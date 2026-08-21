@@ -41,7 +41,11 @@ class ChartTemplateModel(SubscriptableBaseModel):
     makeHouseComparisonGrid: str
     """SVG markup for house comparison grid"""
 
-    full_wheel_translate_y: int
+    #: The whole transform, not just its y. The wheel is a fixed-radius drawing
+    #: placed by a translate; on a canvas tall enough to leave it stranded in a
+    #: corner it also takes a scale, and the two have to arrive as one string
+    #: because the order matters — translate outside, scale inside.
+    full_wheel_transform: str
     """Vertical translation for the full wheel group"""
 
     houses_and_planets_translate_y: int
@@ -79,6 +83,9 @@ class ChartTemplateModel(SubscriptableBaseModel):
 
     stringTitle: str
     """Chart title string"""
+
+    stringDescription: str = ""
+    """Sentence read by a screen reader in place of the wheel (SVG <desc>)"""
 
     top_left_0: str
     """Top left panel content - line 0"""
@@ -441,3 +448,6 @@ class ChartTemplateModel(SubscriptableBaseModel):
 
     makeLunarPhase: str
     """SVG markup for lunar phase"""
+
+    chart_font_family: str
+    """Font stack declared on the SVG root, so every text node inherits one font"""

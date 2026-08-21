@@ -661,8 +661,12 @@ class KerykeionPointModel(SubscriptableBaseModel):
         default=None,
         description=(
             "Classification of the speed against the body's mean daily motion "
-            "(retrograde/stationary/slow/average/fast). Populated for the ten "
-            "planets in Earth-centred perspectives; None elsewhere."
+            "(retrograde/stationary/stationary_retrograde/stationary_direct/"
+            "slow/average/fast). A station is named for the turn it makes — "
+            "stationary_retrograde opens the retrograde phase, "
+            "stationary_direct closes it — falling back to plain stationary "
+            "when the direction of the turn cannot be resolved. Populated for "
+            "the ten planets in Earth-centred perspectives; None elsewhere."
         ),
     )
     declination: Optional[float] = Field(

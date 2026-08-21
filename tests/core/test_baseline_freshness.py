@@ -62,10 +62,23 @@ PANEL_ROWS = len(
 #: source file, and the transit against 1970-01-01. Regenerating them means
 #: deciding what they are supposed to represent, which is a change to the
 #: fixtures rather than a refresh of them.
+#: Six more joined them when the glyph set was redrawn: the same reason, found
+#: the same way — ``poe regenerate:svg`` runs to completion and leaves these
+#: files untouched, because no script in ``scripts/`` casts a progression, and
+#: the Ptolemaic pair's second subject and transit moment appear in no source
+#: file either. They are listed rather than hand-patched: their modern variants
+#: place clusters from the ink tables, so pasting a new glyph block into them
+#: would leave the drawing disagreeing with the geometry that produced it.
 CANNOT_REGENERATE_HERE = {
     "Ancient Greece 500BC - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
     "Ancient Greece 500BC - Synastry Chart - Classic.svg": "no generator in the repo; second subject not recorded",
     "Ancient Greece 500BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
+    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg": "no generator in the repo; the pairing is not recorded",
+    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
+    "John Lennon - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
+    "John Lennon - Progression Chart - Modern.svg": "no generator in the repo; progressed target not recorded",
+    "John Lennon - Progression Chart - Table Grid.svg": "no generator in the repo; progressed target not recorded",
+    "John Lennon - Dark Theme - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
 }
 
 _ROW = re.compile(r"Bottom_Left_Text_(\d+)")
@@ -162,3 +175,134 @@ def test_the_gallery_page_declares_the_aspect_ratio_its_charts_actually_have():
             )
 
     assert not mismatched, "Regenerate with `python scripts/generate_v6_test_gallery.py`:\n" + "\n".join(mismatched)
+
+
+# --------------------------------------------------------------------- glyphs
+#: The generated <symbol> block is spliced verbatim into every template, so every
+#: baseline carries a copy of it — the single largest shared chunk in the tree,
+#: and the one a glyph change moves. The row check above cannot see it: a redrawn
+#: Jupiter adds no line to the bottom-left panel. Seventy-three committed
+#: baselines were drawn with a glyph set the library no longer had, nineteen of
+#: them the README's showcase images, before anything asked.
+GLYPHS = "GLYPHS:BEGIN", "GLYPHS:END"
+
+#: Geometry only. Comparing the block verbatim would fail on baselines that are
+#: legitimately different rather than stale: the `No CSS Variables` fixture
+#: substitutes every `var()` with a literal colour. Paint is exactly the part it
+#: rewrites, and exactly the part a stale glyph shares with a fresh one — so what
+#: is compared is the shapes.
+_GEOMETRY = re.compile(
+    r'\b(?:d|cx|cy|r|rx|ry|x|y|x1|y1|x2|y2|width|height|points|transform|viewBox)='
+    r"(['\"])(.*?)\1",
+    re.S,
+)
+
+#: An absolute moveto starts every path the generator writes. The SVG minifier
+#: rewrites them relative (`M5.10,7.6 C5.10,4.2` becomes `m5.1 7.6c0-3.4`), which
+#: is the same shape spelled differently — no string comparison can see through
+#: it, and rounding it back is a second implementation of the minifier. Minified
+#: baselines are therefore checked on their symbol list instead, and recognised
+#: by what the file contains, never by its name: a filename convention would
+#: quietly stop applying the day one is renamed.
+_MINIFIED_PATH = re.compile(r"\bd=['\"]m")
+
+_USE_REF = re.compile(r"xlink:href=['\"]#([^'\"]+)['\"]")
+
+REGENERATE_HINT = (
+    "Regenerate it: `poe regenerate:svg` for tests/data/svg, "
+    "`poe regenerate:docs-charts` for docs/charts, "
+    "`poe regenerate:gallery-v6` for tests/data/v6_gallery. For a baseline a test "
+    "owns rather than a script, run that test with KERYKEION_REGEN_BASELINES=1."
+)
+
+
+def _glyph_block(text: str) -> str | None:
+    if GLYPHS[0] not in text or GLYPHS[1] not in text:
+        return None
+    return text[text.index(GLYPHS[0]) : text.index(GLYPHS[1])]
+
+
+def _glyph_ids(block: str) -> list[str]:
+    return re.findall(r"<symbol id=['\"]([^'\"]+)['\"]", block)
+
+
+def _glyph_geometry(block: str) -> list[str]:
+    return [" ".join(value.split()) for _quote, value in _GEOMETRY.findall(block)]
+
+
+CURRENT_BLOCK = _glyph_block(
+    (REPO_ROOT / "kerykeion" / "charts" / "templates" / "chart.xml").read_text(encoding="utf-8")
+)
+assert CURRENT_BLOCK is not None
+CURRENT_IDS = _glyph_ids(CURRENT_BLOCK)
+CURRENT_GEOMETRY = _glyph_geometry(CURRENT_BLOCK)
+
+
+def _baselines_with_glyphs() -> list[Path]:
+    found = []
+    for directory in BASELINE_DIRS:
+        for svg in sorted(directory.glob("*.svg")):
+            if GLYPHS[0] in svg.read_text(encoding="utf-8"):
+                found.append(svg)
+    return found
+
+
+GLYPHED = _baselines_with_glyphs()
+
+
+def test_the_glyph_search_actually_finds_baselines():
+    """Guards the cases below: empty lists would make them vacuous."""
+    assert len(CURRENT_IDS) > 70, f"only {len(CURRENT_IDS)} symbols parsed from chart.xml"
+    assert CURRENT_GEOMETRY, "no geometry parsed from chart.xml — did the block move?"
+    assert len(GLYPHED) > 300, f"only {len(GLYPHED)} baselines carry the glyph block"
+
+
+@pytest.mark.parametrize("svg", GLYPHED, ids=lambda p: p.name)
+def test_every_baseline_carries_the_current_symbol_set(svg: Path):
+    """Which symbols ship, and in what order — the part minification preserves.
+
+    Not equality: the minifier tree-shakes the block down to the symbols a chart
+    actually references (32 of 80 on a plain natal), which is the whole point of
+    minifying and not a defect. What must still hold is that the survivors are
+    the current symbols in the current order, and that nothing the file draws was
+    shaken away — a `<use>` pointing at a symbol that is not there renders
+    nothing at all, silently.
+    """
+    if svg.name in CANNOT_REGENERATE_HERE:
+        pytest.skip(f"{svg.name}: {CANNOT_REGENERATE_HERE[svg.name]}")
+
+    text = svg.read_text(encoding="utf-8")
+    block = _glyph_block(text)
+    assert block is not None
+    present = _glyph_ids(block)
+
+    kept = [sid for sid in CURRENT_IDS if sid in set(present)]
+    assert present == kept, (
+        f"{svg.name} carries symbols the templates do not ship, or ships them in "
+        f"a different order. Expected (of the {len(present)} it keeps): {kept}. "
+        f"{REGENERATE_HINT}"
+    )
+
+    glyphs = set(CURRENT_IDS)
+    dangling = sorted({ref for ref in _USE_REF.findall(text) if ref in glyphs} - set(present))
+    assert not dangling, f"{svg.name} draws symbols it does not define: {dangling}"
+
+
+@pytest.mark.parametrize("svg", GLYPHED, ids=lambda p: p.name)
+def test_every_baseline_draws_the_current_glyphs(svg: Path):
+    """The shapes themselves — a redrawn glyph adds no line and moves no symbol."""
+    if svg.name in CANNOT_REGENERATE_HERE:
+        pytest.skip(f"{svg.name}: {CANNOT_REGENERATE_HERE[svg.name]}")
+
+    block = _glyph_block(svg.read_text(encoding="utf-8"))
+    assert block is not None
+    if _MINIFIED_PATH.search(block):
+        pytest.skip(
+            f"{svg.name}: paths were rewritten relative by the minifier, so the "
+            "geometry cannot be compared as text; the symbol-set case above still "
+            "covers this file."
+        )
+
+    assert _glyph_geometry(block) == CURRENT_GEOMETRY, (
+        f"{svg.name} draws a glyph set the templates no longer have. {REGENERATE_HINT}"
+    )

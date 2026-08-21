@@ -1,20 +1,34 @@
 #!/usr/bin/env python3
 """Generate the chart-glyph <symbol> definitions in the SVG templates.
 
-Builds all 75 glyph symbols from open, self-contained sources:
+Builds all 80 glyph symbols from open, self-contained sources:
 
   * Symbola (George Douros)          -- public domain  -> classic signs/planets/
-                                                          asteroids/nodes/Lilith/Rx
+                                                          asteroids/Lilith/Priapus/℞
   * Noto Sans Symbols 2 (Google)     -- SIL OFL 1.1    -> modern TNO / Uranian points
+  * Noto Sans (Google)               -- SIL OFL 1.1    -> the six lettered marks
+                                                          (As/Mc/Ds/Ic, Vx, Av)
   * clean-room geometry (this file)  -- original       -> Sun/Earth/Uranus/Pluto/
-                                                          Ixion, aspects, Arabic parts,
-                                                          Vertex/East Point/Midpoint/star
+                                                          Ixion, the lunar nodes,
+                                                          White Moon / Interpolated
+                                                          Perigee, aspects, Arabic
+                                                          parts, Vertex/East Point/
+                                                          Midpoint/star
 
 Only the glyph outlines are derived from the fonts; the fonts themselves are never
-redistributed (downloaded to a git-ignored cache at build time). Outlines are
+redistributed (downloaded to a git-ignored cache at build time). Nothing a viewer
+loads depends on a font: all 80 symbols are geometry, including the lettered
+marks, which were live <text> until they were traced here. Outlines are
 normalised into the per-group coordinate box the templates already expect and the
 existing `var(--kerykeion-chart-color-*)` style hooks are preserved, so themes and
 the Python renderers keep working unchanged.
+
+What the set contains — ids, families, labels, sources — lives in
+`glyph_catalog.py`, which the published gallery reads too. This file holds the
+artwork and nothing else. That split is load-bearing in both directions: the
+block between the markers is rewritten wholesale, so anything absent from the
+catalog is deleted on the next run, and anything the catalog knows about but the
+gallery filtered out went undocumented (five points did, for weeks).
 
 Run with:  uv run python scripts/build_chart_glyphs.py
 Idempotent: rewrites the block between the GLYPHS:BEGIN / GLYPHS:END markers.
@@ -22,33 +36,55 @@ Idempotent: rewrites the block between the GLYPHS:BEGIN / GLYPHS:END markers.
 from __future__ import annotations
 import hashlib
 import pathlib
+import sys
 import urllib.request
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.boundsPen import BoundsPen
+
+# `scripts/` is not importable as a package from every entry point that loads
+# this file (run directly, loaded by path from the tests), so put it on the path
+# rather than relying on one of them.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from glyph_catalog import BOX, SPEC, box_of  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / "kerykeion" / "charts" / "templates"
 TEMPLATE_FILES = ["chart.xml", "wheel_only.xml", "aspect_grid_only.xml", "modern_wheel.xml"]
 CACHE = ROOT / "scripts" / ".glyph-cache"
 
+# key -> (url, sha256, name to credit). The credit travels with the source so a
+# fourth font cannot be added without one: every template's header line names
+# each of these, and a test checks it. The header ships inside every rendered
+# chart, which is where an OFL attribution is actually read.
 FONT_SOURCES = {
     "Symbola": (
         "https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola.ttf",
         "98c20d0c96bbee0cb8f125297bad388210e2e901fea89820697488ae0a57d688",
+        "Symbola",
     ),
     "Noto2": (
         "https://github.com/notofonts/notofonts.github.io/raw/main/fonts/"
         "NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf",
         "c4a0a80f0041ce4be81e2478faad22776d23edb98ae3f0d19bd37044820ecf9d",
+        "Noto Sans Symbols 2",
+    ),
+    # Latin letters for the six lettered marks (As/Mc/Ds/Ic, Vx, Av). They used
+    # to be live <text>, which is the one thing in the glyph set that depended on
+    # the *viewer's* fonts — the label rendered in whatever they happened to have,
+    # at whatever width. Traced here instead, so all 80 symbols are geometry.
+    # Symbola cannot supply these: its Latin is a serif face, and the rest of the
+    # set is sans. Noto Sans is the same project and the same licence as Noto2.
+    "NotoSans": (
+        "https://github.com/notofonts/notofonts.github.io/raw/main/fonts/"
+        "NotoSans/unhinted/ttf/NotoSans-Regular.ttf",
+        "f3961a9cde016d41a4879aecda1474d3a36d6bf54fa0e4643de029cc2248b0e8",
+        "Noto Sans",
     ),
 }
 
 BEGIN = "<!-- GLYPHS:BEGIN (generated by scripts/build_chart_glyphs.py — do not edit by hand) -->"
 END = "<!-- GLYPHS:END -->"
-
-# per-group coordinate box (matches the <use> transforms in the renderers)
-BOX = {"sign": 32, "planet": 24, "point": 24, "aspect": 10, "retro": 12, "text": 24}
 
 
 # --------------------------------------------------------------------------- fonts
@@ -57,7 +93,7 @@ def _sha256(path: pathlib.Path) -> str:
 
 
 def fetch_font(key: str) -> "Font":
-    url, sha = FONT_SOURCES[key]
+    url, sha, _credit = FONT_SOURCES[key]
     CACHE.mkdir(parents=True, exist_ok=True)
     dest = CACHE / f"{key}.ttf"
     # Drop a corrupt cached copy (e.g. a download truncated by a dropped
@@ -107,130 +143,528 @@ class Font:
         t = f"translate({ox:.3f},{oy:.3f}) scale({s:.5f},{-s:.5f}) translate({-xmin:.3f},{-ymax:.3f})"
         return f'<g transform="{t}"><path d="{sp.getCommands()}" style="fill: {css}"/></g>'
 
+    def _set(self, chars):
+        """Lay `chars` on one baseline using the font's advances. Font units."""
+        hmtx = self.ttf["hmtx"]
+        parts: list[tuple[float, str]] = []
+        pen = 0.0
+        xmin = ymin = float("inf")
+        xmax = ymax = float("-inf")
+        for ch in chars:
+            cp = ord(ch)
+            if cp not in self.cmap:
+                raise KeyError(f"{ch!r} not in font")
+            name = self.cmap[cp]
+            bp = BoundsPen(self.gs)
+            self.gs[name].draw(bp)
+            if bp.bounds:
+                x0, y0, x1, y1 = bp.bounds
+                xmin, xmax = min(xmin, x0 + pen), max(xmax, x1 + pen)
+                ymin, ymax = min(ymin, y0), max(ymax, y1)
+            sp = SVGPathPen(self.gs)
+            self.gs[name].draw(sp)
+            if commands := sp.getCommands():
+                parts.append((pen, commands))
+            pen += hmtx[name][0]
+        if not parts:
+            raise ValueError(f"nothing drawn for {chars!r}")
+        return parts, (xmin, ymin, xmax, ymax)
+
+    def label_scale(self, box: int, cap_frac: float) -> float:
+        """The ONE type size all the lettered marks share, set by CAP HEIGHT.
+
+        Two wrong answers were tried before this one. Fitting each label to the
+        box on its own makes a narrow pair like "Ic" come out bigger than a wide
+        one like "Mc", because the narrow one has room to grow into. Sharing a
+        scale but solving it against the WIDEST label fixes that and creates the
+        opposite fault: "Mc" then pins the size for everyone, and "Ic" — which is
+        both narrow and half x-height — shrinks to under half its box while the
+        symbols around it fill 84% of theirs.
+
+        Cap height is the measure that matches how the marks are actually read,
+        so it is the one held constant — and `label()` then keeps any mark too
+        wide for its box from spilling out of it.
+        """
+        cap = getattr(self.ttf["OS/2"], "sCapHeight", None) or self.ttf["head"].unitsPerEm * 0.7
+        return box * cap_frac / cap
+
+    def label(self, chars, box, css, scale) -> str:
+        """A lettered mark as outlines: no <text>, so no dependency on the viewer's fonts.
+
+        The shared cap height governs, except where it would push a mark out of
+        its box — "Mc" is wide enough to do that — in which case that one mark is
+        held back to fit. The original did the same thing by hand, setting "Mc"
+        at 20px against the others' 22px; the difference is that here it happens
+        only when the geometry demands it, and by how much it demands.
+        """
+        parts, (xmin, ymin, xmax, ymax) = self._set(chars)
+        # The ceiling is the whole box, not the symbols' INK_FRACTION: a letter
+        # pair is wider than it is tall, so holding it to the symbols' ink would
+        # squeeze every mark except the narrowest — and "Ic" would end up the
+        # biggest of them again, which is the fault this is here to prevent.
+        if (width := (xmax - xmin) * scale) > box:
+            scale *= box / width
+        ox = box / 2 - (xmin + xmax) / 2 * scale
+        oy = box / 2 + (ymin + ymax) / 2 * scale  # y is flipped below
+        t = f"translate({ox:.3f},{oy:.3f}) scale({scale:.5f},{-scale:.5f})"
+        inner = "".join(
+            f'<path d="{d}" transform="translate({off:.0f},0)"/>' if off else f'<path d="{d}"/>'
+            for off, d in parts
+        )
+        return f'<g transform="{t}" style="fill: {css}">{inner}</g>'
+
 
 def V(name: str) -> str:
     return f"var(--kerykeion-chart-color-{name})"
 
 
-def sk(v, w=1.8):
+# --------------------------------------------------------------------- weight
+# One weight for every glyph, and it is not a taste call — it is measured.
+#
+# The font-derived silhouettes cannot be re-weighted: their stem is baked into
+# the contour, so a stroke-width has nothing to act on and ink can only be added
+# to a filled shape, never removed. They are therefore the fixed point, and the
+# stroke artwork is tuned to *them*.
+#
+# Measured in the browser over all 45 silhouettes, each in its own units, with
+# stem = 2*area/perimeter (exact for a ribbon of constant width):
+#
+#     stem / ink extent -> min 5.78%   median 7.41%   max 10.47%
+#
+# `outline()` below places that ink at INK_FRACTION of the box, so stroke
+# artwork lands on the same apparent weight at STEM_FRACTION * INK_FRACTION *
+# box. Before this, seven unrelated widths were in use (1.1 … 1.9) and the
+# stroke family ran 1.35x heavier than the silhouettes — the Sun read bolder
+# than the Moon, and the aspects, drawn in a 10-unit box, reached 16% of their
+# own ink: more than twice the silhouettes.
+INK_FRACTION = 0.84  # = 1 - 2 * outline()'s pad_frac
+# Cap height of the lettered marks, as a fraction of their box. 0.64 is what the
+# original hand-set labels had (22px type in a 24-unit box) — the size they read
+# at before they were traced, and close enough to the symbols' 0.84 ink that a
+# letter does not look shrunken beside a planet.
+LABEL_CAP_FRACTION = 0.64
+STEM_FRACTION = 0.0741  # measured median of the 45 font silhouettes
+
+
+def stroke_for(box: int) -> float:
+    """Stroke width that reads at the same weight as the silhouettes, in `box` units."""
+    return round(box * INK_FRACTION * STEM_FRACTION, 3)
+
+
+W_SIGN = stroke_for(BOX["sign"])  # 1.992
+W_BODY = stroke_for(BOX["body"])  # 1.494 — every point drawn on the wheel
+W_RETRO = stroke_for(BOX["retro"])  # 0.747
+W_ASPECT = stroke_for(BOX["aspect"])  # 0.622
+
+# Radius at which a circle centred in a 24-box inks exactly INK_FRACTION of it,
+# stroke included. Earth used 8.5 and came out at 77% while the set sat at 84%.
+_R24 = round((INK_FRACTION * BOX["body"] - W_BODY) / 2, 3)
+
+# Half weight, for a line that joins marks rather than being one. See Midpoint.
+W_CONNECTOR = round(W_BODY / 2, 3)
+
+# Uranus, crescent-armed form. The arms are arcs that open outward: their tips
+# flare away from the stem at top and bottom, the belly curves in toward it, and
+# the cross-bar joins the two bellies — which is why the bar is short. Proportions
+# taken off the reference mark and rescaled to the shared ink height: arms from
+# the ink's top down to just past the globe's shoulder, bellies 3.3 either side of
+# the stem, globe hung under it with its bottom on the ink line.
+_U_TOP = round((BOX["body"] - INK_FRACTION * BOX["body"]) / 2 + W_BODY / 2, 3)  # 2.667
+_U_BOT = 16.9
+_U_TIP_X = 3.4
+_U_BELLY_X = 8.7
+_U_BAR_Y = round((_U_TOP + _U_BOT) / 2, 3)  # the arcs' widest point, by definition
+# radius through three points of a circular arc, from chord and sagitta
+_U_ARC_R = round(
+    ((_U_BELLY_X - _U_TIP_X) ** 2 + ((_U_BOT - _U_TOP) / 2) ** 2)
+    / (2 * (_U_BELLY_X - _U_TIP_X)),
+    3,
+)
+_U_GLOBE_R = 2.4
+_U_GLOBE_CY = round((BOX["body"] + INK_FRACTION * BOX["body"]) / 2 - W_BODY / 2 - _U_GLOBE_R, 3)
+
+
+def sk(v, w=W_BODY):
     return f'fill="none" stroke="{V(v)}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"'
 
 
-def ska(v, w=1.2):
+def ska(v, w=W_ASPECT):
     return sk(v, w)
 
 
-# --------------------------------------------------------------------------- spec
-# (id, group, kind, payload)
-#   kind "S"/"N" -> font glyph: payload = (css_var_name, [codepoints])
-#   kind "C"     -> clean-room: payload = key into CLEAN
-#   kind "T"     -> kept text label: payload = key into TEXT
-P, PT, S, A = "planet", "point", "sign", "aspect"
-SPEC = [
-    ("Sun", P, "C", "Sun"),
-    ("Moon", P, "S", ("moon", [0x263D])),
-    ("Mercury", P, "S", ("mercury", [0x263F])),
-    ("Venus", P, "S", ("venus", [0x2640])),
-    ("Mars", P, "S", ("mars", [0x2642])),
-    ("Jupiter", P, "S", ("jupiter", [0x2643])),
-    ("Saturn", P, "S", ("saturn", [0x2644])),
-    ("Uranus", P, "C", "Uranus"),
-    ("Neptune", P, "S", ("neptune", [0x2646])),
-    ("Pluto", P, "C", "Pluto"),
-    ("Chiron", P, "S", ("chiron", [0x26B7])),
-    ("Mean_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
-    ("Mean_North_Lunar_Node", PT, "S", ("mean-node", [0x260A])),
-    ("True_North_Lunar_Node", PT, "S", ("true-node", [0x260A])),
-    ("Mean_South_Lunar_Node", PT, "S", ("mean-node", [0x260B])),
-    ("True_South_Lunar_Node", PT, "S", ("true-node", [0x260B])),
-    ("Ascendant", "text", "T", "Ascendant"),
-    ("Medium_Coeli", "text", "T", "Medium_Coeli"),
-    ("Descendant", "text", "T", "Descendant"),
-    ("Imum_Coeli", "text", "T", "Imum_Coeli"),
-    ("Earth", PT, "C", "Earth"),
-    ("Pholus", PT, "N", ("pholus", [0x2BDB])),
-    ("Sedna", PT, "N", ("sedna", [0x2BF2])),
-    ("Haumea", PT, "N", ("haumea", [0x1F77B])),
-    ("Makemake", PT, "N", ("makemake", [0x1F77C])),
-    ("Ixion", PT, "C", "Ixion"),
-    ("Orcus", PT, "N", ("orcus", [0x1F77F])),
-    ("Quaoar", PT, "N", ("quaoar", [0x1F77E])),
-    ("Cupido", PT, "N", ("cupido", [0x2BE0])),
-    ("Hades", PT, "N", ("hades", [0x2BE1])),
-    ("Zeus", PT, "N", ("zeus", [0x2BE2])),
-    ("Kronos", PT, "N", ("kronos", [0x2BE3])),
-    ("Apollon", PT, "N", ("apollon", [0x2BE4])),
-    ("Admetos", PT, "N", ("admetos", [0x2BE5])),
-    ("Vulkanus", PT, "N", ("vulkanus", [0x2BE6])),
-    ("Poseidon", PT, "N", ("poseidon", [0x2BE7])),
-    ("FixedStar", PT, "C", "FixedStar"),
-    ("Midpoint", PT, "C", "Midpoint"),
-    ("Anti_Vertex", PT, "C", "Anti_Vertex"),
-    ("Ceres", PT, "S", ("ceres", [0x26B3])),
-    ("Pallas", PT, "S", ("pallas", [0x26B4])),
-    ("Juno", PT, "S", ("juno", [0x26B5])),
-    ("Vesta", PT, "S", ("vesta", [0x26B6])),
-    ("Vertex", PT, "C", "Vertex"),
-    ("True_Lilith", PT, "S", ("mean-lilith", [0x26B8])),
-    ("Eris", PT, "N", ("eris", [0x2BF0])),
-    ("East_Point", PT, "C", "East_Point"),
-    ("Pars_Fortunae", PT, "C", "Pars_Fortunae"),
-    ("Pars_Spiritus", PT, "C", "Pars_Spiritus"),
-    ("Pars_Amoris", PT, "C", "Pars_Amoris"),
-    ("Pars_Fidei", PT, "C", "Pars_Fidei"),
-    ("Ari", S, "S", ("zodiac-icon-0", [0x2648])),
-    ("Tau", S, "S", ("zodiac-icon-1", [0x2649])),
-    ("Gem", S, "S", ("zodiac-icon-2", [0x264A])),
-    ("Can", S, "S", ("zodiac-icon-3", [0x264B])),
-    ("Leo", S, "S", ("zodiac-icon-4", [0x264C])),
-    ("Vir", S, "S", ("zodiac-icon-5", [0x264D])),
-    ("Lib", S, "S", ("zodiac-icon-6", [0x264E])),
-    ("Sco", S, "S", ("zodiac-icon-7", [0x264F])),
-    ("Sag", S, "S", ("zodiac-icon-8", [0x2650])),
-    ("Cap", S, "S", ("zodiac-icon-9", [0x2651])),
-    ("Aqu", S, "S", ("zodiac-icon-10", [0x2652])),
-    ("Pis", S, "S", ("zodiac-icon-11", [0x2653])),
-    ("orb0", A, "C", "orb0"), ("orb30", A, "C", "orb30"), ("orb45", A, "C", "orb45"),
-    ("orb60", A, "C", "orb60"), ("orb72", A, "C", "orb72"), ("orb90", A, "C", "orb90"),
-    ("orb120", A, "C", "orb120"), ("orb135", A, "C", "orb135"), ("orb144", A, "C", "orb144"),
-    ("orb150", A, "C", "orb150"), ("orb180", A, "C", "orb180"),
-    ("retrograde", "retro", "S", ("paper-0", [0x211E])),
-]
-
 # --------------------------------------------------------------------------- clean-room
-TEXT = {
-    "Ascendant": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-first-house)">As</text>',
-    "Medium_Coeli": '<text y="20" style="font-size: 20px; fill: var(--kerykeion-chart-color-tenth-house)">Mc</text>',
-    "Descendant": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-seventh-house)">Ds</text>',
-    "Imum_Coeli": '<text y="20" style="font-size: 22px; fill: var(--kerykeion-chart-color-fourth-house)">Ic</text>',
-}
+# ------------------------------------------------------------- lunar nodes
+# An arc with a ring on each end. The rings are placed by DERIVATION, not by
+# six hand-tuned numbers: a ring whose centre sits at (R + r) along the radius
+# through the contact point is internally tangent to the arc there, so the two
+# curves share a tangent and the stroke reads as one continuous line. Change R
+# or RING and the joint stays closed.
+_NODE_R = 6.4  # arc radius
+_NODE_RING = 2.2  # ring radius
+_NODE_CY = 11.65  # arc centre, y
+_NODE_THETA = 145.0  # where the arc meets the rings, degrees from centre
+
+
+def _lunar_node(colour: str, south: bool = False) -> str:
+    import math
+
+    rad = math.radians(_NODE_THETA)
+    cos, sin = math.cos(rad), math.sin(rad)
+    tx, ty = 12 + _NODE_R * cos, _NODE_CY + _NODE_R * sin  # tangency, left side
+    rx, ry = 12 + (_NODE_R + _NODE_RING) * cos, _NODE_CY + (_NODE_R + _NODE_RING) * sin
+    if south:  # mirror about the box's horizontal axis
+        ty, ry = 24 - ty, 24 - ry
+    sweep = 0 if south else 1
+    pen = (
+        f'fill="none" stroke="{V(colour)}" stroke-width="{W_BODY}" stroke-linecap="round"'
+    )
+    return (
+        f'<path d="M{tx:.4f},{ty:.4f} A{_NODE_R},{_NODE_R} 0 1,{sweep} {24 - tx:.4f},{ty:.4f}" {pen}/>'
+        f'<circle cx="{rx:.4f}" cy="{ry:.4f}" r="{_NODE_RING}" {pen}/>'
+        f'<circle cx="{24 - rx:.4f}" cy="{ry:.4f}" r="{_NODE_RING}" {pen}/>'
+    )
+
+
+def _meet_circle(cx: float, cy: float, r: float, tx: float, ty: float) -> tuple[float, float]:
+    """Where the ray from (cx, cy) toward (tx, ty) crosses the circle.
+
+    Legs that spring from a circle are anchored here instead of at eyeballed
+    coordinates. A round cap reaches half a stroke width BACK along its own
+    line, so a leg starting even slightly inside the circle pushes a blob into
+    the counter: the quintile started 0.072 units in and the biquintile 0.109,
+    both visible. Anchored on the circle the cap tip lands exactly on the inner
+    edge of the ring — joined, not overlapping — whatever the stroke becomes.
+    """
+    import math
+
+    d = math.hypot(tx - cx, ty - cy)
+    return (round(cx + (tx - cx) / d * r, 3), round(cy + (ty - cy) / d * r, 3))
+
+
+_Q72 = _meet_circle(4.4, 4.4, 2.9, 9.2, 9.2)
+_Q144L = _meet_circle(5, 4.5, 2.8, 1.1, 9.2)
+_Q144R = _meet_circle(5, 4.5, 2.8, 8.9, 9.2)
+
+
+def _crescent(cx: float, cy: float, r_out: float, sx: float, r_in: float) -> str:
+    """A hollow lune: the disc at (cx, cy) with a second disc bitten out of it.
+
+    Derived rather than eyeballed. The two circles meet on their radical line,
+    and those two intersection points ARE the crescent's horns — so the horns
+    stay sharp and the two arcs stay tangent to each other however the radii or
+    the offset are retuned. The bite is offset to the left, leaving the belly on
+    the right, as the symbol is conventionally drawn.
+    """
+    import math
+
+    d = cx - sx  # the bite sits to the left, so this is positive
+    a = (d * d + r_out * r_out - r_in * r_in) / (2 * d)
+    h = math.sqrt(max(r_out * r_out - a * a, 0.0))
+    px = cx - a  # foot of the radical line, on the centre line
+    top, bottom = (px, cy - h), (px, cy + h)
+
+    def arc_flags(ox: float, oy: float, radius: float) -> tuple[int, int]:
+        """large-arc / sweep for the path that bellies out to the RIGHT."""
+        a0 = math.atan2(top[1] - oy, top[0] - ox)
+        a1 = math.atan2(bottom[1] - oy, bottom[0] - ox)
+        span = (a1 - a0) % (2 * math.pi)  # clockwise, screen coordinates
+        return (1 if span > math.pi else 0, 1)
+
+    out_large, out_sweep = arc_flags(cx, cy, r_out)
+    # the inner edge is travelled backwards, so its sweep is the mirror image
+    in_span = arc_flags(sx, cy, r_in)
+    in_large, in_sweep = in_span[0], 0
+    return (
+        f'M{top[0]:.3f},{top[1]:.3f} '
+        f'A{r_out},{r_out} 0 {out_large},{out_sweep} {bottom[0]:.3f},{bottom[1]:.3f} '
+        f'A{r_in},{r_in} 0 {in_large},{in_sweep} {top[0]:.3f},{top[1]:.3f} Z'
+    )
+
+
+_CROSS_X = 12.0  # the shaft both marks below hang from
+
+
+def _white_moon(colour: str) -> str:
+    """Hollow crescent over a cross.
+
+    The crescent is HOLLOW and that is the whole point: this is the light twin
+    of Lilith's filled dark moon, so an open belly is what tells them apart at a
+    glance. It used to be drawn as a plain circle, which read as a Venus variant
+    and lost the distinction entirely.
+    """
+    pen = (f'fill="none" stroke="{V(colour)}" stroke-width="{W_BODY}" '
+           f'stroke-linecap="round" stroke-linejoin="round"')
+    # The whole lune is scaled, not reshaped. Shortening the horns by moving the
+    # bite instead would have made it WIDER, because the lune spans (a + r_out)
+    # and a rises as the horns retract — so the only lever that shortens the horn
+    # while keeping the crescent's shape is size. At 0.88 the lower horn reaches
+    # the top of the shaft instead of hanging past it.
+    import math
+
+    _S = 0.88
+    r_out, r_in, gap, cy = 6.0 * _S, 5.2 * _S, 2.6 * _S, 8.0
+    # Centre the LUNE, not the disc that generates it. The crescent runs from the
+    # horns at (cx - a) to the belly at (cx + r_out), and that span is not
+    # symmetric about cx — so putting cx on the shaft leaves the moon sitting off
+    # to the right, which is exactly how it looked.
+    a = (gap * gap + r_out * r_out - r_in * r_in) / (2 * gap)
+    cx = _CROSS_X + (a - r_out) / 2
+
+    # The shaft STOPS where it meets the crescent's outer arc. Running it further
+    # up pushed its round cap through the thin lower band and out into the hollow,
+    # leaving a stub floating inside the moon's opening. Ending on the arc buries
+    # the cap under the stroke instead: joined, with nothing showing through.
+    shaft_top = cy + math.sqrt(r_out * r_out - (_CROSS_X - cx) ** 2)
+    return (
+        f'<path d="{_crescent(cx, cy, r_out, cx - gap, r_in)}" {pen}/>'
+        f'<line x1="{_CROSS_X:g}" y1="{shaft_top:.3f}" x2="{_CROSS_X:g}" y2="21.4" {pen}/>'
+        f'<line x1="7.0" y1="17.8" x2="17.0" y2="17.8" {pen}/>'
+    )
+
+
+def _star(points: int, box: int, inner_ratio: float, css: str) -> str:
+    """A star whose ink fills the shared optical size, not a fixed radius.
+
+    Written as geometry because the hand-set version was 18% smaller than every
+    glyph around it: a 5-pointed star is 2*R*sin(72°) wide, so a radius that
+    looks right on paper does not put the ink where the rest of the set has it.
+    """
+    import math
+
+    span = INK_FRACTION * box  # no stroke: the star is filled
+    r_out = span / (2 * math.sin(math.radians(180 - 360 / points * 1.5)))
+    r_in = r_out * inner_ratio
+    c = box / 2
+    pts = []
+    for i in range(points * 2):
+        a = math.radians(-90 + 180 * i / points)
+        r = r_out if i % 2 == 0 else r_in
+        pts.append(f"{c + r * math.cos(a):.2f},{c + r * math.sin(a):.2f}")
+    return f'<path d="M{" L".join(pts)} Z" fill="{css}"/>'
+
+
+def _east_point(box: int) -> str:
+    """Circle, axis and arrow — scaled and centred on the shared optical size.
+
+    The drawing is kept exactly as it was and only fitted: its widest reach ran
+    3.2 to 19, which inked 72% of the box where the set sits at 84%.
+    """
+    coords = [("circle", 9, 12, 6), ("line", 9, 6.2, 9, 17.8), ("line", 3.2, 12, 14.8, 12),
+              ("line", 14.8, 12, 19, 7.6), ("line", 14.8, 12, 19, 16.4)]
+    xs = [v for shape in coords for v in ((shape[1] - shape[3], shape[1] + shape[3])
+          if shape[0] == "circle" else (shape[1], shape[3]))]
+    k = (INK_FRACTION * box - W_BODY) / (max(xs) - min(xs))
+    off = box / 2 - (min(xs) + max(xs)) / 2 * k
+
+    def fx(v):
+        return f"{round(v * k + off, 3):g}"
+
+    def fy(v):
+        return f"{round((v - box / 2) * k + box / 2, 3):g}"
+
+    out = []
+    for shape in coords:
+        if shape[0] == "circle":
+            out.append(f'<circle cx="{fx(shape[1])}" cy="{fy(shape[2])}" r="{round(shape[3] * k, 3):g}" {sk("east-point")}/>')
+        else:
+            out.append(f'<line x1="{fx(shape[1])}" y1="{fy(shape[2])}" x2="{fx(shape[3])}" y2="{fy(shape[4])}" {sk("east-point")}/>')
+    return "".join(out)
+
+
+# ------------------------------------------------------------------ centaurs
+# Chiron and Pholus are one family: a ring hung under a vertical stem with a
+# letter-like head — K for Chiron, P for Pholus. Both were traced from fonts,
+# where they came out as filled silhouettes among a set that is otherwise
+# monoline; drawn here they join the stroke family and take its weight.
+#
+# Nothing is eyeballed. The ring's diameter plus the stem above it fill
+# INK_FRACTION of the box, the mark is centred on that, and each stem stops
+# exactly where it meets its ring so the round cap lands flush with the inner
+# edge instead of poking into the counter.
+_CENTAUR_R = 4.9
+
+
+def _centaur_frame(box: int = 24) -> tuple[float, float, float]:
+    """Ring radius, ring centre-y and stem top, solved from the shared ink size."""
+    r = _CENTAUR_R
+    cy = (box + (INK_FRACTION * box - W_BODY)) / 2 - r
+    return r, cy, box - cy - r
+
+
+def _chiron(colour: str) -> str:
+    """Ring under a stem, with a K to its right — the key.
+
+    The ring is smaller than the shared centaur frame and hangs centred under
+    the stem, which lands flush on it. Drawn at frame size and met off to one
+    side, the ball read as an oversized weight stuck to the K's foot; hung on
+    its own axis it reads as what it is, the eye of the key. The ring keeps the
+    frame's baseline, so Chiron and Pholus still sit on the same line, and the
+    stem shifts left so ring and arms centre the mark on the box.
+    """
+    r, cy, top = _centaur_frame()
+    ring_r = 3.8
+    ring_cy = (cy + r) - ring_r  # same ink bottom as the frame
+    arm = 6.8  # how far the K reaches right of the stem
+    sx = 12 + (ring_r - arm) / 2  # ink left (sx - ring_r) and right (sx + arm) about 12
+    return (
+        f'<circle cx="{sx:.3f}" cy="{ring_cy:.3f}" r="{ring_r}" {sk(colour)}/>'
+        f'<path d="M{sx:.3f},{top:.3f} L{sx:.3f},{ring_cy - ring_r:.3f}" {sk(colour)}/>'
+        f'<path d="M{sx + arm - 0.4:.3f},3.1 L{sx:.3f},7 L{sx + arm:.3f},11.3" {sk(colour)}/>'
+    )
+
+
+def _pholus(colour: str) -> str:
+    """Ring under a stem, with a P at its head."""
+    r, cy, top = _centaur_frame()
+    bowl_bottom = 8.5
+    bowl_r = (bowl_bottom - top) / 2
+    return (
+        f'<circle cx="12" cy="{cy:.3f}" r="{r}" {sk(colour)}/>'
+        f'<path d="M12,{top:.3f} L12,{cy - r:.3f}" {sk(colour)}/>'
+        f'<path d="M12,{top:.3f} H13.8 A{bowl_r:.3f},{bowl_r:.3f} 0 0 1 13.8,{bowl_bottom} H12" {sk(colour)}/>'
+    )
+
+
+def _priapus(colour: str) -> str:
+    """Filled crescent over a downward arrow.
+
+    NOT Lilith turned upside down, which is what shipped: rotating that mark
+    gives an inverted cross, and the point Priapus is drawn with is an arrow.
+    The crescent is mirrored — horns to the right, belly to the left — which is
+    the opposite hand to the White Moon's, and safe to do with a transform
+    because the shape is filled and has no stroke to distort.
+    """
+    import math
+
+    # A FAT crescent: the first attempt was a thin sliver 7.5 wide against its
+    # own 10.2 height, and read as a fingernail beside the arrow. Pulling the
+    # bite in (smaller r_in, smaller gap) thickens the lune and widens it to 9.0.
+    r_out, r_in, gap, cy = 5.1, 3.7, 2.2, 7.0
+    a = (gap * gap + r_out * r_out - r_in * r_in) / (2 * gap)
+    cx = 12 + (a - r_out) / 2
+    moon = (f'<g transform="translate(24,0) scale(-1,1)">'
+            f'<path d="{_crescent(cx, cy, r_out, cx - gap, r_in)}" fill="{V(colour)}"/></g>')
+
+    # Where the stem may start. Down the centre line the crescent's ink is only
+    # its lower horn, bounded above by the BITE circle, and the stem's round cap
+    # must stay clear of that bite or it shows as a bump in the notch.
+    #
+    # The clearance is disc-against-disc, not a distance along the vertical: the
+    # cap is a half-disc of radius w/2, and its nearest approach to the bite runs
+    # along the line joining the two centres. Solving it vertically — which is
+    # what a first pass did — left the cap 0.22 inside the bite and still
+    # visible. Inflating the bite by w/2 before intersecting is the honest form.
+    bite_x = 24 - (cx - gap)  # the mirror puts the bite to the right
+    clear = r_in + W_BODY / 2
+    stem_top = cy + math.sqrt(max(clear**2 - (12 - bite_x) ** 2, 0.0))
+    stem = (f'<line x1="12" y1="{stem_top:.3f}" x2="12" y2="17.6" fill="none" stroke="{V(colour)}" '
+            f'stroke-width="{W_BODY}" stroke-linecap="round"/>')
+    head = f'<path d="M8.6,16.8 L15.4,16.8 L12,22.1 Z" fill="{V(colour)}"/>'
+    return moon + stem + head
+
+
+def _eris(colour: str) -> str:
+    """Ring over a barred stem ending in a downward arrow.
+
+    Traced from Noto before this, where it came out as a filled silhouette in a
+    set that is otherwise monoline. The ring, the bar and the stem are strokes at
+    the shared weight; only the arrowhead is solid, the same accent Priapus uses
+    so the two read as the same hand.
+
+    The stem stops on the ring rather than running under it: a round cap pushed
+    past the ring's inner edge is the bump that had to be chased out of the
+    White Moon and Priapus, and the same arithmetic prevents it here.
+    """
+    box, w = BOX["body"], W_BODY
+    r = 4.3
+    head_h, head_w = 4.6, 6.4
+    # ring on top, arrow at the foot, the pair filling the shared ink height
+    span = INK_FRACTION * box
+    top = (box - span) / 2 + w / 2  # top of the ring's stroke centre-line
+    cy = top + r
+    foot = top - w / 2 + span  # tip of the arrow
+    bar_y = cy + r + 2.1
+    return (
+        f'<circle cx="12" cy="{cy:.3f}" r="{r}" {sk(colour)}/>'
+        f'<line x1="12" y1="{cy + r:.3f}" x2="12" y2="{foot - head_h:.3f}" {sk(colour)}/>'
+        f'<line x1="{12 - 3.4}" y1="{bar_y:.3f}" x2="{12 + 3.4}" y2="{bar_y:.3f}" {sk(colour)}/>'
+        f'<path d="M{12 - head_w / 2},{foot - head_h:.3f} L{12 + head_w / 2},{foot - head_h:.3f} '
+        f'L12,{foot:.3f} Z" fill="{V(colour)}"/>'
+    )
+
+
+def _jupiter(colour: str) -> str:
+    """The "24" figure: a numeral 2 whose base runs on, crossed by an upright.
+
+    The 2 and its base are ONE path, so the corner where the tail turns into the
+    bar is a real join rather than two strokes that happen to meet. A first pass
+    drew the hook too small and too closed and the diagonal too short, which read
+    as a comma rather than a 2; the bowl now spans a third of the glyph and the
+    tail sweeps the full diagonal, as the figure is written.
+
+    Proportions are taken off the reference and fitted to the shared contract:
+    the upright carries the full ink height (INK_FRACTION of the box) and the
+    mark centres on 12.
+    """
+    top, bottom = 2.667, 21.333      # the upright: 20.16 of ink once stroked
+    return (
+        f'<path d="M5.10,7.6 C5.10,4.2 11.03,3.2 12.43,6.9 '
+        f'C13.53,9.8 10.53,12.4 4.24,17.74 H19.75" {sk(colour)}/>'
+        f'<path d="M15.72,{top} V{bottom}" {sk(colour)}/>'
+    )
+
 
 CLEAN = {
     # planets / points (box 24, centre 12)
+    "Chiron": _chiron("chiron"),
+    "Eris": _eris("eris"),
+    "Mean_Priapus": _priapus("mean-lilith"),
+    "True_Priapus": _priapus("true-lilith"),
+    "Pholus": _pholus("pholus"),
+    "Jupiter": _jupiter("jupiter"),
     "Sun": f'<circle cx="12" cy="12" r="9" {sk("sun")}/><circle cx="12" cy="12" r="1.9" fill="{V("sun")}"/>',
-    "Earth": f'<circle cx="12" cy="12" r="8.5" {sk("earth")}/><line x1="12" y1="3.5" x2="12" y2="20.5" {sk("earth")}/><line x1="3.5" y1="12" x2="20.5" y2="12" {sk("earth")}/>',
-    # Herschel "H": two serifed bars + cross-bar + central stem to a hollow globe
-    "Uranus": (f'<line x1="6.5" y1="3" x2="6.5" y2="13.5" {sk("uranus")}/><line x1="17.5" y1="3" x2="17.5" y2="13.5" {sk("uranus")}/>'
-               f'<line x1="4.6" y1="3" x2="8.4" y2="3" {sk("uranus")}/><line x1="15.6" y1="3" x2="19.4" y2="3" {sk("uranus")}/>'
-               f'<line x1="4.6" y1="13.5" x2="8.4" y2="13.5" {sk("uranus")}/><line x1="15.6" y1="13.5" x2="19.4" y2="13.5" {sk("uranus")}/>'
-               f'<line x1="6.5" y1="8.25" x2="17.5" y2="8.25" {sk("uranus")}/><line x1="12" y1="8.25" x2="12" y2="18" {sk("uranus")}/>'
-               f'<circle cx="12" cy="20" r="2.1" {sk("uranus", 1.6)}/>'),
-    # astrological bowl: circle cradled in an upward crescent, over a cross
-    "Pluto": (f'<circle cx="12" cy="6.8" r="3.8" {sk("pluto", 1.9)}/>'
-              f'<path d="M5.6,8 A6.4,6.4 0 0 0 18.4,8" {sk("pluto", 1.9)}/>'
-              f'<line x1="12" y1="14.4" x2="12" y2="21.5" {sk("pluto", 1.9)}/><line x1="8.4" y1="18" x2="15.6" y2="18" {sk("pluto", 1.9)}/>'),
+    "Mean_North_Lunar_Node": _lunar_node("mean-node"),
+    "True_North_Lunar_Node": _lunar_node("true-node"),
+    "Mean_South_Lunar_Node": _lunar_node("mean-node", south=True),
+    "True_South_Lunar_Node": _lunar_node("true-node", south=True),
+    # Its own colour, not the mean apogee's. In this family the hue is the
+    # family and the lightness is the method, so borrowing a method's colour
+    # would have claimed White Moon is a way of computing the Black Moon. It is
+    # a different point: same hue, low saturation — pale where the three Liliths
+    # are vivid, which is also what its name says.
+    "White_Moon": _white_moon("white-moon"),
+    "Interpolated_Perigee": _priapus("interpolated-lilith"),
+    # r solved from the shared optical size: 2r + stroke = INK_FRACTION * box
+    "Earth": f'<circle cx="12" cy="12" r="{_R24}" {sk("earth")}/><line x1="12" y1="{12 - _R24:g}" x2="12" y2="{12 + _R24:g}" {sk("earth")}/><line x1="{12 - _R24:g}" y1="12" x2="{12 + _R24:g}" y2="12" {sk("earth")}/>',
+    # Crescent-armed Uranus: two arcs flanking a central stem, over a hollow
+    # globe. The arcs open OUTWARD — tips flaring away at top and bottom, belly
+    # curving in toward the stem — and the bar spans belly to belly, so it is
+    # short and actually joins the arms instead of floating between them.
+    "Uranus": (f'<path d="M{_U_TIP_X:g},{_U_TOP:g} A{_U_ARC_R},{_U_ARC_R} 0 0 1 {_U_TIP_X:g},{_U_BOT:g}" {sk("uranus")}/>'
+               f'<path d="M{24 - _U_TIP_X:g},{_U_TOP:g} A{_U_ARC_R},{_U_ARC_R} 0 0 0 {24 - _U_TIP_X:g},{_U_BOT:g}" {sk("uranus")}/>'
+               f'<line x1="{_U_BELLY_X:g}" y1="{_U_BAR_Y}" x2="{24 - _U_BELLY_X:g}" y2="{_U_BAR_Y}" {sk("uranus")}/>'
+               # the stem stops ON the globe, not short of it, so its round cap
+               # lands flush with the ring instead of inside it
+               f'<line x1="12" y1="{_U_TOP:g}" x2="12" y2="{_U_GLOBE_CY - _U_GLOBE_R:.3f}" {sk("uranus")}/>'
+               f'<circle cx="12" cy="{_U_GLOBE_CY:.3f}" r="{_U_GLOBE_R:g}" {sk("uranus")}/>'),
+    # astrological bowl: circle cradled in an upward crescent, over a cross.
+    # The orb sits at 7.3, nested a touch into the bowl rather than floating
+    # clear above it.
+    "Pluto": (f'<circle cx="12" cy="7.3" r="3.8" {sk("pluto")}/>'
+              f'<path d="M5.6,8 A6.4,6.4 0 0 0 18.4,8" {sk("pluto")}/>'
+              f'<line x1="12" y1="14.4" x2="12" y2="21.5" {sk("pluto")}/><line x1="8.4" y1="18" x2="15.6" y2="18" {sk("pluto")}/>'),
     "Ixion": (f'<circle cx="12" cy="12" r="9" {sk("ixion")}/><line x1="6" y1="6" x2="18" y2="18" {sk("ixion")}/>'
               f'<line x1="18" y1="6" x2="6" y2="18" {sk("ixion")}/><line x1="12" y1="3" x2="12" y2="21" {sk("ixion")}/>'),
-    "FixedStar": f'<path d="M12,3 L14.12,9.09 L20.56,9.22 L15.42,13.11 L17.29,19.28 L12,15.6 L6.71,19.28 L8.58,13.11 L3.44,9.22 L9.88,9.09 Z" fill="{V("fixed-star-default, #d4a053")}"/>',
-    "Midpoint": (f'<line x1="5" y1="12" x2="19" y2="12" stroke="{V("midpoint-default, #b58bff")}" stroke-width="1.6"/>'
+    "FixedStar": _star(5, BOX["body"], 0.4, V("fixed-star-default, #d4a053")),
+    # The rule between the dots is a CONNECTOR, not a stroke of the mark, and at
+    # full weight it reads as a third the diameter of the dots it joins — heavy
+    # enough that the glyph looks bolder than everything around it. Half weight
+    # is the one place in the set where a width is not stroke_for(box).
+    "Midpoint": (f'<line x1="5" y1="12" x2="19" y2="12" stroke="{V("midpoint-default, #b58bff")}" stroke-width="{W_CONNECTOR}"/>'
                  f'<circle cx="5" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'
                  f'<circle cx="19" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'
                  f'<circle cx="12" cy="12" r="2.2" fill="{V("midpoint-default, #b58bff")}"/>'),
-    "Vertex": f'<text x="12" y="16.5" text-anchor="middle" style="font-size:13px; fill: {V("vertex")}">Vx</text>',
-    "Anti_Vertex": f'<text x="12" y="16.5" text-anchor="middle" style="font-size:13px; fill: {V("anti-vertex")}">Av</text>',
-    "East_Point": (f'<circle cx="9" cy="12" r="6" {sk("ceres")}/><line x1="9" y1="6.2" x2="9" y2="17.8" {sk("ceres")}/>'
-                   f'<line x1="3.2" y1="12" x2="14.8" y2="12" {sk("ceres")}/><line x1="14.8" y1="12" x2="19" y2="7.6" {sk("ceres")}/>'
-                   f'<line x1="14.8" y1="12" x2="19" y2="16.4" {sk("ceres")}/>'),
+    "East_Point": _east_point(BOX["body"]),
     "Pars_Fortunae": f'<circle cx="12" cy="12" r="9" {sk("pars-fortunae")}/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4" {sk("pars-fortunae")}/><line x1="18.4" y1="5.6" x2="5.6" y2="18.4" {sk("pars-fortunae")}/>',
     "Pars_Spiritus": (f'<circle cx="12" cy="12" r="9" {sk("pars-spiritus")}/><line x1="12" y1="6.5" x2="12" y2="17.5" {sk("pars-spiritus")}/>'
                       f'<line x1="6.5" y1="12" x2="17.5" y2="12" {sk("pars-spiritus")}/><line x1="8.1" y1="8.1" x2="15.9" y2="15.9" {sk("pars-spiritus")}/>'
@@ -243,32 +677,38 @@ CLEAN = {
     "orb30": f'<line x1="1" y1="5.6" x2="9" y2="5.6" {ska("semi-sextile")}/><path d="M1.6,1 L5,5.6 L8.4,1" {ska("semi-sextile")}/>',
     "orb45": f'<path d="M1.4,8.8 L8.8,8.8 M1.4,8.8 L5.1,1.4" {ska("semi-square")}/>',
     "orb60": f'<path d="M1.3,1.3 L8.7,8.7 M1.3,8.7 L8.7,1.3 M1,5 L9,5" {ska("sextile")}/>',
-    "orb72": f'<circle cx="4.4" cy="4.4" r="2.9" {ska("quintile")}/><line x1="6.4" y1="6.4" x2="9.2" y2="9.2" {ska("quintile")}/>',
+    "orb72": f'<circle cx="4.4" cy="4.4" r="2.9" {ska("quintile")}/><line x1="{_Q72[0]}" y1="{_Q72[1]}" x2="9.2" y2="9.2" {ska("quintile")}/>',
     "orb90": f'<rect x="1.3" y="1.3" width="7.4" height="7.4" {ska("square")}/>',
     "orb120": f'<path d="M5,1.2 L9,9 L1,9 Z" {ska("trine")}/>',
-    "orb135": f'<rect x="1" y="1" width="5.3" height="5.3" {ska("sesquiquadrate", 1.1)}/><path d="M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4" {ska("sesquiquadrate", 1.1)}/>',
-    "orb144": f'<circle cx="5" cy="4.5" r="2.8" {ska("biquintile", 1.1)}/><line x1="3.2" y1="6.5" x2="1.1" y2="9.2" {ska("biquintile", 1.1)}/><line x1="6.8" y1="6.5" x2="8.9" y2="9.2" {ska("biquintile", 1.1)}/>',
+    "orb135": f'<rect x="1" y="1" width="5.3" height="5.3" {ska("sesquiquadrate")}/><path d="M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4" {ska("sesquiquadrate")}/>',
+    "orb144": f'<circle cx="5" cy="4.5" r="2.8" {ska("biquintile")}/><line x1="{_Q144L[0]}" y1="{_Q144L[1]}" x2="1.1" y2="9.2" {ska("biquintile")}/><line x1="{_Q144R[0]}" y1="{_Q144R[1]}" x2="8.9" y2="9.2" {ska("biquintile")}/>',
     "orb150": f'<line x1="1" y1="4.4" x2="9" y2="4.4" {ska("quincunx")}/><path d="M1.6,9 L5,4.4 L8.4,9" {ska("quincunx")}/>',
-    "orb180": f'<circle cx="3" cy="3" r="1.9" {ska("opposition", 1.1)}/><circle cx="7" cy="7" r="1.9" {ska("opposition", 1.1)}/><line x1="4.35" y1="4.35" x2="5.65" y2="5.65" {ska("opposition", 1.1)}/>',
+    "orb180": f'<circle cx="3" cy="3" r="1.9" {ska("opposition")}/><circle cx="7" cy="7" r="1.9" {ska("opposition")}/><line x1="4.35" y1="4.35" x2="5.65" y2="5.65" {ska("opposition")}/>',
     # retrograde clean-room fallback (box 12) — used by build_lines() only if
-    # Symbola ever loses U+211E (the "S" font glyph is the normal path)
-    "retrograde": f'<path d="M3,11.2 L3,1.2 L6.2,1.2 C8.4,1.2 8.4,5.4 6.2,5.4 L3,5.4 M5.6,5.4 L9.2,11.2" fill="none" stroke="{V("paper-0")}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    # Symbola ever loses U+211E. The serif ℞ is the shipped mark: it is the only
+    # serif glyph in the set, but at wheel sizes it still reads better than any
+    # monoline redraw, so the exception is kept deliberately.
+    "retrograde": f'<path d="M3,11.2 L3,1.2 L6.2,1.2 C8.4,1.2 8.4,5.4 6.2,5.4 L3,5.4 M5.6,5.4 L9.2,11.2" fill="none" stroke="{V("paper-0")}" stroke-width="{W_RETRO}" stroke-linecap="round" stroke-linejoin="round"/>',
 }
-
-SECTION = {  # printed as a comment before this id
-    "Sun": "Planets", "Ascendant": "Angles", "Earth": "Points",
-    "Ari": "Signs", "orb0": "Aspects", "retrograde": "Retrograde",
-}
-
 
 def build_lines() -> list[str]:
-    """Return the block as a list of un-indented lines (markers + <symbol> defs)."""
-    fonts = {"S": fetch_font("Symbola"), "N": fetch_font("Noto2")}
+    """Return the block as a list of un-indented lines (markers + <symbol> defs).
+
+    The heading printed above each run of symbols is the family itself, not a
+    lookup keyed on something else. When it was a separate table the heading came
+    from one fact and the box from another, and the two drifted: five points sat
+    under "Planets" while declared as points.
+    """
+    fonts = {"S": fetch_font("Symbola"), "N": fetch_font("Noto2"), "L": fetch_font("NotoSans")}
+    # one cap height for every lettered mark; see Font.label_scale
+    label_size = fonts["L"].label_scale(BOX["body"], LABEL_CAP_FRACTION)
     lines = [BEGIN]
-    for sid, group, kind, payload in SPEC:
-        if sid in SECTION:
-            lines.append(f"<!-- {SECTION[sid]} -->")
-        box = BOX[group]
+    last_family = None
+    for sid, family, _label, kind, payload in SPEC:
+        if family != last_family:
+            lines.append(f"<!-- {family} -->")
+            last_family = family
+        box = box_of(family)
         if kind in ("S", "N"):
             varname, cps = payload
             try:
@@ -279,9 +719,10 @@ def build_lines() -> list[str]:
                     raise
                 inner = CLEAN[sid]
         elif kind == "C":
-            inner = CLEAN[payload]
-        else:  # T
-            inner = TEXT[payload]
+            inner = CLEAN[sid]
+        else:  # L — a lettered mark, traced so it needs no font at view time
+            varname, chars = payload
+            inner = fonts["L"].label(chars, box, V(varname), label_size)
         lines += [f'<symbol id="{sid}">', f"    {inner}", "</symbol>"]
     lines.append(END)
     return lines
@@ -306,8 +747,8 @@ def main():
         p = TEMPLATES / fn
         p.write_text(splice(p.read_text(encoding="utf-8"), lines), encoding="utf-8")
         print(f"  updated {fn}")
-    counts = {"S": "Symbola", "N": "Noto2", "C": "clean-room", "T": "text"}
-    tally = {k: sum(1 for s in SPEC if s[2] == k) for k in counts}
+    counts = {"S": "Symbola", "N": "Noto2", "L": "Noto Sans", "C": "clean-room"}
+    tally = {k: sum(1 for entry in SPEC if entry[3] == k) for k in counts}
     print("done — " + "  ".join(f"{counts[k]}:{tally[k]}" for k in counts))
 
 

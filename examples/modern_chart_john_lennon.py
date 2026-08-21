@@ -8,7 +8,7 @@ from pathlib import Path
 from os import makedirs as mkdirs
 
 OUTPUT = str(Path(__file__).parent / "output")
-THEMES = ["classic", "black-and-white", "dark", "dark-high-contrast", "light", "strawberry"]
+THEMES = ["classic", "dark", "black-and-white"]
 
 # ── Subject 1: John Lennon ──────────────────────────────────────────────────
 lennon = AstrologicalSubjectFactory.from_birth_data(

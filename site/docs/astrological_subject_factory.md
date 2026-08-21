@@ -247,7 +247,30 @@ Adds `azimuth` and `altitude_above_horizon` fields for each point. Useful for as
 
 ### Motion State
 
-Always computed for the ten planets (Sun through Pluto) in Earth-centred perspectives. Access via `subject.sun.motion_state`. Returns a `MotionState` literal: `"retrograde"`, `"stationary"` (< 5% of mean motion), `"slow"` (< 80%), `"average"` (80-120%), or `"fast"` (> 120%). `None` for nodes, asteroids, fixed stars, and non-geocentric perspectives.
+Always computed for the ten planets (Sun through Pluto) in Earth-centred perspectives. Access via `subject.sun.motion_state`. Returns a `MotionState` literal: `"stationary_retrograde"`, `"stationary_direct"` or `"stationary"` (inside the band of < 5% of mean motion, either direction), `"retrograde"` (backward, outside that band), `"slow"` (< 80%), `"average"` (80-120%), or `"fast"` (> 120%). `None` for nodes, asteroids, fixed stars, and non-geocentric perspectives.
+
+The stationary band brackets zero speed and is tested before the sign, so a
+planet edging backwards at a hundredth of its mean motion is reported as a
+station instead of a plain retrograde. Which station it is comes from the trend
+rather than the sign: the factory samples the speed again a day later, and a
+speed falling through the band opens the retrograde phase
+(`"stationary_retrograde"`) while a speed rising through it closes the phase
+(`"stationary_direct"`). The extra sample is only ever spent on a body already
+inside the band; where it is unavailable the generic `"stationary"` stands.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+print(subject.mercury.motion_state)  # stationary_retrograde
+print(subject.mercury.speed)         # 0.0123... — still forward, already turning
+```
+
+For the instants of the stations themselves rather than the state of one chart, see [Retrograde Stations](/content/docs/retrograde_station_factory), which reports the same two events as `SR` and `SD`.
 
 ### Declination & Out-of-Bounds
 

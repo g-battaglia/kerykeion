@@ -4,6 +4,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 import logging
+import math
 import re
 from functools import lru_cache
 from math import ceil
@@ -86,10 +87,14 @@ from kerykeion.charts.utils import (
     format_location_string,
     format_datetime_with_timezone,
     draw_house_sectors,
+    convert_decimal_to_degree_string,
+    gauquelin_column_width,
+    planet_grid_column_width,
+    get_decoded_kerykeion_celestial_point_name,
+    CHART_TEXT_FONT_FAMILY,
 )
 from kerykeion.charts.draw_planets import draw_planets
 from kerykeion.charts.draw_modern import (
-    MODERN_TEXT_FONT_FAMILY,
     draw_modern_dual_horoscope,
     draw_modern_horoscope,
 )
@@ -132,6 +137,9 @@ def _load_cached_file(path: str) -> str:
 # substitution; all other fields are either numeric or trusted SVG fragments.
 _PLAIN_TEXT_TEMPLATE_FIELDS = (
     "stringTitle",
+    # Built from the title plus the subject's city and nation, so it carries the
+    # same user-controlled text and needs the same escaping.
+    "stringDescription",
     "top_left_0",
     "top_left_1",
     "top_left_2",
@@ -269,6 +277,32 @@ class CircleRadiiConfig:
 # language. When the line is not drawn, nothing moves at all.
 DIURNALITY_GLYPH_DROP: int = 14
 
+# The geometry the paragraph above describes, as numbers the code can use.
+_WHEEL_CENTRE_X: float = 340.0
+_WHEEL_CENTRE_Y: float = 290.0
+_WHEEL_RADIUS: float = 240.0
+_INFO_ROW_FIRST_Y: float = 452.0
+_INFO_ROW_STEP: float = 14.0
+_INFO_ROW_TEXT_X: float = 20.0
+_INFO_ROW_TEXT_RISE: float = 10.0
+_INFO_ROW_COUNT: int = 6
+#: Baseline the moon glyph's default offset was chosen against — the fifth row,
+#: i.e. the last one before the diurnality line existed.
+_INFO_ROW_LEGACY_LAST_Y: float = 508.0
+
+#: Natal only. The moon glyph rides above the block rather than below it, and the
+#: block slides down until its last line closes level with the foot of the aspect
+#: grid — measured there, at y 532. Chosen by eye from three renders 3px apart.
+#: How many rows the bottom-left block has. The natal panel fills it from the
+#: bottom, so a row it does not draw is taken off the top and the last line
+#: stays level with the foot of the aspect grid beside it.
+_BOTTOM_LEFT_ROWS: int = 6
+
+#: Moved down 14 — one row — when the lunation day left the panel: the disc sits
+#: directly above the phase it draws, and the phase moved down with the block.
+_NATAL_MOON_GLYPH_Y: float = 438.0
+_NATAL_BLOCK_DROP: float = 7.0
+
 # How much clear width row 5 really has, and it is not the 258.6px the chord
 # gives at the baseline: the chord narrows going *upward*, and text rises above
 # its baseline. Ideographs fill the em box, so the binding measurement is the
@@ -278,6 +312,29 @@ DIURNALITY_GLYPH_DROP: int = 14
 # sits a little under the geometry, since the estimator below is close to the
 # truth rather than wildly conservative and the last pixel is not worth having.
 DIURNALITY_ROW_CLEAR_WIDTH: float = 228.0
+
+
+def info_row_clear_width(row_index: int, drop: float = 0.0) -> float:
+    """Clear width in px available to bottom-left row *row_index*, at 10px text.
+
+    Derived from the geometry described above rather than tabulated, so the two
+    cannot drift: the rows sit inside the wheel's chord, the chord narrows going
+    upward, and text rises about 10px above its baseline — so the binding
+    measurement for a row drawn at ``y`` is the chord at ``y - 10``.
+
+    The spread is wide enough to matter. Row 5 has 229px and row 0 only 134,
+    which is why a line that fits at the bottom of the panel can run under the
+    wheel at the top of it. Anything written into these rows should be measured
+    against its own row, never against the roomiest one.
+
+    *drop* is how far the block has been slid down from the template baselines.
+    The natal layout does that to close level with the aspect grid, and a row
+    measured without it is charged for a chord it no longer sits on.
+    """
+    baseline_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * row_index + drop
+    measured_y = baseline_y - _INFO_ROW_TEXT_RISE
+    half_chord = math.sqrt(_WHEEL_RADIUS**2 - (measured_y - _WHEEL_CENTRE_Y) ** 2)
+    return (_WHEEL_CENTRE_X - half_chord) - _INFO_ROW_TEXT_X
 
 
 def truncate_to_width(text: str, budget: float, ellipsis_symbol: str = "…", font_size: float = 10.0) -> str:
@@ -638,65 +695,148 @@ class InfoSectionBuilder:
         """Build the zodiac/ayanamsa info string."""
         return self.drawer._get_zodiac_info()
 
-    def _translated_house_system(self, subject) -> str:
-        """Translate the effective house system of one wheel."""
-        house_key = "houses_system_" + subject.effective_houses_system_identifier
-        return self._translate(house_key, subject.effective_houses_system_name)
+    def zodiac_row_carries_an_ayanamsa(self) -> bool:
+        """Whether the zodiac row is the long kind, and so wants the last line.
 
-    def _translated_house_systems(self, subject, second_subject=None) -> str:
-        """Translate one system, or both when a dual wheel uses different ones."""
-        first_system = self._translated_house_system(subject)
-        if (
-            second_subject is not None
-            and second_subject.effective_houses_system_identifier != subject.effective_houses_system_identifier
-        ):
-            return f"{first_system} / {self._translated_house_system(second_subject)}"
+        Asked of the subject rather than of the string: matching on the word
+        "Ayanamsa" would be right in English and wrong in the other nine
+        languages the panel ships.
+        """
+        return getattr(self.drawer.first_obj, "zodiac_type", None) == "Sidereal"
+
+    def build_lunar_phase_info_line(self, subject, prefix: str = "") -> str:
+        """The phase row on its own, for panels that lay their rows out as a list."""
+        row: dict = {}
+        self.build_lunar_phase_info(row, subject, prefix=prefix, key_phase="row")
+        return row.get("row", "")
+
+    def _translated_house_system(self, subject, terse: bool = False) -> str:
+        """Translate the effective house system of one wheel.
+
+        Near the poles the requested system can be undefined, and the subject
+        factory quietly stands another one in its place. The chart has always
+        printed the system actually used; with ``show_polar_fallback_note`` it
+        also admits that a substitution happened, which is the difference
+        between a reader trusting the line and a reader being misled by it.
+        """
+        house_key = "houses_system_" + subject.effective_houses_system_identifier
+        name = self._translate(house_key, subject.effective_houses_system_name)
+        if self.drawer.show_polar_fallback_note and subject._main_house_fallback() is not None:
+            name += "*" if terse else f"* ({self._translate('polar_fallback', 'polar fallback')})"
+        return name
+
+    def _translated_house_systems(self, subject, second_subject=None, terse: bool = False) -> str:
+        """Translate one system, or both when the two wheels do not tell the same story.
+
+        Landing on the same system is not the same as having asked for it. One
+        wheel can use Porphyry natively while the other asked for Placidus and
+        was given Porphyry at a polar latitude — identical effective
+        identifiers, different facts. Collapsing on the identifier alone would
+        print one unqualified name and hide the substitution entirely, so the
+        rendered names are what decide: they already carry the fallback mark.
+        """
+        first_system = self._translated_house_system(subject, terse=terse)
+        if second_subject is None:
+            return first_system
+        second_system = self._translated_house_system(second_subject, terse=terse)
+        if second_system != first_system:
+            return f"{first_system} / {second_system}"
         return first_system
 
-    def build_domification_info(self, second_subject=None) -> str:
+    def _marks_a_polar_fallback(self, subject, second_subject=None) -> bool:
+        """Whether this row is about to gain a fallback mark from either wheel."""
+        if not self.drawer.show_polar_fallback_note:
+            return False
+        subjects = [subject] + ([second_subject] if second_subject is not None else [])
+        return any(s is not None and s._main_house_fallback() is not None for s in subjects)
+
+    def _fit_house_row(self, compose, subject, second_subject, row_index: int) -> str:
+        """Compose a house-system row, shedding the fallback wording before the words break.
+
+        The spelled-out note is worth the room when there is room: at row 1 the
+        wheel leaves ~147px and "Domification: Porphyry* (polar fallback)" wants
+        180. Cutting that mid-word would leave "(pol…", which reads as damage
+        rather than as a deliberate mark, so the row drops to the bare asterisk
+        instead — keeping the one thing it must not lose, that a substitution
+        happened. The truncation below is a floor no shipped translation reaches.
+
+        The measuring only happens when a mark is actually being added. A dual
+        wheel naming two different systems already ran a few pixels past this
+        row before the option existed, and it is not this feature's place to
+        start truncating that: with nothing to mark, the row is returned exactly
+        as it was.
+        """
+        verbose = compose(False)
+        if not self._marks_a_polar_fallback(subject, second_subject):
+            return verbose
+
+        budget = info_row_clear_width(row_index)
+        if estimate_text_width(verbose) <= budget:
+            return verbose
+        terse = compose(True)
+        if estimate_text_width(terse) <= budget:
+            return terse
+        return truncate_to_width(terse, budget)
+
+    def build_domification_info(self, second_subject=None, row_index: int = 1) -> str:
         """Build the domification string, including both differing dual-wheel systems."""
-        systems = self._translated_house_systems(self.drawer.first_obj, second_subject)
-        return f"{self._translate('domification', 'Domification')}: {systems}"
+        label = self._translate("domification", "Domification")
+        first = self.drawer.first_obj
+        return self._fit_house_row(
+            lambda terse: f"{label}: {self._translated_house_systems(first, second_subject, terse=terse)}",
+            first,
+            second_subject,
+            row_index,
+        )
 
     def build_perspective_info(self, subject) -> str:
         """Build the perspective type string."""
         return self.drawer._get_perspective_string(subject)
 
-    def build_houses_system_info(self, subject, second_subject=None) -> str:
+    def build_houses_system_info(self, subject, second_subject=None, row_index: int = 1) -> str:
         """Build compact house-system text, including a differing second wheel."""
         # The system the cusps came from, not the one requested: the compact
         # renderers label dual wheels and returns, where a polar chart would
         # otherwise read as the system it could not actually be cast in.
-        return f"{self._translated_house_systems(subject, second_subject)} {self._translate('houses', 'Houses')}"
+        houses = self._translate("houses", "Houses")
+        return self._fit_house_row(
+            lambda terse: f"{self._translated_house_systems(subject, second_subject, terse=terse)} {houses}",
+            subject,
+            second_subject,
+            row_index,
+        )
 
     def build_lunar_phase_info(
         self,
         template_dict: dict,
         subject,
         prefix: str = "",
-        key_lunation: str = "bottom_left_2",
         key_phase: str = "bottom_left_3",
     ) -> None:
-        """Populate template_dict with lunar phase info if available.
+        """Populate template_dict with the lunar phase name, if available.
+
+        The lunation day used to print above this on its own row — "Lunation
+        Day: 9", the moon's age in days since the new moon. It is gone: the
+        phase already says where in the cycle the moon is, in the words a reader
+        thinks in, and the disc drawn beside it says the same thing again in a
+        picture. A number that has to be translated back into "waxing, about a
+        third of the way" earns neither the row it took nor the width, which on
+        this panel is the scarce thing — the wheel's chord narrows every line.
 
         Args:
             template_dict: Dictionary to populate.
             subject: Subject with potential lunar_phase data.
             prefix: Optional prefix for labels (e.g., "Transit ").
-            key_lunation: Template key for lunation day.
             key_phase: Template key for phase name.
         """
         if subject.lunar_phase is None:
-            template_dict[key_lunation] = ""
             template_dict[key_phase] = ""
             return
 
-        lunation_label = self._translate("lunation_day", "Lunation Day")
         phase_label = self._translate("lunar_phase", "Lunar Phase")
         phase_name = subject.lunar_phase.moon_phase_name
         phase_key = phase_name.lower().replace(" ", "_")
 
-        template_dict[key_lunation] = f"{prefix}{lunation_label}: {subject.lunar_phase.get('moon_phase', '')}"
         template_dict[key_phase] = f"{prefix}{phase_label}: {self._translate(phase_key, phase_name)}"
 
     def _diurnality_value(self, subject) -> str:
@@ -748,6 +888,36 @@ class InfoSectionBuilder:
         if not value:
             return ""
         return f"{self._translate('diurnality', 'Diurnality')}: {value}"
+
+    def build_relationship_score_info(self) -> tuple[str, str]:
+        """Build the synastry relationship-score rows: the value, then its band.
+
+        Returns two empty strings unless the option is on AND the chart data
+        actually carries a score: ``create_synastry_chart_data`` computes one by
+        default, but the generic factory does not, and a chart drawn from the
+        generic path must print nothing rather than a zero it never measured.
+
+        Two rows rather than one because of where they sit. The score is a count
+        of weighted contacts, so the number means nothing without the band it
+        falls in — but a synastry panel's first row has only ~134px of clear
+        width before the wheel, and "Relationship Score: 12 (Important)" needs
+        156 even in English. A synastry leaves rows 0 and 1 both empty, so the
+        pair fits with room to spare in every shipped language instead of one
+        row being truncated in most of them.
+        """
+        if not self.drawer.show_relationship_score:
+            return "", ""
+        score = getattr(self.drawer.chart_data, "relationship_score", None)
+        if score is None:
+            return "", ""
+
+        label = self._translate("relationship_score", "Relationship Score")
+        description_key = "relationship_score_" + str(score.score_description).lower().replace(" ", "_")
+        description = self._translate(description_key, str(score.score_description))
+        return (
+            truncate_to_width(f"{label}: {score.score_value}", info_row_clear_width(0)),
+            truncate_to_width(str(description), info_row_clear_width(1)),
+        )
 
     @staticmethod
     def _is_symbolic_direction(first, second) -> bool:
@@ -932,12 +1102,66 @@ class NatalChartRenderer(BaseChartRenderer):
         localized_weekday = self._translate(f"weekdays.{d.first_obj.day_of_week}", d.first_obj.day_of_week)
         template_dict["top_left_5"] = f"{self._translate('day_of_week', 'Day of Week')}: {localized_weekday}"
 
-        # Bottom left section - Technical info
-        template_dict["bottom_left_0"] = builder.build_zodiac_info()
-        template_dict["bottom_left_1"] = builder.build_domification_info()
-        builder.build_lunar_phase_info(template_dict, d.first_obj)
-        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
-        template_dict["bottom_left_5"] = builder.build_diurnality_info(d.first_obj)
+        # Bottom left section - Technical info.
+        #
+        # The moon leads: the glyph, then the phase it is called, then everything
+        # else. The lunar line used to sit in the middle of the block with the
+        # glyph stranded underneath, so the picture and its caption were four
+        # lines apart.
+        #
+        # The rest is ordered longest-last, because the wheel's chord is what
+        # limits these rows and it stops narrowing them towards the bottom. Two
+        # lines are long enough for that to decide where they go: the house
+        # system, which in full reads "Domification: Axial rotation
+        # system/Meridian house system", and the zodiac line, which on a sidereal
+        # chart becomes "Ayanamsa: Dhruva/Gal.Center/Mula (Wilhelm) (19°10')".
+        # On a tropical chart that same row is four words and needs nothing, so
+        # it takes the narrowest slot going and the perspective closes the block;
+        # on a sidereal one it goes last, past the perspective, because it is
+        # then the row that will run into the wheel if anything does.
+        #
+        # The diurnality line sits above the house system rather than below it
+        # for the same reason: it is short in English and 175 units in Hindi,
+        # which needs the 189 of row 3 and does not get it at row 2.
+        # Which row is which, before any of them is built: the house-system row
+        # sheds its polar-fallback wording to fit, and it can only measure that
+        # against the width of the row it will actually land on.
+        if builder.zodiac_row_carries_an_ayanamsa():
+            order = ["phase", "diurnality", "domification", "perspective", "zodiac"]
+        else:
+            order = ["phase", "zodiac", "diurnality", "domification", "perspective"]
+
+        # Built before they are placed, because a row can come back empty — a
+        # heliocentric chart states no diurnality, a subject without a moon
+        # phase no phase — and an empty row must not hold a slot. Reserving one
+        # for it would open a blank in the middle of the block, which reads as
+        # damage rather than as a line that had nothing to say.
+        text = {
+            "phase": builder.build_lunar_phase_info_line(d.first_obj),
+            "diurnality": builder.build_diurnality_info(d.first_obj),
+            "zodiac": builder.build_zodiac_info(),
+            "perspective": builder.build_perspective_info(d.first_obj),
+        }
+        # The house system is the exception: it is built last, once its row is
+        # known, and it always says something.
+        drawn = [kind for kind in order if kind == "domification" or text.get(kind)]
+
+        # Bottom-aligned: the block's last line sits at the foot of the aspect
+        # grid beside it, so a row that is not drawn is taken off the top rather
+        # than lifting everything.
+        drawn = [""] * (_BOTTOM_LEFT_ROWS - len(drawn)) + drawn
+        for index, kind in enumerate(drawn):
+            if not kind:
+                template_dict[f"bottom_left_{index}"] = ""
+                continue
+            row = (
+                builder.build_domification_info(row_index=index)
+                if kind == "domification"
+                else text[kind]
+            )
+            template_dict[f"bottom_left_{index}"] = truncate_to_width(
+                row, info_row_clear_width(index, _NATAL_BLOCK_DROP)
+            )
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -1195,9 +1419,13 @@ class TransitChartRenderer(BaseChartRenderer):
         template_dict["top_left_4"] = transit_place
         template_dict["top_left_5"] = f"{transit_lat}  ·  {transit_lon}"
 
-        # Bottom left section
-        template_dict["bottom_left_0"] = builder.build_zodiac_info()
-        template_dict["bottom_left_1"] = builder.build_domification_info(d.second_obj)
+        # Bottom left section. One row shorter than the block since the lunation
+        # day left, and the gap is taken off the top: the last line has to stay
+        # level with the foot of the aspect grid beside it.
+        template_dict["bottom_left_0"] = ""
+        template_dict["bottom_left_1"] = builder.build_zodiac_info()
+        template_dict["bottom_left_2"] = builder.build_domification_info(d.second_obj)
+        template_dict["bottom_left_3"] = builder.build_perspective_info(d.second_obj)
 
         # Lunar phase from transit subject
         if d.second_obj is not None and hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
@@ -1205,14 +1433,10 @@ class TransitChartRenderer(BaseChartRenderer):
                 template_dict,
                 d.second_obj,
                 prefix=f"{self._translate('Transit', 'Transit')} ",
-                key_lunation="bottom_left_3",
                 key_phase="bottom_left_4",
             )
         else:
-            template_dict["bottom_left_3"] = ""
             template_dict["bottom_left_4"] = ""
-
-        template_dict["bottom_left_2"] = builder.build_perspective_info(d.second_obj)
         template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
             (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
             (d.second_obj, self._translate("chart_info_transit_label", "Transit")),
@@ -1252,6 +1476,7 @@ class TransitChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
         template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
             planets_and_houses_grid_title="",
@@ -1260,6 +1485,7 @@ class TransitChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
 
     def setup_house_comparison(self, template_dict: dict) -> None:
@@ -1363,7 +1589,6 @@ class ProgressionChartRenderer(TransitChartRenderer):
                     template_dict,
                     d.second_obj,
                     prefix=f"{self._translate('progression', 'Progression')} ",
-                    key_lunation="bottom_left_3",
                     key_phase="bottom_left_4",
                 )
 
@@ -1470,11 +1695,12 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["top_left_4"] = f"{d.second_obj.city}, {d.second_obj.nation}"
         template_dict["top_left_5"] = format_datetime_with_timezone(d.second_obj.iso_formatted_local_datetime)
 
-        # Bottom left section
-        template_dict["bottom_left_0"] = ""
-        template_dict["bottom_left_1"] = ""
+        # Bottom left section. Rows 0 and 1 are the synastry panel's spare ones,
+        # and the score takes both: the value on the first, its band on the
+        # second. Nothing else moves.
+        template_dict["bottom_left_0"], template_dict["bottom_left_1"] = builder.build_relationship_score_info()
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
-        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj)
+        template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj, row_index=3)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
         # Both natals keep their own sect: a placement that is in sect for one
         # partner can be out of sect for the other, which is precisely what a
@@ -1516,6 +1742,7 @@ class SynastryChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
         template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
             planets_and_houses_grid_title="",
@@ -1524,6 +1751,7 @@ class SynastryChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
 
     def setup_house_comparison(self, template_dict: dict) -> None:
@@ -1846,6 +2074,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
         template_dict["makeSecondaryPlanetGrid"] = draw_secondary_planet_grid(
             planets_and_houses_grid_title="",
@@ -1854,6 +2083,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
             chart_type=d.chart_type,
             text_color=d.chart_colors_settings["paper_0"],
             celestial_point_language=d._language_model.celestial_points,
+            show_out_of_bounds=d.show_out_of_bounds,
         )
 
     def setup_house_comparison(self, template_dict: dict) -> None:
@@ -2052,8 +2282,9 @@ class ChartDrawer:  # type: ignore[no-redef]
             element/quality distributions, and other analytical data. This is the ONLY source
             of chart information - no calculations are performed by ChartDrawer.
         theme (KerykeionChartTheme, optional):
-            CSS theme for the chart. Available: 'classic', 'dark', 'dark-high-contrast',
-            'light', 'strawberry', 'black-and-white'. If None, no styles applied.
+            CSS theme for the chart. Available: 'classic' (the light rainbow
+            theme), 'dark', 'black-and-white'. If None, no styles are applied and
+            the drawing takes its colours from the document that hosts it.
             Defaults to 'classic'.
         double_chart_aspect_grid_type (Literal['list', 'table'], optional):
             Specifies rendering style for double-chart aspect grids. Defaults to 'list'.
@@ -2304,6 +2535,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         style: "KerykeionChartStyle" = "modern",
         show_zodiac_background_ring: bool = True,
         show_diurnality: bool = True,
+        show_motion_state: bool = False,
+        show_out_of_bounds: bool = False,
+        show_aspect_movement: bool = False,
+        show_relationship_score: bool = False,
+        show_ayanamsa_value: bool = False,
+        show_polar_fallback_note: bool = False,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -2376,6 +2613,32 @@ class ChartDrawer:  # type: ignore[no-redef]
                 above or below the horizon) in the bottom-left info panel.
                 Set to False to omit the line; the panel then keeps exactly the
                 spacing it had before the line existed. Defaults to True.
+            show_motion_state (bool, optional):
+                Mark planets at a station on the wheel — "SR" where the
+                retrograde phase opens, "SD" where it closes. Defaults to False.
+            show_out_of_bounds (bool, optional):
+                Badge out-of-bounds planets in the point tables. The badge
+                appears only in a table that has at least one such planet.
+                Defaults to False.
+            show_aspect_movement (bool, optional):
+                Dash the aspect lines that are separating, leaving applying
+                aspects solid. Defaults to False.
+            show_relationship_score (bool, optional):
+                Print the synastry relationship score in the info panel. The
+                line needs a score on the chart data, which
+                ``create_synastry_chart_data`` computes unless asked not to.
+                Defaults to False.
+            show_ayanamsa_value (bool, optional):
+                Append the ayanamsa offset in degrees to the zodiac line of a
+                sidereal chart. Defaults to False.
+            show_polar_fallback_note (bool, optional):
+                Mark the domification line when the requested house system
+                could not be used at this latitude and another one stood in
+                for it. Defaults to False.
+
+            Every option in this last group is off by default: each one adds
+            marks a reader has not asked for, and a chart that gains them
+            without being asked is a chart whose look changed under its owner.
 
         Raises:
             KerykeionException: If ``theme`` is not a valid KerykeionChartTheme
@@ -2423,6 +2686,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             style=style,
             show_zodiac_background_ring=show_zodiac_background_ring,
             show_diurnality=show_diurnality,
+            show_motion_state=show_motion_state,
+            show_out_of_bounds=show_out_of_bounds,
+            show_aspect_movement=show_aspect_movement,
+            show_relationship_score=show_relationship_score,
+            show_ayanamsa_value=show_ayanamsa_value,
+            show_polar_fallback_note=show_polar_fallback_note,
         )
 
         # =====================================================================
@@ -2513,6 +2782,12 @@ class ChartDrawer:  # type: ignore[no-redef]
         style: "KerykeionChartStyle",
         show_zodiac_background_ring: bool,
         show_diurnality: bool,
+        show_motion_state: bool,
+        show_out_of_bounds: bool,
+        show_aspect_movement: bool,
+        show_relationship_score: bool,
+        show_ayanamsa_value: bool,
+        show_polar_fallback_note: bool,
     ) -> None:
         """
         Store basic configuration parameters as instance attributes.
@@ -2542,7 +2817,24 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_aspect_icons = show_aspect_icons
         self.show_diurnality = show_diurnality
         self.auto_size = auto_size
+
+        # Set when the template dictionary is built, and read again when the
+        # glyph centres are rebased into root space. Defaults here so a code
+        # path that rebases without building a template cannot fall over on a
+        # missing attribute — and so that path gets the identity, which is what
+        # a chart drawn at nominal size means.
+        self._wheel_scale: float = 1.0
+        self._wheel_translate_y: int = 0
         self._padding = padding
+
+        # Opt-in marks. Every one of these adds something to the chart that the
+        # reader did not ask for, so each stays off until it is asked for.
+        self.show_motion_state = show_motion_state
+        self.show_out_of_bounds = show_out_of_bounds
+        self.show_aspect_movement = show_aspect_movement
+        self.show_relationship_score = show_relationship_score
+        self.show_ayanamsa_value = show_ayanamsa_value
+        self.show_polar_fallback_note = show_polar_fallback_note
 
         # Chart style defaults (can be overridden per-render call)
         self._validate_chart_style(style)
@@ -2818,9 +3110,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             return 0
 
         from kerykeion.charts.utils import (
-            _GAUQUELIN_COLUMN_WIDTH,
             _GAUQUELIN_MAX_ROWS,
-            _GRID_COLUMN_WIDTH,
             _SECOND_COLUMN_THRESHOLD,
             _gauquelin_grid_thresholds,
             _select_planet_grid_thresholds,
@@ -2840,14 +3130,25 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
             if n_gauq <= _GAUQUELIN_MAX_ROWS:
                 return 0
-            col_width = _GAUQUELIN_COLUMN_WIDTH
+            col_width = gauquelin_column_width(self._gauquelin_grid_carries_oob_badges())
             thresholds = _gauquelin_grid_thresholds(n_gauq)
             n = n_gauq
         else:
             n = self._count_active_planets()
             if n <= _SECOND_COLUMN_THRESHOLD:
                 return 0
-            col_width = _GRID_COLUMN_WIDTH
+            # The grid sizes its own columns from the names it prints, so the
+            # estimator has to ask the same question — reserving the fixed
+            # stride while the grid draws a wider one clips the last column.
+            col_width = planet_grid_column_width(
+                [
+                    get_decoded_kerykeion_celestial_point_name(
+                        point["name"], self._language_model.celestial_points
+                    )
+                    for point in self.available_kerykeion_celestial_points
+                ],
+                self.show_out_of_bounds,
+            )
             thresholds = _select_planet_grid_thresholds(self.chart_type, n)
 
         # Determine how many columns will be used
@@ -3155,6 +3456,54 @@ class ChartDrawer:  # type: ignore[no-redef]
             self.first_circle_radius = self._SINGLE_WHEEL_FIRST_CIRCLE
             self.second_circle_radius = self._SINGLE_WHEEL_SECOND_CIRCLE
             self.third_circle_radius = self._SINGLE_WHEEL_THIRD_CIRCLE
+
+    #: Canvas heights at which the wheel is allowed to grow, and by how much.
+    #:
+    #: A chart with every point active is drawn on a canvas twice the usual
+    #: height, because the aspect grid is a pyramid and 52 points make a tall
+    #: one. The wheel is not: it is a fixed 480 across whatever else happens, so
+    #: on that canvas it occupies 13% of the page and its glyphs are the same 20
+    #: pixels they are on a chart a quarter the size. Growing it is the only way
+    #: to spend room the canvas already has.
+    #:
+    #: The room is not where it looks. Between the wheel's edge and the planet
+    #: grid there are 42 pixels — the grid is parked at wheel_right + 20 — so the
+    #: white is vertical, and a circle cannot take vertical room without also
+    #: taking horizontal. The two figures below are what an ink-overlap sweep
+    #: allows on the two canvas shapes that have any margin at all, with about a
+    #: tenth held back: the taller shape tolerates 1.62 and the shorter 1.25, in
+    #: the worst language of the ten.
+    #:
+    #: Height, not width, decides. For a single wheel the height comes from the
+    #: point count alone and never from the radius, so it can be asked without
+    #: circularity; the width cannot, because it is computed FROM the radius.
+    _WHEEL_GROWTH_MIN_HEIGHT: int = 800
+    _WHEEL_GROWTH_TALL_HEIGHT: int = 1000
+    _WHEEL_GROWTH_SCALE: float = 1.15
+    _WHEEL_GROWTH_SCALE_TALL: float = 1.45
+
+    def _wheel_growth_scale(self) -> float:
+        """How much larger than nominal this chart draws its wheel.
+
+        Three conditions, and all of them carry weight:
+
+        * ``auto_size`` off freezes the width but not the height, so a chart
+          that opted out is already overlapping its own grid at scale 1 — a gate
+          on height alone would fire on the one case that is broken already;
+        * a dual wheel has no margin: its planet grid sits hard against the
+          rings, and the sweep finds ink touching at 1.05;
+        * below 800 the canvas is the ordinary one and there is nothing to
+          spend. Under 800 this returns exactly 1.0, and a scale of 1.0 is not
+          written into the transform at all, so every ordinary chart stays byte
+          for byte what it was.
+        """
+        if not self.auto_size or self._renderer.is_dual_wheel():
+            return 1.0
+        if self.height < self._WHEEL_GROWTH_MIN_HEIGHT:
+            return 1.0
+        if self.height < self._WHEEL_GROWTH_TALL_HEIGHT:
+            return self._WHEEL_GROWTH_SCALE
+        return self._WHEEL_GROWTH_SCALE_TALL
 
     def _apply_dynamic_height_adjustment(self) -> None:
         """Adjust chart height and vertical offsets based on active celestial points.
@@ -3562,9 +3911,9 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         if has_gauquelin:
             # Unified Gauquelin grid replaces both planet and house grids
-            from kerykeion.charts.utils import _GAUQUELIN_COLUMN_WIDTH
-
-            main_grid_right = 645 + grid_shift + _GAUQUELIN_COLUMN_WIDTH
+            main_grid_right = 645 + grid_shift + gauquelin_column_width(
+                self._gauquelin_grid_carries_oob_badges()
+            )
             extents.append(main_grid_right)
         else:
             main_planet_grid_right = 645 + grid_shift + 80
@@ -4010,7 +4359,32 @@ class ChartDrawer:  # type: ignore[no-redef]
             # the mode actually used for the positions — no fallback needed.
             mode_const = "SIDM_" + self.first_obj.sidereal_mode  # type: ignore[operator]
             mode_name = ephe.get_ayanamsa_name(getattr(ephe, mode_const))
-            return f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
+            line = f"{self._translate('ayanamsa', 'Ayanamsa')}: {mode_name}"
+            # The mode names the convention; the offset says where it actually
+            # put the zodiac for this date, which is what differs between two
+            # charts drawn under the same ayanamsa centuries apart.
+            #
+            # That difference is exactly why a dual wheel cannot always show
+            # one: this line has no ring label, so printing the first subject's
+            # offset on a chart whose second subject has another one states
+            # something false about the outer wheel. The rendered strings are
+            # what is compared rather than the floats — two offsets that round
+            # to the same degrees and minutes are the same claim on this line,
+            # and hiding the value for a difference no reader could see would
+            # be its own kind of dishonesty.
+            value = getattr(self.first_obj, "ayanamsa_value", None)
+            if self.show_ayanamsa_value and value is not None and self.second_obj is not None:
+                second_value = getattr(self.second_obj, "ayanamsa_value", None)
+                if second_value is None or convert_decimal_to_degree_string(
+                    second_value, "2"
+                ) != convert_decimal_to_degree_string(value, "2"):
+                    return line
+            if self.show_ayanamsa_value and value is not None:
+                # Degrees and minutes, not seconds: the info panel escapes its
+                # own text, and the seconds symbol is already an entity — it
+                # would reach the reader as a literal &quot;.
+                line += f" ({convert_decimal_to_degree_string(value, '2')})"
+            return line
 
     # =========================================================================
     # TEMPLATE HELPER METHODS
@@ -4359,6 +4733,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
             first_circle_radius=self.first_circle_radius,
             show_degree_indicators=self.show_degree_indicators,
+            show_motion_state=self.show_motion_state,
         )
 
     def _setup_dual_wheel_planets(self, template_dict: dict) -> None:
@@ -4383,6 +4758,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             external_view=self.external_view,
             second_circle_radius=self.second_circle_radius,
             show_degree_indicators=self.show_degree_indicators,
+            show_motion_state=self.show_motion_state,
         )
 
     def _setup_lunar_phase(self, template_dict: dict, subject, latitude: float) -> None:
@@ -4462,6 +4838,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 text_color=self.chart_colors_settings["paper_0"],
                 x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift + gauquelin_x_nudge,
                 celestial_point_language=self._language_model.celestial_points,
+                show_out_of_bounds=self.show_out_of_bounds,
             )
         else:
             template_dict["makeMainPlanetGrid"] = draw_main_planet_grid(
@@ -4472,6 +4849,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 text_color=self.chart_colors_settings["paper_0"],
                 celestial_point_language=self._language_model.celestial_points,
                 x_position=self._MAIN_PLANET_GRID_X + self._grid_x_shift,
+                show_out_of_bounds=self.show_out_of_bounds,
             )
 
     def _setup_secondary_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
@@ -4493,6 +4871,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_type=self.chart_type,
             text_color=self.chart_colors_settings["paper_0"],
             celestial_point_language=self._language_model.celestial_points,
+            show_out_of_bounds=self.show_out_of_bounds,
         )
 
     def _setup_secondary_houses_grid(self, template_dict: dict, houses_list: list) -> None:
@@ -4751,6 +5130,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                         seventh_house_degree_ut=self.first_obj.seventh_house.abs_pos,
                         show_aspect_icon=self.show_aspect_icons,
                         rendered_icon_positions=rendered_icon_positions,
+                        show_aspect_movement=self.show_aspect_movement,
                     )
                 )
         return "".join(parts)
@@ -4858,6 +5238,50 @@ class ChartDrawer:  # type: ignore[no-redef]
         # Fallback for unknown chart types
         return self._truncate_name(self.first_obj.name)
 
+    def _get_chart_description(self, title: str) -> str:
+        """One sentence for a reader who cannot see the wheel.
+
+        The title alone ("John Lennon - Natal") says whose chart it is and
+        nothing about what was drawn. A screen reader announcing a chart should
+        also be told the kind of drawing, the moment and place it was cast for,
+        the house system, and how much is on it — the same facts a sighted
+        reader takes from the corners of the sheet in a glance.
+
+        Everything here already exists on the subject; nothing is computed.
+        """
+        parts = [title]
+
+        moment = getattr(self.first_obj, "iso_formatted_local_datetime", None)
+        if moment:
+            parts.append(format_iso_display(moment, "%Y-%m-%d %H:%M"))
+
+        where = ", ".join(
+            str(x) for x in (getattr(self.first_obj, "city", None),
+                             getattr(self.first_obj, "nation", None)) if x
+        )
+        if where:
+            parts.append(where)
+
+        system_id = getattr(self.first_obj, "effective_houses_system_identifier", None)
+        if system_id:
+            parts.append(self._translate(
+                f"houses_system_{system_id}",
+                getattr(self.first_obj, "effective_houses_system_name", system_id),
+            ))
+
+        points = len(getattr(self, "available_planets_setting", []) or [])
+        aspects = len(getattr(self, "aspects_list", []) or [])
+        counted = self._translate(
+            "chart_contents",
+            "{points} points, {aspects} aspects",
+        )
+        try:
+            parts.append(counted.format(points=points, aspects=aspects))
+        except (KeyError, IndexError):  # a language pack with a broken pattern
+            parts.append(f"{points} points, {aspects} aspects")
+
+        return ". ".join(p for p in parts if p) + "."
+
     def _create_template_dictionary(self, *, custom_title: Union[str, None] = None) -> ChartTemplateModel:
         """
         Assemble chart data and rendering instructions into a template dictionary.
@@ -4895,7 +5319,22 @@ class ChartDrawer:  # type: ignore[no-redef]
         # These offsets are applied as transform="translate(x, y)" on SVG groups.
         # They are dynamically adjusted based on active celestial points count.
         offsets = self._vertical_offsets
-        template_dict["full_wheel_translate_y"] = offsets["wheel"]
+
+        # How much bigger the wheel is drawn than its nominal 480 diameter, and
+        # where that leaves it. See _wheel_growth_scale for when it is not 1.
+        wheel_scale = self._wheel_growth_scale()
+        wheel_bottom = offsets["wheel"] + 2 * self.main_radius
+        wheel_translate_y = wheel_bottom - 2 * self.main_radius * wheel_scale
+        # round(), not the float: "translate(100,50.0)" is a different string
+        # from "translate(100,50)", and every baseline in the repository carries
+        # the second one.
+        self._wheel_scale = wheel_scale
+        self._wheel_translate_y = round(wheel_translate_y)
+        template_dict["full_wheel_transform"] = (
+            f"translate(100,{self._wheel_translate_y})"
+            if wheel_scale == 1.0
+            else f"translate(100,{self._wheel_translate_y}) scale({wheel_scale:g})"
+        )
         template_dict["houses_and_planets_translate_y"] = offsets["grid"]
         template_dict["aspect_grid_translate_y"] = offsets["aspect_grid"]
         template_dict["aspect_list_translate_y"] = offsets["aspect_list"]
@@ -4999,8 +5438,9 @@ class ChartDrawer:  # type: ignore[no-redef]
         template_dict["fixed_string"] = f"{self._translate('fixed', 'Fixed')} {fixed_percentage}%"
         template_dict["mutable_string"] = f"{self._translate('mutable', 'Mutable')} {mutable_percentage}%"
 
-        # Chart title
+        # Chart title, and the sentence a screen reader gets with it
         template_dict["stringTitle"] = self._get_chart_title(custom_title_override=custom_title)
+        template_dict["stringDescription"] = self._get_chart_description(template_dict["stringTitle"])
 
         # Set viewbox dynamically for all chart types
         template_dict["viewbox"] = self._dynamic_viewbox()
@@ -5015,23 +5455,72 @@ class ChartDrawer:  # type: ignore[no-redef]
         # ---------------------------------------------------------------------
         # LAYOUT: bottom-left block and moon glyph
         # ---------------------------------------------------------------------
-        # Written here, after the renderer, because the drop must key off whether
-        # row 5 in particular got filled — not off the flag. `show_diurnality=True`
-        # still leaves row 5 empty on a heliocentric chart, on a midpoint composite,
-        # and on a Davison composite, which puts its line in row 4 instead; in all
-        # three the glyph must stay where it is, since only row 5 reaches into its
-        # clearance. This is also the single point every height branch converges
-        # on, right-panel synastry included.
+        # Written here, after the renderer: this is the single point every height
+        # branch converges on, right-panel synastry included.
+        #
+        # The six rows have fixed baselines and every renderer fills all six,
+        # blanks included, so a row with nothing to say used to leave a hole and
+        # the block stopped looking like a block — a heliocentric chart printed
+        # two lines, two gaps, one line, a gap. The rows are packed to the bottom
+        # instead. Downwards and not upwards: the rows sit under the wheel's
+        # centre so the chord widens as it descends (row 0 clears 134px, row 5
+        # clears 229), which makes moving a line down always safe and moving one
+        # up the mistake documented above DIURNALITY_GLYPH_DROP.
+        #
+        # All six nodes stay in the markup — the empties simply migrate to the
+        # top — because the baseline-freshness guard counts them.
+        filled = [template_dict.get(f"bottom_left_{i}", "") for i in range(_INFO_ROW_COUNT)]
+        filled = [row for row in filled if row]
+        for index in range(_INFO_ROW_COUNT):
+            slot = index - (_INFO_ROW_COUNT - len(filled))
+            template_dict[f"bottom_left_{index}"] = filled[slot] if slot >= 0 else ""
+
+
+        # The glyph keeps the 10px gap below the last line it has always had.
+        # Expressed against the last *filled* row rather than against row 5
+        # specifically: with the rows packed down, "is row 5 filled" is true
+        # whenever anything is written at all, and the old test of it would drop
+        # the glyph on every chart.
         lunar_phase_y = offsets["lunar_phase"]
-        if template_dict.get("bottom_left_5"):
-            lunar_phase_y += DIURNALITY_GLYPH_DROP
+        bottom_left_y = offsets["bottom_left"]
+        if self.chart_type == "Natal":
+            # The natal block leads with the moon instead of trailing it, and its
+            # last line closes level with the foot of the aspect grid (y 532), so
+            # the two columns end together instead of one hanging below the other.
+            # The block only drops _NATAL_BLOCK_DROP: it cannot rise, because the
+            # chord narrows going up and the longest line — Hindi's perspective,
+            # 201px — already needs every pixel the wheel leaves at this height.
+            # The glyph follows the first line rather than sitting at a fixed
+            # height. Both would be defensible on a block of a fixed size, but
+            # this one varies: a heliocentric chart states no diurnality and a
+            # subject without a moon phase states none, and with the rows packed
+            # to the bottom a shorter block starts lower. Pinning the glyph would
+            # leave it hanging on its own halfway up the panel, captioning air.
+            #
+            # Both terms are needed, and only one of them was here: the blank
+            # rows move the first line down inside the block, and the block
+            # itself moves down with the canvas. A chart with every point active
+            # is 1097 tall against the usual 580, and its block sits at y 524 —
+            # the glyph stayed at 438, stranded halfway up the left edge with
+            # half a page of nothing under it.
+            blank_rows = _INFO_ROW_COUNT - len(filled)
+            bottom_left_y = offsets["bottom_left"] + _NATAL_BLOCK_DROP
+            lunar_phase_y = (
+                _NATAL_MOON_GLYPH_Y
+                + _INFO_ROW_STEP * (blank_rows - 1)
+                + offsets["bottom_left"]
+            )
+        elif filled:
+            last_row_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * (_INFO_ROW_COUNT - 1)
+            lunar_phase_y = offsets["lunar_phase"] + (last_row_y - _INFO_ROW_LEGACY_LAST_Y)
         # The template field is ``int``; the offsets are floats on a dataclass a
         # caller can supply, so coerce here rather than lean on pydantic's lax
         # coercion. ``round`` rather than ``int``: the shipped defaults are whole,
         # but a caller passing 518.5 should not silently lose half a pixel to
         # truncation.
         template_dict["lunar_phase_translate_y"] = round(lunar_phase_y)
-        template_dict["bottom_left_translate_y"] = round(offsets["bottom_left"])
+        template_dict["bottom_left_translate_y"] = round(bottom_left_y)
+        template_dict["chart_font_family"] = CHART_TEXT_FONT_FAMILY
 
         # ---------------------------------------------------------------------
         # SECURITY: Escape user-controlled plain-text fields
@@ -5076,6 +5565,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                 aspects_settings=self.aspects_settings,
                 chart_type=self.chart_type,
                 show_zodiac_background_ring=show_zodiac_background_ring,
+                show_motion_state=self.show_motion_state,
+                show_aspect_movement=self.show_aspect_movement,
             )
         else:
             has_gauquelin = any(
@@ -5093,11 +5584,14 @@ class ChartDrawer:  # type: ignore[no-redef]
                 show_zodiac_background_ring=show_zodiac_background_ring,
                 gauquelin_sectors=has_gauquelin,
                 gauquelin_cusps=gauq_cusps,
+                show_motion_state=self.show_motion_state,
+                show_aspect_movement=self.show_aspect_movement,
             )
 
     _GLYPH_CENTER_ATTR_RE = re.compile(r'kr:(cx|cy)="([^"]+)"')
     _CHART_POINT_TAG_RE = re.compile(r'<g\b(?=[^>]*\bkr:node=(["\'])ChartPoint\1)[^>]*>')
     _CHART_POINT_ID_ATTR_RE = re.compile(r'\bkr:(horoscope|absoluteposition)=(["\'])(.*?)\2')
+    _CHART_POINT_ANALYSIS_ATTR_RE = re.compile(r'\bkr:(horoscope|slug)=(["\'])(.*?)\2')
 
     @classmethod
     def _rebase_glyph_centers(cls, svg: str, scale: float, tx: float, ty: float) -> str:
@@ -5163,6 +5657,96 @@ class ChartDrawer:  # type: ignore[no-redef]
             return f'{tag[:-1]} kr:projectedhouse="{projected_house}" kr:projectedhoroscope="{target_ring}">'
 
         return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
+
+    def _inject_analysis_metadata(self, svg: str) -> str:
+        """Tag each point with the chart-level analyses it takes part in.
+
+        Angularity and stelliums are properties of the chart, not of the point:
+        they live on the chart data, keyed by point name, and the three point
+        serializers never see them. Annotating the finished markup — the same
+        route ``_inject_projected_house_metadata`` takes — keeps that data out
+        of every draw signature while still delivering it to consumers that
+        read the SVG rather than the model.
+
+        ``kr:angularity`` lists the angles the point stands on, each with its
+        arc, as ``Angle:distance`` pairs separated by a space and ordered
+        closest first: ``kr:angularity="Ascendant:0.8991 Medium_Coeli:4.3156"``.
+        One attribute rather than two, and a list rather than a single value,
+        because the analysis is genuinely one-to-many — near the poles the
+        Ascendant and the Midheaven close on each other, and a planet can sit
+        within orb of both. Two attributes repeated per pair would be duplicate
+        attribute names, which is not valid XML; keeping only the closest pair
+        would silently drop what ``_compute_angularities`` deliberately reports.
+
+        ``kr:stellium`` carries the house of the crowd the point belongs to.
+        Both are absent for a point that takes part in neither.
+        """
+        chart_data = self.chart_data
+        rings: tuple[tuple[str, list, list], ...]
+        if self._renderer.is_dual_wheel():
+            rings = (
+                (
+                    "0",
+                    list(getattr(chart_data, "first_subject_angularities", []) or []),
+                    list(getattr(chart_data, "first_subject_stelliums", []) or []),
+                ),
+                (
+                    "1",
+                    list(getattr(chart_data, "second_subject_angularities", []) or []),
+                    list(getattr(chart_data, "second_subject_stelliums", []) or []),
+                ),
+            )
+        else:
+            rings = (
+                (
+                    "0",
+                    list(getattr(chart_data, "angularities", []) or []),
+                    list(getattr(chart_data, "stelliums", []) or []),
+                ),
+            )
+
+        # Collected per point before being rendered, so a point standing on two
+        # angles produces one attribute holding two pairs rather than the
+        # attribute twice.
+        angles_by_point: dict[tuple[str, str], list[str]] = {}
+        analysis_by_point: dict[tuple[str, str], list[str]] = {}
+        for ring, angularities, stelliums in rings:
+            for angularity in angularities:
+                angles_by_point.setdefault((ring, str(angularity.point)), []).append(
+                    f"{escape_svg_text(str(angularity.angle))}:{round(angularity.distance, 4)}"
+                )
+            for stellium in stelliums:
+                for name in stellium.points:
+                    analysis_by_point.setdefault((ring, str(name)), []).append(f'kr:stellium="{stellium.house}"')
+
+        for key, pairs in angles_by_point.items():
+            analysis_by_point.setdefault(key, []).insert(0, f'kr:angularity="{" ".join(pairs)}"')
+
+        if not analysis_by_point:
+            return svg
+
+        def _annotate(match: "re.Match[str]") -> str:
+            tag = match.group(0)
+            identity = {name: value for name, _, value in self._CHART_POINT_ANALYSIS_ATTR_RE.findall(tag)}
+            key = (identity.get("horoscope", "0"), identity.get("slug", ""))
+            attributes = analysis_by_point.get(key)
+            if not attributes:
+                return tag
+            return f'{tag[:-1]} {" ".join(attributes)}>'
+
+        return self._CHART_POINT_TAG_RE.sub(_annotate, svg)
+
+    def _gauquelin_grid_carries_oob_badges(self) -> bool:
+        """Whether the Gauquelin table will be widened for out-of-bounds badges.
+
+        The grid widens itself only when a body actually needs the badge, so
+        the estimator has to ask the same question rather than reserving on the
+        option alone: reserving more would move the sector column on charts
+        that draw no badge, and reserving less would clip the one that does.
+        """
+        if not self.show_out_of_bounds:
+            return False
+        return any(getattr(p, "is_out_of_bounds", None) for p in self.available_kerykeion_celestial_points)
 
     def _validate_chart_style(self, style: KerykeionChartStyle) -> None:
         """Validate that the given style is a supported chart style.
@@ -5288,25 +5872,19 @@ class ChartDrawer:  # type: ignore[no-redef]
             overrides["makeHouseSectors"] = ""
             overrides["makeGauquelinSectors"] = ""
             template = Template(raw_template).substitute(overrides)
-            # Pin the font on the whole chart, not just the wheel: chart.xml's
-            # panels, title and aspect grid declare no font-family, so without
-            # this they inherit whatever the embedding page uses while the
-            # wheel renders its pinned stack — two fonts in one deliverable.
-            # Scoped to the modern branch; classic keeps its historical
-            # viewer-default text on purpose.
-            template = template.replace(
-                '<g kr:node="Main_Chart">',
-                f'<g kr:node="Main_Chart" font-family="{MODERN_TEXT_FONT_FAMILY}">',
-                1,
-            )
             # Modern wheel-local (100x100) -> scale wrapper -> Full_Wheel translate.
-            template = self._rebase_glyph_centers(template, scale, 100.0, self._vertical_offsets["wheel"])
+            template = self._rebase_glyph_centers(
+                template, scale * self._wheel_scale, 100.0, float(self._wheel_translate_y)
+            )
         else:
             template = Template(raw_template).substitute(template_data)
             # Classic values are Full_Wheel-local; add the template's translate.
-            template = self._rebase_glyph_centers(template, 1.0, 100.0, self._vertical_offsets["wheel"])
+            template = self._rebase_glyph_centers(
+                template, self._wheel_scale, 100.0, float(self._wheel_translate_y)
+            )
 
         template = self._inject_projected_house_metadata(template)
+        template = self._inject_analysis_metadata(template)
 
         logger.debug("Template dictionary includes %s fields", len(template_data))
 
@@ -5552,6 +6130,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             template = self._rebase_glyph_centers(template, 1.0, 100.0, 50.0)
 
         template = self._inject_projected_house_metadata(template)
+        template = self._inject_analysis_metadata(template)
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
 
@@ -5700,7 +6279,7 @@ if __name__ == "__main__":
     birth_chart = ChartDrawer(
         chart_data=birth_chart_data,
         chart_language="IT",
-        theme="strawberry",
+        theme="classic",
     )
     birth_chart.save_svg()  # minify=True, remove_css_variables=True)
 

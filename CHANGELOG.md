@@ -1,6 +1,271 @@
 # Changelog
 
-## [Unreleased]
+## [6.0.0a86]
+
+### Fixed
+
+- **Every mark a reader has to read now carries the contrast it needs.** The
+  three shipped themes were measured against the surface each mark is actually
+  drawn on — not against the page — and where a point's colour doubles as text
+  it is held to 7:1 rather than 3:1. House cusp lines got a variable of their
+  own, `--kerykeion-modern-cusp`, because a boundary is information and was
+  being drawn at the weight of decoration. Every chart also declares
+  `role="img"` and names itself through `<title>` and a new `<desc>`, so a
+  screen reader announces the subject, the date, the place and the house system
+  instead of "graphic".
+
+- **A cusp line no longer prints through the reading that sits on it.** An
+  angle's cluster is written across its own line by construction, so "As 19º ♈
+  45'" always had a 0.6-wide stroke running through the words. Where a reading
+  crosses a line the line drops to 0.35 for exactly the span of that reading —
+  all of it or none, because a line dimmed under some rows and solid under the
+  others reads as damage. The trigger is geometric, never "this point is that
+  axis": a planet within a degree of a cusp covers the line just as squarely.
+
+- **The outer ring of a dual wheel had no visible indicators.** Not missing:
+  misplaced. Both rings anchored their tether at the boundary between them,
+  which is the inner ring's outer edge and the outer ring's *inner* edge — so
+  every outer tether was drawn twelve units from the planet it points at,
+  pointing outward at nothing. The boundary then carried two families of
+  identical brackets back to back, which is why the inner ring's own tether
+  looked as though it pointed the wrong way. It never did.
+
+- **The chart angles are placed like any other point.** The four angles had a
+  radius of their own, further out than the two the points alternate between,
+  but the code that recognised one did it by index in a fixed list and the v6
+  catalog moved them off those indices. For years that outer lane went to Ceres,
+  Pallas, Juno and Vesta while the angles alternated with everything else.
+  Repairing the classification sent the angles into the zodiac ring, so the lane
+  is removed rather than restored: an angle is a point.
+
+- **A lunar disc no longer hangs halfway up a tall page.** On a Natal chart
+  taller than the usual 580 the glyph followed the blank rows inside its text
+  block but not the offset of the block itself, so on a chart with every point
+  active it stayed 500 pixels above the lines it captions.
+
+- **A long point name no longer runs into the column beside it.** Grid names are
+  capped by inked width — ten Latin characters and ten CJK ones are not the same
+  amount of room — and any trailing marker survives the cut, because dropping
+  the "(T)" would print the true lunar node under the mean node's label.
+
+### Changed
+
+- **The modern wheel grows on a canvas that has room for it.** A chart with
+  every point active is drawn twice as tall, because the aspect grid is a
+  pyramid; the wheel was a fixed 480 regardless, so it occupied 13% of the page
+  with glyphs the size of a chart a quarter as large. It now takes a scale on
+  the two canvas shapes that have margin — measured by an ink-overlap sweep, not
+  assumed — and none at all below that, where ordinary charts stay byte for byte
+  what they were.
+
+- **The cluster reads at the size the ring can afford.** The cusp ring is as
+  thick as the zodiac band beside it, the planet cluster is 12% larger with the
+  room that freed, the sign glyph is 18% larger again because a thin outline
+  beside solid figures reads smaller than it measures, and the aspect web —
+  lines and the marks that name them — is heavier so it survives being read at a
+  glance. Each row is also centred on its own ink rather than on its anchor: a
+  middle-anchored string centres its advance width while the ink sits a tenth of
+  the font size high, and the cluster read as a crooked skewer.
+
+- **The bottom-left panel is ordered longest-last.** The wheel's chord limits
+  those rows and stops narrowing them towards the bottom, so the house system
+  moved down next to last and the zodiac line goes last of all when it carries
+  an ayanamsa. The lunation day is gone: the phase already says where in the
+  cycle the moon is, in the words a reader thinks in, and the disc beside it
+  says the same in a picture.
+
+### Removed
+
+- **Three of the six chart themes are gone: `light`, `strawberry` and
+  `dark-high-contrast`.** They were the three the accessibility pass never
+  covered, and measuring them says why: against the surface each mark is drawn
+  on, `light` had 66 marks under threshold, `strawberry` 72, `dark-high-contrast`
+  19 — while `classic`, `dark` and `black-and-white` have none. The worst of them
+  was the one called `light`, which is the first name anyone tries for a pale
+  chart: its Ascendant sat at 1.51:1, yellow on white.
+
+  What ships now: **`classic`** (the light rainbow theme, still the default),
+  **`dark`**, **`black-and-white`**, and `theme=None` for a drawing that takes
+  its colours from the document hosting it. Passing a removed name raises
+  `KerykeionException`, as any unknown name always has — there is no silent
+  fallback to a theme the caller did not ask for.
+
+  The 40 committed baselines that verified the removed themes are deleted with
+  them; the remaining 338 cover the three that ship. The theming guide is rewritten
+  around the mechanism — how to override the properties, and what each family of
+  names paints — rather than around a list of themes.
+
+
+### Changed
+
+- **A rendered chart needs no fonts, and every glyph carries the same weight.**
+  All 80 `<symbol>` definitions are geometry. The six lettered marks (As/Mc/Ds/Ic,
+  Vx, Av) were live `<text>` and rendered in whatever face the *viewer* happened
+  to have, at whatever width; they are traced to outlines now like everything
+  else. Fonts are still used at build time — Symbola, Noto Sans Symbols 2 and
+  Noto Sans, downloaded to a git-ignored cache and never redistributed — but
+  nothing a reader loads depends on one.
+
+  The weight is measured rather than chosen. Filled silhouettes cannot be
+  re-weighted (their stem is baked into the contour, so a `stroke-width` has
+  nothing to act on), so they are the fixed point: their stem is 7.41% of their
+  ink at the median across all 45 of them, and the drawn glyphs are stroked to
+  land there. Seven unrelated widths were in use before, and the aspects — drawn
+  in a 10-unit box — reached 16% of their own ink, better than twice the
+  silhouettes. The Sun read thinner than the Moon beside it.
+
+  Jupiter, the four lunar nodes, both centaurs, Eris, both Priapus points, the
+  White Moon and the Interpolated Perigee are drawn rather than traced. The
+  redraws are visible: a chart rendered with 6.0.0a85 does not match one rendered
+  before it pixel for pixel.
+
+- **The six lunar-apside points are told apart by colour, not by six shapes.**
+  Mean, True and Interpolated Lilith share one crescent; Mean Priapus, True
+  Priapus and the Interpolated Perigee share its opposite. The glyph says which
+  end of the apsidal line a point is, the colour says which method computed it.
+  White Moon keeps a mark of its own — it is a different point, not a third way
+  of finding the same one.
+
+### Fixed
+
+- **Four points drew their glyph in one colour and their degree in another.**
+  A point's colour is written in two places: the `var()` inside its `<symbol>`,
+  which paints the mark, and `DEFAULT_CELESTIAL_POINTS_SETTINGS["color"]`, which
+  paints the degree text and the pointer line. True Lilith, Interpolated Lilith,
+  True Priapus and the Interpolated Perigee had the second still set to the mean
+  apogee's colour, so each rendered in two colours at once. **Visible change:**
+  the degree readout and pointer for those four points now match their glyph.
+  White Moon no longer borrows the mean apogee's colour at all.
+
+- **The published glyph gallery was missing five symbols and three months old.**
+  `site/docs/chart-glyphs.md` and its poster carried their own section table and
+  their own copy of the box rule, and had drifted: Interpolated Lilith, Mean and
+  True Priapus, White Moon and the Interpolated Perigee appeared nowhere. Both
+  are generated from `scripts/glyph_catalog.py` now, the same list the templates
+  are built from, and the poster resolves the light theme's real colours instead
+  of flattening every `var()` to one ink — without which the six apside points
+  would print as two shapes repeated three times each.
+
+- **Seventy-three committed SVGs drew a glyph set the library no longer had**,
+  nineteen of them the documentation charts the README serves by raw URL. Three
+  generators produced committed output and had no task, so `regenerate:all` never
+  reached them; they have one now (`regenerate:docs-charts`, `regenerate:gallery-v6`,
+  `regenerate:glyph-gallery`) and are part of that sequence. Five baselines that
+  no script produced at all — three natal charts and the two paired-BCE charts —
+  are reproducible now too.
+
+- **Every rendered chart credits the fonts its glyphs come from.** The header
+  line named two sources; Noto Sans became the third when the lettered marks were
+  traced, and was recorded in `NOTICE` but not in the output.
+
+- **An over-subscribed modern wheel now spends its air before its ink.** Each
+  adjacent pair of clusters asks for the arc its own ink needs plus
+  `DEFAULT_CLUSTER_CLEARANCE` of daylight, and on a very full wheel those asks
+  can sum past what a circle has. The only answer was to scale every separation
+  down together, which compresses the ink reservations — so clusters overlap
+  *and* land further from their true degrees. The clearance is the cheaper thing
+  to give up: it is air, and the ink is the reading. Past the budget the
+  affordable clearance is now solved by bisection, down to none if that is what
+  it takes, and only what remains falls back to the old uniform compression. On a
+  54-cluster stress fixture the worst ink overrun halves.
+
+  Dormant on everything that ships today: the default fourteen points ask for
+  about a quarter of the budget, no committed baseline changed, and the reduction
+  is logged at INFO when it happens rather than being applied silently.
+
+### Added
+
+- **`--kerykeion-chart-color-white-moon`**, in all six themes. White Moon shared
+  the mean apogee's variable, which made the colour axis say it was a way of
+  computing the Black Moon. It keeps the family's hue at low saturation instead —
+  pale where the three method colours are vivid.
+- **`--kerykeion-chart-color-interpolated-lilith`**, in all six themes, for the
+  third rung of the apside ladder.
+
+### Changed
+
+- **`kr:angularity` carries every angle a point stands on, and
+  `kr:angularitydistance` is gone.** The value is now a space-separated list of
+  `Angle:distance` pairs, closest first — `Ascendant:0.8991 Medium_Coeli:4.3156`.
+  Near the poles the Ascendant and the Midheaven close on each other and a
+  planet can sit within orb of both, which a scalar pair of attributes could
+  only express by repeating the attribute names — invalid XML. `ChartPointTag`
+  exposes the pairs already split as `angularities`.
+
+### Changed
+
+- **The stationary band is symmetric, and the two stations are named.**
+  `MotionState` gains `"stationary_retrograde"` and `"stationary_direct"`. The
+  band of < 5% of mean daily motion now brackets zero on both sides and is
+  tested **before** the sign of the speed; previously a negative speed answered
+  `"retrograde"` one branch earlier, so only the forward half of the band could
+  ever report a station. A planet creeping backwards at a hundredth of its mean
+  motion was reported as plainly retrograde, hiding the very event the reader
+  was looking for.
+
+  Which station it is comes from the trend, not the sign: both stations are
+  approached from one side of zero and left on the other. `classify_motion_state`
+  takes an optional `speed_sampler` and, for a body already inside the band,
+  asks it for the speed one day later — falling through the band opens the
+  retrograde phase (`"stationary_retrograde"`), rising through it closes the
+  phase (`"stationary_direct"`). Without a usable second sample the generic
+  `"stationary"` stands, which is an absence of a claim rather than a guess. The
+  subject factory supplies the sampler as a closure over the same ephemeris
+  flags, so the extra call is only ever spent on a body already stationary.
+
+  **This is a behavioural change with two edges for downstream code.** A chart
+  cast within the band of a station now reports a different `motion_state` than
+  it did before — `"stationary_retrograde"` where it said `"retrograde"`, and
+  either named station where it said `"stationary"`. And any consumer that
+  matches the literal exhaustively — a `match` statement, a dict keyed by every
+  value, a mirrored TypeScript union — must be extended before it meets one of
+  the new values.
+
+### Added
+
+- **Point state and chart analyses in the `kr:` SVG metadata.** Every rendered
+  ChartPoint now carries `kr:motionstate`, `kr:speed`, `kr:declination` and
+  `kr:oob`, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars.
+  Angularity and stelliums are annotated onto the finished markup as
+  `kr:angularity` with `kr:angularitydistance`, and `kr:stellium`; in a dual
+  wheel each ring is annotated from its own subject's analysis. A consumer
+  reading the SVG no longer has to re-fetch the JSON to say what the wheel
+  already knows.
+
+  These are unconditional — no rendering flag gates them, in either style and in
+  full or wheel-only output — because an attribute only some serializers emit
+  leaves a consumer unable to tell a body that has no such state from a style
+  that forgot to say so. An attribute is **absent** when the model does not
+  carry the value, so silence means "this chart does not compute it" rather than
+  zero or false; `kr:oob` follows `kr:retrograde` and marks only the exception.
+  Attribute names are lowercase letters with no separators, since consumers
+  rewrite the namespace with a general pattern and a name carrying an underscore
+  would be dropped in silence. The emitter, `point_state_attributes`, lives in
+  `kerykeion.charts.svg_metadata` beside the parser.
+
+- **Six opt-in marks on `ChartDrawer`**, each drawing something the chart data
+  already carried and the wheel never showed. All default to `False`: passing
+  every one of them its own default reproduces the previous SVG byte for byte,
+  in both styles. Each is silent where it has no referent.
+
+  | Parameter | Draws |
+  | :-- | :-- |
+  | `show_motion_state` | `SR`/`SD` at a station — modern recolours the cluster and reuses the row that holds `RX`, classic writes the letters at the foot of the glyph |
+  | `show_out_of_bounds` | An `OOB` badge in the point tables; in the Gauquelin grid, off the declination column |
+  | `show_aspect_movement` | A dashed line for a separating aspect |
+  | `show_relationship_score` | The synastry score in the info panel (needs a score on the chart data) |
+  | `show_ayanamsa_value` | The ayanamsa offset in degrees and minutes, after the mode name |
+  | `show_polar_fallback_note` | A note on the domification line when the requested house system was substituted |
+
+  Nine language keys across all ten languages (`relationship_score` and its six
+  bands, `polar_fallback`), each with an English default on the model so a
+  language pack written before this release still validates, and a new
+  `--kerykeion-modern-stationary` CSS variable in the six themes.
+
+- `examples/svg_extended_example.py`: all six marks, each on a subject that
+  genuinely has its referent — Mercury at its August 1990 station (with Uranus
+  out of bounds), a Longyearbyen chart whose Placidus request could not be
+  honoured, a sidereal Lahiri chart, and a synastry pair. Runs offline.
 
 ## 6.0.0a84 - 2026-08-12
 

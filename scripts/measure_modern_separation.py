@@ -15,9 +15,9 @@ move, to send you back here.
 Why a browser rather than arithmetic. Two things defeat a
 "glyph width / arc per degree" estimate:
 
-1. **Nominal boxes lie.** A planet glyph is placed with ``translate(-14 -14)``,
-   as if it filled a 28-unit box. Almost none do — the Sun is a stroked ``r=9``
-   circle, 19.8 units of ink. Text is worse: a font's layout box runs from full
+1. **Nominal boxes lie.** A planet glyph is placed centred on its 24-unit
+   box. Almost none fill it — the mark inks INK_FRACTION of the box at most,
+   and several sit well inside that. Text is worse: a font's layout box runs from full
    ascent to full descent, a third taller than the marks "29º" actually draws.
 2. **Glyphs stay upright, the wheel does not.** Each cluster is counter-rotated
    so its text reads horizontally, so two neighbouring clusters are two
@@ -439,7 +439,7 @@ const PLANET_IDS = __PLANET_IDS__;
 const SIGN_IDS = __SIGN_IDS__;
 const TEXTS = __TEXTS__;                       // every string a cluster row can draw
 const TEXT_FONT_SIZE = __TEXT_FONT_SIZE__;     // reference size; ink scales linearly
-const PLANET_BOX = 28, SIGN_BOX = 32;   // native symbol boxes (translate(-14 -14) / (-16 -16))
+const PLANET_BOX = 24, SIGN_BOX = 32;   // native symbol boxes (translate(-12 -12) / (-16 -16))
 const PAD = 8;                          // units of slack so ink outside the box is not clipped
 const PXU = 20;                         // canvas pixels per native unit
 
@@ -487,10 +487,19 @@ async function measureInk(content, box, pixelsPerUnit = PXU) {
 
 // Widest reach of ink from the anchor point, per axis. Symmetric maxima,
 // because a neighbour can sit on either side once the wheel rotates.
+//
+// The centre is measured too, and it answers a different question: not "how far
+// does this reach" but "where does it actually sit". A mark whose ink is off its
+// own anchor is drawn off the cluster's axis, and a column of them reads as a
+// crooked skewer — glyphs lean one way, digits the other, because a glyph is not
+// centred in its box and a middle-anchored string centres its advance rather
+// than its ink.
 function reachFromAnchor(ink, anchorX, anchorY) {
   return {
     half_width: Math.max(anchorX - ink.xMin, ink.xMax - anchorX),
     half_height: Math.max(anchorY - ink.yMin, ink.yMax - anchorY),
+    centre_x: (ink.xMin + ink.xMax) / 2 - anchorX,
+    centre_y: (ink.yMin + ink.yMax) / 2 - anchorY,
   };
 }
 
@@ -540,6 +549,10 @@ function paintedBlack(markup) {
       widest = widest === null ? reach : {
         half_width: Math.max(widest.half_width, reach.half_width),
         half_height: Math.max(widest.half_height, reach.half_height),
+        // The offsets scale with the text, so they agree across sizes; keeping
+        // the first is keeping the measurement, not picking one of several.
+        centre_x: widest.centre_x,
+        centre_y: widest.centre_y,
       };
     }
     if (!widest) { missing.push(JSON.stringify(text)); continue; }
@@ -609,7 +622,16 @@ def _validated_ink_payload(data: object) -> dict:
             for value in (half_width, half_height):
                 if not isinstance(value, (int, float)) or not 0 < value < 200:
                     raise _InkPayloadError(f"{section}[{name!r}] has a non-numeric or absurd reach")
-            validated[section][name] = {"half_width": float(half_width), "half_height": float(half_height)}
+            centre_x, centre_y = reach.get("centre_x", 0.0), reach.get("centre_y", 0.0)
+            for value in (centre_x, centre_y):
+                # An offset larger than the reach itself would mean the ink sits
+                # entirely off its own anchor: a measurement error, not a glyph.
+                if not isinstance(value, (int, float)) or abs(value) > max(half_width, half_height):
+                    raise _InkPayloadError(f"{section}[{name!r}] has an absurd ink centre")
+            validated[section][name] = {
+                "half_width": float(half_width), "half_height": float(half_height),
+                "centre_x": float(centre_x), "centre_y": float(centre_y),
+            }
     font_size = data.get("text_font_size")
     if not isinstance(font_size, (int, float)) or not 0 < font_size < 1000:
         raise _InkPayloadError("text_font_size is not a sane number")
@@ -636,11 +658,18 @@ whenever a symbol's artwork, a text row's styling, or the text catalog changes.
 
 ``*_HALF_WIDTH`` / ``*_HALF_HEIGHT`` are the widest reach of actual ink from
 the element's anchor toward either side. Symmetric maxima on purpose: glyphs
-are not all centered on their anchor (the Sun's ink spans 2.1–21.9 in its
-28-unit box), and once the wheel rotates a neighbour can sit on any side.
+are not all centered on their anchor, and once the wheel rotates a neighbour
+can sit on any side.
 
-Units: planet glyphs are native symbol units in a 28-unit box anchored at
-(14, 14) (``translate(-14 -14)`` at the use site); zodiac signs a 32-unit box
+``*_INK_CENTRE`` is the other half of that fact: how far the ink's midpoint sits
+from the anchor, along the row (x) and across it (y). The reaches say how much
+room a mark needs; the centres say where it actually lands, and a cluster whose
+rows each land somewhere else reads as a crooked skewer — the glyphs lean one
+way and the digits the other, because a glyph is not centred in its box and a
+middle-anchored string centres its advance width rather than its ink.
+
+Units: planet glyphs are native symbol units in a 24-unit box anchored at
+(12, 12) (``translate(-12 -12)`` at the use site); zodiac signs a 32-unit box
 anchored at (16, 16); texts are measured at font-size
 ``TEXT_INK_REFERENCE_FONT_SIZE`` with the renderer's attributes
 (middle-anchored, weight 500) and scale linearly. Everything — symbols and
@@ -658,7 +687,7 @@ from __future__ import annotations
 #: Font size the text tables were measured at; ink scales linearly with it.
 TEXT_INK_REFERENCE_FONT_SIZE: float = {data["text_font_size"]:.1f}
 
-#: Planet-glyph ink reach from the (14, 14) anchor, native units.
+#: Planet-glyph ink reach from the (12, 12) anchor, native units.
 GLYPH_INK_HALF_WIDTH: dict[str, float] = {table(planets, "half_width")}
 
 GLYPH_INK_HALF_HEIGHT: dict[str, float] = {table(planets, "half_height")}
@@ -672,6 +701,27 @@ SIGN_INK_HALF_HEIGHT: dict[str, float] = {table(signs, "half_height")}
 TEXT_INK_HALF_WIDTH: dict[str, float] = {table(texts, "half_width")}
 
 TEXT_INK_HALF_HEIGHT: dict[str, float] = {table(texts, "half_height")}
+
+#: Offset of the ink's midpoint from the anchor, along the row (x) and across it
+#: (y). Subtract them at the draw site and the mark lands on the cluster's axis
+#: instead of beside it.
+#:
+#: The y offsets are the ones that matter for a cluster: a row is drawn upright
+#: while the column runs radially, so what pushes a reading off the skewer is the
+#: baseline. ``dominant-baseline="middle"`` centres the em box, and digits have
+#: no descenders, so "16º" inks about a fifth of a unit above where it is
+#: anchored while a glyph sits on its centre.
+GLYPH_INK_CENTRE: dict[str, float] = {table(planets, "centre_x")}
+
+SIGN_INK_CENTRE: dict[str, float] = {table(signs, "centre_x")}
+
+TEXT_INK_CENTRE: dict[str, float] = {table(texts, "centre_x")}
+
+GLYPH_INK_CENTRE_Y: dict[str, float] = {table(planets, "centre_y")}
+
+SIGN_INK_CENTRE_Y: dict[str, float] = {table(signs, "centre_y")}
+
+TEXT_INK_CENTRE_Y: dict[str, float] = {table(texts, "centre_y")}
 '''
 
 

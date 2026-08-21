@@ -19,6 +19,7 @@ Usage:
 
 import importlib
 import math
+import os
 from pathlib import Path
 
 import pytest
@@ -34,6 +35,28 @@ from kerykeion.utilities import format_ancient_iso, format_iso_display, extract_
 # =============================================================================
 
 SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
+
+
+def _compare_or_regenerate(baseline_path: Path, svg: str) -> None:
+    """Compare against a baseline, or rewrite it under KERYKEION_REGEN_BASELINES.
+
+    These two baselines pair two BCE subjects, and only this file knows which
+    two: no script in the repository builds them. Without a way to refresh them
+    they went stale on every template change and stayed stale — the comparison
+    below is a line count within 5%, which a redrawn glyph cannot trip. The env
+    var is the same opt-in `compare_chart_svg` uses in test_chart_drawer.py, so
+    the fixtures a test owns are refreshed by running that test.
+    """
+    if os.environ.get("KERYKEION_REGEN_BASELINES"):
+        baseline_path.parent.mkdir(parents=True, exist_ok=True)
+        baseline_path.write_text(svg, encoding="utf-8")
+        return
+    if not baseline_path.exists():
+        pytest.skip("Baseline not found.")
+
+    assert len(svg.strip().splitlines()) == pytest.approx(
+        len(baseline_path.read_text().strip().splitlines()), rel=0.05
+    )
 
 # Position tolerance: accounts for polynomial approximation at extreme dates
 BCE_POSITION_TOLERANCE = 0.5  # degrees
@@ -454,17 +477,11 @@ class TestBCEChartSVG:
     @pytest.mark.extended
     def test_transit_chart_baseline(self, subj_500bc, subj_200bc):
         """Transit chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg"
-        if not baseline_path.exists():
-            pytest.skip("Baseline not found.")
-
         data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        baseline = baseline_path.read_text()
-
-        svg_lines = svg.strip().splitlines()
-        baseline_lines = baseline.strip().splitlines()
-        assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
+        _compare_or_regenerate(
+            SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg", svg
+        )
 
     @pytest.mark.extended
     def test_synastry_chart_svg(self, subj_500bc, subj_200bc):
@@ -480,17 +497,11 @@ class TestBCEChartSVG:
     @pytest.mark.extended
     def test_synastry_chart_baseline(self, subj_500bc, subj_200bc):
         """Synastry chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg"
-        if not baseline_path.exists():
-            pytest.skip("Baseline not found.")
-
         data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        baseline = baseline_path.read_text()
-
-        svg_lines = svg.strip().splitlines()
-        baseline_lines = baseline.strip().splitlines()
-        assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
+        _compare_or_regenerate(
+            SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg", svg
+        )
 
     @pytest.mark.extended
     def test_progression_chart_svg(self, subj_500bc):

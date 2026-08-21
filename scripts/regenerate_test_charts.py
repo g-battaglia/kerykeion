@@ -377,24 +377,6 @@ dark_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_them
 dark_theme_natal_chart = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
 dark_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
-# Dark High Contrast Theme Natal Chart
-dark_high_contrast_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-dark_high_contrast_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_high_contrast_theme_subject)
-dark_high_contrast_theme_natal_chart = ChartDrawer(
-    dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast"
-)
-dark_high_contrast_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
-# Light Theme Natal Chart
-light_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-light_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_subject)
-light_theme_natal_chart = ChartDrawer(light_theme_natal_chart_data, theme="light")
-light_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
 # Dark Theme External Natal Chart
 dark_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
@@ -461,24 +443,6 @@ sidereal_dark_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_dar
 sidereal_dark_chart = ChartDrawer(sidereal_dark_chart_data, theme="dark")
 sidereal_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
-# Wheel Sidereal Birth Chart (Fagan-Bradley) Light Theme
-sidereal_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon Fagan-Bradley - Light Theme",
-    1940,
-    10,
-    9,
-    18,
-    30,
-    "Liverpool",
-    "GB",
-    zodiac_type="Sidereal",
-    sidereal_mode="FAGAN_BRADLEY",
-    suppress_geonames_warning=True,
-)
-sidereal_light_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_light_subject)
-sidereal_light_chart = ChartDrawer(sidereal_light_chart_data, theme="light")
-sidereal_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-
 # Wheel Only Dark Transparent Natal Chart (Hero Image)
 # Uses TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: Sun to Saturn + lunar nodes
 wheel_dark_transparent_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -538,14 +502,6 @@ aspect_grid_dark_subject = AstrologicalSubjectFactory.from_birth_data(
 aspect_grid_dark_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_dark_subject)
 aspect_grid_dark_chart = ChartDrawer(aspect_grid_dark_chart_data, theme="dark")
 aspect_grid_dark_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-
-# Aspect Grid Only Light Theme Natal Chart
-aspect_grid_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-aspect_grid_light_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_light_subject)
-aspect_grid_light_chart = ChartDrawer(aspect_grid_light_chart_data, theme="light")
-aspect_grid_light_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Synastry Chart Aspect Grid Only
 aspect_grid_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -1610,35 +1566,6 @@ ChartDrawer(apc_house_chart_data).save_svg(output_path=OUTPUT_DIR_STR)
 # Section 4: Theme + Chart Type Combinations
 # ----------------------------------------------------------------------------
 
-# Light Theme Synastry Chart
-light_theme_synastry_chart = ChartDrawer(synastry_chart_data, theme="light")
-light_theme_synastry_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Synastry Chart - Classic",
-)
-
-# Light Theme Transit Chart
-light_theme_transit_chart = ChartDrawer(transits_chart_data, theme="light")
-light_theme_transit_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Transit Chart - Classic",
-)
-
-# Light Theme Composite Chart
-light_theme_composite_chart = ChartDrawer(composite_chart_data, theme="light")
-light_theme_composite_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart - Classic",
-)
-
-# Light Theme External Natal Chart
-light_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-light_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_external_subject)
-light_theme_external_chart = ChartDrawer(light_theme_external_chart_data, theme="light", external_view=True)
-light_theme_external_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
 # Dark Theme Transit Chart
 dark_theme_transit_chart = ChartDrawer(transits_chart_data, theme="dark")
 dark_theme_transit_chart.save_svg(
@@ -1695,14 +1622,6 @@ wheel_only_dark_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only
 wheel_only_dark_chart = ChartDrawer(wheel_only_dark_chart_data, theme="dark")
 wheel_only_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
-# Wheel Only Light Theme Natal Chart
-wheel_only_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Only Light", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-wheel_only_light_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only_light_subject)
-wheel_only_light_chart = ChartDrawer(wheel_only_light_chart_data, theme="light")
-wheel_only_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-
 # Wheel Synastry Dark Theme
 wheel_synastry_dark_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Wheel Synastry Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
@@ -1754,16 +1673,6 @@ aspect_grid_dark_transit_chart_data = ChartDataFactory.create_transit_chart_data
 )
 aspect_grid_dark_transit_chart = ChartDrawer(aspect_grid_dark_transit_chart_data, theme="dark")
 aspect_grid_dark_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-
-# Aspect Grid Light Transit
-aspect_grid_light_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Light Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-aspect_grid_light_transit_chart_data = ChartDataFactory.create_transit_chart_data(
-    aspect_grid_light_transit_subject, second
-)
-aspect_grid_light_transit_chart = ChartDrawer(aspect_grid_light_transit_chart_data, theme="light")
-aspect_grid_light_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # ----------------------------------------------------------------------------
 # Section 6: Composite Chart Variations
@@ -2313,10 +2222,6 @@ modern_natal_chart.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 dark_theme_modern_natal = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
 dark_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
-# Modern Natal Chart - Light Theme
-light_theme_modern_natal = ChartDrawer(light_theme_natal_chart_data, theme="light")
-light_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
 # Modern Natal Chart - Black and White Theme
 bw_modern_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Black and White Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
@@ -2324,18 +2229,6 @@ bw_modern_subject = AstrologicalSubjectFactory.from_birth_data(
 bw_modern_natal_data = ChartDataFactory.create_natal_chart_data(bw_modern_subject)
 bw_modern_natal = ChartDrawer(bw_modern_natal_data, theme="black-and-white")
 bw_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
-# Modern Natal Chart - Strawberry Theme
-strawberry_modern_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Strawberry Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-strawberry_modern_natal_data = ChartDataFactory.create_natal_chart_data(strawberry_modern_subject)
-strawberry_modern_natal = ChartDrawer(strawberry_modern_natal_data, theme="strawberry")
-strawberry_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
-# Modern Natal Chart - Dark High Contrast Theme
-dhc_modern_natal = ChartDrawer(dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast")
-dhc_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
 # Modern Synastry Chart
 modern_synastry = ChartDrawer(synastry_chart_data)
@@ -2390,5 +2283,173 @@ modern_single_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 # Modern Dual Return Solar Chart
 modern_dual_return = ChartDrawer(dual_return_chart_data)
 modern_dual_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# ---------------------------------------------------------------------------
+# Opt-in chart marks (classic style)
+#
+# Each subject is chosen so the mark has a real referent: a chart with nothing
+# to mark would pin an empty promise. The suffix in the subject name is what
+# names the baseline file, as everywhere else in this script.
+# ---------------------------------------------------------------------------
+
+# show_motion_state — Mercury turns retrograde on this date
+station_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - Motion State", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+station_chart_data = ChartDataFactory.create_natal_chart_data(station_subject)
+ChartDrawer(station_chart_data, show_motion_state=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_aspect_movement — same sky, separating aspects dashed
+movement_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - Aspect Movement", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+movement_chart_data = ChartDataFactory.create_natal_chart_data(movement_subject)
+ChartDrawer(movement_chart_data, show_aspect_movement=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_out_of_bounds — Uranus sits past the obliquity here
+oob_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Out Of Bounds", 1990, 1, 1, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+oob_chart_data = ChartDataFactory.create_natal_chart_data(oob_subject)
+ChartDrawer(oob_chart_data, show_out_of_bounds=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_relationship_score — synastry info panel
+score_first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Relationship Score", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+score_second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+score_chart_data = ChartDataFactory.create_synastry_chart_data(score_first, score_second)
+ChartDrawer(score_chart_data, show_relationship_score=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_ayanamsa_value — the offset in degrees on a sidereal chart
+ayanamsa_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Ayanamsa Value",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    suppress_geonames_warning=True,
+)
+ayanamsa_chart_data = ChartDataFactory.create_natal_chart_data(ayanamsa_subject)
+ChartDrawer(ayanamsa_chart_data, show_ayanamsa_value=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_polar_fallback_note — Placidus is undefined this far north
+polar_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Polar Fallback",
+    1990,
+    6,
+    15,
+    12,
+    0,
+    "Longyearbyen",
+    "SJ",
+    lng=15.6,
+    lat=78.2,
+    tz_str="Arctic/Longyearbyen",
+    houses_system_identifier="P",
+    suppress_geonames_warning=True,
+)
+polar_chart_data = ChartDataFactory.create_natal_chart_data(polar_subject)
+ChartDrawer(polar_chart_data, show_polar_fallback_note=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# ---------------------------------------------------------------------------
+# Complete charts with every mark switched on
+#
+# The six baselines above each isolate one mark, which is what a regression on
+# that mark needs. These four are the other half of the picture: whole charts
+# rendered the way someone who turns the feature on actually sees them, with
+# every option enabled at once. A mark stays silent where its subject has no
+# referent, so between them these carry the full set without any one of them
+# claiming something its own sky does not have.
+# ---------------------------------------------------------------------------
+
+ALL_MARKS_ON = dict(
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
+    show_relationship_score=True,
+    show_ayanamsa_value=True,
+    show_polar_fallback_note=True,
+)
+
+# Station, out-of-bounds body and separating aspects, in both styles.
+all_marks_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - All Marks", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+)
+all_marks_chart_data = ChartDataFactory.create_natal_chart_data(all_marks_subject)
+ChartDrawer(all_marks_chart_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
+ChartDrawer(all_marks_chart_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Sidereal: the ayanamsa offset joins the marks that the sky supports.
+all_marks_sidereal = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Marks Sidereal",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    suppress_geonames_warning=True,
+)
+ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(all_marks_sidereal), **ALL_MARKS_ON
+).save_svg(output_path=OUTPUT_DIR_STR)
+
+# Polar: the domification line admits the substitution.
+all_marks_polar = AstrologicalSubjectFactory.from_birth_data(
+    "Polar Fallback - All Marks",
+    1990,
+    6,
+    15,
+    12,
+    0,
+    "Longyearbyen",
+    "SJ",
+    lng=15.6,
+    lat=78.2,
+    tz_str="Arctic/Longyearbyen",
+    houses_system_identifier="P",
+    suppress_geonames_warning=True,
+)
+ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(all_marks_polar), **ALL_MARKS_ON
+).save_svg(output_path=OUTPUT_DIR_STR)
+
+# Synastry: the score, on a dual wheel that also carries wheel marks.
+all_marks_syn_first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Marks Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+all_marks_syn_second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", suppress_geonames_warning=True
+)
+all_marks_syn_data = ChartDataFactory.create_synastry_chart_data(all_marks_syn_first, all_marks_syn_second)
+ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
+ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Three plain natal baselines that had been committed without a generator. No
+# test read them and no script wrote them, so they quietly kept a picture of an
+# older library — they were still drawing the font-traced Jupiter six commits
+# after it was redrawn. The birth data below is read straight off the panels of
+# the files they replace, so these regenerate what was there rather than
+# redefining it.
+for _name, _y, _m, _d, _hh, _mm, _city, _nation in (
+    ("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US"),
+    ("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB"),
+    ("Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP"),
+):
+    _subject = AstrologicalSubjectFactory.from_birth_data(
+        _name, _y, _m, _d, _hh, _mm, _city, _nation, suppress_geonames_warning=True
+    )
+    ChartDrawer(ChartDataFactory.create_natal_chart_data(_subject)).save_svg(output_path=OUTPUT_DIR_STR)
 
 print("All charts regenerated successfully!")

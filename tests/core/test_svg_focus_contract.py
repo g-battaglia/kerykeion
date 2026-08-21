@@ -23,11 +23,13 @@ pin that contract for both chart styles:
 """
 
 import re
+import xml.etree.ElementTree as ET
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+from kerykeion.charts.svg_metadata import ChartPointTag, parse_chart_points, point_state_attributes
 from kerykeion.secondary_progressions import SecondaryProgressionFactory
 
 
@@ -336,3 +338,290 @@ class TestGauquelinMetadata:
         wedges = _node_attrs(svg, "GauquelinSector")
         assert len(wedges) == 36
         assert {_attr(a, "sector") for a in wedges} == {str(n) for n in range(1, 37)}
+
+
+# =============================================================================
+# Point state and chart-analysis metadata
+# =============================================================================
+
+
+@pytest.fixture(scope="module")
+def station_chart_data():
+    """A chart whose Mercury is at a station — the rarest state to render."""
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Mercury station", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+@pytest.fixture(scope="module")
+def heliocentric_chart_data():
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Heliocentric",
+        1940,
+        10,
+        9,
+        18,
+        30,
+        "Liverpool",
+        "GB",
+        perspective_type="Heliocentric",
+        suppress_geonames_warning=True,
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+class TestPointStateMetadata:
+    """The state attributes ride on every point, in every style, unconditionally.
+
+    They are not gated by a rendering flag: a consumer reading the SVG must be
+    able to tell a body that has no such state from a chart style that forgot
+    to say so, and that distinction only survives if all three serializers
+    speak the same sentence.
+    """
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    @pytest.mark.parametrize("output_method", ["generate_svg_string", "generate_wheel_only_svg_string"])
+    def test_planets_carry_speed_declination_and_motion(self, natal_chart_data, style, output_method):
+        svg = _svg(getattr(ChartDrawer(chart_data=natal_chart_data, style=style), output_method))
+        by_slug = {_attr(a, "slug"): a for a in _node_attrs(svg, "ChartPoint")}
+        for planet in ("Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"):
+            attrs = by_slug[planet]
+            assert _attr(attrs, "motionstate") is not None, f"{style}/{output_method}: {planet} has no motion state"
+            assert _attr(attrs, "speed") is not None
+            assert _attr(attrs, "declination") is not None
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    def test_state_values_are_identical_across_styles(self, natal_chart_data, style):
+        """A point's physical state cannot depend on how the wheel is drawn."""
+        states = {}
+        for candidate in ("classic", "modern"):
+            svg = _svg(ChartDrawer(chart_data=natal_chart_data, style=candidate).generate_wheel_only_svg_string)
+            states[candidate] = {
+                _attr(a, "slug"): (_attr(a, "motionstate"), _attr(a, "speed"), _attr(a, "declination"))
+                for a in _node_attrs(svg, "ChartPoint")
+            }
+        assert states["classic"] == states["modern"]
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    def test_stations_are_named_in_the_markup(self, station_chart_data, style):
+        svg = _svg(ChartDrawer(chart_data=station_chart_data, style=style).generate_wheel_only_svg_string)
+        by_slug = {_attr(a, "slug"): a for a in _node_attrs(svg, "ChartPoint")}
+        assert _attr(by_slug["Mercury"], "motionstate") == "stationary_retrograde"
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    def test_out_of_bounds_marks_only_the_exception(self, natal_chart_data, style):
+        """``kr:oob`` follows ``kr:retrograde``: present when true, absent otherwise."""
+        svg = _svg(ChartDrawer(chart_data=natal_chart_data, style=style).generate_wheel_only_svg_string)
+        values = {_attr(a, "oob") for a in _node_attrs(svg, "ChartPoint") if _attr(a, "oob") is not None}
+        assert values <= {"true"}, f"{style}: kr:oob should never be emitted as false"
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    def test_non_geocentric_charts_claim_no_motion_state(self, heliocentric_chart_data, style):
+        """Silence, not a guess: the tabulated means are geocentric."""
+        svg = _svg(ChartDrawer(chart_data=heliocentric_chart_data, style=style).generate_wheel_only_svg_string)
+        for attrs in _node_attrs(svg, "ChartPoint"):
+            assert _attr(attrs, "motionstate") is None
+            assert _attr(attrs, "oob") is None
+
+
+class TestAnalysisMetadata:
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    @pytest.mark.parametrize("output_method", ["generate_svg_string", "generate_wheel_only_svg_string"])
+    def test_angularity_and_stellium_reach_the_markup(self, natal_chart_data, style, output_method):
+        svg = _svg(getattr(ChartDrawer(chart_data=natal_chart_data, style=style), output_method))
+        by_slug = {_attr(a, "slug"): a for a in _node_attrs(svg, "ChartPoint")}
+
+        expected_angular: dict[str, list[str]] = {}
+        for angularity in natal_chart_data.angularities:
+            expected_angular.setdefault(str(angularity.point), []).append(str(angularity.angle))
+        assert expected_angular, "fixture no longer exercises angularity"
+        for name, angles in expected_angular.items():
+            value = _attr(by_slug[name], "angularity")
+            assert value is not None
+            assert [pair.rpartition(":")[0] for pair in value.split(" ")] == angles
+            assert all(float(pair.rpartition(":")[2]) >= 0 for pair in value.split(" "))
+
+        expected_stellium = {name: str(s.house) for s in natal_chart_data.stelliums for name in s.points}
+        assert expected_stellium, "fixture no longer exercises stelliums"
+        for name, house in expected_stellium.items():
+            assert _attr(by_slug[name], "stellium") == house
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    def test_points_outside_an_analysis_carry_no_attribute(self, natal_chart_data, style):
+        svg = _svg(ChartDrawer(chart_data=natal_chart_data, style=style).generate_wheel_only_svg_string)
+        in_a_stellium = {name for s in natal_chart_data.stelliums for name in s.points}
+        for attrs in _node_attrs(svg, "ChartPoint"):
+            if _attr(attrs, "slug") not in in_a_stellium:
+                assert _attr(attrs, "stellium") is None
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    def test_dual_charts_annotate_each_ring_from_its_own_analysis(self, style, john_lennon, paul_mccartney):
+        chart_data = ChartDataFactory.create_synastry_chart_data(john_lennon, paul_mccartney)
+        svg = _svg(ChartDrawer(chart_data=chart_data, style=style).generate_wheel_only_svg_string)
+        annotated: dict[str, set] = {"0": set(), "1": set()}
+        for attrs in _node_attrs(svg, "ChartPoint"):
+            if _attr(attrs, "stellium") is not None:
+                annotated[_attr(attrs, "horoscope") or "0"].add(_attr(attrs, "slug"))
+
+        for ring, stelliums in (
+            ("0", chart_data.first_subject_stelliums),
+            ("1", chart_data.second_subject_stelliums),
+        ):
+            assert annotated[ring] == {name for s in stelliums for name in s.points}
+
+
+class TestAttributeNamingContract:
+    """Every ``kr:`` name must be lowercase letters only.
+
+    Consumers rewrite the namespace with a general pattern rather than an
+    allow-list — the web frontend maps ``kr:name`` to ``data-kr-name`` through
+    ``/\\bkr:([a-zA-Z]+)=/`` before sanitizing — so a name carrying an
+    underscore or a digit is dropped in silence instead of failing loudly.
+    """
+
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    @pytest.mark.parametrize(
+        "output_method",
+        ["generate_svg_string", "generate_wheel_only_svg_string", "generate_aspect_grid_only_svg_string"],
+    )
+    def test_every_emitted_attribute_name_is_plain_lowercase(self, natal_chart_data, style, output_method):
+        svg = _svg(getattr(ChartDrawer(chart_data=natal_chart_data, style=style), output_method))
+        names = set(re.findall(r"\bkr:([A-Za-z0-9_-]+)=", svg))
+        assert names, "no kr: attributes found at all"
+        offenders = {name for name in names if not name.isalpha() or not name.islower()}
+        assert not offenders, f"{style}/{output_method}: unreachable attribute names {sorted(offenders)}"
+
+
+# =============================================================================
+# Metadata soundness — the cases a review found, pinned so they stay found
+# =============================================================================
+
+
+@pytest.fixture(scope="module")
+def two_angles_chart_data():
+    """A point standing on two angles at once.
+
+    Near the poles the Ascendant and the Midheaven close on each other, so a
+    planet can sit inside the orb of both — here Venus is 0.9° from the
+    Ascendant and 4.3° from the Midheaven. Every chart in the ordinary fixtures
+    has at most one angularity per point, which is why an encoding that could
+    not express two passed the whole suite.
+    """
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Two angles", 2000, 1, 16, 8, 0, "Tromso", "NO", lng=18.95, lat=67.0, tz_str="UTC",
+        suppress_geonames_warning=True,
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+@pytest.fixture(scope="module")
+def star_chart_data():
+    """A chart carrying fixed stars, which are the only points with magnitude."""
+    from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Fixed stars", 1940, 10, 9, 18, 30, "Liverpool", "GB",
+        active_fixed_stars=list(DEFAULT_FIXED_STARS),
+        suppress_geonames_warning=True,
+    )
+    return ChartDataFactory.create_natal_chart_data(subject)
+
+
+class TestMetadataIsWellFormed:
+    @pytest.mark.parametrize("style", ["classic", "modern"])
+    @pytest.mark.parametrize(
+        "output_method",
+        ["generate_svg_string", "generate_wheel_only_svg_string", "generate_aspect_grid_only_svg_string"],
+    )
+    def test_two_angularities_still_parse_as_xml(self, two_angles_chart_data, style, output_method):
+        """Duplicate attribute names are not valid XML, whatever they carry."""
+        from collections import Counter
+
+        counts = Counter(a.point for a in two_angles_chart_data.angularities)
+        assert max(counts.values()) >= 2, "fixture no longer has a point on two angles"
+
+        svg = getattr(ChartDrawer(chart_data=two_angles_chart_data, style=style), output_method)()
+        ET.fromstring(svg)
+
+    def test_both_angles_survive_the_round_trip(self, two_angles_chart_data):
+        """Modern only: parse_chart_points is pinned to that style's transform."""
+        svg = _svg(ChartDrawer(chart_data=two_angles_chart_data, style="modern").generate_wheel_only_svg_string)
+        tags = {t.slug: t for t in parse_chart_points(svg)}
+        expected = {}
+        for angularity in two_angles_chart_data.angularities:
+            expected.setdefault(str(angularity.point), []).append(str(angularity.angle))
+
+        for name, angles in expected.items():
+            assert [angle for angle, _ in tags[name].angularities] == angles
+
+    def test_a_hostile_name_cannot_escape_its_attribute(self):
+        """Chart data can be deserialized or built by a caller, so names are not literals."""
+
+        class Point:
+            motion_state = None
+            speed = None
+            declination = None
+            is_out_of_bounds = None
+            magnitude = None
+            orb = None
+            near_point = 'Sun" onmouseover="alert(1)'
+
+        emitted = point_state_attributes(Point())
+        assert 'onmouseover="alert(1)"' not in emitted
+        ET.fromstring(f'<g xmlns:kr="https://www.kerykeion.net/" {emitted.strip()} />')
+
+    def test_an_apostrophe_survives_the_delimiter_swap(self):
+        """Post-processing rewrites attribute delimiters to single quotes."""
+
+        class Point:
+            motion_state = None
+            speed = None
+            declination = None
+            is_out_of_bounds = None
+            magnitude = None
+            orb = None
+            near_point = "Regulus's star"
+
+        emitted = point_state_attributes(Point())
+        fragment = f'<g xmlns:kr="https://www.kerykeion.net/" {emitted.strip()} />'
+        ET.fromstring(fragment.replace('"', "'").replace("&apos;", "&#39;"))
+
+    def test_the_parser_exposes_every_attribute_the_emitter_writes(self, star_chart_data):
+        """The contract in one assertion, so the next attribute cannot skip the parser.
+
+        Checked against a chart carrying fixed stars, because the star-only
+        attributes were the ones the emitter wrote and the parser dropped.
+        """
+        svg = _svg(ChartDrawer(chart_data=star_chart_data, style="modern").generate_wheel_only_svg_string)
+        emitted = set()
+        for attrs in _node_attrs(svg, "ChartPoint"):
+            emitted.update(re.findall(r"kr:([a-z]+)=", attrs))
+
+        # Structural attributes the tag models under other names, or not at all
+        # because they identify the tag rather than describe the point.
+        structural = {"node", "cx", "cy", "slug", "horoscope", "sign", "signposition", "absoluteposition", "house"}
+        exposed = {
+            "retrograde": "retrograde",
+            "motionstate": "motion_state",
+            "speed": "speed",
+            "declination": "declination",
+            "oob": "out_of_bounds",
+            "angularity": "angularities",
+            "angularitydistance": "angularities",
+            "stellium": "stellium",
+            "magnitude": "magnitude",
+            "nearpoint": "near_point",
+            "orb": "orb",
+            "gauquelinsector": None,
+            "projectedhouse": None,
+            "projectedhoroscope": None,
+        }
+        unmodelled = {name for name in emitted - structural if exposed.get(name, "missing") == "missing"}
+        assert not unmodelled, f"emitted but absent from ChartPointTag: {sorted(unmodelled)}"
+
+        fields = set(ChartPointTag.__dataclass_fields__)
+        for name in emitted - structural:
+            field = exposed[name]
+            if field is not None:
+                assert field in fields, f"{name} maps to {field}, which ChartPointTag does not have"

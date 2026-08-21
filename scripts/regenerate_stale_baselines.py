@@ -23,16 +23,9 @@ PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
 
 # Sidereal x Theme combinations
 SIDEREAL_THEME_COMBOS = [
-    ("LAHIRI", "strawberry"),
     ("LAHIRI", "black-and-white"),
     ("FAGAN_BRADLEY", "dark"),
-    ("FAGAN_BRADLEY", "strawberry"),
-    ("KRISHNAMURTI", "light"),
-    ("KRISHNAMURTI", "strawberry"),
     ("RAMAN", "dark"),
-    ("RAMAN", "strawberry"),
-    ("J2000", "light"),
-    ("J2000", "strawberry"),
 ]
 
 # House systems

@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a84"
+version = "6.0.0a86"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -307,6 +307,41 @@ cmd = "python scripts/regenerate_test_charts_extended.py"
 [tool.poe.tasks."regenerate:svg:modern"]
 cmd = "python scripts/generate_modern_baselines.py"
 
+# The three below produce committed SVGs too, and each had no task at all. That
+# is why they went stale: `regenerate:all` did not reach them, so a template
+# change refreshed tests/data/svg and left the README's own showcase images
+# drawing a glyph set the library no longer had.
+[tool.poe.tasks."regenerate:docs-charts"]
+cmd = "python scripts/regenerate_docs_charts.py"
+help = "Regenerate the documentation charts (docs/charts/) — the README's showcase images"
+
+[tool.poe.tasks."regenerate:docs-charts".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:gallery-v6"]
+cmd = "python scripts/generate_v6_test_gallery.py"
+help = "Regenerate the v6 feature gallery (tests/data/v6_gallery/)"
+
+[tool.poe.tasks."regenerate:gallery-v6".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:glyph-gallery"]
+cmd = "python scripts/generate_glyph_gallery.py"
+help = "Regenerate the published glyph poster and page (site/docs/chart-glyphs.md)"
+
+[tool.poe.tasks.gallery]
+cmd = "python scripts/generate_svg_validation_gallery.py"
+help = "Render the whole SVG surface into svg_validation_gallery/ for visual review"
+
+[tool.poe.tasks.gallery.env]
+# Charts before ~1600 fall outside the default ephemeris tier and would be
+# drawn as failure cards; the sweep deliberately includes them.
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."gallery:index"]
+cmd = "python scripts/generate_svg_validation_gallery.py --index-only"
+help = "Rewrite the gallery page from cards.json, without re-rendering the charts"
+
 [tool.poe.tasks."regenerate:reports"]
 sequence = ["regenerate:reports:snapshots", "regenerate:reports:output"]
 help = "Regenerate all report golden files (tests/fixtures/)"
@@ -348,7 +383,7 @@ help = "Regenerate all configuration-specific fixtures (house-systems, sidereal-
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
+sequence = ["regenerate:svg", "regenerate:docs-charts", "regenerate:gallery-v6", "regenerate:glyph-gallery", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
 help = "Regenerate all golden standards"
 # Baselines must regenerate at the extended (DE441) tier so ancient/BCE subjects
 # (year 100 AD, etc.) resolve on-disk instead of falling back, and so the long-range

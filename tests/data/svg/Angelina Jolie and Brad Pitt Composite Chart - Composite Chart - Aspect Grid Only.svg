@@ -1,14 +1,20 @@
-<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
+<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Noto Sans (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
 <svg
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='40 44 216 230'
     preserveAspectRatio='xMidYMid'
+    font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
+
+    <title id='kerykeion-chart-title'>Composite Chart: Angelina Jolie and Brad Pitt</title>
+    <desc id='kerykeion-chart-desc'>Composite Chart: Angelina Jolie and Brad Pitt. Placidus. 14 points, 24 aspects.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -47,7 +53,12 @@
     --kerykeion-modern-planet-ring-outer: #e8e8ed;
     --kerykeion-modern-house-ring: #e4e4e7;
     --kerykeion-modern-stroke: #d4d4d8;
+    /* A house boundary is information, not decoration: it carries the 3:1 a
+       graphic object needs, while --kerykeion-modern-stroke keeps outlining the
+       rings at whatever weight the palette likes. */
+    --kerykeion-modern-cusp: #81818d;
     --kerykeion-modern-retrograde: #b03030;
+    --kerykeion-modern-stationary: #8a5a12;
     --kerykeion-modern-indicator: #8a8278;
     --kerykeion-modern-zodiac-bg-0: #ff7200;
     --kerykeion-modern-zodiac-bg-1: #6b3d00;
@@ -74,17 +85,17 @@
     --kerykeion-chart-color-zodiac-bg-9: #6b3d00;
     --kerykeion-chart-color-zodiac-bg-10: #69acf1;
     --kerykeion-chart-color-zodiac-bg-11: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-0: #ff7200;
+    --kerykeion-chart-color-zodiac-icon-0: #b25000;
     --kerykeion-chart-color-zodiac-icon-1: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-2: #69acf1;
+    --kerykeion-chart-color-zodiac-icon-2: #1473d6;
     --kerykeion-chart-color-zodiac-icon-3: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-4: #ff7200;
+    --kerykeion-chart-color-zodiac-icon-4: #b25000;
     --kerykeion-chart-color-zodiac-icon-5: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-6: #69acf1;
+    --kerykeion-chart-color-zodiac-icon-6: #1473d6;
     --kerykeion-chart-color-zodiac-icon-7: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-8: #ff7200;
+    --kerykeion-chart-color-zodiac-icon-8: #b25000;
     --kerykeion-chart-color-zodiac-icon-9: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-10: #69acf1;
+    --kerykeion-chart-color-zodiac-icon-10: #1473d6;
     --kerykeion-chart-color-zodiac-icon-11: #2b4972;
     --kerykeion-chart-color-zodiac-radix-ring-0: #ff0000;
     --kerykeion-chart-color-zodiac-radix-ring-1: #ff0000;
@@ -102,17 +113,17 @@
     --kerykeion-chart-color-conjunction: #5757e2;
     --kerykeion-chart-color-semi-sextile: #810757;
     --kerykeion-chart-color-semi-square: #b14e58;
-    --kerykeion-chart-color-sextile: #d59e28;
+    --kerykeion-chart-color-sextile: #bb8b23;
     --kerykeion-chart-color-quintile: #1f99b3;
     --kerykeion-chart-color-square: #dc0000;
-    --kerykeion-chart-color-trine: #36d100;
+    --kerykeion-chart-color-trine: #2ba800;
     --kerykeion-chart-color-sesquiquadrate: #985a10;
     --kerykeion-chart-color-biquintile: #7a9810;
-    --kerykeion-chart-color-quincunx: #26bbcf;
+    --kerykeion-chart-color-quincunx: #20a0b1;
     --kerykeion-chart-color-opposition: #510060;
 
     /* Planets */
-    --kerykeion-chart-color-sun: #984b00;
+    --kerykeion-chart-color-sun: #7e3e00;
     --kerykeion-chart-color-moon: #150052;
     --kerykeion-chart-color-mercury: #520800;
     --kerykeion-chart-color-venus: #400052;
@@ -124,29 +135,31 @@
     --kerykeion-chart-color-pluto: #713f04;
     --kerykeion-chart-color-mean-node: #4c1541;
     --kerykeion-chart-color-true-node: #4c1541;
-    --kerykeion-chart-color-chiron: #666f06;
-    --kerykeion-chart-color-first-house: #ff7e00;
-    --kerykeion-chart-color-tenth-house: #ff0000;
+    --kerykeion-chart-color-chiron: #505705;
+    --kerykeion-chart-color-first-house: #7f3f00;
+    --kerykeion-chart-color-tenth-house: #a80000;
     --kerykeion-chart-color-seventh-house: #0000ff;
     --kerykeion-chart-color-fourth-house: #000000;
     --kerykeion-chart-color-mean-lilith: #000000;
     --kerykeion-chart-color-true-lilith: #333333;
+    --kerykeion-chart-color-interpolated-lilith: #525252;
+    --kerykeion-chart-color-white-moon: #45545d;
     --kerykeion-chart-color-ceres: #265206;
     --kerykeion-chart-color-pallas: #004952;
     --kerykeion-chart-color-juno: #591f52;
-    --kerykeion-chart-color-vesta: #963209;
+    --kerykeion-chart-color-vesta: #913009;
     --kerykeion-chart-color-pars-fortunae: #095242;
     --kerykeion-chart-color-vertex: #52064e;
     --kerykeion-chart-color-east-point: #482b7f;
     --kerykeion-chart-color-eris: #800000;
     --kerykeion-chart-color-earth: #6a2d04;
-    --kerykeion-chart-color-pholus: #5a5a5a;
-    --kerykeion-chart-color-sedna: #b8860b;
-    --kerykeion-chart-color-haumea: #8b4513;
-    --kerykeion-chart-color-makemake: #a0522d;
-    --kerykeion-chart-color-ixion: #556b2f;
+    --kerykeion-chart-color-pholus: #525252;
+    --kerykeion-chart-color-sedna: #6b4e07;
+    --kerykeion-chart-color-haumea: #824112;
+    --kerykeion-chart-color-makemake: #804224;
+    --kerykeion-chart-color-ixion: #475927;
     --kerykeion-chart-color-orcus: #2f4f4f;
-    --kerykeion-chart-color-quaoar: #8a2be2;
+    --kerykeion-chart-color-quaoar: #731bc4;
     --kerykeion-chart-color-cupido: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-hades: var(--kerykeion-color-accent);
     --kerykeion-chart-color-zeus: var(--kerykeion-color-primary);
@@ -164,15 +177,13 @@
     --kerykeion-chart-color-pars-fidei: #095242;
 
     /* Elements Percentage */
-    --kerykeion-chart-color-air-percentage: #6f76d1;
+    --kerykeion-chart-color-air-percentage: #414ac2;
     --kerykeion-chart-color-earth-percentage: #6a2d04;
-    --kerykeion-chart-color-fire-percentage: #ff6600;
+    --kerykeion-chart-color-fire-percentage: #943b00;
     --kerykeion-chart-color-water-percentage: #630e73;
 
     /* Modalities Percentage */
-    --kerykeion-chart-color-cardinal-percentage: var(
-        --kerykeion-chart-color-fire-percentage
-    );
+    --kerykeion-chart-color-cardinal-percentage: #943b00;
     --kerykeion-chart-color-fixed-percentage: var(
         --kerykeion-chart-color-earth-percentage
     );
@@ -181,8 +192,8 @@
     );
 
     /* Other */
-    --kerykeion-chart-color-house-number: #f00;
-    --kerykeion-chart-color-fixed-star-default: #d4a053;
+    --kerykeion-chart-color-house-number: #990000;
+    --kerykeion-chart-color-fixed-star-default: #bb822f;
     --kerykeion-chart-color-midpoint-default: #8b65d0;
 
 }
@@ -199,7 +210,7 @@
         <!-- GLYPHS:BEGIN (generated by scripts/build_chart_glyphs.py — do not edit by hand) -->
         <!-- Planets -->
         <symbol id='Sun'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-sun)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><circle cx='12' cy='12' r='1.9' fill='var(--kerykeion-chart-color-sun)'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-sun)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><circle cx='12' cy='12' r='1.9' fill='var(--kerykeion-chart-color-sun)'/>
         </symbol>
         <symbol id='Moon'>
             <g transform='translate(3.745,1.920) scale(0.01276,-0.01276) translate(-123.000,-1530.000)'><path d='M1417 740Q1417 408 1185.5 179.0Q954 -50 621 -50Q501 -50 373 -8Q240 36 151 108Q123 131 123 155Q123 200 174 200Q180 200 190 198Q250 186 371 161Q431 149 433 149Q678 149 849.5 322.0Q1021 495 1021 740Q1021 982 851.0 1156.5Q681 1331 440 1331Q436 1331 375.0 1318.5Q314 1306 190 1281Q180 1279 174 1279Q123 1279 123 1324Q123 1349 153 1372Q360 1530 627 1530Q956 1530 1186.5 1299.5Q1417 1069 1417 740ZM1317 740Q1317 1028 1116.0 1229.0Q915 1430 627 1430Q578 1430 531 1424Q785 1388 953.0 1192.5Q1121 997 1121 740Q1121 484 953.0 288.0Q785 92 532 56Q576 50 621 50Q912 50 1114.5 249.5Q1317 449 1317 740Z' style='fill: var(--kerykeion-chart-color-moon)'/></g>
@@ -214,57 +225,78 @@
             <g transform='translate(1.926,1.920) scale(0.01229,-0.01229) translate(-80.000,-1492.000)'><path d='M1720 852H1595V1278L1245 929Q1395 747 1395 509Q1395 235 1203.0 43.0Q1011 -149 737 -149Q463 -149 271.5 43.0Q80 235 80 509Q80 783 271.5 975.0Q463 1167 737 1167Q975 1167 1157 1017L1506 1366H1080V1492H1656L1720 1428ZM1270 509Q1270 731 1114.5 886.5Q959 1042 737 1042Q515 1042 360.0 886.5Q205 731 205 509Q205 287 360.0 131.5Q515 -24 737 -24Q959 -24 1114.5 131.5Q1270 287 1270 509Z' style='fill: var(--kerykeion-chart-color-mars)'/></g>
         </symbol>
         <symbol id='Jupiter'>
-            <g transform='translate(3.481,1.920) scale(0.01191,-0.01191) translate(-70.000,-1492.000)'><path d='M1500 -200H1375V183H195V308H558Q705 308 814 431Q920 550 920 699Q920 869 824 973Q725 1081 557 1081Q392 1081 295 992Q195 901 195 738V675H70V737Q70 952 207 1081Q340 1206 557 1206Q777 1206 913 1062Q1045 921 1045 699Q1045 470 868 308H1375V1492H1500Z' style='fill: var(--kerykeion-chart-color-jupiter)'/></g>
+            <path d='M5.10,7.6 C5.10,4.2 11.03,3.2 12.43,6.9 C13.53,9.8 10.53,12.4 4.24,17.74 H19.75' fill='none' stroke='var(--kerykeion-chart-color-jupiter)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M15.72,2.667 V21.333' fill='none' stroke='var(--kerykeion-chart-color-jupiter)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Saturn'>
             <g transform='translate(5.768,1.920) scale(0.01117,-0.01117) translate(-50.000,-1492.000)'><path d='M1166 571Q1166 435 1055.0 207.5Q944 -20 944 -130Q944 -174 999 -185Q1015 -188 1089 -188V-313H1027Q940 -313 882 -266Q819 -215 819 -130Q819 4 930.0 231.5Q1041 459 1041 571Q1041 785 813 785Q596 785 368 496V-200H243V1150H50V1275H243V1492H368V1275H719V1150H368V685Q591 910 813 910Q970 910 1067 820Q1166 727 1166 571Z' style='fill: var(--kerykeion-chart-color-saturn)'/></g>
         </symbol>
         <symbol id='Uranus'>
-            <line x1='6.5' y1='3' x2='6.5' y2='13.5' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='17.5' y1='3' x2='17.5' y2='13.5' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='4.6' y1='3' x2='8.4' y2='3' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='15.6' y1='3' x2='19.4' y2='3' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='4.6' y1='13.5' x2='8.4' y2='13.5' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='15.6' y1='13.5' x2='19.4' y2='13.5' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.5' y1='8.25' x2='17.5' y2='8.25' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='8.25' x2='12' y2='18' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><circle cx='12' cy='20' r='2.1' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M3.4,2.667 A7.428,7.428 0 0 1 3.4,16.9' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M20.6,2.667 A7.428,7.428 0 0 0 20.6,16.9' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.7' y1='9.784' x2='15.3' y2='9.784' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='2.667' x2='12' y2='16.533' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><circle cx='12' cy='18.933' r='2.4' fill='none' stroke='var(--kerykeion-chart-color-uranus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Neptune'>
             <g transform='translate(1.920,2.746) scale(0.01094,-0.01094) translate(-50.000,-1492.000)'><path d='M1893 1121 1806 1031 1675 1157Q1656 804 1522 637Q1376 455 1034 408V180H1234V55H1034V-200H909V55H709V180H909V406Q572 443 422 635Q287 808 268 1157L137 1031L50 1121L283 1345H370L603 1121L516 1031L393 1149Q408 857 513 723Q628 576 909 534V1300L782 1178L695 1268L928 1492H1015L1248 1268L1161 1178L1034 1300V532Q1310 565 1430 722Q1535 861 1550 1149L1427 1031L1340 1121L1573 1345H1660Z' style='fill: var(--kerykeion-chart-color-neptune)'/></g>
         </symbol>
         <symbol id='Pluto'>
-            <circle cx='12' cy='6.8' r='3.8' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M5.6,8 A6.4,6.4 0 0 0 18.4,8' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='14.4' x2='12' y2='21.5' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.4' y1='18' x2='15.6' y2='18' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='7.3' r='3.8' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M5.6,8 A6.4,6.4 0 0 0 18.4,8' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='14.4' x2='12' y2='21.5' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.4' y1='18' x2='15.6' y2='18' fill='none' stroke='var(--kerykeion-chart-color-pluto)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
-        <symbol id='Chiron'>
-            <g transform='translate(7.319,1.920) scale(0.01104,-0.01104) translate(-83.000,-1420.000)'><path d='M931 -117Q931 -258 783 -339Q660 -406 507 -406Q356 -406 232 -338Q83 -256 83 -117Q83 8 202 87Q301 152 444 168V1420H569V1141L819 1377L905 1286L630 1027L905 767L819 676L569 913V168Q711 152 811 86Q931 7 931 -117ZM806 -117Q806 -39 691 9Q600 47 507 47Q412 47 323 10Q208 -37 208 -117Q208 -195 323 -243Q414 -281 507 -281Q602 -281 691 -244Q806 -197 806 -117Z' style='fill: var(--kerykeion-chart-color-chiron)'/></g>
+        <!-- Lunar nodes -->
+        <symbol id='Mean_North_Lunar_Node'>
+            <path d='M6.7574,15.3209 A6.4,6.4 0 1,1 17.2426,15.3209' fill='none' stroke='var(--kerykeion-chart-color-mean-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='4.9553' cy='16.5828' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-mean-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='19.0447' cy='16.5828' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-mean-node)' stroke-width='1.494' stroke-linecap='round'/>
         </symbol>
+        <symbol id='True_North_Lunar_Node'>
+            <path d='M6.7574,15.3209 A6.4,6.4 0 1,1 17.2426,15.3209' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='4.9553' cy='16.5828' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='19.0447' cy='16.5828' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/>
+        </symbol>
+        <symbol id='Mean_South_Lunar_Node'>
+            <path d='M6.7574,8.6791 A6.4,6.4 0 1,0 17.2426,8.6791' fill='none' stroke='var(--kerykeion-chart-color-mean-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='4.9553' cy='7.4172' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-mean-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='19.0447' cy='7.4172' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-mean-node)' stroke-width='1.494' stroke-linecap='round'/>
+        </symbol>
+        <symbol id='True_South_Lunar_Node'>
+            <path d='M6.7574,8.6791 A6.4,6.4 0 1,0 17.2426,8.6791' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='4.9553' cy='7.4172' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/><circle cx='19.0447' cy='7.4172' r='2.2' fill='none' stroke='var(--kerykeion-chart-color-true-node)' stroke-width='1.494' stroke-linecap='round'/>
+        </symbol>
+        <!-- Lunar apsides -->
         <symbol id='Mean_Lilith'>
             <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-mean-lilith)'/></g>
         </symbol>
-        <symbol id='Mean_North_Lunar_Node'>
-            <g transform='translate(1.920,4.634) scale(0.01119,-0.01119) translate(-56.000,-1286.000)'><path d='M1857 322Q1857 175 1754.5 72.5Q1652 -30 1505 -30Q1358 -30 1255.5 72.5Q1153 175 1153 322Q1153 463 1250.5 565.0Q1348 667 1489 674Q1457 901 1323 1050Q1175 1216 957 1216Q739 1216 591 1050Q457 901 425 674Q566 667 663.5 565.0Q761 463 761 322Q761 175 658.5 72.5Q556 -30 409 -30Q262 -30 159.0 72.5Q56 175 56 322Q56 452 140.0 551.0Q224 650 353 670Q384 929 538 1100Q706 1286 957 1286Q1208 1286 1376 1100Q1530 929 1561 670Q1689 650 1773.0 551.0Q1857 452 1857 322ZM1757 322Q1757 428 1684.0 501.0Q1611 574 1505 574Q1400 574 1326.0 500.5Q1252 427 1252 322Q1252 216 1325.5 143.0Q1399 70 1505 70Q1610 70 1683.5 143.5Q1757 217 1757 322ZM661 322Q661 427 587.5 500.5Q514 574 409 574Q303 574 230.0 501.0Q157 428 157 322Q157 217 230.5 143.5Q304 70 409 70Q515 70 588.0 143.0Q661 216 661 322Z' style='fill: var(--kerykeion-chart-color-mean-node)'/></g>
+        <symbol id='True_Lilith'>
+            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-true-lilith)'/></g>
         </symbol>
-        <symbol id='True_North_Lunar_Node'>
-            <g transform='translate(1.920,4.634) scale(0.01119,-0.01119) translate(-56.000,-1286.000)'><path d='M1857 322Q1857 175 1754.5 72.5Q1652 -30 1505 -30Q1358 -30 1255.5 72.5Q1153 175 1153 322Q1153 463 1250.5 565.0Q1348 667 1489 674Q1457 901 1323 1050Q1175 1216 957 1216Q739 1216 591 1050Q457 901 425 674Q566 667 663.5 565.0Q761 463 761 322Q761 175 658.5 72.5Q556 -30 409 -30Q262 -30 159.0 72.5Q56 175 56 322Q56 452 140.0 551.0Q224 650 353 670Q384 929 538 1100Q706 1286 957 1286Q1208 1286 1376 1100Q1530 929 1561 670Q1689 650 1773.0 551.0Q1857 452 1857 322ZM1757 322Q1757 428 1684.0 501.0Q1611 574 1505 574Q1400 574 1326.0 500.5Q1252 427 1252 322Q1252 216 1325.5 143.0Q1399 70 1505 70Q1610 70 1683.5 143.5Q1757 217 1757 322ZM661 322Q661 427 587.5 500.5Q514 574 409 574Q303 574 230.0 501.0Q157 428 157 322Q157 217 230.5 143.5Q304 70 409 70Q515 70 588.0 143.0Q661 216 661 322Z' style='fill: var(--kerykeion-chart-color-true-node)'/></g>
+        <symbol id='Interpolated_Lilith'>
+            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-interpolated-lilith)'/></g>
         </symbol>
-        <symbol id='Mean_South_Lunar_Node'>
-            <g transform='translate(1.920,4.634) scale(0.01119,-0.01119) translate(-56.000,-1286.000)'><path d='M1857 934Q1857 804 1773.0 705.0Q1689 606 1561 586Q1530 327 1376 156Q1208 -30 957 -30Q706 -30 538 156Q384 327 353 586Q224 606 140.0 705.0Q56 804 56 934Q56 1081 159.0 1183.5Q262 1286 409 1286Q556 1286 658.5 1183.5Q761 1081 761 934Q761 793 663.5 691.0Q566 589 425 582Q457 355 591 206Q739 40 957 40Q1175 40 1323 206Q1457 355 1489 582Q1348 589 1250.5 691.0Q1153 793 1153 934Q1153 1081 1255.5 1183.5Q1358 1286 1505 1286Q1652 1286 1754.5 1183.5Q1857 1081 1857 934ZM1757 934Q1757 1039 1683.5 1112.5Q1610 1186 1505 1186Q1399 1186 1325.5 1113.0Q1252 1040 1252 934Q1252 829 1326.0 755.5Q1400 682 1505 682Q1611 682 1684.0 755.0Q1757 828 1757 934ZM661 934Q661 1040 588.0 1113.0Q515 1186 409 1186Q304 1186 230.5 1112.5Q157 1039 157 934Q157 828 230.0 755.0Q303 682 409 682Q514 682 587.5 755.5Q661 829 661 934Z' style='fill: var(--kerykeion-chart-color-mean-node)'/></g>
+        <symbol id='Mean_Priapus'>
+            <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='var(--kerykeion-chart-color-mean-lilith)'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='var(--kerykeion-chart-color-mean-lilith)'/>
         </symbol>
-        <symbol id='True_South_Lunar_Node'>
-            <g transform='translate(1.920,4.634) scale(0.01119,-0.01119) translate(-56.000,-1286.000)'><path d='M1857 934Q1857 804 1773.0 705.0Q1689 606 1561 586Q1530 327 1376 156Q1208 -30 957 -30Q706 -30 538 156Q384 327 353 586Q224 606 140.0 705.0Q56 804 56 934Q56 1081 159.0 1183.5Q262 1286 409 1286Q556 1286 658.5 1183.5Q761 1081 761 934Q761 793 663.5 691.0Q566 589 425 582Q457 355 591 206Q739 40 957 40Q1175 40 1323 206Q1457 355 1489 582Q1348 589 1250.5 691.0Q1153 793 1153 934Q1153 1081 1255.5 1183.5Q1358 1286 1505 1286Q1652 1286 1754.5 1183.5Q1857 1081 1857 934ZM1757 934Q1757 1039 1683.5 1112.5Q1610 1186 1505 1186Q1399 1186 1325.5 1113.0Q1252 1040 1252 934Q1252 829 1326.0 755.5Q1400 682 1505 682Q1611 682 1684.0 755.0Q1757 828 1757 934ZM661 934Q661 1040 588.0 1113.0Q515 1186 409 1186Q304 1186 230.5 1112.5Q157 1039 157 934Q157 828 230.0 755.0Q303 682 409 682Q514 682 587.5 755.5Q661 829 661 934Z' style='fill: var(--kerykeion-chart-color-true-node)'/></g>
+        <symbol id='True_Priapus'>
+            <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='var(--kerykeion-chart-color-true-lilith)'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='var(--kerykeion-chart-color-true-lilith)' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='var(--kerykeion-chart-color-true-lilith)'/>
         </symbol>
-        <!-- Angles -->
-        <symbol id='Ascendant'>
-            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-first-house)'>As</text>
+        <symbol id='Interpolated_Perigee'>
+            <g transform='translate(24,0) scale(-1,1)'><path d='M7.500,3.714 A5.1,5.1 0 1,1 7.500,10.286 A3.7,3.7 0 1,0 7.500,3.714 Z' fill='var(--kerykeion-chart-color-interpolated-lilith)'/></g><line x1='12' y1='10.455' x2='12' y2='17.6' fill='none' stroke='var(--kerykeion-chart-color-interpolated-lilith)' stroke-width='1.494' stroke-linecap='round'/><path d='M8.6,16.8 L15.4,16.8 L12,22.1 Z' fill='var(--kerykeion-chart-color-interpolated-lilith)'/>
         </symbol>
-        <symbol id='Medium_Coeli'>
-            <text y='20' style='font-size: 20px; fill: var(--kerykeion-chart-color-tenth-house)'>Mc</text>
+        <symbol id='White_Moon'>
+            <path d='M8.030,3.439 A5.28,5.28 0 1,1 8.030,12.561 A4.5760000000000005,4.5760000000000005 0 1,0 8.030,3.439 Z' fill='none' stroke='var(--kerykeion-chart-color-white-moon)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='13.115' x2='12' y2='21.4' fill='none' stroke='var(--kerykeion-chart-color-white-moon)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='7.0' y1='17.8' x2='17.0' y2='17.8' fill='none' stroke='var(--kerykeion-chart-color-white-moon)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
-        <symbol id='Descendant'>
-            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-seventh-house)'>Ds</text>
-        </symbol>
-        <symbol id='Imum_Coeli'>
-            <text y='20' style='font-size: 22px; fill: var(--kerykeion-chart-color-fourth-house)'>Ic</text>
-        </symbol>
-        <!-- Points -->
-        <symbol id='Earth'>
-            <circle cx='12' cy='12' r='8.5' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='3.5' x2='12' y2='20.5' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='3.5' y1='12' x2='20.5' y2='12' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>
+        <!-- Centaurs -->
+        <symbol id='Chiron'>
+            <circle cx='10.500' cy='17.533' r='3.8' fill='none' stroke='var(--kerykeion-chart-color-chiron)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M10.500,2.667 L10.500,13.733' fill='none' stroke='var(--kerykeion-chart-color-chiron)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M16.900,3.1 L10.500,7 L17.300,11.3' fill='none' stroke='var(--kerykeion-chart-color-chiron)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Pholus'>
-            <g transform='translate(6.016,1.920) scale(0.01946,-0.01946) translate(-51.000,-880.000)'><path d='M345 -156Q268 -156 200.5 -133.5Q133 -111 92.0 -67.5Q51 -24 51 38Q51 96 86.5 138.0Q122 180 180.5 204.0Q239 228 309 233V880H482Q565 880 615.5 836.0Q666 792 666 704Q666 625 616.5 580.5Q567 536 474 536H381V233Q451 228 509.5 204.0Q568 180 603.5 138.0Q639 96 639 38Q639 -24 598.0 -67.5Q557 -111 490.0 -133.5Q423 -156 345 -156ZM484 809H381V607H488Q538 607 566.0 631.0Q594 655 594 707Q594 760 568.0 784.5Q542 809 484 809ZM345 -92Q407 -92 457.5 -76.0Q508 -60 537.5 -31.0Q567 -2 567 38Q567 79 537.5 108.0Q508 137 457.5 153.0Q407 169 345 169Q283 169 232.5 153.0Q182 137 152.5 108.0Q123 79 123 38Q123 -2 152.5 -31.0Q182 -60 232.5 -76.0Q283 -92 345 -92Z' style='fill: var(--kerykeion-chart-color-pholus)'/></g>
+            <circle cx='12' cy='16.433' r='4.9' fill='none' stroke='var(--kerykeion-chart-color-pholus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,2.667 L12,11.533' fill='none' stroke='var(--kerykeion-chart-color-pholus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,2.667 H13.8 A2.917,2.917 0 0 1 13.8,8.5 H12' fill='none' stroke='var(--kerykeion-chart-color-pholus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+        </symbol>
+        <!-- Asteroids -->
+        <symbol id='Ceres'>
+            <g transform='translate(7.102,1.920) scale(0.01074,-0.01074) translate(-202.000,-1467.000)'><path d='M1114 932Q1114 726 978.5 575.0Q843 424 641 401V0H937V-125H641V-410H516V-125H220V0H516V522H579Q750 522 869.5 641.5Q989 761 989 932Q989 1103 869.5 1222.5Q750 1342 579 1342Q436 1342 279 1220L202 1319Q389 1467 579 1467Q802 1467 958.0 1311.0Q1114 1155 1114 932Z' style='fill: var(--kerykeion-chart-color-ceres)'/></g>
+        </symbol>
+        <symbol id='Pallas'>
+            <g transform='translate(5.910,1.920) scale(0.01074,-0.01074) translate(-173.000,-1467.000)'><path d='M1307 891 800 376V0H1096V-125H800V-410H675V-125H379V0H675V381L173 891L740 1467ZM1132 891 740 1289 348 891 740 493Z' style='fill: var(--kerykeion-chart-color-pallas)'/></g>
+        </symbol>
+        <symbol id='Juno'>
+            <g transform='translate(6.260,1.920) scale(0.01102,-0.01102) translate(-216.000,-1420.000)'><path d='M1258 798H887L1149 536L1061 447L799 709V0H1095V-125H799V-410H674V-125H378V0H674V709L412 447L324 536L586 798H216V923H586L324 1184L412 1273L674 1011V1420H799V1011L1061 1273L1149 1184L887 923H1258Z' style='fill: var(--kerykeion-chart-color-juno)'/></g>
+        </symbol>
+        <symbol id='Vesta'>
+            <g transform='translate(3.220,1.920) scale(0.01244,-0.01244) translate(-90.000,-1274.000)'><path d='M859 635H734V1274H859ZM1342 561H1156L796 133L436 561H250V686H494L796 327L1098 686H1342ZM1502 0H1156L796 -347L436 0H90V125H486L796 -173L1106 125H1502Z' style='fill: var(--kerykeion-chart-color-vesta)'/></g>
+        </symbol>
+        <!-- Trans-Neptunian objects -->
+        <symbol id='Eris'>
+            <circle cx='12' cy='6.967' r='4.3' fill='none' stroke='var(--kerykeion-chart-color-eris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='11.267' x2='12' y2='17.480' fill='none' stroke='var(--kerykeion-chart-color-eris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.6' y1='13.367' x2='15.4' y2='13.367' fill='none' stroke='var(--kerykeion-chart-color-eris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M8.8,17.480 L15.2,17.480 L12,22.080 Z' fill='var(--kerykeion-chart-color-eris)'/>
         </symbol>
         <symbol id='Sedna'>
             <g transform='translate(3.732,1.920) scale(0.02684,-0.02684) translate(-11.000,-733.000)'><path d='M275 400V539H137Q72 539 41.5 565.5Q11 592 11 635Q11 676 39.0 703.0Q67 730 107 730Q148 730 175.0 702.0Q202 674 202 625V583H275V733H347V583H445V539H347V456Q432 445 494.5 392.0Q557 339 592.0 238.5Q627 138 627 -18H555Q555 134 521.5 226.0Q488 318 425.5 359.0Q363 400 275 400ZM137 583H158V625Q158 656 144.0 671.0Q130 686 107 686Q85 686 70.0 672.0Q55 658 55 635Q55 611 73.0 597.0Q91 583 137 583Z' style='fill: var(--kerykeion-chart-color-sedna)'/></g>
@@ -276,7 +308,7 @@
             <g transform='translate(1.920,2.433) scale(0.02093,-0.02093) translate(-50.000,-833.000)'><path d='M496 -81V762H326Q257 762 211.5 737.0Q166 712 143.5 672.0Q121 632 121 585Q121 507 172.0 455.5Q223 404 315 404V338Q234 338 174.5 370.0Q115 402 82.5 458.5Q50 515 50 586Q50 658 85.5 713.5Q121 769 185.0 801.0Q249 833 335 833H728Q814 833 878.0 801.0Q942 769 977.5 713.5Q1013 658 1013 586Q1013 515 980.5 458.5Q948 402 888.5 370.0Q829 338 748 338V404Q840 404 891.0 455.5Q942 507 942 585Q942 632 919.5 672.0Q897 712 852.0 737.0Q807 762 737 762H567V-81ZM315 454Q280 454 250.0 471.0Q220 488 202.5 517.5Q185 547 185 583Q185 619 202.5 647.5Q220 676 250.0 693.0Q280 710 315 710Q351 710 381.0 693.0Q411 676 428.5 647.5Q446 619 446 583Q446 547 428.5 517.5Q411 488 381.0 471.0Q351 454 315 454ZM747 454Q712 454 682.0 471.0Q652 488 634.5 517.5Q617 547 617 583Q617 619 634.5 647.5Q652 676 682.0 693.0Q712 710 747 710Q783 710 813.0 693.0Q843 676 860.5 647.5Q878 619 878 583Q878 547 860.5 517.5Q843 488 813.0 471.0Q783 454 747 454ZM315 514Q344 514 364.0 534.0Q384 554 384 582Q384 610 364.0 630.0Q344 650 315 650Q287 650 267.5 630.0Q248 610 248 582Q248 554 267.5 534.0Q287 514 315 514ZM747 514Q776 514 796.0 534.0Q816 554 816 582Q816 610 796.0 630.0Q776 650 747 650Q719 650 699.5 630.0Q680 610 680 582Q680 554 699.5 534.0Q719 514 747 514Z' style='fill: var(--kerykeion-chart-color-makemake)'/></g>
         </symbol>
         <symbol id='Ixion'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='6' y1='6' x2='18' y2='18' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='18' y1='6' x2='6' y2='18' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='3' x2='12' y2='21' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='6' y1='6' x2='18' y2='18' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='18' y1='6' x2='6' y2='18' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='3' x2='12' y2='21' fill='none' stroke='var(--kerykeion-chart-color-ixion)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Orcus'>
             <g transform='translate(1.920,1.920) scale(0.02187,-0.02187) translate(-50.000,-810.000)'><path d='M512 -112Q411 -112 326.5 -78.0Q242 -44 180.0 18.0Q118 80 84.0 164.5Q50 249 50 349Q50 450 84.0 534.0Q118 618 180.0 680.0Q242 742 326.5 776.0Q411 810 512 810Q607 810 690.5 776.0Q774 742 837.5 680.0Q901 618 936.5 534.0Q972 450 972 349Q972 249 938.0 164.5Q904 80 842.0 18.0Q780 -44 696.0 -78.0Q612 -112 512 -112ZM363 240Q346 263 336.0 290.5Q326 318 326 348Q326 399 351.0 440.5Q376 482 418.0 506.5Q460 531 510 531Q561 531 603.5 506.5Q646 482 671.0 440.5Q696 399 696 348Q696 315 684.0 285.0Q672 255 651 231H884Q901 288 901 350Q901 431 872.5 502.5Q844 574 791.5 628.5Q739 683 668.0 713.5Q597 744 512 744Q427 744 355.0 715.0Q283 686 231.0 633.0Q179 580 150.0 508.0Q121 436 121 350Q121 268 150.0 196.5Q179 125 231.0 70.5Q283 16 354.5 -14.5Q426 -45 512 -45Q568 -45 621 -30L390 211Q376 224 364 239ZM510 231Q544 231 570.5 246.5Q597 262 613.0 288.5Q629 315 629 347Q629 380 613.5 407.5Q598 435 571.0 451.0Q544 467 511 467Q479 467 452.0 451.0Q425 435 409.0 407.5Q393 380 393 347Q393 315 409.0 288.5Q425 262 452.0 246.5Q479 231 510 231ZM524 167 690 -3Q745 24 788.5 67.5Q832 111 859 167Z' style='fill: var(--kerykeion-chart-color-orcus)'/></g>
@@ -284,6 +316,7 @@
         <symbol id='Quaoar'>
             <g transform='translate(2.006,1.920) scale(0.02154,-0.02154) translate(-50.000,-838.000)'><path d='M978 374 824 220 977 -98 666 62 514 -90 50 374 514 838ZM153 372 512 13 618 119 466 413 764 265 875 376 516 735ZM690 130 846 38 761 196 606 274Z' style='fill: var(--kerykeion-chart-color-quaoar)'/></g>
         </symbol>
+        <!-- Uranian points -->
         <symbol id='Cupido'>
             <g transform='translate(4.826,1.920) scale(0.02129,-0.02129) translate(-31.000,-792.000)'><path d='M31 240V312Q75 315 114.5 340.5Q154 366 179.0 411.0Q204 456 204 516Q204 582 179.0 628.5Q154 675 114.5 700.5Q75 726 31 728V792Q96 789 152.0 756.5Q208 724 242.5 663.5Q277 603 277 516Q277 449 253.5 397.5Q230 346 190 311H488V408Q445 416 411.0 441.5Q377 467 357.5 505.0Q338 543 338 589Q338 640 362.5 681.5Q387 723 428.5 747.5Q470 772 521 772Q573 772 614.5 747.5Q656 723 680.5 681.5Q705 640 705 589Q705 545 686.0 507.5Q667 470 634.5 444.0Q602 418 560 409V311H705V240H560V129H650V58H560V-155H488V58H398V129H488V240ZM521 477Q568 477 600.5 510.0Q633 543 633 589Q633 620 618.0 645.0Q603 670 577.5 685.0Q552 700 521 700Q475 700 442.5 668.0Q410 636 410 589Q410 558 425.0 532.5Q440 507 465.5 492.0Q491 477 521 477Z' style='fill: var(--kerykeion-chart-color-cupido)'/></g>
         </symbol>
@@ -308,65 +341,50 @@
         <symbol id='Poseidon'>
             <g transform='translate(3.327,1.920) scale(0.02182,-0.02182) translate(-51.000,-823.000)'><path d='M51 -101Q51 -21 78.0 48.0Q105 117 154.0 170.5Q203 224 269.0 256.5Q335 289 412 295V427Q335 433 269.0 465.5Q203 498 154.0 551.5Q105 605 78.0 674.0Q51 743 51 823H123Q123 737 160.5 666.5Q198 596 263.5 551.5Q329 507 412 499V707H484V499Q568 507 633.5 551.0Q699 595 736.5 665.5Q774 736 774 823H846Q846 743 819.0 673.5Q792 604 743.0 551.0Q694 498 628.0 465.5Q562 433 484 426V296Q562 289 628.0 256.5Q694 224 743.0 171.0Q792 118 819.0 48.5Q846 -21 846 -101H774Q774 -14 736.5 56.5Q699 127 633.5 171.0Q568 215 484 223V15H412V223Q329 215 263.5 170.5Q198 126 160.5 55.5Q123 -15 123 -101Z' style='fill: var(--kerykeion-chart-color-poseidon)'/></g>
         </symbol>
-        <symbol id='FixedStar'>
-            <path d='M12,3 L14.12,9.09 L20.56,9.22 L15.42,13.11 L17.29,19.28 L12,15.6 L6.71,19.28 L8.58,13.11 L3.44,9.22 L9.88,9.09 Z' fill='var(--kerykeion-chart-color-fixed-star-default, #d4a053)'/>
-        </symbol>
-        <symbol id='Midpoint'>
-            <line x1='5' y1='12' x2='19' y2='12' stroke='var(--kerykeion-chart-color-midpoint-default, #b58bff)' stroke-width='1.6'/><circle cx='5' cy='12' r='2.2' fill='var(--kerykeion-chart-color-midpoint-default, #b58bff)'/><circle cx='19' cy='12' r='2.2' fill='var(--kerykeion-chart-color-midpoint-default, #b58bff)'/><circle cx='12' cy='12' r='2.2' fill='var(--kerykeion-chart-color-midpoint-default, #b58bff)'/>
-        </symbol>
-        <symbol id='Anti_Vertex'>
-            <text x='12' y='16.5' text-anchor='middle' style='font-size:13px; fill: var(--kerykeion-chart-color-anti-vertex)'>Av</text>
-        </symbol>
-        <symbol id='Ceres'>
-            <g transform='translate(7.102,1.920) scale(0.01074,-0.01074) translate(-202.000,-1467.000)'><path d='M1114 932Q1114 726 978.5 575.0Q843 424 641 401V0H937V-125H641V-410H516V-125H220V0H516V522H579Q750 522 869.5 641.5Q989 761 989 932Q989 1103 869.5 1222.5Q750 1342 579 1342Q436 1342 279 1220L202 1319Q389 1467 579 1467Q802 1467 958.0 1311.0Q1114 1155 1114 932Z' style='fill: var(--kerykeion-chart-color-ceres)'/></g>
-        </symbol>
-        <symbol id='Pallas'>
-            <g transform='translate(5.910,1.920) scale(0.01074,-0.01074) translate(-173.000,-1467.000)'><path d='M1307 891 800 376V0H1096V-125H800V-410H675V-125H379V0H675V381L173 891L740 1467ZM1132 891 740 1289 348 891 740 493Z' style='fill: var(--kerykeion-chart-color-pallas)'/></g>
-        </symbol>
-        <symbol id='Juno'>
-            <g transform='translate(6.260,1.920) scale(0.01102,-0.01102) translate(-216.000,-1420.000)'><path d='M1258 798H887L1149 536L1061 447L799 709V0H1095V-125H799V-410H674V-125H378V0H674V709L412 447L324 536L586 798H216V923H586L324 1184L412 1273L674 1011V1420H799V1011L1061 1273L1149 1184L887 923H1258Z' style='fill: var(--kerykeion-chart-color-juno)'/></g>
-        </symbol>
-        <symbol id='Vesta'>
-            <g transform='translate(3.220,1.920) scale(0.01244,-0.01244) translate(-90.000,-1274.000)'><path d='M859 635H734V1274H859ZM1342 561H1156L796 133L436 561H250V686H494L796 327L1098 686H1342ZM1502 0H1156L796 -347L436 0H90V125H486L796 -173L1106 125H1502Z' style='fill: var(--kerykeion-chart-color-vesta)'/></g>
-        </symbol>
-        <symbol id='Vertex'>
-            <text x='12' y='16.5' text-anchor='middle' style='font-size:13px; fill: var(--kerykeion-chart-color-vertex)'>Vx</text>
-        </symbol>
-        <symbol id='True_Lilith'>
-            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-mean-lilith)'/></g>
-        </symbol>
-        <symbol id='Interpolated_Lilith'>
-            <g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-mean-lilith)'/></g>
-        </symbol>
-        <symbol id='Mean_Priapus'>
-            <g transform='rotate(180 12 12)'><g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-mean-lilith)'/></g></g>
-        </symbol>
-        <symbol id='True_Priapus'>
-            <g transform='rotate(180 12 12)'><g transform='translate(7.400,1.920) scale(0.01036,-0.01036) translate(-173.000,-1536.000)'><path d='M1061 270Q943 240 847 240Q753 240 660 268V0H956V-125H660V-410H535V-125H239V0H535V319Q373 405 275 554Q173 710 173 888Q173 1152 379 1346Q581 1536 847 1536Q943 1536 1061 1506L1060 1498Q858 1496 727 1286Q613 1103 613 888Q613 673 727 490Q858 280 1060 278Z' style='fill: var(--kerykeion-chart-color-mean-lilith)'/></g></g>
-        </symbol>
-        <symbol id='White_Moon'>
-            <circle cx='12' cy='7.5' r='4.5' fill='none' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.6' stroke-linecap='round'/><line x1='12' y1='12' x2='12' y2='21' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.6' stroke-linecap='round'/><line x1='7.5' y1='16.5' x2='16.5' y2='16.5' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.6' stroke-linecap='round'/>
-        </symbol>
-        <symbol id='Interpolated_Perigee'>
-            <circle cx='12' cy='7.5' r='4.5' fill='none' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.6' stroke-linecap='round'/><circle cx='12' cy='7.5' r='1.6' fill='var(--kerykeion-chart-color-mean-lilith)'/><line x1='12' y1='12' x2='12' y2='21' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.6' stroke-linecap='round'/><line x1='7.5' y1='16.5' x2='16.5' y2='16.5' stroke='var(--kerykeion-chart-color-mean-lilith)' stroke-width='1.6' stroke-linecap='round'/>
-        </symbol>
-        <symbol id='Eris'>
-            <g transform='translate(2.676,1.920) scale(0.02072,-0.02072) translate(-51.000,-849.000)'><path d='M51 -123V-51Q137 -51 212.0 -19.0Q287 13 344.0 70.0Q401 127 433.0 202.0Q465 277 465 363Q465 449 433.0 524.0Q401 599 344.0 656.0Q287 713 212.0 745.0Q137 777 51 777V849Q139 849 217.0 820.0Q295 791 358.5 739.0Q422 687 465 618V848H537V618Q580 687 643.5 739.0Q707 791 785.5 820.0Q864 849 951 849V777Q866 777 791.0 745.0Q716 713 659.0 656.0Q602 599 569.5 524.0Q537 449 537 363Q537 278 568.5 203.0Q600 128 656.5 71.0Q713 14 788.5 -18.5Q864 -51 951 -51V-123Q863 -123 785.0 -94.0Q707 -65 643.5 -13.0Q580 39 537 108V-124H465V108Q422 39 358.5 -13.0Q295 -65 216.5 -94.0Q138 -123 51 -123Z' style='fill: var(--kerykeion-chart-color-eris)'/></g>
-        </symbol>
-        <symbol id='East_Point'>
-            <circle cx='9' cy='12' r='6' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='9' y1='6.2' x2='9' y2='17.8' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='3.2' y1='12' x2='14.8' y2='12' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='14.8' y1='12' x2='19' y2='7.6' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='14.8' y1='12' x2='19' y2='16.4' fill='none' stroke='var(--kerykeion-chart-color-ceres)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>
-        </symbol>
+        <!-- Arabic parts -->
         <symbol id='Pars_Fortunae'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='5.6' y1='5.6' x2='18.4' y2='18.4' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='18.4' y1='5.6' x2='5.6' y2='18.4' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='5.6' y1='5.6' x2='18.4' y2='18.4' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='18.4' y1='5.6' x2='5.6' y2='18.4' fill='none' stroke='var(--kerykeion-chart-color-pars-fortunae)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Pars_Spiritus'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='6.5' x2='12' y2='17.5' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.5' y1='12' x2='17.5' y2='12' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.1' y1='8.1' x2='15.9' y2='15.9' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='15.9' y1='8.1' x2='8.1' y2='15.9' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='6.5' x2='12' y2='17.5' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.5' y1='12' x2='17.5' y2='12' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.1' y1='8.1' x2='15.9' y2='15.9' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='15.9' y1='8.1' x2='8.1' y2='15.9' fill='none' stroke='var(--kerykeion-chart-color-pars-spiritus)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='Pars_Amoris'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-amoris)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,16.5 C8.8,13.5 7.8,11.4 9.4,9.8 C10.5,8.7 12,9.3 12,10.6 C12,9.3 13.5,8.7 14.6,9.8 C16.2,11.4 15.2,13.5 12,16.5 Z' fill='var(--kerykeion-chart-color-pars-amoris)'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-amoris)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><path d='M12,16.5 C8.8,13.5 7.8,11.4 9.4,9.8 C10.5,8.7 12,9.3 12,10.6 C12,9.3 13.5,8.7 14.6,9.8 C16.2,11.4 15.2,13.5 12,16.5 Z' fill='var(--kerykeion-chart-color-pars-amoris)'/>
         </symbol>
         <symbol id='Pars_Fidei'>
-            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.8' y1='12' x2='17.2' y2='12' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='6.8' x2='12' y2='17.2' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.4' y1='8.4' x2='15.6' y2='15.6' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='12' cy='12' r='9' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.8' y1='12' x2='17.2' y2='12' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='6.8' x2='12' y2='17.2' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='8.4' y1='8.4' x2='15.6' y2='15.6' fill='none' stroke='var(--kerykeion-chart-color-pars-fidei)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+        </symbol>
+        <!-- Angles -->
+        <symbol id='Ascendant'>
+            <g transform='translate(0.458,19.605) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-first-house)'><path d='M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(639,0)'/></g>
+        </symbol>
+        <symbol id='Medium_Coeli'>
+            <g transform='translate(-1.852,18.721) scale(0.01909,-0.01909)' style='fill: var(--kerykeion-chart-color-tenth-house)'><path d='M412 0 177 626H173Q176 595 178.0 542.5Q180 490 180 433V0H97V714H230L450 129H454L678 714H810V0H721V439Q721 491 723.5 542.0Q726 593 728 625H724L486 0Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(907,0)'/></g>
+        </symbol>
+        <symbol id='Descendant'>
+            <g transform='translate(-1.564,19.572) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-seventh-house)'><path d='M669 364Q669 183 570.5 91.5Q472 0 296 0H97V714H317Q425 714 504.0 674.0Q583 634 626.0 556.5Q669 479 669 364ZM574 361Q574 504 503.5 570.5Q433 637 304 637H187V77H284Q574 77 574 361Z'/><path d='M434 148Q434 70 376.0 30.0Q318 -10 220 -10Q164 -10 123.5 -1.0Q83 8 52 24V104Q84 88 129.5 74.5Q175 61 222 61Q289 61 319.0 82.5Q349 104 349 140Q349 160 338.0 176.0Q327 192 298.5 208.0Q270 224 217 244Q165 264 128.0 284.0Q91 304 71.0 332.0Q51 360 51 404Q51 472 106.5 509.0Q162 546 252 546Q301 546 343.5 536.5Q386 527 423 510L393 440Q359 454 322.0 464.0Q285 474 246 474Q192 474 163.5 456.5Q135 439 135 409Q135 387 148.0 371.5Q161 356 191.5 341.5Q222 327 273 307Q324 288 360.0 268.0Q396 248 415.0 219.5Q434 191 434 148Z' transform='translate(730,0)'/></g>
+        </symbol>
+        <symbol id='Imum_Coeli'>
+            <g transform='translate(3.115,19.572) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-fourth-house)'><path d='M298 0H40V52L124 71V642L40 662V714H298V662L214 642V71L298 52Z'/><path d='M300 -10Q229 -10 173.5 19.0Q118 48 86.5 109.0Q55 170 55 265Q55 364 88.0 426.0Q121 488 177.5 517.0Q234 546 306 546Q347 546 385.0 537.5Q423 529 447 517L420 444Q396 453 364.0 461.0Q332 469 304 469Q146 469 146 266Q146 169 184.5 117.5Q223 66 299 66Q343 66 376.5 75.0Q410 84 438 97V19Q411 5 378.5 -2.5Q346 -10 300 -10Z' transform='translate(339,0)'/></g>
+        </symbol>
+        <!-- Axes and other points -->
+        <symbol id='Vertex'>
+            <g transform='translate(0.050,19.680) scale(0.02151,-0.02151)' style='fill: var(--kerykeion-chart-color-vertex)'><path d='M600 714 345 0H255L0 714H94L255 256Q271 212 282.0 173.5Q293 135 300 100Q307 135 318.0 174.0Q329 213 345 258L505 714Z'/><path d='M212 274 27 536H127L265 334L402 536H501L316 274L511 0H411L265 214L117 0H18Z' transform='translate(600,0)'/></g>
+        </symbol>
+        <symbol id='Anti_Vertex'>
+            <g transform='translate(0.000,19.501) scale(0.02092,-0.02092)' style='fill: var(--kerykeion-chart-color-anti-vertex)'><path d='M545 0 459 221H176L91 0H0L279 717H360L638 0ZM352 517Q349 525 342.0 546.0Q335 567 328.5 589.5Q322 612 318 624Q311 593 302.0 563.5Q293 534 287 517L206 301H432Z'/><path d='M203 0 0 536H94L208 220Q216 198 225.0 171.0Q234 144 241.0 119.5Q248 95 251 78H255Q259 95 266.5 120.0Q274 145 283.5 172.0Q293 199 300 220L414 536H508L304 0Z' transform='translate(639,0)'/></g>
+        </symbol>
+        <symbol id='East_Point'>
+            <circle cx='9.667' cy='12' r='7' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='9.667' y1='5.234' x2='9.667' y2='18.766' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='2.9' y1='12' x2='16.433' y2='12' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='16.433' y1='12' x2='21.333' y2='6.867' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='16.433' y1='12' x2='21.333' y2='17.133' fill='none' stroke='var(--kerykeion-chart-color-east-point)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+        </symbol>
+        <symbol id='Earth'>
+            <circle cx='12' cy='12' r='9.333' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='12' y1='2.667' x2='12' y2='21.333' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/><line x1='2.667' y1='12' x2='21.333' y2='12' fill='none' stroke='var(--kerykeion-chart-color-earth)' stroke-width='1.494' stroke-linecap='round' stroke-linejoin='round'/>
+        </symbol>
+        <symbol id='FixedStar'>
+            <path d='M12.00,1.40 L14.49,8.57 L22.08,8.72 L16.03,13.31 L18.23,20.57 L12.00,16.24 L5.77,20.57 L7.97,13.31 L1.92,8.72 L9.51,8.57 Z' fill='var(--kerykeion-chart-color-fixed-star-default, #d4a053)'/>
+        </symbol>
+        <symbol id='Midpoint'>
+            <line x1='5' y1='12' x2='19' y2='12' stroke='var(--kerykeion-chart-color-midpoint-default, #b58bff)' stroke-width='0.747'/><circle cx='5' cy='12' r='2.2' fill='var(--kerykeion-chart-color-midpoint-default, #b58bff)'/><circle cx='19' cy='12' r='2.2' fill='var(--kerykeion-chart-color-midpoint-default, #b58bff)'/><circle cx='12' cy='12' r='2.2' fill='var(--kerykeion-chart-color-midpoint-default, #b58bff)'/>
         </symbol>
         <!-- Signs -->
         <symbol id='Ari'>
@@ -407,37 +425,37 @@
         </symbol>
         <!-- Aspects -->
         <symbol id='orb0'>
-            <circle cx='4' cy='6' r='2.6' fill='none' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/><line x1='5.9' y1='4.1' x2='9' y2='1.2' fill='none' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='4' cy='6' r='2.6' fill='none' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='5.9' y1='4.1' x2='9' y2='1.2' fill='none' stroke='var(--kerykeion-chart-color-conjunction)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb30'>
-            <line x1='1' y1='5.6' x2='9' y2='5.6' fill='none' stroke='var(--kerykeion-chart-color-semi-sextile)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/><path d='M1.6,1 L5,5.6 L8.4,1' fill='none' stroke='var(--kerykeion-chart-color-semi-sextile)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <line x1='1' y1='5.6' x2='9' y2='5.6' fill='none' stroke='var(--kerykeion-chart-color-semi-sextile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><path d='M1.6,1 L5,5.6 L8.4,1' fill='none' stroke='var(--kerykeion-chart-color-semi-sextile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb45'>
-            <path d='M1.4,8.8 L8.8,8.8 M1.4,8.8 L5.1,1.4' fill='none' stroke='var(--kerykeion-chart-color-semi-square)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M1.4,8.8 L8.8,8.8 M1.4,8.8 L5.1,1.4' fill='none' stroke='var(--kerykeion-chart-color-semi-square)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb60'>
-            <path d='M1.3,1.3 L8.7,8.7 M1.3,8.7 L8.7,1.3 M1,5 L9,5' fill='none' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M1.3,1.3 L8.7,8.7 M1.3,8.7 L8.7,1.3 M1,5 L9,5' fill='none' stroke='var(--kerykeion-chart-color-sextile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb72'>
-            <circle cx='4.4' cy='4.4' r='2.9' fill='none' stroke='var(--kerykeion-chart-color-quintile)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.4' y1='6.4' x2='9.2' y2='9.2' fill='none' stroke='var(--kerykeion-chart-color-quintile)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='4.4' cy='4.4' r='2.9' fill='none' stroke='var(--kerykeion-chart-color-quintile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.451' y1='6.451' x2='9.2' y2='9.2' fill='none' stroke='var(--kerykeion-chart-color-quintile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb90'>
-            <rect x='1.3' y='1.3' width='7.4' height='7.4' fill='none' stroke='var(--kerykeion-chart-color-square)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <rect x='1.3' y='1.3' width='7.4' height='7.4' fill='none' stroke='var(--kerykeion-chart-color-square)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb120'>
-            <path d='M5,1.2 L9,9 L1,9 Z' fill='none' stroke='var(--kerykeion-chart-color-trine)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <path d='M5,1.2 L9,9 L1,9 Z' fill='none' stroke='var(--kerykeion-chart-color-trine)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb135'>
-            <rect x='1' y='1' width='5.3' height='5.3' fill='none' stroke='var(--kerykeion-chart-color-sesquiquadrate)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/><path d='M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4' fill='none' stroke='var(--kerykeion-chart-color-sesquiquadrate)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/>
+            <rect x='1' y='1' width='5.3' height='5.3' fill='none' stroke='var(--kerykeion-chart-color-sesquiquadrate)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><path d='M4.4,9.4 L9.4,9.4 M9.4,9.4 L9.4,4.4' fill='none' stroke='var(--kerykeion-chart-color-sesquiquadrate)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb144'>
-            <circle cx='5' cy='4.5' r='2.8' fill='none' stroke='var(--kerykeion-chart-color-biquintile)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/><line x1='3.2' y1='6.5' x2='1.1' y2='9.2' fill='none' stroke='var(--kerykeion-chart-color-biquintile)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.8' y1='6.5' x2='8.9' y2='9.2' fill='none' stroke='var(--kerykeion-chart-color-biquintile)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='5' cy='4.5' r='2.8' fill='none' stroke='var(--kerykeion-chart-color-biquintile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='3.212' y1='6.655' x2='1.1' y2='9.2' fill='none' stroke='var(--kerykeion-chart-color-biquintile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='6.788' y1='6.655' x2='8.9' y2='9.2' fill='none' stroke='var(--kerykeion-chart-color-biquintile)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb150'>
-            <line x1='1' y1='4.4' x2='9' y2='4.4' fill='none' stroke='var(--kerykeion-chart-color-quincunx)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/><path d='M1.6,9 L5,4.4 L8.4,9' fill='none' stroke='var(--kerykeion-chart-color-quincunx)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/>
+            <line x1='1' y1='4.4' x2='9' y2='4.4' fill='none' stroke='var(--kerykeion-chart-color-quincunx)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><path d='M1.6,9 L5,4.4 L8.4,9' fill='none' stroke='var(--kerykeion-chart-color-quincunx)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <symbol id='orb180'>
-            <circle cx='3' cy='3' r='1.9' fill='none' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/><circle cx='7' cy='7' r='1.9' fill='none' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/><line x1='4.35' y1='4.35' x2='5.65' y2='5.65' fill='none' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'/>
+            <circle cx='3' cy='3' r='1.9' fill='none' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><circle cx='7' cy='7' r='1.9' fill='none' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/><line x1='4.35' y1='4.35' x2='5.65' y2='5.65' fill='none' stroke='var(--kerykeion-chart-color-opposition)' stroke-width='0.622' stroke-linecap='round' stroke-linejoin='round'/>
         </symbol>
         <!-- Retrograde -->
         <symbol id='retrograde'>

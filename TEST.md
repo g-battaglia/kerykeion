@@ -187,7 +187,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 
 | File | What it covers |
 |------|----------------|
-| `test_chart_drawer.py` | All chart types (natal, synastry, transit, composite, return), all themes (classic, dark, light, high-contrast, B&W, strawberry), all sidereal modes (20 parametrized), all house systems (23 parametrized), 9 parametrized languages plus default English, partial views (wheel-only, aspect-grid-only), chart options (padding, CSS, minify, custom title, indicators), SVG baseline comparison, save methods, error handling, large aspect lists, overlapping planets, composite location |
+| `test_chart_drawer.py` | All chart types (natal, synastry, transit, composite, return), all themes (classic, dark, B&W), all sidereal modes (20 parametrized), all house systems (23 parametrized), 9 parametrized languages plus default English, partial views (wheel-only, aspect-grid-only), chart options (padding, CSS, minify, custom title, indicators), SVG baseline comparison, save methods, error handling, large aspect lists, overlapping planets, composite location |
 | `test_chart_parametrized.py` | Temporal x themes cross-product, geographic x house systems, extreme latitude whole-sign, sidereal x theme combinations, house system synastry/transit |
 | `test_draw_planets.py` | Planet glyph positioning, retrograde markers, degree labels, planet grouping/overlap handling, edge cases (empty list, single planet, zero/359 degrees), SVG output structure, chart type variants, internal helpers |
 | `test_lunar_phase_svg.py` | All 8 standard moon phases match reference SVG sheet |

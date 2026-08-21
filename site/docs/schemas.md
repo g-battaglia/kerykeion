@@ -84,7 +84,7 @@ Detailed information about a celestial body or house cusp.
 | `nakshatra_pada` | `int \| None`                 | Nakshatra pada/quarter (1-4). Requires `calculate_nakshatra=True` |
 | `nakshatra_lord` | `str \| None`                 | Vimsottari Dasha lord planet. Requires `calculate_nakshatra=True` |
 | `gauquelin_sector` | `float \| None`             | Gauquelin 36-sector position. Requires `calculate_gauquelin=True` |
-| `motion_state` | `MotionState \| None`           | Speed classification (`retrograde`/`stationary`/`slow`/`average`/`fast`). Populated for the ten planets in Earth-centred perspectives. |
+| `motion_state` | `MotionState \| None`           | Speed classification (`retrograde`/`stationary`/`stationary_retrograde`/`stationary_direct`/`slow`/`average`/`fast`). Populated for the ten planets in Earth-centred perspectives. |
 | `azimuth`    | `float \| None`                   | Azimuth angle in degrees. Requires `calculate_local_space=True` |
 | `altitude_above_horizon` | `float \| None`       | Altitude above horizon. Requires `calculate_local_space=True` |
 
@@ -501,13 +501,29 @@ These Literal types define the allowed string values for various model fields, p
 
 Classification of a celestial body's speed relative to its mean daily motion. Populated on `KerykeionPointModel.motion_state` for the ten planets in Earth-centred perspectives; `None` elsewhere.
 
-| Value           | Description                                           |
-| :-------------- | :---------------------------------------------------- |
-| `"retrograde"`  | Moving backward (negative speed).                     |
-| `"stationary"`  | Near-zero speed at a station (< 5% of mean motion).   |
-| `"slow"`        | Below 80% of mean daily motion.                       |
-| `"average"`     | Between 80% and 120% of mean daily motion.            |
-| `"fast"`        | Above 120% of mean daily motion.                      |
+| Value                     | Description                                                                    |
+| :------------------------ | :------------------------------------------------------------------------------ |
+| `"retrograde"`            | Moving backward, outside the stationary band.                                   |
+| `"stationary"`            | Inside the stationary band (< 5% of mean motion, either direction), turn unknown. |
+| `"stationary_retrograde"` | Inside the band with the speed still falling: the retrograde phase is opening.   |
+| `"stationary_direct"`     | Inside the band with the speed rising: the retrograde phase is closing.          |
+| `"slow"`                  | Below 80% of mean daily motion.                                                  |
+| `"average"`               | Between 80% and 120% of mean daily motion.                                       |
+| `"fast"`                  | Above 120% of mean daily motion.                                                 |
+
+The band brackets zero on both sides and is tested before the sign of the speed,
+so a body creeping backwards at a hundredth of its mean motion reports a station
+rather than a plain `"retrograde"`. The two stations are read differently and the
+sign of the speed cannot separate them — both are approached from one side of
+zero and left on the other — so they are told apart by the trend: a second speed
+sample a day later, falling or rising through the band. Without a usable second
+sample the generic `"stationary"` stands, which is an absence of a claim rather
+than a guess.
+
+> **Downstream matching.** `"stationary_retrograde"` and `"stationary_direct"`
+> are new values on this literal. Code that matches `motion_state` exhaustively —
+> a `match` statement, a dict keyed by every value, a TypeScript union mirrored
+> from the schema — must be extended before it sees a chart cast at a station.
 
 ---
 
@@ -845,8 +861,6 @@ Available visual themes for chart rendering.
 | `"classic"`            | Traditional white background, standard colors.      |
 | `"light"`              | Minimalist light mode with soft tones.              |
 | `"dark"`               | Modern dark mode for reduced eye strain.            |
-| `"dark-high-contrast"` | Dark mode with enhanced contrast for accessibility. |
-| `"strawberry"`         | Pink/red color palette, playful aesthetic.          |
 | `"black-and-white"`    | High contrast monochrome for print output.          |
 
 ---

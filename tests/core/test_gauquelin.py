@@ -141,7 +141,7 @@ class TestGauquelinHitAreaSweep:
 
     def test_hit_area_arc_sweep_flags(self, subject_with_gauquelin, tmp_path):
         chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
-        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer = ChartDrawer(chart_data=chart_data, theme="classic")
         # The two-arc wedge path shape is the classic engine's contract; the
         # modern wheel draws its own sector geometry.
         drawer.save_svg(output_path=str(tmp_path), filename="gauq_sweep", style="classic")
@@ -264,7 +264,7 @@ class TestGauquelinSVG:
     def test_svg_contains_gauquelin_sector_lines(self, subject_with_gauquelin, tmp_path):
         """SVG should contain Gauquelin sector line elements."""
         chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
-        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer = ChartDrawer(chart_data=chart_data, theme="classic")
         drawer.save_svg(output_path=str(tmp_path), filename="gauquelin_lines")
         svg_content = (tmp_path / "gauquelin_lines.svg").read_text()
         # Should have sector division lines
@@ -293,7 +293,7 @@ class TestGauquelinSVG:
     def test_svg_contains_36_sector_hit_areas(self, subject_with_gauquelin, tmp_path):
         """Gauquelin mode must emit 36 transparent clickable wedges with kr:sector attrs."""
         chart_data = ChartDataFactory.create_natal_chart_data(subject_with_gauquelin)
-        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer = ChartDrawer(chart_data=chart_data, theme="classic")
         # Transparent-wedge hit areas are the classic engine's contract; the
         # modern wheel renders its own click sectors.
         drawer.save_svg(output_path=str(tmp_path), filename="gauq_hit_areas", style="classic")
@@ -317,7 +317,7 @@ class TestGauquelinSVG:
     def test_svg_without_gauquelin_has_no_sector_hit_areas(self, subject_without_gauquelin, tmp_path):
         """Non-Gauquelin charts must not emit GauquelinSector hit-areas."""
         chart_data = ChartDataFactory.create_natal_chart_data(subject_without_gauquelin)
-        drawer = ChartDrawer(chart_data=chart_data, theme="light")
+        drawer = ChartDrawer(chart_data=chart_data, theme="classic")
         drawer.save_svg(output_path=str(tmp_path), filename="no_gauq_hit_areas")
         svg = (tmp_path / "no_gauq_hit_areas.svg").read_text()
 
