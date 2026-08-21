@@ -275,7 +275,14 @@ PLANET_GLYPH_BOX = 24
 # so zodiac sign scale must be proportionally smaller to appear smaller.
 PLANET_SCALE_BASE = 0.18144  # Planet glyph: 24 * 0.18144 ≈ 4.35 visual units
 DEGREES_FONT_SIZE = 2.24  # Degrees text font size
-SIGN_SCALE_BASE = 0.08736  # Zodiac sign: 32 * 0.08736 ≈ 2.80 visual units
+# The sign glyph carries its size differently from everything around it: a thin
+# outline beside solid figures reads smaller than it measures, and at 0.08736 it
+# was the one mark in the cluster that looked undersized. Up 18%, and it costs
+# nothing at the ruler — it sits in the middle of the block, so it grows into
+# the air between the rows rather than into the tether's room. The planet glyph
+# was left alone for exactly that reason: it is the row nearest the ruler, and
+# it would have had to move inward again to pay for its own growth.
+SIGN_SCALE_BASE = 0.10309  # Zodiac sign: 32 * 0.10309 ≈ 3.30 visual units
 MINUTES_FONT_SIZE = 2.072  # Minutes text font size
 RX_FONT_SIZE = 1.792  # Retrograde indicator font size
 

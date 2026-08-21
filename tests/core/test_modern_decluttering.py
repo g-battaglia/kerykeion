@@ -713,7 +713,7 @@ _MEASURED_GEOMETRY = {
     # Natal ring
     "PLANET_SCALE_BASE": 0.18144,
     "DEGREES_FONT_SIZE": 2.24,
-    "SIGN_SCALE_BASE": 0.08736,
+    "SIGN_SCALE_BASE": 0.10309,
     "MINUTES_FONT_SIZE": 2.072,
     "RX_FONT_SIZE": 1.792,
     # Dual rings

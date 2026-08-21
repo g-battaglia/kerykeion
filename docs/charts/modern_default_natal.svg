@@ -322,7 +322,7 @@
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='#7f3f00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#7f3f00' font-weight='500' transform='rotate(90.000000 50.0 14.21) translate(0 0.2240)'>19º</text>
-  <g transform='translate(50.0 17.89) rotate(90.000000) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(90.000000) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='#7f3f00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#7f3f00' font-weight='500' transform='rotate(90.000000 50.0 21.89) translate(0 0.2124)'>42'</text>
@@ -335,7 +335,7 @@
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(110.648968 50.0 14.21) translate(0 0.2240)'>13º</text>
-  <g transform='translate(50.0 17.89) rotate(110.648968) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(110.648968) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(110.648968 50.0 21.89) translate(0 0.2124)'>12'</text>
@@ -349,7 +349,7 @@
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(116.835659 50.0 14.21) translate(0 0.2240)'>13º</text>
-  <g transform='translate(50.0 17.89) rotate(116.835659) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(116.835659) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(116.835659 50.0 21.89) translate(0 0.2124)'>41'</text>
@@ -363,7 +363,7 @@
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(125.840888 50.0 14.21) translate(0 0.2240)'>25º</text>
-  <g transform='translate(50.0 17.89) rotate(125.840888) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(125.840888) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(125.840888 50.0 21.89) translate(0 0.1968)'>33'</text>
@@ -377,7 +377,7 @@
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='#505705' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#505705' font-weight='500' transform='rotate(189.491565 50.0 14.21) translate(0 0.2240)'>0º</text>
-  <g transform='translate(50.0 17.89) rotate(189.491565) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(189.491565) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='#505705' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#505705' font-weight='500' transform='rotate(189.491565 50.0 21.89) translate(0 0.1968)'>34'</text>
@@ -390,7 +390,7 @@
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='#713f04' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#713f04' font-weight='500' transform='rotate(195.842483 50.0 14.21) translate(0 0.2408)'>4º</text>
-  <g transform='translate(50.0 17.89) rotate(195.842483) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(195.842483) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='#713f04' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#713f04' font-weight='500' transform='rotate(195.842483 50.0 21.89) translate(0 0.2124)'>11'</text>
@@ -403,7 +403,7 @@
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='#400052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#400052' font-weight='500' transform='rotate(223.504289 50.0 14.21) translate(0 0.2240)'>3º</text>
-  <g transform='translate(50.0 17.89) rotate(223.504289) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(223.504289) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='#400052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#400052' font-weight='500' transform='rotate(223.504289 50.0 21.89) translate(0 0.2124)'>12'</text>
@@ -416,7 +416,7 @@
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='#06537f' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#06537f' font-weight='500' transform='rotate(246.318991 50.0 14.21) translate(0 0.2240)'>26º</text>
-  <g transform='translate(50.0 17.89) rotate(246.318991) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(246.318991) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='#06537f' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#06537f' font-weight='500' transform='rotate(246.318991 50.0 21.89) translate(0 0.2124)'>1'</text>
@@ -429,7 +429,7 @@
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='#540000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#540000' font-weight='500' transform='rotate(252.951402 50.0 14.21) translate(0 0.2408)'>2º</text>
-  <g transform='translate(50.0 17.89) rotate(252.951402) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(252.951402) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='#540000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#540000' font-weight='500' transform='rotate(252.951402 50.0 21.89) translate(0 0.1968)'>39'</text>
@@ -442,7 +442,7 @@
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='#4c1541' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#4c1541' font-weight='500' transform='rotate(261.257298 50.0 14.21) translate(0 0.2408)'>11º</text>
-  <g transform='translate(50.0 17.89) rotate(261.257298) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(261.257298) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='#4c1541' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#4c1541' font-weight='500' transform='rotate(261.257298 50.0 21.89) translate(0 0.2124)'>1'</text>
@@ -455,7 +455,7 @@
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#7e3e00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#7e3e00' font-weight='500' transform='rotate(266.612587 50.0 14.21) translate(0 0.2240)'>16º</text>
-  <g transform='translate(50.0 17.89) rotate(266.612587) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(266.612587) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='#7e3e00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#7e3e00' font-weight='500' transform='rotate(266.612587 50.0 21.89) translate(0 0.1968)'>16'</text>
@@ -468,7 +468,7 @@
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='#520800' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#520800' font-weight='500' transform='rotate(288.847104 50.0 14.21) translate(0 0.2240)'>8º</text>
-  <g transform='translate(50.0 17.89) rotate(288.847104) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(288.847104) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='#520800' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#520800' font-weight='500' transform='rotate(288.847104 50.0 21.89) translate(0 0.1968)'>33'</text>
@@ -481,7 +481,7 @@
     <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='#a80000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#a80000' font-weight='500' transform='rotate(347.347283 50.0 14.21) translate(0 0.2408)'>7º</text>
-  <g transform='translate(50.0 17.89) rotate(347.347283) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(347.347283) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='#a80000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#a80000' font-weight='500' transform='rotate(347.347283 50.0 21.89) translate(0 0.1968)'>3'</text>
@@ -494,7 +494,7 @@
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='#150052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#150052' font-weight='500' transform='rotate(373.835496 50.0 14.21) translate(0 0.2240)'>3º</text>
-  <g transform='translate(50.0 17.89) rotate(373.835496) scale(0.078624) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(373.835496) scale(0.092781) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='#150052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#150052' font-weight='500' transform='rotate(373.835496 50.0 21.89) translate(0 0.1968)'>32'</text>
