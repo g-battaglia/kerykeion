@@ -298,7 +298,12 @@ SYN_R_INNER_PLANET_OUTER = 29.5
 
 # Outer planet ring — Subject 2 (synastry partner)
 SYN_R_OUTER_PLANET_INNER = 29.5
-SYN_R_OUTER_PLANET_OUTER = 43.5
+# Flush against the ruler, as the natal planet ring is. It used to be 43.5,
+# which was the ruler's inner edge the day it was written; when the ruler moved
+# out to 44.652 this stayed behind, and a band of bare background 1.152 wide
+# opened between the outer ring and the ticks. Nothing was drawn in it and
+# nothing meant anything by it.
+SYN_R_OUTER_PLANET_OUTER = R_RULER_INNER
 
 # House division line endpoints (Subject 1's cusps drawn in both rings)
 SYN_HOUSE_LINE_OUTER_Y1 = 6.5  # Outer ring: top (near ruler)
@@ -335,13 +340,13 @@ SYN_INDICATOR_OUTER_TICK = 0.7
 SYN_INDICATOR_OUTER_ARC_R = 43.952  # = r(start) - tick
 
 # The inner ring cannot be re-anchored — it has no ruler beside it, and y = 20.5
-# is already its outer edge — so the only lever is length. Its cluster leaves
-# 0.547 between the ring edge and the glyph's ink where the natal one leaves
-# 2.12, and a tether spends twice its tick: at 0.7 it finished 0.85 INSIDE the
-# glyph. At 0.2 it stops 0.15 short, which is little but is the right sign.
+# is already its outer edge — so the only lever is length, and length is bought
+# from the cluster: see SYN_INNER_PLANET_GLYPH_Y, which steps 0.30 further in to
+# pay for this. At 0.7 the tether finished 0.85 INSIDE the glyph; at 0.30 it
+# stops 0.25 short of it, the same clearance the last row has at the other end.
 SYN_INDICATOR_INNER_START_Y = 20.5  # outer edge of the inner ring
-SYN_INDICATOR_INNER_TICK = 0.2
-SYN_INDICATOR_INNER_ARC_R = 29.3  # = r(start) - tick
+SYN_INDICATOR_INNER_TICK = 0.3
+SYN_INDICATOR_INNER_ARC_R = 29.2  # = r(start) - tick
 
 # Planet cluster Y-positioning within each 14-unit ring
 # Outer ring (Subject 2) - glyphs near outer edge, all elements within 6.5-20.5
@@ -359,14 +364,22 @@ SYN_OUTER_MINUTES_Y = 17.37
 SYN_OUTER_RX_Y = 19.54
 
 # Inner ring (Subject 1) - glyphs near outer edge, all elements within 20.5-34.5
-# The same block, moved inward by the 14 units between the two rings: same sizes
-# mean the same spacing, and a reader comparing the two wheels compares like
-# with like.
-SYN_INNER_PLANET_GLYPH_Y = 22.38
-SYN_INNER_DEGREES_Y = 25.82
-SYN_INNER_SIGN_Y = 28.76
-SYN_INNER_MINUTES_Y = 31.37
-SYN_INNER_RX_Y = 33.54
+# The same block as the outer ring, moved inward by the 14 units between the two
+# — same sizes mean the same spacing, and a reader comparing the two wheels
+# compares like with like — and then 0.30 further in.
+#
+# That last nudge is for the tether. The inner ring has no ruler beside it, so
+# its indicator has only the ring's own edge to hang from and only the air
+# between that edge and the glyph to live in: 0.547, against the 2.12 the natal
+# wheel has. A tether spends twice its tick, so at any length worth seeing it
+# was landing on the glyph. Moving the block in splits the difference — 0.25
+# clear above the glyph, 0.25 below the last row — and lets the tick go to 0.30,
+# which is a mark a reader can find rather than a dash on the boundary.
+SYN_INNER_PLANET_GLYPH_Y = 22.68
+SYN_INNER_DEGREES_Y = 26.12
+SYN_INNER_SIGN_Y = 29.06
+SYN_INNER_MINUTES_Y = 31.67
+SYN_INNER_RX_Y = 33.84
 
 # Ink-to-ink air left between neighbouring clusters when the separation is
 # derived from their actual content, in wheel units. 0.45 units is ~2.2px in a
@@ -436,7 +449,17 @@ STRAIGHT_TETHER_THRESHOLD = 0.5
 # Radius falls with the move, so the glyph covers slightly more degrees of arc
 # than it did further out. It does not bind: at the shipped separations the
 # tight pair is always text against text, and the glyph row still has room.
-NATAL_PLANET_GLYPH_Y = 9.57
+# Then 0.65 further in again, and the degrees 0.40 with it. A glyph is drawn
+# upright inside an axis-aligned box while the tether that points at it runs
+# along the cluster's own radius, and a radius that meets that box on the
+# diagonal reaches the corner — 2.66 units out for the widest symbol against the
+# 2.15 the row was placed for. The tether was ending inside the glyph on any
+# cluster sitting near 45 degrees, which is most of them on a crowded wheel.
+#
+# Only these two rows move. The sign, the minutes and the retrograde mark stay:
+# they are nowhere near the ruler, and moving them would spend the balance
+# between the rows for a clearance problem that only exists at the top.
+NATAL_PLANET_GLYPH_Y = 10.22
 # Degrees and sign are nudged off their round numbers to even out the air the
 # reader actually sees. Measured on the rendered ink of nine clusters (the
 # rasterised difference between the wheel and the same wheel without that
@@ -445,7 +468,7 @@ NATAL_PLANET_GLYPH_Y = 9.57
 # are evenly spaced, but the ink inside them is not — a sign glyph inks a thin
 # band high in its 32-unit box, a line of digits fills most of its own. Moving
 # the degrees 0.14 out and the sign 0.23 in brings all three to 1.72.
-NATAL_DEGREES_Y = 13.81
+NATAL_DEGREES_Y = 14.21
 NATAL_SIGN_Y = 17.89
 NATAL_MINUTES_Y = 21.89
 NATAL_RX_Y = 25.25
