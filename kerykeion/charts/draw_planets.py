@@ -40,16 +40,8 @@ logger = logging.getLogger(__name__)
 PLANET_GROUPING_THRESHOLD = 3.4  # Distance to consider planets as grouped
 INDICATOR_GROUPING_THRESHOLD = 2.5  # Distance for indicator overlap detection
 
-# Chart angle indices (ASC, MC, DSC, IC are between these indices)
-# The four chart angles are classified by NAME: the historical index window
-# (22 < idx < 27, inherited from the fixed OpenAstro point ordering) pointed at
-# Ceres/Pallas/Juno/Vesta in the v6 catalog and shifted with any active-points
-# filtering.
-CHART_ANGLE_NAMES: tuple[str, ...] = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
-
 # Radius offsets for different chart elements
 NATAL_INDICATOR_OFFSET = 72  # Offset for inner chart degree indicators
-DUAL_CHART_ANGLE_RADIUS = 76  # Radius for chart angles in dual charts
 DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
@@ -540,11 +532,24 @@ def _determine_point_radius(
     """
     Determine the radial distance for placing a celestial point.
 
-    Different radii are used to create visual separation between points
-    and to distinguish between chart angles and regular planets.
+    Two radii alternate down the sorted list of points, which is what keeps two
+    neighbours from printing on top of each other: consecutive points sit on
+    different lanes, so a crowd spreads across two rings instead of one.
+
+    An angle is drawn on those same lanes. It used to get a third radius of its
+    own, further out than either — but the code that recognised one did it by
+    the point's index in a fixed list, and the v6 catalog moved the angles off
+    those indices, so for years the outer lane went to Ceres, Pallas, Juno and
+    Vesta while the angles alternated with everything else. That is the chart
+    people know, and when the classification was repaired the angles jumped
+    outward into the zodiac ring. Giacomo's call is that they belong with the
+    points, so the dedicated radius is gone rather than restored: an angle is a
+    point, and there is no fourth lane for anyone to land on by accident.
 
     Args:
-        point_name: Name of the celestial point (angles get a dedicated radius).
+        point_name: Name of the celestial point. Unused by the geometry now, and
+            kept because the signature is part of how callers read this: the
+            radius is a property of the point, not of its position in a loop.
         chart_type: Type of the chart.
         is_alternate_position: Whether to use alternate positioning for visual separation.
         external_view: Whether external view mode is enabled.
@@ -552,24 +557,18 @@ def _determine_point_radius(
     Returns:
         Radius value for the point placement.
     """
-    is_chart_angle = point_name in CHART_ANGLE_NAMES
-
     # Dual charts (Transit, Synastry, Return)
     if chart_type in DUAL_CHART_TYPES:
-        if is_chart_angle:
-            return DUAL_CHART_ANGLE_RADIUS
         return DUAL_CHART_PLANET_RADIUS_A if is_alternate_position else DUAL_CHART_PLANET_RADIUS_B
 
     # Natal chart with external view
     # In external view, all points are placed on outer ring with small offset variations
-    # Original calculations: amin = 74-10=64, bmin = 94-10=84, cmin = 40-10=30
-    # Result: 74 - 64 = 10, 94 - 84 = 10, 40 - 30 = 10
+    # Original calculations: amin = 74-10=64, bmin = 94-10=84
+    # Result: 74 - 64 = 10, 94 - 84 = 10
     if external_view:
         return 10
 
     # Standard natal chart
-    if is_chart_angle:
-        return 40
     return 74 if is_alternate_position else 94
 
 
@@ -1199,11 +1198,10 @@ def _draw_secondary_points(
         if chart_type == "Transit" and points_settings[point_idx]["name"] in exclude_points:
             continue
 
-        # Determine point radius (alternating for visual separation)
-        is_chart_angle = points_settings[point_idx]["name"] in CHART_ANGLE_NAMES
-        if is_chart_angle:
-            point_radius = 9
-        elif alternate_position:
+        # Determine point radius (alternating for visual separation). Angles
+        # alternate with everything else here too — see _determine_point_radius
+        # for why the lane they used to have is gone.
+        if alternate_position:
             point_radius = 18
             alternate_position = False
         else:

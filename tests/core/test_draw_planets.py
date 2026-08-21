@@ -24,7 +24,6 @@ from kerykeion.charts.draw_planets import (
     _handle_multi_point_group,
     PLANET_GROUPING_THRESHOLD,
     INDICATOR_GROUPING_THRESHOLD,
-    CHART_ANGLE_NAMES,
     DUAL_CHART_TYPES,
 )
 from kerykeion.schemas import KerykeionException, KerykeionPointModel
@@ -242,22 +241,21 @@ class TestPlanetGlyphPositioning:
         assert 'xlink:href="#First_House"' in result
 
     def test_determine_point_radius_natal(self):
-        """_determine_point_radius returns expected values for Natal chart."""
-        # Regular planet, not alternate
+        """Two alternating lanes, and every point uses them — angles included."""
         assert _determine_point_radius("Sun", "Natal", False) == 94
-        # Regular planet, alternate
         assert _determine_point_radius("Sun", "Natal", True) == 74
-        # Chart angle (index 23 is between 22-27)
-        assert _determine_point_radius("Ascendant", "Natal", False) == 40
-        # Asteroids landed in the fossil 22<idx<27 window and wrongly got the
-        # angle radius; by name they are regular points.
+        # An angle is a point: no third lane further out, which is where a
+        # repaired classification once sent it — into the zodiac ring.
+        assert _determine_point_radius("Ascendant", "Natal", False) == 94
+        assert _determine_point_radius("Ascendant", "Natal", True) == 74
         assert _determine_point_radius("Ceres", "Natal", False) == 94
 
     def test_determine_point_radius_dual_chart(self):
         """_determine_point_radius returns dual chart radii for Transit."""
         assert _determine_point_radius("Sun", "Transit", False) == 130
         assert _determine_point_radius("Sun", "Transit", True) == 110
-        assert _determine_point_radius("Medium_Coeli", "Transit", False) == 76
+        assert _determine_point_radius("Medium_Coeli", "Transit", False) == 130
+        assert _determine_point_radius("Medium_Coeli", "Transit", True) == 110
         assert _determine_point_radius("Vesta", "Transit", False) == 130
 
     def test_determine_point_radius_external_view(self):
@@ -1239,9 +1237,19 @@ class TestInternalHelpers:
         # At least first and last should be adjusted
         assert any(a != 0.0 for a in adjustments)
 
-    def test_chart_angle_index_boundaries(self):
-        """Chart angle constants define the expected index range."""
-        assert CHART_ANGLE_NAMES == ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
+    def test_an_angle_is_placed_like_any_other_point(self):
+        """There is no lane reserved for the angles, in either kind of chart.
+
+        The four angles once had a radius of their own, further out than the two
+        the points alternate between. Nothing selects them any more — this is
+        the test that says so, so the lane cannot come back by accident.
+        """
+        for angle in ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"):
+            for chart_type in ("Natal", "Transit"):
+                for alternate in (False, True):
+                    assert _determine_point_radius(angle, chart_type, alternate) == (
+                        _determine_point_radius("Sun", chart_type, alternate)
+                    )
 
     def test_dual_chart_types_tuple(self):
         """DUAL_CHART_TYPES includes the expected chart type names."""
