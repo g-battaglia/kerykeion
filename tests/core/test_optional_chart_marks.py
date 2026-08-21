@@ -148,6 +148,22 @@ def _info_rows(svg: str) -> list[str]:
     return [m.group(2) for m in re.finditer(r"Bottom_Left_Text_(\d)'[^>]*>([^<]*)</text>", svg)]
 
 
+def _labelled_row(svg: str, key: str, fallback: str, language: str = "EN") -> tuple[int, str]:
+    """The bottom-left row carrying a given label, and where it landed.
+
+    Found by its own label rather than by a remembered slot number. The panel
+    orders itself longest-last and the order is not fixed — the zodiac row moves
+    past the perspective when it carries an ayanamsa — so a hard-coded index is
+    a test that passes for the wrong reason the moment the block is rearranged,
+    which is exactly what happened to the three that used to say ``[2]``.
+    """
+    label = LANGUAGE_SETTINGS[language].get(key, fallback)
+    for index, row in enumerate(_info_rows(svg)):
+        if unescape(row).startswith(f"{label}:"):
+            return index, row
+    raise AssertionError(f"no row labelled {label!r} in {[unescape(r) for r in _info_rows(svg)]}")
+
+
 def _markup_delta(before: str, after: str) -> tuple[list[str], list[str]]:
     """What turning one option on added to, and took away from, the markup.
 
@@ -332,10 +348,13 @@ class TestRelationshipScoreLine:
 class TestAyanamsaValue:
     @pytest.mark.parametrize("style", STYLES)
     def test_the_offset_joins_the_mode_name(self, sidereal_data, style):
-        # The zodiac line sits second from the bottom: the perspective closes the
-        # block, and both are down where the wheel has stopped narrowing it.
-        off = _info_rows(_render(sidereal_data, style))[4]
-        on = _info_rows(_render(sidereal_data, style, show_ayanamsa_value=True))[4]
+        # On a sidereal chart this row is the longest the panel carries, so it
+        # goes last of all — past the perspective. Located by its label rather
+        # than by that fact, which is a layout decision and free to change.
+        _, off = _labelled_row(_render(sidereal_data, style), "ayanamsa", "Ayanamsa")
+        _, on = _labelled_row(
+            _render(sidereal_data, style, show_ayanamsa_value=True), "ayanamsa", "Ayanamsa"
+        )
         assert off == "Ayanamsa: Lahiri"
         assert on.startswith(off) and re.search(r"\(\d+°\d+&apos;\)$", on), on
 
@@ -355,8 +374,10 @@ class TestPolarFallbackNote:
     def test_the_substitution_is_admitted(self, polar_data, style):
         assert polar_data.subject.polar_house_fallbacks, "fixture no longer triggers a fallback"
 
-        off = _info_rows(_render(polar_data, style))[2]      # the domification row
-        on = _info_rows(_render(polar_data, style, show_polar_fallback_note=True))[2]
+        _, off = _labelled_row(_render(polar_data, style), "domification", "Domification")
+        _, on = _labelled_row(
+            _render(polar_data, style, show_polar_fallback_note=True), "domification", "Domification"
+        )
         assert "*" not in off
         assert on.startswith(off) and "*" in on
 
@@ -419,11 +440,12 @@ class TestRowsFitTheWheel:
 
     @pytest.mark.parametrize("language", LANGUAGES)
     def test_the_polar_note_fits(self, polar_data, language):
-        # The domification row, the only one this mark writes to. It moved from
-        # slot 1 to slot 2 when the natal panel was reordered around the moon
-        # glyph (lunation, phase, domification, diurnality, perspective, zodiac).
-        index = 2
-        row = _info_rows(_render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True))[index]
+        # The domification row, the only one this mark writes to. Found by its
+        # label: the panel reorders itself and this row has already moved twice.
+        index, row = _labelled_row(
+            _render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True),
+            "domification", "Domification", language,
+        )
         width = estimate_text_width(unescape(row))
         budget = info_row_clear_width(index)
         assert width <= budget, f"{language} row {index}: {width:.0f}px in a {budget:.0f}px row — {row!r}"
@@ -460,7 +482,8 @@ class TestRowsFitTheWheel:
     def test_the_substitution_is_still_marked_after_it_is_shortened(self, polar_data, language):
         """Shedding the spelled-out note must not shed the fact it points at."""
         svg = _render(polar_data, "classic", chart_language=language, show_polar_fallback_note=True)
-        assert "*" in _info_rows(svg)[2], language  # the domification row; see above
+        _, row = _labelled_row(svg, "domification", "Domification", language)
+        assert "*" in row, language
 
 
 class TestDualWheelsDoNotSpeakForEachOther:

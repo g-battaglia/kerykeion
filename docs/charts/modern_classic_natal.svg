@@ -63,16 +63,16 @@
         </g>
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,7)'>
-            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #000000; font-size: 10px'>Lunation Day: 9</text>
+            <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #000000; font-size: 10px'></text>
             <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: #000000; font-size: 10px'>Lunar phase: First Quarter</text>
-            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: #000000; font-size: 10px'>Domification: Placidus</text>
+            <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: #000000; font-size: 10px'>Zodiac: Tropical</text>
             <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: #000000; font-size: 10px'>Diurnality: Nocturnal</text>
-            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: #000000; font-size: 10px'>Zodiac: Tropical</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: #000000; font-size: 10px'>Domification: Placidus</text>
             <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: #000000; font-size: 10px'>Perspective: Apparent Geocentric</text>
         </g>
 
         <!-- Lunar Phase -->
-        <g kr:node='Lunar_Phase' transform='translate(10,424)'>
+        <g kr:node='Lunar_Phase' transform='translate(10,438)'>
             <g transform='rotate(0 20 10)'>
     <defs>
         <clipPath id='moonPhaseCutOffCircle'>

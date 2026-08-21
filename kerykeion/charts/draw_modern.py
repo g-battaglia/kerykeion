@@ -306,11 +306,42 @@ SYN_HOUSE_LINE_OUTER_Y2 = 20.5  # Outer ring: bottom (at boundary)
 SYN_HOUSE_LINE_INNER_Y1 = 20.5  # Inner ring: top (at boundary)
 SYN_HOUSE_LINE_INNER_Y2 = 34.5  # Inner ring: bottom (near house numbers)
 
-# Indicator line geometry (all start at boundary y = 20.5)
-SYN_INDICATOR_START_Y = 20.5
-SYN_INDICATOR_TICK = 0.7
-SYN_INDICATOR_ARC_R_OUTWARD = 30.2  # Arc for outer-ring ticks (just outside boundary, r > 29.5)
-SYN_INDICATOR_ARC_R_INWARD = 28.8  # Arc for inner-ring ticks (just inside boundary, r < 29.5)
+# Indicator line geometry, per ring.
+#
+# An indicator is a tether: it starts at the ruler-side edge of its own ring and
+# runs inward to the cluster, so a reader can see which reading belongs to which
+# degree. The natal wheel states that as start_y = HOUSE_LINE_OUTER_Y, the inner
+# edge of the graduated ruler.
+#
+# Both dual rings used to start at y = 20.5. For the inner ring (r 15.5-29.5)
+# that is its outer edge and correct. For the outer ring (r 29.5-43.5) it is the
+# INNER edge — the far end from its glyph at r 41.62 — so its tether was drawn
+# twelve units away from the planet it belongs to, on the boundary between the
+# rings, pointing outward at nothing. Two symptoms, one cause: the outer ring
+# looked as though it had no indicators at all, and the boundary carried two
+# families of identical brackets back to back, so the inner ring's own tether
+# looked as if it pointed the wrong way.
+#
+# The cluster rows were translated between the rings; these constants had been
+# mirrored instead. A mirror is not a translation.
+#
+# The outer ring is anchored to the ruler rather than to its own edge, which is
+# what the natal ring means by "start_y" anyway. It also spends the 1.152 units
+# of background that opened up between SYN_R_OUTER_PLANET_OUTER and the ruler
+# when the ruler moved, and that is what buys the tether the same clearance the
+# natal one has: it stops 0.30 short of the glyph, against the natal 0.31.
+SYN_INDICATOR_OUTER_START_Y = HOUSE_LINE_OUTER_Y  # inner edge of the ruler
+SYN_INDICATOR_OUTER_TICK = 0.7
+SYN_INDICATOR_OUTER_ARC_R = 43.952  # = r(start) - tick
+
+# The inner ring cannot be re-anchored — it has no ruler beside it, and y = 20.5
+# is already its outer edge — so the only lever is length. Its cluster leaves
+# 0.547 between the ring edge and the glyph's ink where the natal one leaves
+# 2.12, and a tether spends twice its tick: at 0.7 it finished 0.85 INSIDE the
+# glyph. At 0.2 it stops 0.15 short, which is little but is the right sign.
+SYN_INDICATOR_INNER_START_Y = 20.5  # outer edge of the inner ring
+SYN_INDICATOR_INNER_TICK = 0.2
+SYN_INDICATOR_INNER_ARC_R = 29.3  # = r(start) - tick
 
 # Planet cluster Y-positioning within each 14-unit ring
 # Outer ring (Subject 2) - glyphs near outer edge, all elements within 6.5-20.5
@@ -2717,9 +2748,9 @@ def draw_modern_dual_horoscope(
             "rx_y": SYN_OUTER_RX_Y,
         },
         indicator_config={
-            "start_y": SYN_INDICATOR_START_Y,
-            "tick_length": -SYN_INDICATOR_TICK,  # tick outward (toward outer edge)
-            "arc_radius": SYN_INDICATOR_ARC_R_OUTWARD,  # arc just outside boundary
+            "start_y": SYN_INDICATOR_OUTER_START_Y,
+            "tick_length": SYN_INDICATOR_OUTER_TICK,  # inward, toward its own cluster
+            "arc_radius": SYN_INDICATOR_OUTER_ARC_R,
         },
         horoscope_id="1",
         scale_config={
@@ -2753,9 +2784,9 @@ def draw_modern_dual_horoscope(
             "rx_y": SYN_INNER_RX_Y,
         },
         indicator_config={
-            "start_y": SYN_INDICATOR_START_Y,
-            "tick_length": SYN_INDICATOR_TICK,  # tick inward (toward center)
-            "arc_radius": SYN_INDICATOR_ARC_R_INWARD,  # arc just inside boundary
+            "start_y": SYN_INDICATOR_INNER_START_Y,
+            "tick_length": SYN_INDICATOR_INNER_TICK,  # inward, toward its own cluster
+            "arc_radius": SYN_INDICATOR_INNER_ARC_R,
         },
         horoscope_id="0",
         scale_config={

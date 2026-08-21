@@ -293,7 +293,14 @@ _INFO_ROW_LEGACY_LAST_Y: float = 508.0
 #: Natal only. The moon glyph rides above the block rather than below it, and the
 #: block slides down until its last line closes level with the foot of the aspect
 #: grid — measured there, at y 532. Chosen by eye from three renders 3px apart.
-_NATAL_MOON_GLYPH_Y: float = 424.0
+#: How many rows the bottom-left block has. The natal panel fills it from the
+#: bottom, so a row it does not draw is taken off the top and the last line
+#: stays level with the foot of the aspect grid beside it.
+_BOTTOM_LEFT_ROWS: int = 6
+
+#: Moved down 14 — one row — when the lunation day left the panel: the disc sits
+#: directly above the phase it draws, and the phase moved down with the block.
+_NATAL_MOON_GLYPH_Y: float = 438.0
 _NATAL_BLOCK_DROP: float = 7.0
 
 # How much clear width row 5 really has, and it is not the 258.6px the chord
@@ -688,6 +695,21 @@ class InfoSectionBuilder:
         """Build the zodiac/ayanamsa info string."""
         return self.drawer._get_zodiac_info()
 
+    def zodiac_row_carries_an_ayanamsa(self) -> bool:
+        """Whether the zodiac row is the long kind, and so wants the last line.
+
+        Asked of the subject rather than of the string: matching on the word
+        "Ayanamsa" would be right in English and wrong in the other nine
+        languages the panel ships.
+        """
+        return getattr(self.drawer.first_obj, "zodiac_type", None) == "Sidereal"
+
+    def build_lunar_phase_info_line(self, subject, prefix: str = "") -> str:
+        """The phase row on its own, for panels that lay their rows out as a list."""
+        row: dict = {}
+        self.build_lunar_phase_info(row, subject, prefix=prefix, key_phase="row")
+        return row.get("row", "")
+
     def _translated_house_system(self, subject, terse: bool = False) -> str:
         """Translate the effective house system of one wheel.
 
@@ -789,29 +811,32 @@ class InfoSectionBuilder:
         template_dict: dict,
         subject,
         prefix: str = "",
-        key_lunation: str = "bottom_left_2",
         key_phase: str = "bottom_left_3",
     ) -> None:
-        """Populate template_dict with lunar phase info if available.
+        """Populate template_dict with the lunar phase name, if available.
+
+        The lunation day used to print above this on its own row — "Lunation
+        Day: 9", the moon's age in days since the new moon. It is gone: the
+        phase already says where in the cycle the moon is, in the words a reader
+        thinks in, and the disc drawn beside it says the same thing again in a
+        picture. A number that has to be translated back into "waxing, about a
+        third of the way" earns neither the row it took nor the width, which on
+        this panel is the scarce thing — the wheel's chord narrows every line.
 
         Args:
             template_dict: Dictionary to populate.
             subject: Subject with potential lunar_phase data.
             prefix: Optional prefix for labels (e.g., "Transit ").
-            key_lunation: Template key for lunation day.
             key_phase: Template key for phase name.
         """
         if subject.lunar_phase is None:
-            template_dict[key_lunation] = ""
             template_dict[key_phase] = ""
             return
 
-        lunation_label = self._translate("lunation_day", "Lunation Day")
         phase_label = self._translate("lunar_phase", "Lunar Phase")
         phase_name = subject.lunar_phase.moon_phase_name
         phase_key = phase_name.lower().replace(" ", "_")
 
-        template_dict[key_lunation] = f"{prefix}{lunation_label}: {subject.lunar_phase.get('moon_phase', '')}"
         template_dict[key_phase] = f"{prefix}{phase_label}: {self._translate(phase_key, phase_name)}"
 
     def _diurnality_value(self, subject) -> str:
@@ -1079,32 +1104,64 @@ class NatalChartRenderer(BaseChartRenderer):
 
         # Bottom left section - Technical info.
         #
-        # The moon leads: glyph, then the lunation day it depicts, then the phase
-        # it is called, then everything else. The two lunar lines used to sit in
-        # the middle of the block with the glyph stranded underneath it, so the
-        # picture and its caption were four lines apart.
-        builder.build_lunar_phase_info(
-            template_dict, d.first_obj, key_lunation="bottom_left_0", key_phase="bottom_left_1"
-        )
-        # These two are the only lines the moon's position forces into the narrow
-        # end of the panel — row 1 clears 154px against the 199 Hindi wants for
-        # "चंद्र चरण: शुक्ल पक्ष सप्तमी". Everything else is ordered longest-last and
-        # lands where the wheel has stopped narrowing the block. Measured against
-        # their own chord, so the ellipsis appears only where it must.
-        for index in (0, 1):
-            key = f"bottom_left_{index}"
-            if template_dict.get(key):
-                template_dict[key] = truncate_to_width(
-                    template_dict[key], info_row_clear_width(index, _NATAL_BLOCK_DROP)
-                )
-        template_dict["bottom_left_2"] = builder.build_domification_info()
-        template_dict["bottom_left_3"] = builder.build_diurnality_info(d.first_obj)
-        # The two longest lines go last, where the wheel has stopped narrowing the
-        # panel: the zodiac line — which on a sidereal chart carries the ayanamsa
-        # name and its offset, "Ayanamsa: Krishnamurti (23°45\')" — and then the
-        # perspective, which closes the block.
-        template_dict["bottom_left_4"] = builder.build_zodiac_info()
-        template_dict["bottom_left_5"] = builder.build_perspective_info(d.first_obj)
+        # The moon leads: the glyph, then the phase it is called, then everything
+        # else. The lunar line used to sit in the middle of the block with the
+        # glyph stranded underneath, so the picture and its caption were four
+        # lines apart.
+        #
+        # The rest is ordered longest-last, because the wheel's chord is what
+        # limits these rows and it stops narrowing them towards the bottom. Two
+        # lines are long enough for that to decide where they go: the house
+        # system, which in full reads "Domification: Axial rotation
+        # system/Meridian house system", and the zodiac line, which on a sidereal
+        # chart becomes "Ayanamsa: Dhruva/Gal.Center/Mula (Wilhelm) (19°10')".
+        # On a tropical chart that same row is four words and needs nothing, so
+        # it takes the narrowest slot going and the perspective closes the block;
+        # on a sidereal one it goes last, past the perspective, because it is
+        # then the row that will run into the wheel if anything does.
+        #
+        # The diurnality line sits above the house system rather than below it
+        # for the same reason: it is short in English and 175 units in Hindi,
+        # which needs the 189 of row 3 and does not get it at row 2.
+        # Which row is which, before any of them is built: the house-system row
+        # sheds its polar-fallback wording to fit, and it can only measure that
+        # against the width of the row it will actually land on.
+        if builder.zodiac_row_carries_an_ayanamsa():
+            order = ["phase", "diurnality", "domification", "perspective", "zodiac"]
+        else:
+            order = ["phase", "zodiac", "diurnality", "domification", "perspective"]
+
+        # Built before they are placed, because a row can come back empty — a
+        # heliocentric chart states no diurnality, a subject without a moon
+        # phase no phase — and an empty row must not hold a slot. Reserving one
+        # for it would open a blank in the middle of the block, which reads as
+        # damage rather than as a line that had nothing to say.
+        text = {
+            "phase": builder.build_lunar_phase_info_line(d.first_obj),
+            "diurnality": builder.build_diurnality_info(d.first_obj),
+            "zodiac": builder.build_zodiac_info(),
+            "perspective": builder.build_perspective_info(d.first_obj),
+        }
+        # The house system is the exception: it is built last, once its row is
+        # known, and it always says something.
+        drawn = [kind for kind in order if kind == "domification" or text.get(kind)]
+
+        # Bottom-aligned: the block's last line sits at the foot of the aspect
+        # grid beside it, so a row that is not drawn is taken off the top rather
+        # than lifting everything.
+        drawn = [""] * (_BOTTOM_LEFT_ROWS - len(drawn)) + drawn
+        for index, kind in enumerate(drawn):
+            if not kind:
+                template_dict[f"bottom_left_{index}"] = ""
+                continue
+            row = (
+                builder.build_domification_info(row_index=index)
+                if kind == "domification"
+                else text[kind]
+            )
+            template_dict[f"bottom_left_{index}"] = truncate_to_width(
+                row, info_row_clear_width(index, _NATAL_BLOCK_DROP)
+            )
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -1362,9 +1419,13 @@ class TransitChartRenderer(BaseChartRenderer):
         template_dict["top_left_4"] = transit_place
         template_dict["top_left_5"] = f"{transit_lat}  ·  {transit_lon}"
 
-        # Bottom left section
-        template_dict["bottom_left_0"] = builder.build_zodiac_info()
-        template_dict["bottom_left_1"] = builder.build_domification_info(d.second_obj)
+        # Bottom left section. One row shorter than the block since the lunation
+        # day left, and the gap is taken off the top: the last line has to stay
+        # level with the foot of the aspect grid beside it.
+        template_dict["bottom_left_0"] = ""
+        template_dict["bottom_left_1"] = builder.build_zodiac_info()
+        template_dict["bottom_left_2"] = builder.build_domification_info(d.second_obj)
+        template_dict["bottom_left_3"] = builder.build_perspective_info(d.second_obj)
 
         # Lunar phase from transit subject
         if d.second_obj is not None and hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
@@ -1372,14 +1433,10 @@ class TransitChartRenderer(BaseChartRenderer):
                 template_dict,
                 d.second_obj,
                 prefix=f"{self._translate('Transit', 'Transit')} ",
-                key_lunation="bottom_left_3",
                 key_phase="bottom_left_4",
             )
         else:
-            template_dict["bottom_left_3"] = ""
             template_dict["bottom_left_4"] = ""
-
-        template_dict["bottom_left_2"] = builder.build_perspective_info(d.second_obj)
         template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
             (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
             (d.second_obj, self._translate("chart_info_transit_label", "Transit")),
@@ -1532,7 +1589,6 @@ class ProgressionChartRenderer(TransitChartRenderer):
                     template_dict,
                     d.second_obj,
                     prefix=f"{self._translate('progression', 'Progression')} ",
-                    key_lunation="bottom_left_3",
                     key_phase="bottom_left_4",
                 )
 
@@ -5363,7 +5419,14 @@ class ChartDrawer:  # type: ignore[no-redef]
             # The block only drops _NATAL_BLOCK_DROP: it cannot rise, because the
             # chord narrows going up and the longest line — Hindi's perspective,
             # 201px — already needs every pixel the wheel leaves at this height.
-            lunar_phase_y = _NATAL_MOON_GLYPH_Y
+            # The glyph follows the first line rather than sitting at a fixed
+            # height. Both would be defensible on a block of a fixed size, but
+            # this one varies: a heliocentric chart states no diurnality and a
+            # subject without a moon phase states none, and with the rows packed
+            # to the bottom a shorter block starts lower. Pinning the glyph would
+            # leave it hanging on its own halfway up the panel, captioning air.
+            blank_rows = _INFO_ROW_COUNT - len(filled)
+            lunar_phase_y = _NATAL_MOON_GLYPH_Y + _INFO_ROW_STEP * (blank_rows - 1)
             bottom_left_y = offsets["bottom_left"] + _NATAL_BLOCK_DROP
         elif filled:
             last_row_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * (_INFO_ROW_COUNT - 1)
