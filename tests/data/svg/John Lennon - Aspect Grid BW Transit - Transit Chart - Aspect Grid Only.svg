@@ -3,6 +3,8 @@
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='26 44 230 230'
@@ -10,6 +12,9 @@
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
+
+    <title id='kerykeion-chart-title'>John Lennon - Aspect Grid BW Transit - Transits for 1942-06-18</title>
+    <desc id='kerykeion-chart-desc'>John Lennon - Aspect Grid BW Transit - Transits for 1942-06-18. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 34 aspects.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -33,6 +38,8 @@
     --kerykeion-modern-planet-ring-outer: #d8d8d8;
     --kerykeion-modern-house-ring: #d0d0d0;
     --kerykeion-modern-stroke: #a0a0a0;
+    /* See classic.css: the cusp is read, the ring outline is only seen. */
+    --kerykeion-modern-cusp: #727272;
     --kerykeion-modern-retrograde: #444444;
     --kerykeion-modern-stationary: #6e6e6e;
     --kerykeion-modern-indicator: #808080;
@@ -181,12 +188,12 @@
     --kerykeion-chart-color-air-percentage: #111111;
     --kerykeion-chart-color-earth-percentage: #333333;
     --kerykeion-chart-color-fire-percentage: #555555;
-    --kerykeion-chart-color-water-percentage: #777777;
+    --kerykeion-chart-color-water-percentage: #585858;
 
     /* Modalities Percentage */
     --kerykeion-chart-color-cardinal-percentage: #222222;
     --kerykeion-chart-color-fixed-percentage: #444444;
-    --kerykeion-chart-color-mutable-percentage: #666666;
+    --kerykeion-chart-color-mutable-percentage: #595959;
 
     /* Aspects */
     --kerykeion-chart-color-lunar-phase-0: var(--kerykeion-color-black);

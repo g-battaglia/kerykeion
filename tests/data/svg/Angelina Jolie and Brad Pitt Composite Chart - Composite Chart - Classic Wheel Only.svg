@@ -3,6 +3,8 @@
     xmlns='http://www.w3.org/2000/svg'
     xmlns:xlink='http://www.w3.org/1999/xlink'
     xmlns:kr='https://www.kerykeion.net/'
+    role='img'
+    aria-labelledby='kerykeion-chart-title kerykeion-chart-desc'
     width='100%'
     height='100%'
     viewBox='75 25 530 530'
@@ -10,7 +12,8 @@
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
-    <title>Composite Chart: Angelina Jolie and Brad Pitt</title>
+    <title id='kerykeion-chart-title'>Composite Chart: Angelina Jolie and Brad Pitt</title>
+    <desc id='kerykeion-chart-desc'>Composite Chart: Angelina Jolie and Brad Pitt. Placidus. 14 points, 24 aspects.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -49,6 +52,10 @@
     --kerykeion-modern-planet-ring-outer: #e8e8ed;
     --kerykeion-modern-house-ring: #e4e4e7;
     --kerykeion-modern-stroke: #d4d4d8;
+    /* A house boundary is information, not decoration: it carries the 3:1 a
+       graphic object needs, while --kerykeion-modern-stroke keeps outlining the
+       rings at whatever weight the palette likes. */
+    --kerykeion-modern-cusp: #81818d;
     --kerykeion-modern-retrograde: #b03030;
     --kerykeion-modern-stationary: #8a5a12;
     --kerykeion-modern-indicator: #8a8278;
@@ -77,17 +84,17 @@
     --kerykeion-chart-color-zodiac-bg-9: #6b3d00;
     --kerykeion-chart-color-zodiac-bg-10: #69acf1;
     --kerykeion-chart-color-zodiac-bg-11: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-0: #ff7200;
+    --kerykeion-chart-color-zodiac-icon-0: #b25000;
     --kerykeion-chart-color-zodiac-icon-1: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-2: #69acf1;
+    --kerykeion-chart-color-zodiac-icon-2: #1473d6;
     --kerykeion-chart-color-zodiac-icon-3: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-4: #ff7200;
+    --kerykeion-chart-color-zodiac-icon-4: #b25000;
     --kerykeion-chart-color-zodiac-icon-5: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-6: #69acf1;
+    --kerykeion-chart-color-zodiac-icon-6: #1473d6;
     --kerykeion-chart-color-zodiac-icon-7: #2b4972;
-    --kerykeion-chart-color-zodiac-icon-8: #ff7200;
+    --kerykeion-chart-color-zodiac-icon-8: #b25000;
     --kerykeion-chart-color-zodiac-icon-9: #6b3d00;
-    --kerykeion-chart-color-zodiac-icon-10: #69acf1;
+    --kerykeion-chart-color-zodiac-icon-10: #1473d6;
     --kerykeion-chart-color-zodiac-icon-11: #2b4972;
     --kerykeion-chart-color-zodiac-radix-ring-0: #ff0000;
     --kerykeion-chart-color-zodiac-radix-ring-1: #ff0000;
@@ -105,17 +112,17 @@
     --kerykeion-chart-color-conjunction: #5757e2;
     --kerykeion-chart-color-semi-sextile: #810757;
     --kerykeion-chart-color-semi-square: #b14e58;
-    --kerykeion-chart-color-sextile: #d59e28;
+    --kerykeion-chart-color-sextile: #bb8b23;
     --kerykeion-chart-color-quintile: #1f99b3;
     --kerykeion-chart-color-square: #dc0000;
-    --kerykeion-chart-color-trine: #36d100;
+    --kerykeion-chart-color-trine: #2ba800;
     --kerykeion-chart-color-sesquiquadrate: #985a10;
     --kerykeion-chart-color-biquintile: #7a9810;
-    --kerykeion-chart-color-quincunx: #26bbcf;
+    --kerykeion-chart-color-quincunx: #20a0b1;
     --kerykeion-chart-color-opposition: #510060;
 
     /* Planets */
-    --kerykeion-chart-color-sun: #984b00;
+    --kerykeion-chart-color-sun: #7e3e00;
     --kerykeion-chart-color-moon: #150052;
     --kerykeion-chart-color-mercury: #520800;
     --kerykeion-chart-color-venus: #400052;
@@ -127,31 +134,31 @@
     --kerykeion-chart-color-pluto: #713f04;
     --kerykeion-chart-color-mean-node: #4c1541;
     --kerykeion-chart-color-true-node: #4c1541;
-    --kerykeion-chart-color-chiron: #666f06;
-    --kerykeion-chart-color-first-house: #ff7e00;
-    --kerykeion-chart-color-tenth-house: #ff0000;
+    --kerykeion-chart-color-chiron: #505705;
+    --kerykeion-chart-color-first-house: #7f3f00;
+    --kerykeion-chart-color-tenth-house: #a80000;
     --kerykeion-chart-color-seventh-house: #0000ff;
     --kerykeion-chart-color-fourth-house: #000000;
     --kerykeion-chart-color-mean-lilith: #000000;
     --kerykeion-chart-color-true-lilith: #333333;
-    --kerykeion-chart-color-interpolated-lilith: #666666;
-    --kerykeion-chart-color-white-moon: #5b6f7a;
+    --kerykeion-chart-color-interpolated-lilith: #525252;
+    --kerykeion-chart-color-white-moon: #45545d;
     --kerykeion-chart-color-ceres: #265206;
     --kerykeion-chart-color-pallas: #004952;
     --kerykeion-chart-color-juno: #591f52;
-    --kerykeion-chart-color-vesta: #963209;
+    --kerykeion-chart-color-vesta: #913009;
     --kerykeion-chart-color-pars-fortunae: #095242;
     --kerykeion-chart-color-vertex: #52064e;
     --kerykeion-chart-color-east-point: #482b7f;
     --kerykeion-chart-color-eris: #800000;
     --kerykeion-chart-color-earth: #6a2d04;
-    --kerykeion-chart-color-pholus: #5a5a5a;
-    --kerykeion-chart-color-sedna: #b8860b;
-    --kerykeion-chart-color-haumea: #8b4513;
-    --kerykeion-chart-color-makemake: #a0522d;
-    --kerykeion-chart-color-ixion: #556b2f;
+    --kerykeion-chart-color-pholus: #525252;
+    --kerykeion-chart-color-sedna: #6b4e07;
+    --kerykeion-chart-color-haumea: #824112;
+    --kerykeion-chart-color-makemake: #804224;
+    --kerykeion-chart-color-ixion: #475927;
     --kerykeion-chart-color-orcus: #2f4f4f;
-    --kerykeion-chart-color-quaoar: #8a2be2;
+    --kerykeion-chart-color-quaoar: #731bc4;
     --kerykeion-chart-color-cupido: var(--kerykeion-color-secondary);
     --kerykeion-chart-color-hades: var(--kerykeion-color-accent);
     --kerykeion-chart-color-zeus: var(--kerykeion-color-primary);
@@ -169,15 +176,13 @@
     --kerykeion-chart-color-pars-fidei: #095242;
 
     /* Elements Percentage */
-    --kerykeion-chart-color-air-percentage: #6f76d1;
+    --kerykeion-chart-color-air-percentage: #414ac2;
     --kerykeion-chart-color-earth-percentage: #6a2d04;
-    --kerykeion-chart-color-fire-percentage: #ff6600;
+    --kerykeion-chart-color-fire-percentage: #943b00;
     --kerykeion-chart-color-water-percentage: #630e73;
 
     /* Modalities Percentage */
-    --kerykeion-chart-color-cardinal-percentage: var(
-        --kerykeion-chart-color-fire-percentage
-    );
+    --kerykeion-chart-color-cardinal-percentage: #943b00;
     --kerykeion-chart-color-fixed-percentage: var(
         --kerykeion-chart-color-earth-percentage
     );
@@ -186,8 +191,8 @@
     );
 
     /* Other */
-    --kerykeion-chart-color-house-number: #f00;
-    --kerykeion-chart-color-fixed-star-default: #d4a053;
+    --kerykeion-chart-color-house-number: #990000;
+    --kerykeion-chart-color-fixed-star-default: #bb822f;
     --kerykeion-chart-color-midpoint-default: #8b65d0;
 
 }
@@ -253,7 +258,7 @@
 
             <!-- Planets -->
             <g kr:node='Planets_Wheel'>
-                <g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='3.673669958830767' kr:signposition='3.673669958830767' kr:slug='Chiron' kr:cx='485.79991207416776' kr:cy='297.6410496114698' transform='translate(-12.0,-12.0) scale(1.0)'><use x='385.79991207416776' y='247.64104961146978' xlink:href='#Chiron' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='506.0' kr:cy='290.0' transform='translate(-12.0,-12.0) scale(1.0)'><use x='406.0' y='240.0' xlink:href='#Mercury' /></g><g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='13.629273978623788' kr:signposition='13.629273978623788' kr:slug='Jupiter' kr:cx='484.5791380362693' kr:cy='269.68072725983046' transform='translate(-12.0,-12.0) scale(1.0)'><use x='384.5791380362693' y='219.68072725983046' xlink:href='#Jupiter' /></g><g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='33.265477389668554' kr:signposition='3.265477389668554' kr:slug='Saturn' kr:cx='486.5693004145819' kr:cy='212.06772057754213' transform='translate(-12.0,-12.0) scale(1.0)'><use x='386.5693004145819' y='162.06772057754213' xlink:href='#Saturn' /></g><g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='97.6760660054407' kr:signposition='7.676066005440703' kr:slug='Medium_Coeli' kr:cx='333.02010065949986' kr:cy='90.12183459618085' transform='translate(-12.0,-12.0) scale(1.0)'><use x='233.02010065949986' y='40.12183459618085' xlink:href='#Medium_Coeli' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='171.0263673303981' kr:signposition='21.026367330398102' kr:slug='True_North_Lunar_Node' kr:cx='178.93090943818459' kr:cy='249.84096533045516' transform='translate(-12.0,-12.0) scale(1.0)'><use x='78.93090943818459' y='199.84096533045516' xlink:href='#True_North_Lunar_Node' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='175.37575260994487' kr:signposition='25.37575260994487' kr:slug='Pluto' kr:cx='196.21806806021763' kr:cy='264.6473660606282' transform='translate(-12.0,-12.0) scale(1.0)'><use x='96.21806806021763' y='214.64736606062817' xlink:href='#Pluto' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='184.43406588546029' kr:signposition='4.434065885460285' kr:slug='Uranus' kr:cx='174.1011227148301' kr:cy='284.2066835473849' transform='translate(-12.0,-12.0) scale(1.0)'><use x='74.1011227148301' y='234.2066835473849' xlink:href='#Uranus' /></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='185.62129941235852' kr:signposition='5.621299412358525' kr:slug='Ascendant' kr:cx='140.03046096872174' kr:cy='293.49048128745665' transform='translate(-12.0,-12.0) scale(1.0)'><use x='40.03046096872175' y='243.49048128745665' xlink:href='#Ascendant' /></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='205.81278935592445' kr:signposition='25.81278935592445' kr:slug='Venus' kr:cx='184.0110249495392' kr:cy='346.775343792061' transform='translate(-12.0,-12.0) scale(1.0)'><use x='84.0110249495392' y='296.775343792061' xlink:href='#Venus' /></g><g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='238.57135373651133' kr:signposition='28.571353736511327' kr:slug='Neptune' kr:cx='252.13500661980095' kr:cy='406.60078446690477' transform='translate(-12.0,-12.0) scale(1.0)'><use x='152.13500661980095' y='356.60078446690477' xlink:href='#Neptune' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='325.36686913487233' kr:signposition='25.36686913487233' kr:slug='Mars' kr:cx='467.1633775577503' kr:cy='396.70274320796557' transform='translate(-12.0,-12.0) scale(1.0)'><use x='367.1633775577503' y='346.70274320796557' xlink:href='#Mars' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='332.95802316366576' kr:signposition='2.9580231636657572' kr:slug='Moon' kr:cx='462.4459029200319' kr:cy='369.51729911219394' transform='translate(-12.0,-12.0) scale(1.0)'><use x='362.4459029200319' y='319.51729911219394' xlink:href='#Moon' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='349.64199427659315' kr:signposition='19.641994276593152' kr:slug='Sun' kr:cx='499.5694415257609' kr:cy='335.755801065622' transform='translate(-12.0,-12.0) scale(1.0)'><use x='399.5694415257609' y='285.755801065622' xlink:href='#Sun' /></g><g kr:node='Indicator' kr:slug='Sun' kr:absoluteposition='349.64199427659315'><line class='planet-degree-line' x1='474.572130764856' y1='307.1707932693614' x2='466.88124123158207' y2='304.9684721785627' style='stroke: var(--kerykeion-chart-color-sun); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(480.34029791481146,308.8225340874605)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-sun); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='Moon' kr:absoluteposition='332.95802316366576'><line class='planet-degree-line' x1='445.4130778180375' y1='371.68700566616604' x2='438.67822280761004' y2='367.3693989230131' style='stroke: var(--kerykeion-chart-color-moon); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(450.4642190758581,374.9252107235308)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-moon); font-size: 10px;'>2°</text></g></g><g kr:node='Indicator' kr:slug='Mercury' kr:absoluteposition='4.21847778017385'><line class='planet-degree-line' x1='483.9268696285766' y1='245.97346408739605' x2='475.92926734567243' y2='245.77761280584207' style='stroke: var(--kerykeion-chart-color-mercury); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(489.9996404131138,239.57597958327386)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mercury); font-size: 10px;'>4°</text></g></g><g kr:node='Indicator' kr:slug='Venus' kr:absoluteposition='205.81278935592445'><line class='planet-degree-line' x1='10.995191036072486' y1='324.21874774297623' x2='18.5035454283324' y2='321.4574773251737' style='stroke: var(--kerykeion-chart-color-venus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(5.363925241877546,326.2897005563281)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-venus); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Mars' kr:absoluteposition='325.36686913487233'><line class='planet-degree-line' x1='426.21653178178855' y1='397.6686503118554' x2='420.11107172336926' y2='392.4991863672044' style='stroke: var(--kerykeion-chart-color-mars); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(430.79562682560305,401.5457482703436)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mars); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Jupiter' kr:absoluteposition='13.629273978623788'><line class='planet-degree-line' x1='481.6206800424485' y1='206.00813368135317' x2='473.69869053286' y2='207.12262110163667' style='stroke: var(--kerykeion-chart-color-jupiter); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(487.56217217463984,205.17226811614054)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-jupiter); font-size: 10px;'>13°</text></g></g><g kr:node='Indicator' kr:slug='Saturn' kr:absoluteposition='33.265477389668554'><line class='planet-degree-line' x1='456.1464461766871' y1='126.78907382593974' x2='449.0596774495826' y2='130.5009074709909' style='stroke: var(--kerykeion-chart-color-saturn); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(461.46152272201545,124.00519859215137)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-saturn); font-size: 10px;'>3°</text></g></g><g kr:node='Indicator' kr:slug='Uranus' kr:absoluteposition='184.43406588546029'><line class='planet-degree-line' x1='-3.94761929597325' y1='234.94440509663798' x2='4.0506633038947255' y2='235.11016230658427' style='stroke: var(--kerykeion-chart-color-uranus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-9.725086570817018,228.27903002316162)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-uranus); font-size: 10px;'>4°</text></g></g><g kr:node='Indicator' kr:slug='Neptune' kr:absoluteposition='238.57135373651133'><line class='planet-degree-line' x1='92.98732133102604' y1='434.73898508150086' x2='97.8074091562383' y2='428.3541003247303' style='stroke: var(--kerykeion-chart-color-neptune); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(89.37225546211684,439.52764864907874)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-neptune); font-size: 10px;'>28°</text></g></g><g kr:node='Indicator' kr:slug='Pluto' kr:absoluteposition='175.37575260994487'><line class='planet-degree-line' x1='-0.10930409344633585' y1='196.60043677914592' x2='7.76313210633879' y2='198.02337327819032' style='stroke: var(--kerykeion-chart-color-pluto); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-6.013631243285181,195.5332344048626)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-pluto); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='171.0263673303981'><line class='planet-degree-line' x1='3.873523101450309' y1='178.51596217327074' x2='11.615374803042101' y2='180.53183226595038' style='stroke: var(--kerykeion-chart-color-true-node); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-1.9328656747435353,177.00405960376102)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-true-node); font-size: 10px;'>21°</text></g></g><g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='3.673669958830767'><line class='planet-degree-line' x1='483.8590434005044' y1='248.29258414433835' x2='475.8636649283567' y2='248.02069613960595' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(489.5475455434032,255.0340451397197)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-chiron); font-size: 10px;'>3°</text></g></g><g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='185.62129941235852'><line class='planet-degree-line' x1='-4.0' y1='239.99999999999997' x2='4.0' y2='239.99999999999997' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-9.914331243889315,246.54423707696827)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-first-house); font-size: 10px;'>5°</text></g></g><g kr:node='Indicator' kr:slug='Medium_Coeli' kr:absoluteposition='97.6760660054407'><line class='planet-degree-line' x1='231.25143960901917' y1='-3.843110813255014' x2='231.5382776546251' y2='4.1517452789828555' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(231.0363110748147,-9.839252882433415)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-tenth-house); font-size: 10px;'>7°</text></g></g>
+                <g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='3.673669958830767' kr:signposition='3.673669958830767' kr:slug='Chiron' kr:cx='485.79991207416776' kr:cy='297.6410496114698' transform='translate(-12.0,-12.0) scale(1.0)'><use x='385.79991207416776' y='247.64104961146978' xlink:href='#Chiron' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='506.0' kr:cy='290.0' transform='translate(-12.0,-12.0) scale(1.0)'><use x='406.0' y='240.0' xlink:href='#Mercury' /></g><g kr:node='ChartPoint' kr:house='Seventh_House' kr:sign='Ari' kr:absoluteposition='13.629273978623788' kr:signposition='13.629273978623788' kr:slug='Jupiter' kr:cx='484.5791380362693' kr:cy='269.68072725983046' transform='translate(-12.0,-12.0) scale(1.0)'><use x='384.5791380362693' y='219.68072725983046' xlink:href='#Jupiter' /></g><g kr:node='ChartPoint' kr:house='Eighth_House' kr:sign='Tau' kr:absoluteposition='33.265477389668554' kr:signposition='3.265477389668554' kr:slug='Saturn' kr:cx='486.5693004145819' kr:cy='212.06772057754213' transform='translate(-12.0,-12.0) scale(1.0)'><use x='386.5693004145819' y='162.06772057754213' xlink:href='#Saturn' /></g><g kr:node='ChartPoint' kr:house='Tenth_House' kr:sign='Can' kr:absoluteposition='97.6760660054407' kr:signposition='7.676066005440703' kr:slug='Medium_Coeli' kr:cx='334.9046734814349' kr:cy='144.08893925521204' transform='translate(-12.0,-12.0) scale(1.0)'><use x='234.90467348143488' y='94.08893925521203' xlink:href='#Medium_Coeli' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='171.0263673303981' kr:signposition='21.026367330398102' kr:slug='True_North_Lunar_Node' kr:cx='178.93090943818459' kr:cy='249.84096533045516' transform='translate(-12.0,-12.0) scale(1.0)'><use x='78.93090943818459' y='199.84096533045516' xlink:href='#True_North_Lunar_Node' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Vir' kr:absoluteposition='175.37575260994487' kr:signposition='25.37575260994487' kr:slug='Pluto' kr:cx='196.21806806021763' kr:cy='264.6473660606282' transform='translate(-12.0,-12.0) scale(1.0)'><use x='96.21806806021763' y='214.64736606062817' xlink:href='#Pluto' /></g><g kr:node='ChartPoint' kr:house='Twelfth_House' kr:sign='Lib' kr:absoluteposition='184.43406588546029' kr:signposition='4.434065885460285' kr:slug='Uranus' kr:cx='174.1011227148301' kr:cy='284.2066835473849' transform='translate(-12.0,-12.0) scale(1.0)'><use x='74.1011227148301' y='234.2066835473849' xlink:href='#Uranus' /></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='185.62129941235852' kr:signposition='5.621299412358525' kr:slug='Ascendant' kr:cx='194.0222365071669' kr:cy='292.54805133984337' transform='translate(-12.0,-12.0) scale(1.0)'><use x='94.02223650716688' y='242.54805133984334' xlink:href='#Ascendant' /></g><g kr:node='ChartPoint' kr:house='First_House' kr:sign='Lib' kr:absoluteposition='205.81278935592445' kr:signposition='25.81278935592445' kr:slug='Venus' kr:cx='184.0110249495392' kr:cy='346.775343792061' transform='translate(-12.0,-12.0) scale(1.0)'><use x='84.0110249495392' y='296.775343792061' xlink:href='#Venus' /></g><g kr:node='ChartPoint' kr:house='Second_House' kr:sign='Sco' kr:absoluteposition='238.57135373651133' kr:signposition='28.571353736511327' kr:slug='Neptune' kr:cx='252.13500661980095' kr:cy='406.60078446690477' transform='translate(-12.0,-12.0) scale(1.0)'><use x='152.13500661980095' y='356.60078446690477' xlink:href='#Neptune' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Aqu' kr:absoluteposition='325.36686913487233' kr:signposition='25.36686913487233' kr:slug='Mars' kr:cx='467.1633775577503' kr:cy='396.70274320796557' transform='translate(-12.0,-12.0) scale(1.0)'><use x='367.1633775577503' y='346.70274320796557' xlink:href='#Mars' /></g><g kr:node='ChartPoint' kr:house='Fifth_House' kr:sign='Pis' kr:absoluteposition='332.95802316366576' kr:signposition='2.9580231636657572' kr:slug='Moon' kr:cx='462.4459029200319' kr:cy='369.51729911219394' transform='translate(-12.0,-12.0) scale(1.0)'><use x='362.4459029200319' y='319.51729911219394' xlink:href='#Moon' /></g><g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Pis' kr:absoluteposition='349.64199427659315' kr:signposition='19.641994276593152' kr:slug='Sun' kr:cx='499.5694415257609' kr:cy='335.755801065622' transform='translate(-12.0,-12.0) scale(1.0)'><use x='399.5694415257609' y='285.755801065622' xlink:href='#Sun' /></g><g kr:node='Indicator' kr:slug='Sun' kr:absoluteposition='349.64199427659315'><line class='planet-degree-line' x1='474.572130764856' y1='307.1707932693614' x2='466.88124123158207' y2='304.9684721785627' style='stroke: var(--kerykeion-chart-color-sun); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(480.34029791481146,308.8225340874605)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-sun); font-size: 10px;'>19°</text></g></g><g kr:node='Indicator' kr:slug='Moon' kr:absoluteposition='332.95802316366576'><line class='planet-degree-line' x1='445.4130778180375' y1='371.68700566616604' x2='438.67822280761004' y2='367.3693989230131' style='stroke: var(--kerykeion-chart-color-moon); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(450.4642190758581,374.9252107235308)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-moon); font-size: 10px;'>2°</text></g></g><g kr:node='Indicator' kr:slug='Mercury' kr:absoluteposition='4.21847778017385'><line class='planet-degree-line' x1='483.9268696285766' y1='245.97346408739605' x2='475.92926734567243' y2='245.77761280584207' style='stroke: var(--kerykeion-chart-color-mercury); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(489.9996404131138,239.57597958327386)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mercury); font-size: 10px;'>4°</text></g></g><g kr:node='Indicator' kr:slug='Venus' kr:absoluteposition='205.81278935592445'><line class='planet-degree-line' x1='10.995191036072486' y1='324.21874774297623' x2='18.5035454283324' y2='321.4574773251737' style='stroke: var(--kerykeion-chart-color-venus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(5.363925241877546,326.2897005563281)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-venus); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Mars' kr:absoluteposition='325.36686913487233'><line class='planet-degree-line' x1='426.21653178178855' y1='397.6686503118554' x2='420.11107172336926' y2='392.4991863672044' style='stroke: var(--kerykeion-chart-color-mars); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(430.79562682560305,401.5457482703436)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-mars); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='Jupiter' kr:absoluteposition='13.629273978623788'><line class='planet-degree-line' x1='481.6206800424485' y1='206.00813368135317' x2='473.69869053286' y2='207.12262110163667' style='stroke: var(--kerykeion-chart-color-jupiter); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(487.56217217463984,205.17226811614054)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-jupiter); font-size: 10px;'>13°</text></g></g><g kr:node='Indicator' kr:slug='Saturn' kr:absoluteposition='33.265477389668554'><line class='planet-degree-line' x1='456.1464461766871' y1='126.78907382593974' x2='449.0596774495826' y2='130.5009074709909' style='stroke: var(--kerykeion-chart-color-saturn); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(461.46152272201545,124.00519859215137)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-saturn); font-size: 10px;'>3°</text></g></g><g kr:node='Indicator' kr:slug='Uranus' kr:absoluteposition='184.43406588546029'><line class='planet-degree-line' x1='-3.94761929597325' y1='234.94440509663798' x2='4.0506633038947255' y2='235.11016230658427' style='stroke: var(--kerykeion-chart-color-uranus); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-9.725086570817018,228.27903002316162)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-uranus); font-size: 10px;'>4°</text></g></g><g kr:node='Indicator' kr:slug='Neptune' kr:absoluteposition='238.57135373651133'><line class='planet-degree-line' x1='92.98732133102604' y1='434.73898508150086' x2='97.8074091562383' y2='428.3541003247303' style='stroke: var(--kerykeion-chart-color-neptune); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(89.37225546211684,439.52764864907874)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-neptune); font-size: 10px;'>28°</text></g></g><g kr:node='Indicator' kr:slug='Pluto' kr:absoluteposition='175.37575260994487'><line class='planet-degree-line' x1='-0.10930409344633585' y1='196.60043677914592' x2='7.76313210633879' y2='198.02337327819032' style='stroke: var(--kerykeion-chart-color-pluto); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-6.013631243285181,195.5332344048626)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-pluto); font-size: 10px;'>25°</text></g></g><g kr:node='Indicator' kr:slug='True_North_Lunar_Node' kr:absoluteposition='171.0263673303981'><line class='planet-degree-line' x1='3.873523101450309' y1='178.51596217327074' x2='11.615374803042101' y2='180.53183226595038' style='stroke: var(--kerykeion-chart-color-true-node); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-1.9328656747435353,177.00405960376102)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-true-node); font-size: 10px;'>21°</text></g></g><g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='3.673669958830767'><line class='planet-degree-line' x1='483.8590434005044' y1='248.29258414433835' x2='475.8636649283567' y2='248.02069613960595' style='stroke: var(--kerykeion-chart-color-chiron); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(489.5475455434032,255.0340451397197)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-chiron); font-size: 10px;'>3°</text></g></g><g kr:node='Indicator' kr:slug='Ascendant' kr:absoluteposition='185.62129941235852'><line class='planet-degree-line' x1='-4.0' y1='239.99999999999997' x2='4.0' y2='239.99999999999997' style='stroke: var(--kerykeion-chart-color-first-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(-9.914331243889315,246.54423707696827)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-first-house); font-size: 10px;'>5°</text></g></g><g kr:node='Indicator' kr:slug='Medium_Coeli' kr:absoluteposition='97.6760660054407'><line class='planet-degree-line' x1='231.25143960901917' y1='-3.843110813255014' x2='231.5382776546251' y2='4.1517452789828555' style='stroke: var(--kerykeion-chart-color-tenth-house); stroke-width: 1px; stroke-opacity:.8;'/><g transform='translate(231.0363110748147,-9.839252882433415)'><text text-anchor='middle' dominant-baseline='middle' style='fill: var(--kerykeion-chart-color-tenth-house); font-size: 10px;'>7°</text></g></g>
             </g>
 
             <!-- Aspects -->

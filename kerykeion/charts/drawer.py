@@ -5425,9 +5425,20 @@ class ChartDrawer:  # type: ignore[no-redef]
             # subject without a moon phase states none, and with the rows packed
             # to the bottom a shorter block starts lower. Pinning the glyph would
             # leave it hanging on its own halfway up the panel, captioning air.
+            #
+            # Both terms are needed, and only one of them was here: the blank
+            # rows move the first line down inside the block, and the block
+            # itself moves down with the canvas. A chart with every point active
+            # is 1097 tall against the usual 580, and its block sits at y 524 —
+            # the glyph stayed at 438, stranded halfway up the left edge with
+            # half a page of nothing under it.
             blank_rows = _INFO_ROW_COUNT - len(filled)
-            lunar_phase_y = _NATAL_MOON_GLYPH_Y + _INFO_ROW_STEP * (blank_rows - 1)
             bottom_left_y = offsets["bottom_left"] + _NATAL_BLOCK_DROP
+            lunar_phase_y = (
+                _NATAL_MOON_GLYPH_Y
+                + _INFO_ROW_STEP * (blank_rows - 1)
+                + offsets["bottom_left"]
+            )
         elif filled:
             last_row_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * (_INFO_ROW_COUNT - 1)
             lunar_phase_y = offsets["lunar_phase"] + (last_row_y - _INFO_ROW_LEGACY_LAST_Y)
