@@ -30,6 +30,19 @@ from typing import Sequence
 __all__ = ["isotonic_non_decreasing", "spread_around_wheel"]
 
 
+def _wrap_to_circle(angle: float) -> float:
+    """``angle`` reduced to ``[0, 360)`` — the half-open range, actually.
+
+    Plain ``% 360.0`` does not give it: for a tiny negative input Python's float
+    modulo returns exactly ``360.0``, which is outside the range every caller
+    here assumes. The same trap is documented at
+    :func:`kerykeion.charts.utils.normalize_degree`; this is its local twin,
+    kept local because ``charts.utils`` imports this module and not the reverse.
+    """
+    result = angle % 360.0
+    return result if result < 360.0 else 0.0
+
+
 def isotonic_non_decreasing(values: Sequence[float]) -> list[float]:
     """The closest non-decreasing sequence to *values* in least squares.
 
@@ -85,17 +98,19 @@ def spread_around_wheel(
     neighbours; the widest gap is the one place guaranteed not to be inside a
     crowd. When even the total will not fit — twelve labels wanting more than
     360° between them — the requirement is scaled down to what the circle has,
-    which spreads the crowding evenly instead of piling it all at the seam.
+    which spreads the crowding evenly instead of piling it all at the seam. The
+    budget is the circle itself: a crowd with empty wheel beside it is spread,
+    not left as it was.
     """
     count = len(angles)
     if count < 2 or (min_separation <= 0 and not half_extents):
-        return [angle % 360.0 for angle in angles]
+        return [_wrap_to_circle(angle) for angle in angles]
 
-    order = sorted(range(count), key=lambda i: angles[i] % 360.0)
-    sorted_angles = [angles[i] % 360.0 for i in order]
+    order = sorted(range(count), key=lambda i: _wrap_to_circle(angles[i]))
+    sorted_angles = [_wrap_to_circle(angles[i]) for i in order]
 
     gaps = [
-        (sorted_angles[(i + 1) % count] - sorted_angles[i]) % 360.0
+        _wrap_to_circle(sorted_angles[(i + 1) % count] - sorted_angles[i])
         for i in range(count)
     ]
     cut = max(range(count), key=lambda i: gaps[i])
@@ -103,24 +118,43 @@ def spread_around_wheel(
     # Unroll starting just after the widest gap, so the sequence is monotonic.
     rolled = [sorted_angles[(cut + 1 + i) % count] for i in range(count)]
     start = rolled[0]
-    unrolled = [(angle - start) % 360.0 for angle in rolled]
+    unrolled = [_wrap_to_circle(angle - start) for angle in rolled]
 
     # What each consecutive pair needs, in the unrolled order.
+    rolled_index = [order[(cut + 1 + i) % count] for i in range(count)]
     if half_extents is None:
         gaps_needed = [min_separation] * (count - 1)
     else:
-        rolled_index = [order[(cut + 1 + i) % count] for i in range(count)]
         gaps_needed = [
             max(min_separation, half_extents[rolled_index[i]] + half_extents[rolled_index[i + 1]])
             for i in range(count - 1)
         ]
 
-    needed = sum(gaps_needed)
-    available = unrolled[-1] - unrolled[0]
-    if needed > available and needed > 0:
-        # More labels than the arc can hold at full separation: share the
-        # shortfall rather than letting the last few pile up.
-        shrink = available / needed
+    # What the seam pair — last label back round to first — needs, on the same
+    # terms as every other pair. It is not in `gaps_needed` (the isotonic fit
+    # runs on the straightened row, which has no seam) but it does occupy room
+    # on the circle, so the budget has to count it.
+    if half_extents is None:
+        seam_needed = min_separation
+    else:
+        seam_needed = max(
+            min_separation, half_extents[rolled_index[-1]] + half_extents[rolled_index[0]]
+        )
+
+    # The budget is the circle, not the crowd. This used to compare `needed`
+    # against `unrolled[-1] - unrolled[0]` — the span the labels already
+    # occupied — so a tight cluster was told it had only its own width to work
+    # with and scaled its requirement down to exactly the spacing it already
+    # had. Twelve labels 3.6° apart asking for 4.31° came back untouched, with
+    # 320° of the wheel standing empty beside them. Measured against 360° the
+    # same case has room to spare and simply spreads.
+    needed = sum(gaps_needed) + seam_needed
+    if needed > 360.0:
+        # More labels than the circle can hold at full separation: share the
+        # shortfall rather than letting the last few pile up. Scaling the seam
+        # along with the rest is what keeps the crowding even all the way round
+        # instead of dumping it into the one gap the fit cannot see.
+        shrink = 360.0 / needed
         gaps_needed = [gap * shrink for gap in gaps_needed]
 
     # Subtracting a ramp turns "at least this much apart" into "non decreasing",
@@ -135,5 +169,5 @@ def spread_around_wheel(
 
     result = [0.0] * count
     for position, index in enumerate(order[(cut + 1) % count :] + order[: (cut + 1) % count]):
-        result[index] = (placed[position] + start) % 360.0
+        result[index] = _wrap_to_circle(placed[position] + start)
     return result

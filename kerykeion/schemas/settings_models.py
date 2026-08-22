@@ -331,6 +331,39 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     true_geocentric: str = Field(
         title="True Geocentric", description="The true geocentric label in the chart, in the language"
     )
+    # The remaining seven members of PerspectiveType. Every value the literal
+    # admits needs a field here, or a chart cast in that perspective falls back
+    # to the raw English literal in every language and no language_pack can
+    # supply the missing string (extra keys are dropped before model_dump).
+    # tests/core/test_translation_coverage.py holds the two sides together.
+    selenocentric: str = Field(
+        title="Selenocentric", description="The selenocentric label in the chart, in the language"
+    )
+    mercurycentric: str = Field(
+        title="Mercurycentric", description="The mercurycentric label in the chart, in the language"
+    )
+    venuscentric: str = Field(
+        title="Venuscentric", description="The venuscentric label in the chart, in the language"
+    )
+    marscentric: str = Field(
+        title="Marscentric", description="The marscentric label in the chart, in the language"
+    )
+    jupitercentric: str = Field(
+        title="Jupitercentric", description="The jupitercentric label in the chart, in the language"
+    )
+    saturncentric: str = Field(
+        title="Saturncentric", description="The saturncentric label in the chart, in the language"
+    )
+    barycentric: str = Field(
+        title="Barycentric", description="The barycentric label in the chart, in the language"
+    )
+    chart_contents: str = Field(
+        title="Chart Contents",
+        description=(
+            "Accessibility summary of what the chart holds, read out by the SVG <desc>. "
+            "Takes {points} and {aspects} placeholders."
+        ),
+    )
     new_moon: str = Field(title="New Moon", description="The new moon label in the chart, in the language")
     waxing_crescent: str = Field(
         title="Waxing Crescent", description="The waxing crescent label in the chart, in the language"

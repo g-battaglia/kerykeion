@@ -69,6 +69,7 @@ from kerykeion.schemas import (
 )
 from kerykeion.schemas.literals import AstrologicalPoint
 from datetime import datetime, timedelta, timezone
+import math
 
 from typing import Any, List, Literal, Optional
 import logging
@@ -105,6 +106,10 @@ class EphemerisDataFactory:
             Positive values for North, negative for South. Defaults to 51.4769 (Greenwich).
         lng (float, optional): Geographic longitude in decimal degrees for calculations.
             Positive values for East, negative for West. Defaults to 0.0005 (Greenwich).
+        altitude (float, optional): Observer height above sea level in metres. Only the
+            ``Topocentric`` perspective reads it; every other perspective ignores it.
+            Defaults to None (sea level), which is what the single-subject path assumes
+            for the same input. Defaults to None.
         tz_str (str, optional): Timezone identifier (e.g., "Europe/London", "America/New_York").
             Defaults to "Etc/UTC".
         is_dst (bool, optional): Which reading to take when a transition makes a
@@ -190,6 +195,7 @@ class EphemerisDataFactory:
         step: int = 1,
         lat: float = 51.4769,
         lng: float = 0.0005,
+        altitude: Optional[float] = None,
         tz_str: str = "Etc/UTC",
         is_dst: bool = False,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
@@ -214,6 +220,10 @@ class EphemerisDataFactory:
         self.step = step
         self.lat = lat
         self.lng = lng
+        # Only the topocentric perspective reads it, and only libephemeris/swisseph
+        # know that; forwarded unconditionally so the series and the single-subject
+        # path answer the same for the same observer.
+        self.altitude = altitude
         self.tz_str = tz_str
         self.is_dst = is_dst
         self.zodiac_type = normalize_zodiac_type(zodiac_type)
@@ -282,7 +292,13 @@ class EphemerisDataFactory:
 
         elif self.step_type == "hours":
             hours_diff = (_end_utc - _start_utc).total_seconds() / 3600
-            n_samples = int(hours_diff) // self.step + 1
+            # floor(), not int(): int() truncates toward zero, so an inverted range
+            # shorter than one step (-0.5h -> 0) sized the series at one sample and
+            # returned a single point outside the requested window instead of
+            # raising. floor() takes it negative, the list comes out empty, and the
+            # "No dates found" guard below fires — the same answer the days branch
+            # already gives, where timedelta.days floors for free.
+            n_samples = math.floor(hours_diff) // self.step + 1
             if max_hours and (n_samples > max_hours):
                 raise ValueError(
                     f"Too many hours: {n_samples} > {self.max_hours}. To prevent this error, set max_hours to a higher value or reduce the date range."
@@ -291,7 +307,8 @@ class EphemerisDataFactory:
 
         elif self.step_type == "minutes":
             minutes_diff = (_end_utc - _start_utc).total_seconds() / 60
-            n_samples = int(minutes_diff) // self.step + 1
+            # floor() for the same reason as the hours branch above.
+            n_samples = math.floor(minutes_diff) // self.step + 1
             if max_minutes and (n_samples > max_minutes):
                 raise ValueError(
                     f"Too many minutes: {n_samples} > {self.max_minutes}. To prevent this error, set max_minutes to a higher value or reduce the date range."
@@ -334,6 +351,7 @@ class EphemerisDataFactory:
             seconds=local_date.second,
             lng=self.lng,
             lat=self.lat,
+            altitude=self.altitude,
             tz_str=self.tz_str,
             city="Placeholder",
             nation="Placeholder",

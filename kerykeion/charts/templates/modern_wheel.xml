@@ -10,6 +10,7 @@
     viewBox="0 0 100 100"
     preserveAspectRatio="xMidYMid"
     font-family="$chart_font_family"
+    style="background-color: $background_color"
 >
     <title id="kerykeion-chart-title">$stringTitle</title>
     <desc id="kerykeion-chart-desc">$stringDescription</desc>

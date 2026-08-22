@@ -733,7 +733,16 @@ def normalize_degree(angle: Union[int, float]) -> float:
     Returns:
         float: The normalized angle in the range [0, 360).
     """
-    return angle % 360 if angle % 360 != 0 else 0.0
+    # The guard is on the *result*, not on `% 360 != 0`. For a tiny negative
+    # input Python's float modulo returns exactly 360.0 (-1e-15 % 360 == 360.0),
+    # which the old test read as "non-zero, therefore fine" and passed straight
+    # through — breaking the [0, 360) contract this function exists to hold.
+    # It matters downstream: draw_modern computes a house sector's span as
+    # normalize_degree(next_cusp - cusp), so two cusps coinciding to within
+    # float noise in the negative direction painted a 360° sector over the
+    # whole chart instead of a degenerate one.
+    result = angle % 360.0
+    return result if result < 360.0 else 0.0
 
 
 def timedelta_to_decimal_hours(datetime_offset: Union[datetime.timedelta, None]) -> float:
@@ -908,8 +917,15 @@ def draw_house_sectors(
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        offset_start = -seventh_house_abs + houses_list[i].abs_pos
-        offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
+        # int(), matching draw_house_cusp_lines below and _calculate_point_offset
+        # in draw_planets: the wheel's classic engine quantises every angle to the
+        # whole degree, and a wedge that did not would not line up with the cusp
+        # line it is supposed to bound. It did not, until now — up to 0.7° adrift
+        # on an ordinary chart (~3px at r=240), enough that a click just inside a
+        # cusp selected the neighbouring house. The truncation is inherited
+        # imprecision, but it has to be the *same* imprecision on both sides.
+        offset_start = -int(seventh_house_abs) + int(houses_list[i].abs_pos)
+        offset_end = -int(seventh_house_abs) + int(houses_list[next_i].abs_pos)
 
         # Use wheel_x/Y (which has built-in +1 centering) + dropin offset.
         # This matches the cusp line coordinate system exactly.

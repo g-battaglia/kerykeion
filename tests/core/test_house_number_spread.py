@@ -164,3 +164,43 @@ def test_more_labels_than_the_circle_holds_share_the_shortfall():
 def test_the_reach_is_zero_at_a_degenerate_radius():
     assert _house_number_half_extents([0.0, 90.0], 0.0) == [0.0, 0.0]
     assert math.isfinite(_house_number_half_extents([0.0], 1.0)[0])
+
+
+def test_a_tight_crowd_spreads_into_the_empty_wheel_beside_it():
+    """The budget is the circle, not the crowd's own width.
+
+    The shrink used to be measured against ``unrolled[-1] - unrolled[0]`` — the
+    span the labels already occupied. A crowd was therefore told it had only its
+    own width to work with, scaled its requirement down to exactly the spacing it
+    already had, and came back untouched: twelve labels 3.6° apart asking for
+    4.31° stayed 3.6° apart with 320° of wheel standing empty next to them.
+    """
+    wanted = [i * 3.6 for i in range(12)]
+    placed = spread_around_wheel(wanted, 4.31)
+    # Circular gaps: a crowd centred on 19.8° and widened to 47.4° reaches back
+    # past 0°, and the label that lands at 356.1° is next to the one at 0.4°.
+    gaps = [(placed[i + 1] - placed[i]) % 360.0 for i in range(11)]
+    assert min(gaps) >= 4.31 - 1e-9, gaps
+    # And it stays centred where it was: least movement, not slid to one side.
+    unwrapped = [value if value < 180.0 else value - 360.0 for value in placed]
+    assert sum(unwrapped) / len(unwrapped) == pytest.approx(sum(wanted) / len(wanted), abs=1e-6)
+
+
+def test_a_tight_crowd_with_per_label_extents_spreads_too():
+    """Same defect, reached through the ``half_extents`` signature."""
+    wanted = [i * 2.0 for i in range(8)]
+    extents = [2.0] * 8
+    placed = spread_around_wheel(wanted, 0.0, half_extents=extents)
+    gaps = [(placed[i + 1] - placed[i]) % 360.0 for i in range(7)]
+    assert min(gaps) >= 4.0 - 1e-9, gaps
+
+
+def test_the_result_never_lands_on_360():
+    """``[0, 360)`` is half-open, and plain ``% 360.0`` does not honour that.
+
+    A tiny negative intermediate makes Python's float modulo return exactly
+    360.0. The first entry of a crowd starting at 0.0 hit precisely that.
+    """
+    for wanted in ([i * 3.6 for i in range(12)], [0.0, 0.1, 0.2], [359.9, 0.0, 0.1]):
+        for placed in (spread_around_wheel(wanted, 4.31), spread_around_wheel(wanted, 0.5)):
+            assert all(0.0 <= value < 360.0 for value in placed), placed

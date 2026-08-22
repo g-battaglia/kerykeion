@@ -92,9 +92,13 @@ build-backend = "hatchling.build"
 packages = ["kerykeion"]
 
 # Ship the third-party notices with the wheel: the templates embed glyph outlines
-# derived from Noto Sans Symbols 2 (SIL OFL 1.1), whose license must accompany them.
+# derived from Noto Sans Symbols 2 and from Noto Sans (both SIL OFL 1.1), whose
+# licenses must accompany them. Every file the NOTICE points at has to be here:
+# the sdist gets them from its own "/licenses" include, so a repo checkout hides
+# a missing entry and only a pip-installed tree shows the dangling reference.
 [tool.hatch.build.targets.wheel.force-include]
 "NOTICE" = "kerykeion/NOTICE"
+"licenses/NotoSans-OFL.txt" = "kerykeion/licenses/NotoSans-OFL.txt"
 "licenses/NotoSansSymbols2-OFL.txt" = "kerykeion/licenses/NotoSansSymbols2-OFL.txt"
 
 [tool.hatch.build.targets.sdist]
