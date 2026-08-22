@@ -436,7 +436,10 @@ def ephemeris_trace() -> Iterator[Optional[Any]]:
         if token is not None:
             try:
                 token.var.reset(token)
-            except (RuntimeError, ValueError):
+            except Exception:
+                # Broad on purpose: this runs in a finally, so anything raised
+                # here REPLACES the exception on its way out and the caller sees
+                # a token-plumbing error instead of the real ephemeris failure.
                 pass
 
 
@@ -3436,7 +3439,15 @@ class AstrologicalSubjectFactory:
             # on the swisseph backend — almost always caused by a missing
             # ``sefstars.txt`` in KERYKEION_EPHE_PATH. The fix is documented in
             # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").
-            if requested_fixed_stars and not fixed_stars_list and BACKEND_NAME == "swisseph":
+            # `<` not `not ...`: a partially resolved catalog is the case that
+            # needs saying, and gating on an empty list meant asking for ten stars
+            # and getting three back said nothing at all. Same defect, and same
+            # fix, as the discovery factory's gate.
+            if (
+                requested_fixed_stars
+                and len(fixed_stars_list) < len(requested_fixed_stars)
+                and BACKEND_NAME == "swisseph"
+            ):
                 logging.warning(
                     "No fixed stars could be calculated with the swisseph backend. "
                     "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "

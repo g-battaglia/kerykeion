@@ -204,3 +204,33 @@ def test_the_result_never_lands_on_360():
     for wanted in ([i * 3.6 for i in range(12)], [0.0, 0.1, 0.2], [359.9, 0.0, 0.1]):
         for placed in (spread_around_wheel(wanted, 4.31), spread_around_wheel(wanted, 0.5)):
             assert all(0.0 <= value < 360.0 for value in placed), placed
+
+
+def test_the_seam_is_not_squeezed_when_the_crowd_is_widened():
+    """The fit cannot see the seam, so the ceiling has to be imposed after it.
+
+    Letting the row grow to the circle's budget — the fix above — created its own
+    failure: the isotonic fit honours every gap it was handed, but the seam pair
+    is not among them (the straightened row has no seam), so the overflow landed
+    in exactly the gap nobody was watching. Over 20 000 random twelve-label cases
+    the crowded branch came out *worse* than the implementation it replaced in
+    3121 of them, the worst leaving 0.012° where the old code left 15.9°.
+    """
+    for separation in (25.0, 32.5, 40.0, 45.0):
+        # Labels wanting far more room than the circle holds: 12 x 40° = 480°.
+        wanted = [index * 30.0 for index in range(12)]
+        placed = spread_around_wheel(wanted, separation)
+        gaps = [(placed[(i + 1) % 12] - placed[i]) % 360.0 for i in range(12)]
+        # No gap — the seam included — may be crushed while the others keep room.
+        assert min(gaps) >= max(gaps) - 1e-6, (
+            f"separation {separation}: gaps {[round(g, 3) for g in gaps]}"
+        )
+
+
+def test_a_wide_crowd_keeps_room_at_the_seam():
+    """A row already spanning most of the circle must not close the last gap."""
+    wanted = [index * 28.0 for index in range(12)]  # spans 308°, seam is 52°
+    placed = spread_around_wheel(wanted, 30.0)
+    gaps = [(placed[(i + 1) % 12] - placed[i]) % 360.0 for i in range(12)]
+    assert min(gaps) > 1.0, f"a gap collapsed: {[round(g, 3) for g in gaps]}"
+    assert sum(gaps) == pytest.approx(360.0)

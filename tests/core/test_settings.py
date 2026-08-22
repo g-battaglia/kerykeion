@@ -327,6 +327,14 @@ _KEYS_ADDED_HERE = (
     "relationship_score_exceptional",
     "relationship_score_rare_exceptional",
     "polar_fallback",
+    "selenocentric",
+    "mercurycentric",
+    "venuscentric",
+    "marscentric",
+    "jupitercentric",
+    "saturncentric",
+    "barycentric",
+    "chart_contents",
 )
 
 
@@ -385,6 +393,14 @@ class TestKerykeionLanguageModelRoundTrip:
             "Exceptional",
             "Rare Exceptional",
             "polar fallback",
+            "Selenocentric",
+            "Mercurycentric",
+            "Venuscentric",
+            "Marscentric",
+            "Jupitercentric",
+            "Saturncentric",
+            "Barycentric",
+            "{points} points, {aspects} aspects",
         ]
 
     @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))

@@ -719,9 +719,11 @@ def degree_sum(a: Union[int, float], b: Union[int, float]) -> float:
     Returns:
         float: normalized sum of a and b in the range [0, 360)
     """
-    # Use Python's % (not math.fmod) so the result is always in [0, 360) even for
-    # negative inputs (math.fmod keeps the dividend's sign, breaking the contract).
-    return (a + b) % 360.0
+    # Through normalize_degree rather than a second `% 360.0`: the modulo alone
+    # returns exactly 360.0 for a tiny negative sum, which is outside the range
+    # this docstring promises. That was the defect fixed fifteen lines below;
+    # having the two share one implementation is what stops it being fixed once.
+    return normalize_degree(a + b)
 
 
 def normalize_degree(angle: Union[int, float]) -> float:
@@ -742,6 +744,12 @@ def normalize_degree(angle: Union[int, float]) -> float:
     # float noise in the negative direction painted a 360° sector over the
     # whole chart instead of a degenerate one.
     result = angle % 360.0
+    # `result < 360.0` is False for NaN as well as for 360.0, so a bare else
+    # would quietly turn a NaN angle into 0° Aries — a plausible-looking wrong
+    # position where the old expression let the NaN through to a visible `nan`
+    # coordinate. Inf likewise: `inf % 360` is NaN. Propagate instead.
+    if math.isnan(result):
+        return result
     return result if result < 360.0 else 0.0
 
 
@@ -865,6 +873,12 @@ def draw_zodiac_slice(
     return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice_path + sign + "</g>"
 
 
+# Span given to a wedge whose two cusps quantise onto the same whole degree, so
+# the arc is still drawn and the house stays clickable. One degree is the
+# resolution the classic engine works at, so nothing finer would survive anyway.
+_MINIMUM_WEDGE_SPAN_DEGREES = 1.0
+
+
 def draw_house_sectors(
     r: Union[int, float],
     houses_list: list[KerykeionPointModel],
@@ -876,6 +890,7 @@ def draw_house_sectors(
     seventh_house_abs_override: Union[float, None] = None,
     outer_r_offset: Union[int, float, None] = None,
     inner_r_offset: Union[int, float, None] = None,
+    quantize_offsets_to_whole_degrees: bool = True,
 ) -> str:
     """
     Draw transparent house sector wedges for interactive highlighting.
@@ -895,6 +910,13 @@ def draw_house_sectors(
         horoscope_id: Subject identifier ("0" for first, "1" for second) or None.
         seventh_house_abs_override: Override for the 7th house position used to orient
             the wheel. When None, uses houses_list[6].abs_pos.
+        quantize_offsets_to_whole_degrees: Truncate each offset to the whole degree,
+            as ``draw_houses_cusps_and_text_number`` does for the inner ring. The wedge
+            only has to agree with the line it bounds, and a dual chart draws its two
+            rings with two different conventions: the first subject's cusps are
+            truncated, the second subject's are not (see the ``t_offset`` branch
+            there). Pass False for the outer ring, or the wedges drift off the
+            lines they are supposed to follow.
         outer_r_offset: Override for the outer radius offset (distance from r).
         inner_r_offset: Override for the inner radius offset (distance from r).
 
@@ -917,15 +939,22 @@ def draw_house_sectors(
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        # int(), matching draw_house_cusp_lines below and _calculate_point_offset
-        # in draw_planets: the wheel's classic engine quantises every angle to the
-        # whole degree, and a wedge that did not would not line up with the cusp
-        # line it is supposed to bound. It did not, until now — up to 0.7° adrift
-        # on an ordinary chart (~3px at r=240), enough that a click just inside a
-        # cusp selected the neighbouring house. The truncation is inherited
-        # imprecision, but it has to be the *same* imprecision on both sides.
-        offset_start = -int(seventh_house_abs) + int(houses_list[i].abs_pos)
-        offset_end = -int(seventh_house_abs) + int(houses_list[next_i].abs_pos)
+        # Match whichever convention the cusp lines of *this* ring use. The
+        # classic engine quantises the inner ring to the whole degree
+        # (`-int(seventh) + int(cusp)`, the same expression draw_planets uses for
+        # glyphs), and a wedge that kept exact degrees sat up to 0.7° off the line
+        # it bounds — about 3px at r=240, enough that a click just inside a cusp
+        # selected the neighbouring house. The outer ring of a dual chart is drawn
+        # at full precision instead, so quantising there would recreate the very
+        # drift this fixes, on the other subject.
+        offset_start: float
+        offset_end: float
+        if quantize_offsets_to_whole_degrees:
+            offset_start = -int(seventh_house_abs) + int(houses_list[i].abs_pos)
+            offset_end = -int(seventh_house_abs) + int(houses_list[next_i].abs_pos)
+        else:
+            offset_start = -seventh_house_abs + houses_list[i].abs_pos
+            offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
 
         # Use wheel_x/Y (which has built-in +1 centering) + dropin offset.
         # This matches the cusp line coordinate system exactly.
@@ -950,6 +979,21 @@ def draw_house_sectors(
         # over the opposite half of the wheel.
         span = (offset_end - offset_start) % 360
         large_arc = 1 if span > 180 else 0
+
+        # Two cusps inside the same whole degree collapse to identical endpoints
+        # once quantised, and an arc whose endpoints coincide is dropped by the
+        # SVG spec — leaving a zero-area path that still declares
+        # pointer-events:all, i.e. a house that can never be clicked. Sub-degree
+        # houses are ordinary with Placidus or Campanus near the polar circle.
+        # Give the wedge the smallest span that still encloses something; the
+        # click target is then thin but real, which is what it was before the
+        # quantisation.
+        if span == 0 and houses_list[i].abs_pos != houses_list[next_i].abs_pos:
+            offset_end = offset_start + _MINIMUM_WEDGE_SPAN_DEGREES
+            ox2 = wheel_x(0, outer_visual_r, offset_end) + outer_dropin
+            oy2 = wheel_y(0, outer_visual_r, offset_end) + outer_dropin
+            ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
+            iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
         # Path from cusp N to cusp N+1.
         # sweep=0 for outer arc, sweep=1 for inner arc → both curve outward

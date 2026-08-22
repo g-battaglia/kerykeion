@@ -33,10 +33,14 @@ from kerykeion.utilities.core import get_kerykeion_point_from_degree, get_planet
 
 logger = logging.getLogger(__name__)
 
-# Share of the catalog that has to fail before the swisseph backend is called out.
-# Well under the ~58% that a full scan actually loses, and well above the handful
-# of genuinely missing entries a healthy install drops.
-_UNRESOLVED_WARNING_SHARE = 0.10
+# Swisseph cannot address most of the libephemeris catalog's Bayer abbreviations
+# — around 58% of the 1447 entries fail even with sefstars.txt in place — so the
+# unresolved share is not a fault signal on its own, and warning on it once per
+# subject would train users to filter this logger. Say it once per process
+# instead: the advice ("install sefstars.txt, or switch backend") is the same
+# every time, and repeating it per chart is what would bury the genuinely empty
+# case among the routine ones.
+_swisseph_catalog_warning_emitted = False
 
 
 def _collect_planet_positions(subject: AstrologicalSubjectModel) -> list[tuple[str, float]]:
@@ -110,7 +114,10 @@ def _star_source_trace() -> Iterator[dict[str, str | None]]:
                 holder["source"] = str(next(iter(trace_map.values())))
             try:
                 token.var.reset(token)
-            except (RuntimeError, ValueError):
+            except Exception:
+                # Broad on purpose: raising from a finally would replace the
+                # exception in flight. Same reasoning as the twin in
+                # astrological_subject.factory.ephemeris_trace.
                 pass
 
 
@@ -288,9 +295,13 @@ class FixedStarDiscoveryFactory:
         if unresolved and BACKEND_NAME == "swisseph":
             # seen_names is filled before the attempt, so it already counts every
             # star the loop reached — resolved and unresolved alike.
+            global _swisseph_catalog_warning_emitted
             scanned = len(seen_names)
             unresolved_share = unresolved / scanned if scanned else 0.0
-            if not prominent or unresolved_share >= _UNRESOLVED_WARNING_SHARE:
+            # An empty result is worth repeating (it is the broken-install case);
+            # a partial one is said once and then left alone.
+            if not prominent or not _swisseph_catalog_warning_emitted:
+                _swisseph_catalog_warning_emitted = True
                 logger.warning(
                     "FixedStarDiscoveryFactory could not resolve %d of %d catalog stars "
                     "(%.0f%%) on the swisseph backend; the returned list is incomplete. "

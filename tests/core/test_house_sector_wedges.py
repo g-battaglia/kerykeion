@@ -27,7 +27,7 @@ import re
 
 import pytest
 
-from kerykeion.charts.utils import draw_house_sectors
+from kerykeion.charts.utils import draw_house_sectors, wheel_x, wheel_y
 
 
 class _Cusp:
@@ -44,6 +44,23 @@ def _cusps(*positions: float) -> list:
 
 def _evenly_spaced_from(first_cusp: float) -> list:
     return _cusps(*[(first_cusp + 30.0 * index) % 360.0 for index in range(12)])
+
+
+#: Fractional parts that differ house by house. Twelve cusps 30° apart all share
+#: the same fraction, which `-int(seventh) + int(cusp)` cancels exactly — so an
+#: evenly spaced ring produces the identical offsets whatever the first cusp is,
+#: and five such parametrisations are one case run five times. These drift the
+#: fraction instead, so the 0/360 wrap and the truncation itself are exercised.
+_FRACTION_DRIFT = (0.0, 0.15, 0.31, 0.48, 0.62, 0.77, 0.83, 0.91, 0.05, 0.27, 0.55, 0.69)
+
+
+def _uneven_cusps_from(first_cusp: float) -> list:
+    return _cusps(
+        *[
+            (first_cusp + 30.0 * index + _FRACTION_DRIFT[index]) % 360.0
+            for index in range(12)
+        ]
+    )
 
 
 def _wedge_paths(svg: str) -> list[str]:
@@ -84,23 +101,26 @@ def test_the_wedge_boundary_matches_the_cusp_line_it_bounds(fractional_cusp):
     own offset — reproduced here rather than imported, so that a change to
     either side has to be made deliberately on both.
     """
-    houses = _evenly_spaced_from(fractional_cusp)
+    houses = _uneven_cusps_from(fractional_cusp)
     seventh_house = houses[6].abs_pos
     svg = _draw(houses)
 
-    starts = [float(match) for match in re.findall(r"M ([\d.-]+),", svg)]
+    # Both coordinates, not just x: cos is even, so an x-only assertion passes
+    # happily on a sign-flipped offset. Mutating `-int(seventh) + int(cusp)` to
+    # `int(seventh) - int(cusp)` has to fail here, and it does.
+    starts = [(float(x), float(y)) for x, y in re.findall(r"M ([\d.-]+),([\d.-]+)", svg)]
     assert len(starts) == 12
 
+    outer_visual_r = RADIUS - FIRST_CIRCLE
+    dropin = RADIUS - outer_visual_r
     for index, house in enumerate(houses):
         cusp_line_offset = -int(seventh_house) + int(house.abs_pos)
-        # Recompute the wedge's own start x from that offset: identical input,
-        # identical output, to the last float bit.
-        from kerykeion.charts.utils import wheel_x
-
-        outer_visual_r = RADIUS - FIRST_CIRCLE
-        expected_x = wheel_x(0, outer_visual_r, cusp_line_offset) + (RADIUS - outer_visual_r)
-        assert starts[index] == pytest.approx(expected_x, abs=1e-9), (
-            f"house {index + 1}: wedge starts at {starts[index]}, cusp line at {expected_x}"
+        expected = (
+            wheel_x(0, outer_visual_r, cusp_line_offset) + dropin,
+            wheel_y(0, outer_visual_r, cusp_line_offset) + dropin,
+        )
+        assert starts[index] == pytest.approx(expected, abs=1e-9), (
+            f"house {index + 1}: wedge starts at {starts[index]}, cusp line at {expected}"
         )
 
 

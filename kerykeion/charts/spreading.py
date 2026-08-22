@@ -25,6 +25,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+import math
 from typing import Sequence
 
 __all__ = ["isotonic_non_decreasing", "spread_around_wheel"]
@@ -40,6 +41,10 @@ def _wrap_to_circle(angle: float) -> float:
     kept local because ``charts.utils`` imports this module and not the reverse.
     """
     result = angle % 360.0
+    # NaN fails `< 360.0` too, and turning it into 0.0 would invent a position
+    # rather than surface a bad one. Same reasoning as the twin.
+    if math.isnan(result):
+        return result
     return result if result < 360.0 else 0.0
 
 
@@ -149,6 +154,7 @@ def spread_around_wheel(
     # 320° of the wheel standing empty beside them. Measured against 360° the
     # same case has room to spare and simply spreads.
     needed = sum(gaps_needed) + seam_needed
+    shrink = 1.0
     if needed > 360.0:
         # More labels than the circle can hold at full separation: share the
         # shortfall rather than letting the last few pile up. Scaling the seam
@@ -166,6 +172,23 @@ def spread_around_wheel(
         ramp.append(ramp[-1] + gap)
     fitted = isotonic_non_decreasing([value - offset for value, offset in zip(unrolled, ramp)])
     placed = [value + offset for value, offset in zip(fitted, ramp)]
+
+    # The fit honours every gap it was given, but it was not given the seam — it
+    # runs on the straightened row, where the last label has no neighbour. So it
+    # will happily leave the row spanning more arc than the circle can spare,
+    # and the overflow lands in the one gap it cannot see: the labels crowd the
+    # seam instead of each other. The old code never hit this because it clamped
+    # the requirement to the span already occupied, which meant the row could
+    # not grow at all; letting it grow is the point of the change above, so the
+    # ceiling has to be stated here instead.
+    span = placed[-1] - placed[0]
+    max_span = 360.0 - (seam_needed * shrink)
+    if span > max_span > 0:
+        # Squeeze about the row's own centre, so the crowd stays where it is
+        # rather than sliding toward either end.
+        centre = (placed[0] + placed[-1]) / 2.0
+        squeeze = max_span / span
+        placed = [centre + (value - centre) * squeeze for value in placed]
 
     result = [0.0] * count
     for position, index in enumerate(order[(cut + 1) % count :] + order[: (cut + 1) % count]):
