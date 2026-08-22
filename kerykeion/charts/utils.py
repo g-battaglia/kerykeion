@@ -942,7 +942,13 @@ def draw_house_sectors(
         ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
         iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
-        span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
+        # From the truncated offsets, not the exact degrees: the flag has to agree
+        # with the endpoints it is steering. Reading the exact span while the arc
+        # ends on whole degrees puts them at odds either side of 180° — cusps at
+        # 10.1° and 190.9° span 180.8° exactly (large_arc=1) but only 180° once
+        # truncated, and SVG then takes the long way round, painting the wedge
+        # over the opposite half of the wheel.
+        span = (offset_end - offset_start) % 360
         large_arc = 1 if span > 180 else 0
 
         # Path from cusp N to cusp N+1.

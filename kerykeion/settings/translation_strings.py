@@ -1381,7 +1381,7 @@ LANGUAGE_SETTINGS = {
         "true_geocentric": "Истинный Геоцентрический",
         "selenocentric": "Селеноцентрический",
         "mercurycentric": "Меркуриоцентрический",
-        "venuscentric": "Веноцентрический",
+        "venuscentric": "Венероцентрический",
         "marscentric": "Марсоцентрический",
         "jupitercentric": "Юпитероцентрический",
         "saturncentric": "Сатурноцентрический",

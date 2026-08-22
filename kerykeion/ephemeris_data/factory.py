@@ -106,10 +106,6 @@ class EphemerisDataFactory:
             Positive values for North, negative for South. Defaults to 51.4769 (Greenwich).
         lng (float, optional): Geographic longitude in decimal degrees for calculations.
             Positive values for East, negative for West. Defaults to 0.0005 (Greenwich).
-        altitude (float, optional): Observer height above sea level in metres. Only the
-            ``Topocentric`` perspective reads it; every other perspective ignores it.
-            Defaults to None (sea level), which is what the single-subject path assumes
-            for the same input. Defaults to None.
         tz_str (str, optional): Timezone identifier (e.g., "Europe/London", "America/New_York").
             Defaults to "Etc/UTC".
         is_dst (bool, optional): Which reading to take when a transition makes a
@@ -154,6 +150,11 @@ class EphemerisDataFactory:
             expose them via ``subject.fixed_stars``. Defaults to None, which adds
             no ``"fixed_stars"`` key to the samples. (Independently of this
             argument, every sample carries ``"ephemeris_warnings"`` since a75.)
+        altitude (float, optional): Observer height above sea level in metres. Only
+            the ``Topocentric`` perspective reads it; every other perspective ignores
+            it. Defaults to None (sea level), matching what the single-subject path
+            assumes for the same input. Placed last rather than beside ``lat``/``lng``
+            so that existing positional callers keep binding to the same parameters.
 
     Raises:
         ValueError: If step_type is not one of "days", "hours", or "minutes".
@@ -195,7 +196,6 @@ class EphemerisDataFactory:
         step: int = 1,
         lat: float = 51.4769,
         lng: float = 0.0005,
-        altitude: Optional[float] = None,
         tz_str: str = "Etc/UTC",
         is_dst: bool = False,
         zodiac_type: ZodiacType = DEFAULT_ZODIAC_TYPE,
@@ -209,6 +209,10 @@ class EphemerisDataFactory:
         custom_ayanamsa_ayan_t0: Optional[float] = None,
         active_points: Optional[List[AstrologicalPoint]] = None,
         active_fixed_stars: Optional[List[str]] = None,
+        # Last, not beside lat/lng where it belongs semantically: the parameter
+        # order here is a public contract, and slotting a new one into the middle
+        # would rebind every positional argument after it.
+        altitude: Optional[float] = None,
     ):
         if step <= 0:
             # A non-positive step divides by zero when sizing the series; reject
