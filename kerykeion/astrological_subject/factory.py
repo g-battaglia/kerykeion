@@ -3435,28 +3435,34 @@ class AstrologicalSubjectFactory:
                 if point is not None:
                     fixed_stars_list.append(point)
 
-            # v6: emit a single actionable warning when nothing could be calculated
-            # on the swisseph backend — almost always caused by a missing
-            # ``sefstars.txt`` in KERYKEION_EPHE_PATH. The fix is documented in
+            # v6: warn on the swisseph backend when any requested star could not
+            # be calculated — almost always a missing ``sefstars.txt`` in
+            # KERYKEION_EPHE_PATH, but just as often a Bayer abbreviation the
+            # backend cannot address. The fix is documented in
             # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").
-            # `<` not `not ...`: a partially resolved catalog is the case that
-            # needs saying, and gating on an empty list meant asking for ten stars
-            # and getting three back said nothing at all. Same defect, and same
-            # fix, as the discovery factory's gate.
-            if (
-                requested_fixed_stars
-                and len(fixed_stars_list) < len(requested_fixed_stars)
-                and BACKEND_NAME == "swisseph"
-            ):
+            #
+            # Against `seen_star_slugs`, not the raw request list: the loop above
+            # skips repeats and blanks, so asking for Regulus twice and getting it
+            # once is a complete answer, not a missing star. And a partial result
+            # has to say so — the message used to claim nothing was calculated,
+            # which was true only of the case the gate used to cover.
+            attempted = len(seen_star_slugs)
+            calculated = len(fixed_stars_list)
+            if attempted and calculated < attempted and BACKEND_NAME == "swisseph":
                 logging.warning(
-                    "No fixed stars could be calculated with the swisseph backend. "
+                    "Only %d of %d requested fixed stars could be calculated with "
+                    "the swisseph backend; the rest are missing from the result. "
                     "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
-                    "is not bundled with kerykeion due to licensing. Download it "
+                    "is not bundled with kerykeion due to licensing, and many "
+                    "catalog names are Bayer abbreviations swisseph cannot address. "
+                    "Download it "
                     "from https://github.com/aloistr/swisseph/tree/master/ephe "
                     "and place it in KERYKEION_EPHE_PATH (currently: %s). "
                     "Alternatively, use the libephemeris backend "
                     "(KERYKEION_BACKEND=libephemeris) which ships its own "
                     "catalog. See site/docs/swisseph_configuration.md for details.",
+                    calculated,
+                    attempted,
                     EPHE_DATA_PATH or "<unset>",
                 )
 

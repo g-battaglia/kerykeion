@@ -234,3 +234,41 @@ def test_a_wide_crowd_keeps_room_at_the_seam():
     gaps = [(placed[(i + 1) % 12] - placed[i]) % 360.0 for i in range(12)]
     assert min(gaps) > 1.0, f"a gap collapsed: {[round(g, 3) for g in gaps]}"
     assert sum(gaps) == pytest.approx(360.0)
+
+
+def test_the_span_ceiling_does_not_steal_from_a_pair_that_needs_more():
+    """Constraining the total must not scale the requirements along with it.
+
+    The ceiling was first imposed by squeezing the finished placement, which
+    scales the ramp carrying every pair's requirement together with the freedom
+    the fit had left — so a pair owed 91° came out with 90.5°. Squeezing only the
+    fit's own component leaves the ramp intact, and every gap stays at its
+    requirement plus a non-negative remainder.
+    """
+    angles = [0.0, 120.0, 240.0]
+    extents = [90.0, 89.0, 1.0]
+    placed = spread_around_wheel(angles, 0.0, half_extents=extents)
+    gaps = [(placed[(i + 1) % 3] - placed[i]) % 360.0 for i in range(3)]
+    required = [extents[i] + extents[(i + 1) % 3] for i in range(3)]
+    for index, (gap, need) in enumerate(zip(gaps, required)):
+        assert gap >= need - 1e-9, f"pair {index}: {gap}° given, {need}° required"
+
+
+@pytest.mark.parametrize("count", [3, 5, 8, 12])
+def test_every_pair_keeps_its_room_whenever_the_circle_has_it(count):
+    """Sweep both signatures: if the requirements fit in 360°, all of them hold."""
+    for step in (1, 7, 13):
+        angles = [(index * step * 3.7) % 360.0 for index in range(count)]
+        extents = [1.0 + (index * 5.0) % 40.0 for index in range(count)]
+        required = [extents[i] + extents[(i + 1) % count] for i in range(count)]
+        if sum(required) > 360.0:
+            continue  # crowded branch shares the shortfall; covered above
+        placed = spread_around_wheel(angles, 0.0, half_extents=extents)
+        order = sorted(range(count), key=lambda i: placed[i])
+        for position in range(count):
+            i, j = order[position], order[(position + 1) % count]
+            gap = (placed[j] - placed[i]) % 360.0
+            assert gap >= extents[i] + extents[j] - 1e-7, (
+                f"count={count} step={step}: {gap}° between labels needing "
+                f"{extents[i] + extents[j]}°"
+            )

@@ -171,24 +171,36 @@ def spread_around_wheel(
     for gap in gaps_needed:
         ramp.append(ramp[-1] + gap)
     fitted = isotonic_non_decreasing([value - offset for value, offset in zip(unrolled, ramp)])
-    placed = [value + offset for value, offset in zip(fitted, ramp)]
 
     # The fit honours every gap it was given, but it was not given the seam — it
     # runs on the straightened row, where the last label has no neighbour. So it
-    # will happily leave the row spanning more arc than the circle can spare,
-    # and the overflow lands in the one gap it cannot see: the labels crowd the
-    # seam instead of each other. The old code never hit this because it clamped
-    # the requirement to the span already occupied, which meant the row could
-    # not grow at all; letting it grow is the point of the change above, so the
+    # will happily leave the row spanning more arc than the circle can spare, and
+    # the overflow lands in the one gap it cannot see: the labels crowd the seam
+    # instead of each other. The old code never hit this because it clamped the
+    # requirement to the span already occupied, which meant the row could not
+    # grow at all; letting it grow is the point of the change above, so the
     # ceiling has to be stated here instead.
-    span = placed[-1] - placed[0]
+    #
+    # It is stated on `fitted`, not on the finished placement. The row's total
+    # width is `(fitted[-1] - fitted[0]) + sum(gaps_needed)`: the ramp carries
+    # every pair's requirement, and `fitted` carries only where the crowd chose
+    # to sit. Squeezing the finished placement would scale both, taking pairs
+    # below the separation they were promised — with half-extents of 90, 89 and
+    # 1 degree, a pair owed 91° came out with 90.5°. Squeezing `fitted` alone
+    # cannot: every gap stays `gaps_needed[i]` plus a non-negative amount,
+    # because a non-decreasing sequence scaled about its centre stays
+    # non-decreasing.
     max_span = 360.0 - (seam_needed * shrink)
-    if span > max_span > 0:
-        # Squeeze about the row's own centre, so the crowd stays where it is
-        # rather than sliding toward either end.
-        centre = (placed[0] + placed[-1]) / 2.0
-        squeeze = max_span / span
-        placed = [centre + (value - centre) * squeeze for value in placed]
+    slack = max_span - sum(gaps_needed)
+    fitted_span = fitted[-1] - fitted[0]
+    if fitted_span > slack:
+        centre = (fitted[0] + fitted[-1]) / 2.0
+        # slack <= 0 means the gaps alone fill the budget: the crowd collapses
+        # onto the ramp and every gap lands exactly on its requirement.
+        squeeze = slack / fitted_span if slack > 0 else 0.0
+        fitted = [centre + (value - centre) * squeeze for value in fitted]
+
+    placed = [value + offset for value, offset in zip(fitted, ramp)]
 
     result = [0.0] * count
     for position, index in enumerate(order[(cut + 1) % count :] + order[: (cut + 1) % count]):
