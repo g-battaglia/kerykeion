@@ -678,6 +678,46 @@ class TestChartsUtilsInternalFunctions:
 
         assert normalize_degree(-90) == 270.0
 
+    @pytest.mark.parametrize("angle", [-1e-15, -1e-18, -1e-300])
+    def test_normalize_degree_stays_below_360_for_tiny_negatives(self, angle):
+        """``[0, 360)`` is half-open, and plain ``% 360.0`` does not honour that.
+
+        Python's float modulo returns exactly 360.0 for a tiny negative input, so
+        a guard written as ``x % 360 != 0`` reads it as "non-zero, therefore
+        fine" and passes it through. The reader that pays for it is
+        ``draw_modern``'s house-sector span: two cusps coinciding to within float
+        noise produced a 360° sector painted over the whole chart.
+        """
+        from kerykeion.charts.utils import normalize_degree
+
+        assert normalize_degree(angle) == 0.0
+
+    @pytest.mark.parametrize("angle", [float("nan"), float("inf"), float("-inf")])
+    def test_normalize_degree_propagates_non_finite_input(self, angle):
+        """NaN must survive, not become 0° Aries.
+
+        NaN fails ``< 360.0`` exactly as 360.0 does, so the guard above turns it
+        into 0.0 unless it is checked for. A NaN longitude — an out-of-coverage
+        body, a failed interpolation — then renders as a plausible chart with a
+        point silently placed at the start of the zodiac, where before it reached
+        the SVG as a visible ``nan``. ``inf % 360`` is NaN too.
+        """
+        from kerykeion.charts.utils import normalize_degree
+
+        assert math.isnan(normalize_degree(angle))
+
+    @pytest.mark.parametrize("angle", [float("nan"), float("inf")])
+    def test_degree_sum_propagates_non_finite_input(self, angle):
+        """The twin, which delegates — so it inherits the guard rather than repeating it."""
+        from kerykeion.charts.utils import degree_sum
+
+        assert math.isnan(degree_sum(angle, 1.0))
+
+    def test_degree_sum_stays_below_360_for_a_tiny_negative_sum(self):
+        from kerykeion.charts.utils import degree_sum
+
+        assert degree_sum(-1e-15, 0.0) == 0.0
+
     def test_dec_hour_join(self):
         from kerykeion.charts.utils import hms_to_decimal_hours
 
