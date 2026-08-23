@@ -10,6 +10,7 @@
     viewBox='0 0 100 100'
     preserveAspectRatio='xMidYMid'
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
+    style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>Synastry: John Lennon - All Points All Aspects and Paul McCartney - All Points All Aspects</title>
     <desc id='kerykeion-chart-desc'>Synastry: John Lennon - All Points All Aspects and Paul McCartney - All Points All Aspects. 1940-10-09 18:30. Liverpool, GB. Placidus. 52 points, 1113 aspects.</desc>

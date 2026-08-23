@@ -226,40 +226,40 @@
    <!-- House Sectors (transparent, for interactive highlighting) -->
    <g kr:node="House_Sectors">
     <g kr:house="1" kr:node="HouseSector">
-     <path d="m0 240a240 240 0 0 0 55.592 153.6l92.204-76.801a120 120 0 0 1-27.796-76.801z" fill="transparent" pointer-events="all"/>
+     <path d="m0 240a240 240 0 0 0 56.149 154.27l91.925-77.135a120 120 0 0 1-28.075-77.135z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="2" kr:node="HouseSector">
-     <path d="m55.592 393.6a240 240 0 0 0 66.198 55.267l59.105-104.43a120 120 0 0 1-33.099-27.633z" fill="transparent" pointer-events="all"/>
+     <path d="m56.149 394.27a240 240 0 0 0 67.496 55.64l58.177-104.95a120 120 0 0 1-33.748-27.82z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="3" kr:node="HouseSector">
-     <path d="m121.79 448.87a240 240 0 0 0 65.546 25.281l26.332-117.08a120 120 0 0 1-32.773-12.641z" fill="transparent" pointer-events="all"/>
+     <path d="m123.65 449.91a240 240 0 0 0 66.456 24.847l24.949-117.38a120 120 0 0 1-33.228-12.423z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="4" kr:node="HouseSector">
-     <path d="m187.34 474.15a240 240 0 0 0 75.946 4.7175l-11.641-119.43a120 120 0 0 1-37.973-2.3587z" fill="transparent" pointer-events="all"/>
+     <path d="m190.1 474.76a240 240 0 0 0 74.986 3.9298l-12.543-119.34a120 120 0 0 1-37.493-1.9649z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="5" kr:node="HouseSector">
-     <path d="m263.28 478.87a240 240 0 0 0 105.17-36.137l-64.226-101.37a120 120 0 0 1-52.585 18.068z" fill="transparent" pointer-events="all"/>
+     <path d="m265.09 478.69a240 240 0 0 0 105.63-37.404l-65.357-100.64a120 120 0 0 1-52.813 18.702z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="6" kr:node="HouseSector">
-     <path d="m368.45 442.73a240 240 0 0 0 111.55-202.73h-120a120 120 0 0 1-55.774 101.37z" fill="transparent" pointer-events="all"/>
+     <path d="m370.71 441.28a240 240 0 0 0 109.29-201.28h-120a120 120 0 0 1-54.643 100.64z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="7" kr:node="HouseSector">
-     <path d="m480 240a240 240 0 0 0-55.592-153.6l-92.204 76.801a120 120 0 0 1 27.796 76.801z" fill="transparent" pointer-events="all"/>
+     <path d="m480 240a240 240 0 0 0-56.149-154.27l-91.925 77.135a120 120 0 0 1 28.075 77.135z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="8" kr:node="HouseSector">
-     <path d="m424.41 86.398a240 240 0 0 0-66.198-55.267l-59.105 104.43a120 120 0 0 1 33.099 27.633z" fill="transparent" pointer-events="all"/>
+     <path d="m423.85 85.731a240 240 0 0 0-67.496-55.64l-58.177 104.95a120 120 0 0 1 33.748 27.82z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="9" kr:node="HouseSector">
-     <path d="m358.21 31.131a240 240 0 0 0-65.546-25.281l-26.332 117.08a120 120 0 0 1 32.773 12.641z" fill="transparent" pointer-events="all"/>
+     <path d="m356.35 30.091a240 240 0 0 0-66.456-24.847l-24.949 117.38a120 120 0 0 1 33.228 12.423z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="10" kr:node="HouseSector">
-     <path d="m292.66 5.8494a240 240 0 0 0-75.946-4.7175l11.641 119.43a120 120 0 0 1 37.973 2.3587z" fill="transparent" pointer-events="all"/>
+     <path d="m289.9 5.2446a240 240 0 0 0-74.986-3.9298l12.543 119.34a120 120 0 0 1 37.493 1.9649z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="11" kr:node="HouseSector">
-     <path d="m216.72 1.132a240 240 0 0 0-105.17 36.137l64.226 101.37a120 120 0 0 1 52.585-18.068z" fill="transparent" pointer-events="all"/>
+     <path d="m214.91 1.3147a240 240 0 0 0-105.63 37.404l65.357 100.64a120 120 0 0 1 52.813-18.702z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="12" kr:node="HouseSector">
-     <path d="m111.55 37.269a240 240 0 0 0-111.55 202.73l120-3e-14a120 120 0 0 1 55.774-101.37z" fill="transparent" pointer-events="all"/>
+     <path d="m109.29 38.719a240 240 0 0 0-109.29 201.28l120-3e-14a120 120 0 0 1 54.643-100.64z" fill="transparent" pointer-events="all"/>
     </g>
    </g>
    <!-- Houses -->

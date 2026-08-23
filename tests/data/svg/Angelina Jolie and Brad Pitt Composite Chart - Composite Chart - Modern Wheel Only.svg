@@ -10,6 +10,7 @@
     viewBox='0 0 100 100'
     preserveAspectRatio='xMidYMid'
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
+    style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>Composite Chart: Angelina Jolie and Brad Pitt</title>
     <desc id='kerykeion-chart-desc'>Composite Chart: Angelina Jolie and Brad Pitt. Placidus. 14 points, 24 aspects.</desc>

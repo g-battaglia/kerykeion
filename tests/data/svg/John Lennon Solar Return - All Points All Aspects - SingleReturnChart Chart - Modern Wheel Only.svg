@@ -10,6 +10,7 @@
     viewBox='0 0 100 100'
     preserveAspectRatio='xMidYMid'
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
+    style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>John Lennon Solar Return - Solar Return 2025</title>
     <desc id='kerykeion-chart-desc'>John Lennon Solar Return - Solar Return 2025. 2025-10-09 08:31. Greenwich, GB. Placidus. 52 points, 517 aspects.</desc>

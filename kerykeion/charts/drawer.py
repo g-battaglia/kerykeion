@@ -3278,8 +3278,13 @@ class ChartDrawer:  # type: ignore[no-redef]
 
                 if self.show_cusp_position_comparison:
                     max_house_right = max(self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width, self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width)
-                    cusp_block_width = 160.0 * 2.0
-                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+                    cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                    extents.append(
+                        max_house_right
+                        + self._CUSP_COMPARISON_GRID_GAP
+                        + cusp_block_width
+                        + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                    )
 
         comparison_point_label = self._renderer.get_comparison_point_label()
         comparison_cusp_label = self._renderer.get_comparison_cusp_label()
@@ -3341,8 +3346,13 @@ class ChartDrawer:  # type: ignore[no-redef]
 
                 if self.show_cusp_position_comparison:
                     max_house_right = max(self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width, self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width)
-                    cusp_block_width = 160.0 * 2.0
-                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+                    cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                    extents.append(
+                        max_house_right
+                        + self._CUSP_COMPARISON_GRID_GAP
+                        + cusp_block_width
+                        + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                    )
 
         return max(extents)
 
@@ -3992,11 +4002,16 @@ class ChartDrawer:  # type: ignore[no-redef]
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
                         )
-                        cusp_grid_width = 160.0
-                        inter_cusp_gap = 0.0
-                        cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
-                        extra_cusp_margin = 45.0
-                        cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
+                        # The two cusp grids sit one stride apart with nothing
+                        # between them, which is what _cusp_comparison_grid_origins
+                        # does when it returns `first_grid_x + STRIDE`.
+                        cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                        cusp_block_right = (
+                            max_house_comparison_right
+                            + self._CUSP_COMPARISON_GRID_GAP
+                            + cusp_block_width
+                            + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                        )
                         extents.append(cusp_block_right)
 
             comparison_point_label = self._renderer.get_comparison_point_label()
@@ -4076,11 +4091,16 @@ class ChartDrawer:  # type: ignore[no-redef]
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
                         )
-                        cusp_grid_width = 160.0
-                        inter_cusp_gap = 0.0
-                        cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
-                        extra_cusp_margin = 45.0
-                        cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
+                        # The two cusp grids sit one stride apart with nothing
+                        # between them, which is what _cusp_comparison_grid_origins
+                        # does when it returns `first_grid_x + STRIDE`.
+                        cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                        cusp_block_right = (
+                            max_house_comparison_right
+                            + self._CUSP_COMPARISON_GRID_GAP
+                            + cusp_block_width
+                            + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                        )
                         extents.append(cusp_block_right)
 
         # Conservative safety padding
@@ -4180,6 +4200,11 @@ class ChartDrawer:  # type: ignore[no-redef]
     # and between the two cusp grids themselves.
     _CUSP_COMPARISON_GRID_GAP = 50.0
     _CUSP_COMPARISON_GRID_STRIDE = 160
+    #: Air left to the right of the cusp block, so the canvas does not end on its
+    #: last column. Named because it is spelled at all four sites that estimate
+    #: the block's right edge, and an unnamed number repeated four times is how
+    #: the origin and the extents drifted apart in the first place.
+    _CUSP_COMPARISON_GRID_RIGHT_MARGIN = 45.0
 
     def _cusp_comparison_grid_origins(
         self,
@@ -5337,12 +5362,15 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
         try:
             parts.append(counted.format(points=points, aspects=aspects))
-        except (KeyError, IndexError, ValueError):
-            # ValueError joined the list when chart_contents became a model field:
-            # before that pydantic dropped the key and the hardcoded default was
-            # the only thing this ever formatted. Now a pack can supply the
-            # pattern, and an unbalanced brace ("{points") raises ValueError —
-            # which would fail the whole chart over one <desc> line.
+        except (KeyError, IndexError, ValueError, AttributeError, TypeError):
+            # The list grew when chart_contents became a model field: before that
+            # pydantic dropped the key and the hardcoded default was the only
+            # thing this ever formatted. Now a pack supplies the pattern, and
+            # str.format has a different exception for each way of getting it
+            # wrong — "{points" raises ValueError, "{points.foo}" AttributeError,
+            # "{points[0]}" TypeError. Catching three of the five would fail the
+            # whole chart over one <desc> line, which is the one line a chart can
+            # most afford to lose.
             parts.append(f"{points} points, {aspects} aspects")
 
         return ". ".join(p for p in parts if p) + "."

@@ -10,6 +10,7 @@
     viewBox='0 0 100 100'
     preserveAspectRatio='xMidYMid'
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
+    style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>John Lennon Lunar Return - Lunar Return 2025-01</title>
     <desc id='kerykeion-chart-desc'>John Lennon Lunar Return - Lunar Return 2025-01. 2025-01-29 01:41. Greenwich, GB. Placidus. 52 points, 500 aspects.</desc>

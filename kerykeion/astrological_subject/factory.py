@@ -83,6 +83,17 @@ from kerykeion.settings.config_constants import (
 
 logger = logging.getLogger(__name__)
 
+# Said once per process, not once per subject. A server drawing charts from a
+# fixed active_fixed_stars list repeats the same six-line advice on every single
+# request otherwise — and the advice ("install sefstars.txt, or switch backend")
+# does not change between requests, so repeating it buries the case that is
+# genuinely new. FixedStarDiscoveryFactory holds the same flag for the same
+# reason; see kerykeion/fixed_stars/factory.py.
+#
+# The empty result keeps repeating: nothing resolved at all is the broken-install
+# case, and that one is worth saying every time it happens.
+_swisseph_star_warning_emitted = False
+
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
 GEONAMES_USERNAME_ENV_VAR = "KERYKEION_GEONAMES_USERNAME"
@@ -3449,22 +3460,25 @@ class AstrologicalSubjectFactory:
             attempted = len(seen_star_slugs)
             calculated = len(fixed_stars_list)
             if attempted and calculated < attempted and BACKEND_NAME == "swisseph":
-                logging.warning(
-                    "Only %d of %d requested fixed stars could be calculated with "
-                    "the swisseph backend; the rest are missing from the result. "
-                    "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
-                    "is not bundled with kerykeion due to licensing, and many "
-                    "catalog names are Bayer abbreviations swisseph cannot address. "
-                    "Download it "
-                    "from https://github.com/aloistr/swisseph/tree/master/ephe "
-                    "and place it in KERYKEION_EPHE_PATH (currently: %s). "
-                    "Alternatively, use the libephemeris backend "
-                    "(KERYKEION_BACKEND=libephemeris) which ships its own "
-                    "catalog. See site/docs/swisseph_configuration.md for details.",
-                    calculated,
-                    attempted,
-                    EPHE_DATA_PATH or "<unset>",
-                )
+                global _swisseph_star_warning_emitted
+                if calculated == 0 or not _swisseph_star_warning_emitted:
+                    _swisseph_star_warning_emitted = True
+                    logging.warning(
+                        "Only %d of %d requested fixed stars could be calculated with "
+                        "the swisseph backend; the rest are missing from the result. "
+                        "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
+                        "is not bundled with kerykeion due to licensing, and many "
+                        "catalog names are Bayer abbreviations swisseph cannot address. "
+                        "Download it "
+                        "from https://github.com/aloistr/swisseph/tree/master/ephe "
+                        "and place it in KERYKEION_EPHE_PATH (currently: %s). "
+                        "Alternatively, use the libephemeris backend "
+                        "(KERYKEION_BACKEND=libephemeris) which ships its own "
+                        "catalog. See site/docs/swisseph_configuration.md for details.",
+                        calculated,
+                        attempted,
+                        EPHE_DATA_PATH or "<unset>",
+                    )
 
             data["fixed_stars"] = fixed_stars_list
 

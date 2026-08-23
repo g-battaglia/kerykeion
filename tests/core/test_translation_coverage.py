@@ -74,3 +74,46 @@ def test_the_accessibility_summary_keeps_its_placeholders(language):
 def test_every_pack_still_validates_against_the_model(language):
     """New required fields must be present everywhere, not just in English."""
     KerykeionLanguageModel(**LANGUAGE_SETTINGS[language])
+
+
+# =============================================================================
+# A MALFORMED PATTERN COSTS THE LINE, NOT THE CHART
+# =============================================================================
+#
+# The pack supplies the pattern now, and str.format has a different exception
+# for each way of writing it wrong. The guard caught three of the five: an
+# unbalanced brace, a missing key, a bad index. It did not catch the two that a
+# hand-written pattern is most likely to contain, so a chart in that language
+# raised instead of losing one line of its <desc>.
+
+
+@pytest.mark.parametrize(
+    "pattern",
+    [
+        "{points",  # ValueError — unbalanced brace
+        "{aspects} of {missing}",  # KeyError — a name nothing supplies
+        "{points.foo}",  # AttributeError — an attribute an int does not have
+        "{points[0]}",  # TypeError — an int is not subscriptable
+    ],
+)
+def test_a_broken_summary_pattern_does_not_take_the_chart_with_it(pattern):
+    from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Malformed", 1940, 10, 9, 18, 30, city="Liverpool", nation="GB",
+        lng=-2.97, lat=53.41, tz_str="Europe/London",
+        online=False, suppress_geonames_warning=True,
+    )
+    drawer = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject), theme="classic")
+
+    real_translate = drawer._translate
+
+    def _broken(key, default=None):
+        return pattern if key == "chart_contents" else real_translate(key, default)
+
+    drawer._translate = _broken  # type: ignore[method-assign]
+    svg = drawer.generate_svg_string()
+
+    # The chart renders, and the line falls back to the English it was built on.
+    assert "<svg" in svg
+    assert "points," in svg and "aspects." in svg

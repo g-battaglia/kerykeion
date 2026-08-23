@@ -934,27 +934,52 @@ def draw_house_sectors(
         outer_visual_r = r - c1  # outer boundary (c1=first_circle_radius)
         inner_visual_r = r - c3  # inner boundary (c3=third_circle_radius)
 
+    # Match whichever convention the cusp lines of *this* ring use. The classic
+    # engine quantises the inner ring to the whole degree (`-int(seventh) +
+    # int(cusp)`, the same expression draw_planets uses for glyphs), and a wedge
+    # that kept exact degrees sat up to 0.7° off the line it bounds — about 3px
+    # at r=240, enough that a click just inside a cusp selected the neighbouring
+    # house. The outer ring of a dual chart is drawn at full precision instead,
+    # so quantising there would recreate the very drift this fixes, on the other
+    # subject.
+    if quantize_offsets_to_whole_degrees:
+        boundaries = [
+            float(-int(seventh_house_abs) + int(house.abs_pos)) for house in houses_list[:12]
+        ]
+    else:
+        boundaries = [-seventh_house_abs + house.abs_pos for house in houses_list[:12]]
+
+    # All twelve at once, because a wedge cannot be given room without taking it
+    # from a neighbour. Two cusps inside the same whole degree collapse onto one
+    # offset when quantised — ordinary with Placidus or Campanus near the polar
+    # circle — and an arc whose endpoints coincide is dropped by the SVG spec,
+    # leaving a zero-area path that still declares pointer-events:all: a house
+    # that can never be clicked.
+    #
+    # Widening that one wedge forward does not fix it. It would then run from the
+    # shared degree to a degree the *next* house already owns, so the two overlap
+    # and the later-drawn one wins the hit test — the thin house stays
+    # unclickable and its neighbour answers for it. Separating the boundaries
+    # keeps them SHARED: wedge i ends exactly where wedge i+1 begins, so there is
+    # no overlap to resolve and no gap to fall through, and three coincident
+    # cusps come apart as readily as two.
+    #
+    # Only when something actually collapsed. spread_around_wheel normalises into
+    # [0, 360) even when it moves nothing, and an ordinary chart must come out of
+    # here with the same offsets the cusp lines were drawn from, to the bit.
+    if any(
+        normalize_degree(boundaries[(index + 1) % 12] - boundaries[index]) == 0.0
+        for index in range(12)
+    ):
+        boundaries = spread_around_wheel(boundaries, _MINIMUM_WEDGE_SPAN_DEGREES)
+
     output = ""
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        # Match whichever convention the cusp lines of *this* ring use. The
-        # classic engine quantises the inner ring to the whole degree
-        # (`-int(seventh) + int(cusp)`, the same expression draw_planets uses for
-        # glyphs), and a wedge that kept exact degrees sat up to 0.7° off the line
-        # it bounds — about 3px at r=240, enough that a click just inside a cusp
-        # selected the neighbouring house. The outer ring of a dual chart is drawn
-        # at full precision instead, so quantising there would recreate the very
-        # drift this fixes, on the other subject.
-        offset_start: float
-        offset_end: float
-        if quantize_offsets_to_whole_degrees:
-            offset_start = -int(seventh_house_abs) + int(houses_list[i].abs_pos)
-            offset_end = -int(seventh_house_abs) + int(houses_list[next_i].abs_pos)
-        else:
-            offset_start = -seventh_house_abs + houses_list[i].abs_pos
-            offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
+        offset_start = boundaries[i]
+        offset_end = boundaries[next_i]
 
         # Use wheel_x/Y (which has built-in +1 centering) + dropin offset.
         # This matches the cusp line coordinate system exactly.
@@ -977,23 +1002,20 @@ def draw_house_sectors(
         # 10.1° and 190.9° span 180.8° exactly (large_arc=1) but only 180° once
         # truncated, and SVG then takes the long way round, painting the wedge
         # over the opposite half of the wheel.
-        span = (offset_end - offset_start) % 360
+        # Through normalize_degree, not a bare `% 360`: for a span that comes out
+        # a hair negative — two cusps coinciding to within float noise, in the
+        # wrong order — the modulo alone returns exactly 360.0, which reads as
+        # "more than half the circle" and paints the wedge the long way round
+        # over the whole annulus. Invisible, and with pointer-events:all it then
+        # takes every click meant for the houses drawn before it.
+        #
+        # The separation above already catches that input, so this is the second
+        # line and not the first. It is here because the rule is the rule — a
+        # bare `% 360` on an angle is the trap normalize_degree was rewritten to
+        # close fifteen files away, and leaving one behind invites the next
+        # person to copy it.
+        span = normalize_degree(offset_end - offset_start)
         large_arc = 1 if span > 180 else 0
-
-        # Two cusps inside the same whole degree collapse to identical endpoints
-        # once quantised, and an arc whose endpoints coincide is dropped by the
-        # SVG spec — leaving a zero-area path that still declares
-        # pointer-events:all, i.e. a house that can never be clicked. Sub-degree
-        # houses are ordinary with Placidus or Campanus near the polar circle.
-        # Give the wedge the smallest span that still encloses something; the
-        # click target is then thin but real, which is what it was before the
-        # quantisation.
-        if span == 0 and houses_list[i].abs_pos != houses_list[next_i].abs_pos:
-            offset_end = offset_start + _MINIMUM_WEDGE_SPAN_DEGREES
-            ox2 = wheel_x(0, outer_visual_r, offset_end) + outer_dropin
-            oy2 = wheel_y(0, outer_visual_r, offset_end) + outer_dropin
-            ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
-            iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
         # Path from cusp N to cusp N+1.
         # sweep=0 for outer arc, sweep=1 for inner arc → both curve outward

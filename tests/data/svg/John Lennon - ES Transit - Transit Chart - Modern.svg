@@ -13,7 +13,7 @@
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>John Lennon - ES Transit - Tránsitos para 1942-06-18</title>
-    <desc id='kerykeion-chart-desc'>John Lennon - ES Transit - Tránsitos para 1942-06-18. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 34 aspects.</desc>
+    <desc id='kerykeion-chart-desc'>John Lennon - ES Transit - Tránsitos para 1942-06-18. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 puntos, 34 aspectos.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>

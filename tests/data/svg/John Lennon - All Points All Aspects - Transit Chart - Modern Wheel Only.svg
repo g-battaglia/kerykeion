@@ -10,6 +10,7 @@
     viewBox='0 0 100 100'
     preserveAspectRatio='xMidYMid'
     font-family='Arial, Helvetica, Liberation Sans, sans-serif'
+    style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>John Lennon - All Points All Aspects - Transits for 1942-06-18</title>
     <desc id='kerykeion-chart-desc'>John Lennon - All Points All Aspects - Transits for 1942-06-18. 1940-10-09 18:30. Liverpool, GB. Placidus. 52 points, 1083 aspects.</desc>
