@@ -832,3 +832,87 @@ def test_none_subjects_raise_clean_exception():
         CompositeSubjectFactory(None, None)
     with pytest.raises(KerykeionException):
         RelationshipScoreFactory(None, None)
+
+
+# =============================================================================
+# THE HOUSE A COMPOSITE POINT IS FILED UNDER
+# =============================================================================
+#
+# The composite kept a private copy of the library's house reader, and the copy
+# measured every house as the arc running *forwards* from its own cusp. Average
+# two polar charts and the ring comes out descending: a six-degree house then
+# reads as 354 and swallows most of the wheel. Ten points out of ten were filed
+# wrong, four of the twelve houses could no longer be reached at all, and the
+# same model contradicted itself — its house-comparison field already went
+# through the shared reader and disagreed with its own `sun.house`.
+
+
+_CUSP_ATTRS = (
+    "first_house", "second_house", "third_house", "fourth_house", "fifth_house",
+    "sixth_house", "seventh_house", "eighth_house", "ninth_house", "tenth_house",
+    "eleventh_house", "twelfth_house",
+)
+
+_POINTS = (
+    "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus",
+    "neptune", "pluto", "ascendant", "medium_coeli",
+)
+
+
+def _composite_of(system: str, first_lat: float, second_lat: float):
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 21, 0, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=first_lat, lng=20.0,
+        houses_system_identifier=system,
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1988, 3, 3, 6, 30, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=second_lat, lng=25.0,
+        houses_system_identifier=system,
+    )
+    return CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+
+
+@pytest.mark.parametrize(
+    "system,first_lat,second_lat",
+    [
+        ("C", 70.0, 71.0),   # Campanus inside the polar circle: descending ring
+        ("R", 69.0, 70.5),   # Regiomontanus, likewise
+        ("P", 45.0, 48.0),   # and an ordinary pair, which must not change
+    ],
+)
+def test_every_composite_point_is_filed_where_the_shared_reader_says(system, first_lat, second_lat):
+    """One reader for the whole library, so a model cannot disagree with itself."""
+    from kerykeion.utilities.core import get_planet_house
+
+    composite = _composite_of(system, first_lat, second_lat)
+    cusps = [getattr(composite, name).abs_pos for name in _CUSP_ATTRS]
+    for name in _POINTS:
+        point = getattr(composite, name, None)
+        if point is None:
+            continue
+        assert point.house == get_planet_house(point.abs_pos, cusps), (
+            f"{name} at {point.abs_pos:.3f} filed under {point.house}"
+        )
+
+
+def test_the_composite_angles_still_open_their_own_houses():
+    """The property the private copy existed to protect, kept by the shared one.
+
+    A point exactly on a cusp belongs to the house that cusp opens — which is
+    what puts the composite Midheaven in the tenth even where the ring is a mess.
+    """
+    for system, first_lat, second_lat in (("C", 70.0, 71.0), ("P", 45.0, 48.0)):
+        composite = _composite_of(system, first_lat, second_lat)
+        assert composite.ascendant.house == "First_House", system
+        assert composite.medium_coeli.house == "Tenth_House", system
+
+
+def test_a_descending_composite_ring_can_still_reach_every_house():
+    """Read forwards, four houses covered the whole circle and eight were unreachable."""
+    from kerykeion.utilities.core import get_planet_house
+
+    composite = _composite_of("C", 70.0, 71.0)
+    cusps = [getattr(composite, name).abs_pos for name in _CUSP_ATTRS]
+    reachable = {get_planet_house(degree / 10.0, cusps) for degree in range(3600)}
+    assert len(reachable) == 12, sorted(reachable)

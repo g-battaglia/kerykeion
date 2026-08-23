@@ -58,6 +58,7 @@ from kerykeion.schemas.literals import (
 )
 from kerykeion.utilities.core import (
     get_kerykeion_point_from_degree,
+    get_planet_house,
     circular_mean,
     calculate_moon_phase,
     find_common_active_points,
@@ -414,40 +415,18 @@ class CompositeSubjectFactory:
             self[planet_lower] = get_kerykeion_point_from_degree(
                 planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint"
             )
-            self[planet_lower]["house"] = self._composite_house_for(
-                self[planet_lower]["abs_pos"], house_degree_list_ut, self.houses_names_list
+            # Through the library's own reader, not a copy of it. The copy here
+            # measured every house as the arc running *forwards* from its cusp,
+            # which is not how the cusps always run: average two polar charts and
+            # the ring comes out descending, and then a six-degree house reads as
+            # 354 and swallows most of the wheel. Ten points out of ten landed in
+            # the wrong house, and the same model's own house-comparison field
+            # disagreed with them, because that one already went through
+            # get_planet_house. It carries the exact-on-cusp rule too, so the
+            # composite Midheaven still opens the tenth.
+            self[planet_lower]["house"] = get_planet_house(
+                self[planet_lower]["abs_pos"], house_degree_list_ut
             )
-
-    @staticmethod
-    def _composite_house_for(planet_degree: float, house_cusps: list, house_names: list) -> str:
-        """House of a point given composite cusps, robust to a non-monotone ring.
-
-        Averaging two charts' cusps can yield cusps that are not in ascending
-        circular order, so the usual start-inclusive containment can match the
-        wrong (over-long or reflex) arc. Here each house is the forward arc from
-        its own cusp to the NEXT house's cusp; when several arcs contain the
-        point (overlap from non-monotonicity) the SHORTEST containing arc wins —
-        the tightest, most specific house. Falls back to the first house only if
-        nothing contains it (degenerate all-equal cusps).
-        """
-        # A point sitting exactly ON a cusp belongs to the house that cusp opens
-        # (this is what makes the composite MC land in the 10th house even when
-        # overlapping degenerate arcs would otherwise file it elsewhere).
-        for i in range(len(house_cusps)):
-            if abs((planet_degree - house_cusps[i] + 180.0) % 360.0 - 180.0) < 1e-9:
-                return house_names[i]
-        best_index = 0
-        best_span = 360.0 + 1.0
-        for i in range(len(house_cusps)):
-            start = house_cusps[i]
-            end = house_cusps[(i + 1) % len(house_cusps)]
-            span = (end - start) % 360.0
-            offset = (planet_degree - start) % 360.0
-            # start-inclusive / end-exclusive; span 0 (coincident cusps) can't contain
-            if span > 0 and offset < span and span < best_span:
-                best_index = i
-                best_span = span
-        return house_names[best_index]
 
     def _calculate_composite_lunar_phase(self):
         """

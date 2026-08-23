@@ -353,6 +353,13 @@ _RETROGRADE_CUSPS = (
 )
 
 
+#: Every number an SVG path can carry, exponent included. Without the exponent a
+#: coordinate written as 2.0037e-11 — which is how a point on the wheel's axis
+#: comes out — tokenises as two numbers, and every index after it is off by one.
+#: The reader then measures a different arc and answers confidently about it.
+_NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
+
+
 def _outer_arc_centre(path: str) -> tuple[float, float]:
     """The centre of the circle the wedge's outer arc is actually drawn on.
 
@@ -362,7 +369,7 @@ def _outer_arc_centre(path: str) -> tuple[float, float]:
     the wheel entirely, which no endpoint-only check can see. Recovering the
     centre from the path is the only reading that can.
     """
-    numbers = [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?", path)]
+    numbers = [float(value) for value in re.findall(_NUMBER, path)]
     x1, y1, radius = numbers[0], numbers[1], numbers[2]
     large, sweep = int(numbers[5]), int(numbers[6])
     x2, y2 = numbers[7], numbers[8]
@@ -387,7 +394,7 @@ def _spans_from(svg: str) -> list[float]:
     """
     spans = []
     for path in _wedge_paths(svg):
-        numbers = [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?", path)]
+        numbers = [float(value) for value in re.findall(_NUMBER, path)]
         cx, cy = _outer_arc_centre(path)
         sweep = int(numbers[6])
         start = math.degrees(math.atan2(numbers[1] - cy, numbers[0] - cx))
@@ -546,7 +553,7 @@ def _rendered_spans(system: str, lat: float, lng: float, style: str) -> list[flo
     assert len(sectors) == 12
     spans = []
     for path in sectors:
-        numbers = [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?(?:e-?\d+)?", path)]
+        numbers = [float(value) for value in re.findall(_NUMBER, path)]
         cx, cy = _outer_arc_centre(path)
         sweep = int(numbers[6])
         start = math.degrees(math.atan2(numbers[1] - cy, numbers[0] - cx))
