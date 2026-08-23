@@ -598,7 +598,7 @@ class ChartConfiguration:
         if self.zodiac_type == "Sidereal":
             if not self.sidereal_mode:
                 self.sidereal_mode = DEFAULT_SIDEREAL_MODE
-                logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
+                logger.info("No sidereal mode set, using default FAGAN_BRADLEY")
             elif self.sidereal_mode not in get_args(SiderealMode):
                 raise KerykeionException(
                     f"'{self.sidereal_mode}' is not a valid sidereal mode! Available modes are: {get_args(SiderealMode)}"
@@ -698,7 +698,7 @@ class LocationData:
             The method validates that all required fields (countryCode, timezonestr,
             lat, lng) are present in the API response before updating instance attributes.
         """
-        logging.info(f"Fetching timezone/coordinates for {self.city}, {self.nation} from geonames")
+        logger.info(f"Fetching timezone/coordinates for {self.city}, {self.nation} from geonames")
 
         with FetchGeonames(
             self.city, self.nation, username=username, cache_expire_after_days=cache_expire_after_days
@@ -1071,7 +1071,7 @@ class AstrologicalSubjectFactory:
                 # points (downstream KeyError).
                 _star_names = [p for p in active_points_list if p in _LEGACY_ACTIVE_POINT_STAR_NAMES]
             if _star_names:
-                logging.warning(
+                logger.warning(
                     "active_points no longer accepts fixed star names %s; "
                     "redirecting them to active_fixed_stars. Pass stars via "
                     "the active_fixed_stars parameter instead.",
@@ -1122,7 +1122,7 @@ class AstrologicalSubjectFactory:
         if _center_names:
             _dropped = [p for p in active_points_list if p in _center_names]
             if _dropped:
-                logging.warning(
+                logger.warning(
                     "Excluding %s from active_points: it is the center body of "
                     "the %r perspective and has no position as seen from itself.",
                     _dropped,
@@ -1148,7 +1148,7 @@ class AstrologicalSubjectFactory:
         if perspective_type not in _GEO_TOPO_PERSPECTIVES:
             _geo_only_dropped = [p for p in active_points_list if p in _GEOCENTRIC_ONLY_POINT_NAMES]
             if _geo_only_dropped:
-                logging.warning(
+                logger.warning(
                     "Excluding %s from active_points: geocentric-only points "
                     "(lunar nodes, Lilith/apogee variants) have no meaning in "
                     "the %r perspective.",
@@ -1195,7 +1195,7 @@ class AstrologicalSubjectFactory:
         if geonames_username is None and online and (lat is None or lng is None or not tz_str):
             geonames_username = _get_geonames_username()
             if geonames_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                logger.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
         # Initialize location data
         location = LocationData(
@@ -1328,7 +1328,7 @@ class AstrologicalSubjectFactory:
                     ayan_result = ephe.get_ayanamsa_ex_ut(calc_data["julian_day"], iflag)
                     calc_data["ayanamsa_value"] = ayan_result[1]
                 except Exception as e:
-                    logging.warning(f"Could not calculate ayanamsa value: {e}")
+                    logger.warning(f"Could not calculate ayanamsa value: {e}")
                     calc_data["ayanamsa_value"] = None
             else:
                 calc_data["ayanamsa_value"] = None
@@ -1534,7 +1534,7 @@ class AstrologicalSubjectFactory:
                     if sector is None:
                         sector = _gauquelin_sector_from_cusps(point.abs_pos, gauquelin_cusps)
                     if sector is None:
-                        logging.debug(
+                        logger.debug(
                             "Gauquelin sector for %r via uniform ecliptic approximation "
                             "(no body id and no cusps); not the true diurnal sector.",
                             point.name,
@@ -1606,7 +1606,7 @@ class AstrologicalSubjectFactory:
                     nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                     true_obliquity = nut_data[0]
                 except Exception as e:
-                    logging.warning(f"Could not compute obliquity for OOB detection: {e}")
+                    logger.warning(f"Could not compute obliquity for OOB detection: {e}")
 
                 if true_obliquity is not None:
                     for pk in enrichable_keys:
@@ -1680,7 +1680,7 @@ class AstrologicalSubjectFactory:
                         nutation_obliquity=nut_raw[3],
                     )
                 except Exception as e:
-                    logging.warning(f"Could not compute nutation parameters: {e}")
+                    logger.warning(f"Could not compute nutation parameters: {e}")
                     calc_data["nutation"] = None
 
         # Create and return the AstrologicalSubjectModel
@@ -1850,7 +1850,7 @@ class AstrologicalSubjectFactory:
                 geonames_username if geonames_username != DEFAULT_GEONAMES_USERNAME else _get_geonames_username()
             )
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                logger.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
             with FetchGeonames(
                 city or "Greenwich",
@@ -2109,7 +2109,7 @@ class AstrologicalSubjectFactory:
             # avoids a second lookup.
             resolved_username = geonames_username or _get_geonames_username()
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                logger.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             with FetchGeonames(city or "Greenwich", nation or "GB", username=resolved_username) as _geonames:
                 if lat is not None and lng is not None and not city:
                     # Match from_birth_data: precise coordinates with no city
@@ -2836,7 +2836,7 @@ class AstrologicalSubjectFactory:
                     f"Cannot calculate {planet_name} for JD {julian_day}: {e}. "
                     "The date is likely outside the range covered by the loaded ephemeris data."
                 ) from e
-            logging.error(f"Error calculating {planet_name}: {e}")
+            logger.error(f"Error calculating {planet_name}: {e}")
             AstrologicalSubjectFactory._append_ephemeris_warning(
                 data,
                 planet_name,
@@ -2985,7 +2985,7 @@ class AstrologicalSubjectFactory:
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
             if point in _center_body_names(data.get("perspective_type")):
-                logging.warning(
+                logger.warning(
                     "Cannot auto-activate %s as an Arabic Part prerequisite: it "
                     "is the center body of the %r perspective. The dependent "
                     "part will be skipped.",
@@ -3016,7 +3016,7 @@ class AstrologicalSubjectFactory:
                         f"Cannot calculate {point} for JD {julian_day}: {e}. "
                         "The date is likely outside the range covered by the loaded ephemeris data."
                     ) from e
-                logging.error(f"Error calculating {point}: {e}")
+                logger.error(f"Error calculating {point}: {e}")
                 AstrologicalSubjectFactory._append_ephemeris_warning(
                     data,
                     point,
@@ -3078,7 +3078,7 @@ class AstrologicalSubjectFactory:
             return azalt[1] >= 0
 
         except Exception as e:
-            logging.warning(
+            logger.warning(
                 f"Could not compute Sun altitude for sect classification: {e}. Defaulting to diurnal (day chart)."
             )
             return True
@@ -3119,7 +3119,7 @@ class AstrologicalSubjectFactory:
         # Auto-activate and calculate missing required points
         missing_points = [p for p in required_points if p not in active_points]
         if missing_points:
-            logging.info(f"Automatically adding required points for {part_name}: {missing_points}")
+            logger.info(f"Automatically adding required points for {part_name}: {missing_points}")
             active_points.extend(missing_points)
 
         # Ensure all required points are calculated
@@ -3348,7 +3348,7 @@ class AstrologicalSubjectFactory:
                             exclude_geocentric_only=exclude_geocentric_only,
                         )
                     except Exception as e:
-                        logging.warning(f"Could not calculate {tno_name} position: {e}")
+                        logger.warning(f"Could not calculate {tno_name} position: {e}")
                         if tno_name in active_points:
                             active_points.remove(tno_name)
 
@@ -3423,7 +3423,7 @@ class AstrologicalSubjectFactory:
                         # window to quote and nothing to declare reviewed.
                     return point
                 except Exception as e:
-                    logging.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
+                    logger.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
                     return None
                 finally:
                     if _star_trace_token is not None:
@@ -3463,7 +3463,7 @@ class AstrologicalSubjectFactory:
                 global _swisseph_star_warning_emitted
                 if calculated == 0 or not _swisseph_star_warning_emitted:
                     _swisseph_star_warning_emitted = True
-                    logging.warning(
+                    logger.warning(
                         "Only %d of %d requested fixed stars could be calculated with "
                         "the swisseph backend; the rest are missing from the result. "
                         "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
@@ -3538,7 +3538,7 @@ class AstrologicalSubjectFactory:
                         calculated_planets.append("Vertex")
 
                 except Exception as e:
-                    logging.warning("Could not calculate Vertex position, error: %s", e)
+                    logger.warning("Could not calculate Vertex position, error: %s", e)
                     if "Vertex" in active_points:
                         active_points.remove("Vertex")
                     if "Anti_Vertex" in active_points:
@@ -3573,7 +3573,7 @@ class AstrologicalSubjectFactory:
                 # _calculate_single_planet already drops the point from active_points when
                 # the native calc fails; just ensure it is removed and warn.
                 if "white_moon" not in data:
-                    logging.warning(
+                    logger.warning(
                         "White_Moon/Selena (body ID 56) is not supported by this ephemeris "
                         "backend; skipping it instead of substituting an incorrect value "
                         "(Mean Lilith + 180° is Priapus, not Selena)."

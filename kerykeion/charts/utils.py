@@ -876,7 +876,123 @@ def draw_zodiac_slice(
 # Span given to a wedge whose two cusps quantise onto the same whole degree, so
 # the arc is still drawn and the house stays clickable. One degree is the
 # resolution the classic engine works at, so nothing finer would survive anyway.
-_MINIMUM_WEDGE_SPAN_DEGREES = 1.0
+MINIMUM_WEDGE_SPAN_DEGREES = 1.0
+
+#: How far the twelve widths may miss a full circle and still count as covering
+#: it once. Windings are 360 degrees apart, so anything short of a degree is
+#: float noise rather than another turn.
+_HOUSE_WINDING_TOLERANCE_DEGREES = 1e-4
+
+
+def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
+    """The twelve house widths, and which of them run against their own frame.
+
+    Above roughly 68 degrees a Campanus, Regiomontanus, Sunshine, topocentric or
+    APC chart puts its cusps in *descending* order, and a horizon chart does it
+    on the equator: the houses genuinely run backwards through the signs. Read
+    forwards, each house then measures some 354 degrees instead of 6, the twelve
+    of them wind round the wheel eleven times instead of once, and everything
+    that draws or centres on that span lands on the far side of the chart from
+    the house it names.
+
+    The direction belongs to the whole set and cannot be decided pair by pair: a
+    single house may legitimately run past 180 degrees, which Placidus manages at
+    high latitude, and taking the shorter arc there would cut it in half. Twelve
+    widths cover the circle exactly once in whichever direction the houses run,
+    so the total is what tells the two apart - 360 one way, 3960 the other.
+
+    A third case has neither total. Polich/Page inside the polar circle returns
+    cusps that are not ordered at all: at 70N the first runs backwards while the
+    next five run forwards, so houses 1 and 2 overlap and no direction can make
+    twelve wedges tile a circle. The chart is degenerate rather than reversed,
+    and the least bad reading is to hold each wedge to its shorter arc: they
+    still overlap, because the cusps do, but no single one swallows the wheel.
+
+    Args:
+        cusps: The twelve cusp positions, in house order, in any angular frame.
+
+    Returns:
+        The twelve widths, and for each the flag saying it was measured against
+        the direction of the frame it was given.
+    """
+    forward = [normalize_degree(cusps[(index + 1) % 12] - cusps[index]) for index in range(12)]
+    if abs(sum(forward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        return forward, [False] * 12
+
+    backward = [normalize_degree(cusps[index] - cusps[(index + 1) % 12]) for index in range(12)]
+    if abs(sum(backward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        return backward, [True] * 12
+
+    shorter = [ahead <= behind for ahead, behind in zip(forward, backward)]
+    return (
+        [ahead if pick else behind for ahead, behind, pick in zip(forward, backward, shorter)],
+        [not pick for pick in shorter],
+    )
+
+
+def separate_collapsed_wedges(
+    boundaries: Sequence[float],
+    spans: Sequence[float],
+    reversed_wedges: Sequence[bool],
+    minimum: float,
+) -> tuple[list[float], list[float]]:
+    """Give every wedge at least *minimum* degrees, out of what the widest can spare.
+
+    Two cusps inside the same whole degree collapse onto one offset when the ring
+    is quantised, and an arc whose endpoints coincide is dropped by the SVG spec:
+    a zero-area path that still declares ``pointer-events: all`` is a house that
+    can never be clicked.
+
+    The widths are adjusted and the boundaries rebuilt from them, walking the
+    twelve in house order. That is what keeps the boundaries **shared** — wedge i
+    ends exactly where wedge i+1 begins, so there is no overlap for the hit test
+    to resolve and no gap to fall through — and it is why the twelve angles are
+    not simply handed to ``spread_around_wheel``. That function sorts what it is
+    given and breaks ties by list index, which is not the order round the wheel:
+    where house 12 and house 1 shared a degree it returned them swapped, and the
+    twelfth wedge was then drawn backwards across 359 degrees of the annulus,
+    invisible, taking every click on the chart.
+
+    A wedge that had to grow takes its room from the wedges with room to give, in
+    proportion to what each has above the minimum, so the twelve still cover
+    exactly 360 degrees. A boundary may end up as much as a couple of degrees off
+    the cusp line it was quantised from — five cusps on one degree have to be
+    spread five degrees wide before any of them is clickable — which is the price
+    of the house existing on the wheel at all.
+
+    Args:
+        boundaries: The twelve offsets, in house order.
+        spans: Their widths, from :func:`house_spans`.
+        reversed_wedges: Their directions, from :func:`house_spans`.
+        minimum: The narrowest wedge worth drawing, in degrees.
+
+    Returns:
+        The rebuilt boundaries and widths — the arguments themselves, unchanged
+        and identical object for object, when nothing was below the minimum or
+        the cusps are too tangled to have a direction in common.
+    """
+    unchanged = (list(boundaries), list(spans))
+    deficit = sum(minimum - span for span in spans if span < minimum)
+    if deficit <= 0.0:
+        return unchanged
+    if len(set(reversed_wedges)) != 1:
+        # The cusps cross, so the houses do not tile and there is no order to
+        # rebuild them in. Leave them: overlapping wedges are what the data says.
+        return unchanged
+
+    surplus = sum(span - minimum for span in spans if span > minimum)
+    if surplus <= deficit:
+        return unchanged
+
+    shrink = 1.0 - deficit / surplus
+    adjusted = [
+        minimum if span <= minimum else minimum + (span - minimum) * shrink for span in spans
+    ]
+    step = -1.0 if reversed_wedges[0] else 1.0
+    rebuilt = [float(boundaries[0])]
+    for index in range(len(adjusted) - 1):
+        rebuilt.append(rebuilt[-1] + step * adjusted[index])
+    return rebuilt, adjusted
 
 
 def draw_house_sectors(
@@ -949,29 +1065,21 @@ def draw_house_sectors(
     else:
         boundaries = [-seventh_house_abs + house.abs_pos for house in houses_list[:12]]
 
-    # All twelve at once, because a wedge cannot be given room without taking it
-    # from a neighbour. Two cusps inside the same whole degree collapse onto one
-    # offset when quantised — ordinary with Placidus or Campanus near the polar
-    # circle — and an arc whose endpoints coincide is dropped by the SVG spec,
-    # leaving a zero-area path that still declares pointer-events:all: a house
-    # that can never be clicked.
+    # Which way the houses run, read once from all twelve. Above the polar circle
+    # several quadrant systems reverse, and the wedge for a house that measures
+    # 6 degrees backwards was being painted as the 354 degrees forwards: twelve
+    # near-complete rings stacked on each other, each one invisible and each one
+    # declaring pointer-events:all, so every click on the wheel was answered by
+    # whichever was drawn last.
     #
-    # Widening that one wedge forward does not fix it. It would then run from the
-    # shared degree to a degree the *next* house already owns, so the two overlap
-    # and the later-drawn one wins the hit test — the thin house stays
-    # unclickable and its neighbour answers for it. Separating the boundaries
-    # keeps them SHARED: wedge i ends exactly where wedge i+1 begins, so there is
-    # no overlap to resolve and no gap to fall through, and three coincident
-    # cusps come apart as readily as two.
-    #
-    # Only when something actually collapsed. spread_around_wheel normalises into
-    # [0, 360) even when it moves nothing, and an ordinary chart must come out of
-    # here with the same offsets the cusp lines were drawn from, to the bit.
-    if any(
-        normalize_degree(boundaries[(index + 1) % 12] - boundaries[index]) == 0.0
-        for index in range(12)
-    ):
-        boundaries = spread_around_wheel(boundaries, _MINIMUM_WEDGE_SPAN_DEGREES)
+    # Then any wedge too thin to be drawn is widened out of what the wide ones can
+    # spare, in house order, so the boundaries stay shared and an ordinary chart
+    # comes out of here with the same offsets its cusp lines were drawn from, to
+    # the bit.
+    spans, reversed_wedges = house_spans(boundaries)
+    boundaries, spans = separate_collapsed_wedges(
+        boundaries, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
+    )
 
     output = ""
     for i in range(12):
@@ -1014,17 +1122,23 @@ def draw_house_sectors(
         # bare `% 360` on an angle is the trap normalize_degree was rewritten to
         # close fifteen files away, and leaving one behind invites the next
         # person to copy it.
-        span = normalize_degree(offset_end - offset_start)
+        span = spans[i]
         large_arc = 1 if span > 180 else 0
+        outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 
         # Path from cusp N to cusp N+1.
         # sweep=0 for outer arc, sweep=1 for inner arc → both curve outward
         # (convex away from chart center, following the concentric circles).
+        # Both flip when the houses run backwards: the endpoints are the same two
+        # points either way, and it is the pair (sweep, large_arc) that says which
+        # of the two arcs between them the wedge is. Keeping sweep while the span
+        # shortens would pick the arc off a mirrored circle and lift the wedge
+        # clean off its own ring.
         d = (
             f"M {ox1},{oy1} "
-            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},0 {ox2},{oy2} "
+            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},{outer_sweep} {ox2},{oy2} "
             f"L {ix2},{iy2} "
-            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},1 {ix1},{iy1} Z"
+            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},{inner_sweep} {ix1},{iy1} Z"
         )
 
         horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
@@ -1656,17 +1770,18 @@ def draw_houses_cusps_and_text_number(
     # replaced, so the crowd ended up further out of its houses than before.
     _number_dropin = 100 if external_view else (84 if chart_type in DOUBLE_CHART_TYPES else 48)
     _label_radius = r - _number_dropin
-    _wanted = []
-    for _i in range(xr):
-        # Base and span from the same truncated offsets the cusp lines use. A
-        # truncated base with an exact span sat the number up to half a degree off
-        # the middle of the wedge it names, and where two cusps share a whole
-        # degree - so their bases coincide - the two half spans decided their
-        # order between them: the wheel read 10 before 9, and 4 before 3.
-        _start = float(int(first_subject_houses_list[_i].abs_pos))
-        _end = float(int(first_subject_houses_list[(_i + 1) % xr].abs_pos))
-        _base = -int(first_subject_houses_list[int(xr / 2)].abs_pos) + _start
-        _wanted.append(_base + normalize_degree(_end - _start) / 2.0)
+    # Truncated, like the cusp lines these numbers label. A truncated base with an
+    # exact span sat the number up to half a degree off the middle of its own
+    # wedge, and where two cusps share a whole degree - so their bases coincide -
+    # the two half spans were the only thing separating them: the wheel read 10
+    # before 9, and 4 before 3. The middle is measured in the direction the houses
+    # run, which above the polar circle is not always forwards.
+    _cusps = [float(int(_house.abs_pos)) for _house in first_subject_houses_list[:xr]]
+    _spans, _reversed = house_spans(_cusps)
+    _zero = -int(first_subject_houses_list[int(xr / 2)].abs_pos)
+    _wanted = [
+        _zero + _cusps[_i] + (-0.5 if _reversed[_i] else 0.5) * _spans[_i] for _i in range(xr)
+    ]
     _placed = spread_around_wheel(
         _wanted,
         0.0,
@@ -1676,17 +1791,20 @@ def draw_houses_cusps_and_text_number(
     # The outer wheel of a dual chart draws its own set, on a wider ring.
     _placed_second: list[float] = []
     if second_subject_houses_list is not None:
-        _second_wanted = []
-        for _i in range(xr):
-            # Exact, because the outer ring's cusp lines are: t_offset below keeps
-            # the fraction. Truncating the base here while the line does not drifts
-            # the number off its own line by up to a degree - four pixels out at
-            # this radius - which is the mismatch draw_house_sectors already guards
-            # with quantize_offsets_to_whole_degrees, one function over.
-            _start = second_subject_houses_list[_i].abs_pos
-            _end = second_subject_houses_list[(_i + 1) % xr].abs_pos
-            _base = -first_subject_houses_list[int(xr / 2)].abs_pos + _start
-            _second_wanted.append(_base + normalize_degree(_end - _start) / 2.0)
+        # Exact, because the outer ring's cusp lines are: t_offset below keeps the
+        # fraction. Truncating the base here while the line does not drifts the
+        # number off its own line by up to a degree - four pixels out at this
+        # radius - which is the mismatch draw_house_sectors already guards with
+        # quantize_offsets_to_whole_degrees, one function over.
+        _second_cusps = [_house.abs_pos for _house in second_subject_houses_list[:xr]]
+        _second_spans, _second_reversed = house_spans(_second_cusps)
+        _second_zero = -first_subject_houses_list[int(xr / 2)].abs_pos
+        _second_wanted = [
+            _second_zero
+            + _second_cusps[_i]
+            + (-0.5 if _second_reversed[_i] else 0.5) * _second_spans[_i]
+            for _i in range(xr)
+        ]
         _placed_second = spread_around_wheel(
             _second_wanted,
             0.0,

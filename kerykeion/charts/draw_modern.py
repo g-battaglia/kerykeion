@@ -26,7 +26,10 @@ from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.charts.spreading import spread_around_wheel
 from kerykeion.charts.utils import (
     CHART_TEXT_FONT_FAMILY,
+    MINIMUM_WEDGE_SPAN_DEGREES,
+    house_spans,
     label_separation_degrees,
+    separate_collapsed_wedges,
     STATION_LABELS,
     escape_svg_text,
     normalize_degree,
@@ -2237,13 +2240,28 @@ def _draw_house_sectors_modern(
 ) -> str:
     """Draw transparent house sector wedges for interactive highlighting (modern style)."""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
+    # Which way the houses run, read once from all twelve. The same reversal the
+    # Gauquelin variant below already accounts for reaches ordinary house cusps
+    # too: several quadrant systems put them in descending order above the polar
+    # circle, and the horizon system does it on the equator.
+    wheel_angles = [
+        _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses[:12]
+    ]
+    spans, reversed_wedges = house_spans(wheel_angles)
+    # And any house too thin to click gets the same minimum the classic engine
+    # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
+    # together here — but Campanus at 68N puts two of them 0.03 degrees apart on
+    # their own, which is a house nobody will ever hit with a pointer.
+    wheel_angles, spans = separate_collapsed_wedges(
+        wheel_angles, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
+    )
     out = ""
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        a_start = _zodiac_to_wheel_angle(houses[i].abs_pos, seventh_house_degree_ut)
-        a_end = _zodiac_to_wheel_angle(houses[next_i].abs_pos, seventh_house_degree_ut)
+        a_start = wheel_angles[i]
+        a_end = wheel_angles[next_i]
 
         # Convert wheel angles to radians (parent group has rotate(-90), so subtract 90)
         r_start = math.radians(-a_start - 90)
@@ -2259,15 +2277,19 @@ def _draw_house_sectors_modern(
         ix2 = CENTER + inner_r * math.cos(r_end)
         iy2 = CENTER + inner_r * math.sin(r_end)
 
-        # Angular span to determine large-arc flag
-        span = _normalize_angle(houses[next_i].abs_pos - houses[i].abs_pos)
+        # Angular span to determine large-arc flag. Both sweeps flip with the
+        # direction: the endpoints are the same two points either way, and it is
+        # the pair (sweep, large_arc) that says which of the two arcs between them
+        # the wedge is.
+        span = spans[i]
         large_arc = 1 if span > 180 else 0
+        outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},{outer_sweep} {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},{inner_sweep} {ix1:.6f},{iy1:.6f} Z"
         )
 
         out += (
@@ -2381,13 +2403,19 @@ def _draw_house_ring(
     # are spread by the least movement that separates them, which keeps a crowd
     # centred on the houses it belongs to instead of sliding it sideways.
     label_radius = CENTER - text_y
-    wanted = []
-    for index, sector in enumerate(houses):
-        sector_angle = _zodiac_to_wheel_angle(sector.abs_pos, seventh_house_degree_ut)
-        sector_span = _normalize_angle(
-            _zodiac_to_wheel_angle(houses[(index + 1) % 12].abs_pos, seventh_house_degree_ut) - sector_angle
+    # In the direction the houses run, which above the polar circle is not always
+    # the direction the wheel angles increase in: read forwards, a six-degree
+    # house measures 354 and its number is centred on the far side of the chart.
+    wheel_angles = [
+        _zodiac_to_wheel_angle(sector.abs_pos, seventh_house_degree_ut) for sector in houses[:12]
+    ]
+    ring_spans, ring_reversed = house_spans(wheel_angles)
+    wanted = [
+        _normalize_angle(
+            wheel_angles[index] + (-0.5 if ring_reversed[index] else 0.5) * ring_spans[index]
         )
-        wanted.append(_normalize_angle(sector_angle + sector_span / 2))
+        for index in range(12)
+    ]
     # The widest label the ring carries, measured at the size it is drawn. The
     # estimator scales with the font size and carries no unit of its own, so it
     # answers in the wheel's 100-unit frame here just as it answers in pixels

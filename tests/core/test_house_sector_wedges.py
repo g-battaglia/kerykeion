@@ -28,7 +28,14 @@ import re
 
 import pytest
 
-from kerykeion.charts.utils import draw_house_sectors, wheel_x, wheel_y
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+from kerykeion.charts.utils import (
+    MINIMUM_WEDGE_SPAN_DEGREES,
+    draw_house_sectors,
+    house_spans,
+    wheel_x,
+    wheel_y,
+)
 
 
 class _Cusp:
@@ -70,7 +77,15 @@ def _wedge_paths(svg: str) -> list[str]:
 
 def _arc_flags(svg: str) -> list[int]:
     """The large-arc flag of each wedge's outer arc, in house order."""
-    return [int(flag) for flag in re.findall(r"A [\d.]+,[\d.]+ 0 (\d),0 ", svg)]
+    return [int(flag) for flag, _ in _arc_flag_pairs(svg)]
+
+
+def _arc_flag_pairs(svg: str) -> list[tuple[int, int]]:
+    """(large-arc, sweep) of each wedge's outer arc. The two travel together."""
+    return [
+        (int(large), int(sweep))
+        for large, sweep in re.findall(r"A [\d.]+,[\d.]+ 0 (\d),(\d) ", svg)
+    ][::2]
 
 
 RADIUS = 240.0
@@ -214,11 +229,14 @@ def test_the_wedges_stay_adjacent_rather_than_overlapping():
 
 
 def test_an_ordinary_chart_is_not_touched_by_the_separation():
-    """The spread runs only when something actually collapsed.
+    """Every boundary still lands exactly on the cusp line it was drawn from.
 
-    It normalises into [0, 360) even when it moves nothing, so calling it
-    unconditionally would shift every offset off the cusp line it was drawn from
-    — the very drift the wedges were quantised to close.
+    An earlier version of this docstring said the separation had to be gated
+    because calling it unconditionally would shift every offset. That was not
+    true even then — a reviewer showed the shift was 5e-14 px, well inside the
+    tolerance below — and it is not true now: the separator returns its argument
+    when nothing is under the minimum. What the test pins is the outcome, which
+    is the part that matters: on an ordinary chart the wedges sit on the lines.
     """
     houses = _uneven_cusps_from(263.7)
     seventh_house = houses[6].abs_pos
@@ -290,16 +308,248 @@ def test_a_span_a_hair_negative_does_not_paint_the_long_way_round():
     pins the outcome rather than either mechanism. Which is the honest thing to
     assert: remove the second guard alone and this stays green.
     """
-    later = 47.0
-    earlier = math.nextafter(later, 0.0)  # one ULP below, so the span is -1e-15
-    assert earlier < later
+    # The pair has to stay out of order *after* the seventh cusp is subtracted.
+    # 47.0 does not: 47.0 - 150.0 and nextafter(47.0, 0) - 150.0 are the same
+    # double, so the ULP this test is named for never reached the code and the
+    # assertion below passed on an input it was not testing.
+    later = 47.3
+    earlier = math.nextafter(later, 0.0)
     rest = [(50.0 + 25.0 * index) % 360.0 for index in range(10)]
+    houses = _cusps(later, earlier, *rest)
+    assert earlier - houses[6].abs_pos < later - houses[6].abs_pos, (
+        "the ULP does not survive the subtraction; pick another pair"
+    )
     svg = draw_house_sectors(
         r=RADIUS,
-        houses_list=_cusps(later, earlier, *rest),
+        houses_list=houses,
         c1=FIRST_CIRCLE,
         c3=THIRD_CIRCLE,
         chart_type="Synastry",
         quantize_offsets_to_whole_degrees=False,
     )
     assert _arc_flags(svg) == [0] * 12
+    # Flags alone would miss a wedge drawn backwards at full length, which is how
+    # this failed in practice: read the widths as drawn and count the circle.
+    assert sum(_spans_from(svg)) == pytest.approx(360.0, abs=1e-6)
+
+
+# =============================================================================
+# HOUSES THAT RUN BACKWARDS
+# =============================================================================
+#
+# Above roughly 68 degrees a Campanus, Regiomontanus, Sunshine, topocentric or
+# APC chart puts its cusps in descending order, and the horizon system does it
+# on the equator. The houses are real and so are their widths; what reverses is
+# the direction they run through the signs. Read forwards, each six-degree house
+# measured 354, the twelve of them wound round the wheel eleven times, and every
+# wedge was painted as a near-complete invisible ring with pointer-events:all —
+# so a click anywhere on the chart was answered by whichever was drawn last.
+
+
+#: Campanus at 70N, 1990-06-21 00:00 UTC. Descending, and crowded with it.
+_RETROGRADE_CUSPS = (
+    304.76, 290.74, 288.71, 287.47, 286.02, 282.30,
+    124.76, 110.74, 108.71, 107.47, 106.02, 102.30,
+)
+
+
+def _outer_arc_centre(path: str) -> tuple[float, float]:
+    """The centre of the circle the wedge's outer arc is actually drawn on.
+
+    SVG puts two circles of the given radius through any two points, and the
+    (large-arc, sweep) pair picks which one. Correcting the span without the
+    sweep chooses the mirrored circle: the arc keeps its endpoints and leaves
+    the wheel entirely, which no endpoint-only check can see. Recovering the
+    centre from the path is the only reading that can.
+    """
+    numbers = [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?", path)]
+    x1, y1, radius = numbers[0], numbers[1], numbers[2]
+    large, sweep = int(numbers[5]), int(numbers[6])
+    x2, y2 = numbers[7], numbers[8]
+    # F.6.5 of the SVG specification, for the rx == ry == radius case.
+    dx, dy = (x1 - x2) / 2.0, (y1 - y2) / 2.0
+    scale = max(radius * radius - dx * dx - dy * dy, 0.0) / max(dx * dx + dy * dy, 1e-12)
+    coefficient = math.sqrt(scale)
+    if large == sweep:
+        coefficient = -coefficient
+    return (
+        coefficient * dy + (x1 + x2) / 2.0,
+        -coefficient * dx + (y1 + y2) / 2.0,
+    )
+
+
+def _spans_from(svg: str) -> list[float]:
+    """Each wedge's width, taken from the arc as drawn rather than the cusps.
+
+    The centre comes from the arc itself: the wedge coordinates are offset by the
+    ring's inset, so the radius is not the centre and assuming it is turns every
+    angle into nonsense.
+    """
+    spans = []
+    for path in _wedge_paths(svg):
+        numbers = [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?", path)]
+        cx, cy = _outer_arc_centre(path)
+        sweep = int(numbers[6])
+        start = math.degrees(math.atan2(numbers[1] - cy, numbers[0] - cx))
+        end = math.degrees(math.atan2(numbers[8] - cy, numbers[7] - cx))
+        spans.append((start - end) % 360.0 if sweep == 0 else (end - start) % 360.0)
+    return spans
+
+
+#: Campanus at 68N, Tromso, 1980-03-21 03:58 UTC. Ordinary in the zodiac — the
+#: twelve gaps are all positive and sum to 360 — but once the ring is quantised,
+#: house 12 and house 1 land on the same whole degree, and it is the *wrap* pair
+#: that collapses.
+_WRAP_COLLAPSE_CUSPS = (
+    250.3407, 69.8374, 69.9318, 69.9669, 69.9964, 70.0434,
+    70.3407, 249.8374, 249.9318, 249.9669, 249.9964, 250.0434,
+)
+
+
+def test_the_wrap_pair_collapsing_does_not_reorder_the_houses():
+    """House 12 and house 1 on one degree used to swap places.
+
+    The twelve boundaries were handed to spread_around_wheel, which sorts what it
+    is given and breaks ties by list index — an order that is not the order round
+    the wheel. With boundary 11 equal to boundary 0, index 0 sorted first, the two
+    came back swapped, and the twelfth wedge was drawn backwards across 359
+    degrees: invisible, pointer-events:all, last in the document, and therefore
+    the answer to every click on the chart. The twelve totalled 720 degrees.
+
+    They are separated in house order now, so the order cannot change.
+    """
+    svg = _draw(_cusps(*_WRAP_COLLAPSE_CUSPS))
+    spans = _spans_from(svg)
+    assert len(spans) == 12
+    assert sum(spans) == pytest.approx(360.0, abs=1e-6), spans
+    assert max(spans) <= 180.0, spans
+    assert min(spans) >= MINIMUM_WEDGE_SPAN_DEGREES - 1e-9, spans
+
+
+def test_a_separated_chart_still_hands_each_wedge_to_the_next():
+    """Shared boundaries: no overlap to resolve, no gap to fall through."""
+    svg = _draw(_cusps(*_WRAP_COLLAPSE_CUSPS))
+    pairs = _boundary_offsets(svg)
+    for index in range(12):
+        _, end = pairs[index]
+        next_start, _ = pairs[(index + 1) % 12]
+        assert end == pytest.approx(next_start, abs=1e-9)
+
+
+def test_house_spans_reads_the_direction_from_all_twelve():
+    """One house may run past 180 on its own; only the total tells them apart."""
+    ascending = [index * 30.0 for index in range(12)]
+    spans, reversed_wedges = house_spans(ascending)
+    assert reversed_wedges == [False] * 12
+    assert spans == pytest.approx([30.0] * 12)
+
+    spans, reversed_wedges = house_spans(list(_RETROGRADE_CUSPS))
+    assert reversed_wedges == [True] * 12
+    assert sum(spans) == pytest.approx(360.0)
+    assert max(spans) < 180.0
+
+    # Placidus at high latitude: one enormous house, the rest tiny, all forward.
+    # Taking the shorter arc pair by pair would halve it; the total is what says
+    # the set is ordered, so it stays whole.
+    lopsided = [0.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0]
+    spans, reversed_wedges = house_spans(lopsided)
+    assert reversed_wedges == [False] * 12
+    assert max(spans) == pytest.approx(200.0)
+
+    # Polich/Page at 70N: the first cusp runs back while the next five run on, so
+    # houses 1 and 2 overlap and no direction tiles. Each wedge keeps its shorter
+    # arc, which is the only reading in which none of them swallows the wheel.
+    tangled = [
+        304.76, 279.48, 280.86, 287.47, 296.49, 311.82,
+        124.76, 99.48, 100.86, 107.47, 116.49, 131.82,
+    ]
+    spans, reversed_wedges = house_spans(tangled)
+    assert any(reversed_wedges) and not all(reversed_wedges)
+    assert max(spans) <= 180.0
+
+
+def test_a_retrograde_chart_tiles_the_ring_exactly():
+    """Twelve wedges, no overlap, no gap, and 360 degrees between them."""
+    svg = _draw(_cusps(*_RETROGRADE_CUSPS))
+    spans = _spans_from(svg)
+    assert len(spans) == 12
+    assert sum(spans) == pytest.approx(360.0, abs=1e-6)
+    assert max(spans) < 180.0, "no wedge should still be painted the long way"
+
+
+def test_a_retrograde_wedge_stays_on_its_own_ring():
+    """The half of the fix an endpoint check cannot see.
+
+    Shortening the span without flipping the sweep leaves the endpoints where
+    they were and moves the arc onto the mirrored circle — some 480 units away
+    from the wheel on this fixture. All twelve arcs have to share one centre.
+    """
+    svg = _draw(_cusps(*_RETROGRADE_CUSPS))
+    centres = [_outer_arc_centre(path) for path in _wedge_paths(svg)]
+    assert len(centres) == 12
+    mean_x = sum(x for x, _ in centres) / 12.0
+    mean_y = sum(y for _, y in centres) / 12.0
+    for x, y in centres:
+        assert math.hypot(x - mean_x, y - mean_y) < 0.01, (x, y, mean_x, mean_y)
+
+
+def test_an_ordinary_chart_keeps_the_sweeps_it_always_had():
+    """Nothing below the polar circle may move: outer sweep 0, inner sweep 1."""
+    svg = _draw(_uneven_cusps_from(263.7))
+    assert _arc_flag_pairs(svg)
+    for large, sweep in _arc_flag_pairs(svg):
+        assert sweep == 0, "an ordinary chart's outer arc has always swept 0"
+    assert sum(_spans_from(svg)) == pytest.approx(360.0, abs=1e-6)
+
+
+@pytest.mark.parametrize(
+    "system,lat,lng",
+    [
+        ("C", 70.0, 20.0),   # Campanus, inside the polar circle
+        ("R", 69.0, 20.0),   # Regiomontanus
+        ("H", 0.0, 20.0),    # the horizon system, on the equator
+        ("Y", 76.0, 20.0),   # APC
+        ("P", 45.0, 9.0),    # and one ordinary chart, which must not move
+    ],
+)
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_a_real_chart_of_every_reversing_system_tiles_its_ring(system, lat, lng, style):
+    """End to end, because the two engines draw the wedges independently."""
+    total = sum(_rendered_spans(system, lat, lng, style))
+    assert total == pytest.approx(360.0, abs=1e-4), f"{system} {style}: {total}"
+
+
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_a_chart_whose_cusps_cross_keeps_every_wedge_small(style):
+    """Polich/Page at 70N: houses 1 and 2 genuinely overlap, so nothing tiles.
+
+    What must not happen is the one thing that used to: a wedge running 334
+    degrees, invisible, with pointer-events:all, taking every click on the wheel.
+    """
+    spans = _rendered_spans("T", 70.0, 20.0, style)
+    assert len(spans) == 12
+    assert max(spans) <= 180.0 + 1e-6, spans
+
+
+def _rendered_spans(system: str, lat: float, lng: float, style: str) -> list[float]:
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Reversed", 1990, 6, 21, 0, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=lng,
+        houses_system_identifier=system,
+    )
+    svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
+        style=style
+    )
+    sectors = re.findall(
+        r"<g kr:node='HouseSector' kr:house='\d+'[^>]*><path d='([^']+)'", svg
+    )
+    assert len(sectors) == 12
+    spans = []
+    for path in sectors:
+        numbers = [float(value) for value in re.findall(r"-?\d+(?:\.\d+)?(?:e-?\d+)?", path)]
+        cx, cy = _outer_arc_centre(path)
+        sweep = int(numbers[6])
+        start = math.degrees(math.atan2(numbers[1] - cy, numbers[0] - cx))
+        end = math.degrees(math.atan2(numbers[8] - cy, numbers[7] - cx))
+        spans.append((start - end) % 360.0 if sweep == 0 else (end - start) % 360.0)
+    return spans

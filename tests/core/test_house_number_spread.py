@@ -303,6 +303,12 @@ _HOUSE_NUMBER = re.compile(
 
 _CHART_CENTRE = 240.0
 
+_HOUSE_ATTRS = (
+    "first_house", "second_house", "third_house", "fourth_house", "fifth_house",
+    "sixth_house", "seventh_house", "eighth_house", "ninth_house", "tenth_house",
+    "eleventh_house", "twelfth_house",
+)
+
 
 def _rendered_numbers(svg: str, ring: str = "0") -> list[tuple[int, float, float]]:
     """House number, angle round the wheel, radius from the centre."""
@@ -344,6 +350,9 @@ def test_the_numbers_are_drawn_on_the_ring_the_extents_were_measured_at():
     "system,lat,lng",
     [
         ("C", 67.0, 20.0),   # the case that printed 10 before 9, and 4 before 3
+        ("C", 70.0, 20.0),   # and one where the houses run backwards outright
+        ("H", 0.0, 20.0),    # the horizon system reverses on the equator
+        ("Y", 76.0, 20.0),
         ("P", 67.0, 20.0),
         ("K", 66.0, 20.0),
         ("R", 65.0, 20.0),
@@ -365,8 +374,72 @@ def test_the_numbers_read_round_the_wheel_in_order(system, lat, lng):
     start = by_angle.index(1)
     rotated = by_angle[start:] + by_angle[:start]
     # The wheel runs counter-clockwise in screen terms, so reading atan2 upwards
-    # gives 1, 12, 11 ... The house order is what is being checked, not its sign.
-    assert rotated == [1] + list(range(12, 1, -1)), rotated
+    # normally gives 1, 12, 11 ...; where the houses themselves run backwards it
+    # gives 1, 2, 3 ... The house order is what is being checked, not its sign.
+    assert rotated in (list(range(1, 13)), [1] + list(range(12, 1, -1))), rotated
+
+
+def test_every_number_sits_inside_its_own_house():
+    """Order alone does not catch a set that is uniformly on the wrong side.
+
+    Centre all twelve on the far end of their houses and they still read 1 to 12
+    round the wheel: the whole ring turns together, so the cyclic order survives
+    while every number has left the house it names. What has to be checked is
+    containment, and against a definition of the wedge that owes nothing to the
+    code under test — the arc between two consecutive cusps that holds no other
+    cusp is the house, whichever way round the chart runs.
+    """
+    for system, lat, lng in (("C", 70.0, 20.0), ("H", 0.0, 20.0), ("P", 45.0, 9.0)):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Inside", 1990, 6, 15, 0, 1, city="X", nation="XX", online=False,
+            suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=lng,
+            houses_system_identifier=system,
+        )
+        svg = ChartDrawer(
+            ChartDataFactory.create_natal_chart_data(subject)
+        ).generate_svg_string(style="classic")
+        drawn = {house: angle for house, angle, _ in _rendered_numbers(svg)}
+
+        houses = [getattr(subject, name) for name in _HOUSE_ATTRS]
+        seventh = int(houses[6].abs_pos)
+        offsets = [float(-seventh + int(house.abs_pos)) for house in houses]
+
+        # The offset frame maps onto the screen by a rotation, possibly mirrored.
+        # Two samples fix both, and inverting is then exact.
+        radius = 192.0
+        def screen(offset: float) -> float:
+            x = wheel_x(0, radius, offset) + 48.0 - _CHART_CENTRE
+            y = wheel_y(0, radius, offset) + 48.0 - _CHART_CENTRE
+            return math.degrees(math.atan2(y, x)) % 360.0
+
+        mirrored = ((screen(1.0) - screen(0.0) + 180.0) % 360.0 - 180.0) < 0
+        zero = screen(0.0)
+
+        def to_offset(angle: float) -> float:
+            return ((zero - angle) if mirrored else (angle - zero)) % 360.0
+
+        for index in range(12):
+            start, end = offsets[index], offsets[(index + 1) % 12]
+            others = [offsets[other] for other in range(12) if other not in (index, (index + 1) % 12)]
+            forward = (end - start) % 360.0
+            forward_clean = not any(0.0 < (other - start) % 360.0 < forward for other in others)
+            backward = (start - end) % 360.0
+            backward_clean = not any(0.0 < (start - other) % 360.0 < backward for other in others)
+            if forward_clean == backward_clean:
+                continue  # cusps cross here; the house has no unambiguous arc
+            span = forward if forward_clean else backward
+            if span < 10.0:
+                # No label fits in an arc this narrow, so the spread pushes it out
+                # on purpose and containment is not the property to check. What is
+                # being caught here displaces a number by 177 degrees, not by two.
+                continue
+            inside = ((to_offset(drawn[index + 1]) - start) % 360.0) if forward_clean else (
+                (start - to_offset(drawn[index + 1])) % 360.0
+            )
+            assert inside <= span + 1e-6, (
+                f"{system} at {lat}N: house {index + 1} is labelled {inside:.2f}deg "
+                f"into an arc of {span:.2f}deg"
+            )
 
 
 def test_a_crowd_is_not_pushed_further_than_its_labels_need():
