@@ -1647,14 +1647,26 @@ def draw_houses_cusps_and_text_number(
     # then want the same few degrees. They are spread apart by the least
     # movement that separates them, which keeps a crowd centred on the houses
     # it belongs to instead of sliding it into the neighbouring quadrant.
-    _label_radius = r - (160 if chart_type in DOUBLE_CHART_TYPES else c3)
+    # Measured on the ring the number is drawn on, which is not the one the cusp
+    # line ends at. A label's reach in degrees is its reach in pixels over the arc
+    # a degree covers, so the radius divides straight into the answer: taken at
+    # the line's inner end (r - c3 = 120 on a natal wheel) instead of the text's
+    # own ring (r - 48 = 192), every extent came out 1.6x too large, and 1.95x on
+    # a dual chart's inner ring. That is a wider push than the uniform figure this
+    # replaced, so the crowd ended up further out of its houses than before.
+    _number_dropin = 100 if external_view else (84 if chart_type in DOUBLE_CHART_TYPES else 48)
+    _label_radius = r - _number_dropin
     _wanted = []
     for _i in range(xr):
-        _base = -int(first_subject_houses_list[int(xr / 2)].abs_pos) + int(first_subject_houses_list[_i].abs_pos)
-        _span = (
-            first_subject_houses_list[(_i + 1) % xr].abs_pos - first_subject_houses_list[_i].abs_pos
-        ) % 360.0
-        _wanted.append(_base + _span / 2.0)
+        # Base and span from the same truncated offsets the cusp lines use. A
+        # truncated base with an exact span sat the number up to half a degree off
+        # the middle of the wedge it names, and where two cusps share a whole
+        # degree - so their bases coincide - the two half spans decided their
+        # order between them: the wheel read 10 before 9, and 4 before 3.
+        _start = float(int(first_subject_houses_list[_i].abs_pos))
+        _end = float(int(first_subject_houses_list[(_i + 1) % xr].abs_pos))
+        _base = -int(first_subject_houses_list[int(xr / 2)].abs_pos) + _start
+        _wanted.append(_base + normalize_degree(_end - _start) / 2.0)
     _placed = spread_around_wheel(
         _wanted,
         0.0,
@@ -1666,13 +1678,15 @@ def draw_houses_cusps_and_text_number(
     if second_subject_houses_list is not None:
         _second_wanted = []
         for _i in range(xr):
-            _base = -int(first_subject_houses_list[int(xr / 2)].abs_pos) + int(
-                second_subject_houses_list[_i].abs_pos
-            )
-            _span = (
-                second_subject_houses_list[(_i + 1) % xr].abs_pos - second_subject_houses_list[_i].abs_pos
-            ) % 360.0
-            _second_wanted.append(_base + _span / 2.0)
+            # Exact, because the outer ring's cusp lines are: t_offset below keeps
+            # the fraction. Truncating the base here while the line does not drifts
+            # the number off its own line by up to a degree - four pixels out at
+            # this radius - which is the mismatch draw_house_sectors already guards
+            # with quantize_offsets_to_whole_degrees, one function over.
+            _start = second_subject_houses_list[_i].abs_pos
+            _end = second_subject_houses_list[(_i + 1) % xr].abs_pos
+            _base = -first_subject_houses_list[int(xr / 2)].abs_pos + _start
+            _second_wanted.append(_base + normalize_degree(_end - _start) / 2.0)
         _placed_second = spread_around_wheel(
             _second_wanted,
             0.0,
@@ -1742,11 +1756,9 @@ def draw_houses_cusps_and_text_number(
             )
             parts.append("</g>")
 
-        # Adjust dropin based on chart type and external view
-        if external_view:
-            dropin = 100
-        else:
-            dropin = 84 if chart_type in DOUBLE_CHART_TYPES else 48
+        # The same inset the extents above were measured at, so the room a label
+        # was given is the room it has where it lands.
+        dropin = _number_dropin
         xtext = wheel_x(0, (r - dropin), text_offset) + dropin
         ytext = wheel_y(0, (r - dropin), text_offset) + dropin
 

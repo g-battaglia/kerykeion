@@ -3,7 +3,7 @@
 Extended SVG Chart Generation Script for Comprehensive Test Coverage
 
 This script generates additional SVG charts beyond the base regenerate_test_charts.py:
-- Strawberry theme for all chart types
+- Themed variants of the temporal subjects (dark, black-and-white)
 - Temporal subjects from test_subjects_matrix.py (25 subjects spanning 2700 years)
 - Geographic subjects from test_subjects_matrix.py (16 locations)
 - Cross-combinations (sidereal modes × themes, house systems × chart types)
@@ -151,6 +151,25 @@ def generate_temporal_subject_charts():
                 charts_generated += 1
             except Exception as e:
                 print(f"  ERROR generating {subject_data['name']} dark theme: {e}")
+
+    # Future subjects with the Black and White theme. They used to be drawn in a
+    # theme called "light", which this library no longer has, and the case went on
+    # skipping quietly for a release because no baseline was ever written for it
+    # either — a themed case with no file behind it asserts nothing at all.
+    future_ids = ["future_2050", "future_2100", "future_2200"]
+    for subject_id in future_ids:
+        subject_data = next((s for s in TEMPORAL_SUBJECTS if s["id"] == subject_id), None)
+        if subject_data:
+            try:
+                subject = create_subject_from_dict(subject_data)
+                subject.name = f"{subject_data['name']} - Black-And-White Theme"
+                chart_data = ChartDataFactory.create_natal_chart_data(subject)
+                chart = ChartDrawer(chart_data, theme="black-and-white")
+                chart.save_svg(output_path=OUTPUT_DIR_STR)
+                print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
+                charts_generated += 1
+            except Exception as e:
+                print(f"  ERROR generating {subject_data['name']} black-and-white theme: {e}")
 
     # Modern subjects with Synastry (John + Yoko, Beatles pairs)
     john_data = next((s for s in TEMPORAL_SUBJECTS if s["id"] == "john_lennon_1940"), None)

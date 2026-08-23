@@ -22,7 +22,7 @@ from typing import Dict, Any
 
 import pytest
 
-from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer, KerykeionException
 from kerykeion.chart_data.factory import ChartDataFactory
 
 from tests.data.test_subjects_matrix import (
@@ -205,9 +205,9 @@ class TestTemporalSubjects:
             ("roman_100ad", "dark"),
             ("late_antiquity_400", "dark"),
             ("early_medieval_800", "dark"),
-            ("future_2050", "light"),
-            ("future_2100", "light"),
-            ("future_2200", "light"),
+            ("future_2050", "black-and-white"),
+            ("future_2100", "black-and-white"),
+            ("future_2200", "black-and-white"),
         ],
         ids=lambda x: f"{x[0]}_{x[1]}" if isinstance(x, tuple) else x,
     )
@@ -224,6 +224,12 @@ class TestTemporalSubjects:
         except AssertionError:
             # A baseline mismatch is a real regression, not an environment problem.
             # Without this, `except Exception` swallows it into a skip and the suite stays green.
+            raise
+        except KerykeionException:
+            # A theme this library does not have is a broken test, not a broken
+            # environment. Three cases named "light" went on skipping quietly for a
+            # whole release after it was removed, which reads in the log exactly
+            # like the ephemeris-tier skips around them.
             raise
         except Exception as e:
             pytest.skip(f"Could not generate chart for {subject_data['name']} with {theme}: {e}")

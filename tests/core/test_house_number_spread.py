@@ -17,14 +17,26 @@ See: kerykeion/charts/utils.py::_house_number_half_extents
 from __future__ import annotations
 
 import math
+import re
 
 import pytest
 
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.charts.spreading import spread_around_wheel
-from kerykeion.charts.utils import _house_number_half_extents, label_separation_degrees
+from kerykeion.charts.utils import (
+    _house_number_half_extents,
+    label_separation_degrees,
+    wheel_x,
+    wheel_y,
+)
 
-LABEL_RADIUS = 120.0  # the natal wheel's house-number ring
+#: The ring the natal wheel draws its house numbers on: ``r - 48``, the inset
+#: ``draw_houses_cusps_and_text_number`` uses for the text. Not ``r - c3``, the
+#: radius the cusp *line* ends at, which is 120 and where the extents used to be
+#: measured — a reach in degrees is a reach in pixels over the arc a degree
+#: covers, so that radius made every extent 1.6x too large.
+LABEL_RADIUS = 192.0
 
 
 def _pair_gap(angle_a: float, angle_b: float) -> float:
@@ -272,3 +284,154 @@ def test_every_pair_keeps_its_room_whenever_the_circle_has_it(count):
                 f"count={count} step={step}: {gap}° between labels needing "
                 f"{extents[i] + extents[j]}°"
             )
+
+
+# =============================================================================
+# WHERE THE NUMBER ACTUALLY LANDS
+# =============================================================================
+#
+# The three cases above this line ask the helpers for the right answer. These
+# ask the drawing, because every defect in this area so far has been a coupling
+# one: the helper was right and the caller handed it the wrong radius, or the
+# wrong span, or an offset in a convention the line beside it does not use.
+
+
+_HOUSE_NUMBER = re.compile(
+    "<g kr:node='HouseNumber' kr:house='([0-9]+)' kr:horoscope='([01])'>"
+    "<text[^>]*><tspan x='([-0-9.e]+)' y='([-0-9.e]+)'"
+)
+
+_CHART_CENTRE = 240.0
+
+
+def _rendered_numbers(svg: str, ring: str = "0") -> list[tuple[int, float, float]]:
+    """House number, angle round the wheel, radius from the centre."""
+    out = []
+    for house, horoscope, x, y in _HOUSE_NUMBER.findall(svg):
+        if horoscope != ring:
+            continue
+        # The tspan is nudged by (-3, +3) off the anchor the layout computed.
+        dx = float(x) + 3.0 - _CHART_CENTRE
+        dy = float(y) - 3.0 - _CHART_CENTRE
+        out.append((int(house), math.degrees(math.atan2(dy, dx)) % 360.0, math.hypot(dx, dy)))
+    return out
+
+
+def _natal_svg(**birth) -> str:
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Numbers", 1990, 6, 15, 0, 1, city="X", nation="XX",
+        online=False, suppress_geonames_warning=True, tz_str="UTC", **birth
+    )
+    return ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
+        style="classic"
+    )
+
+
+def test_the_numbers_are_drawn_on_the_ring_the_extents_were_measured_at():
+    """The coupling itself, asserted rather than assumed.
+
+    LABEL_RADIUS is what the module measures reach against; if the text lands
+    somewhere else, every extent is scaled by the ratio between the two and the
+    crowd is separated by the wrong amount in the only units that matter.
+    """
+    numbers = _rendered_numbers(_natal_svg(lat=45.0, lng=9.0, houses_system_identifier="P"))
+    assert len(numbers) == 12
+    for _, _, radius in numbers:
+        assert radius == pytest.approx(LABEL_RADIUS, abs=0.5)
+
+
+@pytest.mark.parametrize(
+    "system,lat,lng",
+    [
+        ("C", 67.0, 20.0),   # the case that printed 10 before 9, and 4 before 3
+        ("P", 67.0, 20.0),
+        ("K", 66.0, 20.0),
+        ("R", 65.0, 20.0),
+        ("O", 67.0, 20.0),
+        ("P", 45.0, 9.0),
+    ],
+)
+def test_the_numbers_read_round_the_wheel_in_order(system, lat, lng):
+    """1 to 12 with nothing out of place, however crowded the quadrant.
+
+    Two cusps inside one whole degree give their numbers the same truncated
+    base, and whatever is added to that base then decides which of the two comes
+    first. Adding half of an *exact* span put them in the order of their
+    fractions, which is not the order of the houses.
+    """
+    numbers = _rendered_numbers(_natal_svg(lat=lat, lng=lng, houses_system_identifier=system))
+    assert len(numbers) == 12
+    by_angle = [house for house, _, _ in sorted(numbers, key=lambda item: item[1])]
+    start = by_angle.index(1)
+    rotated = by_angle[start:] + by_angle[:start]
+    # The wheel runs counter-clockwise in screen terms, so reading atan2 upwards
+    # gives 1, 12, 11 ... The house order is what is being checked, not its sign.
+    assert rotated == [1] + list(range(12, 1, -1)), rotated
+
+
+def test_a_crowd_is_not_pushed_further_than_its_labels_need():
+    """The over-separation the wrong radius caused, measured where it shows.
+
+    Placidus at 67N gives four numbers barely a degree apart. Spread at the
+    right radius they end up about ten pixels apart, the width of the inked
+    figures; measured at the cusp line's radius instead, every extent was 1.6x
+    too large and the same four were pushed out to sixteen.
+    """
+    numbers = _rendered_numbers(_natal_svg(lat=67.0, lng=20.0, houses_system_identifier="P"))
+    ordered = sorted(numbers, key=lambda item: item[1])
+    gaps_px = []
+    for (_, angle_a, radius_a), (_, angle_b, radius_b) in zip(ordered, ordered[1:]):
+        arc = (angle_b - angle_a) % 360.0
+        gaps_px.append(math.radians(arc) * (radius_a + radius_b) / 2.0)
+    tightest = min(gaps_px)
+    # 14px font, cap height ratio 0.716 -> 10.02px is what "just touching" means.
+    assert 9.0 <= tightest <= 12.5, f"tightest pair {tightest:.2f}px"
+
+
+def test_the_outer_ring_of_a_dual_chart_labels_its_own_lines():
+    """Its cusp lines keep their fraction, so its numbers have to as well.
+
+    A truncated base against an exact line drifts the two apart by up to a whole
+    degree, which at this radius is four pixels of daylight between a number and
+    the wedge it names. The wedge is rebuilt here through the same wheel_x/wheel_y
+    the drawing uses, so the check does not depend on knowing which way round the
+    chart runs.
+    """
+    john = AstrologicalSubjectFactory.from_birth_data(
+        "John", 1940, 10, 9, 18, 30, city="Liverpool", nation="GB", lng=-2.97, lat=53.41,
+        tz_str="Europe/London", online=False, suppress_geonames_warning=True,
+    )
+    paul = AstrologicalSubjectFactory.from_birth_data(
+        "Paul", 1942, 6, 18, 15, 30, city="Liverpool", nation="GB", lng=-2.97, lat=53.41,
+        tz_str="Europe/London", online=False, suppress_geonames_warning=True,
+    )
+    svg = ChartDrawer(ChartDataFactory.create_synastry_chart_data(john, paul)).generate_svg_string(
+        style="classic"
+    )
+    numbers = {house: angle for house, angle, _ in _rendered_numbers(svg, ring="1")}
+    assert len(numbers) == 12
+
+    outer_radius = _CHART_CENTRE - 8.0
+
+    def screen_angle(offset: float) -> float:
+        x = wheel_x(0, outer_radius, offset) + 8.0 - _CHART_CENTRE
+        y = wheel_y(0, outer_radius, offset) + 8.0 - _CHART_CENTRE
+        return math.degrees(math.atan2(y, x)) % 360.0
+
+    houses = [getattr(paul, name) for name in (
+        "first_house", "second_house", "third_house", "fourth_house", "fifth_house",
+        "sixth_house", "seventh_house", "eighth_house", "ninth_house", "tenth_house",
+        "eleventh_house", "twelfth_house",
+    )]
+    zero = john.seventh_house.abs_pos
+    drifts = []
+    for index, house in enumerate(houses):
+        start_offset = house.abs_pos - zero
+        span = (houses[(index + 1) % 12].abs_pos - house.abs_pos) % 360.0
+        wanted = screen_angle(start_offset + span / 2.0)
+        drawn = numbers[index + 1]
+        drifts.append(abs((drawn - wanted + 180.0) % 360.0 - 180.0))
+    # Nothing here is crowded enough to be moved by the spread, so every number
+    # should sit on the exact middle of its own wedge. Truncating the base put
+    # them up to a degree off it.
+    assert max(drifts) < 0.05, [round(d, 4) for d in drifts]
