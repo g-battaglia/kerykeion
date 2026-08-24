@@ -1605,3 +1605,90 @@ class TestRoundOneRegressions:
         ctx = to_context(cd)
         if "<relationship_score" in ctx:
             assert "max=" not in ctx
+
+
+# =============================================================================
+# HOUSE INFORMATION THE LIBRARY RECORDS AND THE DOCUMENT HAS TO CARRY
+# =============================================================================
+
+
+def _polar_subject():
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="P",
+    )
+
+
+def test_a_substituted_house_system_is_named_in_the_context():
+    """A chart asked for in Placidus at 70N is cast in Porphyry.
+
+    The subject records the substitution, with a message written for a reader.
+    Reporting only the system actually used has a model writing house sentences
+    about a division the user did not choose, with nothing to caveat it.
+    """
+    subject = _polar_subject()
+    assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
+
+    context = to_context(subject)
+    line = [row for row in context.splitlines() if "polar_house_fallback" in row]
+    assert line, context[:400]
+    assert 'requested="Placidus"' in line[0]
+    assert 'used="Porphyry"' in line[0]
+
+
+def test_a_chart_that_needed_no_substitution_says_nothing():
+    """The element is a fact about a chart, not a field every chart carries."""
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+    )
+    assert not ordinary.polar_house_fallbacks
+    assert "polar_house_fallback" not in to_context(ordinary)
+
+
+@pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
+def test_the_composite_context_carries_the_anchor(anchor):
+    """It can turn the whole house frame by half a turn, so a context without it
+    describes a chart that cannot be reproduced."""
+    from kerykeion.composite_subject.factory import CompositeSubjectFactory
+
+    kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
+                  online=False, suppress_geonames_warning=True)
+    first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
+    second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
+
+    model = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    assert f'house_anchor="{anchor}"' in to_context(model)
+
+    davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+    assert "house_anchor" not in to_context(davison), "a Davison chart never needs one"
+
+
+def test_no_degree_contradicts_the_sign_printed_beside_it():
+    """29.99687 rounds to "30.00", which is zero degrees of the NEXT sign.
+
+    Every degree this document prints sits next to a sign label, so the boundary
+    that matters is the sign's ceiling — not 360, which is the only one a naive
+    guard catches. The report's own tables have always got this right.
+    """
+    import re
+
+    subjects = [
+        AstrologicalSubjectFactory.from_birth_data(
+            "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
+            lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        )
+        for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20))
+    ]
+    for subject in subjects:
+        context = to_context(subject)
+        for attribute in ("position", "cusp"):
+            assert f'{attribute}="30.00"' not in context, f"{attribute} at 30 degrees"
+        for match in re.finditer(r'abs_pos="([0-9.]+)"', context):
+            value = float(match.group(1))
+            assert value % 30.0 != 0.0 or value == 0.0, (
+                f"abs_pos {value} sits exactly on a sign boundary it was rounded onto"
+            )

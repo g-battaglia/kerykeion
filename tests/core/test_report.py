@@ -2688,3 +2688,83 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.CRITICAL)
     pytest.main(["-vv", __file__])
+
+
+# =============================================================================
+# WHICH HOUSE DIVISION THE READER IS LOOKING AT
+# =============================================================================
+
+
+class TestHouseProvenanceInTheReport:
+    """A report that names only the system actually used describes a division the
+    reader may not have asked for, and a composite that does not record its anchor
+    describes a chart that cannot be reproduced."""
+
+    def test_a_substituted_house_system_is_named(self) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="P",
+        )
+        assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
+
+        row = [
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        ]
+        assert row, "no Houses System row at all"
+        assert "Porphyry" in row[0] and "Placidus" in row[0], row[0]
+
+    def test_an_ordinary_chart_names_one_system(self) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+        )
+        row = [
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        ]
+        assert "substituted" not in row[0], row[0]
+
+    @pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
+    def test_the_composite_names_its_anchor(self, anchor: str) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
+                      online=False, suppress_geonames_warning=True)
+        first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
+        second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
+
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        row = [
+            line for line in ReportGenerator(model).generate_report().splitlines()
+            if "House Anchor" in line
+        ]
+        assert row and anchor in row[0], row
+
+        davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+        assert "House Anchor" not in ReportGenerator(davison).generate_report()
+
+    def test_no_house_degree_is_printed_at_its_own_ceiling(self) -> None:
+        """29.99687 rounds to "30.00°", which is zero degrees of the next sign."""
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20)):
+            subject = AstrologicalSubjectFactory.from_birth_data(
+                "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
+                lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+            )
+            report = ReportGenerator(subject).generate_report()
+            assert "| 30.00°" not in report
+            assert " 30.00° " not in report
