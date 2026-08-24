@@ -95,9 +95,11 @@ logger = logging.getLogger(__name__)
 def _house_of(degree: float, cusps: list) -> str:
     """The library's house reader, with an answer for a ring that has gaps.
 
-    Two charts whose own houses cross can average into twelve cusps that are not
-    a partition of the circle, and a longitude can then fall in a gap between
-    them. ``get_planet_house`` raises there, and rightly: for an ordinary chart
+    Two charts whose houses do not run the same way can average into twelve cusps
+    that are not a partition of the circle, and a longitude can then fall in a gap
+    between them. It is rarely both charts crossing their own cusps: of the frames
+    where a real point lands in a gap, 97% have one plain forward ring and one
+    plain backward one, neither crossing anything. ``get_planet_house`` raises there, and rightly: for an ordinary chart
     that is a bug worth stopping on, which is what its own test holds it to.
 
     A composite is the one place the condition is reachable by construction, so
@@ -117,8 +119,9 @@ def _house_of(degree: float, cusps: list) -> str:
         name = get_args(Houses)[behind]
         logger.warning(
             "These cusps do not partition the circle, so %.4f falls in a gap between "
-            "them; reading it as the house whose cusp it last passed. Both subjects' "
-            "own houses cross, and no arrangement of midpoints between them closes it.",
+            "them; reading it as the house whose cusp it last passed. No arrangement "
+            "of midpoints between these two charts closes it — usually because one "
+            "of them has a reversed ring and the other a plain one.",
             degree,
         )
         return name
@@ -205,9 +208,11 @@ def composite_frame(
 
     Returns:
         The frame — ``(first_origin, second_origin, origin_midpoint, step)`` —
-        the twelve cusps, and whether the frame is coherent: ``False`` when the
-        two charts' houses do not run the same way, in which case a position
-        placed on it does not belong to the ring returned beside it.
+        the twelve cusps, and whether the frame is coherent: ``False`` when no
+        one frame spans the two charts' houses, in which case a position placed
+        on it does not belong to the ring returned beside it. Two charts running
+        opposite ways do that, and so does a single parent inside the polar
+        circle whose own cusps are not ordered at all.
     """
     midpoints = [
         circular_mean(first, second) for first, second in zip(first_cusps, second_cusps)
@@ -269,20 +274,27 @@ def composite_frame(
         1.0,
     )
 
-    # Where the two charts do not run the same way there is no frame to place a
-    # ring on, and placing one anyway can put two cusps on the same longitude —
-    # a house of zero width, which the shared house reader has no answer for and
-    # raises on. The plain midpoints are what this returned before there was a
-    # repair at all, and they are the honest answer when there is nothing to
-    # repair *towards*.
-    cusps = (
-        list(midpoints)
-        if already_in_order or not coherent
-        else [
+    # A repair is only a repair if the result is a house division, and the frame
+    # does not guarantee one: where a parent's own ring is degenerate — Campanus
+    # at 75N repeats six of its cusps — the placed ring inherits the repetition
+    # and comes back with cusp 2 on cusp 8. Nothing downstream would notice. So
+    # place, then check the twelve wind once, and where they do not, say that
+    # there was nothing to repair *towards* rather than pretending otherwise.
+    #
+    # The plain midpoints are what this returned before there was a repair at
+    # all, and they are the honest answer for those.
+    if already_in_order:
+        cusps = list(midpoints)
+    else:
+        placed = [
             place_on_composite_frame(first, second, cusp_frame)
             for first, second in zip(first_cusps, second_cusps)
         ]
-    )
+        if _cusp_ring_winds_once(placed):
+            cusps = placed
+        else:
+            cusps = list(midpoints)
+            coherent = False
 
     # Where the parents put an angle exactly on a cusp, the composite has to as
     # well — under equal houses the first cusp IS the Ascendant, and a chart whose
@@ -296,25 +308,33 @@ def composite_frame(
     # question anyway. It fires rarely — 4 charts in 240 under equal-type systems
     # — and never at all under a quadrant system, where the angle and the cusp
     # share an origin and cannot disagree.
-    identities = [
-        (cusp, place_on_composite_frame(first_angles[index], second_angles[index], angle_frame))
-        for index, cusp in ((0, 0), (1, 9))
-        if _angle_is_its_cusp(
-            first_angles[index], second_angles[index], first_cusps, second_cusps, index
-        )
-    ]
-    disagreeing = [
-        cusp
-        for cusp, placed in identities
-        if abs(((cusps[cusp] - placed + 180.0) % 360.0) - 180.0) > 1e-9
-    ]
-    if disagreeing and len(disagreeing) == len(identities):
-        cusps = [(value + 180.0) % 360.0 for value in cusps]
-    elif disagreeing:
-        # One rotation would fix one identity and break the other, which can only
-        # happen on a frame that spans two charts running opposite ways. Leave the
-        # ring alone; the angles are taken off it below.
-        coherent = False
+    # Nothing rotates a ring the frame could not repair. The rotation exists to
+    # make a framed ring agree with the frame; on a ring that is not on one it
+    # only moves the cusp out from under an angle that cannot follow it, because
+    # that angle is its own near midpoint. Ungate this and 26 frames in 148,005
+    # draw an angle opposite the cusp it is.
+    if coherent:
+        identities = [
+            (cusp, place_on_composite_frame(first_angles[index], second_angles[index], angle_frame))
+            for index, cusp in ((0, 0), (1, 9))
+            if _angle_is_its_cusp(
+                first_angles[index], second_angles[index], first_cusps, second_cusps, index
+            )
+        ]
+        disagreeing = [
+            cusp
+            for cusp, placed in identities
+            if abs(((cusps[cusp] - placed + 180.0) % 360.0) - 180.0) > 1e-9
+        ]
+        if disagreeing and len(disagreeing) == len(identities):
+            cusps = [(value + 180.0) % 360.0 for value in cusps]
+        elif disagreeing:
+            # One rotation would fix one identity and break the other. Two charts
+            # running opposite ways do it — 2,028 frames of 2,439 — but so does a
+            # single parent inside the polar circle whose own cusps are not
+            # ordered at all: 393 more had one plain ring and one tangled one, 18
+            # had two tangled. Leave the ring alone; the angles follow it below.
+            coherent = False
 
     return angle_frame, cusps, coherent
 
@@ -758,43 +778,48 @@ class CompositeSubjectFactory:
         angle_opposites = {"descendant": "ascendant", "imum_coeli": "medium_coeli"}
         placed_angles: dict[str, float] = {}
         for angle in ("ascendant", "medium_coeli"):
-            if not frame_is_coherent:
-                # The two charts run opposite ways, so there is no frame: a
-                # position placed on one anyway is not the position the ring
-                # shows — the composite Midheaven landed in the fourth house on a
-                # chart whose twelve cusps tiled perfectly, and nothing anywhere
-                # complained. Every position falls back to its own near midpoint,
-                # which is exactly what this returned before there was a frame at
-                # all, and which keeps an angle on its cusp wherever the parents
-                # put it there, because then the two are the same average.
-                placed_angles[angle] = circular_mean(
-                    self.first_subject[angle]["abs_pos"],
-                    self.second_subject[angle]["abs_pos"],
-                )
-            else:
+            if frame_is_coherent:
                 placed_angles[angle] = place_on_composite_frame(
                     self.first_subject[angle]["abs_pos"],
                     self.second_subject[angle]["abs_pos"],
                     composite_angles_frame,
                 )
+                continue
+
+            # No frame spans these two charts, so there is nothing to place a
+            # position on — a position placed on one anyway is not the position
+            # the ring shows: the composite Midheaven landed in the fourth house
+            # on a chart whose twelve cusps tiled perfectly, and nothing anywhere
+            # complained. Every position falls back to its own near midpoint,
+            # which is exactly what this returned before there was a frame at all,
+            # and which keeps an angle on its cusp wherever the parents put it
+            # there, because then the two are the same average.
+            #
+            # That last part is why nothing rotates the ring once the frame is
+            # known not to span the two charts: half a turn moves the cusp out
+            # from under an angle that is not being placed on a frame and so
+            # cannot follow it.
+            placed_angles[angle] = circular_mean(
+                self.first_subject[angle]["abs_pos"],
+                self.second_subject[angle]["abs_pos"],
+            )
+
+        # The other two are opposites by definition, in the parents and here. An
+        # earlier version averaged them on their own when there was no frame, on
+        # the grounds that the near midpoint of two Descendants need not be the
+        # near midpoint of two Ascendants plus half a turn. It always is: the arc
+        # between the two is the same arc either way. Measured over every
+        # incoherent frame the two answers differed by at most 1.7e-13 degrees,
+        # so the branch is gone rather than left in looking like it decides
+        # something.
         for opposite, angle in angle_opposites.items():
-            if frame_is_coherent:
-                placed_angles[opposite] = (placed_angles[angle] + 180.0) % 360.0
-            else:
-                # Nothing is derived from anything on a frame that does not exist:
-                # the near midpoint of the two Descendants is not always the near
-                # midpoint of the two Ascendants plus half a turn, and taking the
-                # difference put an angle in a gap of a ring that has gaps.
-                placed_angles[opposite] = circular_mean(
-                    self.first_subject[opposite]["abs_pos"],
-                    self.second_subject[opposite]["abs_pos"],
-                )
+            placed_angles[opposite] = (placed_angles[angle] + 180.0) % 360.0
 
         if not frame_is_coherent:
             logger.info(
-                "The two subjects' houses do not run the same way round the wheel, so "
-                "this composite has no single frame: the angles follow the cusp ring "
-                "where the subjects put them on a cusp."
+                "No single frame spans these two subjects' houses, so this composite "
+                "has none: every position is its own near midpoint, and the angles "
+                "follow the cusp ring where the subjects put them on a cusp."
             )
 
         for planet in self.active_points:

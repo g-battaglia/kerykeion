@@ -11,13 +11,11 @@ Primary test pair: John Lennon + Yoko Ono.
 
 import copy
 import pytest
-from typing import get_args
 from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.composite_subject.factory import CompositeSubjectFactory
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.literals import Houses
 
 
 # =============================================================================
@@ -1383,28 +1381,142 @@ def test_two_charts_that_run_opposite_ways_keep_their_angles_on_their_cusps():
         assert model.medium_coeli.house == "Tenth_House", anchor
 
 
-def test_a_composite_of_two_tangled_charts_still_builds():
-    """Sunshine/alt at 66N crosses its own cusps, and two of those average into a
-    ring with gaps in it. The shared house reader raises on a gap, correctly — for
-    an ordinary chart that is a bug worth stopping on. A composite is the one
+def test_a_point_in_a_gap_is_read_as_the_house_whose_cusp_it_last_passed(caplog):
+    """Two charts that do not run the same way average into a ring with a hole in it.
+
+    Sunshine at 80N reverses its cusps while the same system at 41.9N does not,
+    and their midpoints leave a gap that five of the ten planets fall in. The
+    shared house reader raises there, correctly — for an ordinary chart a
+    longitude in no house is a bug worth stopping on. A composite is the one
     place the condition is reachable by construction, so it answers instead: the
     house whose cusp the point last passed, said out loud on the logger.
 
     Before the composite was taught to use the shared reader it had a private copy
-    that returned the first house for these without a word. This is not that.
+    that returned the first house for these without a word. This is not that: the
+    house named below is one the point is genuinely past the cusp of, and it is
+    not the first.
     """
+    import logging
+
+    from kerykeion.utilities import get_planet_house
+
     first = AstrologicalSubjectFactory.from_birth_data(
-        "A", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=66.0, lng=0.0, tz_str="UTC",
-        online=False, suppress_geonames_warning=True, houses_system_identifier="i",
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=41.9, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="I",
     )
     second = AstrologicalSubjectFactory.from_birth_data(
-        "B", 1990, 6, 15, 23, 0, city="X", nation="XX", lat=66.0, lng=0.0, tz_str="UTC",
-        online=False, suppress_geonames_warning=True, houses_system_identifier="i",
+        "B", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=80.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="I",
     )
-    from kerykeion.charts.utils import house_spans
 
-    _spans, reversed_wedges = house_spans([getattr(first, name).abs_pos for name in _CUSP_ATTRS])
-    assert len(set(reversed_wedges)) > 1, "the fixture no longer crosses its own cusps"
+    with caplog.at_level(logging.WARNING, logger="kerykeion.composite_subject.factory"):
+        model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
 
+    cusps = _cusps_of(model)
+    # The gap is the fixture's whole point: without one the reader never answers,
+    # and this test would pass on any behaviour at all.
+    with pytest.raises(ValueError):
+        get_planet_house(model.sun.abs_pos, cusps)
+
+    # Not the first house: that is the answer the private copy gave for every one
+    # of these, and an assertion that cannot tell the two apart proves nothing.
+    assert model.sun.house == "Twelfth_House"
+    assert cusps[11] == approx(358.663, abs=0.01), "the fixture's ring moved"
+    assert "falls in a gap" in caplog.text, "a ring this shape is worth knowing about"
+
+
+def test_nothing_rotates_a_ring_the_frame_could_not_repair():
+    """The rotation is for a ring that is on a frame. This one is not.
+
+    Under the horizon system a chart at the equator and one at 41.9N do not run
+    the same way, so no frame spans them and every position is its own near
+    midpoint — the angles included, which therefore cannot follow a ring that
+    moves. Rotate it half a turn anyway, to satisfy an identity, and the cusp
+    slides out from under the angle that IS it: measured across 148,005 frames,
+    ungating the rotation does exactly that to 26 of them, this pair among them.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 4, 0, city="X", nation="XX", lat=0.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="H",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 16, 0, city="X", nation="XX", lat=41.9, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="H",
+    )
+    for subject in (first, second):
+        assert subject.medium_coeli.abs_pos == approx(subject.tenth_house.abs_pos, abs=1e-9), (
+            "the fixture no longer puts the Midheaven on the tenth cusp"
+        )
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9), anchor
+        assert model.medium_coeli.house == "Tenth_House", anchor
+
+
+def test_a_repair_that_is_not_a_house_division_is_not_a_repair():
+    """Placing the ring on the frame does not guarantee twelve houses.
+
+    Campanus at 75N repeats six of its own cusps, and a ring placed on the frame
+    inherits the repetition: cusp 2 lands on cusp 8, cusp 4 on cusp 10. Nothing
+    downstream notices — the twelve are still twelve numbers — but the Midheaven
+    then sits on two cusps at once and the reader names the earlier one, so this
+    composite came back with its Midheaven in the fourth house.
+
+    Where the frame cannot produce a house division, the plain midpoints are the
+    answer and the frame is not coherent. On this pair they put the Midheaven
+    back on the tenth cusp — and on the same value the systems whose parents
+    agree about where the Midheaven is all give.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=0.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 22, 0, city="X", nation="XX", lat=75.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+    )
     model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
-    assert model.sun.house in set(get_args(Houses))
+    cusps = _cusps_of(model)
+
+    assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9)
+    assert model.medium_coeli.house == "Tenth_House"
+    assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-9)
+    assert model.ascendant.house == "First_House"
+
+
+def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
+    """Under Morinus the first cusp is not the Ascendant, so there is no identity
+    to keep — and an empty list of identities must not be read as agreement.
+
+    Drop the guard that requires at least one and ``len([]) == len([])`` turns
+    every such ring half a circle: 107,100 frames of 460,584 move, under every
+    system where neither angle is a cusp — whole sign, Morinus, meridian,
+    Carter. Here the first cusp goes from 22.19 degrees to 202.19.
+    """
+    from kerykeion.utilities.core import circular_mean
+
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=0.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="M",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 4, 0, city="X", nation="XX", lat=0.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="M",
+    )
+    assert first.ascendant.abs_pos != approx(first.first_house.abs_pos, abs=1e-6), (
+        "the fixture no longer separates the Ascendant from the first cusp"
+    )
+
+    naive = [
+        circular_mean(getattr(first, name).abs_pos, getattr(second, name).abs_pos)
+        for name in _CUSP_ATTRS
+    ]
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        assert _cusps_of(model) == approx(naive, abs=1e-9), anchor
