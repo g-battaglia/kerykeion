@@ -85,7 +85,9 @@ print(localize_naive(gap, tz, is_dst=True).utcoffset())  # 2:00:00
 | Name | Signature | Purpose |
 |---|---|---|
 | `get_kerykeion_point_from_degree` | `(degree, name, point_type, speed=None, declination=None, magnitude=None, ecliptic_latitude=None) -> KerykeionPointModel` | Build a point from a longitude; finite degrees wrapped into [0, 360), non-finite raise |
-| `get_planet_house` | `(planet_degree, houses_degree_ut_list: list) -> Houses` | House containing a longitude (12 cusp degrees in) |
+| `get_planet_house` | `(planet_degree, houses_degree_ut_list: list) -> Houses` | House containing a longitude (12 cusp degrees in). Direction-aware: several house systems return descending cusps above the polar circle |
+| `house_spans` | `(cusps: Sequence[float]) -> tuple[list[float], list[bool]]` | The twelve house widths and which run against the frame given. Six systems reverse above ~68°, two cross |
+| `normalize_degree` | `(angle: float) -> float` | Into [0, 360). Use instead of `% 360`, which answers exactly 360.0 for a hair-negative angle; propagates NaN |
 | `get_house_name` | `(house_number: int) -> Houses` | 1–12 → `"First_House"`...; else `ValueError` |
 | `get_house_number` | `(house_name: Houses) -> int` | Inverse of the above |
 | `get_number_from_name` | `(name: AstrologicalPoint) -> int` | Point name → ephemeris body id; unknown → `KerykeionException` |

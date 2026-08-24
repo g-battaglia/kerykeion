@@ -1,5 +1,67 @@
 # Changelog
 
+## [6.0.0a87]
+
+### Fixed
+
+- **Six house systems draw their houses backwards, and the wheel did not know.**
+  Above roughly 68 degrees Campanus, Regiomontanus, Sunshine, Polich/Page and APC
+  return descending cusps, and the horizon system does it on the equator. Read
+  forwards, a six-degree house measured 354: the twelve transparent hit-wedges
+  were each painted as a near-complete ring, stacked, so a click anywhere on the
+  chart was answered by whichever was drawn last, and every house number sat on
+  the far side of the wheel from the house it names. Direction is now read from
+  all twelve at once — twelve widths cover the circle exactly once whichever way
+  the houses run, so the total tells them apart.
+
+- **A house too thin to draw could not be clicked.** Two cusps inside one whole
+  degree collapse onto one offset when the classic ring is quantised, and an arc
+  whose endpoints coincide is dropped by the SVG specification, leaving a path of
+  no area that still declares `pointer-events: all`. The boundaries are separated
+  in house order now, so they stay shared, and where the cusps genuinely cross —
+  Polich/Page and Sunshine/alt inside the polar circle — each wedge keeps at least
+  a degree by moving only its own end.
+
+- **The composite chart's twelve cusps were not always a house division.** About
+  one couple in sixteen produced twelve arcs totalling 1080 degrees instead of
+  360, with the house numbers out of order and the Midheaven below the horizon.
+  The repair follows the practice the field documents: one angle keeps its near
+  midpoint and the others move onto their far one. The new `house_anchor`
+  argument chooses which — `auto` (the default), `ascendant` or `midheaven` —
+  and is recorded on the resulting model.
+
+- **The composite kept a private copy of the library's house reader**, and the
+  copy was the old one: on a descending cusp ring it filed ten points out of ten
+  in the wrong house, while the same model's house-comparison field, which used
+  the shared function, disagreed with it.
+
+- **House numbers were sized against the wrong ring.** Their reach was measured
+  at the radius where the cusp line ends rather than where the number is drawn,
+  making every extent 1.6 times too large on a natal wheel and 1.95 on a dual
+  chart's inner ring. Two related mismatches are closed with it: the inner ring
+  mixed a truncated base with an exact span, which on a crowded chart printed 10
+  before 9 and 4 before 3; the outer ring of a dual chart labelled exact lines
+  with truncated numbers.
+
+- **`% 360` where the library meant `normalize_degree`**, in four more files. For
+  a hair-negative angle Python's modulo answers exactly 360.0, which is outside
+  the range the callers promise. `normalize_degree` and `house_spans` now live in
+  `kerykeion.utilities.core`, where calculation code can reach them without
+  importing the charts package — which is why those copies existed. Both remain
+  importable from `kerykeion.charts.utils`.
+
+- **`poe regenerate:glyph-gallery` had been dead** since the theme removal: it
+  named a stylesheet that went with the themes, so `regenerate:all` died on it.
+
+- **The default fixed-star lists spelled Deneb Algedi with a space**, the one
+  form that is neither in `AstrologicalPoint` nor in the translations.
+
+### Changed
+
+- `AstrologicalSubjectFactory` writes its log lines to its own module logger
+  rather than the root logger, so a host that silences `kerykeion.*` now does.
+- `CompositeSubjectModel` gains `house_anchor` (`None` on a Davison chart).
+
 ## [6.0.0a86]
 
 ### Fixed

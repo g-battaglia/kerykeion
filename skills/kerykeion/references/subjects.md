@@ -235,14 +235,16 @@ All default `False` except `calculate_lunar_phase` (default `True`); available o
 
 ## Composite subjects
 
-`CompositeSubjectFactory(first_subject, second_subject, chart_name=None)` (import from `kerykeion`). Both subjects must share zodiac type, sidereal mode, house system, and perspective, or it raises; `active_points` are intersected (disjoint sets raise). Two methods, both returning `CompositeSubjectModel`:
+`CompositeSubjectFactory(first_subject, second_subject, chart_name=None, house_anchor="auto")` (import from `kerykeion`). Both subjects must share zodiac type, sidereal mode, house system, and perspective, or it raises; `active_points` are intersected (disjoint sets raise). Two methods, both returning `CompositeSubjectModel`:
 
 - `get_midpoint_composite_subject_model()` — circular midpoints of points and cusps; not a real sky, so `is_diurnal` is `None` and provenance is absent. Composite cusps keep their own house numbers and are deliberately NOT re-sorted by longitude (re-sorting would swap the composite MC and IC).
+
+  Where the two charts' angles are nearly opposed the twelve near midpoints stop running in order — about one pair in sixteen — and the cusps are repaired the way the field does it: one angle keeps its near midpoint and the others move onto their far one. `house_anchor` picks which: `"auto"` (default; whichever of the Ascendant and Midheaven has its base cusps closer together, matching Solar Fire), `"ascendant"` or `"midheaven"` (Kepler's two methods). Anything else raises `KerykeionException`. A ring that already runs in order is returned untouched. The four angles follow their cusp only where the parents made them one point — under whole sign, equal, Morinus or meridian houses the Ascendant is not the first cusp, and it stays a midpoint of the two Ascendants.
 - `get_davison_composite_subject_model(*, custom_ayanamsa_t0=None, custom_ayanamsa_ayan_t0=None)` — midpoint in time (mean Julian Day) and space, cast as a REAL chart at that moment (tz `Etc/GMT`); carries over enrichments both parents share; the keyword pair is required when `sidereal_mode="USER"`.
 
 With `chart_name=None` the composite is named `"{first} and {second} Composite Chart"`.
 
-`CompositeSubjectModel` adds `first_subject`, `second_subject`, `composite_chart_type` (values of the `CompositeChartType` literal: `"Midpoint"` | `"Davison"`), and `Optional is_diurnal`; location/time metadata fields are optional. It feeds `ChartDataFactory.create_composite_chart_data` — see `references/charts-and-drawing.md`.
+`CompositeSubjectModel` adds `first_subject`, `second_subject`, `composite_chart_type` (values of the `CompositeChartType` literal: `"Midpoint"` | `"Davison"`), `Optional house_anchor` (which angle was held when the cusp ring was repaired; `None` on a Davison chart), and `Optional is_diurnal`; location/time metadata fields are optional. It feeds `ChartDataFactory.create_composite_chart_data` — see `references/charts-and-drawing.md`.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
