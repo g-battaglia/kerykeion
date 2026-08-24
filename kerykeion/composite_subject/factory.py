@@ -141,21 +141,33 @@ def _house_of(degree: float, cusps: list) -> str:
         return name
 
 
+def _is_opposite(first: float, second: float) -> bool:
+    """Are these two longitudes exactly half a circle apart?"""
+    return abs(((second - first) % 360.0) - 180.0) < 1e-9
+
+
 def _angle_is_its_cusp(
     first_angle: float,
     second_angle: float,
     first_cusps: Sequence[float],
     second_cusps: Sequence[float],
-    index: int,
+    cusp: int,
 ) -> bool:
     """Do both charts put this angle exactly on the cusp it shares a number with?
 
     Asked of the charts rather than of a list of house-system identifiers kept
-    somewhere and left to rot. Quadrant systems say yes for both angles; equal
-    houses say yes for the Ascendant only; whole sign, Morinus and meridian say
-    no for one or both.
+    somewhere and left to rot. Quadrant systems say yes for all four angles;
+    equal houses say yes for the Ascendant and the Descendant only; whole sign,
+    Morinus and meridian say no for one or both pairs.
+
+    ``cusp`` is the cusp's own index, zero-based: 0 for the Ascendant, 3 for the
+    Imum Coeli, 6 for the Descendant, 9 for the Midheaven. It used to be the
+    angle's index instead, folded to a cusp in here by ``0 if index == 0 else 9``
+    — so a caller with four angles to ask about, passing the cusp numbers
+    straight in, had the Imum Coeli and the Descendant both measured against the
+    tenth cusp. They said no every time and never got the answer this predicate
+    exists to give them. The fold is gone; there is one numbering now.
     """
-    cusp = 0 if index == 0 else 9
     return (
         abs(((first_angle - first_cusps[cusp] + 180.0) % 360.0) - 180.0) < 1e-9
         and abs(((second_angle - second_cusps[cusp] + 180.0) % 360.0) - 180.0) < 1e-9
@@ -231,6 +243,33 @@ def composite_frame(
     midpoints = [
         circular_mean(first, second) for first, second in zip(first_cusps, second_cusps)
     ]
+
+    # A cusp opposite another in both parents has to stay opposite it here, and
+    # averaging the pair on its own does not keep it: where the two charts put a
+    # cusp exactly half a circle apart, that pair and the opposite pair are the
+    # SAME two longitudes, so any average of the set — symmetric, as it must be
+    # for the composite of A and B to equal the composite of B and A — hands both
+    # the same answer. Cusp 4 came out on cusp 10, and the Imum Coeli, derived
+    # from the Midheaven as it should be, then sat half a circle from its own
+    # fourth cusp. It is the four angles' own rule, which they have always had:
+    # derive the opposite instead of averaging it. 765 rings of 165,132.
+    # Only where it actually collapsed. Everywhere else the average already comes
+    # out opposite, to the last bit, and a ring that reads in order is promised
+    # back value for value.
+    # Which of the pair is the source matters: the first cusp is the Ascendant
+    # and the TENTH is the Midheaven, so those two are what the other two hang
+    # from. Derive the seventh from the first and the fourth from the tenth, and
+    # both angles stay on their own cusps; derive them the other way round and
+    # the Midheaven ends up half a circle from the tenth cusp, which is where
+    # this started.
+    for source, derived in ((0, 6), (9, 3), (1, 7), (2, 8), (4, 10), (5, 11)):
+        if (
+            _is_opposite(first_cusps[source], first_cusps[derived])
+            and _is_opposite(second_cusps[source], second_cusps[derived])
+            and not _is_opposite(midpoints[source], midpoints[derived])
+        ):
+            midpoints[derived] = (midpoints[source] + 180.0) % 360.0
+
     already_in_order = _cusp_ring_winds_once(midpoints)
 
     if anchor == "ascendant":
@@ -335,18 +374,20 @@ def composite_frame(
             (cusp, place_on_composite_frame(first_angles[index], second_angles[index], angle_frame))
             for index, cusp in ((0, 0), (1, 9))
             if _angle_is_its_cusp(
-                first_angles[index], second_angles[index], first_cusps, second_cusps, index
+                first_angles[index], second_angles[index], first_cusps, second_cusps, cusp
             )
         ]
-        # The only disagreement a rotation answers is half a turn, and measured
-        # across 279,369 identities that is the only one there is: 271,237 agree
-        # to the bit, 8,098 sit at 180 degrees, and 34 land between 1e-9 and 1e-6
-        # — two angles a hair under half a circle apart, where the near midpoint
-        # and the frame's own choice are the same point reached two ways. Read
-        # with a tolerance of 1e-9 those 34 are a broken identity, and the whole
-        # ring turns half a circle to repair eight nanodegrees: it put the
-        # Ascendant of an Alcabitius composite 180 degrees from its own first
-        # cusp, in the seventh house. Nothing has ever landed in between.
+        # The only disagreement a rotation answers is half a turn. Everything else
+        # is the near midpoint and the frame's own choice being the same point
+        # reached two ways, and the arithmetic error between the two is not small:
+        # a vector mean's resultant vanishes as a pair approaches half a circle
+        # apart, so the error grows as one over the cosine of half the separation.
+        # Bisecting a latitude towards that limit takes the gap from 8e-09 to
+        # 2.8e-06 to **7.9e-04** degrees — nearly three arcseconds — on ordinary
+        # float inputs to the public API. Any tolerance in that range reads it as
+        # a broken identity and turns the whole ring half a circle to repair it,
+        # which put the Ascendant of an Alcabitius composite in the seventh house.
+        # Half a turn is the only thing worth answering, so ask at half of it.
         disagreeing = [
             cusp
             for cusp, placed in identities
@@ -356,10 +397,11 @@ def composite_frame(
             cusps = [(value + 180.0) % 360.0 for value in cusps]
         elif disagreeing:
             # One rotation would fix one identity and break the other. Two charts
-            # running opposite ways do it — 9,042 frames of 10,470 — a single
-            # parent whose own cusps are not ordered at all does it 1,356 times,
-            # and 72 had two plain rings running the same way, which is neither.
-            # Leave the ring alone; the angles follow it below.
+            # running opposite ways are most of it, a single parent whose own
+            # cusps are not ordered at all is most of the rest, and a few have two
+            # plain rings running the same way, which is neither — the ratios move
+            # with whatever grid you measure, but all three occur. Leave the ring
+            # alone; the angles follow it below.
             coherent = False
 
     return angle_frame, cusps, coherent
@@ -768,9 +810,9 @@ class CompositeSubjectFactory:
         )
         if not _cusp_ring_winds_once(house_degree_list_ut):
             # Said out loud rather than shipped quietly. Two partners whose houses
-            # run opposite ways are the common reason — 9,042 of 10,470 measured —
-            # but a single parent whose own cusps are not ordered accounts for
-            # 1,356 more, and 72 had two plain rings running the same way.
+            # run opposite ways are the common reason, a single parent whose own
+            # cusps are not ordered accounts for most of the rest, and a few have
+            # two plain rings running the same way.
             logger.info(
                 "Composite house cusps do not cover the circle once: the two subjects' "
                 "houses do not run the same way round the wheel, so this composite has "
@@ -852,17 +894,25 @@ class CompositeSubjectFactory:
         # house. 468 charts of 178,416 read that way. The four numbers below are
         # not a convention: they are which cusp the parents put the angle on, and
         # they are used only where both parents did.
+        #
+        # Nothing here re-checks that this chart's angle really landed on that
+        # cusp. It always does — the ring derives an opposite cusp from the one
+        # the angle is on, exactly as the angle derives its own opposite — and a
+        # runtime check for it never once changed an answer across 258,201
+        # composites. What holds it is the tests, which assert the angle against
+        # its cusp and not merely against a house name.
         angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
         angle_houses: dict[str, str] = {}
         for angle, cusp in angle_cusp_index.items():
-            if _angle_is_its_cusp(
+            if not _angle_is_its_cusp(
                 self.first_subject[angle]["abs_pos"],
                 self.second_subject[angle]["abs_pos"],
                 first_cusps,
                 second_cusps,
                 cusp,
             ):
-                angle_houses[angle] = get_args(Houses)[cusp]
+                continue
+            angle_houses[angle] = get_args(Houses)[cusp]
 
         if not frame_is_coherent:
             logger.info(

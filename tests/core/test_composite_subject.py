@@ -1538,19 +1538,19 @@ def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
 def test_an_angle_that_is_a_cusp_opens_that_house_even_when_two_cusps_coincide():
     """The composite knows which cusp each angle is. It must not have to look.
 
-    Sunshine reverses its ring at 80N and does not at 41.9N, and the near
-    midpoints of the two fourth cusps and of the two tenth land on the SAME
-    longitude. The Midheaven is that longitude, correctly — it is the tenth cusp
-    — but a reader scanning the twelve meets the fourth first and answers with
-    it, so the chart came back with its Midheaven in the fourth house. 468 charts
-    of 178,416 read that way.
+    Sunshine inside the antarctic circle brings the ninth cusp and the tenth onto
+    one longitude, and the eighth with them. The Midheaven is that longitude,
+    correctly — it is the tenth cusp — but a reader scanning the twelve meets the
+    ninth first and answers with it. 400 charts of the grid read that way, and
+    before the composite recorded the house itself, 3,786 angles were filed
+    against a cusp they were not on.
     """
     first = AstrologicalSubjectFactory.from_birth_data(
-        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=41.9, lng=0.0, tz_str="UTC",
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=-89.0, lng=0.0, tz_str="UTC",
         online=False, suppress_geonames_warning=True, houses_system_identifier="I",
     )
     second = AstrologicalSubjectFactory.from_birth_data(
-        "B", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=80.0, lng=0.0, tz_str="UTC",
+        "B", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=-80.0, lng=0.0, tz_str="UTC",
         online=False, suppress_geonames_warning=True, houses_system_identifier="I",
     )
     for subject in (first, second):
@@ -1561,9 +1561,10 @@ def test_an_angle_that_is_a_cusp_opens_that_house_even_when_two_cusps_coincide()
             first, second, house_anchor=anchor
         ).get_midpoint_composite_subject_model()
         cusps = _cusps_of(model)
-        # The fixture's whole point: without the collision a scan would answer
-        # correctly and this test would hold on any implementation.
-        assert cusps[3] == approx(cusps[9], abs=1e-9), "the two cusps no longer collide"
+        # The fixture's whole point: without an earlier cusp on the same
+        # longitude a scan would answer correctly, and this test would hold on
+        # any implementation at all.
+        assert cusps[8] == approx(cusps[9], abs=1e-9), "the cusps no longer share a longitude"
         assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9), anchor
         assert model.medium_coeli.house == "Tenth_House", anchor
 
@@ -1673,5 +1674,159 @@ def test_a_ring_whose_wedges_run_both_ways_is_not_a_house_division():
     assert sum(spans) == approx(360.0, abs=1e-4), "the fixture no longer sums to a full turn"
     assert min(spans) > 1e-9, "the fixture is now caught by the coincident-cusp test instead"
     assert len(set(reversed_wedges)) > 1, "the fixture's wedges no longer run both ways"
+
+    assert not _cusp_ring_winds_once(ring)
+
+
+def _with_all_four_angles(**kwargs):
+    """A subject carrying the Descendant and the Imum Coeli as well as the other two."""
+    from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+    points = list(DEFAULT_ACTIVE_POINTS) + [
+        name for name in ("Descendant", "Imum_Coeli") if name not in DEFAULT_ACTIVE_POINTS
+    ]
+    return AstrologicalSubjectFactory.from_birth_data(
+        city="X", nation="XX", tz_str="UTC", online=False,
+        suppress_geonames_warning=True, active_points=points, **kwargs
+    )
+
+
+def test_all_four_angles_open_their_own_houses_and_not_just_two():
+    """The Imum Coeli and the Descendant are angles too, and they were being skipped.
+
+    The predicate that asks "do both parents put this angle on that cusp?" once
+    took the ANGLE's index and folded it to a cusp itself, ``0 if index == 0 else
+    9``. A caller with four angles passed the cusp numbers straight in, so 3 and 6
+    both folded to 9 and the Imum Coeli was measured against the tenth cusp — 180
+    degrees away under every quadrant system, so the answer was always no. The
+    Imum Coeli below sits exactly on its own fourth cusp and was filed in the
+    SECOND house. Across the grid: 3,786 angles filed against a cusp they are not
+    on, all of them the two that were being skipped.
+    """
+    first = _with_all_four_angles(
+        name="A", year=1931, month=10, day=24, hour=7, minute=22,
+        lat=-79.96424098503815, lng=-133.89223972312217, houses_system_identifier="I",
+    )
+    second = _with_all_four_angles(
+        name="B", year=1914, month=1, day=16, hour=5, minute=38,
+        lat=-83.20760144583964, lng=124.95453845875852, houses_system_identifier="I",
+    )
+    for subject in (first, second):
+        assert subject.imum_coeli.abs_pos == approx(subject.fourth_house.abs_pos, abs=1e-9)
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        assert model.imum_coeli.abs_pos == approx(cusps[3], abs=1e-9), anchor
+        assert model.imum_coeli.house == "Fourth_House", anchor
+        assert model.descendant.house == "Seventh_House", anchor
+
+
+def test_a_cusp_opposite_another_in_both_parents_stays_opposite_it_here():
+    """Two longitudes half a circle apart are the same two longitudes either way round.
+
+    Where both charts put the fourth cusp exactly opposite the tenth, the pair
+    {fourth, tenth} of one chart and of the other are the SAME set — so a mean of
+    that set, which has to be symmetric for the composite of A and B to equal the
+    composite of B and A, hands the fourth cusp and the tenth the same answer. The
+    ring came back with cusp 4 on cusp 10, and the Imum Coeli, correctly derived
+    from the Midheaven, sat half a circle from its own fourth cusp. 765 rings of
+    165,132.
+
+    The four angles never had this problem because they derive their opposites
+    instead of averaging them. The cusps do it now too — and from the cusp the
+    angle is on, so the Midheaven keeps the tenth and not the fourth.
+    """
+    first = _with_all_four_angles(
+        name="A", year=1900, month=1, day=3, hour=3, minute=0,
+        lat=-88.0, lng=66.5, houses_system_identifier="C",
+    )
+    second = _with_all_four_angles(
+        name="B", year=1900, month=1, day=3, hour=3, minute=0,
+        lat=81.0, lng=66.5, houses_system_identifier="C",
+    )
+    separation = (second.medium_coeli.abs_pos - first.medium_coeli.abs_pos) % 360.0
+    assert separation == approx(180.0, abs=1e-9), "the fixture's Midheavens are no longer antipodal"
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        assert (cusps[3] - cusps[9]) % 360.0 == approx(180.0, abs=1e-9), anchor
+        assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9), anchor
+        assert model.imum_coeli.abs_pos == approx(cusps[3], abs=1e-9), anchor
+        assert model.medium_coeli.house == "Tenth_House", anchor
+        assert model.imum_coeli.house == "Fourth_House", anchor
+
+
+def test_a_gap_of_a_thousandth_of_a_degree_is_still_not_half_a_turn():
+    """The identity gap is not bounded at a microdegree, and a tighter test would fire.
+
+    Two Ascendants approaching half a circle apart make the vector mean's
+    resultant vanish, so the error in it grows as 1/cos of half the separation.
+    Bisecting the second subject's latitude around the fixture that first showed
+    this: at 66.74999964051422S the gap is 2.8e-06 degrees, and at
+    66.74999963662323S it is **7.9e-04** — nearly three arcseconds, and still not
+    a disagreement. Asked at a microdegree instead of at 90 degrees, this chart
+    turns its whole ring half a circle and the Ascendant leaves the first house.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 7, 0, city="X", nation="XX", lat=-33.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="A",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=-66.74999963662323, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True, houses_system_identifier="A",
+    )
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-2), anchor
+        assert model.ascendant.house == "First_House", anchor
+
+
+def test_a_ring_that_covers_the_circle_twice_is_not_a_house_division():
+    """Twelve cusps sixty degrees apart. Synthetic, deliberately.
+
+    Every wedge is under half a circle, so all twelve read forwards and none has
+    zero width: the direction test and the coincident-cusp test both say yes, and
+    the ring goes round twice. Only the total tells them apart — 720 against the
+    360 a division of the circle adds up to. No real midpoint ring reaches it
+    (58,788 measured), which is exactly why it is built here: the reason it cannot
+    fire is a fact about today's ephemeris, not about the function.
+    """
+    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import house_spans
+
+    ring = [(60.0 * index) % 360.0 for index in range(12)]
+    spans, reversed_wedges = house_spans(ring)
+    assert len(set(reversed_wedges)) == 1, "the fixture's wedges no longer agree on a direction"
+    assert min(spans) > 1e-9, "the fixture is now caught by the coincident-cusp test instead"
+    assert sum(spans) == approx(720.0, abs=1e-4), "the fixture no longer goes round twice"
+
+    assert not _cusp_ring_winds_once(ring)
+
+
+def test_two_cusps_a_hair_apart_are_the_same_point():
+    """The coincident-cusp test is a tolerance, not a sign check.
+
+    A house a ten-thousandth of a milliarcsecond wide is two cusps on one
+    longitude by any reading that matters, and it reaches ``get_planet_house``,
+    whose exact-on-cusp rule then answers with whichever came first. Built here
+    because the narrowest real composite house measured was zero exactly, so
+    nothing pins the tolerance between the two.
+    """
+    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import house_spans
+
+    ring = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+    ring[5] = ring[4] + 1e-10
+    spans, _reversed = house_spans(ring)
+    assert 0.0 < min(spans) < 1e-9, "the fixture's narrowest house left the window"
 
     assert not _cusp_ring_winds_once(ring)
