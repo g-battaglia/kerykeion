@@ -146,6 +146,40 @@ def _house_of(degree: float, cusps: list) -> str:
         return name
 
 
+def _rings_admit_a_common_frame(
+    first_cusps: Sequence[float], second_cusps: Sequence[float]
+) -> bool:
+    """Can one frame be read from these two rings?
+
+    Two conditions, and each has cost a defect on its own. Each ring has to be a
+    house division: a parent whose own twelve neither tile nor agree on a
+    direction gave a composite that came back anchored under one angle and gapped
+    under another, on the same two subjects.
+
+    And the two have to run the SAME way. Both winding once is not enough —
+    forwards and backwards each wind once — and a frame spanning one of each
+    measures an arc as a separation in one chart and as its complement in the
+    other. On a horizon pair at 66S and the equator that came back claiming to be
+    anchored under all three anchors while holding the Ascendant rotated every
+    cusp half a circle and moved the Sun from the seventh house to the first.
+    """
+    first_spans, first_directions = house_spans(first_cusps)
+    second_spans, second_directions = house_spans(second_cusps)
+
+    def winds_once(spans: Sequence[float], directions: Sequence[bool]) -> bool:
+        return (
+            len(set(directions)) == 1
+            and abs(sum(spans) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES
+            and all(span > _COINCIDENT_CUSP_DEGREES for span in spans)
+        )
+
+    if not winds_once(first_spans, first_directions):
+        return False
+    if not winds_once(second_spans, second_directions):
+        return False
+    return first_directions[0] == second_directions[0]
+
+
 def _is_opposite(first: float, second: float) -> bool:
     """Are these two longitudes exactly half a circle apart?"""
     return abs(((second - first) % 360.0) - 180.0) < 1e-9
@@ -343,7 +377,7 @@ def composite_frame(
     # back looking anchored and put the Sun in the second house, held on either
     # other angle it came back gapped with the Sun in the ninth. Nothing about the
     # two subjects changed between those three calls.
-    coherent = _cusp_ring_winds_once(first_cusps) and _cusp_ring_winds_once(second_cusps)
+    coherent = _rings_admit_a_common_frame(first_cusps, second_cusps)
 
     # Two origins, one choice. The cusps hang from the cusp of the held angle's
     # house and the angles hang from the angle itself, because they are not the

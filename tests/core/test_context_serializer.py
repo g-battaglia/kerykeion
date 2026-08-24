@@ -1784,3 +1784,12 @@ def test_the_gauquelin_fallback_does_not_claim_the_chart_angles_moved():
         if "polar_house_fallback" in line
     )
     assert "gauquelin_sector_cusps" in line
+
+    # And the prose travels with the scope. The backend writes about the call it
+    # made — "the cusps and the angles derived from this call are approximate" —
+    # and that sentence survives into `model_dump_json()` and anywhere else the
+    # record is read raw, still saying the horizon moved.
+    assert "the cusps and the angles derived from this call are approximate" not in record.message
+    assert "36-sector ring" in record.message
+    assert "angles" in record.message and "keep the real value" in record.message
+    assert f"{record.used_latitude:.4f}" in record.message

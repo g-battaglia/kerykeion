@@ -1493,8 +1493,25 @@ class AstrologicalSubjectFactory:
                         # are bit-identical with Gauquelin switched off. A record
                         # saying "angles" here has a reader believing the horizon
                         # moved when nothing did.
-                        gauquelin_fallback = cusps_g[4].model_copy(
-                            update={"affects": ["gauquelin_sector_cusps", "gauquelin_sectors"]}
+                        # Message as well as scope. The backend writes about the
+                        # call it made — "the cusps and the angles derived from
+                        # this call are approximate" — and that sentence survives
+                        # into `model_dump_json()` and anywhere else the record is
+                        # read raw, still saying the horizon moved.
+                        _clamped = cusps_g[4]
+                        gauquelin_fallback = _clamped.model_copy(
+                            update={
+                                "affects": ["gauquelin_sector_cusps", "gauquelin_sectors"],
+                                "message": (
+                                    f"The Gauquelin 36-sector ring has no equivalent at every "
+                                    f"latitude, so it was computed at "
+                                    f"{abs(_clamped.used_latitude):.4f}\u00b0, just inside the polar "
+                                    f"limit, instead of {abs(_clamped.latitude):.4f}\u00b0. The sector "
+                                    f"ring and the per-body sector numbers are approximate; this "
+                                    f"chart's house cusps, its angles, the planetary positions and "
+                                    f"the persisted latitude all keep the real value."
+                                ),
+                            }
                         )
                         calc_data.setdefault("polar_house_fallbacks", []).append(gauquelin_fallback)
                         # The cusp ring and the per-body sector numbers must

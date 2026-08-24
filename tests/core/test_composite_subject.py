@@ -2209,3 +2209,48 @@ def test_a_parent_that_is_not_a_house_division_admits_no_frame():
         assert model.house_frame == "gapped", anchor
         answers.add((tuple(round(v, 9) for v in _cusps_of(model)), model.sun.house))
     assert len(answers) == 1, "the anchor still decides a chart it cannot anchor"
+
+
+def test_two_rings_running_opposite_ways_admit_no_frame():
+    """Both winding once is not enough — forwards and backwards each wind once.
+
+    A frame spanning one of each measures an arc as a separation in one chart and
+    as its complement in the other. This horizon pair, one at 66S and one at the
+    equator, came back claiming to be anchored under all three anchors: holding
+    the Ascendant rotated every cusp half a circle and moved the Sun out of the
+    seventh house into the first, on the same two subjects.
+    """
+    from kerykeion.utilities.core import house_spans
+
+    def horizon(name, hour, lat):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 21, hour, 0, city="X", nation="XX", lat=lat, lng=20.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="H",
+        )
+
+    first, second = horizon("A", 10, -66.0), horizon("B", 17, 0.0)
+    directions = []
+    for subject in (first, second):
+        spans, reversed_wedges = house_spans(
+            [getattr(subject, name).abs_pos for name in _CUSP_ATTRS]
+        )
+        assert len(set(reversed_wedges)) == 1, "a parent no longer winds once"
+        assert sum(spans) == approx(360.0, abs=1e-4)
+        directions.append(reversed_wedges[0])
+    assert directions[0] != directions[1], "the fixture's parents now run the same way"
+
+    answers = set()
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        assert model.house_frame == "midpoints", anchor
+        answers.add(
+            (
+                tuple(round(value, 9) for value in _cusps_of(model)),
+                round(model.ascendant.abs_pos, 9),
+                model.sun.house,
+            )
+        )
+    assert len(answers) == 1, "the anchor still decides a chart it cannot anchor"
