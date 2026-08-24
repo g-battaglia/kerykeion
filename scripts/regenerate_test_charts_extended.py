@@ -32,6 +32,7 @@ from kerykeion.chart_data.factory import ChartDataFactory
 
 # Import test subject definitions
 from tests.data.test_subjects_matrix import (
+    SIDEREAL_THEME_COMBOS,
     TEMPORAL_SUBJECTS,
     GEOGRAPHIC_SUBJECTS,
 )
@@ -271,11 +272,10 @@ def generate_cross_combination_charts():
     )
 
     # Sidereal × Themes combinations
-    sidereal_theme_combos = [
-        ("LAHIRI", "black-and-white"),
-        ("FAGAN_BRADLEY", "dark"),
-        ("RAMAN", "dark"),
-    ]
+    # From the same list the test reads, so the two cannot drift again: three
+    # pairs were produced here against ten asked for there, and the seven without
+    # a file skipped in silence.
+    sidereal_theme_combos = SIDEREAL_THEME_COMBOS
 
     for sidereal_mode, theme in sidereal_theme_combos:
         try:

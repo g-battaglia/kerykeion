@@ -2250,8 +2250,9 @@ def _draw_house_sectors_modern(
     spans, reversed_wedges = house_spans(wheel_angles)
     # And any house too thin to click gets the same minimum the classic engine
     # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
-    # together here — but Campanus at 68N puts two of them 0.03 degrees apart on
-    # their own, which is a house nobody will ever hit with a pointer.
+    # together here — but Campanus at 68N puts two of them 0.163 degrees apart on
+    # its own (0.108 at 67.5N), which is a house nobody will ever hit with a
+    # pointer.
     wheel_angles, spans = separate_collapsed_wedges(
         wheel_angles, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
     )
@@ -2262,6 +2263,18 @@ def _draw_house_sectors_modern(
 
         a_start = wheel_angles[i]
         a_end = wheel_angles[next_i]
+        span = spans[i]
+
+        # The one case the separation above cannot repair: where the cusps cross
+        # rather than merely run backwards, the twelve do not tile and there is no
+        # width to trade between them. A wedge left at zero puts both ends of its
+        # arc on one point, SVG drops the arc, and a path of no area is left
+        # declaring pointer-events:all — a house that can never be clicked. So it
+        # takes its degree and moves only its own end, overlapping the neighbour
+        # it already overlaps. On a ring that tiles, this never fires.
+        if span < MINIMUM_WEDGE_SPAN_DEGREES:
+            span = MINIMUM_WEDGE_SPAN_DEGREES
+            a_end = a_start + (-span if reversed_wedges[i] else span)
 
         # Convert wheel angles to radians (parent group has rotate(-90), so subtract 90)
         r_start = math.radians(-a_start - 90)
@@ -2281,7 +2294,6 @@ def _draw_house_sectors_modern(
         # direction: the endpoints are the same two points either way, and it is
         # the pair (sweep, large_arc) that says which of the two arcs between them
         # the wedge is.
-        span = spans[i]
         large_arc = 1 if span > 180 else 0
         outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 

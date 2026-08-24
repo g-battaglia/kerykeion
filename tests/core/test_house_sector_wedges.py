@@ -488,8 +488,10 @@ def test_a_retrograde_wedge_stays_on_its_own_ring():
     """The half of the fix an endpoint check cannot see.
 
     Shortening the span without flipping the sweep leaves the endpoints where
-    they were and moves the arc onto the mirrored circle — some 480 units away
-    from the wheel on this fixture. All twelve arcs have to share one centre.
+    they were and moves the arc onto the mirrored circle. The two candidate
+    centres for a chord are 2*sqrt(r^2 - (chord/2)^2) apart, so for a narrow wedge
+    that is very nearly twice the radius: 368 units on this fixture, where the
+    ring is 184. All twelve arcs have to share one centre.
     """
     svg = _draw(_cusps(*_RETROGRADE_CUSPS))
     centres = [_outer_arc_centre(path) for path in _wedge_paths(svg)]
@@ -513,6 +515,9 @@ def test_an_ordinary_chart_keeps_the_sweeps_it_always_had():
     "system,lat,lng",
     [
         ("C", 70.0, 20.0),   # Campanus, inside the polar circle
+        ("C", 68.0, 20.0),   # Campanus again, where two cusps sit 0.163 apart:
+                             # the width has to be traded, not conjured, or the
+                             # twelve stop covering exactly one circle
         ("R", 69.0, 20.0),   # Regiomontanus
         ("H", 0.0, 20.0),    # the horizon system, on the equator
         ("Y", 76.0, 20.0),   # APC
@@ -552,11 +557,83 @@ def _rendered_spans(system: str, lat: float, lng: float, style: str) -> list[flo
     )
     assert len(sectors) == 12
     spans = []
+    centres = []
     for path in sectors:
         numbers = [float(value) for value in re.findall(_NUMBER, path)]
         cx, cy = _outer_arc_centre(path)
+        centres.append((cx, cy))
         sweep = int(numbers[6])
         start = math.degrees(math.atan2(numbers[1] - cy, numbers[0] - cx))
         end = math.degrees(math.atan2(numbers[8] - cy, numbers[7] - cx))
         spans.append((start - end) % 360.0 if sweep == 0 else (end - start) % 360.0)
+
+    # Every caller of this reader gets the mirrored-circle check for free, and
+    # that matters: the span is measured against each wedge's *own* recovered
+    # centre, so a wedge lifted off the ring is perfectly self-consistent and its
+    # total still comes to 360. Only comparing the twelve centres to each other
+    # can see it — and until this line the modern engine had no check at all,
+    # so its sweep flip could be reverted with the whole suite staying green.
+    mean_x = sum(x for x, _ in centres) / 12.0
+    mean_y = sum(y for _, y in centres) / 12.0
+    for x, y in centres:
+        assert math.hypot(x - mean_x, y - mean_y) < 0.01, (
+            f"{system} {style}: a wedge was drawn on a circle of its own, "
+            f"centred ({x:.3f}, {y:.3f}) against ({mean_x:.3f}, {mean_y:.3f})"
+        )
     return spans
+
+
+# =============================================================================
+# CUSPS THAT CROSS, RATHER THAN MERELY RUN BACKWARDS
+# =============================================================================
+#
+# Polich/Page above the polar circle, and Sunshine/alt, return cusps that are not
+# ordered at all: one house runs back while the next few run on, so the houses
+# genuinely overlap and no direction makes the twelve tile a circle. The
+# separation cannot widen a wedge on such a ring — there is no width to trade —
+# and a wedge left at zero puts both ends of its arc on one point. SVG drops the
+# arc segment, and what remains is a path of no area still declaring
+# pointer-events:all: a house that can never be clicked, which is the exact
+# failure the separation exists to prevent. Sunshine at 67N produced six of them
+# in a single chart.
+
+
+@pytest.mark.parametrize(
+    "system,lat",
+    [
+        ("i", 67.0),   # Sunshine/alt: six dead wedges in one chart
+        ("T", 70.0),   # Polich/Page
+        ("i", 65.0),
+        ("T", 67.0),
+    ],
+)
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_a_chart_whose_cusps_cross_still_gives_every_house_a_target(system, lat, style):
+    """No wedge of zero area, and none under the minimum, however tangled."""
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Tangled", 1985, 10, 15, 14, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=25.0,
+        houses_system_identifier=system,
+    )
+    svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
+        style=style
+    )
+    sectors = re.findall(
+        r"<g kr:node='HouseSector' kr:house='(\d+)'[^>]*><path d='([^']+)'", svg
+    )
+    assert len(sectors) == 12
+    for house, path in sectors:
+        numbers = [float(value) for value in re.findall(_NUMBER, path)]
+        start = (numbers[0], numbers[1])
+        end = (numbers[7], numbers[8])
+        assert math.hypot(start[0] - end[0], start[1] - end[1]) > 1e-6, (
+            f"house {house} has no arc at all: {start} to {end}"
+        )
+        radius = numbers[2]
+        chord = math.hypot(start[0] - end[0], start[1] - end[1])
+        span = 2 * math.degrees(math.asin(min(chord / (2 * radius), 1.0)))
+        if int(numbers[5]) == 1:
+            span = 360.0 - span
+        # The path writes six decimals, so the recovered angle carries about
+        # 1.4e-6 of its own; the tolerance is that, not slack in the rule.
+        assert span >= MINIMUM_WEDGE_SPAN_DEGREES - 1e-5, f"house {house}: {span:.6f} deg"

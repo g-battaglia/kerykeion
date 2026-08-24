@@ -780,3 +780,24 @@ def get_subjects_for_tier(tier: str) -> Dict[str, Dict[str, Any]]:
         return {k: v for k, v in _TEMPORAL_SUBJECTS_BY_ID.items() if v.get("tier") in ("base", "medium")}
     else:  # extended
         return dict(_TEMPORAL_SUBJECTS_BY_ID)
+
+
+#: Sidereal mode paired with chart theme, for the cross-combination charts.
+#:
+#: One list, read by the test that compares them and by the script that draws
+#: their baselines. It used to be written twice — ten pairs asked for, three
+#: produced — and the seven without a file behind them skipped with "Baseline
+#: file not found", which reads in a log exactly like a chart that could not be
+#: computed. A themed case with no baseline asserts nothing at all.
+SIDEREAL_THEME_COMBOS = [
+    ("LAHIRI", "classic"),
+    ("LAHIRI", "black-and-white"),
+    ("FAGAN_BRADLEY", "dark"),
+    ("FAGAN_BRADLEY", "classic"),
+    ("KRISHNAMURTI", "black-and-white"),
+    ("KRISHNAMURTI", "dark"),
+    ("RAMAN", "dark"),
+    ("RAMAN", "classic"),
+    ("J2000", "black-and-white"),
+    ("J2000", "classic"),
+]

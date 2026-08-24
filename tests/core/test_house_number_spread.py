@@ -508,3 +508,151 @@ def test_the_outer_ring_of_a_dual_chart_labels_its_own_lines():
     # should sit on the exact middle of its own wedge. Truncating the base put
     # them up to a degree off it.
     assert max(drifts) < 0.05, [round(d, 4) for d in drifts]
+
+
+# =============================================================================
+# THE OTHER ENGINE, AND THE OTHER RING
+# =============================================================================
+#
+# Everything above reads the classic wheel with one subject. Three of the four
+# places that centre a number on a house live elsewhere — the modern engine's
+# own ring, and the outer ring of a dual chart — and each could be reverted to
+# the forward-only midpoint with the whole suite staying green, because no case
+# rendered modern at all and the only dual chart had both subjects running
+# forwards.
+
+
+_MODERN_NUMBER = re.compile(
+    "<g kr:node='HouseNumber' kr:house='([0-9]+)' kr:horoscope='([01])'>"
+    "<text[^>]*transform='rotate\\(-([0-9.]+) "
+)
+
+
+def _house_arc_containing(angles: list[float], index: int) -> tuple[float, float] | None:
+    """The arc between two consecutive cusps that holds no other cusp.
+
+    Independent of the code under test: whichever way the houses run, the house
+    is the gap between its own cusp and the next with nothing in between. Returns
+    None where the cusps cross and the house has no unambiguous arc.
+    """
+    start, end = angles[index], angles[(index + 1) % 12]
+    others = [angles[other] for other in range(12) if other not in (index, (index + 1) % 12)]
+    forward = (end - start) % 360.0
+    forward_clean = not any(0.0 < (other - start) % 360.0 < forward for other in others)
+    backward = (start - end) % 360.0
+    backward_clean = not any(0.0 < (start - other) % 360.0 < backward for other in others)
+    if forward_clean == backward_clean:
+        return None
+    return (start, forward) if forward_clean else (start, -backward)
+
+
+@pytest.mark.parametrize(
+    "system,lat,lng",
+    [
+        ("C", 70.0, 20.0),   # a ring that runs backwards
+        ("H", 0.0, 20.0),    # the horizon system on the equator, likewise
+        ("P", 45.0, 9.0),    # and an ordinary chart
+    ],
+)
+def test_the_modern_ring_centres_its_numbers_on_their_own_houses(system, lat, lng):
+    """The modern engine has a house ring of its own, and it was unpinned.
+
+    Reverted to the forward midpoint, Campanus at 70N puts the numbers 6 and 12
+    a hundred and fifty-seven degrees from the houses they name — and every test
+    in this file stayed green, because none of them rendered modern.
+    """
+    from kerykeion.charts.draw_modern import _zodiac_to_wheel_angle
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Modern", 1990, 6, 15, 0, 1, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=lng,
+        houses_system_identifier=system,
+    )
+    svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
+        style="modern"
+    )
+    drawn = {
+        int(house): float(angle)
+        for house, ring, angle in _MODERN_NUMBER.findall(svg)
+        if ring == "0"
+    }
+    assert len(drawn) == 12, sorted(drawn)
+
+    houses = [getattr(subject, name) for name in _HOUSE_ATTRS]
+    seventh = houses[6].abs_pos
+    angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh) for house in houses]
+    for index in range(12):
+        arc = _house_arc_containing(angles, index)
+        if arc is None:
+            continue
+        start, signed_span = arc
+        span = abs(signed_span)
+        if span < 10.0:
+            continue  # too narrow to hold a label; the spread pushes it out on purpose
+        inside = (
+            (drawn[index + 1] - start) % 360.0
+            if signed_span > 0
+            else (start - drawn[index + 1]) % 360.0
+        )
+        assert inside <= span + 1e-6, (
+            f"{system}: house {index + 1} is labelled {inside:.2f}deg into {span:.2f}deg"
+        )
+
+
+def test_the_outer_ring_follows_a_second_subject_that_runs_backwards():
+    """The dual chart's outer numbers, on a partner whose houses reverse.
+
+    The only dual chart tested until now had both subjects running forwards, so
+    the direction term on that ring was dead weight as far as the suite could
+    tell: reverting it left all twelve outer numbers thirty degrees outside their
+    own wedges and nothing went red.
+    """
+    from kerykeion.charts.utils import wheel_x, wheel_y
+
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "Ordinary", 1940, 10, 9, 18, 30, city="X", nation="XX", lng=-2.97, lat=53.41,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "Reversed", 1990, 6, 21, 0, 0, city="X", nation="XX", lng=20.0, lat=70.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="C",
+    )
+    partner_cusps = [getattr(second, name).abs_pos for name in _HOUSE_ATTRS]
+    forward_total = sum((partner_cusps[(i + 1) % 12] - partner_cusps[i]) % 360.0 for i in range(12))
+    assert abs(forward_total - 360.0) > 1.0, "fixture no longer has a reversed second subject"
+
+    svg = ChartDrawer(
+        ChartDataFactory.create_synastry_chart_data(first, second)
+    ).generate_svg_string(style="classic")
+    drawn = {house: angle for house, angle, _ in _rendered_numbers(svg, ring="1")}
+    assert len(drawn) == 12
+
+    outer_radius = _CHART_CENTRE - 8.0
+    zero = first.seventh_house.abs_pos
+
+    def screen(offset: float) -> float:
+        x = wheel_x(0, outer_radius, offset) + 8.0 - _CHART_CENTRE
+        y = wheel_y(0, outer_radius, offset) + 8.0 - _CHART_CENTRE
+        return math.degrees(math.atan2(y, x)) % 360.0
+
+    angles = [screen(cusp - zero) for cusp in partner_cusps]
+    checked = 0
+    for index in range(12):
+        arc = _house_arc_containing(angles, index)
+        if arc is None:
+            continue
+        start, signed_span = arc
+        span = abs(signed_span)
+        if span < 10.0:
+            continue
+        inside = (
+            (drawn[index + 1] - start) % 360.0
+            if signed_span > 0
+            else (start - drawn[index + 1]) % 360.0
+        )
+        assert inside <= span + 1e-6, (
+            f"outer house {index + 1}: {inside:.2f}deg into an arc of {span:.2f}deg"
+        )
+        checked += 1
+    assert checked >= 2, f"only {checked} houses were wide enough to check"

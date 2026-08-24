@@ -26,6 +26,7 @@ from kerykeion import AstrologicalSubjectFactory, ChartDrawer, KerykeionExceptio
 from kerykeion.chart_data.factory import ChartDataFactory
 
 from tests.data.test_subjects_matrix import (
+    SIDEREAL_THEME_COMBOS,
     TEMPORAL_SUBJECTS,
     GEOGRAPHIC_SUBJECTS,
     get_subject_by_id,
@@ -59,18 +60,6 @@ SUBJECTS_COVERED_BY_MAIN_SCRIPT = {
 TEMPORAL_SUBJECTS_FOR_EXTENDED_TESTS = [s for s in TEMPORAL_SUBJECTS if s["id"] not in SUBJECTS_COVERED_BY_MAIN_SCRIPT]
 
 # Sidereal × Theme combinations
-SIDEREAL_THEME_COMBOS = [
-    ("LAHIRI", "classic"),
-    ("LAHIRI", "black-and-white"),
-    ("FAGAN_BRADLEY", "dark"),
-    ("FAGAN_BRADLEY", "classic"),
-    ("KRISHNAMURTI", "black-and-white"),
-    ("KRISHNAMURTI", "dark"),
-    ("RAMAN", "dark"),
-    ("RAMAN", "classic"),
-    ("J2000", "black-and-white"),
-    ("J2000", "classic"),
-]
 
 # House systems for cross-chart testing
 HOUSE_SYSTEM_NAMES = {

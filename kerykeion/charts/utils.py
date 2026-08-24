@@ -908,6 +908,11 @@ def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
     and the least bad reading is to hold each wedge to its shorter arc: they
     still overlap, because the cusps do, but no single one swallows the wheel.
 
+    Counted over 32,844 charts — all 23 systems, half a degree of latitude at a
+    time, four times of day — six systems reverse outright (Campanus, horizon,
+    Sunshine, Regiomontanus, Polich/Page, APC) and two go degenerate: Polich/Page
+    again, and Sunshine/alt, which never reverses at all.
+
     Args:
         cusps: The twelve cusp positions, in house order, in any angular frame.
 
@@ -955,10 +960,12 @@ def separate_collapsed_wedges(
 
     A wedge that had to grow takes its room from the wedges with room to give, in
     proportion to what each has above the minimum, so the twelve still cover
-    exactly 360 degrees. A boundary may end up as much as a couple of degrees off
-    the cusp line it was quantised from — five cusps on one degree have to be
-    spread five degrees wide before any of them is clickable — which is the price
-    of the house existing on the wheel at all.
+    exactly 360 degrees. A boundary can end up a fair way off the cusp line it was
+    quantised from — five degrees at the worst of 16,422 charts swept, Campanus at
+    72S, because five cusps on one degree have to be spread five degrees wide
+    before any of them is clickable. That is the price of the house existing on
+    the wheel at all, and it is paid only where the alternative is a house with no
+    target.
 
     Args:
         boundaries: The twelve offsets, in house order.
@@ -967,9 +974,10 @@ def separate_collapsed_wedges(
         minimum: The narrowest wedge worth drawing, in degrees.
 
     Returns:
-        The rebuilt boundaries and widths — the arguments themselves, unchanged
-        and identical object for object, when nothing was below the minimum or
-        the cusps are too tangled to have a direction in common.
+        The rebuilt boundaries and widths — equal to the arguments, value for
+        value, when nothing was below the minimum or the cusps are too tangled to
+        have a direction in common. Copies either way: a caller that mutated what
+        it got back would otherwise reach into the list it passed in.
     """
     unchanged = (list(boundaries), list(spans))
     deficit = sum(minimum - span for span in spans if span < minimum)
@@ -1088,6 +1096,24 @@ def draw_house_sectors(
 
         offset_start = boundaries[i]
         offset_end = boundaries[next_i]
+        span = spans[i]
+
+        # A wedge the separation above could not widen, because on this ring
+        # there was nothing to widen it into: where the cusps cross rather than
+        # merely run backwards, the twelve do not tile and the widths cannot be
+        # traded between them. Left alone, a width of zero puts both endpoints of
+        # the arc on the same point, SVG drops the arc segment entirely, and what
+        # remains is a path of no area still declaring pointer-events:all — the
+        # unclickable house this whole passage exists to prevent. Sunshine at 67N
+        # produced six of them in one chart.
+        #
+        # So this one wedge takes its degree and moves only its own end. It then
+        # overlaps its neighbour, which is honest: the cusps overlap. On a ring
+        # that does tile, the separation has already given every wedge its
+        # minimum, so this never fires and the drawing is unchanged to the bit.
+        if span < MINIMUM_WEDGE_SPAN_DEGREES:
+            span = MINIMUM_WEDGE_SPAN_DEGREES
+            offset_end = offset_start + (-span if reversed_wedges[i] else span)
 
         # Use wheel_x/Y (which has built-in +1 centering) + dropin offset.
         # This matches the cusp line coordinate system exactly.
@@ -1122,7 +1148,6 @@ def draw_house_sectors(
         # bare `% 360` on an angle is the trap normalize_degree was rewritten to
         # close fifteen files away, and leaving one behind invites the next
         # person to copy it.
-        span = spans[i]
         large_arc = 1 if span > 180 else 0
         outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 
