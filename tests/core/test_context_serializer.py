@@ -1692,3 +1692,25 @@ def test_no_degree_contradicts_the_sign_printed_beside_it():
             assert value % 30.0 != 0.0 or value == 0.0, (
                 f"abs_pos {value} sits exactly on a sign boundary it was rounded onto"
             )
+
+
+def test_the_axes_are_listed_whatever_the_point_preset_is():
+    """A model reading this context can always see where the horizon and the
+    meridian are.
+
+    Four of the angles and nodes are 180-degree opposites of points that ARE in
+    the default preset, so they appear in no preset of their own. Driving this
+    section off `active_points` therefore dropped them from every default chart,
+    which is what it was fixed for — and narrowing it to "only when the
+    counterpart is active" empties the section altogether for a caller who asks
+    for five planets and no angles, which is a caller this library has.
+    """
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Narrow", 1990, 6, 15, 14, 37, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars"],
+    )
+    context = to_context(subject)
+    assert "<axes" in context
+    for angle in ("Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli"):
+        assert f'name="{angle}"' in context, angle

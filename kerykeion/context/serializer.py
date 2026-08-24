@@ -16,10 +16,7 @@ from __future__ import annotations
 
 from typing import Optional, Union
 from xml.sax.saxutils import escape, quoteattr
-from kerykeion.settings.config_constants import (
-    AXES_AND_NODES_IN_READING_ORDER,
-    OPPOSITE_POINTS,
-)
+from kerykeion.settings.config_constants import AXES_AND_NODES_IN_READING_ORDER
 from kerykeion.schemas.models import (
     KerykeionPointModel,
     LunarPhaseModel,
@@ -571,16 +568,16 @@ def astrological_subject_to_context(
         if point is not None:
             planet_lines.append(f"    {kerykeion_point_to_context(point)}")
 
-    # Same rule as the report: an opposite rides along with the point it is
-    # opposite to, and is left out when that one is.
-    selected = {str(name).lower() for name in (getattr(subject, "active_points", None) or ())}
+    # Unconditional, and deliberately not the rule the report's points table uses.
+    # Four of these are 180-degree opposites absent from every default preset, so
+    # driving the section off active_points dropped them from every default chart
+    # — which is what this was fixed for. Narrowing it again to "only when the
+    # counterpart is active" looked tidier and emptied the section altogether for
+    # a caller who asks for five planets and no angles, which is a caller this
+    # library has. A model reading this context should always be able to see
+    # where the horizon and the meridian are.
     axes_lines = []
     for point_name in AXES_AND_NODES_IN_READING_ORDER:
-        counterpart = OPPOSITE_POINTS.get(point_name)
-        if point_name.lower() not in selected and not (
-            counterpart is not None and counterpart.lower() in selected
-        ):
-            continue
         point = getattr(subject, point_name.lower(), None)
         if point is not None:
             axes_lines.append(f"    {kerykeion_point_to_context(point)}")

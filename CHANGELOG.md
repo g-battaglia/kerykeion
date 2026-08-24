@@ -76,6 +76,20 @@
 - `CompositeSubjectModel` gains `house_anchor` (`None` on a Davison chart).
 - `normalize_degree` and `house_spans` moved to `kerykeion.utilities.core`, and
   are still importable from `kerykeion.charts.utils`.
+- **Kerykeion no longer installs a handler on the root logger.** a86 called
+  `logging.warning` at module level, which runs `basicConfig()` as a side effect;
+  an application that never configured logging saw formatted output because of
+  that and now sees only Python's last-resort handler. Configure the `kerykeion`
+  logger to get INFO-level lines back.
+- The modern wheel-only template paints its background like the other three; pass
+  `transparent_background=True` to composite it over your own surface.
+- An inverted hours range in `EphemerisDataFactory` raises instead of returning
+  one sample outside the window.
+- **Midpoint composites read differently where a86 was wrong.** On 140 ordinary
+  mid-latitude pairs, a86 produced 19 cusp rings that were not house divisions;
+  a87 produces none, at the cost of 19 house frames turning half a circle. A
+  stored a86 composite re-rendered on a87 can read a planet in the opposite
+  house; the two are distinguishable because a87 records `house_anchor`.
 
 ## [6.0.0a86]
 
