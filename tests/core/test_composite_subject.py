@@ -1538,10 +1538,10 @@ def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
 def test_an_angle_that_is_a_cusp_opens_that_house_even_when_two_cusps_coincide():
     """The composite knows which cusp each angle is. It must not have to look.
 
-    Sunshine inside the antarctic circle brings the ninth cusp and the tenth onto
-    one longitude, and the eighth with them. The Midheaven is that longitude,
-    correctly — it is the tenth cusp — but a reader scanning the twelve meets the
-    ninth first and answers with it. 400 charts of the grid read that way, and
+    Sunshine inside the antarctic circle brings the eighth cusp, the ninth and the
+    tenth onto one longitude. The Midheaven is that longitude, correctly — it is
+    the tenth cusp — but a reader scanning the twelve meets the eighth first and
+    answers with it. 400 charts of the grid read that way, and
     before the composite recorded the house itself, 3,786 angles were filed
     against a cusp they were not on.
     """
@@ -1714,6 +1714,13 @@ def test_all_four_angles_open_their_own_houses_and_not_just_two():
     for subject in (first, second):
         assert subject.imum_coeli.abs_pos == approx(subject.fourth_house.abs_pos, abs=1e-9)
 
+    plain = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    plain_cusps = _cusps_of(plain)
+    # Without a collision a scan answers correctly on its own, and this test would
+    # pass on any implementation at all. An engine bump that dissolves this one
+    # must say so here rather than leave the test green and pinning nothing.
+    assert plain_cusps[1] == approx(plain_cusps[2], abs=1e-9), "the cusps no longer collide"
+
     for anchor in _ANCHORS:
         model = CompositeSubjectFactory(
             first, second, house_anchor=anchor
@@ -1789,6 +1796,17 @@ def test_a_gap_of_a_thousandth_of_a_degree_is_still_not_half_a_turn():
         assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-2), anchor
         assert model.ascendant.house == "First_House", anchor
 
+        # This pair is also the one where the opposite-cusp snap does its widest
+        # work: all six pairs fire here without a single one having collapsed,
+        # the parents put every cusp opposite its partner, and so must this ring.
+        assert (cusps[6] - cusps[0]) % 360.0 == approx(180.0, abs=1e-9), anchor
+        assert (cusps[7] - cusps[1]) % 360.0 == approx(180.0, abs=1e-9), anchor
+        assert (cusps[3] - cusps[9]) % 360.0 == approx(180.0, abs=1e-9), anchor
+        if anchor == "ascendant":
+            # 7.9e-04 degrees short of its own first cusp was enough, on this
+            # ring, to put the Descendant into the sixth house.
+            assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-9), anchor
+
 
 def test_a_ring_that_covers_the_circle_twice_is_not_a_house_division():
     """Twelve cusps sixty degrees apart. Synthetic, deliberately.
@@ -1830,3 +1848,54 @@ def test_two_cusps_a_hair_apart_are_the_same_point():
     assert 0.0 < min(spans) < 1e-9, "the fixture's narrowest house left the window"
 
     assert not _cusp_ring_winds_once(ring)
+
+
+def test_the_composite_of_a_and_b_is_the_composite_of_b_and_a():
+    """Nothing in a composite may depend on which subject was named first.
+
+    The snap that puts a cusp back opposite its partner asks BOTH parents whether
+    they had the two opposite. Asking only the second is invisible on an ordinary
+    grid and inert on most of a polar one, but it makes the order matter: swept
+    over 51,315 ordered polar pairs it moved cusps by as much as 0.09 degrees
+    between composite(A, B) and composite(B, A). APC at the pole against the
+    equator is one of them.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=89.9, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="Y",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=0.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="Y",
+    )
+    for anchor in _ANCHORS:
+        one = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        other = CompositeSubjectFactory(
+            second, first, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        assert _cusps_of(one) == approx(_cusps_of(other), abs=1e-9), anchor
+        assert one.ascendant.abs_pos == approx(other.ascendant.abs_pos, abs=1e-9), anchor
+        assert one.medium_coeli.abs_pos == approx(other.medium_coeli.abs_pos, abs=1e-9), anchor
+
+
+def test_a_house_a_ten_millionth_of_a_degree_wide_is_still_a_house():
+    """The coincident-cusp test has to be pinned from above as well as below.
+
+    Below, a house of no width at all is two cusps on one longitude and the ring
+    is not a division. Above, a house has to be allowed to be narrow: polar
+    systems make genuinely thin ones, and a tolerance set loose enough to swallow
+    them would send perfectly good rings down the no-frame path. A ten-millionth
+    of a degree is four ten-thousandths of an arcsecond — far below anything an
+    ephemeris resolves, and still a house.
+    """
+    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import house_spans
+
+    ring = [0.0, 30.0, 60.0, 90.0, 120.0, 120.0 + 1e-7, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+    spans, _reversed = house_spans(ring)
+    assert 1e-9 < min(spans) < 1e-6, "the fixture's narrowest house left the window"
+    assert sum(spans) == approx(360.0, abs=1e-4)
+
+    assert _cusp_ring_winds_once(ring)

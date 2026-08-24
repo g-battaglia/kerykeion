@@ -219,8 +219,10 @@ def composite_frame(
     every position is still a midpoint of its own pair — the rule as Townley
     states it — while the twelve cusps cover the circle exactly once.
 
-    A ring whose near midpoints already run in order needs none of this and is
-    returned untouched, value for value — that is most of them. The frame is
+    A ring whose near midpoints already run in order needs no repair and keeps
+    them — that is most of them. Not always value for value: a cusp the parents
+    put exactly opposite another is snapped back onto it first, which moves it by
+    up to about a thousandth of a degree on a near-antipodal pair. The frame is
     still built and returned for those, because the angles hang from it and must
     not depend on whether the cusps happened to need repairing.
 
@@ -252,10 +254,16 @@ def composite_frame(
     # the same answer. Cusp 4 came out on cusp 10, and the Imum Coeli, derived
     # from the Midheaven as it should be, then sat half a circle from its own
     # fourth cusp. It is the four angles' own rule, which they have always had:
-    # derive the opposite instead of averaging it. 765 rings of 165,132.
-    # Only where it actually collapsed. Everywhere else the average already comes
-    # out opposite, to the last bit, and a ring that reads in order is promised
-    # back value for value.
+    # derive the opposite instead of averaging it.
+    # Not only where it collapsed outright. A circular mean loses accuracy as its
+    # two inputs approach half a circle apart — the same 1/cos mechanism the
+    # rotation threshold below is set for — so a pair the parents put exactly
+    # opposite can come back anywhere from a hair to 1.3e-03 degrees off it
+    # without the average having flipped at all. Those are snapped too: on the
+    # equal-houses pair in the tests all six pairs fire, none of them collapsed,
+    # and it is what puts that chart's Descendant exactly on the seventh cusp
+    # instead of 7.9e-04 degrees short of it — enough, on that ring, to be read
+    # into the sixth house.
     # Which of the pair is the source matters: the first cusp is the Ascendant
     # and the TENTH is the Midheaven, so those two are what the other two hang
     # from. Derive the seventh from the first and the fourth from the tenth, and
@@ -263,6 +271,9 @@ def composite_frame(
     # the Midheaven ends up half a circle from the tenth cusp, which is where
     # this started.
     for source, derived in ((0, 6), (9, 3), (1, 7), (2, 8), (4, 10), (5, 11)):
+        # Both parents, not either: asking only the second makes the composite of
+        # A and B differ from the composite of B and A — 1,872 ordered pairs of
+        # 51,315 swept at the poles, by as much as 0.09 degrees.
         if (
             _is_opposite(first_cusps[source], first_cusps[derived])
             and _is_opposite(second_cusps[source], second_cusps[derived])
@@ -898,9 +909,9 @@ class CompositeSubjectFactory:
         # Nothing here re-checks that this chart's angle really landed on that
         # cusp. It always does — the ring derives an opposite cusp from the one
         # the angle is on, exactly as the angle derives its own opposite — and a
-        # runtime check for it never once changed an answer across 258,201
-        # composites. What holds it is the tests, which assert the angle against
-        # its cusp and not merely against a house name.
+        # runtime check for it never once changed an answer on any grid measured.
+        # What holds it is the tests, which assert the angle against its cusp and
+        # not merely against a house name.
         angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
         angle_houses: dict[str, str] = {}
         for angle, cusp in angle_cusp_index.items():
