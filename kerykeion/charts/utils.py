@@ -1030,10 +1030,22 @@ def draw_house_sectors(
     # comes out of here with the same offsets its cusp lines were drawn from, to
     # the bit.
     spans, reversed_wedges = house_spans(boundaries)
-    # Kept before the widening below rewrites them: these are the arcs the house
-    # READER measures, and where the wedges overlap it is the reader that has to
-    # be agreed with.
-    true_spans = list(spans)
+    # The arcs the house READER measures, taken from the exact longitudes and not
+    # from the boundaries above: those are quantised to the whole degree so the
+    # wedges land on their own cusp lines, and rounding can swap which of two
+    # neighbours is the narrower. Polich/Page at 68S has houses 7 and 9 at
+    # 9.370 and 9.428 degrees — the reader says the seventh — and quantised they
+    # become 10 and 9, so the ninth was painted on top and took the click. The
+    # geometry keeps the rounding it needs; the ownership question is answered
+    # from the same numbers the reader answers it from.
+    true_spans, _true_directions = house_spans(
+        [house.abs_pos for house in houses_list[:12]]
+    )
+    # The rendered widths, before the widening trades them about: whether the
+    # wedges a pointer meets actually overlap is a question about the geometry
+    # that was drawn, while which of them owns the overlap is a question about
+    # the chart. The two are asked of different numbers on purpose.
+    drawn_spans = list(spans)
     boundaries, spans = separate_collapsed_wedges(
         boundaries, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
     )
@@ -1134,7 +1146,7 @@ def draw_house_sectors(
     # first of two equal arcs, so the LOWER house number must end up on top, which
     # means painting it last. On a ring that tiles nothing overlaps, so the order
     # is left alone and an ordinary chart comes out of here byte for byte.
-    if _wedges_overlap(true_spans, reversed_wedges):
+    if _wedges_overlap(drawn_spans, reversed_wedges):
         sectors = [
             sectors[index]
             for index in sorted(range(12), key=lambda index: (-true_spans[index], -index))

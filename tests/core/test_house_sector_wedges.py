@@ -975,3 +975,60 @@ def test_two_overlapping_wedges_of_equal_width_break_the_tie_the_reader_s_way(st
     assert painted.index("1") > painted.index("2"), (
         "the first house is no longer painted after the second"
     )
+
+
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_the_paint_order_is_decided_on_exact_degrees_not_rounded_ones(style):
+    """The classic ring is quantised to the whole degree; ownership is not.
+
+    Those offsets exist so a wedge lands on its own cusp line, and they are right
+    for the geometry. They are wrong for deciding which of two overlapping houses
+    owns a longitude: Polich/Page at 68S has houses 7 and 9 measuring 9.370 and
+    9.428 degrees, so the reader answers the seventh — but rounded they become 10
+    and 9, the ninth looks narrower, and it was painted on top and took the click.
+    The point below is 1.16 degrees from the nearest cusp, well outside the one
+    degree the quantisation is allowed to move things.
+    """
+    import re
+
+    from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+    from kerykeion.chart_data.factory import ChartDataFactory
+    from kerykeion.utilities.core import get_planet_house, house_spans
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "X", 1900, 1, 1, 0, 0, city="X", nation="XX", lat=-68.0, lng=17.3,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="T",
+    )
+    cusps = [getattr(subject, name).abs_pos for name in _CUSP_ATTRS]
+    spans, reversed_wedges = house_spans(cusps)
+    degree = 107.25
+
+    containing = [
+        str(index + 1)
+        for index in range(12)
+        if (
+            (cusps[index] - degree) % 360.0
+            if reversed_wedges[index]
+            else (degree - cusps[index]) % 360.0
+        )
+        <= spans[index]
+    ]
+    assert len(containing) > 1, "the fixture no longer overlaps at this longitude"
+    # The quantisation really does swap which of the two looks narrower, or this
+    # test proves nothing. It truncates each boundary, the way the classic engine
+    # does, so the widths come from the difference of two truncated numbers.
+    quantised, _directions = house_spans(
+        [float(-int(cusps[6]) + int(cusp)) for cusp in cusps]
+    )
+    assert spans[6] < spans[8], "the seventh house is no longer the narrower one"
+    assert quantised[6] > quantised[8], "the quantised widths no longer disagree"
+
+    svg = ChartDrawer(
+        ChartDataFactory.create_natal_chart_data(subject), style=style
+    ).generate_svg_string()
+    painted = re.findall(r"""node=['"]HouseSector['"] kr:house=['"]([^'"]+)['"]""", svg)
+
+    topmost = max(containing, key=painted.index)
+    expected = str(_CUSP_ATTRS.index(get_planet_house(degree, cusps).lower()) + 1)
+    assert topmost == expected
