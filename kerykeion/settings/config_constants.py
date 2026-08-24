@@ -775,6 +775,40 @@ AXIAL_POINTS: list[AstrologicalPoint] = [
 ]
 """The four axial cusps (angles) of the horoscope."""
 
+#: The axes and lunar nodes, in the order a document should present them.
+AXES_AND_NODES_IN_READING_ORDER: list[AstrologicalPoint] = [
+    "Ascendant",
+    "Descendant",
+    "Medium_Coeli",
+    "Imum_Coeli",
+    "Vertex",
+    "Anti_Vertex",
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node",
+    "True_South_Lunar_Node",
+]
+
+#: Points that are the 180-degree opposite of another, and of which.
+#:
+#: None of these five is in ``DEFAULT_ACTIVE_POINTS``, because a caller who asks
+#: for the Ascendant has asked for the Descendant whether they said so or not.
+#: A document that drives its point list off ``active_points`` therefore drops
+#: them from every default chart — which is why a report could name the Imum
+#: Coeli in one table and give its degree in none, and why under whole sign or
+#: equal houses, where the fourth cusp is NOT the Imum Coeli, the reader had no
+#: way to learn where it was.
+#:
+#: They are added when their counterpart is active, and only then: a traditional
+#: point set that leaves the Ascendant out has left the Descendant out with it.
+OPPOSITE_POINTS: dict[AstrologicalPoint, AstrologicalPoint] = {
+    "Descendant": "Ascendant",
+    "Imum_Coeli": "Medium_Coeli",
+    "Anti_Vertex": "Vertex",
+    "Mean_South_Lunar_Node": "Mean_North_Lunar_Node",
+    "True_South_Lunar_Node": "True_North_Lunar_Node",
+}
+
 # Default target of `python -m kerykeion.swisseph_setup` and the directory the
 # swisseph backend auto-detects when KERYKEION_EPHE_PATH is unset. Lives here
 # (dependency-free) so the setup script never has to import the backend module.

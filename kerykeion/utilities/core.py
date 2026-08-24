@@ -1526,6 +1526,18 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
     return datetime.fromisoformat(iso_datetime_string).year
 
 
+def format_absolute_degrees(value: float, decimals: int = 2) -> str:
+    """Format a longitude so the number never contradicts the sign beside it.
+
+    ``format_degrees_below_bound(value, 360.0)`` only guards the wrap at the end
+    of the circle. The boundary that matters for a longitude printed next to a
+    sign label is its own sign's ceiling: 149.99687 rounds to ``"150.00"``, which
+    is zero degrees of Virgo, on a row that says Leo.
+    """
+    sign_ceiling = 30.0 * (int(value // 30.0) + 1)
+    return format_degrees_below_bound(value, min(sign_ceiling, 360.0), decimals)
+
+
 def format_degrees_below_bound(value: float, upper_bound: float, decimals: int = 2) -> str:
     """Format a degree value, guaranteeing the rounded string stays *below* ``upper_bound``.
 

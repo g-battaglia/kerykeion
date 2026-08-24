@@ -16,6 +16,10 @@ from __future__ import annotations
 
 from typing import Optional, Union
 from xml.sax.saxutils import escape, quoteattr
+from kerykeion.settings.config_constants import (
+    AXES_AND_NODES_IN_READING_ORDER,
+    OPPOSITE_POINTS,
+)
 from kerykeion.schemas.models import (
     KerykeionPointModel,
     LunarPhaseModel,
@@ -36,6 +40,7 @@ from kerykeion.schemas.models import (
 from kerykeion.secondary_progressions import SolarArcSubjectModel
 from kerykeion.midpoints import MidpointModel
 from kerykeion.utilities.core import (
+    format_absolute_degrees,
     format_degrees_below_bound,
     format_timedelta_hhmm,
     strip_illegal_control_chars as _strip_illegal,
@@ -157,7 +162,7 @@ def kerykeion_point_to_context(point: KerykeionPointModel) -> str:
         "name": point.name,
         "position": format_degrees_below_bound(point.position, 30.0),
         "sign": full_sign_name,
-        "abs_pos": format_degrees_below_bound(point.abs_pos, 360.0),
+        "abs_pos": format_absolute_degrees(point.abs_pos),
         "quality": point.quality,
         "element": point.element,
     }
@@ -292,7 +297,7 @@ def point_in_house_to_context(
     attrs: dict = {
         "point_name": point_in_house.point_name,
         "point_owner": _owner(point_in_house.point_owner_name),
-        "degree": f"{point_in_house.point_degree:.2f}",
+        "degree": format_degrees_below_bound(point_in_house.point_degree, 30.0),
         "sign": point_in_house.point_sign,
     }
 
@@ -474,10 +479,37 @@ def astrological_subject_to_context(
         config_attrs["sidereal_mode"] = subject.sidereal_mode
     lines.append(f"  {_sc('config', **config_attrs)}")
 
+    # A chart asked for in one house system and cast in another says so. Above
+    # the polar circle a quadrant system is undefined and the cusps are recomputed
+    # with Porphyry; a context that reports only the system actually used has a
+    # model writing about a division the user did not choose.
+    for fallback in getattr(subject, "polar_house_fallbacks", None) or ():
+        lines.append(
+            "  "
+            + _sc(
+                "polar_house_fallback",
+                requested=getattr(fallback, "requested_house_system_name", ""),
+                used=getattr(fallback, "used_house_system_name", ""),
+                latitude=f"{getattr(fallback, 'latitude', 0.0):.4f}",
+                affects=",".join(getattr(fallback, "affects", None) or ()),
+            )
+        )
+
     # Composite chart specific info
     if isinstance(subject, CompositeSubjectModel):
+        composite_attrs = {
+            "type": subject.composite_chart_type,
+            "first_subject": subject.first_subject.name,
+            "second_subject": subject.second_subject.name,
+        }
+        if subject.house_anchor:
+            # Which angle was held when the cusp ring was repaired: it can turn
+            # the whole frame by half a turn, so a model reading this context
+            # cannot reproduce the chart without it. Absent on a Davison chart,
+            # which never needs one.
+            composite_attrs["house_anchor"] = subject.house_anchor
         lines.append(
-            f"  {_sc('composite_info', type=subject.composite_chart_type, first_subject=subject.first_subject.name, second_subject=subject.second_subject.name)}"
+            f"  {_sc('composite_info', **composite_attrs)}"
         )
 
     # Planet Return specific info
@@ -531,22 +563,6 @@ def astrological_subject_to_context(
     # Planets come from active_points (so active TNOs / Uranian points / Arabic
     # parts that <aspects> references are serialized). Axes and lunar nodes are
     # NOT driven by active_points: Descendant/Imum_Coeli/South nodes are derived
-    # 180-degree opposites absent from DEFAULT_ACTIVE_POINTS, so driving them off
-    # active_points dropped them from every default chart's <axes> section. Emit
-    # whichever axes/nodes are present on the subject, unconditionally.
-    _AXIS_AND_NODE_ORDER = (
-        "Ascendant",
-        "Descendant",
-        "Medium_Coeli",
-        "Imum_Coeli",
-        "Vertex",
-        "Anti_Vertex",
-        "East_Point",
-        "Mean_North_Lunar_Node",
-        "True_North_Lunar_Node",
-        "Mean_South_Lunar_Node",
-        "True_South_Lunar_Node",
-    )
     planet_lines = []
     for point_name in active_point_names:
         if point_name in axes_section_names or point_name.endswith("_Lunar_Node"):
@@ -555,8 +571,16 @@ def astrological_subject_to_context(
         if point is not None:
             planet_lines.append(f"    {kerykeion_point_to_context(point)}")
 
+    # Same rule as the report: an opposite rides along with the point it is
+    # opposite to, and is left out when that one is.
+    selected = {str(name).lower() for name in (getattr(subject, "active_points", None) or ())}
     axes_lines = []
-    for point_name in _AXIS_AND_NODE_ORDER:
+    for point_name in AXES_AND_NODES_IN_READING_ORDER:
+        counterpart = OPPOSITE_POINTS.get(point_name)
+        if point_name.lower() not in selected and not (
+            counterpart is not None and counterpart.lower() in selected
+        ):
+            continue
         point = getattr(subject, point_name.lower(), None)
         if point is not None:
             axes_lines.append(f"    {kerykeion_point_to_context(point)}")
@@ -611,7 +635,7 @@ def astrological_subject_to_context(
         house = getattr(subject, house_name, None)
         if house is not None:
             lines.append(
-                f"    {_sc('house', name=house.name, cusp=f'{house.position:.2f}', sign=SIGN_FULL_NAMES.get(house.sign, house.sign))}"
+                f"    {_sc('house', name=house.name, cusp=format_degrees_below_bound(house.position, 30.0), sign=SIGN_FULL_NAMES.get(house.sign, house.sign))}"
             )
     lines.append(f"  {_c('houses')}")
 
@@ -1064,7 +1088,7 @@ def solar_arc_to_context(model: SolarArcSubjectModel) -> str:
         lines.append(f"  {_o('directed_points', count=str(len(model.directed_points)))}")
         for dp in model.directed_points:
             lines.append(
-                f"    {_sc('point', name=dp.name, natal_sign=SIGN_FULL_NAMES.get(dp.natal_sign, dp.natal_sign), directed_sign=SIGN_FULL_NAMES.get(dp.directed_sign, dp.directed_sign), natal_pos=f'{dp.natal_abs_pos:.2f}', directed_pos=f'{dp.directed_abs_pos:.2f}', position=f'{dp.directed_position:.2f}', sign_changed=str(dp.sign_changed).lower())}"
+                f"    {_sc('point', name=dp.name, natal_sign=SIGN_FULL_NAMES.get(dp.natal_sign, dp.natal_sign), directed_sign=SIGN_FULL_NAMES.get(dp.directed_sign, dp.directed_sign), natal_pos=format_absolute_degrees(dp.natal_abs_pos), directed_pos=format_absolute_degrees(dp.directed_abs_pos), position=format_degrees_below_bound(dp.directed_position, 30.0), sign_changed=str(dp.sign_changed).lower())}"
             )
         lines.append(f"  {_c('directed_points')}")
 
@@ -1093,7 +1117,7 @@ def midpoints_to_context(midpoints: list[MidpointModel]) -> str:
     for m in midpoints:
         if m.aspects_to_midpoint:
             lines.append(
-                f"  {_o('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}"
+                f"  {_o('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=format_absolute_degrees(m.midpoint_abs_pos), sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=format_degrees_below_bound(m.midpoint_position, 30.0), modulus_90=f'{m.midpoint_modulus_90:.2f}')}"
             )
             for act in m.aspects_to_midpoint:
                 lines.append(
@@ -1102,7 +1126,7 @@ def midpoints_to_context(midpoints: list[MidpointModel]) -> str:
             lines.append(f"  {_c('midpoint')}")
         else:
             lines.append(
-                f"  {_sc('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=f'{m.midpoint_abs_pos:.2f}', sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=f'{m.midpoint_position:.2f}', modulus_90=f'{m.midpoint_modulus_90:.2f}')}"
+                f"  {_sc('midpoint', pair=f'{m.point_a}/{m.point_b}', abs_pos=format_absolute_degrees(m.midpoint_abs_pos), sign=SIGN_FULL_NAMES.get(m.midpoint_sign, m.midpoint_sign), position=format_degrees_below_bound(m.midpoint_position, 30.0), modulus_90=f'{m.midpoint_modulus_90:.2f}')}"
             )
 
     lines.append(_c("midpoints_analysis"))
