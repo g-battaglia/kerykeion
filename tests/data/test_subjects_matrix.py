@@ -801,3 +801,17 @@ SIDEREAL_THEME_COMBOS = [
     ("J2000", "black-and-white"),
     ("J2000", "classic"),
 ]
+
+
+#: The house systems the cross-combination charts are drawn in, and the words
+#: their filenames use. A deliberate handful, not the full twenty-three — but one
+#: handful, read by the test that compares those charts and by both scripts that
+#: draw them, because three copies of a list is how the sidereal one came to ask
+#: for ten while its generator made three.
+HOUSE_SYSTEM_NAMES = {
+    "K": "Koch",
+    "W": "Whole Sign",
+    "R": "Regiomontanus",
+    "C": "Campanus",
+    "O": "Porphyry",
+}

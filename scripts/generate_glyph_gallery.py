@@ -33,7 +33,17 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from glyph_catalog import IDS, box_of, families  # noqa: E402
 
 TPL = ROOT / "kerykeion/charts/templates/chart.xml"
-THEME = ROOT / "kerykeion/charts/themes/light.css"
+# The gallery is drawn in the default theme. It used to name a file called
+# light.css, which this library removed a release ago along with two other
+# themes, so `poe regenerate:glyph-gallery` — step four of `regenerate:all` —
+# died on a FileNotFoundError instead of drawing anything.
+THEME = ROOT / "kerykeion/charts/themes/classic.css"
+if not THEME.is_file():
+    raise SystemExit(
+        f"{THEME.name} is not in {THEME.parent}: the theme this gallery draws in "
+        f"has been renamed or removed. Available: "
+        + ", ".join(sorted(p.name for p in THEME.parent.glob("*.css")))
+    )
 
 defs = TPL.read_text(encoding="utf-8")
 defs = defs[defs.index("GLYPHS:BEGIN"):defs.index("GLYPHS:END")]

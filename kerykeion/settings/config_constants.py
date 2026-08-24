@@ -542,7 +542,7 @@ BEHENIAN_FIXED_STARS: list[str] = [
     "Alphecca",
     "Antares",
     "Vega",
-    "Deneb Algedi",
+    "Deneb_Algedi",
     "Fomalhaut",
 ]
 """The 15 Behenian stars of the medieval/Hermetic magical tradition."""
@@ -569,7 +569,7 @@ DEFAULT_FIXED_STARS: list[str] = [
     "Alcyone",
     "Alphecca",
     "Algorab",
-    "Deneb Algedi",
+    "Deneb_Algedi",
     "Alkaid",
 ]
 """The 23 default fixed stars (same set as Kerykeion v5.12)."""

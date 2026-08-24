@@ -452,7 +452,12 @@ def subject_with_house_system(house_system, john_lennon):
 
 @pytest.fixture(params=SIDEREAL_MODES, ids=lambda m: f"sidereal_{m}")
 def sidereal_mode(request) -> str:
-    """Parametrized fixture for all sidereal modes (ayanamsas)."""
+    """Parametrized fixture over a chosen twenty of the ayanamsas.
+
+    Not all of them: the library defines forty-eight, and the fixture list is a
+    deliberate spread across the families. Said here because the docstring used
+    to claim "all", which reads as coverage the suite does not have.
+    """
     return request.param
 
 
@@ -485,7 +490,11 @@ def sidereal_subject(sidereal_mode):
 
 @pytest.fixture(params=PERSPECTIVE_TYPES, ids=lambda p: p.replace(" ", "_").lower())
 def perspective_type(request) -> str:
-    """Parametrized fixture for all perspective types."""
+    """Parametrized fixture over the four terrestrial perspectives.
+
+    The library defines eleven; the seven planetocentric and barycentric ones
+    have no fixture coverage. Said here rather than claimed away.
+    """
     return request.param
 
 

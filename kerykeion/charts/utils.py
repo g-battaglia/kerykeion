@@ -19,6 +19,14 @@ import datetime
 import math
 import re
 from typing import Literal, Mapping, Optional, Sequence, Union
+
+# Both live in utilities.core now, and are re-exported here because much of
+# the tree imports them from this module. They are angle arithmetic about
+# houses, not drawing: keeping them under charts/ meant the composite subject
+# factory had to import the charts package to ask which way a ring runs, and
+# it meant three other modules wrote their own `% 360` rather than reach
+# across that line - which is the very trap normalize_degree exists to close.
+from kerykeion.utilities.core import house_spans, normalize_degree  # noqa: F401
 from xml.sax.saxutils import escape as _xml_escape
 
 from kerykeion.charts.glyph_metrics import estimate_text_width
@@ -726,33 +734,6 @@ def degree_sum(a: Union[int, float], b: Union[int, float]) -> float:
     return normalize_degree(a + b)
 
 
-def normalize_degree(angle: Union[int, float]) -> float:
-    """Normalize an angle to the range [0, 360).
-
-    Args:
-        angle (int | float): The input angle in degrees.
-
-    Returns:
-        float: The normalized angle in the range [0, 360).
-    """
-    # The guard is on the *result*, not on `% 360 != 0`. For a tiny negative
-    # input Python's float modulo returns exactly 360.0 (-1e-15 % 360 == 360.0),
-    # which the old test read as "non-zero, therefore fine" and passed straight
-    # through — breaking the [0, 360) contract this function exists to hold.
-    # It matters downstream: draw_modern computes a house sector's span as
-    # normalize_degree(next_cusp - cusp), so two cusps coinciding to within
-    # float noise in the negative direction painted a 360° sector over the
-    # whole chart instead of a degenerate one.
-    result = angle % 360.0
-    # `result < 360.0` is False for NaN as well as for 360.0, so a bare else
-    # would quietly turn a NaN angle into 0° Aries — a plausible-looking wrong
-    # position where the old expression let the NaN through to a visible `nan`
-    # coordinate. Inf likewise: `inf % 360` is NaN. Propagate instead.
-    if math.isnan(result):
-        return result
-    return result if result < 360.0 else 0.0
-
-
 def timedelta_to_decimal_hours(datetime_offset: Union[datetime.timedelta, None]) -> float:
     """Express a UTC offset, given as a ``timedelta``, in decimal hours.
 
@@ -878,61 +859,6 @@ def draw_zodiac_slice(
 # resolution the classic engine works at, so nothing finer would survive anyway.
 MINIMUM_WEDGE_SPAN_DEGREES = 1.0
 
-#: How far the twelve widths may miss a full circle and still count as covering
-#: it once. Windings are 360 degrees apart, so anything short of a degree is
-#: float noise rather than another turn.
-_HOUSE_WINDING_TOLERANCE_DEGREES = 1e-4
-
-
-def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
-    """The twelve house widths, and which of them run against their own frame.
-
-    Above roughly 68 degrees a Campanus, Regiomontanus, Sunshine, topocentric or
-    APC chart puts its cusps in *descending* order, and a horizon chart does it
-    on the equator: the houses genuinely run backwards through the signs. Read
-    forwards, each house then measures some 354 degrees instead of 6, the twelve
-    of them wind round the wheel eleven times instead of once, and everything
-    that draws or centres on that span lands on the far side of the chart from
-    the house it names.
-
-    The direction belongs to the whole set and cannot be decided pair by pair: a
-    single house may legitimately run past 180 degrees, which Placidus manages at
-    high latitude, and taking the shorter arc there would cut it in half. Twelve
-    widths cover the circle exactly once in whichever direction the houses run,
-    so the total is what tells the two apart - 360 one way, 3960 the other.
-
-    A third case has neither total. Polich/Page inside the polar circle returns
-    cusps that are not ordered at all: at 70N the first runs backwards while the
-    next five run forwards, so houses 1 and 2 overlap and no direction can make
-    twelve wedges tile a circle. The chart is degenerate rather than reversed,
-    and the least bad reading is to hold each wedge to its shorter arc: they
-    still overlap, because the cusps do, but no single one swallows the wheel.
-
-    Counted over 32,844 charts — all 23 systems, half a degree of latitude at a
-    time, four times of day — six systems reverse outright (Campanus, horizon,
-    Sunshine, Regiomontanus, Polich/Page, APC) and two go degenerate: Polich/Page
-    again, and Sunshine/alt, which never reverses at all.
-
-    Args:
-        cusps: The twelve cusp positions, in house order, in any angular frame.
-
-    Returns:
-        The twelve widths, and for each the flag saying it was measured against
-        the direction of the frame it was given.
-    """
-    forward = [normalize_degree(cusps[(index + 1) % 12] - cusps[index]) for index in range(12)]
-    if abs(sum(forward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
-        return forward, [False] * 12
-
-    backward = [normalize_degree(cusps[index] - cusps[(index + 1) % 12]) for index in range(12)]
-    if abs(sum(backward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
-        return backward, [True] * 12
-
-    shorter = [ahead <= behind for ahead, behind in zip(forward, backward)]
-    return (
-        [ahead if pick else behind for ahead, behind, pick in zip(forward, backward, shorter)],
-        [not pick for pick in shorter],
-    )
 
 
 def separate_collapsed_wedges(

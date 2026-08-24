@@ -57,8 +57,8 @@ from kerykeion.schemas.literals import (
     Houses,
     CompositeChartType,
 )
-from kerykeion.charts.utils import house_spans
 from kerykeion.utilities.core import (
+    house_spans,
     get_kerykeion_point_from_degree,
     get_planet_house,
     circular_mean,
@@ -70,14 +70,17 @@ from kerykeion.utilities.core import (
 def _cusp_ring_winds_once(cusps: Sequence[float]) -> bool:
     """Do these twelve arcs cover the circle exactly once?
 
-    Twelve houses cover it once whichever way they run. A ring built by taking
-    each cusp's midpoint independently can cover it three times instead, which is
-    not a house division: the numbers stop reading in order and the Midheaven can
-    end up below the horizon.
+    Asked of ``house_spans``, which is the library's answer to this question,
+    rather than counted here a second time. The copy that stood here summed the
+    forward gaps with a bare ``% 360``, and for two cusps coincident to within
+    float noise in the negative direction that returns exactly 360.0 instead of
+    zero — so a ring `house_spans` certifies at 360 came out at 720, the "leave
+    it alone" path was skipped, and nine of twelve cusps were moved on a chart
+    that needed nothing done to it. That is the fourth time this repository has
+    written `% 360` where it meant normalize_degree.
     """
-    forward = sum((cusps[(index + 1) % 12] - cusps[index]) % 360.0 for index in range(12))
-    backward = 12 * 360.0 - forward
-    return min(abs(forward - 360.0), abs(backward - 360.0)) <= 1e-4
+    spans, reversed_wedges = house_spans(cusps)
+    return len(set(reversed_wedges)) == 1 and abs(sum(spans) - 360.0) <= 1e-4
 
 
 logger = logging.getLogger(__name__)

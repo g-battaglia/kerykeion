@@ -71,6 +71,19 @@ def _uneven_cusps_from(first_cusp: float) -> list:
     )
 
 
+#: Every number an SVG path can carry, exponent included. Without the exponent a
+#: coordinate written as 2.0037e-11 — which is how a point on the wheel's axis
+#: comes out — tokenises as two numbers, and every index after it is off by one.
+#: The reader then measures a different arc and answers confidently about it.
+_NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
+
+#: The same, as a capturing group, for readers that pull coordinates in pairs.
+_COORD = r"(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)"
+
+#: And without a group, for the radii a reader has to step over rather than read.
+_SKIP = r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?"
+
+
 def _wedge_paths(svg: str) -> list[str]:
     return re.findall(r'<path d="([^"]+)"', svg)
 
@@ -84,7 +97,7 @@ def _arc_flag_pairs(svg: str) -> list[tuple[int, int]]:
     """(large-arc, sweep) of each wedge's outer arc. The two travel together."""
     return [
         (int(large), int(sweep))
-        for large, sweep in re.findall(r"A [\d.]+,[\d.]+ 0 (\d),(\d) ", svg)
+        for large, sweep in re.findall(rf"A {_SKIP},{_SKIP} 0 (\d),(\d) ", svg)
     ][::2]
 
 
@@ -124,7 +137,7 @@ def test_the_wedge_boundary_matches_the_cusp_line_it_bounds(fractional_cusp):
     # Both coordinates, not just x: cos is even, so an x-only assertion passes
     # happily on a sign-flipped offset. Mutating `-int(seventh) + int(cusp)` to
     # `int(seventh) - int(cusp)` has to fail here, and it does.
-    starts = [(float(x), float(y)) for x, y in re.findall(r"M ([\d.-]+),([\d.-]+)", svg)]
+    starts = [(float(x), float(y)) for x, y in re.findall(rf"M {_COORD},{_COORD}", svg)]
     assert len(starts) == 12
 
     outer_visual_r = RADIUS - FIRST_CIRCLE
@@ -188,10 +201,10 @@ def test_the_arc_flag_agrees_with_the_endpoints_it_steers(cusp, opposite):
 
 def _boundary_offsets(svg: str) -> list[tuple[float, float]]:
     """Each wedge's start point, and the outer-arc endpoint it runs to."""
-    starts = [(float(x), float(y)) for x, y in re.findall(r"M ([\d.-]+),([\d.-]+)", svg)]
+    starts = [(float(x), float(y)) for x, y in re.findall(rf"M {_COORD},{_COORD}", svg)]
     ends = [
         (float(x), float(y))
-        for x, y in re.findall(r"A [\d.]+,[\d.]+ 0 \d,0 ([\d.-]+),([\d.-]+)", svg)
+        for x, y in re.findall(rf"A {_SKIP},{_SKIP} 0 \d,0 {_COORD},{_COORD}", svg)
     ]
     return list(zip(starts, ends))
 
@@ -351,13 +364,6 @@ _RETROGRADE_CUSPS = (
     304.76, 290.74, 288.71, 287.47, 286.02, 282.30,
     124.76, 110.74, 108.71, 107.47, 106.02, 102.30,
 )
-
-
-#: Every number an SVG path can carry, exponent included. Without the exponent a
-#: coordinate written as 2.0037e-11 — which is how a point on the wheel's axis
-#: comes out — tokenises as two numbers, and every index after it is off by one.
-#: The reader then measures a different arc and answers confidently about it.
-_NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
 
 
 def _outer_arc_centre(path: str) -> tuple[float, float]:

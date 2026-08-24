@@ -8,6 +8,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Iterator, List, Literal, Optional
 
+from kerykeion.utilities.core import normalize_degree
 from kerykeion.dignities.rulers import get_domicile_ruler
 from kerykeion.dominants.utils import part_of_fortune_degree
 from kerykeion.schemas.exceptions import KerykeionException
@@ -220,7 +221,7 @@ class ZodiacalReleasingFactory:
                 "Cannot compute the lot: the Ascendant, Sun or Moon is unavailable "
                 "(zodiacal releasing requires a known birth time)."
             )
-        lot_sign_num = int(degree % 360.0 // 30)
+        lot_sign_num = int(normalize_degree(degree) // 30) % 12
 
         # Peak (angular) periods are counted from the natal Lot of FORTUNE
         # regardless of which lot is being released (Valens; Brennan,
@@ -233,7 +234,7 @@ class ZodiacalReleasingFactory:
                 "Cannot compute the Lot of Fortune (the angularity reference for "
                 "peak periods): the Ascendant, Sun or Moon is unavailable."
             )
-        fortune_sign_num = int(fortune_degree % 360.0 // 30)
+        fortune_sign_num = int(normalize_degree(fortune_degree) // 30) % 12
 
         # Split-component subjects and ISO-only subjects (returns, Davison)
         # both resolve through the shared helper; midpoint composites are

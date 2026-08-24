@@ -11,6 +11,7 @@ Tests for v5.12.* — Foundation Enrichment features.
 import pytest
 from typing import get_args
 
+from kerykeion.settings.config_constants import DEFAULT_FIXED_STARS
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode
@@ -168,11 +169,15 @@ NEW_FIXED_STARS = [
     "Deneb_Algedi",
 ]
 
-ALL_FIXED_STARS = ["Regulus", "Spica"] + NEW_FIXED_STARS
+# From the library's own list, not a second hand-written one. The copy that stood
+# here held 22 of the 23 — Alkaid was never asserted on by any of the six
+# parametrized star tests, and a list named ALL that is missing one is the shape
+# that hides things.
+ALL_FIXED_STARS = list(DEFAULT_FIXED_STARS)
 
 
 class TestExpandedFixedStars:
-    """Verify all 22 fixed stars calculate correctly and have magnitude."""
+    """Verify every default fixed star calculates correctly and has a magnitude."""
 
     @pytest.fixture(autouse=True)
     def _setup(self):
