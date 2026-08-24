@@ -1170,40 +1170,174 @@ def test_two_backward_parents_whose_ring_already_tiles_are_left_alone():
 def test_the_composite_angles_do_not_depend_on_the_house_system():
     """An angle is where the ecliptic meets the horizon, and no house system moves it.
 
-    "An angle IS its cusp" holds only under a quadrant system. Under whole sign,
-    equal, Morinus or meridian houses the first cusp is not the Ascendant and the
-    tenth is not the Midheaven — this library models them separately, and says so
-    in its own polar warning.
+    The cusps of a composite have to be repaired, and the repair chooses which of
+    two midpoints — half a turn apart — each position takes. Hang the angles off
+    that choice and they inherit the house system: measured on the pair below,
+    the composite Ascendant came out 180 degrees apart between Placidus and whole
+    sign, and the whole-sign chart had its Midheaven in the fourth house with the
+    Ascendant where the Descendant belongs.
 
-    Reading the angles off the cusps regardless made them move with the house
-    system. Measured on the pair below, across twelve systems: the Ascendant
-    disagreed with itself by up to 173.74 degrees (whole sign against Morinus)
-    and the Midheaven by up to 174.85 (Morinus against Carter); between Placidus
-    and Morinus alone the Ascendant moved 167.65.
+    The angles hang from an angle instead. Under a quadrant system that is the
+    same point as the cusp they share a number with, so the identity survives;
+    under whole sign, equal, Morinus or meridian houses it is not, and they were
+    never one thing to keep together.
     """
-    def composite_for(system: str):
+    SYSTEMS = ("P", "C", "K", "O", "R", "B", "W", "A", "M", "X", "N", "F", "S", "V", "D", "H")
+
+    def composite_for(system: str, anchor: str):
         first = AstrologicalSubjectFactory.from_birth_data(
-            "J", 1940, 10, 9, 18, 30, city="X", nation="XX", lat=53.41, lng=-2.97,
-            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            "A", 1990, 6, 15, 2, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+            tz_str="Etc/GMT", online=False, suppress_geonames_warning=True,
             houses_system_identifier=system,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
-            "P", 1942, 6, 18, 14, 0, city="X", nation="XX", lat=53.41, lng=-2.97,
-            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            "B", 1990, 6, 15, 16, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+            tz_str="Etc/GMT", online=False, suppress_geonames_warning=True,
             houses_system_identifier=system,
         )
-        return CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+        return CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
 
-    ascendants = {}
-    for system in ("P", "C", "K", "O", "R", "B", "W", "A", "M", "X"):
-        model = composite_for(system)
-        ascendants[system] = round(model.ascendant.abs_pos, 9)
-        # And where the parents DID make an angle its own cusp, the composite
-        # keeps them one point — that is the property the repair has to preserve.
-        first_house_is_ascendant = system in {"P", "C", "K", "O", "R", "B", "A"}
-        if first_house_is_ascendant:
-            assert model.ascendant.abs_pos == pytest.approx(
-                model.first_house.abs_pos, abs=1e-9
-            ), system
+    for anchor in _ANCHORS:
+        ascendants, midheavens = set(), set()
+        for system in SYSTEMS:
+            model = composite_for(system, anchor)
+            ascendants.add(round(model.ascendant.abs_pos, 9))
+            midheavens.add(round(model.medium_coeli.abs_pos, 9))
 
-    assert len(set(ascendants.values())) == 1, ascendants
+            cusps = _cusps_of(model)
+            assert _winding(cusps) == pytest.approx(1.0, abs=1e-6), (system, anchor)
+
+            # Where the parents made the angle its own cusp, the composite keeps
+            # them one point. Asked of the parents, not of a list of systems.
+            first = AstrologicalSubjectFactory.from_birth_data(
+                "A", 1990, 6, 15, 2, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+                tz_str="Etc/GMT", online=False, suppress_geonames_warning=True,
+                houses_system_identifier=system,
+            )
+            if abs((first.ascendant.abs_pos - first.first_house.abs_pos + 180) % 360 - 180) < 1e-9:
+                assert model.ascendant.abs_pos == pytest.approx(cusps[0], abs=1e-9), (
+                    f"{system}/{anchor}: the parents make the Ascendant the first cusp, "
+                    f"the composite does not"
+                )
+            if abs((first.medium_coeli.abs_pos - first.tenth_house.abs_pos + 180) % 360 - 180) < 1e-9:
+                assert model.medium_coeli.abs_pos == pytest.approx(cusps[9], abs=1e-9), (
+                    f"{system}/{anchor}: the parents make the Midheaven the tenth cusp, "
+                    f"the composite does not"
+                )
+                assert model.medium_coeli.house == "Tenth_House", (system, anchor)
+
+        assert len(ascendants) == 1, (anchor, ascendants)
+        assert len(midheavens) == 1, (anchor, midheavens)
+
+
+#: Pairs whose plain near midpoints put the composite Midheaven below its own
+#: horizon — 26 of 400 random pairs do. Each is (year, month, day, hour, minute)
+#: twice, then latitude and longitude.
+_MIDHEAVEN_BELOW_THE_HORIZON = (
+    ((1989, 10, 14, 16, 29), (1939, 4, 28, 16, 19), 26.7475, 130.1992),
+    ((1989, 11, 1, 20, 20), (1952, 9, 12, 12, 17), -25.8614, -144.6664),
+    ((1974, 11, 13, 19, 44), (1955, 5, 8, 16, 7), -51.6908, 46.1426),
+)
+
+
+@pytest.mark.parametrize("first_data,second_data,lat,lng", _MIDHEAVEN_BELOW_THE_HORIZON)
+def test_the_composite_midheaven_stays_above_its_own_horizon(first_data, second_data, lat, lng):
+    """The geometry an angle pair has to satisfy: the Midheaven is not below it.
+
+    Take each angle's own near midpoint and nothing keeps the two consistent: on
+    these pairs the plain midpoints put the Midheaven some 90 degrees from the
+    Ascendant, which is not a chart any sky could cast. Placing both on the frame
+    the cusps hang from is what keeps them a pair.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", *first_data, city="X", nation="XX", lat=lat, lng=lng, tz_str="UTC",
+        online=False, suppress_geonames_warning=True,
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", *second_data, city="X", nation="XX", lat=lat, lng=lng, tz_str="UTC",
+        online=False, suppress_geonames_warning=True,
+    )
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        gap = (model.medium_coeli.abs_pos - model.ascendant.abs_pos) % 360.0
+        assert 180.0 < gap < 360.0, f"{anchor}: Midheaven {gap:.2f}deg from the Ascendant"
+
+
+def test_an_anchor_the_library_does_not_have_is_refused():
+    """A typo must not quietly mean "auto".
+
+    The branch that reads the anchor treats everything it does not recognise as
+    the default, so `"Ascendant"` with a capital was accepted in silence and
+    handed back a house frame half a turn from the one asked for. This factory
+    already refuses an unknown house system out loud.
+    """
+    first, second = _pair(0, 11)
+    with pytest.raises(KerykeionException):
+        CompositeSubjectFactory(first, second, house_anchor="Ascendant")
+    with pytest.raises(KerykeionException):
+        CompositeSubjectFactory(first, second, house_anchor="")
+    with pytest.raises(KerykeionException):
+        CompositeSubjectFactory(first, second, house_anchor=None)
+
+
+@pytest.mark.parametrize("anchor", _ANCHORS)
+def test_the_chart_records_which_anchor_produced_it(anchor):
+    """The choice can turn the whole frame by half a turn, so a chart that
+    carries no note of it cannot be reproduced."""
+    first, second = _pair(0, 11)
+    model = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    assert model.house_anchor == anchor
+    assert model.model_dump()["house_anchor"] == anchor
+
+    davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+    assert davison.house_anchor is None, "a Davison chart never needs an anchor"
+
+
+def test_the_angle_cusp_identity_is_asked_of_both_parents():
+    """One parent is not enough, and exact equality is too strict.
+
+    The rule decides whether an angle and its cusp are one point. Asking only
+    one parent would call them one point on a pair where the other disagrees;
+    asking for exact equality would call them two on a pair where they are one,
+    because the identity carries float noise — measured up to 1.2e-12 degrees
+    under APC, Krusinski, Carter, Morinus and meridian houses.
+    """
+    from kerykeion.composite_subject.factory import _angle_is_its_cusp
+
+    cusps_a = [10.0] + [30.0 * index for index in range(1, 12)]
+    cusps_b = [20.0] + [30.0 * index + 5.0 for index in range(1, 12)]
+
+    # One point in both charts, to within the noise a real identity carries.
+    assert _angle_is_its_cusp(10.0, 20.0 + 1e-12, cusps_a, cusps_b, 0)
+    # One point in the first chart only.
+    assert not _angle_is_its_cusp(10.0, 200.0, cusps_a, cusps_b, 0)
+    # And in the second only.
+    assert not _angle_is_its_cusp(100.0, 20.0, cusps_a, cusps_b, 0)
+    # A genuine non-identity is never within a hair of one.
+    assert not _angle_is_its_cusp(10.0 + 1e-6, 20.0, cusps_a, cusps_b, 0)
+
+
+def test_the_winding_test_reads_a_hair_negative_gap_as_zero():
+    """Built from a synthetic ring, because no real pair comes close enough.
+
+    Two cusps coincident to within a hair, in the negative direction, are what a
+    bare ``% 360`` answers 360.0 for — turning a ring that covers the circle once
+    into one that appears to cover it twice, and sending a chart that needed
+    nothing through the repair. The closest two composite cusps measured across
+    140,000 real rings were 5.7e-13 degrees apart, which is an order of magnitude
+    too far to trip it, so the case has to be constructed.
+    """
+    import math
+
+    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+
+    ring = [0.0, 30.0, 60.0, 90.0, 120.0, math.nextafter(120.0, 0.0)]
+    ring += [180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+    assert (ring[5] - ring[4]) % 360.0 == 360.0, "the fixture no longer trips the modulo"
+    assert _cusp_ring_winds_once(ring)

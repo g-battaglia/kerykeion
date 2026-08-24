@@ -60,8 +60,15 @@ def _normalise_long(value: float) -> float:
 def _forward_arc_diff(target: float, source: float) -> float:
     """Return the forward zodiacal difference ``target - source`` in the
     range ``[0, 360)`` degrees.
+
+    Through the library's rule rather than a bare modulo, and this is the site
+    that needed it: its argument is a difference of two longitudes and can be
+    negative, where ``% 360`` answers exactly 360.0 and breaks the range this
+    docstring promises — and the range ``SolarArcSubjectModel.solar_arc``
+    promises after it. ``_normalise_long`` above is handed only sums of
+    non-negative quantities and could never have reached the trap.
     """
-    return (target - source) % 360.0
+    return normalize_degree(target - source)
 
 
 def _is_near_zero_arc(arc: float, orb: float) -> bool:

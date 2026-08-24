@@ -40,7 +40,7 @@ License: AGPL-3.0
 
 import logging
 
-from typing import Sequence, Union, get_args
+from typing import Optional, Sequence, Union, get_args
 
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
@@ -74,10 +74,16 @@ def _cusp_ring_winds_once(cusps: Sequence[float]) -> bool:
     rather than counted here a second time. The copy that stood here summed the
     forward gaps with a bare ``% 360``, and for two cusps coincident to within
     float noise in the negative direction that returns exactly 360.0 instead of
-    zero — so a ring `house_spans` certifies at 360 came out at 720, the "leave
-    it alone" path was skipped, and nine of twelve cusps were moved on a chart
-    that needed nothing done to it. That is the fourth time this repository has
-    written `% 360` where it meant normalize_degree.
+    zero: a ring ``house_spans`` certifies at 360 came out at 720, so the "leave
+    it alone" path was skipped and every cusp was rebuilt on a chart that needed
+    nothing done to it.
+
+    No real pair reaches it — the closest two composite cusps found across
+    140,000 rings were 5.7e-13 degrees apart, an order too far, and the test below
+    is built from a synthetic ring for that reason. It is closed anyway, because
+    the reason it cannot fire is a fact about today's ephemeris and not about this
+    function, and because a bare ``% 360`` on an angle is the fourth of its kind
+    this repository has had to find.
     """
     spans, reversed_wedges = house_spans(cusps)
     return len(set(reversed_wedges)) == 1 and abs(sum(spans) - 360.0) <= 1e-4
@@ -97,109 +103,218 @@ def _runs_backward(cusps: Sequence[float]) -> bool:
     return all(reversed_wedges)
 
 
-def composite_house_cusps(
+def _angle_is_its_cusp(
+    first_angle: float,
+    second_angle: float,
     first_cusps: Sequence[float],
     second_cusps: Sequence[float],
+    index: int,
+) -> bool:
+    """Do both charts put this angle exactly on the cusp it shares a number with?
+
+    Asked of the charts rather than of a list of house-system identifiers kept
+    somewhere and left to rot. Quadrant systems say yes for both angles; equal
+    houses say yes for the Ascendant only; whole sign, Morinus and meridian say
+    no for one or both.
+    """
+    cusp = 0 if index == 0 else 9
+    return (
+        abs(((first_angle - first_cusps[cusp] + 180.0) % 360.0) - 180.0) < 1e-9
+        and abs(((second_angle - second_cusps[cusp] + 180.0) % 360.0) - 180.0) < 1e-9
+    )
+
+
+def composite_frame(
+    first_cusps: Sequence[float],
+    second_cusps: Sequence[float],
+    first_angles: tuple[float, float],
+    second_angles: tuple[float, float],
     anchor: CompositeHouseAnchor = "auto",
-) -> list[float]:
-    """The twelve midpoint-composite cusps, in an order a house division can have.
+) -> tuple[tuple[float, float, float, float], list[float]]:
+    """The twelve composite cusps, and the frame everything else hangs from.
 
     Each composite cusp is the midpoint of the two charts' cusps of the SAME
     number, and keeps that number: the tenth cusp is the midpoint of the tenths,
-    which is the composite Midheaven. Re-sorting by longitude instead would file
-    it into a lower slot and swap the Midheaven with the Imum Coeli.
+    which is the composite Midheaven under any quadrant system. Re-sorting by
+    longitude instead would file it into a lower slot and swap the Midheaven with
+    the Imum Coeli.
 
     Between two points on a circle there are two midpoints, half a turn apart.
     Taking the nearer one is right, and taking it for each of the twelve
     *independently* is what breaks: when the two charts' angles are nearly
     opposed the separations straddle 180 degrees, the choice flips partway round
     the ring, and the twelve arcs come to 1080 degrees instead of 360. That is
-    not a house division at all — measured here, it happens to about one couple
-    in sixteen at ordinary latitudes.
+    not a house division at all — measured here, about one couple in eighteen at
+    ordinary latitudes.
 
-    The profession's answer, and this one: hold one angle at its near midpoint and
-    move whichever others need it onto their far midpoint, so the ring reads in
-    order again. Solar Fire calls it adjusting cusps "to be long-arc midpoints
-    instead of short-arc"; Kepler and Sirius call it "flipping the houses 180
-    degrees if necessary". Which angle is held is the ``anchor``.
+    The profession's answer, and this one: hold one **angle** at its near midpoint
+    and let everything else follow from it. Solar Fire calls the result adjusting
+    cusps "to be long-arc midpoints instead of short-arc"; Kepler and Sirius call
+    it "flipping the houses 180 degrees if necessary", and name their two methods
+    after the angle each never flips. Which angle is held is the ``anchor``.
 
-    A ring whose near midpoints already run in order is returned untouched, value
-    for value — which is most of them.
+    It has to be the angle and not the cusp of the same number. Under a quadrant
+    system they are one point and the distinction is idle, but under whole sign,
+    equal, Morinus or meridian houses the first cusp is not the Ascendant — and
+    anchoring on the cusp then makes the composite Ascendant itself depend on the
+    house system, by exactly half a turn. Anchored on the angle, both angles come
+    out house-system-independent (their arcs from each other are), while the
+    identity with the cusp survives wherever the parents had it, because a cusp
+    that IS its angle sits zero degrees from the origin in both charts.
 
-    What this guarantees, measured over 600 real pairs across thirteen house
-    systems and latitudes to 85 degrees: where the two charts' houses run **the
-    same way**, the repaired ring covers the circle exactly once, always. Where
-    one partner's houses run backwards and the other's forwards — one born inside
-    the polar circle under a system that reverses there, the other not — there is
-    no direction the composite can run in, and no arrangement of midpoints makes
-    one; 69 of those 600 pairs were of that kind, and nine more had a partner
-    whose own cusps cross. Every cusp is still a midpoint of its pair in all of
-    them: that property never breaks.
+    Every position is placed by measuring its arc from a held origin in each
+    chart and averaging the two. Halving an arc taken modulo 360 lands on the
+    near midpoint or the far one according to how many times the pair wrapped,
+    and it is that count which carries one choice to everything on the wheel: so
+    every position is still a midpoint of its own pair — the rule as Townley
+    states it — while the twelve cusps cover the circle exactly once.
+
+    A ring whose near midpoints already run in order needs none of this and is
+    returned untouched, value for value — that is most of them. The frame is
+    still built and returned for those, because the angles hang from it and must
+    not depend on whether the cusps happened to need repairing.
 
     Args:
         first_cusps: The first subject's twelve cusps, in house order.
         second_cusps: The second subject's twelve cusps, in house order.
-        anchor: Which angle keeps its near midpoint. See
+        first_angles: The first subject's (Ascendant, Midheaven).
+        second_angles: The second subject's (Ascendant, Midheaven).
+        anchor: Which angle is held. See
             :data:`~kerykeion.schemas.literals.CompositeHouseAnchor`.
 
     Returns:
-        The twelve composite cusps, in house order.
+        The frame — ``(first_origin, second_origin, origin_midpoint, step)`` —
+        and the twelve cusps.
     """
     midpoints = [
         circular_mean(first, second) for first, second in zip(first_cusps, second_cusps)
     ]
-    if _cusp_ring_winds_once(midpoints):
-        return midpoints
+    already_in_order = _cusp_ring_winds_once(midpoints)
 
     if anchor == "ascendant":
         held = 0
     elif anchor == "midheaven":
-        held = 9
+        held = 1
     else:
-        # The better determined of the two: where the base cusps sit closer
+        # The better determined of the two: where the base angles sit closer
         # together, the midpoint between them is the less arbitrary one. Solar
         # Fire calls this the "strongest" midpoint and makes it the default.
         separations = [
             abs(((second - first + 180.0) % 360.0) - 180.0)
-            for first, second in zip(first_cusps, second_cusps)
+            for first, second in zip(first_angles, second_angles)
         ]
-        held = 0 if separations[0] <= separations[9] else 9
+        held = 0 if separations[0] <= separations[1] else 1
 
-    # Measured as each chart's own arc from its own anchor cusp, then averaged.
-    # Both arcs grow monotonically round their own wheel, so the twelve averages
-    # do too, and the ring cannot come out wound more than once. Each cusp still
-    # lands on its near midpoint or exactly opposite it — that is the rule as
-    # Townley states it, and this is only the formulation of it that cannot fail.
-    #
-    # Deciding each cusp's branch by nearness to the anchor's instead is the
-    # obvious way to write it and is wrong: it holds only while the two charts
-    # distribute their houses similarly, and failed on 2,507 of 20,000 synthetic
-    # pairs whose houses were of very unequal width — which is what high latitude
-    # produces.
-    #
-    # "Round the wheel" has to mean the direction the houses actually run, and it
-    # has to be ONE direction for the pair: above the polar circle several
-    # systems return descending cusps, and reading those forwards measures eleven
-    # turns where there is one. Two backward charts make a backward composite.
-    # Measuring each parent in its own direction instead breaks the very property
-    # this construction exists for — the arcs stop adding up to a separation, and
-    # the cusp lands on neither midpoint of its pair.
+
+    # One direction for the pair, read from the houses themselves: above the
+    # polar circle several systems return descending cusps, and reading those
+    # forwards measures eleven turns where there is one. Two backward charts make
+    # a backward composite. Measuring each parent in its own direction instead
+    # breaks the very property this construction exists for — the arcs stop
+    # adding up to a separation, and the position lands on neither midpoint.
     backward = _runs_backward(first_cusps) and _runs_backward(second_cusps)
     step = -1.0 if backward else 1.0
 
-    def arcs(cusps: Sequence[float]) -> list[float]:
-        origin = cusps[held]
-        if backward:
-            return [(origin - cusp) % 360.0 for cusp in cusps]
-        return [(cusp - origin) % 360.0 for cusp in cusps]
+    # Two origins, one choice. The cusps hang from the cusp of the held angle's
+    # house and the angles hang from the angle itself, because they are not the
+    # same point: under whole sign, equal, Morinus or meridian houses the first
+    # cusp is not the Ascendant. Hanging the angles from the cusp made the
+    # composite Ascendant depend on the house system, by exactly half a turn;
+    # hanging the cusps from the angle puts the cusp that straddles it a half
+    # turn out and breaks the ring. Under a quadrant system the two origins are
+    # the same point, so the identity between angle and cusp survives by
+    # construction wherever the parents had it — and where they did not, the two
+    # were never one thing to keep together.
+    cusp_index = 0 if held == 0 else 9
+    cusp_frame = (
+        first_cusps[cusp_index],
+        second_cusps[cusp_index],
+        circular_mean(first_cusps[cusp_index], second_cusps[cusp_index]),
+        step,
+    )
+    angle_frame = (
+        first_angles[held],
+        second_angles[held],
+        circular_mean(first_angles[held], second_angles[held]),
+        step,
+    )
 
-    first_arcs = arcs(first_cusps)
-    second_arcs = arcs(second_cusps)
-    held_midpoint = midpoints[held]
-    return [
-        (held_midpoint + step * (first_arcs[index] + second_arcs[index]) / 2.0) % 360.0
-        for index in range(12)
-    ]
+    cusps = (
+        list(midpoints)
+        if already_in_order
+        else [
+            place_on_composite_frame(first, second, cusp_frame)
+            for first, second in zip(first_cusps, second_cusps)
+        ]
+    )
+
+    # Where the parents put an angle exactly on a cusp, the composite has to as
+    # well — under equal houses the first cusp IS the Ascendant, and a chart whose
+    # Ascendant is drawn opposite its own first cusp is broken however sound the
+    # ring is. The two can disagree because the anchor may hold the Midheaven
+    # while it is the Ascendant that is a cusp.
+    #
+    # The whole ring turns half a circle to meet it. That is free: a rotation
+    # leaves the twelve tiling exactly as they were, and half a turn takes each
+    # cusp from one midpoint of its pair to the other, which is the only choice in
+    # question anyway. It fires rarely — 4 charts in 240 under equal-type systems
+    # — and never at all under a quadrant system, where the angle and the cusp
+    # share an origin and cannot disagree.
+    for index, cusp in ((0, 0), (1, 9)):
+        if not _angle_is_its_cusp(
+            first_angles[index], second_angles[index], first_cusps, second_cusps, index
+        ):
+            continue
+        placed_angle = place_on_composite_frame(
+            first_angles[index], second_angles[index], angle_frame
+        )
+        if abs(((cusps[cusp] - placed_angle + 180.0) % 360.0) - 180.0) > 1e-9:
+            cusps = [(value + 180.0) % 360.0 for value in cusps]
+        break
+
+    return angle_frame, cusps
+
+
+def place_on_composite_frame(
+    first_value: float, second_value: float, frame: tuple[float, float, float, float]
+) -> float:
+    """One position, placed on the frame :func:`composite_frame` returned.
+
+    The arc from the held angle to the position, measured in each chart and
+    averaged. Algebraically this is the midpoint of the two positions — the
+    origin cancels — so what the frame actually decides is *which* of the two
+    midpoints, consistently for everything on the wheel.
+    """
+    first_origin, second_origin, origin_midpoint, step = frame
+    if step > 0:
+        first_arc = (first_value - first_origin) % 360.0
+        second_arc = (second_value - second_origin) % 360.0
+    else:
+        first_arc = (first_origin - first_value) % 360.0
+        second_arc = (second_origin - second_value) % 360.0
+    return (origin_midpoint + step * (first_arc + second_arc) / 2.0) % 360.0
+
+
+def composite_house_cusps(
+    first_cusps: Sequence[float],
+    second_cusps: Sequence[float],
+    anchor: CompositeHouseAnchor = "auto",
+    first_angles: Optional[tuple[float, float]] = None,
+    second_angles: Optional[tuple[float, float]] = None,
+) -> list[float]:
+    """The twelve composite cusps. See :func:`composite_frame` for the reasoning.
+
+    With the angles omitted the first and tenth cusps stand in for them, which is
+    exact under any quadrant system and the best available when a caller has
+    cusps and nothing else.
+    """
+    return composite_frame(
+        first_cusps,
+        second_cusps,
+        first_angles if first_angles is not None else (first_cusps[0], first_cusps[9]),
+        second_angles if second_angles is not None else (second_cusps[0], second_cusps[9]),
+        anchor,
+    )[1]
 
 
 def _davison_midpoint_components(
@@ -557,8 +672,12 @@ class CompositeSubjectFactory:
             self.second_subject[house.lower()]["abs_pos"]
             for house in self.first_subject.houses_names_list
         ]
-        house_degree_list_ut = composite_house_cusps(
-            first_cusps, second_cusps, anchor=self.house_anchor
+        composite_angles_frame, house_degree_list_ut = composite_frame(
+            first_cusps,
+            second_cusps,
+            (self.first_subject["ascendant"]["abs_pos"], self.first_subject["medium_coeli"]["abs_pos"]),
+            (self.second_subject["ascendant"]["abs_pos"], self.second_subject["medium_coeli"]["abs_pos"]),
+            anchor=self.house_anchor,
         )
         if not _cusp_ring_winds_once(house_degree_list_ut):
             # Said out loud rather than shipped quietly. It happens when the two
@@ -577,46 +696,40 @@ class CompositeSubjectFactory:
 
         # Planets
         planets = {}
-        # The four angles have to move with the ring — an angle half a circle from
-        # the house it opens is the defect this replaced — but only where they
-        # ARE the ring. Under a quadrant system the first cusp is the Ascendant
-        # and the tenth is the Midheaven, and the composite has to keep that
-        # true. Under whole sign, equal, Morinus or meridian houses they are
-        # different points: the angles are where the ecliptic meets the horizon
-        # and the meridian, which is what this library's own polar warning says,
-        # and no house system moves them. Reading them off the cusps regardless
-        # made the composite Ascendant depend on the house system — 167.65 degrees
-        # between Morinus and Placidus on one ordinary pair, and up to 173.74
-        # across the twelve systems measured.
+        # The four angles are placed on the same frame as the cusps, not averaged
+        # on their own. Averaged on their own they part company with the ring the
+        # moment the ring is repaired: the repair flips whichever cusps the order
+        # requires, and an angle that did not flip with them ends up half a circle
+        # from the house it opens — on the Rome pair below, a whole-sign composite
+        # came out with its Midheaven in the fourth house and its Ascendant where
+        # the Descendant belongs.
         #
-        # Which of the two it is, is asked of the parents rather than of a list
-        # of system identifiers kept somewhere: if an angle sits exactly on its
-        # own cusp in BOTH charts, then this system makes them one point and the
-        # composite keeps them one point. Otherwise the angle is a midpoint of
-        # its own pair and nothing but that.
-        angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
-        house_fields = [house.lower() for house in self.first_subject.houses_names_list]
-
-        def _is_its_own_cusp(angle: str, cusp_index: int) -> bool:
-            for subject in (self.first_subject, self.second_subject):
-                cusp = subject[house_fields[cusp_index]]["abs_pos"]
-                if abs(((subject[angle]["abs_pos"] - cusp + 180.0) % 360.0) - 180.0) > 1e-9:
-                    return False
-            return True
-
-        angle_takes_its_cusp = {
-            angle: _is_its_own_cusp(angle, index)
-            for angle, index in angle_cusp_index.items()
-            if angle in {point.lower() for point in self.active_points}
-        }
+        # Read off the cusps instead — which is what this did first — and the
+        # angles inherit the house system: the composite Ascendant moved by
+        # exactly half a turn between Placidus and whole sign. The frame is hung
+        # from an *angle* for that reason, so both angles come out independent of
+        # the house system (their arcs from each other are), while a cusp that IS
+        # its angle still lands on it, sitting zero degrees from the origin in
+        # both charts.
+        #
+        # Only the Ascendant and the Midheaven are placed. The other two are
+        # their opposites by definition, in the parents and here.
+        angle_opposites = {"descendant": "ascendant", "imum_coeli": "medium_coeli"}
+        placed_angles: dict[str, float] = {}
+        for angle in ("ascendant", "medium_coeli"):
+            placed_angles[angle] = place_on_composite_frame(
+                self.first_subject[angle]["abs_pos"],
+                self.second_subject[angle]["abs_pos"],
+                composite_angles_frame,
+            )
+        for opposite, angle in angle_opposites.items():
+            placed_angles[opposite] = (placed_angles[angle] + 180.0) % 360.0
 
         for planet in self.active_points:
             planet_lower = planet.lower()
             planets[planet_lower] = {}
-            if angle_takes_its_cusp.get(planet_lower):
-                planets[planet_lower]["abs_pos"] = house_degree_list_ut[
-                    angle_cusp_index[planet_lower]
-                ]
+            if planet_lower in placed_angles:
+                planets[planet_lower]["abs_pos"] = placed_angles[planet_lower]
             else:
                 planets[planet_lower]["abs_pos"] = circular_mean(
                     self.first_subject[planet_lower]["abs_pos"],

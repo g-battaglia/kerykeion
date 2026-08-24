@@ -69,7 +69,10 @@ def _lot_degree(subject: AstrologicalSubjectModel, lot: LotName) -> Optional[flo
         degree = ascendant.abs_pos + sun.abs_pos - moon.abs_pos
     else:
         degree = ascendant.abs_pos + moon.abs_pos - sun.abs_pos
-    return degree % 360.0
+    # The lot is a sum and a difference of three longitudes, so it can come out
+    # negative — this is the site in this file where `% 360` could actually
+    # answer 360.0, and everything downstream inherits whatever it returns.
+    return normalize_degree(degree)
 
 
 def _lob_sequence(start: int) -> Iterator[tuple[int, bool]]:
