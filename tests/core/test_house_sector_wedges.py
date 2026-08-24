@@ -744,3 +744,122 @@ def test_the_gauquelin_wedges_stay_on_their_own_ring(style):
             f"{style}: a sector was drawn on a circle of its own, centred "
             f"({x:.3f}, {y:.3f}) against ({mean_x:.3f}, {mean_y:.3f})"
         )
+
+
+# =============================================================================
+# THE HOUSE YOU CLICKED
+# =============================================================================
+#
+# Everything else in this file measures the wedges. This asks the question the
+# wedges exist to answer: point at the ring, and does the wedge under your finger
+# name the house that longitude is actually in?
+#
+# It is worth having end to end because the failure it guards was invisible to
+# every other kind of check. The wedges were all twelve well-formed, their spans
+# summed to something, the SVG was valid — and on a chart whose houses run
+# backwards, sampling the ring at half-degree steps: Campanus at 70N answered
+# correctly once in 720, the horizon system on the equator and APC at 76N not
+# once in 720, with errors up to 75 degrees from any boundary.
+
+
+def _wedge_geometry(path: str):
+    numbers = [float(value) for value in re.findall(_NUMBER, path)]
+    centre_x, centre_y = _outer_arc_centre(path)
+    # M x1,y1 A rx,ry rot large sweep x2,y2 L x3,y3 A rx,ry ... — the inner radius
+    # is the twelfth number; the tenth and eleventh are a coordinate.
+    outer, inner = numbers[2], numbers[11]
+    sweep = int(numbers[6])
+    start = math.degrees(math.atan2(numbers[1] - centre_y, numbers[0] - centre_x)) % 360.0
+    end = math.degrees(math.atan2(numbers[8] - centre_y, numbers[7] - centre_x)) % 360.0
+    span = (start - end) % 360.0 if sweep == 0 else (end - start) % 360.0
+    return centre_x, centre_y, inner, outer, start, sweep, span
+
+
+#: A point mathematically on a shared boundary belongs to both of the wedges that
+#: meet there, and a rasteriser paints it in both. Compared exactly, it can fall
+#: between the two by a ten-thousandth of a degree of float noise and be covered
+#: by neither — which says something about this reader, not about the drawing.
+_ON_THE_LINE = 1e-6
+
+
+def _covers(geometry, point_x: float, point_y: float) -> bool:
+    centre_x, centre_y, inner, outer, start, sweep, span = geometry
+    radius = math.hypot(point_x - centre_x, point_y - centre_y)
+    if not inner - _ON_THE_LINE <= radius <= outer + _ON_THE_LINE:
+        return False
+    angle = math.degrees(math.atan2(point_y - centre_y, point_x - centre_x)) % 360.0
+    travelled = (start - angle) % 360.0 if sweep == 0 else (angle - start) % 360.0
+    return travelled <= span + _ON_THE_LINE or travelled >= 360.0 - _ON_THE_LINE
+
+
+_HOUSE_ORDINAL = {
+    name: index + 1
+    for index, name in enumerate((
+        "First_House", "Second_House", "Third_House", "Fourth_House", "Fifth_House",
+        "Sixth_House", "Seventh_House", "Eighth_House", "Ninth_House", "Tenth_House",
+        "Eleventh_House", "Twelfth_House",
+    ))
+}
+
+
+@pytest.mark.parametrize(
+    "system,lat,lng",
+    [
+        ("P", 45.0, 9.0),    # an ordinary chart
+        ("C", 70.0, 20.0),   # Campanus inside the polar circle: 1 hit in 720 before
+        ("R", 69.0, 20.0),   # Regiomontanus: 2 in 720
+        ("H", 0.0, 20.0),    # the horizon system on the equator: 0 in 720
+        ("Y", 76.0, 20.0),   # APC: 0 in 720
+        ("W", 51.0, 0.0),    # whole sign, which never reversed
+    ],
+)
+def test_pointing_at_the_ring_names_the_house_that_longitude_is_in(system, lat, lng):
+    """Sample the ring every half degree and read the wedge under the point.
+
+    The only answers allowed to differ from `get_planet_house` are within a
+    degree of a cusp, where the classic engine's wedges are quantised to whole
+    degrees on purpose so that a wedge agrees with the line a reader sees.
+    """
+    from kerykeion.charts.utils import wheel_x, wheel_y
+    from kerykeion.utilities.core import get_planet_house
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Click", 1985, 10, 15, 14, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=lng,
+        houses_system_identifier=system,
+    )
+    cusps = [getattr(subject, name).abs_pos for name in _HOUSE_ATTRS]
+    svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
+        style="classic"
+    )
+    sectors = re.findall(
+        r"<g kr:node='HouseSector' kr:house='(\d+)'[^>]*><path d='([^']+)'", svg
+    )
+    assert len(sectors) == 12
+    geometry = [(int(house), _wedge_geometry(path)) for house, path in sectors]
+
+    seventh = int(cusps[6])
+    _cx, _cy, inner, outer, _s, _w, _sp = geometry[0][1]
+    ring_radius = (inner + outer) / 2.0
+    dropin = geometry[0][1][0] - ring_radius
+
+    far_from_a_cusp = 0
+    for step in range(720):
+        longitude = step * 0.5
+        point_x = wheel_x(0, ring_radius, -seventh + longitude) + dropin
+        point_y = wheel_y(0, ring_radius, -seventh + longitude) + dropin
+        # The frontend takes the last wedge in document order that covers the
+        # point, because that is the one painted on top.
+        owners = [house for house, shape in geometry if _covers(shape, point_x, point_y)]
+        assert owners, f"{system}: nothing covers the ring at {longitude} degrees"
+        if owners[-1] == _HOUSE_ORDINAL[get_planet_house(longitude, cusps)]:
+            continue
+        nearest_cusp = min(
+            min((longitude - cusp) % 360.0, (cusp - longitude) % 360.0) for cusp in cusps
+        )
+        if nearest_cusp > 1.0:
+            far_from_a_cusp += 1
+    assert far_from_a_cusp == 0, (
+        f"{system} at {lat}N: {far_from_a_cusp} points of the ring name a house that "
+        f"is not theirs, and not because of the whole-degree quantisation"
+    )
