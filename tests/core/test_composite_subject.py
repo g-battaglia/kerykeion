@@ -1066,3 +1066,74 @@ def test_every_point_is_still_filed_by_the_shared_reader(anchor):
         if point is None:
             continue
         assert point.house == get_planet_house(point.abs_pos, cusps)
+
+
+def test_a_cusp_is_always_a_midpoint_of_its_pair_even_where_no_ring_exists():
+    """The property that never breaks, held apart from the one that can.
+
+    Where one partner's houses run backwards round the wheel and the other's
+    forwards — one of them born inside the polar circle under a system that
+    reverses there — the twelve cannot be made to cover the circle once, because
+    there is no direction for them to run in. What must still hold is that every
+    composite cusp is a midpoint of its own pair: the near one or the far one,
+    never something in between.
+    """
+    from kerykeion.composite_subject.factory import composite_house_cusps
+    from kerykeion.utilities.core import circular_mean
+
+    forward = AstrologicalSubjectFactory.from_birth_data(
+        "Forward", 1990, 6, 21, 0, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=45.0, lng=9.0,
+    )
+    backward = AstrologicalSubjectFactory.from_birth_data(
+        "Backward", 1990, 6, 21, 0, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=70.0, lng=20.0,
+        houses_system_identifier="C",
+    )
+    first = [getattr(forward, name).abs_pos for name in _CUSP_ATTRS]
+    second = [getattr(backward, name).abs_pos for name in _CUSP_ATTRS]
+
+    from kerykeion.charts.utils import house_spans
+    assert not any(house_spans(first)[1]), "the forward fixture stopped running forwards"
+    assert all(house_spans(second)[1]), "the backward fixture stopped running backwards"
+
+    for anchor in _ANCHORS:
+        cusps = composite_house_cusps(first, second, anchor=anchor)
+        for index, (a, b) in enumerate(zip(first, second)):
+            near = circular_mean(a, b)
+            offset = abs((cusps[index] - near + 180.0) % 360.0 - 180.0)
+            assert min(offset, abs(offset - 180.0)) < 1e-6, (
+                f"{anchor}: cusp {index + 1} is neither midpoint of its pair"
+            )
+
+
+@pytest.mark.parametrize("anchor", _ANCHORS)
+def test_two_charts_whose_houses_run_the_same_way_always_give_a_ring(anchor):
+    """The guarantee, on the case that can actually be guaranteed.
+
+    Both backwards is as good as both forwards: a pair of polar charts under a
+    reversing system makes a composite that runs backwards, and still covers the
+    circle exactly once.
+    """
+    from kerykeion.composite_subject.factory import composite_house_cusps
+
+    def polar(hour: int, lat: float):
+        return [
+            getattr(
+                AstrologicalSubjectFactory.from_birth_data(
+                    "P", 1990, 6, 21, hour, 0, city="X", nation="XX", online=False,
+                    suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=20.0,
+                    houses_system_identifier="C",
+                ),
+                name,
+            ).abs_pos
+            for name in _CUSP_ATTRS
+        ]
+
+    from kerykeion.charts.utils import house_spans
+
+    first, second = polar(0, 70.0), polar(21, 72.0)
+    assert all(house_spans(first)[1]) and all(house_spans(second)[1])
+    assert _winding(composite_house_cusps(first, second, anchor=anchor)) == pytest.approx(
+        1.0, abs=1e-6
+    )
