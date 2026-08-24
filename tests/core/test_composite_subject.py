@@ -11,11 +11,13 @@ Primary test pair: John Lennon + Yoko Ono.
 
 import copy
 import pytest
+from typing import get_args
 from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.composite_subject.factory import CompositeSubjectFactory
 from kerykeion.schemas import KerykeionException
+from kerykeion.schemas.literals import Houses
 
 
 # =============================================================================
@@ -1341,3 +1343,68 @@ def test_the_winding_test_reads_a_hair_negative_gap_as_zero():
     ring += [180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
     assert (ring[5] - ring[4]) % 360.0 == 360.0, "the fixture no longer trips the modulo"
     assert _cusp_ring_winds_once(ring)
+
+
+def test_two_charts_that_run_opposite_ways_keep_their_angles_on_their_cusps():
+    """One partner inside the polar circle, one outside: there is no shared frame.
+
+    Both of these put the Midheaven exactly on their own tenth cusp, so the
+    composite must too. Placing the angles on a frame spanning two charts that
+    run opposite ways gave a composite Midheaven in the FOURTH house — on a chart
+    whose twelve cusps tiled perfectly, so no guard anywhere fired. Whatever the
+    anchor, and whichever of the two angles is examined.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=68.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 4, 0, city="X", nation="XX", lat=68.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+    )
+    from kerykeion.charts.utils import house_spans
+
+    directions = {
+        all(house_spans([getattr(parent, name).abs_pos for name in _CUSP_ATTRS])[1])
+        for parent in (first, second)
+    }
+    assert len(directions) == 2, "the fixture no longer has one ring each way"
+    for parent in (first, second):
+        assert parent.medium_coeli.abs_pos == pytest.approx(parent.tenth_house.abs_pos, abs=1e-9)
+        assert parent.ascendant.abs_pos == pytest.approx(parent.first_house.abs_pos, abs=1e-9)
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        assert model.medium_coeli.abs_pos == pytest.approx(cusps[9], abs=1e-9), anchor
+        assert model.ascendant.abs_pos == pytest.approx(cusps[0], abs=1e-9), anchor
+        assert model.medium_coeli.house == "Tenth_House", anchor
+
+
+def test_a_composite_of_two_tangled_charts_still_builds():
+    """Sunshine/alt at 66N crosses its own cusps, and two of those average into a
+    ring with gaps in it. The shared house reader raises on a gap, correctly — for
+    an ordinary chart that is a bug worth stopping on. A composite is the one
+    place the condition is reachable by construction, so it answers instead: the
+    house whose cusp the point last passed, said out loud on the logger.
+
+    Before the composite was taught to use the shared reader it had a private copy
+    that returned the first house for these without a word. This is not that.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=66.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="i",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 23, 0, city="X", nation="XX", lat=66.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="i",
+    )
+    from kerykeion.charts.utils import house_spans
+
+    _spans, reversed_wedges = house_spans([getattr(first, name).abs_pos for name in _CUSP_ATTRS])
+    assert len(set(reversed_wedges)) > 1, "the fixture no longer crosses its own cusps"
+
+    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    assert model.sun.house in set(get_args(Houses))
