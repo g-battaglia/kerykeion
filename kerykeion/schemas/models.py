@@ -1240,6 +1240,11 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
     composite_chart_type: str
+    #: Which angle kept its near midpoint when the cusp ring had to be repaired.
+    #: Recorded because the choice can turn the whole house frame by half a turn,
+    #: so a chart that carries no note of it cannot be reproduced. None on a
+    #: Davison chart, which is cast as an ordinary chart and never needs one.
+    house_anchor: Optional[str] = None
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
     # represent a real moment; None when not applicable (the midpoint method

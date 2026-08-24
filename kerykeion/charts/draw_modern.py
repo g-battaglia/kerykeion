@@ -2250,9 +2250,10 @@ def _draw_house_sectors_modern(
     spans, reversed_wedges = house_spans(wheel_angles)
     # And any house too thin to click gets the same minimum the classic engine
     # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
-    # together here — but Campanus at 68N puts two of them 0.163 degrees apart on
-    # its own (0.108 at 67.5N), which is a house nobody will ever hit with a
-    # pointer.
+    # together here — but Campanus inside the polar circle brings two of them
+    # arbitrarily close on its own: sweeping five latitudes between 67N and 69N at
+    # five-minute steps, the closest pair measured 0.0002 degrees. That is a house
+    # no pointer will ever find.
     wheel_angles, spans = separate_collapsed_wedges(
         wheel_angles, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
     )

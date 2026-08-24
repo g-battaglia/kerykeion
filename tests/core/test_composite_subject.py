@@ -1137,3 +1137,69 @@ def test_two_charts_whose_houses_run_the_same_way_always_give_a_ring(anchor):
     assert _winding(composite_house_cusps(first, second, anchor=anchor)) == pytest.approx(
         1.0, abs=1e-6
     )
+
+
+def test_two_backward_parents_whose_ring_already_tiles_are_left_alone():
+    """A backward ring is a ring. The repair must recognise one and stand down.
+
+    Read only forwards, twelve backward houses measure eleven turns, the "leave
+    it alone" test says no, and the repair rebuilds a chart that was already
+    correct — moving cusps that had nothing wrong with them.
+    """
+    from kerykeion.charts.utils import house_spans
+    from kerykeion.composite_subject.factory import composite_house_cusps
+    from kerykeion.utilities.core import circular_mean
+
+    def polar(hour: int, lat: float):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "P", 1990, 6, 21, hour, 0, city="X", nation="XX", online=False,
+            suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=20.0,
+            houses_system_identifier="C",
+        )
+        return [getattr(subject, name).abs_pos for name in _CUSP_ATTRS]
+
+    first, second = polar(0, 70.0), polar(21, 72.0)
+    assert all(house_spans(first)[1]) and all(house_spans(second)[1])
+    naive = [circular_mean(a, b) for a, b in zip(first, second)]
+    assert _winding(naive) == pytest.approx(1.0, abs=1e-6), "fixture already needs repair"
+
+    for anchor in _ANCHORS:
+        assert composite_house_cusps(first, second, anchor=anchor) == naive
+
+
+def test_the_composite_angles_do_not_depend_on_the_house_system():
+    """An angle is where the ecliptic meets the horizon, and no house system moves it.
+
+    "An angle IS its cusp" holds only under a quadrant system. Under whole sign,
+    equal, Morinus or meridian houses the first cusp is not the Ascendant and the
+    tenth is not the Midheaven — this library models them separately, and says so
+    in its own polar warning. Reading the angles off the cusps regardless made the
+    composite Ascendant move 167 degrees between Morinus and Placidus for one
+    ordinary pair, and 173 for the Midheaven under whole sign.
+    """
+    def composite_for(system: str):
+        first = AstrologicalSubjectFactory.from_birth_data(
+            "J", 1940, 10, 9, 18, 30, city="X", nation="XX", lat=53.41, lng=-2.97,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=system,
+        )
+        second = AstrologicalSubjectFactory.from_birth_data(
+            "P", 1942, 6, 18, 14, 0, city="X", nation="XX", lat=53.41, lng=-2.97,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=system,
+        )
+        return CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+
+    ascendants = {}
+    for system in ("P", "C", "K", "O", "R", "B", "W", "A", "M", "X"):
+        model = composite_for(system)
+        ascendants[system] = round(model.ascendant.abs_pos, 9)
+        # And where the parents DID make an angle its own cusp, the composite
+        # keeps them one point — that is the property the repair has to preserve.
+        first_house_is_ascendant = system in {"P", "C", "K", "O", "R", "B", "A"}
+        if first_house_is_ascendant:
+            assert model.ascendant.abs_pos == pytest.approx(
+                model.first_house.abs_pos, abs=1e-9
+            ), system
+
+    assert len(set(ascendants.values())) == 1, ascendants

@@ -40,7 +40,7 @@ License: AGPL-3.0
 
 import logging
 
-from typing import Sequence, Union
+from typing import Sequence, Union, get_args
 
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
@@ -345,6 +345,15 @@ class CompositeSubjectFactory:
         """
         self.model: Union[CompositeSubjectModel, None] = None
         self.composite_chart_type = "Midpoint"
+        # Checked, because the branch that reads it treats everything it does not
+        # recognise as "auto": a capital A in "Ascendant" would have been accepted
+        # in silence and handed back a house frame half a turn from the one asked
+        # for. This factory already refuses an unknown house system out loud.
+        if house_anchor not in get_args(CompositeHouseAnchor):
+            raise KerykeionException(
+                f"'{house_anchor}' is not a valid composite house anchor! "
+                f"Available anchors are: {get_args(CompositeHouseAnchor)}"
+            )
         self.house_anchor: CompositeHouseAnchor = house_anchor
 
         for _label, _subject in (("first_subject", first_subject), ("second_subject", second_subject)):
@@ -568,21 +577,49 @@ class CompositeSubjectFactory:
 
         # Planets
         planets = {}
-        # An angle IS its cusp: the Ascendant is the first, the Midheaven the
-        # tenth. Averaged on its own it would part company with the ring the
-        # moment the ring had to be repaired — half a circle away, with the
-        # Midheaven no longer opening the tenth house — so the four are read off
-        # the cusps rather than computed a second time.
+        # The four angles have to move with the ring — an angle half a circle from
+        # the house it opens is the defect this replaced — but only where they
+        # ARE the ring. Under a quadrant system the first cusp is the Ascendant
+        # and the tenth is the Midheaven, and the composite has to keep that
+        # true. Under whole sign, equal, Morinus or meridian houses they are
+        # different points: the angles are where the ecliptic meets the horizon
+        # and the meridian, which is what this library's own polar warning says,
+        # and no house system moves them. Reading them off the cusps regardless
+        # made the composite Ascendant depend on the house system — 167 degrees
+        # between Morinus and Placidus on one ordinary pair.
+        #
+        # Which of the two it is, is asked of the parents rather than of a list
+        # of system identifiers kept somewhere: if an angle sits exactly on its
+        # own cusp in BOTH charts, then this system makes them one point and the
+        # composite keeps them one point. Otherwise the angle is a midpoint of
+        # its own pair and nothing but that.
         angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
+        house_fields = [house.lower() for house in self.first_subject.houses_names_list]
+
+        def _is_its_own_cusp(angle: str, cusp_index: int) -> bool:
+            for subject in (self.first_subject, self.second_subject):
+                cusp = subject[house_fields[cusp_index]]["abs_pos"]
+                if abs(((subject[angle]["abs_pos"] - cusp + 180.0) % 360.0) - 180.0) > 1e-9:
+                    return False
+            return True
+
+        angle_takes_its_cusp = {
+            angle: _is_its_own_cusp(angle, index)
+            for angle, index in angle_cusp_index.items()
+            if angle in {point.lower() for point in self.active_points}
+        }
 
         for planet in self.active_points:
             planet_lower = planet.lower()
             planets[planet_lower] = {}
-            if planet_lower in angle_cusp_index:
-                planets[planet_lower]["abs_pos"] = house_degree_list_ut[angle_cusp_index[planet_lower]]
+            if angle_takes_its_cusp.get(planet_lower):
+                planets[planet_lower]["abs_pos"] = house_degree_list_ut[
+                    angle_cusp_index[planet_lower]
+                ]
             else:
                 planets[planet_lower]["abs_pos"] = circular_mean(
-                    self.first_subject[planet_lower]["abs_pos"], self.second_subject[planet_lower]["abs_pos"]
+                    self.first_subject[planet_lower]["abs_pos"],
+                    self.second_subject[planet_lower]["abs_pos"],
                 )
             self[planet_lower] = get_kerykeion_point_from_degree(
                 planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint"

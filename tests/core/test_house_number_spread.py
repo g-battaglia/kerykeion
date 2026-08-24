@@ -581,6 +581,7 @@ def test_the_modern_ring_centres_its_numbers_on_their_own_houses(system, lat, ln
     houses = [getattr(subject, name) for name in _HOUSE_ATTRS]
     seventh = houses[6].abs_pos
     angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh) for house in houses]
+    checked = 0
     for index in range(12):
         arc = _house_arc_containing(angles, index)
         if arc is None:
@@ -597,6 +598,10 @@ def test_the_modern_ring_centres_its_numbers_on_their_own_houses(system, lat, ln
         assert inside <= span + 1e-6, (
             f"{system}: house {index + 1} is labelled {inside:.2f}deg into {span:.2f}deg"
         )
+        checked += 1
+    # Without this the narrow-house skip could swallow every house on a crowded
+    # chart and the case would pass having asserted nothing at all.
+    assert checked >= 2, f"{system}: only {checked} houses were wide enough to check"
 
 
 def test_the_outer_ring_follows_a_second_subject_that_runs_backwards():

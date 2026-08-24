@@ -607,15 +607,21 @@ def _rendered_spans(system: str, lat: float, lng: float, style: str) -> list[flo
 @pytest.mark.parametrize(
     "system,lat",
     [
-        ("i", 67.0),   # Sunshine/alt: six dead wedges in one chart
+        ("i", 67.0),   # Sunshine/alt: six dead wedges in one chart before the guard
         ("T", 70.0),   # Polich/Page
-        ("i", 65.0),
-        ("T", 67.0),
+        ("i", 66.5),  # both engines force six wedges here
+        ("T", 74.0),
     ],
 )
 @pytest.mark.parametrize("style", ["classic", "modern"])
 def test_a_chart_whose_cusps_cross_still_gives_every_house_a_target(system, lat, style):
-    """No wedge of zero area, and none under the minimum, however tangled."""
+    """No wedge of zero area, and none under the minimum, however tangled.
+
+    Every case here has to actually reach the guard, or it is asserting that a
+    chart which never needed it came out fine. Two of the four fixtures used to
+    do exactly that — the guard fired zero times on them in either engine — so
+    the test below counts the wedges it had to widen and refuses to pass on none.
+    """
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Tangled", 1985, 10, 15, 14, 0, city="X", nation="XX", online=False,
         suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=25.0,
@@ -628,6 +634,7 @@ def test_a_chart_whose_cusps_cross_still_gives_every_house_a_target(system, lat,
         r"<g kr:node='HouseSector' kr:house='(\d+)'[^>]*><path d='([^']+)'", svg
     )
     assert len(sectors) == 12
+    widened = 0
     for house, path in sectors:
         numbers = [float(value) for value in re.findall(_NUMBER, path)]
         start = (numbers[0], numbers[1])
@@ -643,3 +650,36 @@ def test_a_chart_whose_cusps_cross_still_gives_every_house_a_target(system, lat,
         # The path writes six decimals, so the recovered angle carries about
         # 1.4e-6 of its own; the tolerance is that, not slack in the rule.
         assert span >= MINIMUM_WEDGE_SPAN_DEGREES - 1e-5, f"house {house}: {span:.6f} deg"
+        if abs(span - MINIMUM_WEDGE_SPAN_DEGREES) < 1e-5:
+            widened += 1
+    assert widened, (
+        f"{system} at {lat}N in {style} never reached the guard, so this case "
+        f"proves nothing about it — pick a chart whose cusps actually cross"
+    )
+
+
+def test_a_tangled_ring_is_not_rebuilt_around_a_direction_it_does_not_have():
+    """The separator hands back what it was given when the cusps cross.
+
+    Its rebuild walks the twelve in one direction, adding each width to the last.
+    That only means something on a ring that runs one way. On a ring whose cusps
+    cross there is no such direction, and walking it anyway would move every
+    boundary off the cusp line it was drawn from to build a tiling the cusps do
+    not describe. The thin wedges are widened where they are, one at a time, by
+    the guard in the drawing loop.
+
+    Sunshine/alt at 67N, quantised: two of the twelve widths are zero, so the
+    separator is genuinely asked to do something and declines.
+    """
+    from kerykeion.charts.utils import house_spans, separate_collapsed_wedges
+
+    tangled = [-180.0, -179.0, -179.0, -180.0, -180.0, -180.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    spans, reversed_wedges = house_spans(tangled)
+    assert len(set(reversed_wedges)) > 1, "fixture no longer has crossing cusps"
+    assert min(spans) < MINIMUM_WEDGE_SPAN_DEGREES, "fixture no longer asks for a widening"
+
+    boundaries, widths = separate_collapsed_wedges(
+        tangled, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
+    )
+    assert boundaries == list(tangled)
+    assert widths == list(spans)
