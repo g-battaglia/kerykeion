@@ -2768,3 +2768,59 @@ class TestHouseProvenanceInTheReport:
             report = ReportGenerator(subject).generate_report()
             assert "| 30.00°" not in report
             assert " 30.00° " not in report
+
+
+def test_the_houses_row_reads_this_chart_s_fallback_and_not_the_first_one():
+    """Asking for Gauquelin sectors adds a SECOND fallback record, and it is not
+    about the houses.
+
+    Above the polar circle the 36-sector ring is recomputed at a clamped
+    latitude, which files a record of its own listing "house_cusps" like any
+    other. Taking the first record in the list therefore made a polar whole-sign
+    chart — whose twelve cusps are perfectly well defined and were not touched —
+    report them as "substituted for Gauquelin sectors". The subject has an
+    accessor that matches on the requested identifier; the row uses it.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.report.generator import ReportGenerator
+
+    def houses_row(system):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=system, calculate_gauquelin=True,
+        )
+        assert any(
+            record.requested_house_system_identifier == "G"
+            for record in subject.polar_house_fallbacks
+        ), "the fixture no longer files an ancillary Gauquelin record"
+        return next(
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        )
+
+    # Whole sign is defined at every latitude: nothing was substituted.
+    assert "substituted" not in houses_row("W")
+    # Placidus is not, and that substitution is the one the row exists to report.
+    assert "substituted for Placidus" in houses_row("P")
+
+
+def test_a_star_name_with_padding_reaches_the_ephemeris_stripped():
+    """The slug was stripped and the ephemeris name was not.
+
+    A padded request deduped as the same star — so a caller could not even ask
+    twice to work around it — and then failed to resolve, counting against the
+    unresolved share that decides whether the catalog warning fires.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+
+    def sun_star_names(requested):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            active_fixed_stars=requested,
+        )
+        return sorted(star.name for star in (subject.fixed_stars or []))
+
+    assert sun_star_names([" Regulus"]) == sun_star_names(["Regulus"])
+    assert sun_star_names(["Regulus"]), "the fixture resolves no star at all"

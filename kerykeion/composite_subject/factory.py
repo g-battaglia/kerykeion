@@ -727,6 +727,11 @@ class CompositeSubjectFactory:
             self.first_subject == other.first_subject
             and self.second_subject == other.second_subject
             and self.name == other.name
+            # Chart-defining, not a preference: two factories over the same pair
+            # under different anchors can produce house frames half a turn apart,
+            # so calling them equal collapses two different charts in any dict,
+            # set or cache keyed on them.
+            and self.house_anchor == other.house_anchor
         )
 
     def __hash__(self):
@@ -749,6 +754,7 @@ class CompositeSubjectFactory:
                 self.second_subject.name,
                 self.second_subject.julian_day,
                 self.name,
+                self.house_anchor,
             )
         )
 
@@ -756,10 +762,20 @@ class CompositeSubjectFactory:
         """
         Create a shallow copy of the composite subject.
 
+        The anchor travels with it. Rebuilding without it silently reverts to
+        ``"auto"``, and on a pair whose angles are opposed that turns the copy's
+        cusp ring half a circle away from the original's.
+
         Returns:
-            CompositeSubjectFactory: New instance with the same subjects and name.
+            CompositeSubjectFactory: New instance with the same subjects, name
+            and house anchor.
         """
-        return CompositeSubjectFactory(self.first_subject, self.second_subject, self.name)
+        return CompositeSubjectFactory(
+            self.first_subject,
+            self.second_subject,
+            self.name,
+            house_anchor=self.house_anchor,
+        )
 
     def __setitem__(self, key, value):
         """

@@ -32,6 +32,7 @@ from kerykeion.chart_data.factory import ChartDataFactory
 
 # Import test subject definitions
 from tests.data.test_subjects_matrix import (
+    HOUSE_SYSTEM_NAMES,
     SIDEREAL_THEME_COMBOS,
     TEMPORAL_SUBJECTS,
     GEOGRAPHIC_SUBJECTS,
@@ -294,16 +295,10 @@ def generate_cross_combination_charts():
         except Exception as e:
             print(f"  ERROR generating {sidereal_mode} {theme}: {e}")
 
-    # House Systems × Synastry combinations
-    house_system_names = {
-        "K": "Koch",
-        "W": "Whole Sign",
-        "R": "Regiomontanus",
-        "C": "Campanus",
-        "O": "Porphyry",
-    }
-
-    for house_id, house_name in house_system_names.items():
+    # House Systems × Synastry combinations, from the shared matrix the test
+    # reads: a second copy here is how the sidereal list came to ask for ten
+    # combinations and generate three.
+    for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
         try:
             first_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon - {house_name} Synastry",
@@ -329,7 +324,7 @@ def generate_cross_combination_charts():
             print(f"  ERROR generating {house_name} synastry: {e}")
 
     # House Systems × Transit combinations
-    for house_id, house_name in house_system_names.items():
+    for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
         try:
             first_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon - {house_name} Transit",

@@ -3437,7 +3437,11 @@ class AstrologicalSubjectFactory:
             requested_fixed_stars = data.get("_active_fixed_stars") or []
             seen_star_slugs: set[str] = set()
             for star_name in requested_fixed_stars:
-                slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
+                # Stripped once, here: the slug was stripped and the ephemeris
+                # name was not, so " Regulus" deduped as Regulus and then failed
+                # to resolve, counting against the unresolved share.
+                star_name = star_name.strip()
+                slug = star_name.lower().replace(" ", "_").replace("-", "_")
                 if not slug or slug in seen_star_slugs:
                     continue
                 seen_star_slugs.add(slug)

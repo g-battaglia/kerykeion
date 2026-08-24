@@ -1369,3 +1369,35 @@ class TestResolveSubjectLocalMomentSeconds:
         year, month, day, hour = resolve_subject_local_moment(subject)
         assert (year, month, day) == (1990, 6, 15)
         assert hour == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+
+def test_the_documented_helpers_import_from_the_flat_facade():
+    """`house_spans` and `normalize_degree` are documented as public helpers of
+    `kerykeion.utilities`, and moving them into `utilities.core` left the flat
+    facade without them: the documented import raised ImportError."""
+    from kerykeion.utilities import house_spans, normalize_degree
+
+    assert normalize_degree(-1e-15) == 0.0
+    spans, reversed_wedges = house_spans([30.0 * index for index in range(12)])
+    assert sum(spans) == pytest.approx(360.0, abs=1e-9)
+    assert set(reversed_wedges) == {False}
+
+
+def test_a_formatted_longitude_never_leaves_its_own_sign():
+    """Rounding must not move a longitude into the sign next door.
+
+    149.99687 is Leo, and `f"{v:.2f}"` prints "150.00" — zero degrees of Virgo —
+    on a row whose sign label still says Leo. The guard clamps at the sign's
+    ceiling; this holds it at both ends, for every sign, including the values
+    that sit a hair inside either boundary.
+    """
+    from kerykeion.utilities.core import format_absolute_degrees
+
+    assert format_absolute_degrees(149.99687) == "149.99"
+
+    for index in range(12):
+        floor = 30.0 * index
+        for offset in (0.0, 1e-9, 0.001, 0.004, 0.005, 14.9, 29.99, 29.995, 29.999):
+            value = floor + offset
+            formatted = float(format_absolute_degrees(value))
+            assert floor <= formatted < floor + 30.0, (value, formatted)

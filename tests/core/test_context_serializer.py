@@ -1714,3 +1714,34 @@ def test_the_axes_are_listed_whatever_the_point_preset_is():
     assert "<axes" in context
     for angle in ("Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli"):
         assert f'name="{angle}"' in context, angle
+
+
+def test_a_clamped_polar_fallback_says_which_latitude_it_used():
+    """Requested and used name the same system, so the latitude is the whole story.
+
+    A polar Gauquelin ring is recomputed at a clamped latitude under its own
+    name: the element said "Gauquelin sectors" twice, printed the latitude that
+    was ASKED for, and left out both the strategy and the latitude actually used.
+    A model reading that cannot tell anything happened, let alone reproduce it.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="W", calculate_gauquelin=True,
+    )
+    clamped = next(
+        record for record in subject.polar_house_fallbacks
+        if record.strategy == "clamp_latitude"
+    )
+    assert clamped.used_latitude != clamped.latitude, "the fixture no longer clamps"
+
+    line = next(
+        line for line in astrological_subject_to_context(subject).splitlines()
+        if "polar_house_fallback" in line
+    )
+    assert 'strategy="clamp_latitude"' in line
+    assert f'latitude="{clamped.latitude:.4f}"' in line
+    assert f'used_latitude="{clamped.used_latitude:.4f}"' in line

@@ -57,7 +57,7 @@ from kerykeion.schemas.literals import (
     PerspectiveType,
     AspectMovementType,
 )
-from kerykeion.schemas.literals import ReturnType, DominantMethod
+from kerykeion.schemas.literals import ReturnType, DominantMethod, CompositeHouseAnchor
 
 # Type alias for any astrological subject model (birth chart, composite, or return)
 AnySubjectModel = Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
@@ -1244,7 +1244,7 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     #: Recorded because the choice can turn the whole house frame by half a turn,
     #: so a chart that carries no note of it cannot be reproduced. None on a
     #: Davison chart, which is cast as an ordinary chart and never needs one.
-    house_anchor: Optional[str] = None
+    house_anchor: Optional[CompositeHouseAnchor] = None
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
     # represent a real moment; None when not applicable (the midpoint method

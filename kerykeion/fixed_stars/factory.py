@@ -299,8 +299,12 @@ class FixedStarDiscoveryFactory:
             scanned = len(seen_names)
             unresolved_share = unresolved / scanned if scanned else 0.0
             # An empty result is worth repeating (it is the broken-install case);
-            # a partial one is said once and then left alone.
-            if not prominent or not _swisseph_catalog_warning_emitted:
+            # a partial one is said once and then left alone. "Empty" is the
+            # backend resolving nothing, not the search finding no conjunction:
+            # a small orb legitimately returns none while the catalog resolved
+            # fine, and keying on that repeated the warning on every call.
+            resolved_nothing = unresolved == scanned
+            if resolved_nothing or not _swisseph_catalog_warning_emitted:
                 _swisseph_catalog_warning_emitted = True
                 logger.warning(
                     "FixedStarDiscoveryFactory could not resolve %d of %d catalog stars "

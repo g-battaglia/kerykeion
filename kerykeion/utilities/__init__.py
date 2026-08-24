@@ -19,6 +19,8 @@ modules genuinely import them: `_POLAR_LATITUDE_LIMIT` by the ephemeris backend,
 """
 
 from .core import (
+    house_spans,
+    normalize_degree,
     CRITICAL,
     DEBUG,
     ERROR,
@@ -99,6 +101,8 @@ from .core import (
 )
 
 __all__ = [
+    "house_spans",
+    "normalize_degree",
     "HOUSE_FIELD_NAMES",
     "TERRESTRIAL_PERSPECTIVES",
     "calculate_moon_phase",

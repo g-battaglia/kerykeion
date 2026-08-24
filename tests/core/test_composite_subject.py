@@ -2027,3 +2027,68 @@ def test_a_frame_that_could_not_repair_the_ring_is_not_used_for_the_angles():
                 ),
                 abs=1e-9,
             ), (anchor, angle)
+
+
+def test_the_anchor_travels_with_the_factory_and_tells_two_apart():
+    """`house_anchor` is chart-defining state, so copying and comparing must carry it.
+
+    A factory built with one anchor and copied came back holding `"auto"`, which
+    on a pair whose angles are opposed draws the copy's houses half a circle from
+    the original's. And two factories over the same pair under different anchors
+    compared equal and hashed equal, so a dict, a set or a cache keyed on them
+    kept one chart and dropped the other.
+    """
+    import copy
+
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1987, 10, 22, 20, 40, city="X", nation="XX", lat=-71.9297883354,
+        lng=17.8568718463, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="O",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1913, 10, 26, 1, 56, city="X", nation="XX", lat=18.884737657,
+        lng=115.7524154677, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="O",
+    )
+    on_ascendant = CompositeSubjectFactory(first, second, house_anchor="ascendant")
+    on_midheaven = CompositeSubjectFactory(first, second, house_anchor="midheaven")
+
+    # The fixture earns its place only while the two anchors really disagree.
+    assert _cusps_of(on_ascendant.get_midpoint_composite_subject_model()) != approx(
+        _cusps_of(on_midheaven.get_midpoint_composite_subject_model()), abs=1e-9
+    ), "the fixture no longer separates the two anchors"
+
+    assert copy.copy(on_midheaven).house_anchor == "midheaven"
+    assert _cusps_of(
+        copy.copy(on_midheaven).get_midpoint_composite_subject_model()
+    ) == approx(_cusps_of(on_midheaven.get_midpoint_composite_subject_model()), abs=1e-9)
+
+    assert on_ascendant != on_midheaven
+    assert hash(on_ascendant) != hash(on_midheaven)
+    assert len({on_ascendant, on_midheaven}) == 2
+
+
+def test_a_composite_model_will_not_carry_an_anchor_the_factory_would_refuse():
+    """The factory raises on an unknown anchor; a deserialised model must too.
+
+    Typed as a bare string the field accepted `"invalid"`, and the generated JSON
+    schema advertised no enum at all — so a payload could carry an anchor nothing
+    downstream can act on, through a door the constructor keeps shut.
+    """
+    import pydantic
+
+    from kerykeion.schemas.models import CompositeSubjectModel
+
+    first, second = _pair(0, 7)
+    payload = CompositeSubjectFactory(
+        first, second, house_anchor="midheaven"
+    ).get_midpoint_composite_subject_model().model_dump()
+
+    assert CompositeSubjectModel.model_validate(payload).house_anchor == "midheaven"
+
+    payload["house_anchor"] = "invalid"
+    with pytest.raises(pydantic.ValidationError):
+        CompositeSubjectModel.model_validate(payload)
+
+    schema = CompositeSubjectModel.model_json_schema()
+    assert "house_anchor" in schema["properties"]

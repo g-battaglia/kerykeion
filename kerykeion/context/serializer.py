@@ -480,17 +480,23 @@ def astrological_subject_to_context(
     # the polar circle a quadrant system is undefined and the cusps are recomputed
     # with Porphyry; a context that reports only the system actually used has a
     # model writing about a division the user did not choose.
+    # The strategy and the latitude it used, not only the one asked for: a polar
+    # Gauquelin ring is recomputed at a CLAMPED latitude under the same system
+    # name, so requested and used agree and the only thing distinguishing the
+    # record is that 78 degrees became 66. Emit them and the ring is reproducible;
+    # omit them and the element says a substitution happened without saying what.
     for fallback in getattr(subject, "polar_house_fallbacks", None) or ():
-        lines.append(
-            "  "
-            + _sc(
-                "polar_house_fallback",
-                requested=getattr(fallback, "requested_house_system_name", ""),
-                used=getattr(fallback, "used_house_system_name", ""),
-                latitude=f"{getattr(fallback, 'latitude', 0.0):.4f}",
-                affects=",".join(getattr(fallback, "affects", None) or ()),
-            )
-        )
+        used_latitude = getattr(fallback, "used_latitude", None)
+        attrs = {
+            "strategy": getattr(fallback, "strategy", ""),
+            "requested": getattr(fallback, "requested_house_system_name", ""),
+            "used": getattr(fallback, "used_house_system_name", ""),
+            "latitude": f"{getattr(fallback, 'latitude', 0.0):.4f}",
+            "affects": ",".join(getattr(fallback, "affects", None) or ()),
+        }
+        if used_latitude is not None:
+            attrs["used_latitude"] = f"{used_latitude:.4f}"
+        lines.append("  " + _sc("polar_house_fallback", **attrs))
 
     # Composite chart specific info
     if isinstance(subject, CompositeSubjectModel):

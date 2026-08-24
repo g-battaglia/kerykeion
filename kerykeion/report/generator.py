@@ -1022,15 +1022,20 @@ class ReportGenerator:
         # The system actually used, so a polar chart is not tabulated as the
         # one that was asked for but could not be cast.
         houses_system = subject.effective_houses_system_name
-        for fallback in getattr(subject, "polar_house_fallbacks", None) or ():
-            # A chart asked for in Placidus above the polar circle is cast in
-            # Porphyry, and saying only "Porphyry" describes a division the
-            # reader did not choose. The subject records why; this is the one
-            # place a reader would look for it.
-            requested = getattr(fallback, "requested_house_system_name", None)
-            if requested and requested != houses_system:
-                houses_system = f"{houses_system} (substituted for {requested})"
-            break
+        # A chart asked for in Placidus above the polar circle is cast in
+        # Porphyry, and saying only "Porphyry" describes a division the reader
+        # did not choose. The subject records why; this is the one place a reader
+        # would look for it.
+        #
+        # Through the subject's own accessor, not the first record in the list:
+        # asking for Gauquelin sectors alongside the houses adds a SECOND,
+        # ancillary record for the 36-sector ring, which degrades on its own. Take
+        # the first and a polar whole-sign chart with Gauquelin enabled reports
+        # its perfectly undegraded cusps as "substituted for Gauquelin sectors".
+        main_fallback = getattr(subject, "_main_house_fallback", lambda: None)()
+        requested = getattr(main_fallback, "requested_house_system_name", None)
+        if requested and requested != houses_system:
+            houses_system = f"{houses_system} (substituted for {requested})"
         settings_data.append(["Houses System", houses_system])
         settings_data.append(["Perspective Type", str(subject.perspective_type)])
 

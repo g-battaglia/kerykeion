@@ -410,9 +410,14 @@ def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
     if abs(sum(backward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
         return backward, [True] * 12
 
-    shorter = [ahead <= behind for ahead, behind in zip(forward, backward)]
+    # strict: all three are twelve long by construction, and a silent truncation
+    # here would return a ring with fewer houses than it was given.
+    shorter = [ahead <= behind for ahead, behind in zip(forward, backward, strict=True)]
     return (
-        [ahead if pick else behind for ahead, behind, pick in zip(forward, backward, shorter)],
+        [
+            ahead if pick else behind
+            for ahead, behind, pick in zip(forward, backward, shorter, strict=True)
+        ],
         [not pick for pick in shorter],
     )
 
