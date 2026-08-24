@@ -2173,3 +2173,39 @@ def test_auto_does_not_depend_on_which_subject_was_named_first():
             composite_house_cusps(second, first, anchor, second_angles, first_angles),
             abs=1e-9,
         ), anchor
+
+
+def test_a_parent_that_is_not_a_house_division_admits_no_frame():
+    """A frame is a common reading of two rings, so both have to be rings.
+
+    Polich/Page at 68S manages twelve arcs totalling 360.198 degrees with mixed
+    directions — not a house division at all. Paired with a chart that is one, a
+    ring placed on the frame can still come out winding once by accident, and
+    then it was accepted: held on the Midheaven this composite came back looking
+    anchored with the Sun in the second house, held on either other angle it came
+    back gapped with the Sun in the ninth. Nothing about the two subjects changed
+    between those three calls, and the anchor decides nothing on such a pair.
+    """
+    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+
+    def polich(name, lat, hour):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, hour, 0, city="X", nation="XX", lat=lat, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="T",
+        )
+
+    first, second = polich("A", -89.0, 0), polich("B", -68.0, 9)
+    assert _cusp_ring_winds_once([getattr(first, name).abs_pos for name in _CUSP_ATTRS])
+    assert not _cusp_ring_winds_once(
+        [getattr(second, name).abs_pos for name in _CUSP_ATTRS]
+    ), "the fixture's second parent is a house division again"
+
+    answers = set()
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        assert model.house_frame == "gapped", anchor
+        answers.add((tuple(round(v, 9) for v in _cusps_of(model)), model.sun.house))
+    assert len(answers) == 1, "the anchor still decides a chart it cannot anchor"

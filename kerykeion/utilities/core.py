@@ -450,6 +450,26 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
         if abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0) < 1e-9:
             return _HOUSE_NAMES_TUPLE[i]
 
+    # Where the twelve ARE a house division, ask the one function that decides
+    # that — the same one the wheel is drawn from. Choosing the shorter arc for
+    # each pair independently is the right rule only on a ring that is not a
+    # division: on one that is, it can contradict the division itself. Twelve
+    # cusps at 0, 200, 210 … 300 run forwards and total 360, with a first house
+    # 200 degrees wide; read pair by pair, that house becomes the opposite 160
+    # degrees and longitude 100 — inside it, and drawn inside it — belongs to no
+    # house at all. No real chart reaches this (the widest arc measured across 23
+    # systems and nine latitudes is 179.2388 degrees) but the two functions
+    # disagreeing about the same ring is worth closing, not documenting.
+    spans, reversed_wedges = house_spans(houses_degree_ut_list)
+    if len(set(reversed_wedges)) == 1 and abs(sum(spans) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        for i in range(n):
+            if spans[i] <= 0.0:
+                continue
+            start = houses_degree_ut_list[i]
+            offset = (start - planet_degree) % 360.0 if reversed_wedges[i] else (planet_degree - start) % 360.0
+            if offset < spans[i]:
+                return _HOUSE_NAMES_TUPLE[i]
+
     best_index = None
     best_span = 360.0 + 1.0
     for i in range(n):

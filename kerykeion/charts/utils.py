@@ -1130,12 +1130,14 @@ def draw_house_sectors(
     # model said the ninth, the wheel answered the twelfth.
     #
     # Painting widest first puts the narrowest on top, which is the reader's own
-    # rule. On a ring that tiles nothing overlaps, so the order is left alone and
-    # an ordinary chart comes out of here byte for byte as before.
+    # rule. Ties go the same way it breaks them: it scans upwards and keeps the
+    # first of two equal arcs, so the LOWER house number must end up on top, which
+    # means painting it last. On a ring that tiles nothing overlaps, so the order
+    # is left alone and an ordinary chart comes out of here byte for byte.
     if _wedges_overlap(true_spans, reversed_wedges):
         sectors = [
             sectors[index]
-            for index in sorted(range(12), key=lambda index: (-true_spans[index], index))
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], -index))
         ]
 
     return "".join(sectors)

@@ -229,7 +229,20 @@ class TestPolarFallbackIsDeclared:
         assert fallback.used_house_system_identifier == "G"
         # The observer DID move here — which is precisely why it has to be declared.
         assert fallback.used_latitude != fallback.latitude == 78.2232
-        assert fallback.affects == ["house_cusps", "angles"]
+
+        # And what moved WITH it is only the Gauquelin ring. The backend reports
+        # what its own call produced, cusps and angles, but the chart keeps just
+        # the 36 sectors from it: this subject's twelve cusps and four angles are
+        # bit-identical to the same subject built without Gauquelin, so a record
+        # naming them would say the horizon moved when it did not.
+        assert fallback.affects == ["gauquelin_sector_cusps", "gauquelin_sectors"]
+
+        plain = AstrologicalSubjectFactory.from_birth_data(
+            "Gauquelin Polar", 1995, 1, 15, 2, 0,
+            lat=78.2232, houses_system_identifier="W", **_POLAR_SUBJECT,
+        )
+        for angle in ("ascendant", "medium_coeli", "descendant", "imum_coeli"):
+            assert getattr(subject, angle).abs_pos == getattr(plain, angle).abs_pos, angle
 
     def test_gauquelin_points_use_the_same_fallback_latitude_as_the_ring(self):
         """A clamped ring cannot coexist with sectors cast at the real latitude."""

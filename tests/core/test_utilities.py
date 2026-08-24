@@ -1401,3 +1401,32 @@ def test_a_formatted_longitude_never_leaves_its_own_sign():
             value = floor + offset
             formatted = float(format_absolute_degrees(value))
             assert floor <= formatted < floor + 30.0, (value, formatted)
+
+
+def test_the_house_reader_agrees_with_the_house_division_it_is_given():
+    """Two functions in one module must not disagree about the same twelve cusps.
+
+    `house_spans` reads the direction from all twelve at once, and the wheel is
+    drawn from what it returns. The reader chose the shorter arc for each pair
+    independently, which is the right rule on a ring that is NOT a division and
+    the wrong one on a ring that is: the twelve below run forwards and total 360
+    with a first house 200 degrees wide, and read pair by pair that house becomes
+    the opposite 160 degrees — so longitude 100, inside it and drawn inside it,
+    belonged to no house at all and the reader raised.
+
+    Synthetic, because no real chart reaches it: the widest arc measured across
+    23 systems and nine latitudes is 179.2388 degrees. The two disagreeing is
+    worth closing anyway.
+    """
+    from kerykeion.utilities.core import get_planet_house, house_spans
+
+    cusps = [0.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0]
+    spans, reversed_wedges = house_spans(cusps)
+    assert set(reversed_wedges) == {False}
+    assert sum(spans) == pytest.approx(360.0, abs=1e-9)
+    assert spans[0] > 180.0, "the fixture no longer has a reflex house"
+
+    assert get_planet_house(100.0, cusps) == "First_House"
+    assert get_planet_house(205.0, cusps) == "Second_House"
+    # The exact-on-cusp rule still comes first.
+    assert get_planet_house(200.0, cusps) == "Second_House"

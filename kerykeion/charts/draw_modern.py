@@ -2324,7 +2324,7 @@ def _draw_house_sectors_modern(
     if _wedges_overlap(true_spans, reversed_wedges):
         sectors = [
             sectors[index]
-            for index in sorted(range(12), key=lambda index: (-true_spans[index], index))
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], -index))
         ]
 
     return "".join(sectors)

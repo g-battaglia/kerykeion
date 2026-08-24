@@ -941,3 +941,37 @@ def test_an_ordinary_ring_is_still_painted_in_house_order(style):
     ).generate_svg_string()
     painted = re.findall(r"""node=['"]HouseSector['"] kr:house=['"]([^'"]+)['"]""", svg)
     assert painted == [str(number) for number in range(1, 13)]
+
+
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_two_overlapping_wedges_of_equal_width_break_the_tie_the_reader_s_way(style):
+    """Widest first settles most of it; equal widths need the same tie-break too.
+
+    The reader scans upwards and keeps the first of two equal arcs, so the LOWER
+    house number owns the overlap — which means it has to be painted LAST, since
+    the last element is the one a pointer finds. Sorting `(-span, index)` painted
+    the lower number first and handed the click to the higher one.
+    """
+    import re
+
+    from kerykeion.utilities.core import get_planet_house
+
+    class _Cusp:
+        def __init__(self, value):
+            self.abs_pos = value
+
+    # Houses 1 and 2 start on the same longitude and are both thirty degrees wide.
+    cusps = [0.0, 30.0, 0.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0]
+    assert get_planet_house(15.0, cusps) == "First_House"
+
+    if style == "classic":
+        svg = _draw([_Cusp(value) for value in cusps])
+    else:
+        from kerykeion.charts.draw_modern import _draw_house_sectors_modern
+
+        svg = _draw_house_sectors_modern([_Cusp(value) for value in cusps], cusps[6])
+
+    painted = re.findall(r"""node=['"]HouseSector['"] kr:house=['"]([^'"]+)['"]""", svg)
+    assert painted.index("1") > painted.index("2"), (
+        "the first house is no longer painted after the second"
+    )

@@ -1486,7 +1486,16 @@ class AstrologicalSubjectFactory:
                         polar_strategy="clamp_latitude",
                     )
                     if cusps_g[4] is not None:
-                        gauquelin_fallback = cusps_g[4]
+                        # Rescoped before it is filed. The backend describes what
+                        # ITS call produced — cusps and angles — but only the
+                        # 36-sector ring is kept from this one: the chart's own
+                        # cusps and its four angles come from the houses call and
+                        # are bit-identical with Gauquelin switched off. A record
+                        # saying "angles" here has a reader believing the horizon
+                        # moved when nothing did.
+                        gauquelin_fallback = cusps_g[4].model_copy(
+                            update={"affects": ["gauquelin_sector_cusps", "gauquelin_sectors"]}
+                        )
                         calc_data.setdefault("polar_house_fallbacks", []).append(gauquelin_fallback)
                         # The cusp ring and the per-body sector numbers must
                         # describe the SAME observer. A polar G call is retried

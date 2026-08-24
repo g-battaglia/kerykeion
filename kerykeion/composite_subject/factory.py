@@ -335,7 +335,15 @@ def composite_frame(
     # halving an arc taken modulo 360 gives the same answer either way, except
     # when one of the two arcs is exactly zero, which no pair of real charts
     # produced in 2,760 tries. Both are gone rather than left in looking useful.
-    coherent = True
+    # A frame is a common reading of two rings, and there is nothing to read a
+    # frame from unless each of them is a house division in the first place. A
+    # parent whose own twelve neither tile nor agree on a direction — Polich/Page
+    # at 68S manages 360.198 degrees with mixed directions — gave a composite
+    # whose answer depended on the anchor: held on the Midheaven the ring came
+    # back looking anchored and put the Sun in the second house, held on either
+    # other angle it came back gapped with the Sun in the ninth. Nothing about the
+    # two subjects changed between those three calls.
+    coherent = _cusp_ring_winds_once(first_cusps) and _cusp_ring_winds_once(second_cusps)
 
     # Two origins, one choice. The cusps hang from the cusp of the held angle's
     # house and the angles hang from the angle itself, because they are not the
@@ -373,7 +381,12 @@ def composite_frame(
     #
     # The plain midpoints are what this returned before there was a repair at
     # all, and they are the honest answer for those.
-    if already_in_order:
+    # ``not coherent`` here is the parents themselves, decided above: a ring
+    # placed on a frame that does not exist can still come out winding once by
+    # accident, and then it is accepted, and the anchor — which decides nothing on
+    # such a pair — silently decides everything. That is how one chart came back
+    # anchored under the Midheaven and gapped under the other two.
+    if already_in_order or not coherent:
         cusps = list(midpoints)
     else:
         placed = [

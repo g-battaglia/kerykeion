@@ -1745,3 +1745,42 @@ def test_a_clamped_polar_fallback_says_which_latitude_it_used():
     assert 'strategy="clamp_latitude"' in line
     assert f'latitude="{clamped.latitude:.4f}"' in line
     assert f'used_latitude="{clamped.used_latitude:.4f}"' in line
+
+
+def test_the_gauquelin_fallback_does_not_claim_the_chart_angles_moved():
+    """The backend describes what ITS call produced; only part of it is kept.
+
+    A polar Gauquelin call is retried at a clamped latitude and returns cusps and
+    angles, so the record it files says `house_cusps,angles`. But the chart keeps
+    only the 36-sector ring from that call — its own cusps and its four angles
+    come from the houses call and are bit-identical with Gauquelin switched off.
+    Filed unchanged, the record has a reader believing the horizon moved when
+    nothing did.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    shared = dict(
+        city="X", nation="XX", lat=78.0, lng=0.0, tz_str="UTC", online=False,
+        suppress_geonames_warning=True, houses_system_identifier="W",
+    )
+    plain = AstrologicalSubjectFactory.from_birth_data("N", 1990, 6, 15, 12, 0, **shared)
+    with_gauquelin = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, **shared, calculate_gauquelin=True
+    )
+    for angle in ("ascendant", "medium_coeli", "descendant", "imum_coeli"):
+        assert getattr(plain, angle).abs_pos == getattr(with_gauquelin, angle).abs_pos, angle
+
+    record = next(
+        item for item in with_gauquelin.polar_house_fallbacks
+        if item.requested_house_system_identifier == "G"
+    )
+    assert "angles" not in record.affects
+    assert "house_cusps" not in record.affects
+    assert record.affects == ["gauquelin_sector_cusps", "gauquelin_sectors"]
+
+    line = next(
+        line for line in astrological_subject_to_context(with_gauquelin).splitlines()
+        if "polar_house_fallback" in line
+    )
+    assert "gauquelin_sector_cusps" in line
