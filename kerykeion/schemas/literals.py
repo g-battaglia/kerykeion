@@ -430,6 +430,30 @@ RelationshipScoreDescription: TypeAlias = Literal[
 CompositeChartType: TypeAlias = Literal["Midpoint", "Davison"]
 """Literal type for Composite Chart Types"""
 
+CompositeHouseFrame: TypeAlias = Literal["anchored", "midpoints", "gapped"]
+"""What the composite's twelve cusps actually are, once the ring has been built.
+
+``house_anchor`` records which angle a caller ASKED to hold. It is not always
+possible to hold one: where the two charts' houses admit no common frame — two
+rings running opposite ways, or a parent whose own cusps are not ordered — every
+position falls back to its own near midpoint and the requested anchor decides
+nothing. A chart that reports only the request describes a construction that did
+not happen, and all three anchors then return the same ring.
+
+- ``"anchored"``: a frame was hung from the requested angle and the twelve cover
+  the circle exactly once. The anchor was held.
+- ``"midpoints"``: no frame spans the two charts, so every position is its own
+  near midpoint — but the twelve are still a house division.
+- ``"gapped"``: as ``"midpoints"``, and the twelve are NOT a house division: they
+  leave gaps, and a longitude falling in one is named for the house whose cusp it
+  last passed. Every house name on such a chart is that reading, not a
+  containment.
+
+``None`` on a Davison chart, which is cast as an ordinary chart and has no frame
+to speak of.
+"""
+
+
 CompositeHouseAnchor: TypeAlias = Literal["auto", "ascendant", "midheaven"]
 """Which composite cusp keeps its short-arc midpoint when the ring has to be repaired.
 

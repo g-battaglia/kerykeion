@@ -26,6 +26,14 @@ Usage:
 import math
 import re
 
+#: The twelve house attributes, in order — the index of a name in this tuple is
+#: its house number minus one.
+_CUSP_ATTRS = (
+    "first_house", "second_house", "third_house", "fourth_house",
+    "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+    "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+)
+
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
@@ -863,3 +871,73 @@ def test_pointing_at_the_ring_names_the_house_that_longitude_is_in(system, lat, 
         f"{system} at {lat}N: {far_from_a_cusp} points of the ring name a house that "
         f"is not theirs, and not because of the whole-degree quantisation"
     )
+
+
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_the_house_a_pointer_finds_is_the_house_the_reader_names(style):
+    """Where the wedges overlap, the last one painted is the one a click reaches.
+
+    Polich/Page at 70N crosses its own cusps, so one longitude sits inside three
+    houses at once — 7, 9 and 12 on the chart below. Painted in house order the
+    twelfth is on top and takes the pointer, while `get_planet_house` answers with
+    the NARROWEST containing arc, the ninth. The wheel and the model disagreed
+    about the same point.
+
+    Painting widest first puts the narrowest on top, which is the reader's rule.
+    """
+    import re
+
+    from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+    from kerykeion.chart_data.factory import ChartDataFactory
+    from kerykeion.utilities.core import get_planet_house, house_spans
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1985, 10, 15, 14, 0, city="X", nation="XX", lat=70.0, lng=25.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="T",
+    )
+    cusps = [getattr(subject, name).abs_pos for name in _CUSP_ATTRS]
+    spans, reversed_wedges = house_spans(cusps)
+    assert len(set(reversed_wedges)) > 1, "the fixture no longer crosses its own cusps"
+
+    degree = subject.chiron.abs_pos
+    containing = []
+    for index in range(12):
+        offset = (
+            (cusps[index] - degree) % 360.0
+            if reversed_wedges[index]
+            else (degree - cusps[index]) % 360.0
+        )
+        if offset <= spans[index]:
+            containing.append(str(index + 1))
+    assert len(containing) > 1, "the fixture no longer overlaps at this longitude"
+
+    svg = ChartDrawer(
+        ChartDataFactory.create_natal_chart_data(subject), style=style
+    ).generate_svg_string()
+    painted = re.findall(r"""node=['"]HouseSector['"] kr:house=['"]([^'"]+)['"]""", svg)
+    assert len(painted) == 12
+
+    topmost = max(containing, key=painted.index)
+    expected = str(_CUSP_ATTRS.index(get_planet_house(degree, cusps).lower()) + 1)
+    assert topmost == expected
+
+
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_an_ordinary_ring_is_still_painted_in_house_order(style):
+    """Nothing overlaps on a ring that tiles, so the order is left exactly alone —
+    which is what keeps every stored baseline byte for byte."""
+    import re
+
+    from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+    from kerykeion.chart_data.factory import ChartDataFactory
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+    )
+    svg = ChartDrawer(
+        ChartDataFactory.create_natal_chart_data(subject), style=style
+    ).generate_svg_string()
+    painted = re.findall(r"""node=['"]HouseSector['"] kr:house=['"]([^'"]+)['"]""", svg)
+    assert painted == [str(number) for number in range(1, 13)]

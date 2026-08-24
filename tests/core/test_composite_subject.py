@@ -2092,3 +2092,84 @@ def test_a_composite_model_will_not_carry_an_anchor_the_factory_would_refuse():
 
     schema = CompositeSubjectModel.model_json_schema()
     assert "house_anchor" in schema["properties"]
+
+
+def test_a_chart_records_whether_its_anchor_was_actually_held():
+    """`house_anchor` is a request, and a chart has to say whether it was granted.
+
+    Where the two charts admit no common frame the anchor decides nothing: all
+    three return the same ring, and every house name on a gapped one is the house
+    whose cusp the point last passed rather than a house containing it. A model
+    carrying only the request describes a construction that did not happen, and
+    the report and the context repeated it as fact.
+    """
+    from kerykeion.report.generator import ReportGenerator
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    def sunshine(name, lat):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, 0, 0, city="X", nation="XX", lat=lat, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="I",
+        )
+
+    first, second = sunshine("A", 41.9), sunshine("B", 80.0)
+    rings = set()
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        rings.add(tuple(round(value, 9) for value in _cusps_of(model)))
+        assert model.house_anchor == anchor
+        assert model.house_frame == "gapped", anchor
+    assert len(rings) == 1, "the anchors no longer all give the same ring here"
+
+    model = CompositeSubjectFactory(
+        first, second, house_anchor="midheaven"
+    ).get_midpoint_composite_subject_model()
+    anchor_row = next(
+        line for line in ReportGenerator(model).generate_report().splitlines()
+        if "House Anchor" in line
+    )
+    assert "not held" in anchor_row
+    assert 'house_frame="gapped"' in astrological_subject_to_context(model)
+
+    # And an ordinary pair says the opposite, so the field is not a constant.
+    plain = CompositeSubjectFactory(
+        *_pair(0, 7), house_anchor="midheaven"
+    ).get_midpoint_composite_subject_model()
+    assert plain.house_frame == "anchored"
+    assert "not held" not in next(
+        line for line in ReportGenerator(plain).generate_report().splitlines()
+        if "House Anchor" in line
+    )
+
+
+def test_auto_does_not_depend_on_which_subject_was_named_first():
+    """Two angles half a circle apart measure differently depending on the order.
+
+    `abs(((second - first + 180) % 360) - 180)` is arithmetic on ordered inputs:
+    on the pair below it returns 180.0 one way round and 179.99999999999997 the
+    other, which is enough for `auto` to hold a different angle — and every cusp
+    then comes out half a circle away. Measured symmetrically, the two orders are
+    the same float.
+    """
+    from kerykeion.composite_subject.factory import composite_house_cusps
+
+    first = [0.0, 0.02, 0.05, 0.1, 50.1, 110.1, 180.0, 180.02, 180.05, 180.1, 230.1, 290.1]
+    second = [(value + 180.0) % 360.0 for value in first]
+    first_angles = (first[0], first[9])
+    second_angles = (second[0], second[9])
+
+    one = composite_house_cusps(first, second, "auto", first_angles, second_angles)
+    other = composite_house_cusps(second, first, "auto", second_angles, first_angles)
+    assert one == approx(other, abs=1e-9)
+
+    # The explicit anchors were already commutative; they must stay so.
+    for anchor in ("ascendant", "midheaven"):
+        assert composite_house_cusps(
+            first, second, anchor, first_angles, second_angles
+        ) == approx(
+            composite_house_cusps(second, first, anchor, second_angles, first_angles),
+            abs=1e-9,
+        ), anchor

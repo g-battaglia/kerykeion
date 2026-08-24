@@ -967,11 +967,22 @@ class ReportGenerator:
             birth_data.append(["Composite Members", composite_members])
             birth_data.append(["Composite Type", subject.composite_chart_type])
             if subject.house_anchor:
-                # Which angle was held when the cusp ring was repaired. It can
-                # turn the whole house frame by half a turn — the same Sun reads
-                # first house or seventh depending on it — so a report that does
-                # not say cannot be checked against the chart it describes.
-                birth_data.append(["House Anchor", subject.house_anchor])
+                # Which angle was ASKED to be held when the cusp ring was
+                # repaired. It can turn the whole house frame by half a turn —
+                # the same Sun reads first house or seventh depending on it — so
+                # a report that does not say cannot be checked against the chart
+                # it describes.
+                #
+                # And whether it was held at all, because it is a request: where
+                # the two charts admit no common frame all three anchors return
+                # the same ring, and a row saying "midheaven" on such a chart
+                # describes a construction that did not happen.
+                anchor: str = subject.house_anchor
+                if subject.house_frame == "midpoints":
+                    anchor = f"{anchor} (not held: no frame spans the two charts)"
+                elif subject.house_frame == "gapped":
+                    anchor = f"{anchor} (not held: the twelve cusps are not a house division)"
+                birth_data.append(["House Anchor", anchor])
 
         if isinstance(subject, PlanetReturnModel):
             birth_data.append(["Return Type", subject.return_type])
@@ -1140,6 +1151,29 @@ class ReportGenerator:
         gauquelin_data: list[list[str]] = [["Point", "Sector"]]
         for point in points:
             gauquelin_data.append([_humanize(str(point.name)), f"{point.gauquelin_sector:.2f}"])
+
+        # The 36-sector ring is undefined inside the polar circle and is
+        # recomputed at a clamped latitude, which files a fallback record of its
+        # own — separate from any substitution of the houses, and the houses row
+        # deliberately ignores it. Nothing else in the report mentions it, so
+        # these numbers read as if cast where the subject was born.
+        clamp = next(
+            (
+                record
+                for record in getattr(subject, "polar_house_fallbacks", None) or ()
+                if record.requested_house_system_identifier == "G"
+                and record.used_latitude is not None
+                and record.used_latitude != record.latitude
+            ),
+            None,
+        )
+        if clamp is not None:
+            gauquelin_data.append(
+                [
+                    "(computed at)",
+                    f"{clamp.used_latitude:.4f}\u00b0 not {clamp.latitude:.4f}\u00b0",
+                ]
+            )
         return AsciiTable(gauquelin_data, title=title).table
 
     def _points_table(

@@ -2824,3 +2824,40 @@ def test_a_star_name_with_padding_reaches_the_ephemeris_stripped():
 
     assert sun_star_names([" Regulus"]) == sun_star_names(["Regulus"])
     assert sun_star_names(["Regulus"]), "the fixture resolves no star at all"
+
+
+def test_the_gauquelin_section_says_which_latitude_it_was_computed_at():
+    """The 36-sector ring is undefined inside the polar circle and is recomputed
+    at a clamped latitude.
+
+    That files a fallback record of its own, separate from any substitution of
+    the houses — and the houses row deliberately ignores it, because it is not
+    about the houses. Nothing else in the report mentioned it either, so the
+    sector values read as if cast where the subject was born. On the chart below
+    they are computed at 66 degrees, not 78.2232.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.report.generator import ReportGenerator
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=78.2232, lng=15.6467,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="P", calculate_gauquelin=True,
+    )
+    clamp = next(
+        record for record in subject.polar_house_fallbacks
+        if record.requested_house_system_identifier == "G"
+    )
+    assert clamp.used_latitude != clamp.latitude, "the fixture no longer clamps"
+
+    report = ReportGenerator(subject).generate_report()
+    assert f"{clamp.used_latitude:.4f}" in report
+    assert "computed at" in report
+
+    # A chart whose Gauquelin ring needed no clamp says nothing extra.
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        calculate_gauquelin=True,
+    )
+    assert "computed at" not in ReportGenerator(ordinary).generate_report()

@@ -30,6 +30,7 @@ from kerykeion.charts.utils import (
     house_spans,
     label_separation_degrees,
     separate_collapsed_wedges,
+    _wedges_overlap,
     STATION_LABELS,
     escape_svg_text,
     normalize_degree,
@@ -2248,6 +2249,10 @@ def _draw_house_sectors_modern(
         _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses[:12]
     ]
     spans, reversed_wedges = house_spans(wheel_angles)
+    # Kept before the widening below rewrites them: these are the arcs the house
+    # reader measures, and where the wedges overlap it is the reader the paint
+    # order has to agree with.
+    true_spans = list(spans)
     # And any house too thin to click gets the same minimum the classic engine
     # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
     # together here — but Campanus inside the polar circle brings two of them
@@ -2257,7 +2262,7 @@ def _draw_house_sectors_modern(
     wheel_angles, spans = separate_collapsed_wedges(
         wheel_angles, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
     )
-    out = ""
+    sectors: list[str] = []
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
@@ -2305,13 +2310,24 @@ def _draw_house_sectors_modern(
             f"A {inner_r},{inner_r} 0 {large_arc},{inner_sweep} {ix1:.6f},{iy1:.6f} Z"
         )
 
-        out += (
+        sectors.append(
             f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" fill="transparent" stroke="none" pointer-events="all"/>'
             f"</g>\n"
         )
 
-    return out
+    # Widest first, so the narrowest is on top — the same rule the house reader
+    # applies, and the one the classic engine now paints by. It matters only where
+    # the wedges overlap, which is where the ring is not a house division: a point
+    # under houses 7, 9 and 12 was answered as the twelfth by the wheel and the
+    # ninth by the model. A ring that tiles is painted in house order, unchanged.
+    if _wedges_overlap(true_spans, reversed_wedges):
+        sectors = [
+            sectors[index]
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], index))
+        ]
+
+    return "".join(sectors)
 
 
 def _draw_gauquelin_sectors_modern(

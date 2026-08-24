@@ -27,7 +27,11 @@ from typing import Literal, Mapping, Optional, Sequence, Union
 # the charts package to ask which way a ring runs, and it meant three other
 # modules wrote their own `% 360` rather than reach across that line - which is
 # the very trap normalize_degree exists to close.
-from kerykeion.utilities.core import house_spans, normalize_degree  # noqa: F401
+from kerykeion.utilities.core import (  # noqa: F401
+    _HOUSE_WINDING_TOLERANCE_DEGREES,
+    house_spans,
+    normalize_degree,
+)
 from xml.sax.saxutils import escape as _xml_escape
 
 from kerykeion.charts.glyph_metrics import estimate_text_width
@@ -934,6 +938,16 @@ def separate_collapsed_wedges(
     return rebuilt, adjusted
 
 
+def _wedges_overlap(spans: Sequence[float], reversed_wedges: Sequence[bool]) -> bool:
+    """Do these twelve wedges cover any longitude more than once?
+
+    They do exactly when the ring is not a house division: twelve arcs that run
+    the same way and add to a full turn share only their endpoints, and any other
+    ring has at least one longitude under two wedges at once.
+    """
+    return len(set(reversed_wedges)) != 1 or abs(sum(spans) - 360.0) > _HOUSE_WINDING_TOLERANCE_DEGREES
+
+
 def draw_house_sectors(
     r: Union[int, float],
     houses_list: list[KerykeionPointModel],
@@ -1016,11 +1030,15 @@ def draw_house_sectors(
     # comes out of here with the same offsets its cusp lines were drawn from, to
     # the bit.
     spans, reversed_wedges = house_spans(boundaries)
+    # Kept before the widening below rewrites them: these are the arcs the house
+    # READER measures, and where the wedges overlap it is the reader that has to
+    # be agreed with.
+    true_spans = list(spans)
     boundaries, spans = separate_collapsed_wedges(
         boundaries, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
     )
 
-    output = ""
+    sectors: list[str] = []
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
@@ -1098,13 +1116,29 @@ def draw_house_sectors(
         )
 
         horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
-        output += (
+        sectors.append(
             f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" style="fill: transparent; stroke: none; pointer-events: all;"/>'
             f"</g>"
         )
 
-    return output
+    # House order, unless the twelve overlap. Where the cusps cross, one longitude
+    # is inside several wedges at once, and the last one painted is the one a
+    # pointer finds — so painting 1 to 12 handed the click to the highest-numbered
+    # house containing the point while ``get_planet_house`` answers with the
+    # NARROWEST. Polich/Page at 70N put a point inside houses 7, 9 and 12: the
+    # model said the ninth, the wheel answered the twelfth.
+    #
+    # Painting widest first puts the narrowest on top, which is the reader's own
+    # rule. On a ring that tiles nothing overlaps, so the order is left alone and
+    # an ordinary chart comes out of here byte for byte as before.
+    if _wedges_overlap(true_spans, reversed_wedges):
+        sectors = [
+            sectors[index]
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], index))
+        ]
+
+    return "".join(sectors)
 
 
 # =============================================================================

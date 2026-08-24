@@ -48,6 +48,7 @@ from kerykeion.predictive.utils import jd_to_ymd_hms
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
 from kerykeion.schemas.literals import (
+    CompositeHouseFrame,
     CompositeHouseAnchor,
     ZodiacType,
     PerspectiveType,
@@ -307,10 +308,16 @@ def composite_frame(
         # The better determined of the two: where the base angles sit closer
         # together, the midpoint between them is the less arbitrary one. Solar
         # Fire calls this the "strongest" midpoint and makes it the default.
-        separations = [
-            abs(((second - first + 180.0) % 360.0) - 180.0)
-            for first, second in zip(first_angles, second_angles)
-        ]
+        # Measured symmetrically, because which subject was named first must not
+        # decide anything. Taking the signed difference modulo 360 and folding it
+        # is arithmetic on ordered inputs: for a pair exactly half a circle apart
+        # it returns 180.0 one way round and 179.99999999999997 the other, which
+        # is enough to hold a different angle and turn the whole ring half a
+        # circle. abs() first, and the two orders are the same float.
+        separations = []
+        for first, second in zip(first_angles, second_angles, strict=True):
+            delta = abs(second - first) % 360.0
+            separations.append(min(delta, 360.0 - delta))
         held = 0 if separations[0] <= separations[1] else 1
 
 
@@ -854,15 +861,30 @@ class CompositeSubjectFactory:
             (self.second_subject["ascendant"]["abs_pos"], self.second_subject["medium_coeli"]["abs_pos"]),
             anchor=self.house_anchor,
         )
-        if not _cusp_ring_winds_once(house_degree_list_ut):
-            # Said out loud rather than shipped quietly. Two partners whose houses
-            # run opposite ways are the common reason, a single parent whose own
-            # cusps are not ordered accounts for most of the rest, and a few have
-            # two plain rings running the same way.
+        # Recorded on the chart, not only said to the logger. `house_anchor` is
+        # what the caller ASKED to hold, and where no frame spans the two charts
+        # it holds nothing: all three anchors then return the same ring, and a
+        # model carrying only the request describes a construction that did not
+        # happen. Worse, on a ring with gaps every house name is the last-passed-
+        # cusp reading rather than a containment, and nothing said so.
+        ring_is_a_division = _cusp_ring_winds_once(house_degree_list_ut)
+        if frame_is_coherent:
+            self.house_frame: CompositeHouseFrame = "anchored"
+        elif ring_is_a_division:
+            self.house_frame = "midpoints"
+        else:
+            self.house_frame = "gapped"
+
+        if not ring_is_a_division:
+            # Said out loud as well. Two partners whose houses run opposite ways
+            # are the common reason, a single parent whose own cusps are not
+            # ordered accounts for most of the rest, and a few have two plain
+            # rings running the same way.
             logger.info(
                 "Composite house cusps do not cover the circle once: the two subjects' "
                 "houses do not run the same way round the wheel, so this composite has "
-                "no coherent house division."
+                "no coherent house division. Its house names are the house whose cusp "
+                "each point last passed; house_frame records this as 'gapped'."
             )
 
         for house_index, house_name in enumerate(self.first_subject.houses_names_list):

@@ -506,11 +506,18 @@ def astrological_subject_to_context(
             "second_subject": subject.second_subject.name,
         }
         if subject.house_anchor:
-            # Which angle was held when the cusp ring was repaired: it can turn
-            # the whole frame by half a turn, so a model reading this context
-            # cannot reproduce the chart without it. Absent on a Davison chart,
-            # which never needs one.
+            # Which angle the caller asked to hold when the cusp ring was
+            # repaired: it can turn the whole frame by half a turn, so a model
+            # reading this context cannot reproduce the chart without it. Absent
+            # on a Davison chart, which never needs one.
             composite_attrs["house_anchor"] = subject.house_anchor
+        if subject.house_frame:
+            # And what the twelve turned out to BE. Without it the anchor reads
+            # as a fact when it is a request: on a chart with no common frame all
+            # three anchors give the same ring, and on a "gapped" one every house
+            # name is the house whose cusp the point last passed rather than a
+            # house that contains it.
+            composite_attrs["house_frame"] = subject.house_frame
         lines.append(
             f"  {_sc('composite_info', **composite_attrs)}"
         )

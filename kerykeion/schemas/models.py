@@ -57,7 +57,12 @@ from kerykeion.schemas.literals import (
     PerspectiveType,
     AspectMovementType,
 )
-from kerykeion.schemas.literals import ReturnType, DominantMethod, CompositeHouseAnchor
+from kerykeion.schemas.literals import (
+    ReturnType,
+    DominantMethod,
+    CompositeHouseAnchor,
+    CompositeHouseFrame,
+)
 
 # Type alias for any astrological subject model (birth chart, composite, or return)
 AnySubjectModel = Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
@@ -1245,6 +1250,13 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     #: so a chart that carries no note of it cannot be reproduced. None on a
     #: Davison chart, which is cast as an ordinary chart and never needs one.
     house_anchor: Optional[CompositeHouseAnchor] = None
+
+    #: What the twelve cusps turned out to be — whether the requested anchor was
+    #: actually held, and whether the ring is a house division at all. Recorded
+    #: because ``house_anchor`` alone is a request: where the two charts admit no
+    #: common frame it decides nothing, and all three anchors return the same
+    #: chart. See :data:`~kerykeion.schemas.literals.CompositeHouseFrame`.
+    house_frame: Optional[CompositeHouseFrame] = None
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
     # represent a real moment; None when not applicable (the midpoint method
