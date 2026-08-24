@@ -40,7 +40,7 @@ License: AGPL-3.0
 
 import logging
 
-from typing import Union
+from typing import Sequence, Union
 
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
@@ -48,6 +48,7 @@ from kerykeion.predictive.utils import jd_to_ymd_hms
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
 from kerykeion.schemas.literals import (
+    CompositeHouseAnchor,
     ZodiacType,
     PerspectiveType,
     HousesSystemIdentifier,
@@ -63,6 +64,90 @@ from kerykeion.utilities.core import (
     calculate_moon_phase,
     find_common_active_points,
 )
+
+
+def _cusp_ring_winds_once(cusps: Sequence[float]) -> bool:
+    """Do these twelve arcs cover the circle exactly once?
+
+    Twelve houses cover it once whichever way they run. A ring built by taking
+    each cusp's midpoint independently can cover it three times instead, which is
+    not a house division: the numbers stop reading in order and the Midheaven can
+    end up below the horizon.
+    """
+    forward = sum((cusps[(index + 1) % 12] - cusps[index]) % 360.0 for index in range(12))
+    backward = 12 * 360.0 - forward
+    return min(abs(forward - 360.0), abs(backward - 360.0)) <= 1e-4
+
+
+def composite_house_cusps(
+    first_cusps: Sequence[float],
+    second_cusps: Sequence[float],
+    anchor: CompositeHouseAnchor = "auto",
+) -> list[float]:
+    """The twelve midpoint-composite cusps, in an order a house division can have.
+
+    Each composite cusp is the midpoint of the two charts' cusps of the SAME
+    number, and keeps that number: the tenth cusp is the midpoint of the tenths,
+    which is the composite Midheaven. Re-sorting by longitude instead would file
+    it into a lower slot and swap the Midheaven with the Imum Coeli.
+
+    Between two points on a circle there are two midpoints, half a turn apart.
+    Taking the nearer one is right, and taking it for each of the twelve
+    *independently* is what breaks: when the two charts' angles are nearly
+    opposed the separations straddle 180 degrees, the choice flips partway round
+    the ring, and the twelve arcs come to 1080 degrees instead of 360. That is
+    not a house division at all — measured here, it happens to about one couple
+    in sixteen at ordinary latitudes.
+
+    The profession's answer, and this one: hold one angle at its near midpoint and
+    move whichever others need it onto their far midpoint, so the ring reads in
+    order again. Solar Fire calls it adjusting cusps "to be long-arc midpoints
+    instead of short-arc"; Kepler and Sirius call it "flipping the houses 180
+    degrees if necessary". Which angle is held is the ``anchor``.
+
+    A ring whose near midpoints already run in order is returned untouched, value
+    for value — which is most of them.
+
+    Args:
+        first_cusps: The first subject's twelve cusps, in house order.
+        second_cusps: The second subject's twelve cusps, in house order.
+        anchor: Which angle keeps its near midpoint. See
+            :data:`~kerykeion.schemas.literals.CompositeHouseAnchor`.
+
+    Returns:
+        The twelve composite cusps, in house order.
+    """
+    midpoints = [
+        circular_mean(first, second) for first, second in zip(first_cusps, second_cusps)
+    ]
+    if _cusp_ring_winds_once(midpoints):
+        return midpoints
+
+    # How far the second chart's cusp lies from the first, signed, by the short
+    # way round. Halving this is what picks the near midpoint, so it is also what
+    # has to be made consistent across the twelve.
+    separations = [
+        ((second - first + 180.0) % 360.0) - 180.0
+        for first, second in zip(first_cusps, second_cusps)
+    ]
+
+    if anchor == "ascendant":
+        held = 0
+    elif anchor == "midheaven":
+        held = 9
+    else:
+        # The better determined of the two: where the base cusps sit closer
+        # together, the midpoint between them is the less arbitrary one. Solar
+        # Fire calls this the "strongest" midpoint and makes it the default.
+        held = 0 if abs(separations[0]) <= abs(separations[9]) else 9
+
+    reference = separations[held]
+    return [
+        midpoint
+        if abs(min((s - 360.0, s, s + 360.0), key=lambda c: abs(c - reference)) - s) < 1e-9
+        else (midpoint + 180.0) % 360.0
+        for midpoint, s in zip(midpoints, separations)
+    ]
 
 
 def _davison_midpoint_components(
@@ -177,6 +262,7 @@ class CompositeSubjectFactory:
         first_subject: AstrologicalSubjectModel,
         second_subject: AstrologicalSubjectModel,
         chart_name: Union[str, None] = None,
+        house_anchor: CompositeHouseAnchor = "auto",
     ):
         """
         Initialize the composite subject factory with two astrological subjects.
@@ -190,6 +276,10 @@ class CompositeSubjectFactory:
             chart_name (str | None, optional): Custom name for the composite chart.
                                              If None, generates name from subject names.
                                              Defaults to None.
+            house_anchor (CompositeHouseAnchor, optional): Which angle keeps its near
+                                             midpoint when the cusp ring has to be
+                                             repaired. Only ever consulted on the
+                                             charts that need it. Defaults to "auto".
 
         Raises:
             KerykeionException: If either input is not an astrological subject model
@@ -203,6 +293,7 @@ class CompositeSubjectFactory:
         """
         self.model: Union[CompositeSubjectModel, None] = None
         self.composite_chart_type = "Midpoint"
+        self.house_anchor: CompositeHouseAnchor = house_anchor
 
         for _label, _subject in (("first_subject", first_subject), ("second_subject", second_subject)):
             if getattr(_subject, "active_points", None) is None:
@@ -385,20 +476,29 @@ class CompositeSubjectFactory:
             This is an internal method called by get_midpoint_composite_subject_model().
             Only planets that exist in both subjects' active_points are included.
         """
-        # Houses: each composite cusp is the circular mean of the two subjects'
+        # Houses: each composite cusp is the midpoint of the two subjects'
         # SAME-numbered cusps, and it KEEPS that house number. Do NOT re-sort by
-        # longitude and re-label positionally: averaging cusps of two charts whose
-        # Ascendants are far apart produces a non-monotone cusp ring (the forward
-        # arcs can sum to a multiple of 360°), and sorting then files the averaged
-        # 10th cusp (the composite MC) into a lower slot — swapping MC/IC by 180°
-        # and corrupting every planet's house. The tenth cusp must stay the mean
-        # of the tenth cusps, i.e. the composite Midheaven.
-        house_degree_list_ut = []
-        for house in self.first_subject.houses_names_list:
-            house_lower = house.lower()
-            house_degree_list_ut.append(
-                circular_mean(self.first_subject[house_lower]["abs_pos"], self.second_subject[house_lower]["abs_pos"])
-            )
+        # longitude and re-label positionally: sorting files the averaged 10th
+        # cusp (the composite Midheaven) into a lower slot, swapping it with the
+        # Imum Coeli and corrupting every planet's house. The tenth cusp must stay
+        # the mean of the tenth cusps.
+        #
+        # Which leaves the real repair to composite_house_cusps: where the two
+        # charts' angles are nearly opposed, the near midpoints stop running in
+        # order and the twelve arcs come to 1080 degrees instead of 360. It holds
+        # one angle and moves the others onto their far midpoint, which is what
+        # the profession does with this case.
+        house_degree_list_ut = composite_house_cusps(
+            [
+                self.first_subject[house.lower()]["abs_pos"]
+                for house in self.first_subject.houses_names_list
+            ],
+            [
+                self.second_subject[house.lower()]["abs_pos"]
+                for house in self.first_subject.houses_names_list
+            ],
+            anchor=self.house_anchor,
+        )
 
         for house_index, house_name in enumerate(self.first_subject.houses_names_list):
             house_lower = house_name.lower()
@@ -406,12 +506,22 @@ class CompositeSubjectFactory:
 
         # Planets
         planets = {}
+        # An angle IS its cusp: the Ascendant is the first, the Midheaven the
+        # tenth. Averaged on its own it would part company with the ring the
+        # moment the ring had to be repaired — half a circle away, with the
+        # Midheaven no longer opening the tenth house — so the four are read off
+        # the cusps rather than computed a second time.
+        angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
+
         for planet in self.active_points:
             planet_lower = planet.lower()
             planets[planet_lower] = {}
-            planets[planet_lower]["abs_pos"] = circular_mean(
-                self.first_subject[planet_lower]["abs_pos"], self.second_subject[planet_lower]["abs_pos"]
-            )
+            if planet_lower in angle_cusp_index:
+                planets[planet_lower]["abs_pos"] = house_degree_list_ut[angle_cusp_index[planet_lower]]
+            else:
+                planets[planet_lower]["abs_pos"] = circular_mean(
+                    self.first_subject[planet_lower]["abs_pos"], self.second_subject[planet_lower]["abs_pos"]
+                )
             self[planet_lower] = get_kerykeion_point_from_degree(
                 planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint"
             )

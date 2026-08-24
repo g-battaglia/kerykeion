@@ -430,6 +430,27 @@ RelationshipScoreDescription: TypeAlias = Literal[
 CompositeChartType: TypeAlias = Literal["Midpoint", "Davison"]
 """Literal type for Composite Chart Types"""
 
+CompositeHouseAnchor: TypeAlias = Literal["auto", "ascendant", "midheaven"]
+"""Which composite cusp keeps its short-arc midpoint when the ring has to be repaired.
+
+Between two cusps there are two midpoints, half a circle apart, and taking the
+nearer one for each of the twelve independently breaks down when the two charts'
+angles are nearly opposed: some cusps take one side and some the other, and the
+twelve stop being a house division at all. The trade the profession settles on is
+to keep one angle fixed and move the rest onto their far midpoint as needed.
+
+- ``auto``: whichever of the Ascendant and the Midheaven has its two base cusps
+  closer together, that being the better determined of the two midpoints. The
+  default here, and in Solar Fire and Astro Gold.
+- ``ascendant``: the Ascendant never moves. Kepler and Sirius call this
+  "Asc Midpoint".
+- ``midheaven``: the Midheaven never moves. Kepler and Sirius call this
+  "MC Midpoint".
+
+None of the three does anything to a chart whose short-arc midpoints already run
+in order, which is most of them.
+"""
+
 AspectName: TypeAlias = Literal[
     "conjunction",
     "semi-sextile",

@@ -916,3 +916,153 @@ def test_a_descending_composite_ring_can_still_reach_every_house():
     cusps = [getattr(composite, name).abs_pos for name in _CUSP_ATTRS]
     reachable = {get_planet_house(degree / 10.0, cusps) for degree in range(3600)}
     assert len(reachable) == 12, sorted(reachable)
+
+
+# =============================================================================
+# THE CUSP RING THE MIDPOINT METHOD HANDS BACK
+# =============================================================================
+#
+# Between two points on a circle there are two midpoints, half a turn apart, and
+# taking the nearer one for each of the twelve cusps *independently* breaks when
+# the two charts' angles are nearly opposed: the choice flips partway round the
+# ring and the twelve arcs come to 1080 degrees instead of 360. That is not a
+# house division — the numbers stop reading in order and the Midheaven can end up
+# a quarter turn from where the Ascendant puts it. Measured here: about one
+# random couple in sixteen, at ordinary latitudes.
+#
+# The profession's answer is to hold one angle at its near midpoint and move the
+# others onto their far midpoint as needed. Solar Fire: "adjust some of the house
+# cusps to be long-arc midpoints instead of short-arc in order to preserve the
+# correct zodiacal ordering". Kepler and Sirius: "flipping the houses 180 degrees
+# if necessary". Townley prescribes the same in "The Composite Chart", for the
+# stray cusp and its opposite.
+
+
+_ANCHORS = ("auto", "ascendant", "midheaven")
+
+
+def _cusps_of(model) -> list[float]:
+    return [getattr(model, name).abs_pos for name in _CUSP_ATTRS]
+
+
+def _winding(cusps: list[float]) -> float:
+    forward = sum((cusps[(i + 1) % 12] - cusps[i]) % 360.0 for i in range(12))
+    return min(forward, 12 * 360.0 - forward) / 360.0
+
+
+def _pair(first_hour: int, second_hour: int, lat: float = 51.5, lng: float = -0.1667):
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 1, 1, first_hour, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=lng,
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 1, 1, second_hour, 30 if second_hour == 11 else 0, city="X", nation="XX",
+        online=False, suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=lng,
+    )
+    return first, second
+
+
+@pytest.mark.parametrize("anchor", _ANCHORS)
+def test_the_composite_cusps_cover_the_circle_exactly_once(anchor):
+    """The London pair whose Ascendants sit 179.6 degrees apart.
+
+    Independent near midpoints give this one twelve arcs totalling 1080 degrees,
+    with the Midheaven and the Imum Coeli swapped.
+    """
+    first, second = _pair(0, 11)
+    opposition = abs((first.ascendant.abs_pos - second.ascendant.abs_pos + 180.0) % 360.0 - 180.0)
+    assert opposition > 170.0, f"fixture no longer has opposed Ascendants: {opposition:.1f}"
+
+    composite = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    assert _winding(_cusps_of(composite)) == pytest.approx(1.0, abs=1e-6)
+
+
+@pytest.mark.parametrize("anchor", _ANCHORS)
+def test_a_ring_that_already_reads_in_order_is_not_touched(anchor):
+    """No anchor may move a chart that never needed repairing.
+
+    Most composites do not, and their cusps have to come out of here as the plain
+    circular means they always were — the same value, not merely a close one.
+    """
+    from kerykeion.utilities.core import circular_mean
+
+    first, second = _pair(0, 6)
+    composite = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    cusps = _cusps_of(composite)
+    assert _winding(cusps) == pytest.approx(1.0, abs=1e-6), "fixture is not an ordered pair"
+    for index, name in enumerate(_CUSP_ATTRS):
+        expected = circular_mean(
+            getattr(first, name).abs_pos, getattr(second, name).abs_pos
+        )
+        assert cusps[index] == expected
+
+
+def test_the_named_anchor_keeps_its_own_near_midpoint():
+    """Anchoring is a promise about one cusp: that one does not move."""
+    from kerykeion.utilities.core import circular_mean
+
+    first, second = _pair(0, 11)
+
+    on_ascendant = CompositeSubjectFactory(
+        first, second, house_anchor="ascendant"
+    ).get_midpoint_composite_subject_model()
+    assert on_ascendant.first_house.abs_pos == pytest.approx(
+        circular_mean(first.first_house.abs_pos, second.first_house.abs_pos), abs=1e-9
+    )
+
+    on_midheaven = CompositeSubjectFactory(
+        first, second, house_anchor="midheaven"
+    ).get_midpoint_composite_subject_model()
+    assert on_midheaven.tenth_house.abs_pos == pytest.approx(
+        circular_mean(first.tenth_house.abs_pos, second.tenth_house.abs_pos), abs=1e-9
+    )
+
+    # And the two are not the same chart: which angle is held can turn the whole
+    # house frame by half a circle, which is why the choice is offered at all.
+    difference = abs(
+        (on_ascendant.first_house.abs_pos - on_midheaven.first_house.abs_pos + 180.0) % 360.0
+        - 180.0
+    )
+    assert difference == pytest.approx(180.0, abs=1e-6)
+
+
+def test_auto_holds_whichever_angle_is_the_better_determined():
+    """Solar Fire's rule: the "strongest" midpoint is the one whose base cusps
+    are closest together, because a midpoint between two nearly opposite points
+    is the arbitrary one of the pair."""
+    from kerykeion.composite_subject.factory import composite_house_cusps
+
+    # First house cusps 10 degrees apart, tenth 170 apart: the first is stronger.
+    first = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+    second = [10.0, 40.0, 70.0, 100.0, 130.0, 160.0, 190.0, 220.0, 250.0, 100.0, 310.0, 340.0]
+    automatic = composite_house_cusps(first, second, anchor="auto")
+    on_ascendant = composite_house_cusps(first, second, anchor="ascendant")
+    assert automatic == on_ascendant
+
+    # Now the other way round: tenth cusps together, first cusps nearly opposed.
+    first = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+    second = [170.0, 40.0, 70.0, 100.0, 130.0, 160.0, 350.0, 220.0, 250.0, 280.0, 310.0, 340.0]
+    automatic = composite_house_cusps(first, second, anchor="auto")
+    on_midheaven = composite_house_cusps(first, second, anchor="midheaven")
+    assert automatic == on_midheaven
+
+
+@pytest.mark.parametrize("anchor", _ANCHORS)
+def test_every_point_is_still_filed_by_the_shared_reader(anchor):
+    """The repair must not put the ring and the housing back out of step."""
+    from kerykeion.utilities.core import get_planet_house
+
+    first, second = _pair(0, 11)
+    composite = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    cusps = _cusps_of(composite)
+    for name in _POINTS:
+        point = getattr(composite, name, None)
+        if point is None:
+            continue
+        assert point.house == get_planet_house(point.abs_pos, cusps)
