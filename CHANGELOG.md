@@ -56,11 +56,26 @@
 - **The default fixed-star lists spelled Deneb Algedi with a space**, the one
   form that is neither in `AstrologicalPoint` nor in the translations.
 
+- **The modern engine drew the Gauquelin ring off its own wheel.** Those
+  thirty-six cusps descend by construction; the span was corrected for that and
+  both sweep flags were left as the ascending case set them, which is the one
+  combination that moves an arc onto the mirrored circle SVG puts through any two
+  points. The wedges sat on circles up to 92 units from a wheel of radius 50.
+
+- **The text report and `to_context` dropped house information the library
+  records.** A chart asked for in Placidus above the polar circle is cast in
+  Porphyry and both said only "Porphyry"; the composite's `house_anchor`, which
+  can turn the whole house frame by half a turn, reached neither. Degrees printed
+  beside a sign were bounded at 360 rather than at that sign's ceiling, so a point
+  a hundredth short of a cusp printed as the first degree of the next sign.
+
 ### Changed
 
 - `AstrologicalSubjectFactory` writes its log lines to its own module logger
   rather than the root logger, so a host that silences `kerykeion.*` now does.
 - `CompositeSubjectModel` gains `house_anchor` (`None` on a Davison chart).
+- `normalize_degree` and `house_spans` moved to `kerykeion.utilities.core`, and
+  are still importable from `kerykeion.charts.utils`.
 
 ## [6.0.0a86]
 
