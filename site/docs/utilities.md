@@ -39,7 +39,9 @@ Functions for working with astrological houses.
 
 | Function                                     | Description                                                    |
 | :------------------------------------------- | :------------------------------------------------------------- |
-| `get_planet_house(planet_pos, active_cusps)` | Determines which house a planet falls into (returns a house name like `"First_House"`). |
+| `get_planet_house(planet_pos, active_cusps)` | Determines which house a planet falls into (returns a house name like `"First_House"`). Direction-aware: six house systems return descending cusps above roughly 67°, and the horizon system does it on the equator. |
+| `house_spans(cusps)` | The twelve house widths and which of them run against the frame they were given. Use it to ask which way a chart's houses run before measuring anything across them. |
+| `normalize_degree(angle)` | An angle into `[0, 360)`. Use it instead of `% 360`, which answers exactly `360.0` for a hair-negative input — outside the range every caller assumes. Propagates `NaN` rather than inventing `0`. |
 | `get_house_name(number)`                     | Converts `1` to `"First_House"`.                               |
 | `get_house_number(name)`                     | Converts `"First_House"` to `1`.                               |
 | `get_houses_list(subject)`                   | Returns list of all 12 house objects from a subject.           |

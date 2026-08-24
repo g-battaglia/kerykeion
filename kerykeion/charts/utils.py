@@ -20,12 +20,13 @@ import math
 import re
 from typing import Literal, Mapping, Optional, Sequence, Union
 
-# Both live in utilities.core now, and are re-exported here because much of
-# the tree imports them from this module. They are angle arithmetic about
-# houses, not drawing: keeping them under charts/ meant the composite subject
-# factory had to import the charts package to ask which way a ring runs, and
-# it meant three other modules wrote their own `% 360` rather than reach
-# across that line - which is the very trap normalize_degree exists to close.
+# Both live in utilities.core now, and are re-exported here so the name
+# `kerykeion.charts.utils.normalize_degree` keeps working for anything outside
+# this repository that reached for it. They are angle arithmetic, not drawing:
+# keeping them under charts/ meant the composite subject factory had to import
+# the charts package to ask which way a ring runs, and it meant three other
+# modules wrote their own `% 360` rather than reach across that line - which is
+# the very trap normalize_degree exists to close.
 from kerykeion.utilities.core import house_spans, normalize_degree  # noqa: F401
 from xml.sax.saxutils import escape as _xml_escape
 
@@ -729,7 +730,7 @@ def degree_sum(a: Union[int, float], b: Union[int, float]) -> float:
     """
     # Through normalize_degree rather than a second `% 360.0`: the modulo alone
     # returns exactly 360.0 for a tiny negative sum, which is outside the range
-    # this docstring promises. That was the defect fixed fifteen lines below;
+    # this docstring promises. That was the defect normalize_degree was rewritten to fix;
     # having the two share one implementation is what stops it being fixed once.
     return normalize_degree(a + b)
 
@@ -854,9 +855,12 @@ def draw_zodiac_slice(
     return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice_path + sign + "</g>"
 
 
-# Span given to a wedge whose two cusps quantise onto the same whole degree, so
-# the arc is still drawn and the house stays clickable. One degree is the
-# resolution the classic engine works at, so nothing finer would survive anyway.
+# The narrowest wedge worth drawing, so the arc is still there and the house
+# stays clickable. One degree is the resolution the classic engine quantises to,
+# so nothing finer would survive there anyway. The modern engine keeps its exact
+# degrees and imports this all the same: for that one it is not a quantisation
+# limit but a floor on what a pointer can hit, and the ring brings cusps close
+# enough on its own to need it.
 MINIMUM_WEDGE_SPAN_DEGREES = 1.0
 
 
@@ -901,8 +905,9 @@ def separate_collapsed_wedges(
 
     Returns:
         The rebuilt boundaries and widths — equal to the arguments, value for
-        value, when nothing was below the minimum or the cusps are too tangled to
-        have a direction in common. Copies either way: a caller that mutated what
+        value, when nothing was below the minimum, when the cusps are too tangled
+        to have a direction in common, or when the wide wedges cannot spare what
+        the thin ones need. Copies either way: a caller that mutated what
         it got back would otherwise reach into the list it passed in.
     """
     unchanged = (list(boundaries), list(spans))
@@ -1030,7 +1035,7 @@ def draw_house_sectors(
         # traded between them. Left alone, a width of zero puts both endpoints of
         # the arc on the same point, SVG drops the arc segment entirely, and what
         # remains is a path of no area still declaring pointer-events:all — the
-        # unclickable house this whole passage exists to prevent. Sunshine at 67N
+        # unclickable house this whole passage exists to prevent. Sunshine/alt at 67N
         # produced six of them in one chart.
         #
         # So this one wedge takes its degree and moves only its own end. It then
@@ -1072,7 +1077,7 @@ def draw_house_sectors(
         # The separation above already catches that input, so this is the second
         # line and not the first. It is here because the rule is the rule — a
         # bare `% 360` on an angle is the trap normalize_degree was rewritten to
-        # close fifteen files away, and leaving one behind invites the next
+        # close, and leaving one behind invites the next
         # person to copy it.
         large_arc = 1 if span > 180 else 0
         outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)

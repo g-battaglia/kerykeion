@@ -333,7 +333,8 @@ def normalize_degree(angle: Union[int, float]) -> float:
         angle (int | float): The input angle in degrees.
 
     Returns:
-        float: The normalized angle in the range [0, 360).
+        float: The normalized angle in the range [0, 360), or NaN unchanged when
+            the input is NaN - see the note below on why it is not turned into 0.
     """
     # The guard is on the *result*, not on `% 360 != 0`. For a tiny negative
     # input Python's float modulo returns exactly 360.0 (-1e-15 % 360 == 360.0),
@@ -362,7 +363,7 @@ _HOUSE_WINDING_TOLERANCE_DEGREES = 1e-4
 def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
     """The twelve house widths, and which of them run against their own frame.
 
-    Above roughly 68 degrees a Campanus, Regiomontanus, Sunshine, topocentric or
+    Above roughly 67 degrees a Campanus, Regiomontanus, Sunshine, Polich/Page or
     APC chart puts its cusps in *descending* order, and a horizon chart does it
     on the equator: the houses genuinely run backwards through the signs. Read
     forwards, each house then measures some 354 degrees instead of 6, the twelve
@@ -370,11 +371,17 @@ def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
     that draws or centres on that span lands on the far side of the chart from
     the house it names.
 
-    The direction belongs to the whole set and cannot be decided pair by pair: a
-    single house may legitimately run past 180 degrees, which Placidus manages at
-    high latitude, and taking the shorter arc there would cut it in half. Twelve
-    widths cover the circle exactly once in whichever direction the houses run,
-    so the total is what tells the two apart - 360 one way, 3960 the other.
+    The direction belongs to the whole set and cannot be decided pair by pair.
+    Reading each pair's shorter arc would answer a different question - one about
+    two cusps rather than about twelve - and would have no way to tell a house
+    that is genuinely wide from one that is being read backwards. Twelve widths
+    cover the circle exactly once in whichever direction the houses run, so the
+    total is what tells the two apart: 360 one way, 3960 the other.
+
+    (Houses close on 180 degrees but do not pass it: the widest found by sweeping
+    every system to 89.9 degrees of latitude is 179.995, under APC at 86N. The
+    sibling reader get_planet_house relies on that, and this is the measurement
+    behind it.)
 
     A third case has neither total. Polich/Page inside the polar circle returns
     cusps that are not ordered at all: at 70N the first runs backwards while the

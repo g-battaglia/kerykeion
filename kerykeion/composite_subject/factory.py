@@ -585,8 +585,9 @@ class CompositeSubjectFactory:
         # different points: the angles are where the ecliptic meets the horizon
         # and the meridian, which is what this library's own polar warning says,
         # and no house system moves them. Reading them off the cusps regardless
-        # made the composite Ascendant depend on the house system — 167 degrees
-        # between Morinus and Placidus on one ordinary pair.
+        # made the composite Ascendant depend on the house system — 167.65 degrees
+        # between Morinus and Placidus on one ordinary pair, and up to 173.74
+        # across the twelve systems measured.
         #
         # Which of the two it is, is asked of the parents rather than of a list
         # of system identifiers kept somewhere: if an angle sits exactly on its
@@ -631,8 +632,10 @@ class CompositeSubjectFactory:
             # 354 and swallows most of the wheel. Ten points out of ten landed in
             # the wrong house, and the same model's own house-comparison field
             # disagreed with them, because that one already went through
-            # get_planet_house. It carries the exact-on-cusp rule too, so the
-            # composite Midheaven still opens the tenth.
+            # get_planet_house. It carries the exact-on-cusp rule too, so wherever
+            # the Midheaven IS the tenth cusp - every quadrant system - it still
+            # opens the tenth house. Under equal or Carter houses it is a point of
+            # its own and can fall in the ninth, which is what those systems mean.
             self[planet_lower]["house"] = get_planet_house(
                 self[planet_lower]["abs_pos"], house_degree_list_ut
             )

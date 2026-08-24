@@ -75,6 +75,12 @@ def _uneven_cusps_from(first_cusp: float) -> list:
 #: coordinate written as 2.0037e-11 — which is how a point on the wheel's axis
 #: comes out — tokenises as two numbers, and every index after it is off by one.
 #: The reader then measures a different arc and answers confidently about it.
+_HOUSE_ATTRS = (
+    "first_house", "second_house", "third_house", "fourth_house", "fifth_house",
+    "sixth_house", "seventh_house", "eighth_house", "ninth_house", "tenth_house",
+    "eleventh_house", "twelfth_house",
+)
+
 _NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
 
 #: The same, as a capturing group, for readers that pull coordinates in pairs.
@@ -609,24 +615,43 @@ def _rendered_spans(system: str, lat: float, lng: float, style: str) -> list[flo
     [
         ("i", 67.0),   # Sunshine/alt: six dead wedges in one chart before the guard
         ("T", 70.0),   # Polich/Page
-        ("i", 66.5),  # both engines force six wedges here
-        ("T", 74.0),
+        ("i", 67.5),
+        ("T", 70.5),
     ],
 )
 @pytest.mark.parametrize("style", ["classic", "modern"])
 def test_a_chart_whose_cusps_cross_still_gives_every_house_a_target(system, lat, style):
     """No wedge of zero area, and none under the minimum, however tangled.
 
-    Every case here has to actually reach the guard, or it is asserting that a
-    chart which never needed it came out fine. Two of the four fixtures used to
-    do exactly that — the guard fired zero times on them in either engine — so
-    the test below counts the wedges it had to widen and refuses to pass on none.
+    Every case here has to be a chart whose cusps genuinely cross — that is the
+    only kind the separator cannot repair, and therefore the only kind that
+    reaches the guard in the drawing loop. Fixtures have twice been chosen here
+    that looked the part and were not: one had a ring running in a single
+    direction, which the separator tiles, so the case passed while proving
+    nothing. The first assertion below asks house_spans rather than the eye.
     """
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Tangled", 1985, 10, 15, 14, 0, city="X", nation="XX", online=False,
         suppress_geonames_warning=True, tz_str="UTC", lat=lat, lng=25.0,
         houses_system_identifier=system,
     )
+    # The fixture has to be what the test is named for: cusps that cross, not
+    # merely run backwards. house_spans says which, and a mixed set of direction
+    # flags is exactly the case the separator declines and the loop guard has to
+    # take. Asked in the quantised frame the classic engine draws in, since that
+    # is where the collapse happens.
+    cusps = [getattr(subject, name).abs_pos for name in _HOUSE_ATTRS]
+    seventh = int(cusps[6])
+    boundaries = [float(-seventh + int(cusp)) for cusp in cusps]
+    spans, reversed_wedges = house_spans(boundaries)
+    assert len(set(reversed_wedges)) > 1, (
+        f"{system} at {lat}N has a ring running one way — the separator tiles it, "
+        f"so this fixture never reaches the guard it is meant to exercise"
+    )
+    assert min(spans) < MINIMUM_WEDGE_SPAN_DEGREES, (
+        f"{system} at {lat}N has nothing under the minimum to widen"
+    )
+
     svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
         style=style
     )
@@ -652,10 +677,7 @@ def test_a_chart_whose_cusps_cross_still_gives_every_house_a_target(system, lat,
         assert span >= MINIMUM_WEDGE_SPAN_DEGREES - 1e-5, f"house {house}: {span:.6f} deg"
         if abs(span - MINIMUM_WEDGE_SPAN_DEGREES) < 1e-5:
             widened += 1
-    assert widened, (
-        f"{system} at {lat}N in {style} never reached the guard, so this case "
-        f"proves nothing about it — pick a chart whose cusps actually cross"
-    )
+    assert widened, f"{system} at {lat}N in {style}: nothing came out at the minimum"
 
 
 def test_a_tangled_ring_is_not_rebuilt_around_a_direction_it_does_not_have():
@@ -683,3 +705,42 @@ def test_a_tangled_ring_is_not_rebuilt_around_a_direction_it_does_not_have():
     )
     assert boundaries == list(tangled)
     assert widths == list(spans)
+
+
+# =============================================================================
+# THE GAUQUELIN RING
+# =============================================================================
+#
+# A Gauquelin chart replaces the twelve house wedges with thirty-six sector ones,
+# and those cusps descend by construction. The modern engine corrected its span
+# for that and left both sweep flags where they were — the one combination this
+# module's own comments say lifts an arc onto the mirrored circle SVG puts
+# through any two points. Measured on the gallery's charts before the fix: the
+# thirty-six wedges sat on circles up to 92 units from a wheel whose radius is
+# 50. The classic engine's twin had always used the flipped pair.
+
+
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_the_gauquelin_wedges_stay_on_their_own_ring(style):
+    """All thirty-six arcs have to share one centre, as the house wedges do."""
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Gauquelin", 1990, 1, 1, 12, 0, city="X", nation="XX", online=False,
+        suppress_geonames_warning=True, tz_str="UTC", lat=51.5074, lng=-0.1276,
+        calculate_gauquelin=True,
+    )
+    svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string(
+        style=style
+    )
+    sectors = re.findall(
+        r"<g kr:node='GauquelinSector' kr:sector='\d+'><path d='([^']+)'", svg
+    ) or re.findall(r'<g kr:node="GauquelinSector" kr:sector="\d+"><path d="([^"]+)"', svg)
+    assert len(sectors) == 36, len(sectors)
+
+    centres = [_outer_arc_centre(path) for path in sectors]
+    mean_x = sum(x for x, _ in centres) / 36.0
+    mean_y = sum(y for _, y in centres) / 36.0
+    for x, y in centres:
+        assert math.hypot(x - mean_x, y - mean_y) < 0.01, (
+            f"{style}: a sector was drawn on a circle of its own, centred "
+            f"({x:.3f}, {y:.3f}) against ({mean_x:.3f}, {mean_y:.3f})"
+        )

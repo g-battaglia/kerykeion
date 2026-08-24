@@ -2240,10 +2240,10 @@ def _draw_house_sectors_modern(
 ) -> str:
     """Draw transparent house sector wedges for interactive highlighting (modern style)."""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
-    # Which way the houses run, read once from all twelve. The same reversal the
-    # Gauquelin variant below already accounts for reaches ordinary house cusps
-    # too: several quadrant systems put them in descending order above the polar
-    # circle, and the horizon system does it on the equator.
+    # Which way the houses run, read once from all twelve. Several quadrant
+    # systems put them in descending order above the polar circle, and the
+    # horizon system does it on the equator. The Gauquelin variant below is
+    # always descending, by construction, and says so where it draws.
     wheel_angles = [
         _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses[:12]
     ]
@@ -2362,11 +2362,17 @@ def _draw_gauquelin_sectors_modern(
 
         large_arc = 1 if span > 180 else 0
 
+        # Both sweeps flipped, because these cusps descend. Correcting the span
+        # alone leaves the endpoints where they were and moves the arc onto the
+        # mirrored circle SVG puts through any two points at a given radius —
+        # measured on the gallery's Gauquelin charts, the thirty-six wedges sat
+        # on circles up to 92 units from a wheel whose radius is 50. The classic
+        # engine's twin has always used this pair; only this one did not.
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},1 {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},0 {ix1:.6f},{iy1:.6f} Z"
         )
 
         out += (

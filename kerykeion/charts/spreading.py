@@ -25,27 +25,14 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
-import math
+# The one rule, not a local restatement of it. This module used to carry a
+# byte-identical twin, kept local because charts.utils imported spreading and
+# not the reverse — an argument that stopped being true when normalize_degree
+# moved to utilities.core, which imports nothing from charts at all.
+from kerykeion.utilities.core import normalize_degree
 from typing import Sequence
 
 __all__ = ["isotonic_non_decreasing", "spread_around_wheel"]
-
-
-def _wrap_to_circle(angle: float) -> float:
-    """``angle`` reduced to ``[0, 360)`` — the half-open range, actually.
-
-    Plain ``% 360.0`` does not give it: for a tiny negative input Python's float
-    modulo returns exactly ``360.0``, which is outside the range every caller
-    here assumes. The same trap is documented at
-    :func:`kerykeion.charts.utils.normalize_degree`; this is its local twin,
-    kept local because ``charts.utils`` imports this module and not the reverse.
-    """
-    result = angle % 360.0
-    # NaN fails `< 360.0` too, and turning it into 0.0 would invent a position
-    # rather than surface a bad one. Same reasoning as the twin.
-    if math.isnan(result):
-        return result
-    return result if result < 360.0 else 0.0
 
 
 def isotonic_non_decreasing(values: Sequence[float]) -> list[float]:
@@ -109,13 +96,13 @@ def spread_around_wheel(
     """
     count = len(angles)
     if count < 2 or (min_separation <= 0 and not half_extents):
-        return [_wrap_to_circle(angle) for angle in angles]
+        return [normalize_degree(angle) for angle in angles]
 
-    order = sorted(range(count), key=lambda i: _wrap_to_circle(angles[i]))
-    sorted_angles = [_wrap_to_circle(angles[i]) for i in order]
+    order = sorted(range(count), key=lambda i: normalize_degree(angles[i]))
+    sorted_angles = [normalize_degree(angles[i]) for i in order]
 
     gaps = [
-        _wrap_to_circle(sorted_angles[(i + 1) % count] - sorted_angles[i])
+        normalize_degree(sorted_angles[(i + 1) % count] - sorted_angles[i])
         for i in range(count)
     ]
     cut = max(range(count), key=lambda i: gaps[i])
@@ -123,7 +110,7 @@ def spread_around_wheel(
     # Unroll starting just after the widest gap, so the sequence is monotonic.
     rolled = [sorted_angles[(cut + 1 + i) % count] for i in range(count)]
     start = rolled[0]
-    unrolled = [_wrap_to_circle(angle - start) for angle in rolled]
+    unrolled = [normalize_degree(angle - start) for angle in rolled]
 
     # What each consecutive pair needs, in the unrolled order.
     rolled_index = [order[(cut + 1 + i) % count] for i in range(count)]
@@ -204,5 +191,5 @@ def spread_around_wheel(
 
     result = [0.0] * count
     for position, index in enumerate(order[(cut + 1) % count :] + order[: (cut + 1) % count]):
-        result[index] = _wrap_to_circle(placed[position] + start)
+        result[index] = normalize_degree(placed[position] + start)
     return result

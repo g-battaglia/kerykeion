@@ -1173,9 +1173,13 @@ def test_the_composite_angles_do_not_depend_on_the_house_system():
     "An angle IS its cusp" holds only under a quadrant system. Under whole sign,
     equal, Morinus or meridian houses the first cusp is not the Ascendant and the
     tenth is not the Midheaven — this library models them separately, and says so
-    in its own polar warning. Reading the angles off the cusps regardless made the
-    composite Ascendant move 167 degrees between Morinus and Placidus for one
-    ordinary pair, and 173 for the Midheaven under whole sign.
+    in its own polar warning.
+
+    Reading the angles off the cusps regardless made them move with the house
+    system. Measured on the pair below, across twelve systems: the Ascendant
+    disagreed with itself by up to 173.74 degrees (whole sign against Morinus)
+    and the Midheaven by up to 174.85 (Morinus against Carter); between Placidus
+    and Morinus alone the Ascendant moved 167.65.
     """
     def composite_for(system: str):
         first = AstrologicalSubjectFactory.from_birth_data(
