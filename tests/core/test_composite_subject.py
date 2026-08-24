@@ -1329,18 +1329,31 @@ def test_the_winding_test_reads_a_hair_negative_gap_as_zero():
     Two cusps coincident to within a hair, in the negative direction, are what a
     bare ``% 360`` answers 360.0 for — turning a ring that covers the circle once
     into one that appears to cover it twice, and sending a chart that needed
-    nothing through the repair. The closest two composite cusps measured across
-    140,000 real rings were 5.7e-13 degrees apart, which is an order of magnitude
-    too far to trip it, so the case has to be constructed.
+    nothing through the repair. Real composite rings do produce coincident cusps —
+    90 of 120,069 measured were bit-identical — but not this far apart and no
+    closer, so the exact case has to be constructed.
+
+    Two separate facts, and the ring below is not a house division: its twelve
+    arcs cover the circle once, and two of its cusps are the same point. The
+    first is what ``house_spans`` must not read as 720; the second is why twelve
+    arcs summing to 360 is not on its own an answer.
     """
     import math
 
     from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import house_spans
 
     ring = [0.0, 30.0, 60.0, 90.0, 120.0, math.nextafter(120.0, 0.0)]
     ring += [180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
     assert (ring[5] - ring[4]) % 360.0 == 360.0, "the fixture no longer trips the modulo"
-    assert _cusp_ring_winds_once(ring)
+
+    spans, reversed_wedges = house_spans(ring)
+    assert sum(spans) == approx(360.0, abs=1e-4), "the hair-negative gap read as a whole turn"
+    assert len(set(reversed_wedges)) == 1
+
+    # And still not twelve houses: one of them has no width.
+    assert min(spans) < 1e-9
+    assert not _cusp_ring_winds_once(ring)
 
 
 def test_two_charts_that_run_opposite_ways_keep_their_angles_on_their_cusps():
@@ -1520,3 +1533,145 @@ def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
             first, second, house_anchor=anchor
         ).get_midpoint_composite_subject_model()
         assert _cusps_of(model) == approx(naive, abs=1e-9), anchor
+
+
+def test_an_angle_that_is_a_cusp_opens_that_house_even_when_two_cusps_coincide():
+    """The composite knows which cusp each angle is. It must not have to look.
+
+    Sunshine reverses its ring at 80N and does not at 41.9N, and the near
+    midpoints of the two fourth cusps and of the two tenth land on the SAME
+    longitude. The Midheaven is that longitude, correctly — it is the tenth cusp
+    — but a reader scanning the twelve meets the fourth first and answers with
+    it, so the chart came back with its Midheaven in the fourth house. 468 charts
+    of 178,416 read that way.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=41.9, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="I",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=80.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="I",
+    )
+    for subject in (first, second):
+        assert subject.medium_coeli.abs_pos == approx(subject.tenth_house.abs_pos, abs=1e-9)
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        # The fixture's whole point: without the collision a scan would answer
+        # correctly and this test would hold on any implementation.
+        assert cusps[3] == approx(cusps[9], abs=1e-9), "the two cusps no longer collide"
+        assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9), anchor
+        assert model.medium_coeli.house == "Tenth_House", anchor
+
+
+def test_a_hair_under_half_a_circle_is_not_a_disagreement():
+    """Two Ascendants 179.99999192 degrees apart have two midpoints a hair apart.
+
+    The near one and the frame's own choice are then the same point reached two
+    ways, and they differ by 8.2e-09 degrees. Read as a broken identity — which a
+    tolerance of 1e-9 does — the whole ring turns half a circle to repair eight
+    nanodegrees, and the Ascendant of this composite came out 180 degrees from
+    its own first cusp, in the seventh house. Across 279,369 identities the
+    disagreement is 0 for 271,237 and 180 degrees for 8,098; 34 sit between 1e-9
+    and 1e-6, and nothing at all lies in between.
+    """
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 7, 0, city="X", nation="XX", lat=-33.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="A",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=-66.75, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="A",
+    )
+    separation = abs(((second.ascendant.abs_pos - first.ascendant.abs_pos + 180.0) % 360.0) - 180.0)
+    assert separation == approx(180.0, abs=1e-4), "the fixture is no longer near half a circle"
+    assert separation != approx(180.0, abs=1e-9), "the fixture is now exactly half a circle"
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        # A microdegree, not a bit: the two ARE the same point reached two ways,
+        # and the eight nanodegrees between them are the whole subject here.
+        assert model.ascendant.abs_pos == approx(_cusps_of(model)[0], abs=1e-6), anchor
+        assert model.ascendant.house == "First_House", anchor
+
+
+def test_the_descendant_is_derived_and_not_averaged_on_its_own():
+    """Averaging the two Imum Coeli separately can land half a turn from the Midheaven.
+
+    Two angles half a circle apart have two midpoints equally near, and separate
+    calls pick opposite ones: on this pair the direct average of the two Imum
+    Coeli is 173.59 while the Midheaven's own midpoint plus half a turn is 353.59.
+    Averaged on its own, an Imum Coeli stops being opposite its own Midheaven —
+    which it is by definition, in the parents and here. 2,835 pairs of 39,924
+    differ by more than a nanodegree, and the largest difference is exactly 180.
+    """
+    from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+    from kerykeion.utilities.core import circular_mean
+
+    points = list(DEFAULT_ACTIVE_POINTS) + [
+        name for name in ("Descendant", "Imum_Coeli") if name not in DEFAULT_ACTIVE_POINTS
+    ]
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=-89.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        active_points=points,
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=80.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="C",
+        active_points=points,
+    )
+    direct = circular_mean(first.imum_coeli.abs_pos, second.imum_coeli.abs_pos)
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        assert (model.imum_coeli.abs_pos - model.medium_coeli.abs_pos) % 360.0 == approx(
+            180.0, abs=1e-9
+        ), anchor
+        assert (model.descendant.abs_pos - model.ascendant.abs_pos) % 360.0 == approx(
+            180.0, abs=1e-9
+        ), anchor
+        # The fixture earns its place only while the two answers still differ.
+        assert abs(((direct - model.imum_coeli.abs_pos + 180.0) % 360.0) - 180.0) == approx(
+            180.0, abs=1e-6
+        ), anchor
+
+
+def test_a_ring_whose_wedges_run_both_ways_is_not_a_house_division():
+    """Twelve arcs can sum to 360 while half of them run the other way.
+
+    The arcs then measure something that is not a partition — some of the circle
+    twice and some of it not at all — and the shortest-arc reading each wedge
+    falls back on hides it in the total. This is the one real midpoint ring in
+    181,125 where that clause is the only thing standing between the ring and
+    being called a house division: every arc has width, and they add to 360.
+    """
+    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import circular_mean, house_spans
+
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 7, 0, city="X", nation="XX", lat=-89.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="Y",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1990, 6, 15, 7, 0, city="X", nation="XX", lat=-86.0, lng=0.0, tz_str="UTC",
+        online=False, suppress_geonames_warning=True, houses_system_identifier="Y",
+    )
+    ring = [
+        circular_mean(getattr(first, name).abs_pos, getattr(second, name).abs_pos)
+        for name in _CUSP_ATTRS
+    ]
+    spans, reversed_wedges = house_spans(ring)
+    assert sum(spans) == approx(360.0, abs=1e-4), "the fixture no longer sums to a full turn"
+    assert min(spans) > 1e-9, "the fixture is now caught by the coincident-cusp test instead"
+    assert len(set(reversed_wedges)) > 1, "the fixture's wedges no longer run both ways"
+
+    assert not _cusp_ring_winds_once(ring)

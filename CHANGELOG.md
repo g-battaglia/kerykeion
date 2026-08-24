@@ -85,11 +85,13 @@
   `transparent_background=True` to composite it over your own surface.
 - An inverted hours range in `EphemerisDataFactory` raises instead of returning
   one sample outside the window.
-- **Midpoint composites read differently where a86 was wrong.** On 140 ordinary
-  mid-latitude pairs, a86 produced 19 cusp rings that were not house divisions;
-  a87 produces none, at the cost of 19 house frames turning half a circle. A
-  stored a86 composite re-rendered on a87 can read a planet in the opposite
-  house; the two are distinguishable because a87 records `house_anchor`.
+- **Midpoint composites read differently where a86 was wrong.** Cusp rings that
+  are not a division of the circle into twelve houses fall from 9.9% to 2.2% at
+  ordinary latitudes and from 19.3% to 8.9% above the polar circle; a Midheaven
+  that both parents put on their own tenth cusp is filed outside the tenth house
+  637 times by a86 above the polar circle and never by a87. A stored a86
+  composite re-rendered on a87 can read a planet in the opposite house; the two
+  are distinguishable because a87 records `house_anchor`.
 
 ## [6.0.0a86]
 
