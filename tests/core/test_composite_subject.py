@@ -1033,22 +1033,52 @@ def test_the_named_anchor_keeps_its_own_near_midpoint():
 def test_auto_holds_whichever_angle_is_the_better_determined():
     """Solar Fire's rule: the "strongest" midpoint is the one whose base cusps
     are closest together, because a midpoint between two nearly opposite points
-    is the arbitrary one of the pair."""
-    from kerykeion.composite_subject.factory import composite_house_cusps
+    is the arbitrary one of the pair.
+    Real charts, because synthetic ones do not reach the rule: two rings that fail
+    the repair come back as their own plain midpoints whatever is held, so the
+    three anchors agree and an assertion between them compares a value with
+    itself. These two pairs are drawn from 674 of 6,000 random polar composites
+    where holding the Ascendant and holding the Midheaven give different rings.
+    """
 
-    # First house cusps 10 degrees apart, tenth 170 apart: the first is stronger.
-    first = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
-    second = [10.0, 40.0, 70.0, 100.0, 130.0, 160.0, 190.0, 220.0, 250.0, 100.0, 310.0, 340.0]
-    automatic = composite_house_cusps(first, second, anchor="auto")
-    on_ascendant = composite_house_cusps(first, second, anchor="ascendant")
-    assert automatic == on_ascendant
+    def pair(system, one, other):
+        return tuple(
+            AstrologicalSubjectFactory.from_birth_data(
+                name, *when, city="X", nation="XX", lat=lat, lng=lng, tz_str="UTC",
+                online=False, suppress_geonames_warning=True,
+                houses_system_identifier=system,
+            )
+            for name, when, lat, lng in (one, other)
+        )
 
-    # Now the other way round: tenth cusps together, first cusps nearly opposed.
-    first = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
-    second = [170.0, 40.0, 70.0, 100.0, 130.0, 160.0, 350.0, 220.0, 250.0, 280.0, 310.0, 340.0]
-    automatic = composite_house_cusps(first, second, anchor="auto")
-    on_midheaven = composite_house_cusps(first, second, anchor="midheaven")
-    assert automatic == on_midheaven
+    def rings(subjects):
+        first, second = subjects
+        return {
+            anchor: _cusps_of(
+                CompositeSubjectFactory(
+                    first, second, house_anchor=anchor
+                ).get_midpoint_composite_subject_model()
+            )
+            for anchor in _ANCHORS
+        }
+
+    # Ascendants 137.9 degrees apart, Midheavens 180.0: the Ascendant is stronger.
+    ring = rings(pair(
+        "O",
+        ("A", (1987, 10, 22, 20, 40), -71.9297883354, 17.8568718463),
+        ("B", (1913, 10, 26, 1, 56), 18.884737657, 115.7524154677),
+    ))
+    assert ring["auto"] == approx(ring["ascendant"], abs=1e-9)
+    assert ring["auto"] != approx(ring["midheaven"], abs=1e-9), "the fixture stopped separating them"
+
+    # Now the other way: Midheavens 103.5 apart, Ascendants 116.6.
+    ring = rings(pair(
+        "D",
+        ("A", (1926, 12, 1, 20, 36), 86.5566556659, -58.2274497794),
+        ("B", (1953, 5, 17, 4, 52), -70.6328746065, 112.0509011745),
+    ))
+    assert ring["auto"] == approx(ring["midheaven"], abs=1e-9)
+    assert ring["auto"] != approx(ring["ascendant"], abs=1e-9), "the fixture stopped separating them"
 
 
 @pytest.mark.parametrize("anchor", _ANCHORS)
@@ -1492,13 +1522,31 @@ def test_a_repair_that_is_not_a_house_division_is_not_a_repair():
         "B", 1990, 6, 15, 22, 0, city="X", nation="XX", lat=75.0, lng=0.0, tz_str="UTC",
         online=False, suppress_geonames_warning=True, houses_system_identifier="C",
     )
-    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
-    cusps = _cusps_of(model)
+    from kerykeion.utilities.core import circular_mean
 
-    assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9)
-    assert model.medium_coeli.house == "Tenth_House"
-    assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-9)
-    assert model.ascendant.house == "First_House"
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+
+        assert model.medium_coeli.abs_pos == approx(cusps[9], abs=1e-9), anchor
+        assert model.medium_coeli.house == "Tenth_House", anchor
+        assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-9), anchor
+        assert model.ascendant.house == "First_House", anchor
+
+        # And there is genuinely no frame here, not merely a ring that happens to
+        # agree with one: every position falls back to its own near midpoint,
+        # which is what a composite was before any of this. Let the frame call
+        # itself coherent after a repair it could not make, and the angles get
+        # placed on it instead.
+        for angle in ("ascendant", "medium_coeli"):
+            assert getattr(model, angle).abs_pos == approx(
+                circular_mean(
+                    getattr(first, angle).abs_pos, getattr(second, angle).abs_pos
+                ),
+                abs=1e-9,
+            ), (anchor, angle)
 
 
 def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
@@ -1510,7 +1558,7 @@ def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
     system where neither angle is a cusp — whole sign, Morinus, meridian,
     Carter. Here the first cusp goes from 22.19 degrees to 202.19.
     """
-    from kerykeion.utilities.core import circular_mean
+    from kerykeion.utilities.core import circular_mean, get_planet_house
 
     first = AstrologicalSubjectFactory.from_birth_data(
         "A", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=0.0, lng=0.0, tz_str="UTC",
@@ -1532,7 +1580,14 @@ def test_the_ring_is_left_alone_where_no_angle_is_a_cusp():
         model = CompositeSubjectFactory(
             first, second, house_anchor=anchor
         ).get_midpoint_composite_subject_model()
-        assert _cusps_of(model) == approx(naive, abs=1e-9), anchor
+        cusps = _cusps_of(model)
+        assert cusps == approx(naive, abs=1e-9), anchor
+
+        # And the Ascendant is filed by looking, because here it is NOT the first
+        # cusp. The shortcut that records an angle's house by its cusp number is
+        # only for charts whose parents put it there; let it through unguarded and
+        # this Ascendant claims the first house from a ring that never gave it.
+        assert model.ascendant.house == get_planet_house(model.ascendant.abs_pos, cusps), anchor
 
 
 def test_an_angle_that_is_a_cusp_opens_that_house_even_when_two_cusps_coincide():
@@ -1719,7 +1774,7 @@ def test_all_four_angles_open_their_own_houses_and_not_just_two():
     # Without a collision a scan answers correctly on its own, and this test would
     # pass on any implementation at all. An engine bump that dissolves this one
     # must say so here rather than leave the test green and pinning nothing.
-    assert plain_cusps[1] == approx(plain_cusps[2], abs=1e-9), "the cusps no longer collide"
+    assert plain_cusps[1] == approx(plain_cusps[3], abs=1e-9), "the cusps no longer collide"
 
     for anchor in _ANCHORS:
         model = CompositeSubjectFactory(
@@ -1799,9 +1854,13 @@ def test_a_gap_of_a_thousandth_of_a_degree_is_still_not_half_a_turn():
         # This pair is also the one where the opposite-cusp snap does its widest
         # work: all six pairs fire here without a single one having collapsed,
         # the parents put every cusp opposite its partner, and so must this ring.
-        assert (cusps[6] - cusps[0]) % 360.0 == approx(180.0, abs=1e-9), anchor
-        assert (cusps[7] - cusps[1]) % 360.0 == approx(180.0, abs=1e-9), anchor
-        assert (cusps[3] - cusps[9]) % 360.0 == approx(180.0, abs=1e-9), anchor
+        for source, derived in ((0, 6), (9, 3), (1, 7), (2, 8), (4, 10), (5, 11)):
+            # By value and not merely by relation: an opposition holds whichever
+            # of the two moved, and it is the one carrying an angle that must not.
+            assert cusps[derived] == approx((cusps[source] + 180.0) % 360.0, abs=1e-9), (
+                anchor,
+                source,
+            )
         if anchor == "ascendant":
             # 7.9e-04 degrees short of its own first cusp was enough, on this
             # ring, to put the Descendant into the sixth house.
@@ -1899,3 +1958,72 @@ def test_a_house_a_ten_millionth_of_a_degree_wide_is_still_a_house():
     assert sum(spans) == approx(360.0, abs=1e-4)
 
     assert _cusp_ring_winds_once(ring)
+
+
+def test_an_angle_that_is_not_a_cusp_is_filed_by_looking():
+    """The shortcut is only for angles their parents put on a cusp.
+
+    Under the horizon system the first cusp is not the Ascendant, so the composite
+    has no identity to record and must read the ring like any other point. Let the
+    shortcut through unguarded and every Ascendant claims the first house whatever
+    the ring says: this one is in the SECOND, and 794 readings of 16,496 on one
+    sweep disagreed with an independently written reader.
+    """
+    from kerykeion.utilities.core import get_planet_house
+
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1946, 6, 4, 17, 27, city="X", nation="XX", lat=66.0770056063,
+        lng=146.9838620094, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="H",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1985, 3, 1, 2, 17, city="X", nation="XX", lat=-30.7804059435,
+        lng=22.2668395803, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="H",
+    )
+    for subject in (first, second):
+        assert subject.ascendant.abs_pos != approx(subject.first_house.abs_pos, abs=1e-6), (
+            "the fixture now puts the Ascendant on the first cusp"
+        )
+
+    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    cusps = _cusps_of(model)
+    assert model.ascendant.house == get_planet_house(model.ascendant.abs_pos, cusps)
+    assert model.ascendant.house == "Second_House"
+
+
+def test_a_frame_that_could_not_repair_the_ring_is_not_used_for_the_angles():
+    """Saying "coherent" after a repair that failed puts the angles on a frame the
+    ring is not on.
+
+    On this pair the ring cannot be placed on the frame and made a house division
+    at all, so every position is its own near midpoint — and placing the Ascendant
+    on that frame instead puts it at 53.56 degrees where its own midpoint is
+    233.56, half a circle away. Rare, and worth hunting for: one composite in
+    2,500 random polar pairs is affected by the flag alone, because on almost all
+    the others the conflicting-identity branch clears it anyway. That is exactly
+    why nothing was holding it.
+    """
+    from kerykeion.utilities.core import circular_mean
+
+    first = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1925, 2, 23, 5, 31, city="X", nation="XX", lat=70.51556447615829,
+        lng=145.65582591300597, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="H",
+    )
+    second = AstrologicalSubjectFactory.from_birth_data(
+        "B", 1946, 4, 21, 7, 46, city="X", nation="XX", lat=-7.964902969273311,
+        lng=-95.15449595145473, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="H",
+    )
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        for angle in ("ascendant", "medium_coeli"):
+            assert getattr(model, angle).abs_pos == approx(
+                circular_mean(
+                    getattr(first, angle).abs_pos, getattr(second, angle).abs_pos
+                ),
+                abs=1e-9,
+            ), (anchor, angle)

@@ -58,6 +58,7 @@ from kerykeion.schemas.literals import (
     CompositeChartType,
 )
 from kerykeion.utilities.core import (
+    _HOUSE_WINDING_TOLERANCE_DEGREES,
     house_spans,
     get_kerykeion_point_from_degree,
     get_planet_house,
@@ -97,7 +98,10 @@ def _cusp_ring_winds_once(cusps: Sequence[float]) -> bool:
     filed in the fourth. So the arcs must also be arcs.
     """
     spans, reversed_wedges = house_spans(cusps)
-    if len(set(reversed_wedges)) != 1 or abs(sum(spans) - 360.0) > 1e-4:
+    if (
+        len(set(reversed_wedges)) != 1
+        or abs(sum(spans) - 360.0) > _HOUSE_WINDING_TOLERANCE_DEGREES
+    ):
         return False
     return all(span > _COINCIDENT_CUSP_DEGREES for span in spans)
 
@@ -220,11 +224,15 @@ def composite_frame(
     states it — while the twelve cusps cover the circle exactly once.
 
     A ring whose near midpoints already run in order needs no repair and keeps
-    them — that is most of them. Not always value for value: a cusp the parents
-    put exactly opposite another is snapped back onto it first, which moves it by
-    up to about a thousandth of a degree on a near-antipodal pair. The frame is
-    still built and returned for those, because the angles hang from it and must
-    not depend on whether the cusps happened to need repairing.
+    them — that is most of them. Not value for value, though, and in two sizes: a
+    cusp the parents put exactly opposite another is snapped back onto it first,
+    which moves it by up to about a thousandth of a degree on a near-antipodal
+    pair; and where an angle that IS a cusp disagrees with the frame, the whole
+    ring turns half a circle to meet it, in-order or not. That second one is most
+    of the times it fires — 13 of 13 on one mixed-latitude sweep, 30 of 36 on a
+    polar one — and it moves all twelve cusps, not one. The frame is still built
+    and returned for these, because the angles hang from it and must not depend on
+    whether the cusps happened to need repairing.
 
     Args:
         first_cusps: The first subject's twelve cusps, in house order.
@@ -274,6 +282,14 @@ def composite_frame(
         # Both parents, not either: asking only the second makes the composite of
         # A and B differ from the composite of B and A — 1,872 ordered pairs of
         # 51,315 swept at the poles, by as much as 0.09 degrees.
+        #
+        # Which of a pair is the source is forced only for the two carrying an
+        # angle. For the other four it is a convention and nothing observable
+        # rests on it: neither cusp is an angle, and the two parents' separations
+        # are equal by construction, so there is no better-determined one to
+        # prefer. Flipping them moves those cusps by up to 6e-04 degrees and
+        # breaks no invariant — it would show up in a stored baseline, which is
+        # the only reason to leave it alone.
         if (
             _is_opposite(first_cusps[source], first_cusps[derived])
             and _is_opposite(second_cusps[source], second_cusps[derived])
@@ -584,9 +600,12 @@ class CompositeSubjectFactory:
                                              If None, generates name from subject names.
                                              Defaults to None.
             house_anchor (CompositeHouseAnchor, optional): Which angle keeps its near
-                                             midpoint when the cusp ring has to be
-                                             repaired. Only ever consulted on the
-                                             charts that need it. Defaults to "auto".
+                                             midpoint. It decides the frame every
+                                             chart is placed on, not only the ones
+                                             whose ring needs repairing: of 431
+                                             composites needing no repair, 14 had an
+                                             angle moved by it, every one of them by
+                                             exactly half a circle. Defaults to "auto".
 
         Raises:
             KerykeionException: If either input is not an astrological subject model
@@ -810,7 +829,7 @@ class CompositeSubjectFactory:
         ]
         second_cusps = [
             self.second_subject[house.lower()]["abs_pos"]
-            for house in self.first_subject.houses_names_list
+            for house in self.second_subject.houses_names_list
         ]
         composite_angles_frame, house_degree_list_ut, frame_is_coherent = composite_frame(
             first_cusps,
@@ -907,11 +926,15 @@ class CompositeSubjectFactory:
         # they are used only where both parents did.
         #
         # Nothing here re-checks that this chart's angle really landed on that
-        # cusp. It always does — the ring derives an opposite cusp from the one
-        # the angle is on, exactly as the angle derives its own opposite — and a
-        # runtime check for it never once changed an answer on any grid measured.
-        # What holds it is the tests, which assert the angle against its cusp and
-        # not merely against a house name.
+        # cusp. It effectively always does: the ring derives an opposite cusp from
+        # the one the angle is on, exactly as the angle derives its own opposite,
+        # and across ordinary random input the worst drift measured was 2.4e-12
+        # degrees. Bisect a latitude into the band where a circular mean's
+        # resultant vanishes and it reaches 4.5e-09 — enough for the shared reader
+        # to name the twelfth house for an Ascendant this files, correctly, in the
+        # first. So this is the more accurate of the two answers there, not a
+        # shortcut past one. What holds it is the tests, which assert the angle
+        # against its cusp and not merely against a house name.
         angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
         angle_houses: dict[str, str] = {}
         for angle, cusp in angle_cusp_index.items():
