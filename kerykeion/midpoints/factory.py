@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import List, Optional, Sequence, cast
 
 from pydantic import Field
+from kerykeion.utilities.core import normalize_degree
 from kerykeion.schemas.models import SubscriptableBaseModel
 
 from kerykeion.aspects.utils import get_aspect_from_two_points
@@ -95,7 +96,10 @@ class MidpointFactory:
     @staticmethod
     def _sign_and_position(longitude: float) -> tuple[str, float]:
         """Return ``(sign_code, position_within_sign)`` for a longitude in 0-360°."""
-        normalised = longitude % 360.0
+        # Through the library's rule, not a bare modulo: for a hair-negative
+        # longitude `% 360` answers exactly 360.0, and the model would carry a
+        # position of 360 degrees in Aries.
+        normalised = normalize_degree(longitude)
         sign_index = int(normalised // 30) % 12
         position = normalised - (sign_index * 30.0)
         return SIGN_CODES[sign_index], position

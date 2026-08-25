@@ -331,6 +331,60 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     true_geocentric: str = Field(
         title="True Geocentric", description="The true geocentric label in the chart, in the language"
     )
+    # The remaining seven members of PerspectiveType. Every value the literal
+    # admits needs a field here, or a chart cast in that perspective falls back
+    # to the raw English literal in every language and no language_pack can
+    # supply the missing string (extra keys are dropped before model_dump).
+    # tests/core/test_translation_coverage.py holds the two sides together.
+    #
+    # Each carries an English default, like every other key on this model: a new
+    # field without one is a required field, and a required field invalidates
+    # every third-party language pack written before it existed. See
+    # ``_KEYS_ADDED_HERE`` in tests/core/test_settings.py, which pins both halves
+    # of that promise — a pack may omit the key, a shipped pack may not.
+    selenocentric: str = Field(
+        default="Selenocentric",
+        title="Selenocentric",
+        description="The selenocentric label in the chart, in the language",
+    )
+    mercurycentric: str = Field(
+        default="Mercurycentric",
+        title="Mercurycentric",
+        description="The mercurycentric label in the chart, in the language",
+    )
+    venuscentric: str = Field(
+        default="Venuscentric",
+        title="Venuscentric",
+        description="The venuscentric label in the chart, in the language",
+    )
+    marscentric: str = Field(
+        default="Marscentric",
+        title="Marscentric",
+        description="The marscentric label in the chart, in the language",
+    )
+    jupitercentric: str = Field(
+        default="Jupitercentric",
+        title="Jupitercentric",
+        description="The jupitercentric label in the chart, in the language",
+    )
+    saturncentric: str = Field(
+        default="Saturncentric",
+        title="Saturncentric",
+        description="The saturncentric label in the chart, in the language",
+    )
+    barycentric: str = Field(
+        default="Barycentric",
+        title="Barycentric",
+        description="The barycentric label in the chart, in the language",
+    )
+    chart_contents: str = Field(
+        default="{points} points, {aspects} aspects",
+        title="Chart Contents",
+        description=(
+            "Accessibility summary of what the chart holds, read out by the SVG <desc>. "
+            "Takes {points} and {aspects} placeholders."
+        ),
+    )
     new_moon: str = Field(title="New Moon", description="The new moon label in the chart, in the language")
     waxing_crescent: str = Field(
         title="Waxing Crescent", description="The waxing crescent label in the chart, in the language"

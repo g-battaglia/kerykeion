@@ -1605,3 +1605,191 @@ class TestRoundOneRegressions:
         ctx = to_context(cd)
         if "<relationship_score" in ctx:
             assert "max=" not in ctx
+
+
+# =============================================================================
+# HOUSE INFORMATION THE LIBRARY RECORDS AND THE DOCUMENT HAS TO CARRY
+# =============================================================================
+
+
+def _polar_subject():
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="P",
+    )
+
+
+def test_a_substituted_house_system_is_named_in_the_context():
+    """A chart asked for in Placidus at 70N is cast in Porphyry.
+
+    The subject records the substitution, with a message written for a reader.
+    Reporting only the system actually used has a model writing house sentences
+    about a division the user did not choose, with nothing to caveat it.
+    """
+    subject = _polar_subject()
+    assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
+
+    context = to_context(subject)
+    line = [row for row in context.splitlines() if "polar_house_fallback" in row]
+    assert line, context[:400]
+    assert 'requested="Placidus"' in line[0]
+    assert 'used="Porphyry"' in line[0]
+
+
+def test_a_chart_that_needed_no_substitution_says_nothing():
+    """The element is a fact about a chart, not a field every chart carries."""
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+    )
+    assert not ordinary.polar_house_fallbacks
+    assert "polar_house_fallback" not in to_context(ordinary)
+
+
+@pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
+def test_the_composite_context_carries_the_anchor(anchor):
+    """It can turn the whole house frame by half a turn, so a context without it
+    describes a chart that cannot be reproduced."""
+    from kerykeion.composite_subject.factory import CompositeSubjectFactory
+
+    kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
+                  online=False, suppress_geonames_warning=True)
+    first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
+    second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
+
+    model = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    assert f'house_anchor="{anchor}"' in to_context(model)
+
+    davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+    assert "house_anchor" not in to_context(davison), "a Davison chart never needs one"
+
+
+def test_no_degree_contradicts_the_sign_printed_beside_it():
+    """29.99687 rounds to "30.00", which is zero degrees of the NEXT sign.
+
+    Every degree this document prints sits next to a sign label, so the boundary
+    that matters is the sign's ceiling — not 360, which is the only one a naive
+    guard catches. The report's own tables have always got this right.
+    """
+    import re
+
+    subjects = [
+        AstrologicalSubjectFactory.from_birth_data(
+            "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
+            lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        )
+        for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20))
+    ]
+    for subject in subjects:
+        context = to_context(subject)
+        for attribute in ("position", "cusp"):
+            assert f'{attribute}="30.00"' not in context, f"{attribute} at 30 degrees"
+        for match in re.finditer(r'abs_pos="([0-9.]+)"', context):
+            value = float(match.group(1))
+            assert value % 30.0 != 0.0 or value == 0.0, (
+                f"abs_pos {value} sits exactly on a sign boundary it was rounded onto"
+            )
+
+
+def test_the_axes_are_listed_whatever_the_point_preset_is():
+    """A model reading this context can always see where the horizon and the
+    meridian are.
+
+    Four of the angles and nodes are 180-degree opposites of points that ARE in
+    the default preset, so they appear in no preset of their own. Driving this
+    section off `active_points` therefore dropped them from every default chart,
+    which is what it was fixed for — and narrowing it to "only when the
+    counterpart is active" empties the section altogether for a caller who asks
+    for five planets and no angles, which is a caller this library has.
+    """
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Narrow", 1990, 6, 15, 14, 37, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars"],
+    )
+    context = to_context(subject)
+    assert "<axes" in context
+    for angle in ("Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli"):
+        assert f'name="{angle}"' in context, angle
+
+
+def test_a_clamped_polar_fallback_says_which_latitude_it_used():
+    """Requested and used name the same system, so the latitude is the whole story.
+
+    A polar Gauquelin ring is recomputed at a clamped latitude under its own
+    name: the element said "Gauquelin sectors" twice, printed the latitude that
+    was ASKED for, and left out both the strategy and the latitude actually used.
+    A model reading that cannot tell anything happened, let alone reproduce it.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="W", calculate_gauquelin=True,
+    )
+    clamped = next(
+        record for record in subject.polar_house_fallbacks
+        if record.strategy == "clamp_latitude"
+    )
+    assert clamped.used_latitude != clamped.latitude, "the fixture no longer clamps"
+
+    line = next(
+        line for line in astrological_subject_to_context(subject).splitlines()
+        if "polar_house_fallback" in line
+    )
+    assert 'strategy="clamp_latitude"' in line
+    assert f'latitude="{clamped.latitude:.4f}"' in line
+    assert f'used_latitude="{clamped.used_latitude:.4f}"' in line
+
+
+def test_the_gauquelin_fallback_does_not_claim_the_chart_angles_moved():
+    """The backend describes what ITS call produced; only part of it is kept.
+
+    A polar Gauquelin call is retried at a clamped latitude and returns cusps and
+    angles, so the record it files says `house_cusps,angles`. But the chart keeps
+    only the 36-sector ring from that call — its own cusps and its four angles
+    come from the houses call and are bit-identical with Gauquelin switched off.
+    Filed unchanged, the record has a reader believing the horizon moved when
+    nothing did.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    shared = dict(
+        city="X", nation="XX", lat=78.0, lng=0.0, tz_str="UTC", online=False,
+        suppress_geonames_warning=True, houses_system_identifier="W",
+    )
+    plain = AstrologicalSubjectFactory.from_birth_data("N", 1990, 6, 15, 12, 0, **shared)
+    with_gauquelin = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, **shared, calculate_gauquelin=True
+    )
+    for angle in ("ascendant", "medium_coeli", "descendant", "imum_coeli"):
+        assert getattr(plain, angle).abs_pos == getattr(with_gauquelin, angle).abs_pos, angle
+
+    record = next(
+        item for item in with_gauquelin.polar_house_fallbacks
+        if item.requested_house_system_identifier == "G"
+    )
+    assert "angles" not in record.affects
+    assert "house_cusps" not in record.affects
+    assert record.affects == ["gauquelin_sector_cusps", "gauquelin_sectors"]
+
+    line = next(
+        line for line in astrological_subject_to_context(with_gauquelin).splitlines()
+        if "polar_house_fallback" in line
+    )
+    assert "gauquelin_sector_cusps" in line
+
+    # And the prose travels with the scope. The backend writes about the call it
+    # made — "the cusps and the angles derived from this call are approximate" —
+    # and that sentence survives into `model_dump_json()` and anywhere else the
+    # record is read raw, still saying the horizon moved.
+    assert "the cusps and the angles derived from this call are approximate" not in record.message
+    assert "36-sector ring" in record.message
+    assert "angles" in record.message and "keep the real value" in record.message
+    assert f"{record.used_latitude:.4f}" in record.message

@@ -105,7 +105,7 @@ KerykeionException: Both subjects must have the same perspective type
 
 ### The house-system requirement is about the cusps, not the request
 
-Each composite cusp is the circular mean of the two subjects' same-numbered cusps, so the result inherits whatever division produced them. Averaging a Porphyry third house with a Placidus third house yields a boundary belonging to neither system, and no label on the output could turn it into one.
+Each composite cusp is the midpoint of the two subjects' same-numbered cusps, so the result inherits whatever division produced them. Averaging a Porphyry third house with a Placidus third house yields a boundary belonging to neither system, and no label on the output could turn it into one.
 
 That matters because a subject's requested and actual divisions can differ. Inside the polar circle a quadrant system is undefined, so the cusps are recomputed with Porphyry at the real latitude and the substitution is recorded — see [Polar Latitudes](/content/docs/faq). Two subjects can therefore both request Placidus and still have incompatible cusps. The factory compares `effective_houses_system_identifier`, and says why when it refuses:
 
@@ -171,6 +171,14 @@ When the input subjects use `sidereal_mode="USER"`, pass `custom_ayanamsa_t0` an
 ## Methodology
 
 - **Midpoint method**: Positions are calculated as the shortest-arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°); house cusps are also taken by midpoint, which is why both parents' cusps have to come from the same division. Only points present in _both_ input subjects are included.
+
+  Between two points on a circle there are two midpoints, half a turn apart, and taking the nearer one for each of the twelve cusps independently breaks down when the two charts' angles are nearly opposed: the choice flips partway round the ring, the twelve arcs come to 1080° instead of 360°, and the result is not a house division at all. About one pair in sixteen is affected. The cusps are repaired the way the field documents — Solar Fire moves the offending cusps to their long-arc midpoint, Kepler calls it flipping the houses 180°, Townley prescribes it for the stray cusp and its opposite — by holding one angle at its near midpoint and moving the others.
+
+  `house_anchor` chooses which angle is held: `"auto"` (the default; whichever of the Ascendant and the Midheaven has its two base cusps closer together, which is Solar Fire's rule and its default too), `"ascendant"`, or `"midheaven"` (Kepler's two named methods). Anything else raises. A chart whose near midpoints already run in order is returned untouched, value for value, and the anchor is recorded on the model as `house_anchor` so the result can be reproduced.
+
+  The four angles follow their cusp only where the parents made them one point. Under a quadrant system the first cusp is the Ascendant and the tenth the Midheaven, and the composite keeps that true; under whole sign, equal, Morinus or meridian houses they are different points, and the angle stays the midpoint of its own pair — an angle is where the ecliptic meets the horizon and the meridian, and no house system moves it.
+
+  Where the two subjects' houses run opposite ways round the wheel — one of them born inside the polar circle under a system that reverses there — no arrangement of midpoints makes a ring, and the library says so on its logger rather than shipping the chart quietly.
 - **Davison method**: The two birth moments (Julian Day) and the two locations (lat/lng) are averaged, then a standard natal chart is cast for that derived moment and place.
 - **Active Points**: For the midpoint composite, only points present in _both_ input subjects are included.
 

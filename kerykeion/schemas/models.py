@@ -57,7 +57,13 @@ from kerykeion.schemas.literals import (
     PerspectiveType,
     AspectMovementType,
 )
-from kerykeion.schemas.literals import ReturnType, DominantMethod
+from kerykeion.schemas.literals import (
+    ReturnType,
+    DominantMethod,
+    CompositeChartType,
+    CompositeHouseAnchor,
+    CompositeHouseFrame,
+)
 
 # Type alias for any astrological subject model (birth chart, composite, or return)
 AnySubjectModel = Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
@@ -1239,7 +1245,53 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     # Specific composite data
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
-    composite_chart_type: str
+    composite_chart_type: CompositeChartType
+    #: Which angle kept its near midpoint when the cusp ring had to be repaired.
+    #: Recorded because the choice can turn the whole house frame by half a turn,
+    #: so a chart that carries no note of it cannot be reproduced. None on a
+    #: Davison chart, which is cast as an ordinary chart and never needs one.
+    house_anchor: Optional[CompositeHouseAnchor] = None
+
+    #: What the twelve cusps turned out to be — whether the requested anchor was
+    #: actually held, and whether the ring is a house division at all. Recorded
+    #: because ``house_anchor`` alone is a request: where the two charts admit no
+    #: common frame it decides nothing, and all three anchors return the same
+    #: chart. See :data:`~kerykeion.schemas.literals.CompositeHouseFrame`.
+    house_frame: Optional[CompositeHouseFrame] = None
+
+    @model_validator(mode="after")
+    def _davison_charts_carry_no_house_frame(self) -> "CompositeSubjectModel":
+        """A Davison chart is cast as an ordinary chart, so it has no frame at all.
+
+        Both provenance fields describe a construction only the midpoint method
+        performs. Left unconstrained, a payload could claim a Davison chart was
+        anchored on its Midheaven, and the report and the context would repeat
+        it — the report even printing a House Anchor row for a chart that has no
+        anchor to print.
+
+        The converse is deliberately NOT required. An a86 midpoint payload
+        carries neither field, and this release promises those still validate; a
+        midpoint chart without provenance is an old chart, not an impossible one.
+        """
+        if self.composite_chart_type == "Davison":
+            if self.house_anchor is not None or self.house_frame is not None:
+                raise ValueError(
+                    "A Davison composite has no house frame to record: it is cast as an "
+                    f"ordinary chart. Got house_anchor={self.house_anchor!r}, "
+                    f"house_frame={self.house_frame!r}."
+                )
+        elif (self.house_anchor is None) != (self.house_frame is None):
+            # Both or neither. One alone says nothing anything downstream can act
+            # on: an anchor with no frame is a request nobody can tell was granted,
+            # and a frame with no anchor is an answer to a question the chart does
+            # not record. The factory never produces either, and the report and the
+            # context each describe half of it.
+            raise ValueError(
+                "A midpoint composite records both its house anchor and what became of "
+                "it, or neither — an a86 payload carries neither and still validates. "
+                f"Got house_anchor={self.house_anchor!r}, house_frame={self.house_frame!r}."
+            )
+        return self
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
     # represent a real moment; None when not applicable (the midpoint method

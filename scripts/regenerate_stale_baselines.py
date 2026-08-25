@@ -12,6 +12,17 @@ Failing tests:
 """
 
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+# The lists live with the fixtures, not here. This script used to carry its own
+# three sidereal-by-theme pairs against the ten the test asks for, which is the
+# same drift, in the same shape, one directory over.
+from tests.data.test_subjects_matrix import (  # noqa: E402
+    HOUSE_SYSTEM_NAMES,
+    SIDEREAL_THEME_COMBOS,
+)
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 from kerykeion.chart_data.factory import ChartDataFactory
 
@@ -21,21 +32,7 @@ SVG_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
 PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
 
-# Sidereal x Theme combinations
-SIDEREAL_THEME_COMBOS = [
-    ("LAHIRI", "black-and-white"),
-    ("FAGAN_BRADLEY", "dark"),
-    ("RAMAN", "dark"),
-]
 
-# House systems
-HOUSE_SYSTEM_NAMES = {
-    "K": "Koch",
-    "W": "Whole Sign",
-    "R": "Regiomontanus",
-    "C": "Campanus",
-    "O": "Porphyry",
-}
 
 
 def regenerate_sidereal_theme_combos():

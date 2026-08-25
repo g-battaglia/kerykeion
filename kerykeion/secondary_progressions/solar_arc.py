@@ -41,20 +41,34 @@ from kerykeion.schemas import KerykeionException
 from kerykeion.schemas.literals import SIGN_CODES
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.predictive.utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
+from kerykeion.utilities.core import normalize_degree
 from kerykeion.utilities.core import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
 
 from .factory import SecondaryProgressionFactory
 
 
-def _normalise_long(longitude: float) -> float:
-    return longitude % 360.0
+def _normalise_long(value: float) -> float:
+    """Longitude into [0, 360), through the library's own rule.
+
+    A bare ``% 360`` answers exactly 360.0 for a hair-negative input, which is
+    outside the range this function promises and outside the range the model
+    documents. normalize_degree exists for that.
+    """
+    return normalize_degree(value)
 
 
 def _forward_arc_diff(target: float, source: float) -> float:
     """Return the forward zodiacal difference ``target - source`` in the
     range ``[0, 360)`` degrees.
+
+    Through the library's rule rather than a bare modulo, and this is the site
+    that needed it: its argument is a difference of two longitudes and can be
+    negative, where ``% 360`` answers exactly 360.0 and breaks the range this
+    docstring promises — and the range ``SolarArcSubjectModel.solar_arc``
+    promises after it. ``_normalise_long`` above is handed only sums of
+    non-negative quantities and could never have reached the trap.
     """
-    return (target - source) % 360.0
+    return normalize_degree(target - source)
 
 
 def _is_near_zero_arc(arc: float, orb: float) -> bool:

@@ -430,6 +430,55 @@ RelationshipScoreDescription: TypeAlias = Literal[
 CompositeChartType: TypeAlias = Literal["Midpoint", "Davison"]
 """Literal type for Composite Chart Types"""
 
+CompositeHouseFrame: TypeAlias = Literal["anchored", "midpoints", "gapped"]
+"""What the composite's twelve cusps actually are, once the ring has been built.
+
+``house_anchor`` records which angle a caller ASKED to hold. It is not always
+possible to hold one: where the two charts' houses admit no common frame — two
+rings running opposite ways, or a parent whose own cusps are not ordered — the
+requested anchor decides nothing, and every position falls back to its own near
+midpoint. With one exception, and it is not a small one: a cusp the parents put
+exactly opposite another is kept opposite it, which is the far midpoint for one
+of the pair. Without that the fourth cusp and the tenth come out on the same
+longitude, because two points half a circle apart are the same unordered pair
+either way round and a symmetric mean cannot tell them apart. A chart that reports only the request describes a construction that did
+not happen, and all three anchors then return the same ring.
+
+- ``"anchored"``: a frame was hung from the requested angle and the twelve cover
+  the circle exactly once. The anchor was held.
+- ``"midpoints"``: no frame spans the two charts, so every position is its own
+  near midpoint — but the twelve are still a house division.
+- ``"gapped"``: as ``"midpoints"``, and the twelve are NOT a house division: they
+  leave gaps, and a longitude falling in one is named for the house whose cusp it
+  last passed. Every house name on such a chart is that reading, not a
+  containment.
+
+``None`` on a Davison chart, which is cast as an ordinary chart and has no frame
+to speak of.
+"""
+
+
+CompositeHouseAnchor: TypeAlias = Literal["auto", "ascendant", "midheaven"]
+"""Which composite cusp keeps its short-arc midpoint when the ring has to be repaired.
+
+Between two cusps there are two midpoints, half a circle apart, and taking the
+nearer one for each of the twelve independently breaks down when the two charts'
+angles are nearly opposed: some cusps take one side and some the other, and the
+twelve stop being a house division at all. The trade the profession settles on is
+to keep one angle fixed and move the rest onto their far midpoint as needed.
+
+- ``auto``: whichever of the Ascendant and the Midheaven has its two base cusps
+  closer together, that being the better determined of the two midpoints. The
+  default here, and in Solar Fire and Astro Gold.
+- ``ascendant``: the Ascendant never moves. Kepler and Sirius call this
+  "Asc Midpoint".
+- ``midheaven``: the Midheaven never moves. Kepler and Sirius call this
+  "MC Midpoint".
+
+None of the three does anything to a chart whose short-arc midpoints already run
+in order, which is most of them.
+"""
+
 AspectName: TypeAlias = Literal[
     "conjunction",
     "semi-sextile",

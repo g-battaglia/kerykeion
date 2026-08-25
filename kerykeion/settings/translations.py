@@ -14,26 +14,25 @@ T = TypeVar("T")
 
 _SENTINEL = object()
 
-# Cache for the common case (no overrides). A fresh deepcopy of the cache is
-# returned on every call so callers can mutate the result freely without
-# poisoning the shared defaults used by later charts.
-_DEFAULT_LANG_CACHE: dict[str, dict[str, Any]] | None = None
-
 
 def load_language_settings(overrides: Optional[Mapping[str, Any]] = None) -> dict[str, dict[str, Any]]:
     """Return the available language settings merged with optional overrides.
 
     The returned dict is always an independent copy: mutating it never
     affects the module-level defaults or subsequent calls.
+
+    Reads ``LANGUAGE_SETTINGS`` live, like :func:`load_language_pair` and
+    :func:`get_translations`. A snapshot cache used to sit here for the
+    no-override path, but it froze the table at first use while its two sibling
+    accessors kept reading the live mapping — so a process that touched the
+    table at runtime could hand out two different label sets depending on which
+    accessor a code path happened to call. Nothing in the library mutates it
+    today, which is exactly why the divergence would have been so hard to spot.
     """
-    global _DEFAULT_LANG_CACHE
-
-    if not overrides:
-        if _DEFAULT_LANG_CACHE is None:
-            _DEFAULT_LANG_CACHE = deepcopy(LANGUAGE_SETTINGS)
-        return deepcopy(_DEFAULT_LANG_CACHE)
-
     languages = deepcopy(LANGUAGE_SETTINGS)
+    if not overrides:
+        return languages
+
     data = overrides.get("language_settings", overrides)
     languages = _deep_merge(languages, data)
     return languages

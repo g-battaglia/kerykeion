@@ -235,14 +235,20 @@ All default `False` except `calculate_lunar_phase` (default `True`); available o
 
 ## Composite subjects
 
-`CompositeSubjectFactory(first_subject, second_subject, chart_name=None)` (import from `kerykeion`). Both subjects must share zodiac type, sidereal mode, house system, and perspective, or it raises; `active_points` are intersected (disjoint sets raise). Two methods, both returning `CompositeSubjectModel`:
+`CompositeSubjectFactory(first_subject, second_subject, chart_name=None, house_anchor="auto")` (import from `kerykeion`). Both subjects must share zodiac type, sidereal mode, house system, and perspective, or it raises; `active_points` are intersected (disjoint sets raise). Two methods, both returning `CompositeSubjectModel`:
 
 - `get_midpoint_composite_subject_model()` — circular midpoints of points and cusps; not a real sky, so `is_diurnal` is `None` and provenance is absent. Composite cusps keep their own house numbers and are deliberately NOT re-sorted by longitude (re-sorting would swap the composite MC and IC).
+
+  Where the two charts' angles are nearly opposed the twelve near midpoints stop running in order — about one pair in sixteen — and the cusps are repaired the way the field does it: one angle keeps its near midpoint and the others move onto their far one. `house_anchor` picks which: `"auto"` (default; whichever of the Ascendant and Midheaven has its base cusps closer together, matching Solar Fire), `"ascendant"` or `"midheaven"` (Kepler's two methods). Anything else raises `KerykeionException`.
+
+  It is a request, not a guarantee: a frame can only be read where each parent is itself a house division and the two run the same way, and `house_frame` on the model says whether it was granted. Where it was not, every position is its own near midpoint — bar a cusp the parents put exactly opposite another, which is kept opposite it — and all three anchors give the same chart.
+
+  The ring is reconciled with the angles by the ARC each angle stands at from the cusp it shares a number with, averaged from the two parents: zero is the case where the angle IS the cusp, and under whole sign, Morinus, meridian or Carter it is something else. An exact identity outranks an arc; where neither is exact the anchor breaks the tie.
 - `get_davison_composite_subject_model(*, custom_ayanamsa_t0=None, custom_ayanamsa_ayan_t0=None)` — midpoint in time (mean Julian Day) and space, cast as a REAL chart at that moment (tz `Etc/GMT`); carries over enrichments both parents share; the keyword pair is required when `sidereal_mode="USER"`.
 
 With `chart_name=None` the composite is named `"{first} and {second} Composite Chart"`.
 
-`CompositeSubjectModel` adds `first_subject`, `second_subject`, `composite_chart_type` (values of the `CompositeChartType` literal: `"Midpoint"` | `"Davison"`), and `Optional is_diurnal`; location/time metadata fields are optional. It feeds `ChartDataFactory.create_composite_chart_data` — see `references/charts-and-drawing.md`.
+`CompositeSubjectModel` adds `first_subject`, `second_subject`, `composite_chart_type` (values of the `CompositeChartType` literal: `"Midpoint"` | `"Davison"`), `Optional house_anchor` (which angle the caller ASKED to hold when the cusp ring was repaired; `None` on a Davison chart), `Optional house_frame` (what the twelve turned out to be — `"anchored"` if a frame was hung from that angle and the twelve cover the circle once, `"midpoints"` if no frame spans the two charts but they are still a house division, `"gapped"` if they are not; the two fields are recorded together or not at all, and an a86 payload carrying neither still validates), and `Optional is_diurnal`; location/time metadata fields are optional. It feeds `ChartDataFactory.create_composite_chart_data` — see `references/charts-and-drawing.md`.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory

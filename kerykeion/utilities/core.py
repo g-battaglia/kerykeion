@@ -32,7 +32,7 @@ from kerykeion.schemas.literals import (
     Houses,
 )
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP as _POINT_NUMBER_MAP_IMPORT
-from typing import Any, Union, Optional, get_args, cast
+from typing import Any, Optional, Sequence, Union, cast, get_args
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
@@ -326,6 +326,102 @@ def is_point_between(
     return distance_from_start < span
 
 
+def normalize_degree(angle: Union[int, float]) -> float:
+    """Normalize an angle to the range [0, 360).
+
+    Args:
+        angle (int | float): The input angle in degrees.
+
+    Returns:
+        float: The normalized angle in the range [0, 360), or NaN unchanged when
+            the input is NaN - see the note below on why it is not turned into 0.
+    """
+    # The guard is on the *result*, not on `% 360 != 0`. For a tiny negative
+    # input Python's float modulo returns exactly 360.0 (-1e-15 % 360 == 360.0),
+    # which the old test read as "non-zero, therefore fine" and passed straight
+    # through — breaking the [0, 360) contract this function exists to hold.
+    # It matters downstream: draw_modern computes a house sector's span as
+    # normalize_degree(next_cusp - cusp), so two cusps coinciding to within
+    # float noise in the negative direction painted a 360° sector over the
+    # whole chart instead of a degenerate one.
+    result = angle % 360.0
+    # `result < 360.0` is False for NaN as well as for 360.0, so a bare else
+    # would quietly turn a NaN angle into 0° Aries — a plausible-looking wrong
+    # position where the old expression let the NaN through to a visible `nan`
+    # coordinate. Inf likewise: `inf % 360` is NaN. Propagate instead.
+    if math.isnan(result):
+        return result
+    return result if result < 360.0 else 0.0
+
+
+#: How far the twelve widths may miss a full circle and still count as covering
+#: it once. Windings are 360 degrees apart, so anything short of a degree is
+#: float noise rather than another turn.
+_HOUSE_WINDING_TOLERANCE_DEGREES = 1e-4
+
+
+def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
+    """The twelve house widths, and which of them run against their own frame.
+
+    Above roughly 67 degrees a Campanus, Regiomontanus, Sunshine, Polich/Page or
+    APC chart puts its cusps in *descending* order, and a horizon chart does it
+    on the equator: the houses genuinely run backwards through the signs. Read
+    forwards, each house then measures some 354 degrees instead of 6, the twelve
+    of them wind round the wheel eleven times instead of once, and everything
+    that draws or centres on that span lands on the far side of the chart from
+    the house it names.
+
+    The direction belongs to the whole set and cannot be decided pair by pair.
+    Reading each pair's shorter arc would answer a different question - one about
+    two cusps rather than about twelve - and would have no way to tell a house
+    that is genuinely wide from one that is being read backwards. Twelve widths
+    cover the circle exactly once in whichever direction the houses run, so the
+    total is what tells the two apart: 360 one way, 3960 the other.
+
+    (Houses close on 180 degrees but do not pass it: the widest found by sweeping
+    every system to 89.9 degrees of latitude is 179.995, under APC at 86N. The
+    sibling reader get_planet_house relies on that, and this is the measurement
+    behind it.)
+
+    A third case has neither total. Polich/Page inside the polar circle returns
+    cusps that are not ordered at all: at 70N the first runs backwards while the
+    next five run forwards, so houses 1 and 2 overlap and no direction can make
+    twelve wedges tile a circle. The chart is degenerate rather than reversed,
+    and the least bad reading is to hold each wedge to its shorter arc: they
+    still overlap, because the cusps do, but no single one swallows the wheel.
+
+    Counted over 32,844 charts — all 23 systems, half a degree of latitude at a
+    time, four times of day — six systems reverse outright (Campanus, horizon,
+    Sunshine, Regiomontanus, Polich/Page, APC) and two go degenerate: Polich/Page
+    again, and Sunshine/alt, which never reverses at all.
+
+    Args:
+        cusps: The twelve cusp positions, in house order, in any angular frame.
+
+    Returns:
+        The twelve widths, and for each the flag saying it was measured against
+        the direction of the frame it was given.
+    """
+    forward = [normalize_degree(cusps[(index + 1) % 12] - cusps[index]) for index in range(12)]
+    if abs(sum(forward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        return forward, [False] * 12
+
+    backward = [normalize_degree(cusps[index] - cusps[(index + 1) % 12]) for index in range(12)]
+    if abs(sum(backward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        return backward, [True] * 12
+
+    # strict: all three are twelve long by construction, and a silent truncation
+    # here would return a ring with fewer houses than it was given.
+    shorter = [ahead <= behind for ahead, behind in zip(forward, backward, strict=True)]
+    return (
+        [
+            ahead if pick else behind
+            for ahead, behind, pick in zip(forward, backward, shorter, strict=True)
+        ],
+        [not pick for pick in shorter],
+    )
+
+
 def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
     Determine which house contains a planet based on its degree position.
@@ -350,9 +446,38 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     # a point belongs to the house whose cusp→next-cusp arc contains it via the
     # SHORTEST path (the real house span is always < 180°); a point exactly on a
     # cusp belongs to the house that cusp opens.
-    for i in range(n):
-        if abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0) < 1e-9:
-            return _HOUSE_NAMES_TUPLE[i]
+    # The NEAREST cusp within the tolerance, not the first one found. Above the
+    # polar circle several systems crowd three cusps into a few hundredths of a
+    # nanodegree: Sunshine at 89S puts the eighth, ninth and tenth within 6.6e-11
+    # of each other, and the Midheaven is the tenth exactly. Scanning upwards and
+    # taking the first match filed it in the eighth.
+    on_cusp = [
+        (abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0), i)
+        for i in range(n)
+    ]
+    closest, index = min(on_cusp)
+    if closest < 1e-9:
+        return _HOUSE_NAMES_TUPLE[index]
+
+    # Where the twelve ARE a house division, ask the one function that decides
+    # that — the same one the wheel is drawn from. Choosing the shorter arc for
+    # each pair independently is the right rule only on a ring that is not a
+    # division: on one that is, it can contradict the division itself. Twelve
+    # cusps at 0, 200, 210 … 300 run forwards and total 360, with a first house
+    # 200 degrees wide; read pair by pair, that house becomes the opposite 160
+    # degrees and longitude 100 — inside it, and drawn inside it — belongs to no
+    # house at all. No real chart reaches this (the widest arc measured across 23
+    # systems and nine latitudes is 179.2388 degrees) but the two functions
+    # disagreeing about the same ring is worth closing, not documenting.
+    spans, reversed_wedges = house_spans(houses_degree_ut_list)
+    if len(set(reversed_wedges)) == 1 and abs(sum(spans) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        for i in range(n):
+            if spans[i] <= 0.0:
+                continue
+            start = houses_degree_ut_list[i]
+            offset = (start - planet_degree) % 360.0 if reversed_wedges[i] else (planet_degree - start) % 360.0
+            if offset < spans[i]:
+                return _HOUSE_NAMES_TUPLE[i]
 
     best_index = None
     best_span = 360.0 + 1.0
@@ -1433,6 +1558,18 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
     if iso_datetime_string.startswith("0000"):
         return 0
     return datetime.fromisoformat(iso_datetime_string).year
+
+
+def format_absolute_degrees(value: float, decimals: int = 2) -> str:
+    """Format a longitude so the number never contradicts the sign beside it.
+
+    ``format_degrees_below_bound(value, 360.0)`` only guards the wrap at the end
+    of the circle. The boundary that matters for a longitude printed next to a
+    sign label is its own sign's ceiling: 149.99687 rounds to ``"150.00"``, which
+    is zero degrees of Virgo, on a row that says Leo.
+    """
+    sign_ceiling = 30.0 * (int(value // 30.0) + 1)
+    return format_degrees_below_bound(value, min(sign_ceiling, 360.0), decimals)
 
 
 def format_degrees_below_bound(value: float, upper_bound: float, decimals: int = 2) -> str:

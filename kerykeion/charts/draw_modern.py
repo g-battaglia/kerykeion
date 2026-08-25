@@ -26,7 +26,11 @@ from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.charts.spreading import spread_around_wheel
 from kerykeion.charts.utils import (
     CHART_TEXT_FONT_FAMILY,
+    MINIMUM_WEDGE_SPAN_DEGREES,
+    house_spans,
     label_separation_degrees,
+    separate_collapsed_wedges,
+    _wedges_overlap,
     STATION_LABELS,
     escape_svg_text,
     normalize_degree,
@@ -224,8 +228,14 @@ def _cusp_lanes(angles: Sequence[float], band: float) -> list[Optional[int]]:
         return [None] * count
 
     #: ``tight[i]``: readings *i* and *i+1* are closer than the band they occupy.
+    # How far apart two readings are, not how far one is from the other going
+    # forwards: above the polar circle several systems return their cusps in
+    # decreasing order, and the one-way gap then reads a seven-degree crowd as
+    # three hundred and fifty-two degrees of room. Nothing was ever staggered on
+    # such a chart, and the readings sat on top of each other.
     tight = [
-        ((angles[(index + 1) % count] - angles[index]) % 360.0) < band for index in range(count)
+        abs(((angles[(index + 1) % count] - angles[index] + 180.0) % 360.0) - 180.0) < band
+        for index in range(count)
     ]
     if not any(tight):
         return [None] * count
@@ -867,7 +877,16 @@ def _draw_cusp_ring(
     # a floor, for skies no arrangement can fix.
     angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses]
     count = len(angles)
-    gaps = [(angles[(i + 1) % count] - angles[i]) % 360.0 for i in range(count)] if count > 1 else [360.0]
+    # The same correction, and for the twelve it is `house_spans` that knows: it
+    # reads the direction from all of them at once and returns each wedge's real
+    # width, whichever way the ring runs.
+    if count > 1:
+        gaps = house_spans(angles)[0] if count == 12 else [
+            abs(((angles[(i + 1) % count] - angles[i] + 180.0) % 360.0) - 180.0)
+            for i in range(count)
+        ]
+    else:
+        gaps = [360.0]
     nominal_span = _cusp_cluster_span(1.0)
     shrink_alone = min(gaps) / nominal_span
 
@@ -2237,13 +2256,63 @@ def _draw_house_sectors_modern(
 ) -> str:
     """Draw transparent house sector wedges for interactive highlighting (modern style)."""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
-    out = ""
+    # Which way the houses run, read once from all twelve. Several quadrant
+    # systems put them in descending order above the polar circle, and the
+    # horizon system does it on the equator. The Gauquelin variant below is
+    # always descending, by construction, and says so where it draws.
+    wheel_angles = [
+        _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses[:12]
+    ]
+    spans, reversed_wedges = house_spans(wheel_angles)
+    # Kept before the widening below rewrites them: these are the arcs the house
+    # reader measures, and where the wedges overlap it is the reader the paint
+    # order has to agree with.
+    true_spans = list(spans)
+    # A wedge narrower than the minimum is widened so it can be clicked at all,
+    # and a widened wedge necessarily covers longitudes outside its own arc: on a
+    # crossing ring where it is also the narrowest, it is painted on top and
+    # answers for them. Polich/Page at 70.5N has an eleventh house 0.348 degrees
+    # wide, so it answers for up to 0.652 degrees either side that the reader
+    # gives its neighbour.
+    #
+    # Painting the widened ones underneath instead was tried and is worse: the
+    # tenth house crosses the eleventh on that same ring, so the eleventh loses
+    # its own middle and goes back to being unclickable, which is the defect the
+    # widening exists for. No single paint order settles both. The slop is bounded
+    # by the minimum width, and that is the trade.
+    #
+    # A click exactly ON a cusp is outside all of this: an SVG path is closed, so
+    # both wedges that share a boundary contain it, and no linear order of twelve
+    # cyclic wedges can give every cusp to the house it opens. The reader does —
+    # it has an exact-on-cusp rule — so the two differ on a set of measure zero.
+    # And any house too thin to click gets the same minimum the classic engine
+    # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
+    # together here — but Campanus inside the polar circle brings two of them
+    # arbitrarily close on its own: sweeping five latitudes between 67N and 69N at
+    # five-minute steps, the closest pair measured 0.0002 degrees. That is a house
+    # no pointer will ever find.
+    wheel_angles, spans = separate_collapsed_wedges(
+        wheel_angles, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
+    )
+    sectors: list[str] = []
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        a_start = _zodiac_to_wheel_angle(houses[i].abs_pos, seventh_house_degree_ut)
-        a_end = _zodiac_to_wheel_angle(houses[next_i].abs_pos, seventh_house_degree_ut)
+        a_start = wheel_angles[i]
+        a_end = wheel_angles[next_i]
+        span = spans[i]
+
+        # The one case the separation above cannot repair: where the cusps cross
+        # rather than merely run backwards, the twelve do not tile and there is no
+        # width to trade between them. A wedge left at zero puts both ends of its
+        # arc on one point, SVG drops the arc, and a path of no area is left
+        # declaring pointer-events:all — a house that can never be clicked. So it
+        # takes its degree and moves only its own end, overlapping the neighbour
+        # it already overlaps. On a ring that tiles, this never fires.
+        if span < MINIMUM_WEDGE_SPAN_DEGREES:
+            span = MINIMUM_WEDGE_SPAN_DEGREES
+            a_end = a_start + (-span if reversed_wedges[i] else span)
 
         # Convert wheel angles to radians (parent group has rotate(-90), so subtract 90)
         r_start = math.radians(-a_start - 90)
@@ -2259,24 +2328,38 @@ def _draw_house_sectors_modern(
         ix2 = CENTER + inner_r * math.cos(r_end)
         iy2 = CENTER + inner_r * math.sin(r_end)
 
-        # Angular span to determine large-arc flag
-        span = _normalize_angle(houses[next_i].abs_pos - houses[i].abs_pos)
+        # Angular span to determine large-arc flag. Both sweeps flip with the
+        # direction: the endpoints are the same two points either way, and it is
+        # the pair (sweep, large_arc) that says which of the two arcs between them
+        # the wedge is.
         large_arc = 1 if span > 180 else 0
+        outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},{outer_sweep} {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},{inner_sweep} {ix1:.6f},{iy1:.6f} Z"
         )
 
-        out += (
+        sectors.append(
             f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" fill="transparent" stroke="none" pointer-events="all"/>'
             f"</g>\n"
         )
 
-    return out
+    # Widest first, so the narrowest is on top — the same rule the house reader
+    # applies, and the one the classic engine now paints by. It matters only where
+    # the wedges overlap, which is where the ring is not a house division: a point
+    # under houses 7, 9 and 12 was answered as the twelfth by the wheel and the
+    # ninth by the model. A ring that tiles is painted in house order, unchanged.
+    if _wedges_overlap(true_spans, reversed_wedges):
+        sectors = [
+            sectors[index]
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], -index))
+        ]
+
+    return "".join(sectors)
 
 
 def _draw_gauquelin_sectors_modern(
@@ -2327,11 +2410,17 @@ def _draw_gauquelin_sectors_modern(
 
         large_arc = 1 if span > 180 else 0
 
+        # Both sweeps flipped, because these cusps descend. Correcting the span
+        # alone leaves the endpoints where they were and moves the arc onto the
+        # mirrored circle SVG puts through any two points at a given radius —
+        # measured on the gallery's Gauquelin charts, the thirty-six wedges sat
+        # on circles up to 92 units from a wheel whose radius is 50. The classic
+        # engine's twin has always used this pair; only this one did not.
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},1 {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},0 {ix1:.6f},{iy1:.6f} Z"
         )
 
         out += (
@@ -2381,13 +2470,19 @@ def _draw_house_ring(
     # are spread by the least movement that separates them, which keeps a crowd
     # centred on the houses it belongs to instead of sliding it sideways.
     label_radius = CENTER - text_y
-    wanted = []
-    for index, sector in enumerate(houses):
-        sector_angle = _zodiac_to_wheel_angle(sector.abs_pos, seventh_house_degree_ut)
-        sector_span = _normalize_angle(
-            _zodiac_to_wheel_angle(houses[(index + 1) % 12].abs_pos, seventh_house_degree_ut) - sector_angle
+    # In the direction the houses run, which above the polar circle is not always
+    # the direction the wheel angles increase in: read forwards, a six-degree
+    # house measures 354 and its number is centred on the far side of the chart.
+    wheel_angles = [
+        _zodiac_to_wheel_angle(sector.abs_pos, seventh_house_degree_ut) for sector in houses[:12]
+    ]
+    ring_spans, ring_reversed = house_spans(wheel_angles)
+    wanted = [
+        _normalize_angle(
+            wheel_angles[index] + (-0.5 if ring_reversed[index] else 0.5) * ring_spans[index]
         )
-        wanted.append(_normalize_angle(sector_angle + sector_span / 2))
+        for index in range(12)
+    ]
     # The widest label the ring carries, measured at the size it is drawn. The
     # estimator scales with the font size and carries no unit of its own, so it
     # answers in the wheel's 100-unit frame here just as it answers in pixels
@@ -2669,11 +2764,15 @@ def draw_modern_horoscope(
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_house_ring(houses, seventh_house_degree_ut, horoscope_id="0")
-    # House sectors are click-only overlays; clip them to the inner edge of
-    # the zodiac background ring when the zodiac is drawn, so a click on a
-    # zodiac sign isn't intercepted by the house sector underneath. Falls
-    # back to R_CUSP_OUTER when no zodiac ring is rendered.
-    house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    # House sectors are click-only overlays and must not reach into the zodiac
+    # background ring, or a click on a sign is intercepted by the house under it.
+    # R_CUSP_OUTER is what does that, in both cases: when the ring is drawn these
+    # overlays are already inside the scale(0.92) wrapper that shrinks the whole
+    # chart to fit, so 50 here renders at 46 — exactly the ring's inner edge.
+    # Passing R_ZODIAC_BG_INNER applied that scale a second time and stopped the
+    # hit areas at a rendered 42.32, leaving 3.68 units of chart with no house
+    # under the pointer at all.
+    house_sector_outer_r = R_CUSP_OUTER
     if gauquelin_sectors:
         # Match the click hit-areas to the visible 36-sector rings above.
         out += _draw_gauquelin_sectors_modern(
@@ -2843,9 +2942,10 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
-    # Clip outer radius to the zodiac inner boundary when the zodiac ring is
-    # drawn, so clicks on a zodiac sign aren't swallowed by the house sector.
-    syn_house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    # R_CUSP_OUTER in both cases: with the zodiac ring drawn these overlays sit
+    # inside the scale(0.92) wrapper, so 50 renders at 46, the ring's inner edge.
+    # See the single-chart path for what applying that scale twice cost.
+    syn_house_sector_outer_r = R_CUSP_OUTER
     out += _draw_house_sectors_modern(
         houses_1,
         seventh_house_degree_ut,

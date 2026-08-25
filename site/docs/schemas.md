@@ -859,7 +859,6 @@ Available visual themes for chart rendering.
 | Value                  | Description                                         |
 | :--------------------- | :-------------------------------------------------- |
 | `"classic"`            | Traditional white background, standard colors.      |
-| `"light"`              | Minimalist light mode with soft tones.              |
 | `"dark"`               | Modern dark mode for reduced eye strain.            |
 | `"black-and-white"`    | High contrast monochrome for print output.          |
 

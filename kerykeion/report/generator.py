@@ -11,6 +11,7 @@ from kerykeion.fixed_stars.catalog import FixedStarCatalog
 from kerykeion.utilities.core import (
     get_available_astrological_points_list,
     get_houses_list,
+    format_absolute_degrees,
     format_degrees_below_bound,
     format_iso_display,
     format_timedelta_hhmm,
@@ -671,7 +672,7 @@ class ReportGenerator:
             ["Field", "Value"],
             ["Lot", releasing.lot.capitalize()],
             ["Lot Sign", str(releasing.lot_sign)],
-            ["Lot Degree", f"{format_degrees_below_bound(releasing.lot_degree, 360.0)}°"],
+            ["Lot Degree", f"{format_absolute_degrees(releasing.lot_degree)}°"],
         ]
         # Short on purpose: AsciiTable DROPS a title wider than the table, and
         # the banner above already names the technique and the lot.
@@ -965,6 +966,23 @@ class ReportGenerator:
             composite_members = f"{_san(subject.first_subject.name)} & {_san(subject.second_subject.name)}"
             birth_data.append(["Composite Members", composite_members])
             birth_data.append(["Composite Type", subject.composite_chart_type])
+            if subject.house_anchor:
+                # Which angle was ASKED to be held when the cusp ring was
+                # repaired. It can turn the whole house frame by half a turn —
+                # the same Sun reads first house or seventh depending on it — so
+                # a report that does not say cannot be checked against the chart
+                # it describes.
+                #
+                # And whether it was held at all, because it is a request: where
+                # the two charts admit no common frame all three anchors return
+                # the same ring, and a row saying "midheaven" on such a chart
+                # describes a construction that did not happen.
+                anchor: str = subject.house_anchor
+                if subject.house_frame == "midpoints":
+                    anchor = f"{anchor} (not held: no frame spans the two charts)"
+                elif subject.house_frame == "gapped":
+                    anchor = f"{anchor} (not held: the twelve cusps are not a house division)"
+                birth_data.append(["House Anchor", anchor])
 
         if isinstance(subject, PlanetReturnModel):
             birth_data.append(["Return Type", subject.return_type])
@@ -1014,7 +1032,22 @@ class ReportGenerator:
             settings_data.append(["Sidereal Mode", str(subject.sidereal_mode)])
         # The system actually used, so a polar chart is not tabulated as the
         # one that was asked for but could not be cast.
-        settings_data.append(["Houses System", str(subject.effective_houses_system_name)])
+        houses_system = subject.effective_houses_system_name
+        # A chart asked for in Placidus above the polar circle is cast in
+        # Porphyry, and saying only "Porphyry" describes a division the reader
+        # did not choose. The subject records why; this is the one place a reader
+        # would look for it.
+        #
+        # Through the subject's own accessor, not the first record in the list:
+        # asking for Gauquelin sectors alongside the houses adds a SECOND,
+        # ancillary record for the 36-sector ring, which degrades on its own. Take
+        # the first and a polar whole-sign chart with Gauquelin enabled reports
+        # its perfectly undegraded cusps as "substituted for Gauquelin sectors".
+        main_fallback = getattr(subject, "_main_house_fallback", lambda: None)()
+        requested = getattr(main_fallback, "requested_house_system_name", None)
+        if requested and requested != houses_system:
+            houses_system = f"{houses_system} (substituted for {requested})"
+        settings_data.append(["Houses System", houses_system])
         settings_data.append(["Perspective Type", str(subject.perspective_type)])
 
         julian_day = getattr(subject, "julian_day", None)
@@ -1118,6 +1151,29 @@ class ReportGenerator:
         gauquelin_data: list[list[str]] = [["Point", "Sector"]]
         for point in points:
             gauquelin_data.append([_humanize(str(point.name)), f"{point.gauquelin_sector:.2f}"])
+
+        # The 36-sector ring is undefined inside the polar circle and is
+        # recomputed at a clamped latitude, which files a fallback record of its
+        # own — separate from any substitution of the houses, and the houses row
+        # deliberately ignores it. Nothing else in the report mentions it, so
+        # these numbers read as if cast where the subject was born.
+        clamp = next(
+            (
+                record
+                for record in getattr(subject, "polar_house_fallbacks", None) or ()
+                if record.requested_house_system_identifier == "G"
+                and record.used_latitude is not None
+                and record.used_latitude != record.latitude
+            ),
+            None,
+        )
+        if clamp is not None:
+            gauquelin_data.append(
+                [
+                    "(computed at)",
+                    f"{clamp.used_latitude:.4f}\u00b0 not {clamp.latitude:.4f}\u00b0",
+                ]
+            )
         return AsciiTable(gauquelin_data, title=title).table
 
     def _points_table(
@@ -1201,6 +1257,13 @@ class ReportGenerator:
         return self._points_table(midpoints, title)
 
     def _collect_celestial_points(self, subject: SubjectLike) -> list[KerykeionPointModel]:
+        # Driven off active_points, deliberately: this table reflects the preset
+        # the caller chose, which is what TestActivePointsContentValidation says
+        # it is for. The Descendant, the Imum Coeli and the south nodes are not in
+        # any default preset because each is the 180-degree opposite of a point
+        # that is — so a reader who meets one in the Angularities table can always
+        # reach it from the row above. The <axes> section of `to_context` makes the
+        # other choice, and says so where it makes it.
         if isinstance(subject, AstrologicalSubjectModel):
             return get_available_astrological_points_list(subject)
 
@@ -1210,8 +1273,7 @@ class ReportGenerator:
             return points
 
         for point_name in active_points:
-            attr_name = str(point_name).lower()
-            attr = getattr(subject, attr_name, None)
+            attr = getattr(subject, str(point_name).lower(), None)
             if attr is not None:
                 points.append(attr)
 
@@ -1233,7 +1295,7 @@ class ReportGenerator:
                     _humanize(house.name),
                     f"{house.sign} {_sign_emoji(house.emoji)}",
                     f"{format_degrees_below_bound(house.position, 30.0)}°",
-                    f"{format_degrees_below_bound(house.abs_pos, 360.0)}°",
+                    f"{format_absolute_degrees(house.abs_pos)}°",
                 ]
             )
 
@@ -1464,7 +1526,7 @@ class ReportGenerator:
                     owner_house,
                     projected_house,
                     point.point_sign,
-                    f"{point.point_degree:.2f}°",
+                    f"{format_degrees_below_bound(point.point_degree, 30.0)}°",
                 ]
             )
 
@@ -1482,7 +1544,7 @@ class ReportGenerator:
                     f"{_san(point.point_owner_name)} – {_humanize(point.point_name)}",
                     projected_house,
                     point.point_sign,
-                    f"{point.point_degree:.2f}°",
+                    f"{format_degrees_below_bound(point.point_degree, 30.0)}°",
                 ]
             )
 

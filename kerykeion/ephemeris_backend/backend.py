@@ -403,7 +403,7 @@ def houses_ex2_with_polar_fallback_ex(
             message = (
                 f"House system {hsys_char!r} is undefined inside the polar circle at latitude "
                 f"{lat:.4f}°{where}; it has no equivalent at every latitude, so its division was "
-                f"computed at {abs(retry_lat):.4f}°, just inside the polar limit. The cusps and the angles "
+                f"computed at {retry_lat:.4f}°, just inside the polar limit. The cusps and the angles "
                 f"derived from this call are approximate; planetary positions and the persisted "
                 f"latitude keep the real value."
             )

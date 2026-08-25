@@ -405,40 +405,40 @@
    <!-- House Sectors (transparent, for interactive highlighting) -->
    <g kr:node="House_Sectors">
     <g kr:house="1" kr:node="HouseSector">
-     <path d="m0 240a240 240 0 0 0 55.592 153.6l92.204-76.801a120 120 0 0 1-27.796-76.801z" fill="transparent" pointer-events="all"/>
+     <path d="m0 240a240 240 0 0 0 56.149 154.27l91.925-77.135a120 120 0 0 1-28.075-77.135z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="2" kr:node="HouseSector">
-     <path d="m55.592 393.6a240 240 0 0 0 66.198 55.267l59.105-104.43a120 120 0 0 1-33.099-27.633z" fill="transparent" pointer-events="all"/>
+     <path d="m56.149 394.27a240 240 0 0 0 67.496 55.64l58.177-104.95a120 120 0 0 1-33.748-27.82z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="3" kr:node="HouseSector">
-     <path d="m121.79 448.87a240 240 0 0 0 65.546 25.281l26.332-117.08a120 120 0 0 1-32.773-12.641z" fill="transparent" pointer-events="all"/>
+     <path d="m123.65 449.91a240 240 0 0 0 66.456 24.847l24.949-117.38a120 120 0 0 1-33.228-12.423z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="4" kr:node="HouseSector">
-     <path d="m187.34 474.15a240 240 0 0 0 75.946 4.7175l-11.641-119.43a120 120 0 0 1-37.973-2.3587z" fill="transparent" pointer-events="all"/>
+     <path d="m190.1 474.76a240 240 0 0 0 74.986 3.9298l-12.543-119.34a120 120 0 0 1-37.493-1.9649z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="5" kr:node="HouseSector">
-     <path d="m263.28 478.87a240 240 0 0 0 105.17-36.137l-64.226-101.37a120 120 0 0 1-52.585 18.068z" fill="transparent" pointer-events="all"/>
+     <path d="m265.09 478.69a240 240 0 0 0 105.63-37.404l-65.357-100.64a120 120 0 0 1-52.813 18.702z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="6" kr:node="HouseSector">
-     <path d="m368.45 442.73a240 240 0 0 0 111.55-202.73h-120a120 120 0 0 1-55.774 101.37z" fill="transparent" pointer-events="all"/>
+     <path d="m370.71 441.28a240 240 0 0 0 109.29-201.28h-120a120 120 0 0 1-54.643 100.64z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="7" kr:node="HouseSector">
-     <path d="m480 240a240 240 0 0 0-55.592-153.6l-92.204 76.801a120 120 0 0 1 27.796 76.801z" fill="transparent" pointer-events="all"/>
+     <path d="m480 240a240 240 0 0 0-56.149-154.27l-91.925 77.135a120 120 0 0 1 28.075 77.135z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="8" kr:node="HouseSector">
-     <path d="m424.41 86.398a240 240 0 0 0-66.198-55.267l-59.105 104.43a120 120 0 0 1 33.099 27.633z" fill="transparent" pointer-events="all"/>
+     <path d="m423.85 85.731a240 240 0 0 0-67.496-55.64l-58.177 104.95a120 120 0 0 1 33.748 27.82z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="9" kr:node="HouseSector">
-     <path d="m358.21 31.131a240 240 0 0 0-65.546-25.281l-26.332 117.08a120 120 0 0 1 32.773 12.641z" fill="transparent" pointer-events="all"/>
+     <path d="m356.35 30.091a240 240 0 0 0-66.456-24.847l-24.949 117.38a120 120 0 0 1 33.228 12.423z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="10" kr:node="HouseSector">
-     <path d="m292.66 5.8494a240 240 0 0 0-75.946-4.7175l11.641 119.43a120 120 0 0 1 37.973 2.3587z" fill="transparent" pointer-events="all"/>
+     <path d="m289.9 5.2446a240 240 0 0 0-74.986-3.9298l12.543 119.34a120 120 0 0 1 37.493 1.9649z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="11" kr:node="HouseSector">
-     <path d="m216.72 1.132a240 240 0 0 0-105.17 36.137l64.226 101.37a120 120 0 0 1 52.585-18.068z" fill="transparent" pointer-events="all"/>
+     <path d="m214.91 1.3147a240 240 0 0 0-105.63 37.404l65.357 100.64a120 120 0 0 1 52.813-18.702z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="12" kr:node="HouseSector">
-     <path d="m111.55 37.269a240 240 0 0 0-111.55 202.73l120-3e-14a120 120 0 0 1 55.774-101.37z" fill="transparent" pointer-events="all"/>
+     <path d="m109.29 38.719a240 240 0 0 0-109.29 201.28l120-3e-14a120 120 0 0 1 54.643-100.64z" fill="transparent" pointer-events="all"/>
     </g>
    </g>
    <!-- Houses -->
@@ -447,73 +447,73 @@
      <line x1="120" y1="240" y2="240" stroke="var(--kerykeion-chart-color-first-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="1" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="56.4604529146698" y="308.34119633297087">1</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="56.57901680910558" y="308.6678675185284">1</tspan></text>
     </g>
     <g kr:absoluteposition="59.539355319478915" kr:horoscope="0" kr:node="Cusp" kr:sign="Tau" kr:signposition="29.539355319478915" kr:slug="Second_House">
      <line x1="148.07" x2="56.149" y1="317.13" y2="394.27" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="2" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="114.48511446080713" y="390.8313323396582">2</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="114.87298170666935" y="391.15192001044227">2</tspan></text>
     </g>
     <g kr:absoluteposition="80.23902557714422" kr:horoscope="0" kr:node="Cusp" kr:sign="Gem" kr:signposition="20.23902557714422" kr:slug="Third_House">
      <line x1="181.82" x2="123.65" y1="344.95" y2="449.91" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="3" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="169.4965216965274" y="422.74226107661104">3</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="169.76018279818223" y="422.8410603356923">3</tspan></text>
     </g>
     <g kr:absoluteposition="97.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="7.070979233059859" kr:slug="Fourth_House">
      <line x1="215.05" x2="190.1" y1="357.38" y2="474.76" stroke="var(--kerykeion-chart-color-fourth-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="4" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="227.3576625108809" y="434.7577256012021">4</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="226.9514964013547" y="434.7368706728781">4</tspan></text>
     </g>
     <g kr:absoluteposition="115.31371115556101" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="25.31371115556101" kr:slug="Fifth_House">
      <line x1="252.54" x2="265.09" y1="359.34" y2="478.69" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="5" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="300.7618352143262" y="424.1033637735675">5</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="301.090916972884" y="423.9871662896983">5</tspan></text>
     </g>
     <g kr:absoluteposition="142.10542080689618" kr:horoscope="0" kr:node="Cusp" kr:sign="Leo" kr:signposition="22.105420806896177" kr:slug="Sixth_House">
      <line x1="305.36" x2="370.71" y1="340.64" y2="441.28" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="6" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="406.2429884620511" y="333.66868729850484">6</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="405.73288563109736" y="334.61448196984486">6</tspan></text>
     </g>
     <g kr:absoluteposition="199.7467671946414" kr:horoscope="0" kr:node="Cusp" kr:sign="Lib" kr:signposition="19.746767194641393" kr:slug="Seventh_House">
      <line x1="360" x2="480" y1="240" y2="240" stroke="var(--kerykeion-chart-color-seventh-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="7" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="417.5395470853302" y="177.65880366702916">7</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="417.4209831908944" y="177.3321324814716">7</tspan></text>
     </g>
     <g kr:absoluteposition="239.53935531947891" kr:horoscope="0" kr:node="Cusp" kr:sign="Sco" kr:signposition="29.539355319478915" kr:slug="Eighth_House">
      <line x1="331.93" x2="423.85" y1="162.87" y2="85.731" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="8" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="359.51488553919296" y="95.16866766034187">8</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="359.1270182933307" y="94.84807998955776">8</tspan></text>
     </g>
     <g kr:absoluteposition="260.2390255771442" kr:horoscope="0" kr:node="Cusp" kr:sign="Sag" kr:signposition="20.23902557714422" kr:slug="Ninth_House">
      <line x1="298.18" x2="356.35" y1="135.05" y2="30.091" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="9" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="304.5034783034725" y="63.257738923388935">9</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="304.23981720181774" y="63.15893966430767">9</tspan></text>
     </g>
     <g kr:absoluteposition="277.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Tenth_House">
      <line x1="264.95" x2="289.9" y1="122.62" y2="5.2446" stroke="var(--kerykeion-chart-color-tenth-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="10" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="246.64233748911906" y="51.24227439879787">10</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="247.04850359864525" y="51.263129327121824">10</tspan></text>
     </g>
     <g kr:absoluteposition="295.313711155561" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="25.31371115556101" kr:slug="Eleventh_House">
      <line x1="227.46" x2="214.91" y1="120.66" y2="1.3147" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="11" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="173.2381647856738" y="61.896636226432534">11</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="172.90908302711597" y="62.01283371030176">11</tspan></text>
     </g>
     <g kr:absoluteposition="322.1054208068962" kr:horoscope="0" kr:node="Cusp" kr:sign="Aqu" kr:signposition="22.105420806896177" kr:slug="Twelfth_House">
      <line x1="174.64" x2="109.29" y1="139.36" y2="38.719" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="12" kr:node="HouseNumber">
-     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="67.75701153794898" y="152.33131270149508">12</tspan></text>
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="68.26711436890267" y="151.38551803015514">12</tspan></text>
     </g>
    </g>
    <!-- Gauquelin Sectors Overlay -->

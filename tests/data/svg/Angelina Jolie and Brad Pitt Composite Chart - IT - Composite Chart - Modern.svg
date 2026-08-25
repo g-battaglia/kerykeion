@@ -13,7 +13,7 @@
     style='background-color: var(--kerykeion-chart-color-paper-1)'
 >
     <title id='kerykeion-chart-title'>Tema Composito: Angelina Jolie e Brad Pitt</title>
-    <desc id='kerykeion-chart-desc'>Tema Composito: Angelina Jolie e Brad Pitt. Placido. 14 points, 24 aspects.</desc>
+    <desc id='kerykeion-chart-desc'>Tema Composito: Angelina Jolie e Brad Pitt. Placido. 14 punti, 24 aspetti.</desc>
 
     <!-- Colors -->
     <style kr:node='Theme_Colors_Tag'>
@@ -248,7 +248,7 @@
             <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiaco: Tropicale</text>
             <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Placido Case</text>
-            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Prospettiva: Apparent Geocentric</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Prospettiva: Geocentrico Apparente</text>
             <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Tema Composito - Punti Medi</text>
         </g>
 
@@ -593,7 +593,7 @@
 <g kr:node='Indicator' kr:slug='Chiron' kr:absoluteposition='3.673669958830767' transform='rotate(-178.052371 50.0 50.0)'>
   <path d='M 50.0 5.348 l 0 1.075 A 43.652 43.652 0 0 1 52.0002494634 6.3938524278 L 51.9509901357 7.4677232388' fill='transparent' stroke='var(--kerykeion-modern-indicator, #8a8a9e)' stroke-width='0.1'/>
 </g>
-<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='515.628426600872' kr:cy='286.2489154618247' transform='rotate(-181.223541 50.0 50.0)'>
+<g kr:node='ChartPoint' kr:house='Sixth_House' kr:sign='Ari' kr:absoluteposition='4.21847778017385' kr:signposition='4.21847778017385' kr:slug='Mercury' kr:cx='515.628426600872' kr:cy='286.2489154618247' transform='rotate(-181.223541 50.0 50.0)' kr:angularity='Descendant:1.4028'>
   <g transform='translate(50.0 10.22) rotate(271.223541) scale(0.18144) translate(-12 -12)'>
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
@@ -712,18 +712,18 @@
 <line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-334.005087 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='12' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='var(--kerykeion-chart-color-paper-0, #333333)' font-weight='500' transform='rotate(-347.002543 50.0 50.0) rotate(437.002543 50.0 29.25)'>12</text></g>
 </g>
-<g kr:node='HouseSector' kr:house='1'><path d='M 50.000000,4.000000 A 46.0,46.0 0 0,0 28.905377,9.121926 L 41.057714,32.671251 A 19.5,19.5 0 0,1 50.000000,30.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='2'><path d='M 28.905377,9.121926 A 46.0,46.0 0 0,0 10.728867,26.046334 L 33.352455,39.845728 A 19.5,19.5 0 0,1 41.057714,32.671251 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='3'><path d='M 10.728867,26.046334 A 46.0,46.0 0 0,0 4.029577,51.649319 L 30.512538,50.699168 A 19.5,19.5 0 0,1 33.352455,39.845728 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='4'><path d='M 4.029577,51.649319 A 46.0,46.0 0 0,0 12.126929,76.108054 L 33.945111,61.067544 A 19.5,19.5 0 0,1 30.512538,50.699168 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='5'><path d='M 12.126929,76.108054 A 46.0,46.0 0 0,0 29.838598,91.346316 L 41.453319,67.527243 A 19.5,19.5 0 0,1 33.945111,61.067544 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='6'><path d='M 29.838598,91.346316 A 46.0,46.0 0 0,0 50.000000,96.000000 L 50.000000,69.500000 A 19.5,19.5 0 0,1 41.453319,67.527243 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='7'><path d='M 50.000000,96.000000 A 46.0,46.0 0 0,0 71.094623,90.878074 L 58.942286,67.328749 A 19.5,19.5 0 0,1 50.000000,69.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='8'><path d='M 71.094623,90.878074 A 46.0,46.0 0 0,0 89.271133,73.953666 L 66.647545,60.154272 A 19.5,19.5 0 0,1 58.942286,67.328749 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='9'><path d='M 89.271133,73.953666 A 46.0,46.0 0 0,0 95.970423,48.350681 L 69.487462,49.300832 A 19.5,19.5 0 0,1 66.647545,60.154272 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='10'><path d='M 95.970423,48.350681 A 46.0,46.0 0 0,0 87.873071,23.891946 L 66.054889,38.932456 A 19.5,19.5 0 0,1 69.487462,49.300832 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='11'><path d='M 87.873071,23.891946 A 46.0,46.0 0 0,0 70.161402,8.653684 L 58.546681,32.472757 A 19.5,19.5 0 0,1 66.054889,38.932456 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='12'><path d='M 70.161402,8.653684 A 46.0,46.0 0 0,0 50.000000,4.000000 L 50.000000,30.500000 A 19.5,19.5 0 0,1 58.546681,32.472757 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='1'><path d='M 50.000000,0.000000 A 50.0,50.0 0 0,0 27.071062,5.567311 L 41.057714,32.671251 A 19.5,19.5 0 0,1 50.000000,30.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='2'><path d='M 27.071062,5.567311 A 50.0,50.0 0 0,0 7.313986,23.963406 L 33.352455,39.845728 A 19.5,19.5 0 0,1 41.057714,32.671251 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='3'><path d='M 7.313986,23.963406 A 50.0,50.0 0 0,0 0.032149,51.792738 L 30.512538,50.699168 A 19.5,19.5 0 0,1 33.352455,39.845728 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='4'><path d='M 0.032149,51.792738 A 50.0,50.0 0 0,0 8.833618,78.378319 L 33.945111,61.067544 A 19.5,19.5 0 0,1 30.512538,50.699168 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='5'><path d='M 8.833618,78.378319 A 50.0,50.0 0 0,0 28.085432,94.941648 L 41.453319,67.527243 A 19.5,19.5 0 0,1 33.945111,61.067544 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='6'><path d='M 28.085432,94.941648 A 50.0,50.0 0 0,0 50.000000,100.000000 L 50.000000,69.500000 A 19.5,19.5 0 0,1 41.453319,67.527243 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='7'><path d='M 50.000000,100.000000 A 50.0,50.0 0 0,0 72.928938,94.432689 L 58.942286,67.328749 A 19.5,19.5 0 0,1 50.000000,69.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='8'><path d='M 72.928938,94.432689 A 50.0,50.0 0 0,0 92.686014,76.036594 L 66.647545,60.154272 A 19.5,19.5 0 0,1 58.942286,67.328749 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='9'><path d='M 92.686014,76.036594 A 50.0,50.0 0 0,0 99.967851,48.207262 L 69.487462,49.300832 A 19.5,19.5 0 0,1 66.647545,60.154272 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='10'><path d='M 99.967851,48.207262 A 50.0,50.0 0 0,0 91.166382,21.621681 L 66.054889,38.932456 A 19.5,19.5 0 0,1 69.487462,49.300832 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='11'><path d='M 91.166382,21.621681 A 50.0,50.0 0 0,0 71.914568,5.058352 L 58.546681,32.472757 A 19.5,19.5 0 0,1 66.054889,38.932456 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='12'><path d='M 71.914568,5.058352 A 50.0,50.0 0 0,0 50.000000,0.000000 L 50.000000,30.500000 A 19.5,19.5 0 0,1 58.546681,32.472757 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
 <g kr:node='AspectCore'>
 <path d='M 30.5,50.0 A 19.5,19.5 0 1,1 69.5,50.0 A 19.5,19.5 0 1,1 30.5,50.0 Z' fill='var(--kerykeion-chart-color-paper-1, #ffffff)' fill-rule='evenodd'/>
 <g kr:node='Aspect' kr:aspectname='opposition' kr:to='Sun' kr:tooriginaldegrees='349.64199427659315' kr:from='Pluto' kr:fromoriginaldegrees='175.37575260994487' kr:orb='5.733758333351716' kr:aspectdegrees='180' kr:planetsdiff='174.26624166664828' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>

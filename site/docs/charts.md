@@ -203,7 +203,6 @@ drawer = ChartDrawer(
 
 - `"classic"` (Default): White background, traditional look.
 - `"dark"`: Modern dark mode.
-- `"light"`: Minimalist light mode.
 - `"black-and-white"`: High contrast monochrome for print.
 
 ### Languages

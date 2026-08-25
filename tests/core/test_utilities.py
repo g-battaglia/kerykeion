@@ -678,6 +678,46 @@ class TestChartsUtilsInternalFunctions:
 
         assert normalize_degree(-90) == 270.0
 
+    @pytest.mark.parametrize("angle", [-1e-15, -1e-18, -1e-300])
+    def test_normalize_degree_stays_below_360_for_tiny_negatives(self, angle):
+        """``[0, 360)`` is half-open, and plain ``% 360.0`` does not honour that.
+
+        Python's float modulo returns exactly 360.0 for a tiny negative input, so
+        a guard written as ``x % 360 != 0`` reads it as "non-zero, therefore
+        fine" and passes it through. The reader that pays for it is
+        ``draw_modern``'s house-sector span: two cusps coinciding to within float
+        noise produced a 360° sector painted over the whole chart.
+        """
+        from kerykeion.charts.utils import normalize_degree
+
+        assert normalize_degree(angle) == 0.0
+
+    @pytest.mark.parametrize("angle", [float("nan"), float("inf"), float("-inf")])
+    def test_normalize_degree_propagates_non_finite_input(self, angle):
+        """NaN must survive, not become 0° Aries.
+
+        NaN fails ``< 360.0`` exactly as 360.0 does, so the guard above turns it
+        into 0.0 unless it is checked for. A NaN longitude — an out-of-coverage
+        body, a failed interpolation — then renders as a plausible chart with a
+        point silently placed at the start of the zodiac, where before it reached
+        the SVG as a visible ``nan``. ``inf % 360`` is NaN too.
+        """
+        from kerykeion.charts.utils import normalize_degree
+
+        assert math.isnan(normalize_degree(angle))
+
+    @pytest.mark.parametrize("angle", [float("nan"), float("inf")])
+    def test_degree_sum_propagates_non_finite_input(self, angle):
+        """The twin, which delegates — so it inherits the guard rather than repeating it."""
+        from kerykeion.charts.utils import degree_sum
+
+        assert math.isnan(degree_sum(angle, 1.0))
+
+    def test_degree_sum_stays_below_360_for_a_tiny_negative_sum(self):
+        from kerykeion.charts.utils import degree_sum
+
+        assert degree_sum(-1e-15, 0.0) == 0.0
+
     def test_dec_hour_join(self):
         from kerykeion.charts.utils import hms_to_decimal_hours
 
@@ -1329,3 +1369,98 @@ class TestResolveSubjectLocalMomentSeconds:
         year, month, day, hour = resolve_subject_local_moment(subject)
         assert (year, month, day) == (1990, 6, 15)
         assert hour == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+
+def test_the_documented_helpers_import_from_the_flat_facade():
+    """`house_spans` and `normalize_degree` are documented as public helpers of
+    `kerykeion.utilities`, and moving them into `utilities.core` left the flat
+    facade without them: the documented import raised ImportError."""
+    from kerykeion.utilities import house_spans, normalize_degree
+
+    assert normalize_degree(-1e-15) == 0.0
+    spans, reversed_wedges = house_spans([30.0 * index for index in range(12)])
+    assert sum(spans) == pytest.approx(360.0, abs=1e-9)
+    assert set(reversed_wedges) == {False}
+
+
+def test_a_formatted_longitude_never_leaves_its_own_sign():
+    """Rounding must not move a longitude into the sign next door.
+
+    149.99687 is Leo, and `f"{v:.2f}"` prints "150.00" — zero degrees of Virgo —
+    on a row whose sign label still says Leo. The guard clamps at the sign's
+    ceiling; this holds it at both ends, for every sign, including the values
+    that sit a hair inside either boundary.
+    """
+    from kerykeion.utilities.core import format_absolute_degrees
+
+    assert format_absolute_degrees(149.99687) == "149.99"
+
+    for index in range(12):
+        floor = 30.0 * index
+        for offset in (0.0, 1e-9, 0.001, 0.004, 0.005, 14.9, 29.99, 29.995, 29.999):
+            value = floor + offset
+            formatted = float(format_absolute_degrees(value))
+            assert floor <= formatted < floor + 30.0, (value, formatted)
+
+
+def test_the_house_reader_agrees_with_the_house_division_it_is_given():
+    """Two functions in one module must not disagree about the same twelve cusps.
+
+    `house_spans` reads the direction from all twelve at once, and the wheel is
+    drawn from what it returns. The reader chose the shorter arc for each pair
+    independently, which is the right rule on a ring that is NOT a division and
+    the wrong one on a ring that is: the twelve below run forwards and total 360
+    with a first house 200 degrees wide, and read pair by pair that house becomes
+    the opposite 160 degrees — so longitude 100, inside it and drawn inside it,
+    belonged to no house at all and the reader raised.
+
+    Synthetic, because no real chart reaches it: the widest arc measured across
+    23 systems and nine latitudes is 179.2388 degrees. The two disagreeing is
+    worth closing anyway.
+    """
+    from kerykeion.utilities.core import get_planet_house, house_spans
+
+    cusps = [0.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0]
+    spans, reversed_wedges = house_spans(cusps)
+    assert set(reversed_wedges) == {False}
+    assert sum(spans) == pytest.approx(360.0, abs=1e-9)
+    assert spans[0] > 180.0, "the fixture no longer has a reflex house"
+
+    assert get_planet_house(100.0, cusps) == "First_House"
+    assert get_planet_house(205.0, cusps) == "Second_House"
+    # The exact-on-cusp rule still comes first.
+    assert get_planet_house(200.0, cusps) == "Second_House"
+
+
+def test_a_point_on_a_cusp_belongs_to_the_cusp_it_is_on():
+    """The exact-on-cusp rule has to find the nearest cusp, not the first nearby one.
+
+    Above the polar circle several systems crowd cusps together: Sunshine at 89S
+    puts the eighth, the ninth and the tenth within 6.6e-11 degrees of each other,
+    and the Midheaven IS the tenth, bit for bit. Scanning upwards and returning
+    the first match inside the tolerance filed it in the eighth — and the report
+    and the context both repeated that.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.utilities.core import get_planet_house
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="Antarctic", nation="AQ", lat=-89.0, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="I",
+    )
+    cusps = [
+        getattr(subject, name).abs_pos
+        for name in (
+            "first_house", "second_house", "third_house", "fourth_house",
+            "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+            "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+        )
+    ]
+    # The fixture's whole point: three cusps inside the tolerance of one another,
+    # and the Midheaven exactly on the last of them.
+    assert abs(cusps[7] - cusps[9]) < 1e-9 and cusps[7] != cusps[9]
+    assert subject.medium_coeli.abs_pos == cusps[9]
+
+    assert get_planet_house(subject.medium_coeli.abs_pos, cusps) == "Tenth_House"
+    assert subject.medium_coeli.house == "Tenth_House"

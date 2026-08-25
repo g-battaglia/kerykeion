@@ -78,55 +78,18 @@ try:
         ANGLES,
         HOUSES,
     )
-except ImportError:
-    # Fallback if running before module is set up
-    TEMPORAL_SUBJECTS = []
-    GEOGRAPHIC_SUBJECTS = []
-    SYNASTRY_PAIRS = []
-    HOUSE_SYSTEMS = ["P", "K", "W", "O", "R", "C", "A", "E", "V", "X", "H", "T", "B", "M", "U", "G"]
-    SIDEREAL_MODES = [
-        "FAGAN_BRADLEY",
-        "LAHIRI",
-        "DELUCE",
-        "RAMAN",
-        "USHASHASHI",
-        "KRISHNAMURTI",
-        "DJWHAL_KHUL",
-        "YUKTESHWAR",
-        "JN_BHASIN",
-        "BABYL_KUGLER1",
-        "BABYL_KUGLER2",
-        "BABYL_KUGLER3",
-        "BABYL_HUBER",
-        "BABYL_ETPSC",
-        "ALDEBARAN_15TAU",
-        "HIPPARCHOS",
-        "SASSANIAN",
-        "J1900",
-        "J2000",
-        "B1950",
-    ]
-    PERSPECTIVE_TYPES = ["Apparent Geocentric", "True Geocentric", "Heliocentric", "Topocentric"]
-    CORE_PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]
-    LUNAR_NODES = ["mean_north_lunar_node", "true_north_lunar_node", "mean_south_lunar_node", "true_south_lunar_node"]
-    ANGLES = ["ascendant", "descendant", "medium_coeli", "imum_coeli"]
-    HOUSES = [
-        f"{n}_house"
-        for n in [
-            "first",
-            "second",
-            "third",
-            "fourth",
-            "fifth",
-            "sixth",
-            "seventh",
-            "eighth",
-            "ninth",
-            "tenth",
-            "eleventh",
-            "twelfth",
-        ]
-    ]
+except ImportError as error:  # pragma: no cover - the fixtures are part of the repo
+    # There used to be a hand-written fallback here: sixteen house systems, of
+    # which two ("E" and "G") this library rejects outright and nine of the real
+    # twenty-three were missing, plus its own copies of the sidereal modes and
+    # perspectives. A fallback that quietly regenerates the wrong set is worse
+    # than none — the caller cannot tell it happened. The fixtures live in this
+    # repository; if they cannot be imported, something is wrong that a stale
+    # list will not fix.
+    raise SystemExit(
+        f"cannot import the test fixtures ({error}). Run this from the repository "
+        f"root, or with the repository root on PYTHONPATH."
+    )
 
 # Key subjects for detailed testing (subset for faster regeneration)
 KEY_SUBJECT_IDS = ["john_lennon_1940", "johnny_depp_1963", "paul_mccartney_1942"]

@@ -9,7 +9,7 @@ This script creates all types of SVG charts used in tests:
 - Transit charts
 - Wheel-only charts
 - Aspect-grid-only charts
-- Charts with different themes (dark, light, high-contrast)
+- Charts with different themes (dark, black-and-white)
 - Multilingual charts
 - Composite charts
 - Charts with transparent background

@@ -1231,8 +1231,11 @@ class CompositeChartRenderer(BaseChartRenderer):
         # Bottom left section
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
         template_dict["bottom_left_1"] = builder.build_houses_system_info(d.first_obj)
-        template_dict["bottom_left_2"] = (
-            f"{self._translate('perspective_type', 'Perspective')}: {d.first_obj.first_subject.perspective_type}"  # type: ignore[union-attr]
+        # Through the builder like every other renderer: interpolating the raw
+        # literal printed "Перспектива: Apparent Geocentric" — label translated,
+        # value not — and left the perspective translations dead on this path.
+        template_dict["bottom_left_2"] = builder.build_perspective_info(
+            d.first_obj.first_subject  # type: ignore[union-attr]
         )
         template_dict["bottom_left_3"] = (
             f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
@@ -1520,7 +1523,16 @@ class TransitChartRenderer(BaseChartRenderer):
             )
 
         if d.show_cusp_position_comparison:
-            cusp_x = 1180 if d.show_house_position_comparison else 980
+            cusp_x = (
+                d._single_cusp_comparison_grid_origin(
+                    [
+                        self._comparison_return_point_label(),
+                        self._translate("house_position", "House Position"),
+                    ]
+                )
+                if d.show_house_position_comparison
+                else d._TRANSIT_HOUSE_COMPARISON_X
+            )
 
             cusp_grid = draw_single_cusp_comparison_grid(
                 house_comparison,
@@ -1818,24 +1830,12 @@ class SynastryChartRenderer(BaseChartRenderer):
                     first_subject_label,
                 ]
 
-                first_grid_width = d._estimate_house_comparison_grid_width(
-                    column_labels=first_columns,
-                    include_radix_column=True,
-                    include_title=True,
+                first_cusp_x, second_cusp_x = d._cusp_comparison_grid_origins(
+                    first_columns, second_columns
                 )
-                second_grid_width = d._estimate_house_comparison_grid_width(
-                    column_labels=second_columns,
-                    include_radix_column=True,
-                    include_title=False,
-                )
-
-                max_right = max(1000 + first_grid_width, 1190 + second_grid_width)
-                cusp_x = int(max_right + 50.0)
-                first_cusp_x = cusp_x
-                second_cusp_x = cusp_x + 160
             else:
-                first_cusp_x = 1090
-                second_cusp_x = 1290
+                first_cusp_x = d._HOUSE_COMPARISON_GRID_X_FIRST
+                second_cusp_x = d._HOUSE_COMPARISON_GRID_X_SECOND
 
             first_cusp = draw_cusp_comparison_grid(
                 house_comparison,
@@ -2143,24 +2143,12 @@ class DualReturnChartRenderer(BaseChartRenderer):
                 first_columns = [f"{natal_label} {point_column_label}", natal_label, return_label_text]
                 second_columns = [f"{return_label_text} {point_column_label}", return_label_text, natal_label]
 
-                first_grid_width = d._estimate_house_comparison_grid_width(
-                    column_labels=first_columns,
-                    include_radix_column=True,
-                    include_title=True,
+                first_cusp_x, second_cusp_x = d._cusp_comparison_grid_origins(
+                    first_columns, second_columns
                 )
-                second_grid_width = d._estimate_house_comparison_grid_width(
-                    column_labels=second_columns,
-                    include_radix_column=True,
-                    include_title=False,
-                )
-
-                max_right = max(1000 + first_grid_width, 1190 + second_grid_width)
-                cusp_x = int(max_right + 50.0)
-                first_cusp_x = cusp_x
-                second_cusp_x = cusp_x + 160
             else:
-                first_cusp_x = 1090
-                second_cusp_x = 1290
+                first_cusp_x = d._HOUSE_COMPARISON_GRID_X_FIRST
+                second_cusp_x = d._HOUSE_COMPARISON_GRID_X_SECOND
 
             first_cusp = draw_cusp_comparison_grid(
                 house_comparison,
@@ -3285,13 +3273,18 @@ class ChartDrawer:  # type: ignore[no-redef]
                     include_title=False,
                 )
 
-                extents.append(1090 + first_grid_width)
-                extents.append(1290 + second_grid_width)
+                extents.append(self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width)
+                extents.append(self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width)
 
                 if self.show_cusp_position_comparison:
-                    max_house_right = max(1090 + first_grid_width, 1290 + second_grid_width)
-                    cusp_block_width = 160.0 * 2.0
-                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+                    max_house_right = max(self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width, self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width)
+                    cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                    extents.append(
+                        max_house_right
+                        + self._CUSP_COMPARISON_GRID_GAP
+                        + cusp_block_width
+                        + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                    )
 
         comparison_point_label = self._renderer.get_comparison_point_label()
         comparison_cusp_label = self._renderer.get_comparison_cusp_label()
@@ -3308,12 +3301,14 @@ class ChartDrawer:  # type: ignore[no-redef]
                     include_title=True,
                     minimum_width=170.0,
                 )
-                house_right = 980 + transit_grid_width
+                house_right = self._TRANSIT_HOUSE_COMPARISON_X + transit_grid_width
                 if self.show_house_position_comparison:
                     extents.append(house_right)
                 if self.show_cusp_position_comparison:
                     if self.show_house_position_comparison:
-                        extents.append(house_right + 40.0 + 260.0)
+                        extents.append(
+                            house_right + self._SINGLE_CUSP_COMPARISON_GRID_GAP + 260.0
+                        )
                     else:
                         extents.append(house_right)
 
@@ -3346,13 +3341,18 @@ class ChartDrawer:  # type: ignore[no-redef]
                     include_title=False,
                 )
 
-                extents.append(1090 + first_grid_width)
-                extents.append(1290 + second_grid_width)
+                extents.append(self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width)
+                extents.append(self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width)
 
                 if self.show_cusp_position_comparison:
-                    max_house_right = max(1090 + first_grid_width, 1290 + second_grid_width)
-                    cusp_block_width = 160.0 * 2.0
-                    extents.append(max_house_right + 50.0 + cusp_block_width + 45.0)
+                    max_house_right = max(self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width, self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width)
+                    cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                    extents.append(
+                        max_house_right
+                        + self._CUSP_COMPARISON_GRID_GAP
+                        + cusp_block_width
+                        + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                    )
 
         return max(extents)
 
@@ -3993,8 +3993,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                         include_title=False,
                     )
 
-                    first_house_comparison_grid_right = 1090 + first_grid_width
-                    second_house_comparison_grid_right = 1290 + second_grid_width
+                    first_house_comparison_grid_right = self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width
+                    second_house_comparison_grid_right = self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width
                     extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
                     if self.show_cusp_position_comparison:
@@ -4002,11 +4002,16 @@ class ChartDrawer:  # type: ignore[no-redef]
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
                         )
-                        cusp_grid_width = 160.0
-                        inter_cusp_gap = 0.0
-                        cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
-                        extra_cusp_margin = 45.0
-                        cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
+                        # The two cusp grids sit one stride apart with nothing
+                        # between them, which is what _cusp_comparison_grid_origins
+                        # does when it returns `first_grid_x + STRIDE`.
+                        cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                        cusp_block_right = (
+                            max_house_comparison_right
+                            + self._CUSP_COMPARISON_GRID_GAP
+                            + cusp_block_width
+                            + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                        )
                         extents.append(cusp_block_right)
 
             comparison_point_label = self._renderer.get_comparison_point_label()
@@ -4024,7 +4029,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                         include_title=True,
                         minimum_width=170.0,
                     )
-                    house_comparison_grid_right = 980 + transit_grid_width
+                    house_comparison_grid_right = self._TRANSIT_HOUSE_COMPARISON_X + transit_grid_width
 
                     if self.show_house_position_comparison:
                         # Classic layout: house comparison grid at x=980
@@ -4034,7 +4039,11 @@ class ChartDrawer:  # type: ignore[no-redef]
                         if self.show_house_position_comparison:
                             # Both grids visible: cusp table rendered to the right
                             cusp_block_width = 260.0
-                            cusp_block_right = house_comparison_grid_right + 40.0 + cusp_block_width
+                            cusp_block_right = (
+                                house_comparison_grid_right
+                                + self._SINGLE_CUSP_COMPARISON_GRID_GAP
+                                + cusp_block_width
+                            )
                             extents.append(cusp_block_right)
                         else:
                             # Cusp-only: cusp table occupies the house grid slot at x=980
@@ -4072,8 +4081,8 @@ class ChartDrawer:  # type: ignore[no-redef]
                         include_title=False,
                     )
 
-                    first_house_comparison_grid_right = 1090 + first_grid_width
-                    second_house_comparison_grid_right = 1290 + second_grid_width
+                    first_house_comparison_grid_right = self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width
+                    second_house_comparison_grid_right = self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width
                     extents.extend([first_house_comparison_grid_right, second_house_comparison_grid_right])
 
                     if self.show_cusp_position_comparison:
@@ -4082,11 +4091,16 @@ class ChartDrawer:  # type: ignore[no-redef]
                             first_house_comparison_grid_right,
                             second_house_comparison_grid_right,
                         )
-                        cusp_grid_width = 160.0
-                        inter_cusp_gap = 0.0
-                        cusp_block_width = (cusp_grid_width * 2.0) + inter_cusp_gap
-                        extra_cusp_margin = 45.0
-                        cusp_block_right = max_house_comparison_right + 50.0 + cusp_block_width + extra_cusp_margin
+                        # The two cusp grids sit one stride apart with nothing
+                        # between them, which is what _cusp_comparison_grid_origins
+                        # does when it returns `first_grid_x + STRIDE`.
+                        cusp_block_width = self._CUSP_COMPARISON_GRID_STRIDE * 2.0
+                        cusp_block_right = (
+                            max_house_comparison_right
+                            + self._CUSP_COMPARISON_GRID_GAP
+                            + cusp_block_width
+                            + self._CUSP_COMPARISON_GRID_RIGHT_MARGIN
+                        )
                         extents.append(cusp_block_right)
 
         # Conservative safety padding
@@ -4181,6 +4195,73 @@ class ChartDrawer:  # type: ignore[no-redef]
             label = language_map.get(key) or fallback_map.get(key) or key
             display_names.append(str(label))
         return display_names
+
+    # Gap between the rightmost house-comparison grid and the cusp grid beside it,
+    # and between the two cusp grids themselves.
+    _CUSP_COMPARISON_GRID_GAP = 50.0
+    _CUSP_COMPARISON_GRID_STRIDE = 160
+    #: Air left to the right of the cusp block, so the canvas does not end on its
+    #: last column. Named because it is spelled at all four sites that estimate
+    #: the block's right edge, and an unnamed number repeated four times is how
+    #: the origin and the extents drifted apart in the first place.
+    _CUSP_COMPARISON_GRID_RIGHT_MARGIN = 45.0
+
+    def _cusp_comparison_grid_origins(
+        self,
+        first_columns: Sequence[str],
+        second_columns: Sequence[str],
+    ) -> tuple[int, int]:
+        """X origins for the two cusp grids, clear of the house grids beside them.
+
+        Both callers (Synastry and DualReturn) had this arithmetic inline, and both
+        wrote the house grids' origins as the literals ``1000``/``1190`` while the
+        grids themselves are drawn at ``_HOUSE_COMPARISON_GRID_X_FIRST`` /
+        ``_SECOND`` — 1090 and 1290. The origin came out 90 to 100px short and the
+        cusp table landed on top of the second house table. Deriving it from the
+        same constants the grids use is what stops the two from drifting again,
+        and the duplication is why nobody caught the drift the first time.
+        """
+        first_grid_width = self._estimate_house_comparison_grid_width(
+            column_labels=first_columns,
+            include_radix_column=True,
+            include_title=True,
+        )
+        second_grid_width = self._estimate_house_comparison_grid_width(
+            column_labels=second_columns,
+            include_radix_column=True,
+            include_title=False,
+        )
+        max_right = max(
+            self._HOUSE_COMPARISON_GRID_X_FIRST + first_grid_width,
+            self._HOUSE_COMPARISON_GRID_X_SECOND + second_grid_width,
+        )
+        first_grid_x = int(max_right + self._CUSP_COMPARISON_GRID_GAP)
+        return first_grid_x, first_grid_x + self._CUSP_COMPARISON_GRID_STRIDE
+
+    # Gap between the single transit/progression house grid and the cusp grid
+    # beside it. Narrower than the dual-chart gap because the block that follows
+    # is one grid rather than two.
+    _SINGLE_CUSP_COMPARISON_GRID_GAP = 40.0
+
+    def _single_cusp_comparison_grid_origin(self, column_labels: Sequence[str]) -> int:
+        """X origin for the cusp grid of a single-wheel comparison, clear of the house grid.
+
+        The sibling of :meth:`_cusp_comparison_grid_origins`, for the renderers
+        that draw one house grid instead of two. This one pinned its origin at the
+        literal 1180 while the grid it has to clear is drawn at
+        ``_TRANSIT_HOUSE_COMPARISON_X`` and sized by the estimator — so it
+        overlapped by 44px in English and 93px in German, worse than the
+        dual-chart drift because it did not even need a wide locale to show.
+        """
+        grid_width = self._estimate_house_comparison_grid_width(
+            column_labels=column_labels,
+            include_radix_column=False,
+            include_title=True,
+            minimum_width=170.0,
+        )
+        return int(
+            self._TRANSIT_HOUSE_COMPARISON_X + grid_width + self._SINGLE_CUSP_COMPARISON_GRID_GAP
+        )
 
     def _estimate_house_comparison_grid_width(
         self,
@@ -4631,6 +4712,10 @@ class ChartDrawer:  # type: ignore[no-redef]
                 seventh_house_abs_override=houses_list[6].abs_pos,
                 outer_r_offset=36,
                 inner_r_offset=72,
+                # The outer ring's cusp lines are drawn at full precision (the
+                # `t_offset` branch of draw_houses_cusps_and_text_number), unlike
+                # the inner ring's. The wedges follow the lines they bound.
+                quantize_offsets_to_whole_degrees=False,
             )
         template_dict["makeHouseSectors"] = sectors
 
@@ -5277,7 +5362,15 @@ class ChartDrawer:  # type: ignore[no-redef]
         )
         try:
             parts.append(counted.format(points=points, aspects=aspects))
-        except (KeyError, IndexError):  # a language pack with a broken pattern
+        except (KeyError, IndexError, ValueError, AttributeError, TypeError):
+            # The list grew when chart_contents became a model field: before that
+            # pydantic dropped the key and the hardcoded default was the only
+            # thing this ever formatted. Now a pack supplies the pattern, and
+            # str.format has a different exception for each way of getting it
+            # wrong — "{points" raises ValueError, "{points.foo}" AttributeError,
+            # "{points[0]}" TypeError. Catching three of the five would fail the
+            # whole chart over one <desc> line, which is the one line a chart can
+            # most afford to lose.
             parts.append(f"{points} points, {aspects} aspects")
 
         return ". ".join(p for p in parts if p) + "."
