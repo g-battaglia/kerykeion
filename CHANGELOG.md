@@ -16,15 +16,19 @@
   The answer is not in the twelve numbers. It is in what the point IS, which the
   ephemeris knows at the moment it returns the cusps and the angles from one call.
   `angle_house_identities` in `kerykeion/utilities/core.py` states that once, and
-  `houses_ring_with_polar_fallback` applies it where the cusps are made — the
-  natal factory, the late-Ascendant path the Arabic Parts use, and the relocated
-  chart. No consumer of `get_planet_house` changed, and `get_planet_house` itself
+  it is applied where the cusps are made: in the natal factory through
+  `houses_ring_with_polar_fallback`, and in the relocated chart, which shifts the
+  ring by the ayanamsa first and then asks the same question of the shifted ring.
+  (A third copy of the houses call, kept in the factory "for the Arabic Parts",
+  turned out to be unreachable — the houses are always cast first — and is gone.)
+  No consumer of `get_planet_house` changed, and `get_planet_house` itself
   behaves exactly as before: the roughly twenty other callers project a point into
   a ring that is not its own, where no identity exists.
 
-  Whole sign, equal, Morinus and meridian charts claim no identity and read as
-  they always have — there the angle is a point of its own and may legitimately
-  fall in a neighbouring house. Measured across 5,520 charts (23 systems, 15
+  Whole sign, Vehlow and Morinus charts claim no identity and read as they always
+  have — there the angle is a point of its own and may legitimately fall in a
+  neighbouring house; equal houses claim the Ascendant and Descendant only, and
+  meridian and equal-from-MC charts the Midheaven and Imum Coeli only. Measured across 5,520 charts (23 systems, 15
   latitudes, 8 hours, 2 minutes) one angle was misfiled before and none is now; at
   a quarter of an hour's resolution over the eight systems that crowd their cusps
   and fourteen latitudes beyond 66 degrees, some 10,700 charts, the same. Davison
@@ -71,13 +75,18 @@
   through `tests/data/golden_drive.py` with a comparison that records nothing and
   raises nothing, and it closes the second door as well — the timezone-for-
   coordinates lookup `from_birth_data` opens when it has a latitude and longitude
-  but no `tz_str`.
+  but no `tz_str`. A third pass found the driver still passing over five baseline
+  readers that took class-scoped fixtures, without a word: the driver now reports
+  every test it cannot call, the guard asserts that list EQUALS a named allowlist
+  of tests that compare no baseline, the BCE readers share their subjects through
+  `setup_class` instead, and a class whose `setup_class` fails on this kernel is
+  still checked for reachability, which depends on signatures and not on kernels.
 
-- **Eighteen baselines were read by nothing.** The charts demonstrating the
+- **Twenty baselines were read by nothing.** The charts demonstrating the
   optional marks — the station glyph, the out-of-bounds badge, the separating
   aspects, the ayanamsa offset, the polar substitution note, the relationship
-  score — plus three plain natal charts, were generated, committed and compared by
-  no test. They have readers now, and
+  score — seventeen of them, plus three plain natal charts, were generated,
+  committed and compared by no test. They have readers now, and
   `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline
   loses one.
 
@@ -86,7 +95,9 @@
   the freshness gate's exemption table, and deleting their tests left the gate
   green. A source line now counts only where it compares or opens the file, and
   the driver calls `setup_class` as pytest would. Proven by deleting
-  `TestProgressionChart` from the source: the gate names all four.
+  `TestProgressionChart` from the source: the gate names all four. The source
+  scan reads tokens, not text, so a commented-out call or a docstring that
+  mentions `SVG_DIR` cannot vote either.
 
   Three of the new optional-mark tests asserted a word the chart carried anyway
   — "Relationship Score" is in the subject's name, `kr:motionstate` is on every
@@ -108,7 +119,7 @@
   months of accumulated staleness, and were wrong. The scripts check before they
   write — and they check the backend too: a regeneration on swisseph would have
   written swisseph charts under a constant that declares them libephemeris, and
-  the comparator's own regeneration path refuses the same way.
+  the comparator's own regeneration path refuses both the same way.
 
 - **Nine baselines were months stale, and nine were listed as unregenerable.** Four
   progression charts, the Ptolemaic BCE pair, the 500 BC progression, and two

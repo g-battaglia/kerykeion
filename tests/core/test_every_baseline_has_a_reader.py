@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """A stored baseline that no test reads is a picture, not a guard.
 
-346 SVG files sit under tests/data/svg. Eighteen of them were generated, committed
-and compared by nothing at all — the charts demonstrating the optional marks, and
-three plain natal charts that had no generator either. A baseline nobody reads
+346 SVG files sit under tests/data/svg. Twenty of them were generated, committed
+and compared by nothing at all — seventeen charts demonstrating the optional
+marks, and three plain natal charts that had no generator either. A baseline nobody reads
 records the library as it was the day it was written and says nothing when that
 changes, which is how 73 files came to be drawing a glyph the library no longer
 had and 51 went stale on a panel row.
@@ -17,8 +17,9 @@ file that is only *mentioned* has no reader either. Anything else has to be list
 below with a reason, and a second test refuses a reason that has stopped being true.
 """
 
+import ast
 import functools
-import re
+import tokenize
 from pathlib import Path
 
 from tests.data.golden_drive import drive_every_golden_test
@@ -28,28 +29,42 @@ SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
 TESTS_ROOT = Path(__file__).parent.parent
 
 #: Baselines with no reader, and why. Empty, and meant to stay that way: the
-#: eighteen that were here are read by tests/core/test_optional_mark_baselines.py.
+#: twenty that were here are read by tests/core/test_optional_mark_baselines.py.
 #: A new entry is a debt, not a category — write the reason as a sentence someone
 #: can act on, or write the test instead.
 BASELINES_WITH_NO_READER: dict[str, str] = {}
 
 #: A source line counts as reading a baseline only if it hands the name to a
-#: comparison or builds a path to the file. The first version of this scan took
-#: any quoted "….svg" anywhere under tests/, so the four progression baselines
-#: were "read" by being keys in test_baseline_freshness.py's cannot-regenerate
-#: table, and deleting their actual tests left the gate green.
-_A_LINE_THAT_READS = re.compile(r"compare_\w*\(|SVG_DIR|read_text\(|\bopen\(")
+#: comparison or builds a path to the file — judged on the line's NAME tokens, so
+#: a commented-out call or a docstring that mentions SVG_DIR cannot vote. The first
+#: version of this scan took any quoted "….svg" anywhere under tests/, so the four
+#: progression baselines were "read" by being keys in test_baseline_freshness.py's
+#: cannot-regenerate table, and deleting their actual tests left the gate green.
+_NAMES_THAT_READ = {"SVG_DIR", "read_text", "open"}
+
+
+def _reads(name: str) -> bool:
+    return name in _NAMES_THAT_READ or name.startswith("compare_")
 
 
 def _names_read_on_a_source_line() -> set[str]:
-    """Every "....svg" that appears on a line that compares it or opens it."""
+    """Every "....svg" literal on a line whose code compares it or opens it."""
     found: set[str] = set()
     for source in TESTS_ROOT.rglob("*.py"):
-        for line in source.read_text(encoding="utf-8").splitlines():
-            if not _A_LINE_THAT_READS.search(line):
-                continue
-            found |= set(re.findall(r'"([^"\n]+\.svg)"', line))
-            found |= set(re.findall(r"'([^'\n]+\.svg)'", line))
+        readers_on_line: set[int] = set()
+        literals: list[tuple[int, str]] = []
+        with tokenize.open(source) as handle:
+            for token in tokenize.generate_tokens(handle.readline):
+                if token.type == tokenize.NAME and _reads(token.string):
+                    readers_on_line.add(token.start[0])
+                elif token.type == tokenize.STRING:
+                    try:
+                        value = ast.literal_eval(token.string)
+                    except (ValueError, SyntaxError):
+                        continue  # a prefix this reader does not evaluate
+                    if isinstance(value, str) and value.endswith(".svg"):
+                        literals.append((token.start[0], value))
+        found |= {name for line, name in literals if line in readers_on_line}
     return {Path(name).name for name in found}
 
 

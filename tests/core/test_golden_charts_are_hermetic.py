@@ -74,9 +74,37 @@ def test_the_golden_subjects_are_cast_without_the_network(refuse_the_network):
         assert subject.city == "Liverpool"
 
 
+#: Tests in the golden modules the driver cannot call, because they take a fixture
+#: — tmp_path, caplog, monkeypatch, a mock. None of them compares a baseline: they
+#: write to a temporary directory or read a log. Listed by name and asserted
+#: EQUAL below, so a golden test that starts taking a fixture — and so stops being
+#: driven, and so stops being vouched for — shows up here instead of vanishing.
+#: The first version of the driver skipped five baseline readers that way in
+#: silence; the guard said "every golden test" and was wrong.
+TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE = {
+    "TestChartDrawerBasic::test_chart_drawer_logging",
+    "TestMinifyFallbackScope::test_string_fallback_applies_when_optimizer_fails",
+    "TestModernChartStyle::test_classic_only_options_warn_once_per_drawer",
+    "TestModernChartStyle::test_classic_only_options_warn_under_modern",
+    "TestModernChartStyle::test_default_save_filenames_carry_style_suffix",
+    "TestModernChartStyle::test_modern_wheel_only_filename_does_not_claim_external_view",
+    "TestModernChartStyle::test_save_modern_svg_creates_file",
+    "TestModernChartStyle::test_save_modern_wheel_only_creates_file",
+    "TestModernChartStyle::test_save_svg_default_filename_modern_suffix",
+    "TestModernChartStyle::test_save_wheel_only_default_filename_modern_suffix",
+    "TestOutputToFile::test_save_aspect_grid_only_creates_file",
+    "TestOutputToFile::test_save_svg_creates_file",
+    "TestOutputToFile::test_save_wheel_only_creates_file",
+    "TestSvgOutputPathSafety::test_filename_traversal_is_sanitized",
+    "TestSvgOutputPathSafety::test_subject_name_with_path_separators_is_sanitized",
+}
+
+
 def test_every_golden_chart_test_survives_a_refused_network(refuse_the_network):
-    """Every test in every golden module, every parametrized case."""
+    """Every test in every golden module, every parametrized case — and the driver
+    says which tests it could not call, so "every" is checked rather than assumed."""
     asked_the_network: list[str] = []
+    not_driven: list[str] = []
 
     def record_nothing(_baseline_path, _generated_svg, **_kwargs):
         pass
@@ -86,9 +114,16 @@ def test_every_golden_chart_test_survives_a_refused_network(refuse_the_network):
             asked_the_network.append(qualified_name)
         # Any other failure is that test's business, not this one's.
 
-    drive_every_golden_test(record_nothing, on_failure=note_network_calls)
+    drive_every_golden_test(record_nothing, on_failure=note_network_calls, on_unreachable=not_driven.append)
 
     assert sorted(set(asked_the_network)) == [], (
         "These golden tests asked GeoNames where their chart was cast:\n  "
         + "\n  ".join(sorted(set(asked_the_network)))
+    )
+    assert set(not_driven) == TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE, (
+        "The driver could not call these tests, so this guard cannot vouch for them. "
+        "A golden test must take nothing but its parametrize arguments (use setup_class "
+        "for shared subjects); a test that compares no baseline goes in the list above.\n"
+        f"  not driven, not listed: {sorted(set(not_driven) - TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE)}\n"
+        f"  listed, but driven now: {sorted(TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE - set(not_driven))}"
     )

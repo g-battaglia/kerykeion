@@ -76,6 +76,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Iterator, Optional, Sequence, Tuple
 
 if TYPE_CHECKING:
+    from kerykeion.schemas.literals import Houses
     # Type-only: the runtime import lives inside the polar fallback branch below,
     # because the models package imports back into kerykeion at load time.
     from kerykeion.schemas.models import PolarHouseFallbackModel
@@ -446,10 +447,10 @@ class HouseRing:
     #: Angle field name -> the house that angle opens, for the angles this chart
     #: puts on their own cusp. Empty under whole sign, Morinus and meridian, where
     #: the angles are points of their own.
-    angle_houses: dict = field(default_factory=dict)
+    angle_houses: dict[str, "Houses"] = field(default_factory=dict)
     #: One-based house numbers whose cusps share a longitude. Empty for every
     #: chart whose twelve cusps are twelve distinct points.
-    coincident_cusps: list = field(default_factory=list)
+    coincident_cusps: list[list[int]] = field(default_factory=list)
 
 
 def houses_ring_with_polar_fallback(
@@ -467,8 +468,10 @@ def houses_ring_with_polar_fallback(
     Same computation and same polar substitution as
     :func:`houses_ex2_with_polar_fallback_ex` — this adds the two facts that are
     knowable here and nowhere downstream: which house each angle opens, and which
-    cusps stand on top of each other. Every site that produces cusps calls this;
-    the tuple-returning siblings stay for callers that want neither.
+    cusps stand on top of each other. The natal factory calls this; the relocated
+    chart, which has to shift the ring by the ayanamsa first, asks the same two
+    questions of the shifted ring itself. The tuple-returning siblings stay for
+    callers that want neither.
     """
     # Lazy, for the import cycle documented on the sibling below: utilities does
     # not import this module, and this module must not import utilities at load.

@@ -173,6 +173,11 @@ def compare_svg_file(
     name = baseline_path.name
 
     if os.environ.get("KERYKEION_REGEN_BASELINES"):
+        from tests.data.regeneration_guard import require_library_from_this_checkout
+
+        # The same two refusals as the scripts: the library must be this checkout's,
+        # and the backend the one the baselines are declared to come from.
+        require_library_from_this_checkout(__file__)
         assert numbers_are_comparable(), (
             f"Refusing to rewrite {name}: the baselines are {BASELINE_BACKEND} charts and "
             f"this run is on {active_backend()}. A baseline written by the other backend "

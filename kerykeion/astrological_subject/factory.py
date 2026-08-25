@@ -3011,30 +3011,16 @@ class AstrologicalSubjectFactory:
         if point_key in data:
             return  # Already calculated
 
-        # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            # Mirror the main houses call: preserve the real latitude and
-            # substitute only a house system undefined inside the polar circle.
-            ring = houses_ring_with_polar_fallback(
-                data["julian_day"],
-                data["lat"],
-                data["lng"],
-                str.encode(data["houses_system_identifier"]),
-                iflag,
-                context=data.get("name", ""),
+            # Unreachable by construction: _calculate_houses runs unconditionally
+            # before any point is calculated and always stores the Ascendant, so
+            # the early return above has already fired. Until a88 a copy of the
+            # houses call lived here "for the Arabic Parts"; nothing could ever
+            # reach it, and a second place that files the Ascendant is a second
+            # place to get it wrong.
+            raise KerykeionException(
+                "The Ascendant is calculated with the houses, before any point can ask for it"
             )
-            ascmc, ascmc_speed = ring.ascmc, ring.ascmc_speed
-            data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
-            )
-            # Same rule as the main houses call, from the same ring: an Ascendant
-            # asked for late (an Arabic Part needs one) must not read differently
-            # from one asked for up front.
-            data["ascendant"].house = ring.angle_houses.get("ascendant") or get_planet_house(
-                ascmc[0], houses_degree_ut
-            )
-            data["ascendant"].retrograde = False
-            return
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
