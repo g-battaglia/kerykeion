@@ -1353,6 +1353,10 @@ class TestThePerspectiveRowFitsItsSlot:
             return ChartDataFactory.create_composite_chart_data(_composite("Midpoint"))
         if kind == "composite_davison":
             return ChartDataFactory.create_composite_chart_data(_composite("Davison"))
+        if kind == "solar_arc":
+            natal = _subject("Demo", year=1950, month=6, day=15, hour=5, minute=0)
+            directed = SolarArcFactory.compute_directed_subject(natal, target_year=2020)
+            return ChartDataFactory.create_progression_chart_data(natal, directed)
         natal, solar = _solar_return()
         if kind == "single_return":
             return ChartDataFactory.create_single_wheel_return_chart_data(solar)
@@ -1381,7 +1385,7 @@ class TestThePerspectiveRowFitsItsSlot:
 
     @pytest.mark.parametrize(
         "kind",
-        ["transit", "synastry", "composite_midpoint", "composite_davison", "single_return", "dual_return"],
+        ["transit", "synastry", "composite_midpoint", "composite_davison", "single_return", "dual_return", "solar_arc"],
     )
     def test_every_fitted_call_site_bites(self, kind):
         """A value too wide for any slot is cut to its own slot's room — everywhere.
@@ -1410,6 +1414,23 @@ class TestThePerspectiveRowFitsItsSlot:
         not reach.
         """
         assert info_row_clear_width(5, _MOON_GLYPH_FOOTPRINT) == pytest.approx(320.0)
+
+    def test_a_solar_arc_lands_the_perspective_lower_and_refits_it_there(self):
+        """Every solar arc blanks the diurnality row it inherits from the
+        transit setup, so the perspective fitted there to row 3 closes one
+        lower — rebuilt for row 4's chord, not carried down still cut for
+        row 3's 22px-narrower one.
+        """
+        floor, ceiling = info_row_clear_width(3), info_row_clear_width(4)
+        value = "W"
+        while estimate_text_width(f"Perspective: {value}") <= floor + 4:
+            value += "W"
+        full = f"Perspective: {value}"
+        assert floor + 4 < estimate_text_width(full) <= ceiling - 4, "the fixture window collapsed"
+        svg = _render(self._chart_data("solar_arc"), language_pack={"apparent_geocentric": value})
+        row, index, drop = self._perspective_row(svg)
+        assert index == 4, "the diurnality row came back — this fixture is no longer a solar arc"
+        assert row == full, f"cut for row 3's chord although drawn on row 4's: {row!r}"
 
     @pytest.mark.parametrize(
         "kind,slot,floor",

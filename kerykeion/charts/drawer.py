@@ -825,6 +825,27 @@ class InfoSectionBuilder:
             row = truncate_to_width(row, info_row_clear_width(row_index, drop))
         return row
 
+    def refit_perspective_to_landing(
+        self, template_dict: dict, subject, written_index: int, drop: float = 0.0
+    ) -> None:
+        """Rebuild the perspective row for the slot the packing lands it on.
+
+        The fixed-slot renderers fit the row where they write it, but a row
+        below can come back empty — every solar arc states no diurnality, a
+        subject without a moon writes no phase line — and the packing then
+        carries the perspective down onto a wider chord, still cut for the
+        narrower one it left. Called last, once the rows below it are final.
+        """
+        blanks_below = sum(
+            1
+            for later in range(written_index + 1, _INFO_ROW_COUNT)
+            if not template_dict.get(f"bottom_left_{later}")
+        )
+        if blanks_below:
+            template_dict[f"bottom_left_{written_index}"] = self.build_perspective_info(
+                subject, row_index=written_index + blanks_below, drop=drop
+            )
+
     def build_houses_system_info(self, subject, second_subject=None, row_index: int = 1) -> str:
         """Build compact house-system text, including a differing second wheel."""
         # The system the cusps came from, not the one requested: the compact
@@ -1521,8 +1542,9 @@ class TransitChartRenderer(BaseChartRenderer):
         # the wheel's chord narrows going up, leaving 147px on the first row
         # against the 229 of the last, and a dual panel's phase line carries the
         # wheel's name too ("Transit Lunar phase: Waxing Crescent", 174px). Of
-        # 140 language-by-phase combinations, 113 would overrun up there and 15
-        # do down here — against 35 in the row this line used to occupy.
+        # 400 combinations — ten languages, five wheel contexts, eight phases,
+        # in the reference fonts' advances — 304 would overrun up there and 21
+        # do down here, against 98 in the rows this line used to occupy.
         template_dict["bottom_left_4"] = builder.build_dual_diurnality_info(
             (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
             (d.second_obj, self._translate("chart_info_transit_label", "Transit")),
@@ -1538,6 +1560,11 @@ class TransitChartRenderer(BaseChartRenderer):
             )
         else:
             template_dict["bottom_left_5"] = ""
+
+        # A heliocentric wheel writes no diurnality and a moonless one no phase:
+        # the packing then lands the perspective a row or two lower, and the fit
+        # taken at row 3 must follow it down.
+        builder.refit_perspective_to_landing(template_dict, d.second_obj, written_index=3)
 
         # Moon phase visualization from transit subject. The same question the
         # caption row asks — `is not None`, not truthiness — so a present but
@@ -1705,6 +1732,13 @@ class ProgressionChartRenderer(TransitChartRenderer):
                     key_phase="bottom_left_5",
                     row_index=5,
                 )
+            # The rows the transit fit was taken against have just been
+            # rewritten, and a solar arc blanks the diurnality outright: the
+            # perspective the super fitted to row 3 lands on row 4 then, cut
+            # for a chord 22px narrower than the one it is drawn on.
+            InfoSectionBuilder(d).refit_perspective_to_landing(
+                template_dict, d.second_obj, written_index=3
+            )
 
 
 class SynastryChartRenderer(BaseChartRenderer):
@@ -1830,6 +1864,11 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_5"] = builder.build_dual_diurnality_info(
             (d.first_obj, d._truncate_name(d.first_obj.name, truncate_at_space=True)),
             (d.second_obj, d._truncate_name(d.second_obj.name, truncate_at_space=True)),
+        )
+        # Two heliocentric wheels state no diurnality: the perspective then
+        # closes the block, still on the dropped, disc-less chord.
+        builder.refit_perspective_to_landing(
+            template_dict, d.first_obj, written_index=4, drop=_MOON_GLYPH_FOOTPRINT
         )
 
         template_dict["makeLunarPhase"] = ""
@@ -2009,6 +2048,9 @@ class SingleReturnChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_3"] = builder.build_diurnality_info(d.first_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj, row_index=4)
         builder.build_lunar_phase_info(template_dict, d.first_obj, key_phase="bottom_left_5", row_index=5)
+        # A moonless return writes no phase row and the perspective closes the
+        # block from the wider row 5.
+        builder.refit_perspective_to_landing(template_dict, d.first_obj, written_index=4)
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -2177,6 +2219,9 @@ class DualReturnChartRenderer(BaseChartRenderer):
             key_phase="bottom_left_5",
             row_index=5,
         )
+        # A moonless return moment writes no phase row; the perspective's fit
+        # follows it down the packing, as on the transit panel.
+        builder.refit_perspective_to_landing(template_dict, d.first_obj, written_index=3)
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.second_obj, d.geolat)
