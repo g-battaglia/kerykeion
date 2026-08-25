@@ -1,6 +1,6 @@
 # Changelog
 
-## [6.0.0a87]
+## [6.0.0a87] - 2026-08-25
 
 ### Fixed
 
@@ -62,6 +62,23 @@
   combination that moves an arc onto the mirrored circle SVG puts through any two
   points. The wedges sat on circles up to 92 units from a wheel of radius 50.
 
+- **A point exactly on a cusp was filed by the first cusp inside the tolerance,
+  not the cusp it is on.** Above the polar circle several systems crowd cusps
+  together — Sunshine at 89S puts the eighth, the ninth and the tenth within
+  6.6e-11 degrees — and the Midheaven, bit-identical to the tenth, was filed in
+  the eighth. `get_planet_house` takes the nearest cusp now, and where the
+  twelve are a house division it reads containment from `house_spans` rather
+  than choosing the shorter arc pair by pair. Across 3,685 real charts this
+  moves 35 assignments, every one of them a Midheaven returning to the tenth
+  house.
+
+- **`scripts/regenerate_test_charts_extended.py` reported success whatever
+  happened.** Twelve handlers printed their errors and carried on, and the run
+  exited 0, so a baseline that could not be drawn stayed stale while the suite
+  compared against it in green. Failures are recorded and the run exits
+  non-zero, naming them — which immediately surfaced that the two ancient-date
+  baselines cannot be drawn at all on an ephemeris that covers 1550 onwards.
+
 - **The text report and `to_context` dropped house information the library
   records.** A chart asked for in Placidus above the polar circle is cast in
   Porphyry and both said only "Porphyry"; the composite's `house_anchor`, which
@@ -73,7 +90,13 @@
 
 - `AstrologicalSubjectFactory` writes its log lines to its own module logger
   rather than the root logger, so a host that silences `kerykeion.*` now does.
-- `CompositeSubjectModel` gains `house_anchor` (`None` on a Davison chart).
+- `CompositeSubjectModel` gains `house_anchor` and `house_frame`: the angle the
+  caller asked to hold, and what became of it — `anchored` when the ring stands
+  on that frame, `midpoints` when no frame spans the two charts and the plain
+  midpoints are kept, `gapped` when the twelve are not a house division at all.
+  Both `None` on a Davison chart, which is cast as an ordinary chart. A model
+  may carry both or neither, never one alone; an a86 payload, which carries
+  neither, still validates.
 - `normalize_degree` and `house_spans` moved to `kerykeion.utilities.core`, and
   are still importable from `kerykeion.charts.utils`.
 - **Kerykeion no longer installs a handler on the root logger.** a86 called
@@ -85,13 +108,15 @@
   `transparent_background=True` to composite it over your own surface.
 - An inverted hours range in `EphemerisDataFactory` raises instead of returning
   one sample outside the window.
-- **Midpoint composites read differently where a86 was wrong.** Cusp rings that
-  are not a division of the circle into twelve houses fall from 9.9% to 2.2% at
-  ordinary latitudes and from 19.3% to 8.9% above the polar circle; a Midheaven
-  that both parents put on their own tenth cusp is filed outside the tenth house
-  637 times by a86 above the polar circle and never by a87. A stored a86
-  composite re-rendered on a87 can read a planet in the opposite house; the two
-  are distinguishable because a87 records `house_anchor`.
+- **Midpoint composites read differently where a86 was wrong.** On one grid of
+  random pairs (four house systems, the same pairs for both versions, three
+  anchors on a87), cusp rings that are not a division of the circle into twelve
+  houses fall from 7.7% to none at latitudes up to 65 degrees and from 34.0% to
+  21.7% between the polar circle and 89 degrees; a Midheaven that both parents
+  put on their own tenth cusp is filed outside the tenth house by a86 above the
+  polar circle and never by a87 — zero in a 13,440-composite polar sweep. A
+  stored a86 composite re-rendered on a87 can read a planet in the opposite
+  house; the two are distinguishable because a87 records `house_anchor`.
 
 ## [6.0.0a86]
 
