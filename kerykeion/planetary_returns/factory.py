@@ -75,7 +75,7 @@ import logging
 from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 
 from datetime import datetime, timedelta, timezone
-from typing import List, Literal, Union, cast
+from typing import Callable, List, Literal, Optional, Union, cast
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.geonames.fetcher import FetchGeonames
@@ -271,38 +271,124 @@ class PlanetaryReturnFactory:
         never the answer), so a crossing inside the seed's second — reported
         at that second, hence not "before" it — is excluded, while one in the
         second before is found. Reported instants become re-usable as seeds —
-        ``next`` from the instant of return N is N+1, ``previous`` is N−1,
-        exactly — and nothing can be skipped: consecutive crossings of the
-        Sun, the Moon, the lunar nodes and the heliocentric planets the backend
-        solves (Mercury to Pluto, Ceres to Vesta) are at least ~12.4 days
-        apart (the node crossing, every half draconic month). Bodies the
-        backend has no heliocentric crossing for (Chiron, Pholus, the Uranian
-        points, the nodes and Liliths themselves) are outside this contract:
-        their search returns its seed, before and after this change alike.
+        ``next`` from the instant of return N is N+1, ``previous`` is N-1,
+        exactly — and nothing can be skipped: consecutive crossings of any
+        one kind are at least ~12.4 days apart (the node crossing, every half
+        draconic month). The backend's solvers do not reach this resolution
+        on their own — their at-crossing dead band spans ~90 ms for the Sun,
+        their 0.001″ tolerance is seconds of a slow heliocentric body's motion
+        — so ``_settled`` holds every ISO search to the contract: heliocentric
+        crossings are settled to a millisecond by bisection, a crossing inside
+        the second before a backward seed is looked for explicitly, and a
+        result that has not moved past the seed's second restarts from outside
+        the solver's basin. The lunar nodes and Liliths have no heliocentric
+        longitude in the backend and are outside this contract, as they were.
 
         Naive timestamps are read as UTC, like every ``*_from_iso`` entry.
         """
-        dt = cls._parse_iso(iso_formatted_time)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
+        whole_second = cls._seed_whole_second(iso_formatted_time)
         step = timedelta(seconds=0 if backwards else 1)
         try:
-            # Normalize to UTC BEFORE truncating and stepping: the civil range
-            # is a range of instants, and a local wall time at its edge
-            # (9999-12-31T23:59:59+14:00 is a mid-morning UTC instant) must not
-            # trip on the local representation. What overflows here is a seed
-            # genuinely outside the range — 9999-12-31T23:59:59 UTC forward,
-            # or an aware timestamp whose UTC instant is already past an edge.
-            whole_second = dt.astimezone(timezone.utc).replace(microsecond=0)
             return datetime_to_julian(whole_second + step)
         except OverflowError as exc:
-            # Refuse with the library's own exception, naming the range, not
-            # the ephemeris.
+            # 9999-12-31T23:59:59 UTC forward: the next second is outside the
+            # civil range. Refuse with the library's own exception, naming the
+            # range, not the ephemeris.
             raise KerykeionException(
                 f"Cannot search {'backward' if backwards else 'forward'} from "
                 f"{iso_formatted_time!r}: the search would start outside the "
                 "supported civil range (years 1 to 9999)."
             ) from exc
+
+    @classmethod
+    def _seed_whole_second(cls, iso_formatted_time: str) -> datetime:
+        """The seed's whole second, in UTC — the instant ordering is decided against."""
+        dt = cls._parse_iso(iso_formatted_time)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        try:
+            # Normalize to UTC BEFORE truncating: the civil range is a range of
+            # instants, and a local wall time at its edge
+            # (9999-12-31T23:59:59+14:00 is a mid-morning UTC instant) must not
+            # trip on the local representation. What overflows here is an
+            # aware timestamp whose UTC instant is already past an edge.
+            return dt.astimezone(timezone.utc).replace(microsecond=0)
+        except OverflowError as exc:
+            raise KerykeionException(
+                f"Cannot search from {iso_formatted_time!r}: its UTC instant is outside "
+                "the supported civil range (years 1 to 9999)."
+            ) from exc
+
+    # One second, in days.
+    _SECOND = 1.0 / 86400.0
+    # Where a search restarts when the solver handed back the crossing its seed
+    # came from: well outside every solver's convergence basin (a minute, for
+    # the slowest heliocentric body) and well inside every cycle (twelve days,
+    # for a node crossing).
+    _ESCAPE_DAYS = 1.0 / 24.0
+
+    @staticmethod
+    def _signed_arc(longitude: float, target: float) -> float:
+        """Signed arc from ``target`` to ``longitude``, in (-180, 180]."""
+        return ((longitude - target + 180.0) % 360.0) - 180.0
+
+    @staticmethod
+    def _crossing_between(offset: Callable[[float], float], lo: float, hi: float) -> Optional[float]:
+        """The root of a monotone signed ``offset`` inside ``[lo, hi)``, to a millisecond — or None.
+
+        ``offset`` is negative on one side of the crossing and positive on the
+        other; a sign change across the window is the crossing, found by
+        bisection. This reaches the resolution the backend's solvers do not:
+        inside one second (their at-crossing dead band spans ~90 ms for the
+        Sun) and inside the convergence basin of a slow heliocentric body
+        (their 0.001″ tolerance is six seconds of Pluto's motion).
+        """
+        f_lo, f_hi = offset(lo), offset(hi)
+        if f_lo == 0.0:
+            return lo
+        if (f_lo < 0.0) == (f_hi < 0.0):
+            return None
+        for _ in range(64):
+            if (hi - lo) * 86400.0 < 1e-3:
+                break
+            mid = 0.5 * (lo + hi)
+            f_mid = offset(mid)
+            if f_mid == 0.0:
+                return mid
+            if (f_mid < 0.0) == (f_lo < 0.0):
+                lo, f_lo = mid, f_mid
+            else:
+                hi, f_hi = mid, f_mid
+        return 0.5 * (lo + hi)
+
+    def _settled(
+        self,
+        iso_formatted_time: str,
+        backwards: bool,
+        search: Callable[[float], PlanetReturnModel],
+    ) -> PlanetReturnModel:
+        """Run ``search`` from the ISO seed and hold it to the ordering contract.
+
+        A result is accepted only when its reported second lies strictly after
+        (forward) or before (backward) the seed's whole second. When it does
+        not, the solver has handed back the crossing the seed came from — its
+        convergence basin, up to a minute for the slowest heliocentric bodies,
+        is wider than the second the seed stepped — and the search restarts
+        from well outside that basin.
+        """
+        seed_second = round(datetime_to_julian(self._seed_whole_second(iso_formatted_time)) * 86400.0)
+        model = search(self._search_start_jd(iso_formatted_time, backwards))
+        for _ in range(2):
+            assert model.julian_day is not None
+            reported_second = round(model.julian_day * 86400.0)
+            if (reported_second < seed_second) if backwards else (reported_second > seed_second):
+                return model
+            escape = model.julian_day + (-self._ESCAPE_DAYS if backwards else self._ESCAPE_DAYS)
+            model = search(escape)
+        raise KerykeionException(
+            f"The return search could not move past its seed {iso_formatted_time!r}: "
+            "the backend keeps answering with the crossing the seed came from."
+        )
 
     def __init__(
         self,
@@ -663,8 +749,10 @@ class PlanetaryReturnFactory:
             next_return_from_date(): Date-based calculation interface
         """
 
-        return self._next_return_from_jd(
-            self._search_start_jd(iso_formatted_time, backwards), return_type, backwards=backwards
+        return self._settled(
+            iso_formatted_time,
+            backwards,
+            lambda start_jd: self._next_return_from_jd(start_jd, return_type, backwards=backwards),
         )
 
     def _next_return_from_jd(
@@ -790,6 +878,24 @@ class PlanetaryReturnFactory:
                         ) from exc
             else:
                 raise KerykeionException(f"Invalid return type {return_type}. Use 'Solar' or 'Lunar'.")
+
+            if backwards and return_julian_date is not None:
+                # The backend treats a body within ~1e-6° of its target as "at
+                # the crossing" and jumps a full cycle back: a dead band of
+                # ~90 ms for the Sun, ~7 ms for the Moon. A crossing inside the
+                # second before the seed is still before it at reporting
+                # resolution — look for it explicitly.
+                body = self.subject.sun if return_type == "Solar" else self.subject.moon
+                assert body is not None
+                body_id = ephe.SUN if return_type == "Solar" else ephe.MOON
+                target = body.abs_pos
+
+                def geocentric_offset(jd: float) -> float:
+                    return self._signed_arc(ephe.calc_ut(jd, body_id, iflag)[0][0], target)
+
+                inside = self._crossing_between(geocentric_offset, julian_day - self._SECOND, julian_day)
+                if inside is not None:
+                    return_julian_date = inside
 
         try:
             return_date_utc = julian_to_datetime(return_julian_date)
@@ -1141,6 +1247,28 @@ class PlanetaryReturnFactory:
                         f"ephemeris date range; narrow the search window. ({exc})"
                     ) from exc
 
+            def heliocentric_offset(jd: float) -> float:
+                return self._signed_arc(ephe.calc_ut(jd, planet_id, helio_iflag)[0][0], natal_lon)
+
+            # The solver converges to 0.001″ — six seconds of Pluto's motion,
+            # two of Uranus', one of Chiron's — so its answer can sit seconds
+            # from the crossing, and a seed one second on may be handed back as
+            # its own answer. Settle the crossing to a millisecond by bisection
+            # around the solver's result (no other crossing lies within a
+            # minute: the shortest heliocentric period is Mercury's 88 days),
+            # so the instant reported is the crossing's own, whatever the seed.
+            refined = self._crossing_between(
+                heliocentric_offset, return_jd - 60.0 * self._SECOND, return_jd + 60.0 * self._SECOND
+            )
+            if refined is not None:
+                return_jd = refined
+            if backwards:
+                # A crossing inside the second before the seed is before it at
+                # reporting resolution; the solver's past-exclusion may skip it.
+                inside = self._crossing_between(heliocentric_offset, start_jd - self._SECOND, start_jd)
+                if inside is not None:
+                    return_jd = inside
+
         # Build return chart at that moment (outside the session: subject
         # construction manages its own ephemeris state).
         return_model = self._build_return_chart(return_jd, "Heliocentric")
@@ -1189,6 +1317,18 @@ class PlanetaryReturnFactory:
                     ) from exc
             crossing_jd = result[0]
 
+            if backwards:
+                # The Moon crosses its node where its latitude changes sign. A
+                # crossing inside the second before the seed is before it at
+                # reporting resolution; the solver's dead band (~20 ms) may
+                # skip it — look for it explicitly.
+                def moon_latitude(jd: float) -> float:
+                    return ephe.calc_ut(jd, ephe.MOON, iflag)[0][1]
+
+                inside = self._crossing_between(moon_latitude, start_jd - self._SECOND, start_jd)
+                if inside is not None:
+                    crossing_jd = inside
+
         return_model = self._build_return_chart(crossing_jd, "Lunar_Node_Crossing")
         return return_model
 
@@ -1215,10 +1355,12 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the heliocentric return chart.
         """
-        return self.next_heliocentric_return(
-            planet_name=planet_name,
-            start_jd=self._search_start_jd(iso_formatted_time, backwards),
-            backwards=backwards,
+        return self._settled(
+            iso_formatted_time,
+            backwards,
+            lambda start_jd: self.next_heliocentric_return(
+                planet_name=planet_name, start_jd=start_jd, backwards=backwards
+            ),
         )
 
     def next_heliocentric_return_from_year(
@@ -1298,9 +1440,10 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
-        return self.next_lunar_node_crossing(
-            start_jd=self._search_start_jd(iso_formatted_time, backwards),
-            backwards=backwards,
+        return self._settled(
+            iso_formatted_time,
+            backwards,
+            lambda start_jd: self.next_lunar_node_crossing(start_jd=start_jd, backwards=backwards),
         )
 
     def next_lunar_node_crossing_from_year(
