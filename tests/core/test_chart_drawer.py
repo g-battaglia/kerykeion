@@ -2926,6 +2926,157 @@ class TestModernChartStyle:
         )
 
 
+class TestGlyphSize:
+    """The glyph_size option: three cluster profiles behind one drawer keyword.
+
+    The profile numbers themselves are pinned in test_modern_decluttering; what
+    this class guards is the plumbing — the default path staying byte-identical,
+    the per-render override, the validation, the classic style's indifference,
+    and the parity scale actually reaching the ink.
+    """
+
+    @staticmethod
+    def _natal_data():
+        return ChartDataFactory.create_natal_chart_data(_make_john())
+
+    @staticmethod
+    def _dual_data():
+        return ChartDataFactory.create_synastry_chart_data(_make_john(), _make_paul())
+
+    def test_default_render_is_byte_identical_to_explicit_medium(self):
+        """Omitting glyph_size and asking for "medium" must be the same bytes.
+
+        This is the contract every pre-size chart rests on: the option's
+        default is not a near-copy of the old render, it IS the old render.
+        """
+        for data in (self._natal_data(), self._dual_data()):
+            drawer = ChartDrawer(data)
+            assert drawer.generate_svg_string(style="modern") == drawer.generate_svg_string(
+                style="modern", glyph_size="medium"
+            )
+            assert drawer.generate_wheel_only_svg_string(
+                style="modern"
+            ) == drawer.generate_wheel_only_svg_string(style="modern", glyph_size="medium")
+
+    def test_large_emits_the_classic_parity_scale(self):
+        """At large, a map-1.0 body's glyph is written at the exact parity base.
+
+        24 units x base x 0.92 wrapper x 4.8 page = the classic engine's own
+        24px (single) / 19.2px (dual). The scale is asserted as the emitted
+        string, so a profile re-priced to a rounded decimal fails here even if
+        the drawing still looks right.
+        """
+        from kerykeion.charts.draw_modern import (
+            GLYPH_SIZE_PROFILES,
+            MODERN_PAGE_SCALE,
+            ZODIAC_BG_SCALE,
+        )
+
+        single_base = GLYPH_SIZE_PROFILES["large"]["natal"].planet_scale_base
+        svg = ChartDrawer(self._natal_data()).generate_svg_string(style="modern", glyph_size="large")
+        assert f"scale({single_base})" in svg
+        assert 24 * single_base * ZODIAC_BG_SCALE * MODERN_PAGE_SCALE == pytest.approx(24.0, abs=1e-12)
+
+        dual_base = GLYPH_SIZE_PROFILES["large"]["dual_outer"].planet_scale_base
+        dual_svg = ChartDrawer(self._dual_data()).generate_svg_string(style="modern", glyph_size="large")
+        assert f"scale({dual_base})" in dual_svg
+        assert 24 * dual_base * ZODIAC_BG_SCALE * MODERN_PAGE_SCALE == pytest.approx(19.2, abs=1e-12)
+
+    def test_each_size_changes_the_modern_svg(self):
+        drawer = ChartDrawer(self._natal_data())
+        rendered = {
+            size: drawer.generate_svg_string(style="modern", glyph_size=size)
+            for size in ("small", "medium", "large")
+        }
+        assert rendered["small"] != rendered["medium"]
+        assert rendered["medium"] != rendered["large"]
+        assert rendered["small"] != rendered["large"]
+
+    def test_invalid_glyph_size_raises_everywhere(self, tmp_path):
+        """"huge" is refused by the constructor and by all four render methods."""
+        with pytest.raises(KerykeionException, match="small, medium, large"):
+            ChartDrawer(self._natal_data(), glyph_size="huge")  # type: ignore[arg-type]
+
+        drawer = ChartDrawer(self._natal_data())
+        with pytest.raises(KerykeionException, match="huge"):
+            drawer.generate_svg_string(style="modern", glyph_size="huge")
+        with pytest.raises(KerykeionException, match="huge"):
+            drawer.generate_wheel_only_svg_string(style="modern", glyph_size="huge")
+        with pytest.raises(KerykeionException, match="huge"):
+            drawer.save_svg(output_path=tmp_path, style="modern", glyph_size="huge")
+        with pytest.raises(KerykeionException, match="huge"):
+            drawer.save_wheel_only_svg_file(output_path=tmp_path, style="modern", glyph_size="huge")
+
+    def test_per_render_override_wins_and_does_not_stick(self):
+        """A render-time size beats the constructor default without mutating it.
+
+        The reused-drawer contract: the override applies to that render alone,
+        and the next call without one falls back to the constructor's size.
+        """
+        from kerykeion.charts.draw_modern import GLYPH_SIZE_PROFILES
+
+        drawer = ChartDrawer(self._natal_data(), glyph_size="small")
+        large_base = GLYPH_SIZE_PROFILES["large"]["natal"].planet_scale_base
+        small_base = GLYPH_SIZE_PROFILES["small"]["natal"].planet_scale_base
+
+        overridden = drawer.generate_svg_string(style="modern", glyph_size="large")
+        assert f"scale({large_base})" in overridden
+        assert drawer._glyph_size == "small"
+
+        followup = drawer.generate_svg_string(style="modern")
+        assert f"scale({small_base})" in followup
+        assert f"scale({large_base})" not in followup
+
+    def test_classic_ignores_glyph_size_silently(self, caplog):
+        """The classic wheel draws its fixed-size glyph whatever the size says.
+
+        Silently, like show_zodiac_background_ring: identical output across all
+        three values, and not a word in the log — pinned so the choice stays a
+        choice rather than an accident.
+        """
+        import logging
+
+        drawer = ChartDrawer(self._natal_data())
+        with caplog.at_level(logging.DEBUG):
+            rendered = {
+                size: drawer.generate_svg_string(style="classic", glyph_size=size)
+                for size in ("small", "medium", "large")
+            }
+        assert rendered["small"] == rendered["medium"] == rendered["large"]
+        assert "glyph" not in caplog.text.lower()
+
+    def test_wheel_only_honours_glyph_size(self):
+        """The wheel-only path resolves the same override the full chart does."""
+        from kerykeion.charts.draw_modern import GLYPH_SIZE_PROFILES
+
+        drawer = ChartDrawer(self._natal_data())
+        medium = drawer.generate_wheel_only_svg_string(style="modern")
+        large = drawer.generate_wheel_only_svg_string(style="modern", glyph_size="large")
+        assert medium != large
+        assert f"scale({GLYPH_SIZE_PROFILES['large']['natal'].planet_scale_base})" in large
+
+    def test_non_medium_sizes_stamp_the_root(self):
+        """small/large stamp kr:glyphsize on the modern root; medium does not.
+
+        The stamp is for a consumer holding only the SVG (downstream hit-area
+        injection reads it); its absence IS the default, which keeps the medium
+        render byte-identical to every chart drawn before sizes existed.
+        """
+        def stamp(svg: str) -> str | None:
+            # Post-processing may normalise attribute quotes; read the value, not the quoting.
+            found = re.search(r'kr:glyphsize=["\']([a-z]+)["\']', svg)
+            return found.group(1) if found else None
+
+        natal = ChartDrawer(self._natal_data())
+        dual = ChartDrawer(self._dual_data())
+
+        assert stamp(natal.generate_svg_string(style="modern")) is None
+        assert stamp(dual.generate_svg_string(style="modern")) is None
+        assert stamp(natal.generate_svg_string(style="modern", glyph_size="large")) == "large"
+        assert stamp(natal.generate_svg_string(style="modern", glyph_size="small")) == "small"
+        assert stamp(dual.generate_svg_string(style="modern", glyph_size="large")) == "large"
+
+
 class TestChartDrawerLargeAspectList:
     """Synastry chart with many aspects triggers dynamic height adjustment."""
 

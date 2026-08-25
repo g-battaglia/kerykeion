@@ -47,6 +47,7 @@ from kerykeion.schemas.literals import (
     KerykeionChartTheme,
     KerykeionChartStyle,
     KerykeionChartLanguage,
+    KerykeionGlyphSize,
     AstrologicalPoint,
 )
 from kerykeion.settings.config_constants import (
@@ -2699,6 +2700,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         show_aspect_icons: bool = True,
         style: "KerykeionChartStyle" = "modern",
         show_zodiac_background_ring: bool = True,
+        glyph_size: "KerykeionGlyphSize" = "medium",
         show_diurnality: bool = True,
         show_motion_state: bool = False,
         show_out_of_bounds: bool = False,
@@ -2773,6 +2775,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_zodiac_background_ring (bool, optional):
                 Default for whether to draw colored zodiac wedges (modern style only).
                 Can be overridden at render time.  Defaults to True.
+            glyph_size (KerykeionGlyphSize, optional):
+                Default size of the planet cluster on the modern wheel — "small"
+                (the medium cluster at 90%), "medium", or "large" (the planet
+                glyph at the classic style's own size). Modern style only; the
+                classic wheel ignores it. Can be overridden at render time.
+                Defaults to "medium".
             show_diurnality (bool, optional):
                 Whether to print the chart's diurnality (whether the Sun stood
                 above or below the horizon) in the bottom-left info panel.
@@ -2850,6 +2858,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             padding=padding,
             style=style,
             show_zodiac_background_ring=show_zodiac_background_ring,
+            glyph_size=glyph_size,
             show_diurnality=show_diurnality,
             show_motion_state=show_motion_state,
             show_out_of_bounds=show_out_of_bounds,
@@ -2946,6 +2955,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         padding: int,
         style: "KerykeionChartStyle",
         show_zodiac_background_ring: bool,
+        glyph_size: "KerykeionGlyphSize",
         show_diurnality: bool,
         show_motion_state: bool,
         show_out_of_bounds: bool,
@@ -3005,6 +3015,8 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(style)
         self._style: "KerykeionChartStyle" = style
         self._show_zodiac_background_ring: bool = show_zodiac_background_ring
+        self._validate_glyph_size(glyph_size)
+        self._glyph_size: "KerykeionGlyphSize" = glyph_size
         # Classic-only options already reported by _warn_classic_only_options,
         # so a reused drawer warns once per option rather than once per render.
         self._warned_classic_only: set[str] = set()
@@ -5818,6 +5830,7 @@ class ChartDrawer:  # type: ignore[no-redef]
     def _generate_modern_content(
         self,
         show_zodiac_background_ring: bool = True,
+        glyph_size: "KerykeionGlyphSize" = "medium",
     ) -> str:
         """Generate raw modern wheel SVG content in the 100x100 coordinate space.
 
@@ -5825,6 +5838,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         Args:
             show_zodiac_background_ring: Draw colored zodiac wedges.
+            glyph_size: Planet-cluster size profile both renderers draw.
 
         Returns:
             str: Raw SVG group content for the modern wheel.
@@ -5845,6 +5859,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 show_zodiac_background_ring=show_zodiac_background_ring,
                 show_motion_state=self.show_motion_state,
                 show_aspect_movement=self.show_aspect_movement,
+                glyph_size=glyph_size,
             )
         else:
             has_gauquelin = any(
@@ -5864,6 +5879,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 gauquelin_cusps=gauq_cusps,
                 show_motion_state=self.show_motion_state,
                 show_aspect_movement=self.show_aspect_movement,
+                glyph_size=glyph_size,
             )
 
     _GLYPH_CENTER_ATTR_RE = re.compile(r'kr:(cx|cy)="([^"]+)"')
@@ -6039,6 +6055,21 @@ class ChartDrawer:  # type: ignore[no-redef]
         if style not in allowed_styles:
             raise KerykeionException(f"Style {style!r} is not available. Allowed values: {', '.join(allowed_styles)}.")
 
+    def _validate_glyph_size(self, glyph_size: KerykeionGlyphSize) -> None:
+        """Validate that the given glyph size is a supported cluster size.
+
+        Args:
+            glyph_size: The glyph size to validate.
+
+        Raises:
+            KerykeionException: If the size is not in the allowed values.
+        """
+        allowed_sizes = get_args(KerykeionGlyphSize)
+        if glyph_size not in allowed_sizes:
+            raise KerykeionException(
+                f"Glyph size {glyph_size!r} is not available. Allowed values: {', '.join(allowed_sizes)}."
+            )
+
     def _warn_classic_only_options(self, effective_style: "KerykeionChartStyle") -> None:
         """Warn when classic-only options are active but the modern style renders.
 
@@ -6082,6 +6113,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         custom_title: Union[str, None] = None,
         style: "Union[KerykeionChartStyle, object]" = _UNSET,
         show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
+        glyph_size: "Union[KerykeionGlyphSize, object]" = _UNSET,
     ) -> str:
         """
         Render the full chart SVG as a string.
@@ -6097,6 +6129,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
                 If not provided, uses the default set in the constructor.
+            glyph_size (KerykeionGlyphSize): Planet-cluster size (modern only) —
+                "small", "medium" or "large". If not provided, uses the default
+                set in the constructor.
 
         Returns:
         """
@@ -6109,8 +6144,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             if show_zodiac_background_ring is not _UNSET
             else self._show_zodiac_background_ring
         )
+        effective_glyph_size = (
+            cast("KerykeionGlyphSize", glyph_size) if glyph_size is not _UNSET else self._glyph_size
+        )
 
         self._validate_chart_style(effective_style)
+        self._validate_glyph_size(effective_glyph_size)
         self._warn_classic_only_options(effective_style)
         td = self._create_template_dictionary(custom_title=custom_title)
 
@@ -6122,6 +6161,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         if effective_style == "modern":
             modern_content = self._generate_modern_content(
                 show_zodiac_background_ring=effective_ring,
+                glyph_size=effective_glyph_size,
             )
             # Scale from 100x100 modern space into the ~480x480 classic wheel space.
             # The wheel group in chart.xml is at translate(100, $full_wheel_translate_y),
@@ -6308,6 +6348,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         custom_title: Union[str, None] = None,
         style: "Union[KerykeionChartStyle, object]" = _UNSET,
         show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
+        glyph_size: "Union[KerykeionGlyphSize, object]" = _UNSET,
     ):
         """
         Generate and save the full chart SVG to disk.
@@ -6341,6 +6382,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             custom_title=custom_title,
             style=style,
             show_zodiac_background_ring=show_zodiac_background_ring,
+            glyph_size=glyph_size,
         )
         self._write_svg_to_disk(self.template, output_path, filename, default_suffix=suffix)
 
@@ -6351,6 +6393,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         *,
         style: "Union[KerykeionChartStyle, object]" = _UNSET,
         show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
+        glyph_size: "Union[KerykeionGlyphSize, object]" = _UNSET,
     ):
         """
         Render the wheel-only chart SVG as a string.
@@ -6378,8 +6421,12 @@ class ChartDrawer:  # type: ignore[no-redef]
             if show_zodiac_background_ring is not _UNSET
             else self._show_zodiac_background_ring
         )
+        effective_glyph_size = (
+            cast("KerykeionGlyphSize", glyph_size) if glyph_size is not _UNSET else self._glyph_size
+        )
 
         self._validate_chart_style(effective_style)
+        self._validate_glyph_size(effective_glyph_size)
         self._warn_classic_only_options(effective_style)
 
         if effective_style == "modern":
@@ -6388,6 +6435,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict = self._create_template_dictionary()
             modern_content = self._generate_modern_content(
                 show_zodiac_background_ring=effective_ring,
+                glyph_size=effective_glyph_size,
             )
             template = Template(raw_template).substitute(
                 {
@@ -6421,6 +6469,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         *,
         style: "Union[KerykeionChartStyle, object]" = _UNSET,
         show_zodiac_background_ring: "Union[bool, object]" = _UNSET,
+        glyph_size: "Union[KerykeionGlyphSize, object]" = _UNSET,
     ):
         """
         Generate and save wheel-only chart SVG to disk.
@@ -6453,6 +6502,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             remove_css_variables,
             style=style,
             show_zodiac_background_ring=show_zodiac_background_ring,
+            glyph_size=glyph_size,
         )
         self._write_svg_to_disk(template, output_path, filename, default_suffix=suffix)
 

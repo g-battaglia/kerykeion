@@ -85,6 +85,8 @@ def test_the_golden_subjects_are_cast_without_the_network(refuse_the_network):
 #: silence; the guard said "every golden test" and was wrong.
 UNDRIVEN_GOLDEN_TESTS_THAT_COMPARE_NO_BASELINE = {
     "TestChartDrawerBasic::test_chart_drawer_logging",
+    "TestGlyphSize::test_classic_ignores_glyph_size_silently",
+    "TestGlyphSize::test_invalid_glyph_size_raises_everywhere",
     "TestMinifyFallbackScope::test_string_fallback_applies_when_optimizer_fails",
     "TestModernChartStyle::test_classic_only_options_warn_once_per_drawer",
     "TestModernChartStyle::test_classic_only_options_warn_under_modern",
