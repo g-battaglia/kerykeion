@@ -19,13 +19,21 @@
   (the backend's backward searches are strictly past, so a crossing inside
   that second is excluded and one in the second before is found), in one
   helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
-  entry points. The contract is pinned for the Sun, the Moon, the lunar nodes
-  and the heliocentric planets the backend solves (Mercury to Saturn in the
-  tests): `next(reported(N))` is `N + 1`, `previous(reported(N))` is `N − 1`,
-  `previous(next(r))` is `r` instant for instant, and a walk of steps lands on
-  each return exactly once. Bodies the backend has no heliocentric crossing
-  for (Chiron, Pholus, the Uranian points, the nodes and Liliths themselves)
-  stay outside it — their search returned its seed before and does still.
+  entry points. The backend's solvers do not reach that resolution on their
+  own — their at-crossing dead band is ~90 ms for the Sun, and their 0.001″
+  tolerance is six seconds of Pluto's motion, so a seed one second past a
+  slow body's crossing came back as its own answer — so every ISO search is
+  held to the contract (`_settled`): heliocentric crossings are settled to a
+  millisecond by bisection around the solver's answer, a crossing inside the
+  second before a backward seed is looked for explicitly, and a result that
+  has not moved past the seed's second restarts from outside the solver's
+  basin. The contract is pinned for the Sun, the Moon, the lunar nodes and the
+  heliocentric bodies from Mercury to Pluto plus Chiron: `next(reported(N))`
+  is `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
+  instant for instant, `previous` from the second after a reported instant
+  finds it (twenty consecutive solar returns, dead band included), and a walk
+  of steps lands on each return exactly once. The lunar nodes and Liliths
+  have no heliocentric longitude in the backend and stay outside, as before.
   Nothing reported changes; the date and year wrappers keep their inclusive
   midnight seed, so a return in the first second of a date is still that
   date's return. The one visible

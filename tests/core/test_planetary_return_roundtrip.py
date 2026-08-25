@@ -48,7 +48,7 @@ pytestmark = pytest.mark.skipif(
 MAX_GAP_DAYS = {
     "Solar": 367.0,
     "Lunar": 28.0,
-    "Node": 16.0,  # the Moon meets either node every ~12.4–14.7 days (half a draconic month)
+    "Node": 16.0,  # the Moon meets either node every ~12.4-14.7 days (half a draconic month)
     "Mars": 800.0,  # heliocentric Mars, ~687 days
 }
 
@@ -210,6 +210,70 @@ def test_a_crossing_a_fraction_before_the_seed_is_found_backward(factory, kind):
     assert back.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
 
 
+@pytest.mark.parametrize(
+    "start",
+    [
+        # Solar returns whose exact crossing falls in the last ~90 ms of its
+        # reported second — inside the backend's at-crossing dead band, where
+        # a backward search from the next second used to jump a whole year.
+        "1985-03-01T00:00:00+00:00",
+        "2021-03-01T00:00:00+00:00",
+        "2024-03-01T00:00:00+00:00",
+    ],
+)
+def test_a_solar_return_in_the_dead_band_is_still_found_backward(factory, start):
+    first = _step(factory, "Solar", start)
+    back = _step(factory, "Solar", _shift(first.iso_formatted_utc_datetime, 1), backwards=True)
+    assert back.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
+
+
+def test_twenty_consecutive_solar_returns_are_found_from_the_second_after(factory):
+    """The dead band catches ~9% of solar returns at random; a run of twenty
+    consecutive ones leaves no room for luck."""
+    current = _step(factory, "Solar", "1980-01-01T00:00:00+00:00")
+    for _ in range(20):
+        back = _step(factory, "Solar", _shift(current.iso_formatted_utc_datetime, 1), backwards=True)
+        assert back.iso_formatted_utc_datetime == current.iso_formatted_utc_datetime
+        current = _step(factory, "Solar", current.iso_formatted_utc_datetime)
+
+
+# The slow heliocentric bodies: the solver's 0.001″ tolerance is seconds of
+# their motion, so a seed one second past a crossing used to be handed back
+# as its own answer (the same crossing reported a second later). Settled to a
+# millisecond and held to the ordering contract, they step like the rest.
+SLOW_HELIOCENTRIC_MAX_GAP_DAYS = {
+    "Uranus": 31000.0,
+    "Neptune": 61000.0,
+    "Pluto": 92000.0,
+    "Chiron": 19000.0,
+}
+
+
+@pytest.mark.parametrize("planet", sorted(SLOW_HELIOCENTRIC_MAX_GAP_DAYS))
+def test_slow_heliocentric_bodies_step_and_come_back(factory, planet):
+    first = _step(factory, planet, START)
+    second = _step(factory, planet, first.iso_formatted_utc_datetime)
+    back = _step(factory, planet, second.iso_formatted_utc_datetime, backwards=True)
+    from_next_second = _step(factory, planet, _shift(first.iso_formatted_utc_datetime, 1), backwards=True)
+
+    gap = second.julian_day - first.julian_day
+    assert 1.0 < gap < SLOW_HELIOCENTRIC_MAX_GAP_DAYS[planet], f"{planet}: {gap:.2f} days"
+    assert back.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
+    assert from_next_second.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
+
+
+def test_crossing_between_finds_a_sign_change_to_a_millisecond():
+    root = 2460000.123456
+    crossing = PlanetaryReturnFactory._crossing_between(lambda jd: jd - root, root - 1.0, root + 1.0)
+    assert crossing is not None and abs(crossing - root) * 86400.0 < 1e-3
+
+    assert PlanetaryReturnFactory._crossing_between(lambda jd: jd - root, root + 1.0, root + 2.0) is None
+    assert PlanetaryReturnFactory._crossing_between(lambda jd: jd - root, root, root + 1.0) == root
+    # A decreasing offset (the Moon's latitude at a descending node) is a sign change too.
+    falling = PlanetaryReturnFactory._crossing_between(lambda jd: root - jd, root - 1.0, root + 1.0)
+    assert falling is not None and abs(falling - root) * 86400.0 < 1e-3
+
+
 def test_date_and_iso_entry_points_agree_away_from_the_boundary(factory):
     """Away from a date's first second, the date wrapper and an ISO midnight
     seed select the same return."""
@@ -287,7 +351,7 @@ def test_search_refuses_to_start_outside_the_civil_range(factory):
         factory.next_return_from_iso_formatted_time("9999-12-31T23:59:59+00:00", "Solar")
     # The first second of 1 CE is a valid backward seed; the search itself then
     # runs out of the civil range and refuses through the library's exception.
-    with pytest.raises(KerykeionException, match="1 CE|civil range|range"):
+    with pytest.raises(KerykeionException, match=r"1 CE|civil range|range"):
         factory.next_return_from_iso_formatted_time("0001-01-01T00:00:00+00:00", "Solar", backwards=True)
 
 
