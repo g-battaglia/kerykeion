@@ -63,7 +63,10 @@ from kerykeion.schemas.literals import (
     CompositeChartType,
 )
 from kerykeion.utilities.core import (
-    _HOUSE_WINDING_TOLERANCE_DEGREES,
+    ANGLE_CUSP_INDEX,
+    angle_is_its_cusp,
+    coincident_cusp_groups,
+    cusps_are_a_house_division,
     house_spans,
     get_kerykeion_point_from_degree,
     get_planet_house,
@@ -71,44 +74,6 @@ from kerykeion.utilities.core import (
     calculate_moon_phase,
     find_common_active_points,
 )
-
-
-#: Two cusps closer than this are the same point: a thousandth of a milliarcsecond,
-#: far below anything an ephemeris resolves or a wheel can draw.
-_COINCIDENT_CUSP_DEGREES = 1e-9
-
-
-def _cusp_ring_winds_once(cusps: Sequence[float]) -> bool:
-    """Do these twelve arcs cover the circle exactly once?
-
-    Asked of ``house_spans``, which is the library's answer to this question,
-    rather than counted here a second time. The copy that stood here summed the
-    forward gaps with a bare ``% 360``, and for two cusps coincident to within
-    float noise in the negative direction that returns exactly 360.0 instead of
-    zero: a ring ``house_spans`` certifies at 360 came out at 720, so the "leave
-    it alone" path was skipped and every cusp was rebuilt on a chart that needed
-    nothing done to it.
-
-    Real composite rings do reach it: 90 of 120,069 rings measured had two cusps
-    at bit-identical longitudes. It is closed anyway, because the reason a
-    particular ephemeris does or does not produce one is not a fact about this
-    function, and because a bare ``% 360`` on an angle is the fourth of its kind
-    this repository has had to find.
-
-    Covering the circle is necessary and not sufficient: a house of zero width
-    adds nothing to the total, so twelve arcs can sum to 360 with two of the
-    cusps on the same longitude. That is not a division into twelve houses, and
-    left uncaught it reaches ``get_planet_house``, whose exact-on-cusp rule then
-    answers with the earlier of the two — a Midheaven that IS the tenth cusp,
-    filed in the fourth. So the arcs must also be arcs.
-    """
-    spans, reversed_wedges = house_spans(cusps)
-    if (
-        len(set(reversed_wedges)) != 1
-        or abs(sum(spans) - 360.0) > _HOUSE_WINDING_TOLERANCE_DEGREES
-    ):
-        return False
-    return all(span > _COINCIDENT_CUSP_DEGREES for span in spans)
 
 
 logger = logging.getLogger(__name__)
@@ -167,20 +132,12 @@ def _rings_admit_a_common_frame(
     anchored under all three anchors while holding the Ascendant rotated every
     cusp half a circle and moved the Sun from the seventh house to the first.
     """
-    first_spans, first_directions = house_spans(first_cusps)
-    second_spans, second_directions = house_spans(second_cusps)
-
-    def winds_once(spans: Sequence[float], directions: Sequence[bool]) -> bool:
-        return (
-            len(set(directions)) == 1
-            and abs(sum(spans) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES
-            and all(span > _COINCIDENT_CUSP_DEGREES for span in spans)
-        )
-
-    if not winds_once(first_spans, first_directions):
+    if not cusps_are_a_house_division(first_cusps):
         return False
-    if not winds_once(second_spans, second_directions):
+    if not cusps_are_a_house_division(second_cusps):
         return False
+    _, first_directions = house_spans(first_cusps)
+    _, second_directions = house_spans(second_cusps)
     return first_directions[0] == second_directions[0]
 
 
@@ -196,24 +153,26 @@ def _angle_is_its_cusp(
     second_cusps: Sequence[float],
     cusp: int,
 ) -> bool:
-    """Do both charts put this angle exactly on the cusp it shares a number with?
+    """Do BOTH charts put this angle exactly on the cusp it shares a number with?
 
-    Asked of the charts rather than of a list of house-system identifiers kept
-    somewhere and left to rot. Quadrant systems say yes for all four angles;
-    equal houses say yes for the Ascendant and the Descendant only; whole sign,
-    Morinus and meridian say no for one or both pairs.
+    The one-ring question is :func:`kerykeion.utilities.core.angle_is_its_cusp`,
+    and it is asked twice here rather than reimplemented: quadrant systems say yes
+    for all four angles, equal houses for the Ascendant and the Descendant only,
+    meridian houses for the Midheaven and the Imum Coeli only, whole sign and
+    Morinus for none. A composite may use
+    the identity only where BOTH parents have it, because it is their cusps that
+    are being averaged.
 
-    ``cusp`` is the cusp's own index, zero-based: 0 for the Ascendant, 3 for the
-    Imum Coeli, 6 for the Descendant, 9 for the Midheaven. It used to be the
+    ``cusp`` is the cusp's own index, zero-based, exactly as
+    :data:`kerykeion.utilities.core.ANGLE_CUSP_INDEX` gives them. It used to be the
     angle's index instead, folded to a cusp in here by ``0 if index == 0 else 9``
-    — so a caller with four angles to ask about, passing the cusp numbers
-    straight in, had the Imum Coeli and the Descendant both measured against the
-    tenth cusp. They said no every time and never got the answer this predicate
-    exists to give them. The fold is gone; there is one numbering now.
+    — so a caller with four angles to ask about, passing the cusp numbers straight
+    in, had the Imum Coeli and the Descendant both measured against the tenth cusp.
+    They said no every time and never got the answer this predicate exists to give
+    them. The fold is gone; there is one numbering now.
     """
-    return (
-        abs(((first_angle - first_cusps[cusp] + 180.0) % 360.0) - 180.0) < 1e-9
-        and abs(((second_angle - second_cusps[cusp] + 180.0) % 360.0) - 180.0) < 1e-9
+    return angle_is_its_cusp(first_angle, first_cusps, cusp) and angle_is_its_cusp(
+        second_angle, second_cusps, cusp
     )
 
 
@@ -336,7 +295,7 @@ def composite_frame(
         ):
             midpoints[derived] = (midpoints[source] + 180.0) % 360.0
 
-    already_in_order = _cusp_ring_winds_once(midpoints)
+    already_in_order = cusps_are_a_house_division(midpoints)
 
     if anchor == "ascendant":
         held = 0
@@ -431,7 +390,7 @@ def composite_frame(
             place_on_composite_frame(first, second, cusp_frame)
             for first, second in zip(first_cusps, second_cusps)
         ]
-        if _cusp_ring_winds_once(placed):
+        if cusps_are_a_house_division(placed):
             cusps = placed
         else:
             cusps = list(midpoints)
@@ -956,7 +915,12 @@ class CompositeSubjectFactory:
         # model carrying only the request describes a construction that did not
         # happen. Worse, on a ring with gaps every house name is the last-passed-
         # cusp reading rather than a containment, and nothing said so.
-        ring_is_a_division = _cusp_ring_winds_once(house_degree_list_ut)
+        ring_is_a_division = cusps_are_a_house_division(house_degree_list_ut)
+        # The midpoint ring is a ring of its own, and it says which of its houses
+        # have no width the same way a natal chart does: two parents cast on
+        # crowded rings put their midpoints on one longitude too, and the model
+        # field promises to be empty only when the twelve cusps are distinct.
+        self.coincident_house_cusps = coincident_cusp_groups(house_degree_list_ut)
         if frame_is_coherent:
             self.house_frame: CompositeHouseFrame = "anchored"
         elif ring_is_a_division:
@@ -1064,9 +1028,8 @@ class CompositeSubjectFactory:
         # first. So this is the more accurate of the two answers there, not a
         # shortcut past one. What holds it is the tests, which assert the angle
         # against its cusp and not merely against a house name.
-        angle_cusp_index = {"ascendant": 0, "imum_coeli": 3, "descendant": 6, "medium_coeli": 9}
         angle_houses: dict[str, str] = {}
-        for angle, cusp in angle_cusp_index.items():
+        for angle, cusp in ANGLE_CUSP_INDEX.items():
             if not _angle_is_its_cusp(
                 self.first_subject[angle]["abs_pos"],
                 self.second_subject[angle]["abs_pos"],

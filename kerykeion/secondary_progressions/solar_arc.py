@@ -42,7 +42,14 @@ from kerykeion.schemas.literals import SIGN_CODES
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.predictive.utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
 from kerykeion.utilities.core import normalize_degree
-from kerykeion.utilities.core import _ZODIAC_SIGNS, get_planet_house, HOUSE_FIELD_NAMES
+from kerykeion.utilities.core import (
+    _ZODIAC_SIGNS,
+    ANGLE_CUSP_INDEX,
+    HOUSE_FIELD_NAMES,
+    _HOUSE_NAMES_TUPLE,
+    angle_is_its_cusp,
+    get_planet_house,
+)
 
 from .factory import SecondaryProgressionFactory
 
@@ -421,6 +428,14 @@ class SolarArcFactory:
             point.altitude_above_horizon = None
             point.gauquelin_sector = None
             if len(houses_degree_ut) == 12:
+                # The houses are the natal ring, not directed, so a directed angle
+                # has left its cusp and is a point among the others — except at an
+                # arc of zero, where it still IS its cusp and opens that house,
+                # which several coincident cusps would hide from the reader.
+                own_cusp = ANGLE_CUSP_INDEX.get(point.name.lower())
+                if own_cusp is not None and angle_is_its_cusp(new_abs, houses_degree_ut, own_cusp):
+                    point.house = _HOUSE_NAMES_TUPLE[own_cusp]
+                    continue
                 try:
                     point.house = get_planet_house(new_abs, houses_degree_ut)
                 except ValueError:

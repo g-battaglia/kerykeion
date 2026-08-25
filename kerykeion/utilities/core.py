@@ -360,6 +360,30 @@ def normalize_degree(angle: Union[int, float]) -> float:
 _HOUSE_WINDING_TOLERANCE_DEGREES = 1e-4
 
 
+#: Two longitudes closer than this are the same point: a thousandth of a
+#: milliarcsecond, far below anything an ephemeris resolves or a wheel can draw.
+#: It is the tolerance behind three separate questions that are really one — is
+#: this point ON that cusp, are these two cusps the same cusp, is this angle its
+#: own cusp — and they had three copies of the number between them.
+ON_CUSP_TOLERANCE_DEGREES = 1e-9
+
+#: Which cusp each angle IS, zero-based, in the systems that put it on one.
+#:
+#: Not a convention and not a lookup table of house-system identifiers kept
+#: somewhere and left to rot: it is which cusp a chart's own numbers put the
+#: angle on, and it is used only where that chart actually did. Quadrant systems
+#: say yes for all four; equal houses say yes for the Ascendant and Descendant
+#: only; whole sign, Morinus and meridian say no for one or both pairs, and there
+#: the angle is a point of its own that can legitimately fall in a neighbouring
+#: house.
+ANGLE_CUSP_INDEX: dict[str, int] = {
+    "ascendant": 0,
+    "imum_coeli": 3,
+    "descendant": 6,
+    "medium_coeli": 9,
+}
+
+
 def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
     """The twelve house widths, and which of them run against their own frame.
 
@@ -422,6 +446,127 @@ def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
     )
 
 
+def angular_separation(first_degree: float, second_degree: float) -> float:
+    """How far apart two longitudes are, the short way round, in [0, 180]."""
+    return abs((first_degree - second_degree + 180.0) % 360.0 - 180.0)
+
+
+def angle_is_its_cusp(angle_degree: float, cusps: Sequence[float], cusp_index: int) -> bool:
+    """Does this chart put this angle exactly on the cusp it shares a number with?
+
+    Asked of the chart's own numbers rather than of a list of house-system
+    identifiers: a system either lands the angle on that cusp or it does not, and
+    the two longitudes say which without anyone having to maintain a table.
+
+    ``cusp_index`` is the cusp's own index, zero-based — 0 for the Ascendant, 3
+    for the Imum Coeli, 6 for the Descendant, 9 for the Midheaven, exactly as
+    :data:`ANGLE_CUSP_INDEX` gives them.
+    """
+    return angular_separation(angle_degree, cusps[cusp_index]) < ON_CUSP_TOLERANCE_DEGREES
+
+
+def angle_house_identities(
+    cusps: Sequence[float], ascendant: float, medium_coeli: float
+) -> dict[str, Houses]:
+    """Which house each angle opens, for the angles this chart puts on a cusp.
+
+    An angle that IS a cusp opens that house, and the chart knows which cusp each
+    angle is at the moment the cusps are computed — so it says so, instead of
+    handing the longitude back to a reader that has to find it again. The reader
+    cannot always succeed: above the polar circle several systems crowd cusps onto
+    one longitude, and Sunshine at 74.25 degrees north puts the second through the
+    sixth on 316.971024. The Imum Coeli IS the fourth cusp there, bit for bit, and
+    scanning twelve identical numbers answers with the earliest of them — the
+    third house, in the report and in the context both.
+
+    Nothing here invents an identity that the chart does not have. Whole sign,
+    equal, Morinus and meridian charts put one or both pairs of angles off their
+    numbered cusps, and for those this returns nothing and the shared reader
+    answers, which is what those systems mean.
+
+    The Descendant and the Imum Coeli are derived as the antipodes of the
+    Ascendant and the Midheaven, the same way every factory derives them, so the
+    identity is decided on the value the chart will actually carry.
+
+    Args:
+        cusps: The twelve cusp positions, in house order.
+        ascendant: The Ascendant's longitude, as the ephemeris returned it.
+        medium_coeli: The Midheaven's longitude, as the ephemeris returned it.
+
+    Returns:
+        A mapping from angle field name to the house it opens, holding only the
+        angles this chart places on their own cusp. Empty for a chart that places
+        none of them.
+    """
+    angles = {
+        "ascendant": ascendant % 360.0,
+        "descendant": (ascendant + 180.0) % 360.0,
+        "medium_coeli": medium_coeli % 360.0,
+        "imum_coeli": (medium_coeli + 180.0) % 360.0,
+    }
+    identities: dict[str, Houses] = {}
+    for angle_name, cusp_index in ANGLE_CUSP_INDEX.items():
+        if angle_is_its_cusp(angles[angle_name], cusps, cusp_index):
+            identities[angle_name] = _HOUSE_NAMES_TUPLE[cusp_index]
+    return identities
+
+
+def cusps_are_a_house_division(cusps: Sequence[float]) -> bool:
+    """Do these twelve arcs divide the circle into twelve houses?
+
+    Asked of :func:`house_spans`, which is the library's answer to which way the
+    ring runs, rather than counted here a second time.
+
+    Covering the circle is necessary and not sufficient: a house of zero width
+    adds nothing to the total, so twelve arcs can sum to 360 with two of the cusps
+    on the same longitude. That is not a division into twelve houses — no point
+    can ever be in a house that has no width — and it is the shape behind every
+    angle filed in the wrong house.
+    """
+    spans, reversed_wedges = house_spans(cusps)
+    if (
+        len(set(reversed_wedges)) != 1
+        or abs(sum(spans) - 360.0) > _HOUSE_WINDING_TOLERANCE_DEGREES
+    ):
+        return False
+    return all(span > ON_CUSP_TOLERANCE_DEGREES for span in spans)
+
+
+def coincident_cusp_groups(cusps: Sequence[float]) -> list[list[int]]:
+    """The sets of house numbers whose cusps stand on the same longitude.
+
+    House numbers are one-based, as a reader of a chart counts them. A chart whose
+    twelve cusps are twelve distinct longitudes — every ordinary chart — returns an
+    empty list, which is what makes this safe to carry on every subject.
+
+    Grouping is by single linkage: a cusp joins a group when it coincides with any
+    member. At a tolerance of a thousandth of a milliarcsecond the distinction from
+    strict equivalence is theoretical, and the question being asked — which houses
+    have no width — is answered the same way either round.
+    """
+    count = len(cusps)
+    group_of: list[int] = list(range(count))
+
+    def resolve(index: int) -> int:
+        while group_of[index] != index:
+            group_of[index] = group_of[group_of[index]]
+            index = group_of[index]
+        return index
+
+    for first in range(count):
+        for second in range(first + 1, count):
+            if angular_separation(cusps[first], cusps[second]) < ON_CUSP_TOLERANCE_DEGREES:
+                group_of[resolve(second)] = resolve(first)
+
+    grouped: dict[int, list[int]] = {}
+    for index in range(count):
+        grouped.setdefault(resolve(index), []).append(index + 1)
+    return sorted(
+        (sorted(members) for members in grouped.values() if len(members) > 1),
+        key=lambda members: members[0],
+    )
+
+
 def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
     Determine which house contains a planet based on its degree position.
@@ -451,12 +596,20 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     # nanodegree: Sunshine at 89S puts the eighth, ninth and tenth within 6.6e-11
     # of each other, and the Midheaven is the tenth exactly. Scanning upwards and
     # taking the first match filed it in the eighth.
-    on_cusp = [
-        (abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0), i)
-        for i in range(n)
-    ]
+    #
+    # Nearest is as far as twelve numbers can take it. Where several cusps are
+    # bit-identical — Sunshine at 74.25 degrees north puts the second through the
+    # sixth on one longitude — they are all equally near, and no rule written over
+    # this list can say which of them a point standing there opens. The answer is
+    # not in the list: it is in what the point IS, which the ephemeris knows when
+    # it returns the cusps and the angles together. So the four angles do not come
+    # through here any more; they are given their house by angle_house_identities
+    # where the cusps are made. What still arrives here is an ordinary point
+    # standing on a crowd of cusps, for which no answer is more right than
+    # another, and it gets the lowest-numbered one.
+    on_cusp = [(angular_separation(planet_degree, houses_degree_ut_list[i]), i) for i in range(n)]
     closest, index = min(on_cusp)
-    if closest < 1e-9:
+    if closest < ON_CUSP_TOLERANCE_DEGREES:
         return _HOUSE_NAMES_TUPLE[index]
 
     # Where the twelve ARE a house division, ask the one function that decides

@@ -498,6 +498,14 @@ def astrological_subject_to_context(
             attrs["used_latitude"] = f"{used_latitude:.4f}"
         lines.append("  " + _sc("polar_house_fallback", **attrs))
 
+    # A ring can be the system the user asked for and still not be a division into
+    # twelve houses: some systems bring several cusps onto one longitude at extreme
+    # latitudes, and the houses between them have no width. The reference ephemeris
+    # returns the same ring, so the cusps are reported as computed — this says when
+    # a model reading them is looking at houses nothing can ever be in.
+    for group in getattr(subject, "coincident_house_cusps", None) or ():
+        lines.append("  " + _sc("coincident_house_cusps", houses=",".join(str(n) for n in group)))
+
     # Composite chart specific info
     if isinstance(subject, CompositeSubjectModel):
         composite_attrs = {

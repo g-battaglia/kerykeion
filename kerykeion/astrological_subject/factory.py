@@ -35,8 +35,8 @@ from kerykeion.ephemeris_backend.backend import (
     EPHE_DATA_PATH,
     BACKEND_NAME,
     ephemeris_session,
-    houses_ex2_with_polar_fallback,
     houses_ex2_with_polar_fallback_ex,
+    houses_ring_with_polar_fallback,
 )
 import logging
 import math
@@ -749,7 +749,7 @@ class LocationData:
 
             The real latitude is PRESERVED here (no polar clamping). Polar-only
             house systems (Placidus/Koch) are handled locally at the houses call
-            via ``houses_ex2_with_polar_fallback``, so topocentric positions, the
+            via ``houses_ring_with_polar_fallback``, so topocentric positions, the
             persisted latitude, and every latitude-agnostic house system keep the
             real observer latitude.
         """
@@ -2568,7 +2568,7 @@ class AstrologicalSubjectFactory:
         # variant additionally returns a descriptor of any such degradation:
         # keep it on the subject so the chart declares that its houses are not
         # the requested system instead of only whispering it to the log.
-        cusps, ascmc, cusps_speed, ascmc_speed, polar_fallback = houses_ex2_with_polar_fallback_ex(
+        ring = houses_ring_with_polar_fallback(
             data["julian_day"],
             data["lat"],
             data["lng"],
@@ -2576,6 +2576,8 @@ class AstrologicalSubjectFactory:
             data["_iflag"],
             context=data.get("name", ""),
         )
+        cusps, ascmc, cusps_speed, ascmc_speed = ring.cusps, ring.ascmc, ring.cusps_speed, ring.ascmc_speed
+        polar_fallback = ring.polar_fallback
         if polar_fallback is not None:
             data.setdefault("polar_house_fallbacks", []).append(polar_fallback)
             # `houses_system_identifier` deliberately keeps the REQUEST. It is
@@ -2592,6 +2594,15 @@ class AstrologicalSubjectFactory:
 
         # Store house degrees
         data["_houses_degree_ut"] = cusps
+
+        # Which house each angle opens, decided where the cusps and the angles came
+        # out of the same call and nowhere else. _calculate_opposite_points reads it
+        # for the Descendant and the Imum Coeli, which it derives rather than asks
+        # for; see angle_house_identities for why twelve numbers cannot answer this
+        # on their own.
+        data["_angle_house_identities"] = ring.angle_houses
+        # Empty for every chart whose twelve cusps are twelve distinct longitudes.
+        data["coincident_house_cusps"] = ring.coincident_cusps
 
         # House configuration: (attribute_name, house_name)
         HOUSE_CONFIG: list[tuple[str, Houses]] = [
@@ -2643,7 +2654,9 @@ class AstrologicalSubjectFactory:
             point_type=point_type,
             speed=ascmc_speed[0],
         )
-        data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
+        data["ascendant"].house = ring.angle_houses.get("ascendant") or get_planet_house(
+            data["ascendant"].abs_pos, data["_houses_degree_ut"]
+        )
         data["ascendant"].retrograde = False
         if should_calculate("Ascendant"):
             calculated_axial_cusps.append("Ascendant")
@@ -2654,7 +2667,9 @@ class AstrologicalSubjectFactory:
             point_type=point_type,
             speed=ascmc_speed[1],
         )
-        data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
+        data["medium_coeli"].house = ring.angle_houses.get("medium_coeli") or get_planet_house(
+            data["medium_coeli"].abs_pos, data["_houses_degree_ut"]
+        )
         data["medium_coeli"].retrograde = False
         if should_calculate("Medium_Coeli"):
             calculated_axial_cusps.append("Medium_Coeli")
@@ -2953,7 +2968,14 @@ class AstrologicalSubjectFactory:
                 declination=dec,
                 ecliptic_latitude=ecl_lat,
             )
-            point.house = get_planet_house(deg, houses_degree_ut)
+            # The Descendant and the Imum Coeli are derived here, so this is where
+            # they collect the identity recorded when the cusps were made: an angle
+            # that IS a cusp opens that house, and on a ring with several cusps on
+            # one longitude the shared reader cannot tell which. Every other derived
+            # point — the south nodes, Priapus, the Anti-Vertex — is a point of its
+            # own and goes through the reader as before.
+            identity = data.get("_angle_house_identities", {}).get(derived_name.lower())
+            point.house = identity or get_planet_house(deg, houses_degree_ut)
             point.retrograde = primary.retrograde if primary.retrograde is not None else False
 
             data[derived_name.lower()] = point
@@ -2989,24 +3011,16 @@ class AstrologicalSubjectFactory:
         if point_key in data:
             return  # Already calculated
 
-        # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            # Mirror the main houses call: preserve the real latitude and
-            # substitute only a house system undefined inside the polar circle.
-            _, ascmc, _, ascmc_speed = houses_ex2_with_polar_fallback(
-                data["julian_day"],
-                data["lat"],
-                data["lng"],
-                str.encode(data["houses_system_identifier"]),
-                iflag,
-                context=data.get("name", ""),
+            # Unreachable by construction: _calculate_houses runs unconditionally
+            # before any point is calculated and always stores the Ascendant, so
+            # the early return above has already fired. Until a88 a copy of the
+            # houses call lived here "for the Arabic Parts"; nothing could ever
+            # reach it, and a second place that files the Ascendant is a second
+            # place to get it wrong.
+            raise KerykeionException(
+                "The Ascendant is calculated with the houses, before any point can ask for it"
             )
-            data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
-            )
-            data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
-            data["ascendant"].retrograde = False
-            return
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:

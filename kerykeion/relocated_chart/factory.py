@@ -41,6 +41,8 @@ from kerykeion.utilities.core import (
     normalize_longitude,
     safe_timezone,
     get_kerykeion_point_from_degree,
+    angle_house_identities,
+    coincident_cusp_groups,
     get_planet_house,
     _assemble_ancient_iso,
     _split_decimal_hour_with_carry,
@@ -235,6 +237,11 @@ class RelocatedChartFactory:
         # Build house degree list for planet house assignment
         houses_degree_ut = list(cusps)
 
+        # Decided on the cusps and angles this chart will actually carry — after
+        # the sidereal shift, which moves both by the same arc and so cannot
+        # change which cusp an angle is standing on, but is part of making them.
+        angle_houses = angle_house_identities(houses_degree_ut, ascmc[0], ascmc[1])
+
         # Create house KerykeionPointModels
         house_data = {}
         house_names = [
@@ -292,7 +299,12 @@ class RelocatedChartFactory:
 
         for field_name, (point_name, degree) in axis_degrees.items():
             point = get_kerykeion_point_from_degree(degree, point_name, "AstrologicalPoint")
-            point.house = get_planet_house(degree, houses_degree_ut)
+            # Relocating TOWARDS a polar latitude is the common way a real user
+            # meets a ring with cusps on top of each other, so this is exactly
+            # where an angle must be given the house it opens rather than the
+            # earliest cusp that happens to share its longitude. The Vertex has no
+            # such identity — it is nobody's cusp — and reads as before.
+            point.house = angle_houses.get(field_name) or get_planet_house(degree, houses_degree_ut)
             point.retrograde = False
             house_data[field_name] = point
 
@@ -328,6 +340,7 @@ class RelocatedChartFactory:
         # nulled: carrying it over would attribute a substitution to a latitude
         # that no longer produced these cusps.
         relocated_data["polar_house_fallbacks"] = [polar_fallback] if polar_fallback is not None else []
+        relocated_data["coincident_house_cusps"] = coincident_cusp_groups(houses_degree_ut)
         # As in the natal path, the requested system stays in
         # `houses_system_identifier` so a further recast is not poisoned by a
         # substitution that belonged to one location. Rendering reads
