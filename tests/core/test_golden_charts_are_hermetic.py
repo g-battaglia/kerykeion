@@ -32,8 +32,7 @@ import pytest
 
 from kerykeion.geonames.fetcher import FetchGeonames
 
-from tests.core.test_every_baseline_has_a_reader import SVG_DIR, _names_this_run_cannot_reach
-from tests.data.golden_drive import drive_every_golden_test
+from tests.data.golden_drive import SVG_DIR, baselines_out_of_this_runs_reach, drive_every_golden_test
 
 
 class _NetworkWasAsked(AssertionError):
@@ -84,7 +83,7 @@ def test_the_golden_subjects_are_cast_without_the_network(refuse_the_network):
 #: driven, and so stops being vouched for — shows up here instead of vanishing.
 #: The first version of the driver skipped five baseline readers that way in
 #: silence; the guard said "every golden test" and was wrong.
-TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE = {
+UNDRIVEN_GOLDEN_TESTS_THAT_COMPARE_NO_BASELINE = {
     "TestChartDrawerBasic::test_chart_drawer_logging",
     "TestMinifyFallbackScope::test_string_fallback_applies_when_optimizer_fails",
     "TestModernChartStyle::test_classic_only_options_warn_once_per_drawer",
@@ -100,16 +99,6 @@ TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE = {
     "TestOutputToFile::test_save_wheel_only_creates_file",
     "TestSvgOutputPathSafety::test_filename_traversal_is_sanitized",
     "TestSvgOutputPathSafety::test_subject_name_with_path_separators_is_sanitized",
-}
-
-
-#: Baselines no driven golden test hands to the comparison, and why — so the guard
-#: can demand that every other one was reached with the network refused.
-CAST_BY_NO_DRIVEN_GOLDEN_TEST = {
-    "Moon Phases.svg": "a sheet of lunar-phase icons, read by test_lunar_phase_svg.py, which casts no chart",
-    "Historical Subject - Natal Chart - Classic.svg": (
-        "a 1500 chart, @extended; on the medium kernel its test fails before it can compare"
-    ),
 }
 
 
@@ -140,15 +129,15 @@ def test_every_golden_chart_test_survives_a_refused_network(refuse_the_network):
         "These golden tests asked GeoNames where their chart was cast:\n  "
         + "\n  ".join(sorted(set(asked_the_network)))
     )
-    assert set(not_driven) == TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE, (
+    assert set(not_driven) == UNDRIVEN_GOLDEN_TESTS_THAT_COMPARE_NO_BASELINE, (
         "The driver could not call these tests, so this guard cannot vouch for them. "
         "A golden test must take nothing but its parametrize arguments (use setup_class "
         "for shared subjects); a test that compares no baseline goes in the list above.\n"
-        f"  not driven, not listed: {sorted(set(not_driven) - TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE)}\n"
-        f"  listed, but driven now: {sorted(TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE - set(not_driven))}"
+        f"  not driven, not listed: {sorted(set(not_driven) - UNDRIVEN_GOLDEN_TESTS_THAT_COMPARE_NO_BASELINE)}\n"
+        f"  listed, but driven now: {sorted(UNDRIVEN_GOLDEN_TESTS_THAT_COMPARE_NO_BASELINE - set(not_driven))}"
     )
     stored = {path.name for path in SVG_DIR.glob("*.svg")}
-    never_reached = sorted(stored - _names_this_run_cannot_reach() - compared - set(CAST_BY_NO_DRIVEN_GOLDEN_TEST))
+    never_reached = sorted(stored - baselines_out_of_this_runs_reach() - compared)
     assert never_reached == [], (
         "With the network refused, no driven golden test got as far as comparing these "
         "baselines, so nothing here vouches for how their charts are cast:\n  " + "\n  ".join(never_reached)

@@ -289,13 +289,11 @@ class ReportGenerator:
             self._active_points = []
             self._active_aspects = []
         elif any(isinstance(self.model, model_type) for model_type, _, _ in standalone_kinds):
-            kind, chart_type = next(
-                (kind, chart_type)
-                for model_type, kind, chart_type in standalone_kinds
-                if isinstance(self.model, model_type)
-            )
-            self._model_kind = kind
-            self.chart_type = chart_type
+            # Indexed rather than unpacked through a fresh tuple: pyright widens
+            # the literal kind to `str` inside the generator and then refuses it.
+            matched = next(entry for entry in standalone_kinds if isinstance(self.model, entry[0]))
+            self._model_kind = matched[1]
+            self.chart_type = matched[2]
             self._primary_subject = None
             self._secondary_subject = None
             self._active_points = []

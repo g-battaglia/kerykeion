@@ -19,13 +19,11 @@ modules genuinely import them: `_POLAR_LATITUDE_LIMIT` by the ephemeris backend,
 """
 
 from .core import (
-    ANGLE_CUSP_INDEX,
     CRITICAL,
     DEBUG,
     ERROR,
     HOUSE_FIELD_NAMES,
     INFO,
-    ON_CUSP_TOLERANCE_DEGREES,
     TERRESTRIAL_PERSPECTIVES,
     WARNING,
     _ANCIENT_ISO_RE,
@@ -51,8 +49,6 @@ from .core import (
     _split_decimal_hour_with_carry,
     _zone_label,
     angle_house_identities,
-    angle_is_its_cusp,
-    angular_separation,
     calculate_moon_phase,
     check_and_adjust_polar_latitude,
     circular_mean,
@@ -60,7 +56,6 @@ from .core import (
     civil_jd,
     civil_leap_year,
     coincident_cusp_groups,
-    cusps_are_a_house_division,
     datetime_to_julian,
     distribute_percentages_to_100,
     extract_year_from_iso,
@@ -105,17 +100,12 @@ from .core import (
     validate_latitude,
     validate_longitude,
     wrap_180,
-
 )
 
 __all__ = [
-    "ANGLE_CUSP_INDEX",
     "HOUSE_FIELD_NAMES",
-    "ON_CUSP_TOLERANCE_DEGREES",
     "TERRESTRIAL_PERSPECTIVES",
     "angle_house_identities",
-    "angle_is_its_cusp",
-    "angular_separation",
     "calculate_moon_phase",
     "check_and_adjust_polar_latitude",
     "circular_mean",
@@ -123,7 +113,6 @@ __all__ = [
     "civil_jd",
     "civil_leap_year",
     "coincident_cusp_groups",
-    "cusps_are_a_house_division",
     "datetime_to_julian",
     "distribute_percentages_to_100",
     "extract_year_from_iso",
@@ -167,5 +156,4 @@ __all__ = [
     "validate_latitude",
     "validate_longitude",
     "wrap_180",
-
 ]

@@ -26,11 +26,18 @@ test the guard never runs is one the guard cannot vouch for, and the first
 version of this driver skipped five baseline readers that way without a word.
 """
 
+import functools
 import importlib
 import inspect
+from pathlib import Path
 from typing import Callable, Optional
 
-from _pytest.outcomes import Exit
+import pytest
+
+#: pytest.exit() raises this; it must never be swallowed as a driven test's failure.
+Exit = pytest.exit.Exception
+
+SVG_DIR = Path(__file__).parent / "svg"
 
 #: The modules whose tests read SVG baselines through ``compare_svg_file``.
 GOLDEN_TEST_MODULES = (
@@ -38,7 +45,75 @@ GOLDEN_TEST_MODULES = (
     "tests.core.test_optional_mark_baselines",
     "tests.core.test_chart_parametrized",
     "tests.core.test_bce_dates",
+    "tests.core.test_lunar_phase_svg",
 )
+
+#: base < medium < extended. A subject dated outside the loaded kernel's range
+#: cannot be cast at all, so the test that reads its baseline skips before it ever
+#: names the file — which is not the same as the file having no reader.
+TIER_ORDER = {"base": 0, "medium": 1, "extended": 2}
+
+#: Baselines read by a test the driver can only run on the full-range kernel — a
+#: test marked for a higher tier whose subject is not in the matrix, so the tier
+#: gate below cannot see it. Counted as out of reach on a lower tier; on the
+#: extended kernel each of these MUST be recorded by the driver, and the reader
+#: gate says so.
+BASELINES_READ_ONLY_BY_EXTENDED_TIER_TESTS: dict[str, str] = {
+    "Historical Subject - Natal Chart - Classic.svg": (
+        "test_chart_drawer.py::TestChartOptions::test_historical_date is @extended: a 1500 "
+        "chart cannot be cast on the medium kernel"
+    ),
+}
+
+
+def baselines_out_of_this_runs_reach() -> set[str]:
+    """Baselines whose chart this run's kernel tier or backend cannot produce.
+
+    Declared, not guessed: every matrix subject carries the tier it needs, and the
+    detected tier is what tests/conftest.py already probes for. The full point set
+    needs per-body asteroid files the swisseph setup cannot download; the conftest
+    probes for that too and skips the all-points tests when the probe fails. Out of
+    reach is not the same as having no reader, and the gates subtract this set.
+    """
+    from tests.conftest import _detect_ephemeris_tier, _tnos_available
+    from tests.data.test_subjects_matrix import GEOGRAPHIC_SUBJECTS, TEMPORAL_SUBJECTS
+
+    stored = [path.name for path in SVG_DIR.glob("*.svg")]
+    available = TIER_ORDER.get(_detect_ephemeris_tier(), 0)
+    out_of_reach: set[str] = set()
+    if available < TIER_ORDER["extended"]:
+        out_of_reach |= set(BASELINES_READ_ONLY_BY_EXTENDED_TIER_TESTS)
+    subjects_beyond_the_kernel = {
+        subject["name"]
+        for subject in (*TEMPORAL_SUBJECTS, *GEOGRAPHIC_SUBJECTS)
+        if TIER_ORDER.get(subject.get("tier", "base"), 0) > available
+    }
+    out_of_reach |= {
+        name
+        for name in stored
+        for subject in subjects_beyond_the_kernel
+        if name.startswith(subject + " -") or name.startswith(subject + " and ")
+    }
+    if not _tnos_available():
+        out_of_reach |= {name for name in stored if "All Active Points" in name}
+    return out_of_reach
+
+
+@functools.lru_cache(maxsize=1)
+def baselines_the_golden_tests_compare() -> frozenset[str]:
+    """The baselines the golden tests actually hand to the comparison, by running them.
+
+    Cached: driving the suite costs seconds, and more than one gate asks. A test
+    that fails still names the baseline it wanted; a test that fails before it
+    gets there names nothing, and its baseline shows up as unread — the truth.
+    """
+    compared: set[str] = set()
+
+    def recording(baseline_path, _generated_svg, **_kwargs):
+        compared.add(Path(baseline_path).name)
+
+    drive_every_golden_test(recording)
+    return frozenset(compared)
 
 
 def parameter_sets(function):

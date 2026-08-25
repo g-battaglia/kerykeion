@@ -28,7 +28,8 @@
   Whole sign, Vehlow and Morinus charts claim no identity and read as they always
   have — there the angle is a point of its own and may legitimately fall in a
   neighbouring house; equal houses claim the Ascendant and Descendant only, and
-  meridian and equal-from-MC charts the Midheaven and Imum Coeli only. Measured across 5,520 charts (23 systems, 15
+  meridian and equal-from-MC charts the Midheaven and Imum Coeli only. Measured
+  across 5,520 charts (23 systems, 15
   latitudes, 8 hours, 2 minutes) one angle was misfiled before and none is now; at
   a quarter of an hour's resolution over the eight systems that crowd their cusps
   and fourteen latitudes beyond 66 degrees, some 10,700 charts, the same. Davison
@@ -66,25 +67,15 @@
   `tests/data/golden_places.py` and `test_golden_charts_are_hermetic.py` fails if a
   golden chart reaches for the network.
 
-  The first version of that guard drove one module and skipped every parametrized
-  test, which is where twenty-nine of the network calls still were — the nine
-  language charts and the twenty cross-combination charts — and
-  `scripts/generate_modern_baselines.py` still resolved Liverpool too. Review
-  found them. Every golden place is pinned now, in all four golden modules and all
-  three regeneration scripts; the guard drives every golden test, every case,
-  through `tests/data/golden_drive.py` with a comparison that records nothing and
-  raises nothing, and it closes the second door as well — the timezone-for-
-  coordinates lookup `from_birth_data` opens when it has a latitude and longitude
-  but no `tz_str`. A third pass found the driver still passing over five baseline
-  readers that took class-scoped fixtures, without a word: the driver now reports
-  every test it cannot call, the guard asserts that list EQUALS a named allowlist
-  of tests that compare no baseline, the BCE readers share their subjects through
-  `setup_class` instead, and a class whose `setup_class` fails on this kernel is
-  still checked for reachability, which depends on signatures and not on kernels.
-  A fourth pass ran every new test against a mutation aimed at it and found the
-  guard passing when no golden test could cast its chart at all — nothing reached
-  the network because nothing got that far — so it now also demands that every
-  stored baseline this kernel and backend can reach was handed to the comparison.
+  Every golden place is pinned, in all five golden modules and all four
+  regeneration scripts. The guard drives every golden test, every parametrized
+  case, through `tests/data/golden_drive.py` with a comparison that records and
+  raises nothing, closes both GeoNames doors (the city lookup and the timezone-
+  for-coordinates lookup), reports every test it cannot call against a named
+  allowlist of tests that compare no baseline, and demands that every stored
+  baseline within this kernel's and backend's reach was actually handed to the
+  comparison — without that last demand a suite that failed before casting any
+  chart would pass by never getting as far as the network.
 
 - **Twenty baselines were read by nothing.** The charts demonstrating the
   optional marks — the station glyph, the out-of-bounds badge, the separating
@@ -94,17 +85,14 @@
   `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline
   loses one.
 
-  Its first version counted a *mention* as a reader: any quoted `….svg` anywhere
-  under `tests/`, so the four progression baselines were "read" by being keys in
-  the freshness gate's exemption table, and deleting their tests left the gate
-  green. A source line now counts only where it compares or opens the file, and
-  the driver calls `setup_class` as pytest would. Proven by deleting
-  `TestProgressionChart` from the source: the gate names all four. The source
-  scan reads tokens, not text, so a commented-out call or a docstring that
-  mentions `SVG_DIR` cannot vote either — and it does not vote inside the driven
-  modules at all, where a compare line in a test whose body no longer compares
-  would otherwise still count; the one reader that runs only on the full-range
-  kernel is declared, and the extended run checks the declaration.
+  Inside the golden modules the only witness is the driver; elsewhere a source
+  line counts only where its tokens compare or open the file, so a mention in a
+  docstring, a comment, or another gate's exemption table is not a reader. The
+  one reader that runs only on the full-range kernel is declared, and the
+  extended run of the gate — `poe check` runs it as `test:gates:extended`, and
+  refuses to run it on a narrower kernel than it asked for — checks the
+  declaration. Proven by deleting `TestProgressionChart` from the source and by
+  emptying a reader's body: the gate names the files both times.
 
   Three of the new optional-mark tests asserted a word the chart carried anyway
   — "Relationship Score" is in the subject's name, `kr:motionstate` is on every
@@ -146,6 +134,20 @@
   the modern glyph scale and the house-sector arcs — which is what a strict
   comparator is for.
 
+- **The house comparison refiled an angle with the reader.** `house_comparison`
+  recomputed a point's house in its own chart from the twelve cusps instead of
+  reading the house the model already carries, so on the crowded ring the
+  synastry and transit tables said Third where the model said Fourth. It reads
+  `point.house` now, and asks the reader only for a point that has none. The
+  solar-arc direction did the same for a directed angle at an arc of zero — the
+  natal angle, still its cusp — and keeps that house now; at any other arc the
+  angle has left its cusp and is read as before.
+
+- **`poe check` never reached its test steps.** The sequence stopped at a pyright
+  error in the report generator (`_model_kind` assigned through a tuple the
+  checker widened to `str`), so the new baseline gates would not have run from
+  the maintainer's command; the generator indexes the matched entry instead.
+
 - **A midpoint composite declared no coincident cusps** even when both parents stood
   on the crowded ring and its midpoints did too; the Davison, cast as an ordinary
   chart, declared them. The composite factory computes the groups on its own ring
@@ -176,10 +178,12 @@
   `kerykeion.ephemeris_backend`: the cusps, the angles, the polar-fallback record,
   the angle-to-house identities and the coincident groups from one call. The two
   tuple-returning siblings keep their signatures.
-- `ANGLE_CUSP_INDEX`, `ON_CUSP_TOLERANCE_DEGREES`, `angle_house_identities`,
-  `angle_is_its_cusp`, `angular_separation`, `coincident_cusp_groups` and
-  `cusps_are_a_house_division` in `kerykeion.utilities`. The last four were private
-  copies inside the composite factory; there is one of each now.
+- `angle_house_identities` and `coincident_cusp_groups` in `kerykeion.utilities`;
+  the predicates and constants behind them — `ANGLE_CUSP_INDEX`,
+  `ON_CUSP_TOLERANCE_DEGREES`, `angle_is_its_cusp`, `angular_separation`,
+  `cusps_are_a_house_division` — live in `kerykeion.utilities.core`. Two of them
+  replace private copies inside the composite factory (`_angle_is_its_cusp`,
+  `_cusp_ring_winds_once`); there is one of each now.
 
 ## [6.0.0a87] - 2026-08-25
 

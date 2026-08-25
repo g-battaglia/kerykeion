@@ -119,9 +119,9 @@ def test_the_exemption_list_does_not_outlive_its_reason():
     assert not stale_entries, f"exempted files that no longer exist: {sorted(stale_entries)}"
 
     if CANNOT_REGENERATE_HERE:
-        from tests.core.test_every_baseline_has_a_reader import _names_the_golden_tests_ask_for
+        from tests.data.golden_drive import baselines_the_golden_tests_compare
 
-        regenerable = sorted(set(CANNOT_REGENERATE_HERE) & _names_the_golden_tests_ask_for())
+        regenerable = sorted(set(CANNOT_REGENERATE_HERE) & baselines_the_golden_tests_compare())
         assert regenerable == [], (
             "exempted as unregenerable, but a golden test compares them, and the comparator "
             f"rewrites what it compares under KERYKEION_REGEN_BASELINES: {regenerable}"

@@ -1472,23 +1472,20 @@ def test_a_point_on_a_cusp_belongs_to_the_cusp_it_is_on():
 
 #: The one chart, of 5,520 swept across 23 systems and 15 latitudes, whose angle
 #: the shared reader could not place: Sunshine at 74.25 degrees north, where the
-#: third through the sixth cusps stand on one longitude and the Imum Coeli IS the
+#: second through the sixth cusps stand on one longitude and the Imum Coeli IS the
 #: fourth of them.
-_CROWDED_RING = dict(
+_SUBJECT_ON_A_CROWDED_RING = dict(
     year=1990, month=6, day=15, hour=3, minute=45,
     lat=74.25, lng=0.0, tz_str="UTC", city="Crowded", nation="NO",
     online=False, suppress_geonames_warning=True, houses_system_identifier="I",
 )
 
-_CUSP_FIELDS = (
-    "first_house", "second_house", "third_house", "fourth_house",
-    "fifth_house", "sixth_house", "seventh_house", "eighth_house",
-    "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
-)
 
 
 def _cusps_of(subject):
-    return [getattr(subject, name).abs_pos for name in _CUSP_FIELDS]
+    from kerykeion.utilities.core import HOUSE_FIELD_NAMES
+
+    return [getattr(subject, name).abs_pos for name in HOUSE_FIELD_NAMES]
 
 
 def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
@@ -1497,7 +1494,7 @@ def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
     The exact-on-cusp rule takes the cusp closest to the point, which settles a
     crowd whose members differ by a fraction of a nanodegree. It cannot settle a
     crowd whose members are bit-identical: they are all equally near, and `min`
-    answers with the lowest-numbered one. Here the third, fourth, fifth and sixth
+    answers with the lowest-numbered one. Here the second, third, fourth, fifth and sixth
     cusps are the same float and the Imum Coeli is that float, so the reader said
     the third house — for the point that DEFINES the fourth.
 
@@ -1507,7 +1504,7 @@ def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.utilities.core import get_planet_house
 
-    subject = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING)
+    subject = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
     cusps = _cusps_of(subject)
 
     # The fixture's whole point, asserted rather than assumed: a crowd of cusps
@@ -1542,7 +1539,7 @@ def test_a_crowded_ring_says_so_instead_of_being_discovered():
     """
     from kerykeion import AstrologicalSubjectFactory
 
-    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING)
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
     # The second cusp is a hair off the other four rather than bit-identical to
     # them, and a hair below a thousandth of a milliarcsecond is the same point.
     assert crowded.coincident_house_cusps == [[2, 3, 4, 5, 6]]
@@ -1554,7 +1551,7 @@ def test_a_crowded_ring_says_so_instead_of_being_discovered():
     assert ordinary.coincident_house_cusps == []
 
 
-_ANGLES_ONLY = ["Sun", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
+_ANGLES_ONLY = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 
 
 def test_a_payload_that_predates_the_field_declares_its_crowd_anyway():
@@ -1568,7 +1565,7 @@ def test_a_payload_that_predates_the_field_declares_its_crowd_anyway():
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.schemas.models import AstrologicalSubjectModel
 
-    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING).model_dump()
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING).model_dump()
     older = {key: value for key, value in crowded.items() if key != "coincident_house_cusps"}
     assert AstrologicalSubjectModel.model_validate(older).coincident_house_cusps == [[2, 3, 4, 5, 6]]
     assert AstrologicalSubjectModel.model_validate({**crowded, "coincident_house_cusps": []}).coincident_house_cusps == []
@@ -1584,7 +1581,7 @@ def test_the_field_refuses_a_crowd_that_cannot_exist(groups):
     from kerykeion.schemas.models import AstrologicalSubjectModel
     from pydantic import ValidationError
 
-    payload = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING).model_dump()
+    payload = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING).model_dump()
     with pytest.raises(ValidationError):
         AstrologicalSubjectModel.model_validate({**payload, "coincident_house_cusps": groups})
 
@@ -1696,7 +1693,7 @@ def test_a_davison_composite_inherits_the_identity_fix():
     from kerykeion.utilities.core import get_planet_house
 
     def parent(name):
-        return AstrologicalSubjectFactory.from_birth_data(name, **_CROWDED_RING)
+        return AstrologicalSubjectFactory.from_birth_data(name, **_SUBJECT_ON_A_CROWDED_RING)
 
     davison = CompositeSubjectFactory(
         parent("A"), parent("B")
@@ -1718,13 +1715,50 @@ def test_a_midpoint_composite_declares_the_crowd_on_its_own_ring():
     from kerykeion.composite_subject import CompositeSubjectFactory
 
     def parent(name):
-        return AstrologicalSubjectFactory.from_birth_data(name, **_CROWDED_RING)
+        return AstrologicalSubjectFactory.from_birth_data(name, **_SUBJECT_ON_A_CROWDED_RING)
 
     composite = CompositeSubjectFactory(parent("A"), parent("B")).get_midpoint_composite_subject_model()
 
     # The groups, not the floats: swisseph lays the same crowd out a bit apart.
     assert composite.coincident_house_cusps == [[2, 3, 4, 5, 6]]
     assert composite.imum_coeli.house == "Fourth_House"
+
+
+def test_the_house_comparison_reads_the_owner_house_off_the_model():
+    """A point's house in its own chart is what the model says, not a re-reading.
+
+    The comparison tables used to project the point into its own cusps again with
+    the shared reader, and on the crowded ring answered Third for an Imum Coeli the
+    model files in Fourth. The model already knows; the reader is only for a point
+    that carries no house.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.house_comparison.utils import calculate_points_in_reciprocal_houses
+
+    # The comparison lists a point only if the subject itself asked for it.
+    crowded = AstrologicalSubjectFactory.from_birth_data(
+        "Crowded", **{**_SUBJECT_ON_A_CROWDED_RING, "active_points": ["Sun", "Imum_Coeli"]}
+    )
+    rows = calculate_points_in_reciprocal_houses(crowded, crowded, active_points=["Sun", "Imum_Coeli"])
+    (imum_coeli,) = [row for row in rows if row.point_name == "Imum_Coeli"]
+    assert crowded.imum_coeli.house == "Fourth_House"
+    assert imum_coeli.point_owner_house_name == "Fourth_House"
+
+
+def test_a_solar_arc_of_zero_keeps_an_angle_in_the_house_it_opens():
+    """Directed by nothing, the Imum Coeli is still the fourth cusp and opens it.
+
+    Solar arc directs the points and not the houses, so at any other arc an angle
+    has left its cusp and is read as a point; at an arc of zero it IS its cusp, and
+    the reader would file it with the lowest of the coincident cusps instead.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.secondary_progressions.solar_arc import SolarArcFactory
+
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
+    directed = SolarArcFactory.compute_directed_subject(crowded, target_iso_utc_datetime=crowded.iso_formatted_utc_datetime)
+    assert directed.imum_coeli.abs_pos == crowded.imum_coeli.abs_pos
+    assert directed.imum_coeli.house == "Fourth_House"
 
 
 def test_the_identity_rule_answers_for_every_angle_the_reader_cannot_place():

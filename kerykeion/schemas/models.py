@@ -866,13 +866,6 @@ class PolarHouseFallbackModel(SubscriptableBaseModel):
     message: str = Field(description="Human-readable explanation of the substitution.")
 
 
-#: The twelve cusp fields, first to twelfth, for reading a ring off a payload.
-_HOUSE_FIELD_NAMES_IN_ORDER = (
-    "first_house", "second_house", "third_house", "fourth_house", "fifth_house", "sixth_house",
-    "seventh_house", "eighth_house", "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
-)
-
-
 class AstrologicalBaseModel(SubscriptableBaseModel):
     """
     Base model containing common fields for all astrological subjects.
@@ -1162,7 +1155,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _declare_the_crowd_an_older_payload_left_unsaid(cls, data: Any) -> Any:
+    def _read_coincident_cusps_off_a_pre_a88_payload(cls, data: Any) -> Any:
         """A payload from before 6.0.0a88 carries its twelve cusps but not this field.
 
         The field promises to be empty only when the twelve cusps are distinct, and a
@@ -1170,17 +1163,21 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         chart. The cusps are right there, so the groups are read off them instead.
         A payload that names the field, even as ``[]``, is taken at its word.
         """
-        if not isinstance(data, dict) or "coincident_house_cusps" in data:
+        if not isinstance(data, dict) or data.get("coincident_house_cusps") is not None:
             return data
+        data = {key: value for key, value in data.items() if key != "coincident_house_cusps"}
+        from kerykeion.utilities.core import HOUSE_FIELD_NAMES, coincident_cusp_groups
+
         cusps: list[float] = []
-        for field_name in _HOUSE_FIELD_NAMES_IN_ORDER:
+        for field_name in HOUSE_FIELD_NAMES:
             house = data.get(field_name)
             degree = house.get("abs_pos") if isinstance(house, dict) else getattr(house, "abs_pos", None)
-            if not isinstance(degree, (int, float)):
+            if degree is None:
                 return data  # not a chart with twelve cusps; nothing to read
-            cusps.append(float(degree))
-        from kerykeion.utilities.core import coincident_cusp_groups
-
+            try:
+                cusps.append(float(degree))  # a JSON producer may have written "264.04"
+            except (TypeError, ValueError):
+                return data  # not a chart with twelve cusps; nothing to read
         return {**data, "coincident_house_cusps": coincident_cusp_groups(cusps)}
 
     def find_fixed_star(self, name: str) -> Optional[KerykeionPointModel]:
