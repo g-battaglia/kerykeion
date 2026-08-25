@@ -219,6 +219,24 @@ def test_a_return_in_the_first_second_of_a_date_belongs_to_that_date():
     assert by_iso.iso_formatted_utc_datetime.startswith("1991-06-")
 
 
+def test_seed_is_normalized_to_utc_before_it_is_stepped():
+    """The civil range is a range of instants: a local wall time at its edge
+    whose UTC instant is well inside it must seed normally, and an aware
+    timestamp whose UTC instant is already past the edge must refuse."""
+    seed = PlanetaryReturnFactory._search_start_jd
+
+    forward_edge = seed("9999-12-31T23:59:59+14:00", backwards=False)
+    assert forward_edge == datetime_to_julian(datetime(9999, 12, 31, 10, 0, 0, tzinfo=timezone.utc))
+
+    backward_edge = seed("0001-01-01T00:00:00-14:00", backwards=True)
+    assert backward_edge == datetime_to_julian(datetime(1, 1, 1, 13, 59, 59, tzinfo=timezone.utc))
+
+    with pytest.raises(KerykeionException, match="civil range"):
+        seed("9999-12-31T23:59:59-14:00", backwards=False)  # already year 10000 in UTC
+    with pytest.raises(KerykeionException, match="civil range"):
+        seed("0001-01-01T00:00:00+14:00", backwards=True)  # already year 0 in UTC
+
+
 def test_search_refuses_to_start_outside_the_civil_range(factory):
     with pytest.raises(KerykeionException, match="civil range"):
         factory.next_return_from_iso_formatted_time("9999-12-31T23:59:59+00:00", "Solar")

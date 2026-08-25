@@ -275,14 +275,20 @@ class PlanetaryReturnFactory:
         dt = cls._parse_iso(iso_formatted_time)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        whole_second = dt.replace(microsecond=0)
         step = timedelta(seconds=-1 if backwards else 1)
         try:
+            # Normalize to UTC BEFORE truncating and stepping: the civil range
+            # is a range of instants, and a local wall time at its edge
+            # (9999-12-31T23:59:59+14:00 is a mid-morning UTC instant) must not
+            # trip on the local representation. What overflows here is a seed
+            # genuinely outside the range — 9999-12-31T23:59:59 UTC forward,
+            # 0001-01-01T00:00:00 UTC backward, or an aware timestamp whose
+            # UTC instant is already past the edge.
+            whole_second = dt.astimezone(timezone.utc).replace(microsecond=0)
             return datetime_to_julian(whole_second + step)
         except OverflowError as exc:
-            # 9999-12-31T23:59:59 forward / 0001-01-01T00:00:00 backward: the
-            # next second is outside datetime's civil range. Refuse with the
-            # library's own exception, naming the range, not the ephemeris.
+            # Refuse with the library's own exception, naming the range, not
+            # the ephemeris.
             raise KerykeionException(
                 f"Cannot search {'backward' if backwards else 'forward'} from "
                 f"{iso_formatted_time!r}: the search would start outside the "
