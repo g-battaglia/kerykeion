@@ -24,7 +24,7 @@ poe test:medium:cov   # Coverage on medium tier
 poe test:extended:cov # Coverage on extended tier (full)
 
 # Regenerate golden standards
-poe regenerate:svg        # SVG chart baselines (tests/data/svg/)
+poe regenerate:svg        # SVG chart baselines (tests/data/svg/) — three scripts, then the eleven test-owned baselines via KERYKEION_REGEN_BASELINES
 poe regenerate:reports    # Report golden files (tests/fixtures/)
 poe regenerate:positions  # Expected positions & subjects (tests/data/expected_*.py)
 poe regenerate:aspects    # Expected aspects (tests/data/expected_*_aspects.py)
@@ -320,7 +320,7 @@ SVG baseline files live in `tests/data/svg/` (346 files). Tests compare generate
 
 A few golden charts cast two millennia back differ STRUCTURALLY between the backends — an aspect falls in or out of orb. Those carry `@pytest.mark.reference_backend_only`, one at a time and with a reason.
 
-**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; eighteen were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader.
+**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; eighteen were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader. On the default (medium) kernel the baselines of extended-tier subjects are exempt by tier, so a lost reader for one of them is invisible there; `poe check` therefore also runs `test:gates:extended`, the same gates under `LIBEPHEMERIS_PRECISION=extended`, where nothing is exempt.
 
 **Golden charts are hermetic.** They are cast at coordinates frozen in `tests/data/golden_places.py`, never resolved through GeoNames — `from_birth_data` defaults to `online=True`, so the whole golden suite used to depend on what a remote service answered that minute. `tests/core/test_golden_charts_are_hermetic.py` fails if one reaches for the network: it drives every golden test in all four golden modules through the same driver with both GeoNames doors — the city lookup and the timezone-for-coordinates lookup — refused.
 

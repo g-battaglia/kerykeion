@@ -1557,6 +1557,38 @@ def test_a_crowded_ring_says_so_instead_of_being_discovered():
 _ANGLES_ONLY = ["Sun", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
 
 
+def test_a_payload_that_predates_the_field_declares_its_crowd_anyway():
+    """The field promises to be empty only when the twelve cusps are distinct.
+
+    A payload written before 6.0.0a88 has no such field, and a default of `[]`
+    would make that promise false for a crowded chart whose cusps are right there
+    in the payload. So the groups are read off the cusps. A payload that names the
+    field is taken at its word, even when the word is `[]`.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.schemas.models import AstrologicalSubjectModel
+
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING).model_dump()
+    older = {key: value for key, value in crowded.items() if key != "coincident_house_cusps"}
+    assert AstrologicalSubjectModel.model_validate(older).coincident_house_cusps == [[2, 3, 4, 5, 6]]
+    assert AstrologicalSubjectModel.model_validate({**crowded, "coincident_house_cusps": []}).coincident_house_cusps == []
+
+
+@pytest.mark.parametrize(
+    "groups",
+    [[[3]], [[0, 1]], [[12, 13]], [[3, 2]], [[2, 3], [3, 4]]],
+    ids=["one house is no crowd", "house 0", "house 13", "descending", "a house in two groups"],
+)
+def test_the_field_refuses_a_crowd_that_cannot_exist(groups):
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.schemas.models import AstrologicalSubjectModel
+    from pydantic import ValidationError
+
+    payload = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING).model_dump()
+    with pytest.raises(ValidationError):
+        AstrologicalSubjectModel.model_validate({**payload, "coincident_house_cusps": groups})
+
+
 def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
     """The sweep the single fixture above was found in, kept as the guard.
 
@@ -1573,10 +1605,18 @@ def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
         get_house_number,
     )
 
+    from typing import get_args
+
+    from kerykeion.schemas.literals import HousesSystemIdentifier
+
     latitudes = (-89.9, -84.1, -74.25, -70.5, -66.75, 0.0, 45.0, 66.75, 70.5, 74.25, 84.1, 89.9)
-    systems = "ABCDEFHIiKLMNOPQRSTUVWXY"
+    # Every identifier the library accepts, so a new system joins the sweep by
+    # existing. (A hand-written string once carried an "E" that is no system at
+    # all, and 96 attempts were swallowed below without a word.)
+    systems = get_args(HousesSystemIdentifier)
 
     misfiled = []
+    not_cast = []
     for system in systems:
         for latitude in latitudes:
             for hour in range(0, 24, 3):
@@ -1590,9 +1630,12 @@ def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
                         # planets would cost five times as much and say nothing.
                         active_points=_ANGLES_ONLY,
                     )
-                except Exception:
-                    # A system undefined at this latitude with no substitute is a
-                    # different subject; this test is about the rings that exist.
+                except Exception as refusal:
+                    # A system undefined at this latitude with no substitute would
+                    # be a different subject; today every one of them casts, and
+                    # the assertion below says so rather than letting a sweep that
+                    # casts nothing pass in silence.
+                    not_cast.append((system, latitude, hour, type(refusal).__name__))
                     continue
                 cusps = _cusps_of(subject)
                 for angle_name, cusp_index in ANGLE_CUSP_INDEX.items():
@@ -1603,6 +1646,7 @@ def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
                         misfiled.append((system, latitude, hour, angle_name, angle.house))
 
     assert misfiled == []
+    assert not_cast == [], f"{len(not_cast)} of {len(systems) * len(latitudes) * 8} charts could not be cast"
 
 
 def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities():

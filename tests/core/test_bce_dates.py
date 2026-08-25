@@ -48,8 +48,9 @@ _ATHENS_OFFLINE = dict(
 def _compare_or_regenerate(baseline_path: Path, svg: str) -> None:
     """Compare against a baseline, or rewrite it under KERYKEION_REGEN_BASELINES.
 
-    The six BCE baselines are built here and nowhere else: no script in the
-    repository casts them. Without a way to refresh them they went stale on every
+    Five BCE baselines are built here and nowhere else — the natal one the
+    temporal matrix's script casts too — so `poe regenerate:svg` ends by running
+    these tests with the variable set. Without a way to refresh them they went stale on every
     template change and stayed stale — the comparison used to be a line count
     within 5%, which a redrawn glyph cannot trip; it is now the same comparison
     every other baseline gets. The regeneration env var is handled inside it, so

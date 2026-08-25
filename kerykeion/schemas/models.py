@@ -28,7 +28,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from datetime import datetime, timedelta
-from typing import Union, Optional, Literal
+from typing import Any, Literal, Optional, Union
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, field_validator, model_validator
 from kerykeion.schemas.literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
@@ -866,6 +866,13 @@ class PolarHouseFallbackModel(SubscriptableBaseModel):
     message: str = Field(description="Human-readable explanation of the substitution.")
 
 
+#: The twelve cusp fields, first to twelfth, for reading a ring off a payload.
+_HOUSE_FIELD_NAMES_IN_ORDER = (
+    "first_house", "second_house", "third_house", "fourth_house", "fifth_house", "sixth_house",
+    "seventh_house", "eighth_house", "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+)
+
+
 class AstrologicalBaseModel(SubscriptableBaseModel):
     """
     Base model containing common fields for all astrological subjects.
@@ -1134,6 +1141,47 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="Nutation and obliquity parameters for the chart moment. "
         "Populated when calculate_nutation=True. Added in v6.0.",
     )
+
+    @field_validator("coincident_house_cusps")
+    @classmethod
+    def _each_group_is_a_real_crowd(cls, groups: list[list[int]]) -> list[list[int]]:
+        """A group names at least two existing houses, ascending, and no house twice."""
+        seen: set[int] = set()
+        for group in groups:
+            if len(group) < 2:
+                raise ValueError(f"a group of coincident cusps names at least two houses, not {group}")
+            if group != sorted(group):
+                raise ValueError(f"a group of coincident cusps is listed ascending, not {group}")
+            for house in group:
+                if not 1 <= house <= 12:
+                    raise ValueError(f"house {house} does not exist: houses are numbered 1 to 12")
+                if house in seen:
+                    raise ValueError(f"house {house} cannot be in two groups of coincident cusps")
+                seen.add(house)
+        return groups
+
+    @model_validator(mode="before")
+    @classmethod
+    def _declare_the_crowd_an_older_payload_left_unsaid(cls, data: Any) -> Any:
+        """A payload from before 6.0.0a88 carries its twelve cusps but not this field.
+
+        The field promises to be empty only when the twelve cusps are distinct, and a
+        default of ``[]`` would break that promise for an old payload of a crowded
+        chart. The cusps are right there, so the groups are read off them instead.
+        A payload that names the field, even as ``[]``, is taken at its word.
+        """
+        if not isinstance(data, dict) or "coincident_house_cusps" in data:
+            return data
+        cusps: list[float] = []
+        for field_name in _HOUSE_FIELD_NAMES_IN_ORDER:
+            house = data.get(field_name)
+            degree = house.get("abs_pos") if isinstance(house, dict) else getattr(house, "abs_pos", None)
+            if not isinstance(degree, (int, float)):
+                return data  # not a chart with twelve cusps; nothing to read
+            cusps.append(float(degree))
+        from kerykeion.utilities.core import coincident_cusp_groups
+
+        return {**data, "coincident_house_cusps": coincident_cusp_groups(cusps)}
 
     def find_fixed_star(self, name: str) -> Optional[KerykeionPointModel]:
         """Case-insensitive lookup in ``fixed_stars`` by IAU name or slug.

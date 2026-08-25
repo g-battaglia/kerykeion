@@ -259,9 +259,16 @@ help = "Check module paths, patch targets and logger names outside kerykeion/"
 cmd = "python scripts/check_import_graph.py --fresh-imports"
 help = "Import every module in a cold interpreter (catches leaf-first cycles)"
 
+[tool.poe.tasks."test:gates:extended"]
+cmd = "pytest tests/core/test_every_baseline_has_a_reader.py tests/core/test_golden_charts_are_hermetic.py tests/core/test_baseline_freshness.py -p no:randomly"
+help = "The baseline gates on the full-range kernel: on the default tier the reader gate cannot see a lost reader for the extended-tier subjects' baselines"
+
+[tool.poe.tasks."test:gates:extended".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core"]
-help = "Run all quality checks (lint, analyze, typecheck, test:core)"
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
 # int return, so a `script` task exits 0 even when the checks fail — the gate
@@ -297,10 +304,18 @@ help = "Re-measure modern wheel symbol ink extents in a browser and rewrite glyp
 cmd = "python scripts/measure_modern_separation.py --mode dump-ink"
 
 [tool.poe.tasks."regenerate:svg"]
-sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern"]
+sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern", "regenerate:svg:test-owned"]
 help = "Regenerate all SVG chart baselines (tests/data/svg/)"
 
 [tool.poe.tasks."regenerate:svg".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:svg:test-owned"]
+cmd = "pytest tests/core/test_chart_drawer.py::TestProgressionChart tests/core/test_chart_drawer.py::TestNatalChart tests/core/test_bce_dates.py::TestBCEChartSVG tests/core/test_bce_dates.py::TestBCEPairWithAModernPartner -p no:randomly -q"
+help = "The eleven baselines no script casts — progressions, the minified pair, the BCE pairs — rewritten by the tests that own them"
+
+[tool.poe.tasks."regenerate:svg:test-owned".env]
+KERYKEION_REGEN_BASELINES = "1"
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:svg:base"]
