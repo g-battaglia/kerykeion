@@ -17,6 +17,11 @@ Usage::
 
     python3 scripts/report_modern_displacement.py
 
+Note: the report describes the MEDIUM wheel — the renders below take the
+default glyph size. The small and large profiles displace differently (their
+separations are their own); measure them by editing the ChartDrawer calls, or
+extend this script with ``--glyph-size`` if the comparison becomes routine.
+
 @module scripts.report_modern_displacement
 """
 

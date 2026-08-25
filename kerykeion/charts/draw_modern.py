@@ -737,7 +737,13 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
 
 # The small and large profiles below are OUTPUT, not opinion: they are what
 # ``scripts/derive_modern_cluster_profiles.py`` prints, and a test re-runs the
-# derivation and refuses any hand edit that drifts from it. The rule, in one
+# derivation and refuses any hand edit that drifts from it. The one exception
+# is min_separation, which no formula owns: each value below is MEASURED, by
+# ``scripts/measure_modern_separation.py --glyph-size <size>`` under the same
+# policy the medium constants embody — the first separation from which every
+# larger one keeps at least 0.25 wheel units of daylight between adversarial
+# worst-content clusters (the harness's "0.25 units" column). Touch floors per
+# size live in tests/core/test_modern_decluttering.py::_TOUCHING_SEPARATION. The rule, in one
 # line: sizes scale by k, every quantity of air scales by a = min(k, fit), rows
 # are laid top-down from the tether's end, and the tab never drops below
 # MIN_INDICATOR_TICK. Small is k = 0.9 — a pure homothety, the medium cluster
@@ -762,7 +768,7 @@ _SMALL_NATAL = ClusterProfile(
     sign_y=16.6358,
     minutes_y=20.2358,
     rx_y=23.2598,
-    min_separation=6.59,  # analytic seed — the harness re-measures per size
+    min_separation=7.0,
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
         "tick_length": 0.9675,
@@ -781,7 +787,7 @@ _SMALL_DUAL_OUTER = ClusterProfile(
     sign_y=13.8188,
     minutes_y=16.1678,
     rx_y=18.1208,
-    min_separation=5.09,  # analytic seed — the harness re-measures per size
+    min_separation=5.25,
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
         "tick_length": 0.63,
@@ -800,7 +806,7 @@ _SMALL_DUAL_INNER = ClusterProfile(
     sign_y=28.204,
     minutes_y=30.553,
     rx_y=32.506,
-    min_separation=7.91,  # analytic seed — the harness re-measures per size
+    min_separation=8.0,
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
         "tick_length": 0.27,
@@ -819,7 +825,7 @@ _LARGE_NATAL = ClusterProfile(
     sign_y=18.3845,
     minutes_y=22.3458,
     rx_y=25.6815,
-    min_separation=9.83,  # analytic seed — the harness re-measures per size
+    min_separation=9.5,
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
         "tick_length": 0.6959,
@@ -838,7 +844,7 @@ _LARGE_DUAL_OUTER = ClusterProfile(
     sign_y=15.264,
     minutes_y=17.6455,
     rx_y=19.6148,
-    min_separation=7.99,  # analytic seed — the harness re-measures per size
+    min_separation=7.75,
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
         "tick_length": 0.2881,
@@ -857,7 +863,7 @@ _LARGE_DUAL_INNER = ClusterProfile(
     sign_y=29.8331,
     minutes_y=31.9873,
     rx_y=33.7656,
-    min_separation=12.87,  # analytic seed — the harness re-measures per size
+    min_separation=12.5,
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
         "tick_length": MIN_INDICATOR_TICK,  # the floor binds at a = 0.23
