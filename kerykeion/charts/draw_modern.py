@@ -3007,8 +3007,14 @@ def draw_modern_horoscope(
     """
     # Orient the entire wheel so that 0° (Ascendant) is at 9 o'clock (LEFT)
     # The SVG initial orientation puts 0° at TOP. We rotate the whole group by -90°.
+    # Non-default sizes stamp themselves on the root so a consumer holding only
+    # the SVG (hit-area injection downstream, a saved file, a cached render) can
+    # tell which profile drew it. Medium stays unstamped on purpose: the
+    # attribute's absence IS the default, and the default render stays
+    # byte-identical to every chart drawn before sizes existed.
+    size_attr = "" if glyph_size == "medium" else f' kr:glyphsize="{glyph_size}"'
     out = (
-        f'<g kr:node="ModernHoroscope" font-family="{MODERN_TEXT_FONT_FAMILY}" '
+        f'<g kr:node="ModernHoroscope"{size_attr} font-family="{MODERN_TEXT_FONT_FAMILY}" '
         f'transform="rotate(-90 {CENTER} {CENTER})">\n'
     )
 
@@ -3125,8 +3131,10 @@ def draw_modern_dual_horoscope(
     # ── FLAT CONCENTRIC DUAL-RING LAYOUT ──────────────────────────────────
     # Both rings exist at the same coordinate level, no nested scale() transforms.
 
+    # See draw_modern_horoscope: non-default sizes are stamped, medium is not.
+    size_attr = "" if glyph_size == "medium" else f' kr:glyphsize="{glyph_size}"'
     out = (
-        f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}" '
+        f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}"{size_attr} '
         f'font-family="{MODERN_TEXT_FONT_FAMILY}" transform="rotate(-90 {CENTER} {CENTER})">\n'
     )
 
