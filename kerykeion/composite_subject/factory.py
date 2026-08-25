@@ -43,9 +43,12 @@ import logging
 from typing import Optional, Sequence, Union, get_args
 
 # Fix the circular import by changing this import
-from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
+from kerykeion.astrological_subject.factory import (
+    AstrologicalSubjectFactory,
+    OPPOSITE_PAIRS,
+    _GEO_TOPO_PERSPECTIVES,
+)
 from kerykeion.predictive.utils import jd_to_ymd_hms
-from kerykeion.settings.config_constants import OPPOSITE_POINTS
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
 from kerykeion.schemas.literals import (
@@ -1061,12 +1064,37 @@ class CompositeSubjectFactory:
         # parents sit at 190 and 10 came out on top of the north node, separation
         # zero. `active_points` is left alone: it says what was asked for, and the
         # display and aspect filters go on reading it.
+        # Through the same registry the subject factory derives them from, not a
+        # second list beside it: the copy in `config_constants` had never learned
+        # about Priapus, so a composite asked for Lilith came back without one
+        # while its parents both had it.
         derived_points = {
-            opposite: primary
-            for opposite, primary in OPPOSITE_POINTS.items()
-            if primary in self.active_points and opposite not in self.active_points
+            opposite: pair["primary"]
+            for opposite, pair in OPPOSITE_PAIRS.items()
+            if pair["primary"] in self.active_points
         }
-        for planet in list(self.active_points) + list(derived_points):
+        # Derived whether or not the opposite was ALSO asked for. Averaging an
+        # explicitly active counterpart on its own walks straight into the
+        # ambiguity this exists to avoid — with the parents' nodes crossed, both
+        # ends landed on the same longitude.
+        ordinary_points = [
+            point for point in self.active_points if point not in derived_points
+        ]
+        # And the four axes always, whatever the preset. They are already computed
+        # above; materialising them only when they are active left a chart built
+        # with `["Sun", "Moon", "Mercury", "Venus", "Mars"]` with no Ascendant,
+        # no Midheaven and no `<axes>` block at all — while an ordinary subject
+        # keeps them and the context contract calls that section unconditional.
+        for axis in placed_angles:
+            if axis not in (point.lower() for point in ordinary_points + list(derived_points)):
+                ordinary_points.append(
+                    next(
+                        name
+                        for name in ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
+                        if name.lower() == axis
+                    )
+                )
+        for planet in ordinary_points + list(derived_points):
             planet_lower = planet.lower()
             planets[planet_lower] = {}
             if planet in derived_points:

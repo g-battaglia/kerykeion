@@ -2253,6 +2253,23 @@ def _draw_house_sectors_modern(
     # reader measures, and where the wedges overlap it is the reader the paint
     # order has to agree with.
     true_spans = list(spans)
+    # A wedge narrower than the minimum is widened so it can be clicked at all,
+    # and a widened wedge necessarily covers longitudes outside its own arc: on a
+    # crossing ring where it is also the narrowest, it is painted on top and
+    # answers for them. Polich/Page at 70.5N has an eleventh house 0.348 degrees
+    # wide, so it answers for up to 0.652 degrees either side that the reader
+    # gives its neighbour.
+    #
+    # Painting the widened ones underneath instead was tried and is worse: the
+    # tenth house crosses the eleventh on that same ring, so the eleventh loses
+    # its own middle and goes back to being unclickable, which is the defect the
+    # widening exists for. No single paint order settles both. The slop is bounded
+    # by the minimum width, and that is the trade.
+    #
+    # A click exactly ON a cusp is outside all of this: an SVG path is closed, so
+    # both wedges that share a boundary contain it, and no linear order of twelve
+    # cyclic wedges can give every cusp to the house it opens. The reader does —
+    # it has an exact-on-cusp rule — so the two differ on a set of measure zero.
     # And any house too thin to click gets the same minimum the classic engine
     # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
     # together here — but Campanus inside the polar circle brings two of them

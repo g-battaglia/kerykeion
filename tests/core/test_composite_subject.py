@@ -2342,3 +2342,83 @@ def test_a_davison_chart_cannot_carry_a_house_frame():
 
     legacy = {key: value for key, value in midpoint.items() if key not in ("house_anchor", "house_frame")}
     assert CompositeSubjectModel.model_validate(legacy).house_frame is None
+
+
+def test_the_axes_are_on_the_chart_whatever_the_point_preset_is():
+    """Four angles, always — the same rule the context section follows.
+
+    They are computed for every composite regardless, but were materialised only
+    while iterating `active_points`: ask for five planets and no angles and the
+    chart came back with no Ascendant, no Midheaven and no `<axes>` block at all,
+    while an ordinary subject built the same way keeps all four.
+    """
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    def restricted(name, year):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, 1, 1, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon", "Mercury", "Venus", "Mars"],
+        )
+
+    first, second = restricted("A", 1990), restricted("B", 1991)
+    assert first.ascendant is not None, "the parent lost its angles"
+
+    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    for axis in ("ascendant", "medium_coeli", "descendant", "imum_coeli"):
+        assert getattr(model, axis) is not None, axis
+    assert (model.descendant.abs_pos - model.ascendant.abs_pos) % 360.0 == approx(180.0, abs=1e-9)
+    assert "<axes" in astrological_subject_to_context(model)
+    assert "Ascendant" not in model.active_points
+
+
+def test_every_derived_opposite_comes_from_the_one_registry():
+    """Priapus is a derived opposite too, and a second list beside the real one
+    had never heard of it.
+
+    The subject factory derives its opposites from `OPPOSITE_PAIRS`; the composite
+    had a copy in `config_constants` listing five of the seven, so a composite
+    asked for Lilith came back with no Priapus while both parents had one. And a
+    counterpart that was ALSO asked for was averaged on its own rather than
+    derived, which walks into the antipodal ambiguity the derivation exists to
+    avoid.
+    """
+    from kerykeion.astrological_subject.factory import OPPOSITE_PAIRS
+
+    def with_lilith(name, year):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, 1, 1, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            active_points=["Mean_Lilith"],
+        )
+
+    model = CompositeSubjectFactory(
+        with_lilith("A", 1990), with_lilith("B", 1991)
+    ).get_midpoint_composite_subject_model()
+    assert model.mean_priapus is not None
+    assert (model.mean_priapus.abs_pos - model.mean_lilith.abs_pos) % 360.0 == approx(
+        180.0, abs=1e-9
+    )
+
+    # An explicitly active counterpart is derived too, not averaged: with the
+    # parents' nodes crossed, averaging put both ends on one longitude.
+    both = ["True_North_Lunar_Node", "True_South_Lunar_Node"]
+    first, second = (
+        AstrologicalSubjectFactory.from_birth_data(
+            name, year, 1, 1, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True, active_points=both,
+        )
+        for name, year in (("A", 1990), ("B", 1991))
+    )
+    first.true_north_lunar_node.abs_pos = 10.0
+    first.true_south_lunar_node.abs_pos = 190.0
+    second.true_north_lunar_node.abs_pos = 190.0
+    second.true_south_lunar_node.abs_pos = 10.0
+
+    crossed = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    assert (
+        crossed.true_south_lunar_node.abs_pos - crossed.true_north_lunar_node.abs_pos
+    ) % 360.0 == approx(180.0, abs=1e-9)
+
+    # And every pair the subject factory knows about is covered here.
+    assert set(OPPOSITE_PAIRS) >= {"Mean_Priapus", "True_Priapus", "Descendant", "Imum_Coeli"}

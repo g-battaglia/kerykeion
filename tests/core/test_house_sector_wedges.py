@@ -1032,3 +1032,71 @@ def test_the_paint_order_is_decided_on_exact_degrees_not_rounded_ones(style):
     topmost = max(containing, key=painted.index)
     expected = str(_CUSP_ATTRS.index(get_planet_house(degree, cusps).lower()) + 1)
     assert topmost == expected
+
+
+def test_the_widening_slop_stays_bounded_by_the_minimum_wedge():
+    """A house too thin to click is widened, and the slop has a price.
+
+    A widened wedge covers longitudes outside its own arc; on a crossing ring
+    where it is also the narrowest it is painted on top and answers for them.
+    Polich/Page at 70.5N has an eleventh house 0.348 degrees wide, so it answers
+    across roughly a degree that the reader gives its neighbours.
+
+    That is the trade, not an oversight — painting widened wedges underneath was
+    tried and the eleventh house lost its own middle, which is the defect the
+    widening exists for. What this holds is that the price stays small, and that
+    the thin house is reachable at all.
+    """
+    import re
+
+    from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+    from kerykeion.chart_data.factory import ChartDataFactory
+    from kerykeion.charts.utils import MINIMUM_WEDGE_SPAN_DEGREES
+    from kerykeion.utilities.core import get_planet_house, house_spans
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1985, 10, 15, 14, 0, city="X", nation="XX", lat=70.5, lng=25.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="T",
+    )
+    cusps = [getattr(subject, name).abs_pos for name in _CUSP_ATTRS]
+    spans, reversed_wedges = house_spans(cusps)
+    assert min(spans) < MINIMUM_WEDGE_SPAN_DEGREES, "no house here needs widening any more"
+
+    svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string()
+    painted = re.findall(r"""node=['"]HouseSector['"] kr:house=['"]([^'"]+)['"]""", svg)
+
+    def clicked(degree):
+        covering = [
+            str(index + 1)
+            for index in range(12)
+            if (
+                (cusps[index] - degree) % 360.0
+                if reversed_wedges[index]
+                else (degree - cusps[index]) % 360.0
+            )
+            <= max(spans[index], MINIMUM_WEDGE_SPAN_DEGREES)
+        ]
+        return max(covering, key=painted.index)
+
+    thinnest = spans.index(min(spans))
+    middle = (
+        (cusps[thinnest] - spans[thinnest] / 2) % 360.0
+        if reversed_wedges[thinnest]
+        else (cusps[thinnest] + spans[thinnest] / 2) % 360.0
+    )
+    # The whole point of widening it: its own middle answers with itself.
+    assert clicked(middle) == str(thinnest + 1)
+
+    disagreements = 0
+    for sample in range(3600):
+        degree = sample / 10.0
+        try:
+            expected = get_planet_house(degree, cusps)
+        except ValueError:
+            continue
+        if clicked(degree) != str(_CUSP_ATTRS.index(expected.lower()) + 1):
+            disagreements += 1
+    # A tenth of a degree per sample; the slop cannot exceed the minimum width on
+    # either side of the one wedge that needed it.
+    assert disagreements / 10.0 <= 2 * MINIMUM_WEDGE_SPAN_DEGREES, disagreements
