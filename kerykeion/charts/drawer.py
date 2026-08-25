@@ -290,6 +290,13 @@ _INFO_ROW_COUNT: int = 6
 #: i.e. the last one before the diurnality line existed.
 _INFO_ROW_LEGACY_LAST_Y: float = 508.0
 
+#: What the disc keeps for itself under the block: the 10px gap it holds below
+#: the last line, plus its own 20px of height. On a panel that draws no disc
+#: this is dead space at the foot of the page, so the block takes it and closes
+#: where the disc would have — the panel's bottom edge then sits at the same
+#: place whether or not there is a moon to draw.
+_MOON_GLYPH_FOOTPRINT: float = 30.0
+
 #: Natal only. The moon glyph rides above the block rather than below it, and the
 #: block slides down until its last line closes level with the foot of the aspect
 #: grid — measured there, at y 532. Chosen by eye from three renders 3px apart.
@@ -5694,6 +5701,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         elif filled:
             last_row_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * (_INFO_ROW_COUNT - 1)
             lunar_phase_y = offsets["lunar_phase"] + (last_row_y - _INFO_ROW_LEGACY_LAST_Y)
+            if not template_dict.get("makeLunarPhase"):
+                # No disc under this block, so nothing is holding the 30px it
+                # would have taken: the block closes where the disc's foot would
+                # have been instead of leaving a strip of empty page under the
+                # last line. A synastry panel names no phase and a midpoint
+                # composite has no moment to have one, and both used to stop 30px
+                # short of where every other panel ends.
+                bottom_left_y += _MOON_GLYPH_FOOTPRINT
         # The template field is ``int``; the offsets are floats on a dataclass a
         # caller can supply, so coerce here rather than lean on pydantic's lax
         # coercion. ``round`` rather than ``int``: the shipped defaults are whole,

@@ -75,9 +75,12 @@ MOON_TRANSFORM = re.compile(r"Lunar_Phase' transform='translate\(10,([-\d.]+)\)'
 #: fewer, one row lower: 438 + 14 = 452.
 LAYOUT_WITH_LINE = ("7", "438")
 LAYOUT_WITHOUT_LINE = ("7", "452")
-#: Every other chart type keeps the older arrangement — glyph under the block,
-#: block on the template baselines. Only the natal panel was reordered.
+#: Every other chart type keeps the older arrangement: the glyph under the
+#: block, and the block on the template baselines — except that a panel drawing
+#: no glyph takes the 30px the glyph is not using, so its block sits that much
+#: lower and ends where a panel with one ends.
 LAYOUT_NON_NATAL = ("0", "532")
+LAYOUT_NON_NATAL_NO_DISC = ("30", "532")
 
 
 _ADVANCES = json.loads((Path(__file__).parents[1] / "data" / "glyph_advances.json").read_text())["advances"]
@@ -423,7 +426,9 @@ class TestDiurnalityOmitted:
         # leaves row 5 blank, and the packing then closes that gap, so no fixed
         # slot answers this question any more.
         assert not _states_diurnality(svg)
-        assert _layout(svg) == LAYOUT_NON_NATAL
+        # No disc on this panel, so the block takes the room one would have had.
+        assert not _draws_a_disc(svg)
+        assert _layout(svg) == LAYOUT_NON_NATAL_NO_DISC
 
     def test_a_davison_composite_does_have_one(self):
         """The counterpart that makes the test above mean something.
@@ -436,8 +441,10 @@ class TestDiurnalityOmitted:
         assert isinstance(composite.is_diurnal, bool)
         svg = _render(ChartDataFactory.create_composite_chart_data(composite))
         assert _row(svg) == f"Diurnality: {'Diurnal' if composite.is_diurnal else 'Nocturnal'}"
-        # Row 4 already existed, so nothing had to move for it.
-        assert _layout(svg) == LAYOUT_NON_NATAL
+        # Row 4 already existed, so nothing had to move for it. The block sits
+        # 30px down like its midpoint counterpart: neither draws a disc.
+        assert not _draws_a_disc(svg)
+        assert _layout(svg) == LAYOUT_NON_NATAL_NO_DISC
 
 
 class TestDiurnalityInTheTextReport:
@@ -1124,6 +1131,41 @@ class TestTheDiscCaptionsItsOwnRow:
         assert phase and float(phase[0]) == last, (
             f"{kind}: the phase row is not the last one; the disc is drawn "
             "below the block and would caption whatever ended up there"
+        )
+
+    @pytest.mark.parametrize("kind", ["synastry", "composite_midpoint", "composite_davison"])
+    def test_a_panel_with_no_disc_closes_where_one_with_a_disc_does(self, kind):
+        """The block takes the room the disc is not using.
+
+        The disc holds 30px under the block — a 10px gap plus its own 20px of
+        height — so a panel that draws none used to stop 30px short and leave a
+        strip of empty page under its last line while every other panel ran on
+        to the same edge. The rows pack to the bottom precisely so the panel has
+        one bottom edge; it should not depend on whether there is a moon to draw.
+        """
+        panels = {
+            "synastry": ChartDataFactory.create_synastry_chart_data(
+                _subject(), _subject("Paul", year=1942, month=6, day=18, hour=8, minute=0)
+            ),
+            "composite_midpoint": ChartDataFactory.create_composite_chart_data(_composite("Midpoint")),
+            "composite_davison": ChartDataFactory.create_composite_chart_data(_composite("Davison")),
+        }
+        svg = _render(panels[kind])
+        assert not _draws_a_disc(svg), "fixture must be a panel that draws no disc"
+        block = float(_layout(svg)[0])
+        last_row = block + max(float(y) for y in _filled_row_baselines(svg).values())
+
+        # Where a panel that does draw one ends: the foot of its disc.
+        with_disc = _render(
+            ChartDataFactory.create_transit_chart_data(
+                _subject(), _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
+            )
+        )
+        assert _draws_a_disc(with_disc)
+        disc_foot = float(_layout(with_disc)[1]) + 20.0
+        assert last_row == pytest.approx(disc_foot), (
+            f"{kind}: the panel closes at {last_row:.0f} where one with a disc "
+            f"closes at {disc_foot:.0f}"
         )
 
     def test_a_composite_draws_no_disc_because_it_writes_no_row(self):

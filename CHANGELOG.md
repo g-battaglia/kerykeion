@@ -39,6 +39,16 @@
   pays: the phase keeps its own words, following the rule the diurnality row
   already states.
 
+- **A panel that draws no moon stopped short of the page.** The disc holds 30px
+  under the block — the 10px gap it keeps below the last line, plus its own 20px
+  of height — so a synastry, which names no phase, and a midpoint composite,
+  which has no moment to have one, ended 30px above where every other panel
+  ends, with a strip of empty page under the last line. The block takes that
+  room now and closes where a disc's foot would have been: the panel has one
+  bottom edge whether or not there is a moon to draw. The natal panel is
+  unaffected — its disc rides above the block, so its absence frees nothing
+  below.
+
 - **The dual-wheel diurnality row was budgeted against the wrong row.** It is
   allocated by measuring the space the wheel leaves, and that space depends on
   which row the line lands in — the chord narrows going up, 200px on row 4
