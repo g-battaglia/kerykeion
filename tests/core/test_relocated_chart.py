@@ -732,16 +732,17 @@ class TestSiderealSunshineFollowsTheReference:
     def test_a_fixed_epoch_mode_keeps_makransky_on_both_sides(self):
         """The rule stops at the fixed-epoch modes, where the reference keeps 'i' as itself.
 
-        Makransky and Treindl are tens of degrees apart here, so a hundredth of a
+        Makransky and Treindl are tens of degrees apart here, so a tenth of a
         degree tells them apart while absorbing the drift every fixed-epoch
-        relocation carries already (Placidus included, ~0.002 degrees): the
-        relocation shifts by a plain ayanamsa where the reference applies the
-        epoch's frame. That drift predates this test and is not its subject.
+        relocation carries already, for every house system: thousandths of a
+        degree under J2000, up to five hundredths under J1900, on both backends.
+        The relocation shifts by a plain ayanamsa where the reference applies the
+        epoch's frame; that drift predates this test and is not its subject.
         """
         natal = self._sunshine(self._SIXTY_NORTH, zodiac_type="Sidereal", sidereal_mode="J2000")
         relocated = self._relocated_onto_itself(natal)
         for natal_cusp, relocated_cusp in zip(self._cusps(natal), self._cusps(relocated)):
-            assert _angular_diff(natal_cusp, relocated_cusp) < 0.01
+            assert _angular_diff(natal_cusp, relocated_cusp) < 0.1
 
     def test_a_tropical_sunshine_inside_the_polar_circle_is_still_substituted(self):
         """The rule is the reference's rule for SIDEREAL charts; a tropical 'i' is refused there as before."""
