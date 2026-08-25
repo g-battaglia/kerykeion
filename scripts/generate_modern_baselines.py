@@ -17,7 +17,14 @@ Categories:
   A11. Optional marks — 6 files (one per opt-in mark, all styles' shared panels)
 """
 
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from tests.data.golden_places import golden_place
+from tests.data.regeneration_guard import require_library_from_this_checkout
+
+require_library_from_this_checkout(__file__)  # noqa: E402
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data.factory import ChartDataFactory
@@ -263,8 +270,7 @@ def generate_a8_natal():
         23,
         10,
         0,
-        "Paris",
-        "FR",
+        **golden_place("Paris", "FR"),
         suppress_geonames_warning=True,
     )
     data = ChartDataFactory.create_natal_chart_data(subj)
@@ -473,7 +479,7 @@ def generate_a11_optional_marks():
 
     # Station markers — Mercury turns retrograde on this date.
     station = AstrologicalSubjectFactory.from_birth_data(
-        "Mercury Station", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+        "Mercury Station", 1990, 8, 25, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
     )
     data = ChartDataFactory.create_natal_chart_data(station)
     svg = ChartDrawer(data, show_motion_state=True).generate_svg_string(style="modern")
@@ -485,7 +491,7 @@ def generate_a11_optional_marks():
 
     # Out-of-bounds badge — Uranus sits past the obliquity here.
     oob = AstrologicalSubjectFactory.from_birth_data(
-        "Out Of Bounds", 1990, 1, 1, 12, 0, "London", "GB", suppress_geonames_warning=True
+        "Out Of Bounds", 1990, 1, 1, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
     )
     data = ChartDataFactory.create_natal_chart_data(oob)
     svg = ChartDrawer(data, show_out_of_bounds=True).generate_svg_string(style="modern")

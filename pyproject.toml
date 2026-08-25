@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a87"
+version = "6.0.0a88"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -133,6 +133,7 @@ markers = [
     "base: DE440s tier (1849-2150)",
     "medium: DE440 tier (1550-2650, cumulative)",
     "extended: DE441 tier (full range, cumulative)",
+    "reference_backend_only: golden comparison the two ephemerides genuinely disagree on (deep antiquity); skipped off the baseline backend with a reason",
 ]
 
 # Coverage Configuration

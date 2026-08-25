@@ -1,5 +1,111 @@
 # Changelog
 
+## [6.0.0a88] - 2026-08-25
+
+### Fixed
+
+- **An angle could be filed in the wrong house, and twelve numbers could not say
+  otherwise.** Where a house system brings several cusps onto one longitude —
+  Sunshine at 74.25 degrees north puts the third through the sixth on
+  316.971024 — the shared reader answers with the lowest-numbered of them, so an
+  Imum Coeli that IS the fourth cusp came back in the third, in the model, the
+  report and the context alike. The nearest-cusp rule added in a87 settles a crowd
+  whose members differ by a fraction of a nanodegree; it cannot settle one whose
+  members are the same float, because they are all equally near.
+
+  The answer is not in the twelve numbers. It is in what the point IS, which the
+  ephemeris knows at the moment it returns the cusps and the angles from one call.
+  `angle_house_identities` in `kerykeion/utilities/core.py` states that once, and
+  `houses_ring_with_polar_fallback` applies it where the cusps are made — the
+  natal factory, the late-Ascendant path the Arabic Parts use, and the relocated
+  chart. No consumer of `get_planet_house` changed, and `get_planet_house` itself
+  behaves exactly as before: the roughly twenty other callers project a point into
+  a ring that is not its own, where no identity exists.
+
+  Whole sign, equal, Morinus and meridian charts claim no identity and read as
+  they always have — there the angle is a point of its own and may legitimately
+  fall in a neighbouring house. Measured across 5,520 charts (23 systems, 15
+  latitudes, 8 hours, 2 minutes) one angle was misfiled before and none is now; at
+  a quarter of an hour's resolution over the eight systems that crowd their cusps
+  and fourteen latitudes beyond 66 degrees, some 10,700 charts, the same. Davison
+  composites inherit the fix by being cast as ordinary charts.
+
+  **The cusps themselves are unchanged.** pyswisseph returns the same crowded ring
+  for that chart, so repairing it would diverge from the implementation this
+  library is validated against. What is new is that the chart says so: see
+  `coincident_house_cusps` below.
+
+- **The SVG golden comparison could not fail.** `compare_svg_lines` returned
+  WITHOUT asserting whenever a line's count of numbers or its non-numeric skeleton
+  differed, `compare_chart_svg` abandoned the whole file for a ±5% length ratio
+  when the line count changed, a missing baseline skipped, and what was left was
+  compared at `rel_tol=0.5` — fifty per cent, ±150 units on a coordinate of 300.
+  Three further copies of the comparison lived in the test tree with three further
+  tolerances, one of them with no callers at all.
+
+  There is one comparison now, in `tests/data/compare_svg_lines.py`. Structure is
+  fatal on every backend: line count, count of numbers in a line, and the line
+  with its numbers blanked out. Numbers are compared with `rel_tol=0.0,
+  abs_tol=1e-4` and only on the backend the baselines were generated with; on
+  another the structural assertions still run and the test then reports SKIPPED,
+  naming the backend, because the two compute different charts rather than less
+  precise ones. A handful of charts cast two millennia back differ structurally
+  between the backends and carry `@pytest.mark.reference_backend_only`, one at a
+  time and with a reason.
+
+- **The golden charts asked a remote service where they were cast.**
+  `from_birth_data` defaults to `online=True`, and both the tests and the
+  regeneration scripts passed a bare city name — so a regeneration baked one day's
+  GeoNames answer into 346 files while a test run compared against another day's.
+  Running the comparison at four tolerances over one afternoon on one unchanged
+  tree gave 2, 6, 63 and 69 failures. The coordinates are frozen in
+  `tests/data/golden_places.py` and `test_golden_charts_are_hermetic.py` fails if a
+  golden chart reaches for the network.
+
+- **Eighteen baselines were read by nothing.** The charts demonstrating the
+  optional marks — the station glyph, the out-of-bounds badge, the separating
+  aspects, the ayanamsa offset, the polar substitution note, the relationship
+  score — plus three plain natal charts, were generated, committed and compared by
+  no test. They have readers now, and
+  `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline
+  loses one.
+
+- **Two charts wrote the same baseline file.** `save_svg` builds its default name
+  from the subject's name, so a subject named "John Lennon - Relationship Score"
+  collided with the explicitly-named file for that same variation and silently
+  overwrote it. The comparison test then reproduced the loser: it rendered a chart
+  with two EMPTY panel rows against a baseline showing "Relationship Score: 12",
+  and passed. The regeneration refuses to overwrite its own output now.
+
+- **The regeneration scripts could draw with another checkout's library.** An
+  editable install resolves to the path it was installed from, so running a
+  regeneration from a git worktree of the same repository uses the ORIGINAL tree's
+  code — including its uncommitted work — while writing into the worktree. Sixty-four
+  baselines were produced that way while this branch was being written, looked like
+  months of accumulated staleness, and were wrong. The scripts check before they
+  write.
+
+- **Four progression baselines and two BCE ones were months stale.** They predate
+  the accessibility attributes (`role`, `aria-labelledby`, `<desc>`) and the
+  contrast-adjusted palette. The tolerant comparator could not see it; nothing else
+  in the chart changed.
+
+### Added
+
+- `coincident_house_cusps` on `AstrologicalSubjectModel` and its siblings: the
+  groups of house numbers whose cusps stand on one longitude, so the houses between
+  them have no width and no point can ever be in them. Empty for every ordinary
+  chart, so an a87 payload validates unchanged. The report prints it as a "Cusps On
+  One Longitude" row and the context emits `<coincident_house_cusps>`.
+- `houses_ring_with_polar_fallback` and `HouseRing` in
+  `kerykeion.ephemeris_backend`: the cusps, the angles, the polar-fallback record,
+  the angle-to-house identities and the coincident groups from one call. The two
+  tuple-returning siblings keep their signatures.
+- `ANGLE_CUSP_INDEX`, `ON_CUSP_TOLERANCE_DEGREES`, `angle_house_identities`,
+  `angle_is_its_cusp`, `angular_separation`, `coincident_cusp_groups` and
+  `cusps_are_a_house_division` in `kerykeion.utilities`. The last four were private
+  copies inside the composite factory; there is one of each now.
+
 ## [6.0.0a87] - 2026-08-25
 
 ### Fixed

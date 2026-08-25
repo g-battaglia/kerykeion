@@ -115,7 +115,10 @@ tests/
 │   ├── expected_arabic_parts.py
 │   ├── test_subjects_matrix.py       # Subject matrix: 25 temporal, 16 geographic
 │   ├── configurations/               # Settings override JSON files
-│   └── svg/                           # 361 SVG baseline files
+│   ├── svg/                           # 346 SVG baseline files
+│   ├── golden_places.py              # frozen coordinates: golden charts never resolve a city online
+│   ├── compare_svg_lines.py          # THE SVG comparison; there is one
+│   └── regeneration_guard.py         # refuses to regenerate from another checkout's code
 └── fixtures/                # Golden-file report snapshots (36 .txt files)
 ```
 
@@ -303,13 +306,23 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 ### Core conftest (`tests/core/conftest.py`)
 
 - **Session-scoped subjects:** `johnny_depp`, `john_lennon`, `yoko_ono`, `paul_mccartney` (using `AstrologicalSubjectFactory.from_birth_data` with explicit coordinates, `online=False`)
-- **Comparison helpers:** `assert_position_equal`, `assert_positions_match`, `assert_svg_matches_baseline`, `assert_report_matches_snapshot`
+- **Comparison helpers:** `assert_position_equal`, `assert_positions_match`, `assert_report_matches_snapshot`
 - **Tolerance constants:** `POSITION_TOLERANCE=1e-2` (0.01°), `SPEED_TOLERANCE=1e-4`, `DECLINATION_TOLERANCE=1e-2`, `ORB_TOLERANCE=1e-2`, `PERCENTAGE_TOLERANCE=2` (integer percentages, ±2)
-- **SVG comparison:** imports `compare_svg_lines` from `tests.data.compare_svg_lines`
+- **SVG comparison:** imports `compare_svg_file` from `tests.data.compare_svg_lines` — the single implementation. Three other copies of it lived in the test tree, each with its own tolerance; the loosest returned without asserting on any structural difference and allowed 50% on every number.
 
 ### Golden-File Testing
 
-SVG baseline files live in `tests/data/svg/` (361 files). Tests compare generated SVGs line-by-line using `compare_svg_lines()`, which applies numeric tolerance for floating-point coordinates. The extended parametrized matrix skips combinations whose baseline is intentionally absent; the main golden tests fail on a missing baseline and name the regeneration command.
+SVG baseline files live in `tests/data/svg/` (346 files). Tests compare generated SVGs through `compare_svg_file()` in `tests/data/compare_svg_lines.py`, which is the only such comparison in the repository.
+
+**Structure is fatal, on every backend.** Line count, the count of numbers in a line, and the line with its numbers blanked out must all match. A missing baseline fails and names `uv run poe regenerate:svg`. The extended parametrized matrix alone skips a combination whose baseline was never generated.
+
+**Numbers are compared with `rel_tol=0.0, abs_tol=1e-4`**, and only on the backend the baselines were generated with (`libephemeris`). On another backend the structural assertions still run and the test then reports SKIPPED with the reason: the two backends compute different charts, not less precise ones, and one tolerance wide enough to cover that is the `rel_tol=0.5` this replaced.
+
+A few golden charts cast two millennia back differ STRUCTURALLY between the backends — an aspect falls in or out of orb. Those carry `@pytest.mark.reference_backend_only`, one at a time and with a reason.
+
+**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; eighteen were, when it was written.
+
+**Golden charts are hermetic.** They are cast at coordinates frozen in `tests/data/golden_places.py`, never resolved through GeoNames — `from_birth_data` defaults to `online=True`, so the whole golden suite used to depend on what a remote service answered that minute. `tests/core/test_golden_charts_are_hermetic.py` fails if one reaches for the network.
 
 Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_report_matches_snapshot` helper compares generated report output against these files.
 
@@ -323,7 +336,7 @@ Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_rep
 
 3. **Tiered ephemeris.** Historical and future test subjects are stratified by the JPL ephemeris file required. Run `test:base` for fast validation and `test:extended` for full coverage.
 
-4. **Explicit baseline policy.** Main SVG golden tests fail when an expected baseline is missing. The extended parametrized matrix alone skips combinations that do not have an intentionally generated baseline.
+4. **Explicit baseline policy.** SVG golden tests fail when an expected baseline is missing, when the line count differs, when a line's number count differs, and when a line differs anywhere it has no numbers. The extended parametrized matrix alone skips combinations that do not have an intentionally generated baseline.
 
 5. **Semantic file organization.** Each test file maps to a specific module or concern (e.g., `test_chart_drawer.py` covers `kerykeion.charts.chart_drawer`, `test_aspects.py` covers `kerykeion.aspects`).
 

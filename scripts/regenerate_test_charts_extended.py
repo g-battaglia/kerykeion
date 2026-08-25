@@ -31,6 +31,10 @@ from kerykeion import ChartDrawer as _ChartDrawer
 from kerykeion.chart_data.factory import ChartDataFactory
 
 # Import test subject definitions
+from tests.data.golden_places import golden_place
+from tests.data.regeneration_guard import require_library_from_this_checkout
+
+require_library_from_this_checkout(__file__)
 from tests.data.test_subjects_matrix import (
     HOUSE_SYSTEM_NAMES,
     SIDEREAL_THEME_COMBOS,
@@ -50,8 +54,12 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR_STR = str(OUTPUT_DIR)
 
 # Common birth data for John Lennon and Paul McCartney (used for synastry/transit)
-JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
-PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
+# The place is NOT in the tuple: a bare city name is resolved over the network, so
+# a regeneration bakes one day's coordinates into the baselines while the
+# comparison expects another day's. See tests/data/golden_places.py.
+JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
+PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
+LIVERPOOL = golden_place("Liverpool", "GB")
 
 # Themes to test
 THEMES = list(get_args(KerykeionChartTheme))
@@ -291,7 +299,7 @@ def generate_cross_combination_charts():
 
     # Create base subjects
     second = AstrologicalSubjectFactory.from_birth_data(
-        "Paul McCartney", *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True
+        "Paul McCartney", *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True, **LIVERPOOL
     )
 
     # Sidereal × Themes combinations
@@ -305,6 +313,7 @@ def generate_cross_combination_charts():
             subject = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon {sidereal_mode} - {theme.title()} Theme",
                 *JOHN_LENNON_BIRTH_DATA,
+                **LIVERPOOL,
                 zodiac_type="Sidereal",
                 sidereal_mode=sidereal_mode,
                 suppress_geonames_warning=True,
@@ -327,12 +336,14 @@ def generate_cross_combination_charts():
             first_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon - {house_name} Synastry",
                 *JOHN_LENNON_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
             second_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"Paul McCartney - {house_name}",
                 *PAUL_MCCARTNEY_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
@@ -355,12 +366,14 @@ def generate_cross_combination_charts():
             first_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon - {house_name} Transit",
                 *JOHN_LENNON_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
             second_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"Paul McCartney - {house_name} Transit",
                 *PAUL_MCCARTNEY_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
@@ -427,7 +440,7 @@ def generate_cross_combination_charts():
     # Hindi Synastry
     try:
         hindi_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-            "John Lennon - HI", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
+            "John Lennon - HI", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **LIVERPOOL
         )
         synastry_data = ChartDataFactory.create_synastry_chart_data(hindi_synastry_subject, second)
         chart = ChartDrawer(synastry_data, chart_language="HI")

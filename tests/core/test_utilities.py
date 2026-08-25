@@ -1510,15 +1510,21 @@ def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
     subject = AstrologicalSubjectFactory.from_birth_data("Crowded", **_CROWDED_RING)
     cusps = _cusps_of(subject)
 
-    # The fixture's whole point, asserted rather than assumed: four cusps that are
-    # not merely close but the same float, with the Imum Coeli standing on them.
-    assert cusps[2] == cusps[3] == cusps[4] == cusps[5]
+    # The fixture's whole point, asserted rather than assumed: a crowd of cusps
+    # the reader cannot choose between, with the Imum Coeli standing exactly on
+    # one of them. The crowd is stated through coincident_house_cusps rather than
+    # by comparing floats bit for bit — the two backends lay the last bit of these
+    # four out differently and both are crowds, which is the property that matters.
+    assert subject.coincident_house_cusps == [[2, 3, 4, 5, 6]]
     assert subject.imum_coeli.abs_pos == cusps[3]
 
-    # The shared reader still answers the third: it is given twelve numbers and
-    # nothing else, and this is the limit of what they can say. Not a defect to
-    # fix here — the two assertions below are what changed.
-    assert get_planet_house(subject.imum_coeli.abs_pos, cusps) == "Third_House"
+    # The shared reader still answers some OTHER house: it is given twelve numbers
+    # and nothing else, and this is the limit of what they can say. Which of the
+    # crowd it names is a fact about the ephemeris's last bit — the two backends
+    # answer the second and the third — so what is asserted is that it does not
+    # name the fourth. Not a defect to fix here; the assertions below are what
+    # changed.
+    assert get_planet_house(subject.imum_coeli.abs_pos, cusps) != "Fourth_House"
 
     assert subject.imum_coeli.house == "Fourth_House"
     assert subject.medium_coeli.house == "Tenth_House"
@@ -1619,10 +1625,10 @@ def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities():
     cusps = _cusps_of(relocated)
     assert relocated.coincident_house_cusps, "the fixture must relocate onto a crowded ring"
     assert relocated.imum_coeli.abs_pos == cusps[3]
-    # The discriminating half: given only the twelve numbers the reader still says
-    # the third, so this passes only because the relocated ring decided the
-    # identity again for the place it was cast at.
-    assert get_planet_house(relocated.imum_coeli.abs_pos, cusps) == "Third_House"
+    # The discriminating half: given only the twelve numbers the reader still names
+    # a house that is not the fourth, so this passes only because the relocated
+    # ring decided the identity again for the place it was cast at.
+    assert get_planet_house(relocated.imum_coeli.abs_pos, cusps) != "Fourth_House"
     assert relocated.imum_coeli.house == "Fourth_House"
 
 
@@ -1649,7 +1655,7 @@ def test_a_davison_composite_inherits_the_identity_fix():
     cusps = _cusps_of(davison)
     assert davison.coincident_house_cusps == [[2, 3, 4, 5, 6]]
     assert davison.imum_coeli.abs_pos == cusps[3]
-    assert get_planet_house(davison.imum_coeli.abs_pos, cusps) == "Third_House"
+    assert get_planet_house(davison.imum_coeli.abs_pos, cusps) != "Fourth_House"
     assert davison.imum_coeli.house == "Fourth_House"
 
 

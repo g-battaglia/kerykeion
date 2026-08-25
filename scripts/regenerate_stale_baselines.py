@@ -19,18 +19,25 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 # The lists live with the fixtures, not here. This script used to carry its own
 # three sidereal-by-theme pairs against the ten the test asks for, which is the
 # same drift, in the same shape, one directory over.
+from tests.data.golden_places import golden_place  # noqa: E402
+from tests.data.regeneration_guard import require_library_from_this_checkout  # noqa: E402
 from tests.data.test_subjects_matrix import (  # noqa: E402
     HOUSE_SYSTEM_NAMES,
     SIDEREAL_THEME_COMBOS,
 )
-from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+require_library_from_this_checkout(__file__)
+
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer  # noqa: E402
 from kerykeion.chart_data.factory import ChartDataFactory
 
 SVG_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 
 # Common birth data
-JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
-PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
+# The place is not in the tuple: a bare city name is resolved over the network.
+# See tests/data/golden_places.py.
+JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
+PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
+LIVERPOOL = golden_place("Liverpool", "GB")
 
 
 
@@ -41,7 +48,7 @@ def regenerate_sidereal_theme_combos():
     for sidereal_mode, theme in SIDEREAL_THEME_COMBOS:
         subject = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon {sidereal_mode} - {theme.title()} Theme",
-            *JOHN_LENNON_BIRTH_DATA,
+            *JOHN_LENNON_BIRTH_DATA, **LIVERPOOL,
             zodiac_type="Sidereal",
             sidereal_mode=sidereal_mode,
             suppress_geonames_warning=True,
@@ -60,13 +67,13 @@ def regenerate_house_system_synastry():
     for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
         first = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon - {house_name} Synastry",
-            *JOHN_LENNON_BIRTH_DATA,
+            *JOHN_LENNON_BIRTH_DATA, **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
             f"Paul McCartney - {house_name}",
-            *PAUL_MCCARTNEY_BIRTH_DATA,
+            *PAUL_MCCARTNEY_BIRTH_DATA, **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
@@ -84,13 +91,13 @@ def regenerate_house_system_transit():
     for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
         first = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon - {house_name} Transit",
-            *JOHN_LENNON_BIRTH_DATA,
+            *JOHN_LENNON_BIRTH_DATA, **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
             f"Paul McCartney - {house_name} Transit",
-            *PAUL_MCCARTNEY_BIRTH_DATA,
+            *PAUL_MCCARTNEY_BIRTH_DATA, **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
