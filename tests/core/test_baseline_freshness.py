@@ -48,38 +48,23 @@ PANEL_ROWS = len(
 
 #: Baselines this repository cannot reproduce, with the reason.
 #:
-#: An earlier version of this list held five files and blamed the DE441 kernel.
-#: That was wrong and a reviewer caught it: ``poe regenerate:svg`` already sets
-#: ``LIBEPHEMERIS_PRECISION=extended``, and under that tier this machine computes
-#: pre-1-CE subjects and draws them with all six rows. Two of the five were
-#: regenerated that way. A wrong exemption is worse than no exemption, because it
-#: reads as verified and permanently silences the only guard that would flag the
-#: file.
+#: Empty, and it has been wrong twice on the way here. The first version held
+#: five files and blamed the DE441 kernel; ``poe regenerate:svg`` already sets
+#: ``LIBEPHEMERIS_PRECISION=extended``, under which this machine draws every
+#: pre-1-CE subject with all six rows. The second held nine and said no script
+#: casts them and their second subjects are unrecorded. Also wrong: every one is
+#: read by a test that names its subjects in full — the four progressions record
+#: their target year, the Ptolemaic pair is built in test_bce_dates.py, and the
+#: "Transit Partner" synastry and transit carry both subjects on their own
+#: panels — and the comparator regenerates whatever it compares when
+#: ``KERYKEION_REGEN_BASELINES`` is set. Run the reading test with that variable
+#: and the file is refreshed.
 #:
-#: These three are exempt for a different reason: no script in the repository
-#: produces them, and their second subject is not recoverable from it — the
-#: synastry is cast against a subject named "Transit Partner" that appears in no
-#: source file, and the transit against 1970-01-01. Regenerating them means
-#: deciding what they are supposed to represent, which is a change to the
-#: fixtures rather than a refresh of them.
-#: Six more joined them when the glyph set was redrawn: the same reason, found
-#: the same way — ``poe regenerate:svg`` runs to completion and leaves these
-#: files untouched, because no script in ``scripts/`` casts a progression, and
-#: the Ptolemaic pair's second subject and transit moment appear in no source
-#: file either. They are listed rather than hand-patched: their modern variants
-#: place clusters from the ink tables, so pasting a new glyph block into them
-#: would leave the drawing disagreeing with the geometry that produced it.
-CANNOT_REGENERATE_HERE = {
-    "Ancient Greece 500BC - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
-    "Ancient Greece 500BC - Synastry Chart - Classic.svg": "no generator in the repo; second subject not recorded",
-    "Ancient Greece 500BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
-    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg": "no generator in the repo; the pairing is not recorded",
-    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
-    "John Lennon - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
-    "John Lennon - Progression Chart - Modern.svg": "no generator in the repo; progressed target not recorded",
-    "John Lennon - Progression Chart - Table Grid.svg": "no generator in the repo; progressed target not recorded",
-    "John Lennon - Dark Theme - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
-}
+#: A wrong exemption is worse than no exemption: it reads as verified and
+#: permanently silences the only guard that would flag the file. A new entry
+#: needs a reason that ``test_the_exemption_list_does_not_outlive_its_reason``
+#: cannot refute, and there is no such reason for a chart that some test casts.
+CANNOT_REGENERATE_HERE: dict[str, str] = {}
 
 _ROW = re.compile(r"Bottom_Left_Text_(\d+)")
 
@@ -323,11 +308,22 @@ def test_the_extended_generator_refuses_to_report_success_after_a_failure():
 
     import pytest
 
+    import tests.data.compare_svg_lines as comparison
+
     script = Path(__file__).resolve().parents[2] / "scripts" / "regenerate_test_charts_extended.py"
     spec = importlib.util.spec_from_file_location("regen_extended", script)
     module = importlib.util.module_from_spec(spec)
     sys.modules["regen_extended"] = module
-    spec.loader.exec_module(module)
+    # The script refuses to import on a backend other than the one the baselines
+    # come from, which is right for a regeneration and beside the point here: this
+    # test is about how the script reports a failure, on whichever backend the
+    # suite happens to run. Let it believe it is on the baseline backend.
+    reported_backend = comparison.active_backend
+    comparison.active_backend = lambda: comparison.BASELINE_BACKEND
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        comparison.active_backend = reported_backend
 
     assert module.FAILURES == [], "a failure leaked out of an earlier import"
 

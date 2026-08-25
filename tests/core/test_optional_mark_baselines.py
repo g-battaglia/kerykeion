@@ -11,10 +11,12 @@ A baseline no test reads is not a regression guard; it is a picture of the libra
 as it was on the day it was written, which is how 73 files came to be drawing a
 glyph the library no longer had. These are the tests that read them.
 
-Each also asserts the mark it exists for is actually PRESENT. A golden comparison
-alone would pass just as well if the option silently stopped doing anything and
-the baseline were regenerated to match — which is exactly what happened to the
-relationship-score chart.
+Each also asserts the mark it exists for is actually PRESENT — by something only
+the mark draws, not by a word the chart carries anyway. A golden comparison alone
+would pass just as well if the option silently stopped doing anything and the
+baseline were regenerated to match — which is exactly what happened to the
+relationship-score chart, whose title says "Relationship Score" whether or not
+the score is printed.
 """
 
 import pytest
@@ -68,6 +70,23 @@ def _render(subject, style, **drawer_kwargs):
     return ChartDrawer(data, **drawer_kwargs).generate_svg_string(style=style)
 
 
+#: What each mark draws and nothing else does, per style, found by rendering the
+#: same subject with and without the option and reading what the option added.
+DRAWN_ONLY_BY_THE_MARK = {
+    ("motion_state", "classic"): ">SR<",  # the station label beside the glyph
+    ("motion_state", "modern"): "var(--kerykeion-modern-stationary",  # the palette defines it always; only the mark USES it
+    ("aspect_movement", "classic"): "stroke-dasharray: 5 3.2",  # the separating dash
+    ("aspect_movement", "modern"): "stroke-dasharray='1.5 1'",
+    ("out_of_bounds", "classic"): ">OOB<",
+    ("out_of_bounds", "modern"): ">OOB<",
+}
+
+
+def _assert_the_mark_is_drawn(svg: str, mark: str, style: str) -> None:
+    token = DRAWN_ONLY_BY_THE_MARK[(mark, style)]
+    assert token in svg, f"show_{mark}=True drew nothing the {style} chart does not draw anyway ({token!r})"
+
+
 # The classic baselines were written from subjects NAMED after the mark, because
 # save_svg takes its filename from the subject's name; the modern ones were written
 # with an explicit filename from a subject named plainly. The panel prints the name,
@@ -82,19 +101,21 @@ def _station_named_for(style: str, mark: str):
 @pytest.mark.parametrize("style", ["classic", "modern"])
 def test_motion_state_baseline(style):
     svg = _render(_station_named_for(style, "Motion State"), style, show_motion_state=True)
-    assert "motion" in svg.lower()
+    _assert_the_mark_is_drawn(svg, "motion_state", style)
     compare_svg_file(SVG_DIR / f"Mercury Station - Motion State - Natal Chart - {style.capitalize()}.svg", svg)
 
 
 @pytest.mark.parametrize("style", ["classic", "modern"])
 def test_aspect_movement_baseline(style):
     svg = _render(_station_named_for(style, "Aspect Movement"), style, show_aspect_movement=True)
+    _assert_the_mark_is_drawn(svg, "aspect_movement", style)
     compare_svg_file(SVG_DIR / f"Mercury Station - Aspect Movement - Natal Chart - {style.capitalize()}.svg", svg)
 
 
 @pytest.mark.parametrize("style", ["classic", "modern"])
 def test_out_of_bounds_baseline(style):
     svg = _render(_out_of_bounds_subject(), style, show_out_of_bounds=True)
+    _assert_the_mark_is_drawn(svg, "out_of_bounds", style)
     compare_svg_file(SVG_DIR / f"Out Of Bounds - Natal Chart - {style.capitalize()}.svg", svg)
 
 
@@ -120,7 +141,8 @@ def test_relationship_score_modern_baseline():
     john, paul = _make_john("Relationship Score"), _make_paul()
     data = ChartDataFactory.create_synastry_chart_data(john, paul)
     svg = ChartDrawer(data, show_relationship_score=True).generate_svg_string(style="modern")
-    assert "Relationship Score" in svg
+    # The title carries the words on its own; the score line is what the option draws.
+    assert "Relationship Score: 12" in svg
     compare_svg_file(SVG_DIR / "John Lennon - Relationship Score - Synastry Chart - Modern.svg", svg)
 
 

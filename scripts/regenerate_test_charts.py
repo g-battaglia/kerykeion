@@ -80,9 +80,10 @@ _ChartDrawer._write_svg_to_disk = _write_svg_once
 # bare city name did, because from_birth_data resolves it over the network.
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from tests.data.golden_places import golden_place
-from tests.data.regeneration_guard import require_library_from_this_checkout
+from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend
 
 require_library_from_this_checkout(__file__)  # noqa: E402
+require_the_baseline_backend()  # noqa: E402
 
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

@@ -119,7 +119,7 @@ tests/
 │   ├── golden_places.py              # frozen coordinates: golden charts never resolve a city online
 │   ├── compare_svg_lines.py          # THE SVG comparison; there is one
 │   └── regeneration_guard.py         # refuses to regenerate from another checkout's code
-└── fixtures/                # Golden-file report snapshots (36 .txt files)
+└── fixtures/                # Golden-file report snapshots (42 .txt files)
 ```
 
 ---
@@ -199,7 +199,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 
 | File | What it covers |
 |------|----------------|
-| `test_report.py` | Subject/natal/synastry/transit/composite/return reports, moon phase overview, golden-file snapshots (36 baseline files), section presence, content formatting (retrograde markers, aspect symbols, movement, speed, declination, position, dates, coordinates), element/quality percentage sums, max_aspects truncation, sidereal mode display, empty data paths, relationship score content, cusp comparison, active points/aspects presets, geographic/temporal diversity, private helpers, parametrized sweeps, composite houses, subject-only mode |
+| `test_report.py` | Subject/natal/synastry/transit/composite/return reports, moon phase overview, golden-file snapshots (42 baseline files), section presence, content formatting (retrograde markers, aspect symbols, movement, speed, declination, position, dates, coordinates), element/quality percentage sums, max_aspects truncation, sidereal mode display, empty data paths, relationship score content, cusp comparison, active points/aspects presets, geographic/temporal diversity, private helpers, parametrized sweeps, composite houses, subject-only mode |
 
 ### Backward Compatibility
 
@@ -308,7 +308,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 - **Session-scoped subjects:** `johnny_depp`, `john_lennon`, `yoko_ono`, `paul_mccartney` (using `AstrologicalSubjectFactory.from_birth_data` with explicit coordinates, `online=False`)
 - **Comparison helpers:** `assert_position_equal`, `assert_positions_match`, `assert_report_matches_snapshot`
 - **Tolerance constants:** `POSITION_TOLERANCE=1e-2` (0.01°), `SPEED_TOLERANCE=1e-4`, `DECLINATION_TOLERANCE=1e-2`, `ORB_TOLERANCE=1e-2`, `PERCENTAGE_TOLERANCE=2` (integer percentages, ±2)
-- **SVG comparison:** imports `compare_svg_file` from `tests.data.compare_svg_lines` — the single implementation. Three other copies of it lived in the test tree, each with its own tolerance; the loosest returned without asserting on any structural difference and allowed 50% on every number.
+- **SVG comparison:** the golden tests import `compare_svg_file` from `tests.data.compare_svg_lines` — the single implementation; the conftest only reads `numbers_are_comparable()` from it, for the `reference_backend_only` skip. Three other copies of it lived in the test tree, each with its own tolerance; the loosest returned without asserting on any structural difference and allowed 50% on every number.
 
 ### Golden-File Testing
 
@@ -320,11 +320,11 @@ SVG baseline files live in `tests/data/svg/` (346 files). Tests compare generate
 
 A few golden charts cast two millennia back differ STRUCTURALLY between the backends — an aspect falls in or out of orb. Those carry `@pytest.mark.reference_backend_only`, one at a time and with a reason.
 
-**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; eighteen were, when it was written.
+**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; eighteen were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader.
 
-**Golden charts are hermetic.** They are cast at coordinates frozen in `tests/data/golden_places.py`, never resolved through GeoNames — `from_birth_data` defaults to `online=True`, so the whole golden suite used to depend on what a remote service answered that minute. `tests/core/test_golden_charts_are_hermetic.py` fails if one reaches for the network.
+**Golden charts are hermetic.** They are cast at coordinates frozen in `tests/data/golden_places.py`, never resolved through GeoNames — `from_birth_data` defaults to `online=True`, so the whole golden suite used to depend on what a remote service answered that minute. `tests/core/test_golden_charts_are_hermetic.py` fails if one reaches for the network: it drives every golden test in all four golden modules through the same driver with both GeoNames doors — the city lookup and the timezone-for-coordinates lookup — refused.
 
-Report golden files live in `tests/fixtures/` (36 `.txt` files). The `assert_report_matches_snapshot` helper compares generated report output against these files.
+Report golden files live in `tests/fixtures/` (42 `.txt` files). The `assert_report_matches_snapshot` helper compares generated report output against these files.
 
 ---
 

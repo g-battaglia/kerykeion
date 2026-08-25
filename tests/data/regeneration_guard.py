@@ -13,7 +13,10 @@ of accumulated staleness, and only the row order gave it away. The files were
 plausible, idempotent on a second run, and wrong.
 
 So the scripts ask, before they write anything: is the library I am about to draw
-with the one that lives beside the folder I am about to write into?
+with the one that lives beside the folder I am about to write into? And is it
+computing with the ephemeris the baselines are declared to come from? The
+comparator only compares numbers on that backend, so a set of baselines written
+by the other one would fail every run on the backend they claim as their own.
 """
 
 from pathlib import Path
@@ -41,4 +44,16 @@ def require_library_from_this_checkout(script_file: str) -> None:
             f"path it was installed from, so running this from a worktree silently uses "
             f"the original tree's code — including whatever is uncommitted there.\n"
             f"Run it with PYTHONPATH={repository_root} so the checkout you are in wins."
+        )
+
+
+def require_the_baseline_backend() -> None:
+    """Raise unless the active ephemeris is the one the stored baselines come from."""
+    from tests.data.compare_svg_lines import BASELINE_BACKEND, active_backend
+
+    if active_backend() != BASELINE_BACKEND:
+        raise SystemExit(
+            f"Refusing to regenerate: the baselines are {BASELINE_BACKEND} charts and this "
+            f"run is on {active_backend()}. Unset KERYKEION_BACKEND, or set it to "
+            f"{BASELINE_BACKEND}, before regenerating."
         )

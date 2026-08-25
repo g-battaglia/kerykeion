@@ -33,6 +33,7 @@ from tests.data.test_subjects_matrix import (
     get_subject_by_id,
 )
 from tests.data.compare_svg_lines import compare_svg_file
+from tests.data.golden_places import golden_place
 
 
 # =============================================================================
@@ -42,9 +43,11 @@ from tests.data.compare_svg_lines import compare_svg_file
 SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
 
 # Common birth data constants
-# Format: (year, month, day, hour, minute, city, country)
-JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
-PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
+# Format: (year, month, day, hour, minute). The place is spread separately, with
+# its coordinates frozen: a golden chart may not ask GeoNames where it was cast.
+JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
+PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
+LIVERPOOL = golden_place("Liverpool", "GB")
 
 # Subjects that are already covered by the main regenerate_test_charts.py script
 # and should be excluded from temporal subject tests to avoid test conflicts.
@@ -294,6 +297,7 @@ class TestCrossCombinations:
         subject = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon {sidereal_mode} - {theme.title()} Theme",
             *JOHN_LENNON_BIRTH_DATA,
+            **LIVERPOOL,
             zodiac_type="Sidereal",
             sidereal_mode=sidereal_mode,
             suppress_geonames_warning=True,
@@ -313,12 +317,14 @@ class TestCrossCombinations:
         first = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon - {house_name} Synastry",
             *JOHN_LENNON_BIRTH_DATA,
+            **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
             f"Paul McCartney - {house_name}",
             *PAUL_MCCARTNEY_BIRTH_DATA,
+            **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
@@ -337,12 +343,14 @@ class TestCrossCombinations:
         first = AstrologicalSubjectFactory.from_birth_data(
             f"John Lennon - {house_name} Transit",
             *JOHN_LENNON_BIRTH_DATA,
+            **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )
         second = AstrologicalSubjectFactory.from_birth_data(
             f"Paul McCartney - {house_name} Transit",
             *PAUL_MCCARTNEY_BIRTH_DATA,
+            **LIVERPOOL,
             houses_system_identifier=house_id,
             suppress_geonames_warning=True,
         )

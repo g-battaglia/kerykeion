@@ -1554,6 +1554,9 @@ def test_a_crowded_ring_says_so_instead_of_being_discovered():
     assert ordinary.coincident_house_cusps == []
 
 
+_ANGLES_ONLY = ["Sun", "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
+
+
 def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
     """The sweep the single fixture above was found in, kept as the guard.
 
@@ -1583,6 +1586,9 @@ def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
                         tz_str="UTC", city="S", nation="XX", online=False,
                         suppress_geonames_warning=True,
                         houses_system_identifier=system,
+                        # The four angles and their cusps are all this reads; the
+                        # planets would cost five times as much and say nothing.
+                        active_points=_ANGLES_ONLY,
                     )
                 except Exception:
                     # A system undefined at this latitude with no substitute is a
@@ -1657,6 +1663,24 @@ def test_a_davison_composite_inherits_the_identity_fix():
     assert davison.imum_coeli.abs_pos == cusps[3]
     assert get_planet_house(davison.imum_coeli.abs_pos, cusps) != "Fourth_House"
     assert davison.imum_coeli.house == "Fourth_House"
+
+
+def test_a_midpoint_composite_declares_the_crowd_on_its_own_ring():
+    """The midpoint ring is built in the composite factory, not cast, so it has to say
+    so itself: two parents on the crowded ring put their midpoints on one longitude,
+    and a composite that declared nothing would contradict the field's own promise.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.composite_subject import CompositeSubjectFactory
+
+    def parent(name):
+        return AstrologicalSubjectFactory.from_birth_data(name, **_CROWDED_RING)
+
+    composite = CompositeSubjectFactory(parent("A"), parent("B")).get_midpoint_composite_subject_model()
+
+    # The groups, not the floats: swisseph lays the same crowd out a bit apart.
+    assert composite.coincident_house_cusps == [[2, 3, 4, 5, 6]]
+    assert composite.imum_coeli.house == "Fourth_House"
 
 
 def test_the_identity_rule_answers_for_every_angle_the_reader_cannot_place():

@@ -826,9 +826,8 @@ class TestNatalChartLanguages:
             dy,
             hr,
             mn,
-            city,
-            nation,
             suppress_geonames_warning=True,
+            **golden_place(city, nation),
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data, chart_language=lang).generate_svg_string(style="classic")
