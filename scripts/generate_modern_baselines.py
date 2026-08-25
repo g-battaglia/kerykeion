@@ -17,7 +17,15 @@ Categories:
   A11. Optional marks — 6 files (one per opt-in mark, all styles' shared panels)
 """
 
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from tests.data.golden_places import golden_place
+from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend
+
+require_library_from_this_checkout(__file__)
+require_the_baseline_backend()
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data.factory import ChartDataFactory
@@ -29,8 +37,10 @@ SVG_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 
 # --- Subject helpers (mirror test_chart_drawer.py) ---
 
-JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
-PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
+JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
+PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
+# The place is pinned, not resolved: the tests cast from the same frozen coordinates.
+LIVERPOOL = golden_place("Liverpool", "GB")
 RETURN_ISO = "2025-01-09T18:30:00+01:00"
 
 
@@ -40,6 +50,7 @@ def _make_john(suffix="", **kwargs):
         name,
         *JOHN_LENNON_BIRTH_DATA,
         suppress_geonames_warning=True,
+        **LIVERPOOL,
         **kwargs,
     )
 
@@ -50,6 +61,7 @@ def _make_paul(suffix="", **kwargs):
         name,
         *PAUL_MCCARTNEY_BIRTH_DATA,
         suppress_geonames_warning=True,
+        **LIVERPOOL,
         **kwargs,
     )
 
@@ -243,10 +255,11 @@ def generate_a7_single_return_lunar():
 def generate_a8_natal():
     print("\n=== A8. Natal (2 files) ===")
 
-    # Sidereal LAHIRI — must match _make_sidereal_subject() in tests (uses geonames)
+    # Sidereal LAHIRI — must match _make_sidereal_subject() in tests
     subj = AstrologicalSubjectFactory.from_birth_data(
         "John Lennon Sidereal LAHIRI",
         *JOHN_LENNON_BIRTH_DATA,
+        **LIVERPOOL,
         zodiac_type="Sidereal",
         sidereal_mode="LAHIRI",
         suppress_geonames_warning=True,
@@ -255,7 +268,7 @@ def generate_a8_natal():
     svg = ChartDrawer(data).generate_svg_string(style="modern")
     _write("John Lennon - Sidereal LAHIRI - Natal Chart - Modern.svg", svg)
 
-    # French language — must match test (uses geonames)
+    # French language — must match test
     subj = AstrologicalSubjectFactory.from_birth_data(
         "Jeanne Moreau",
         1928,
@@ -263,8 +276,7 @@ def generate_a8_natal():
         23,
         10,
         0,
-        "Paris",
-        "FR",
+        **golden_place("Paris", "FR"),
         suppress_geonames_warning=True,
     )
     data = ChartDataFactory.create_natal_chart_data(subj)
@@ -473,7 +485,7 @@ def generate_a11_optional_marks():
 
     # Station markers — Mercury turns retrograde on this date.
     station = AstrologicalSubjectFactory.from_birth_data(
-        "Mercury Station", 1990, 8, 25, 12, 0, "London", "GB", suppress_geonames_warning=True
+        "Mercury Station", 1990, 8, 25, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
     )
     data = ChartDataFactory.create_natal_chart_data(station)
     svg = ChartDrawer(data, show_motion_state=True).generate_svg_string(style="modern")
@@ -485,7 +497,7 @@ def generate_a11_optional_marks():
 
     # Out-of-bounds badge — Uranus sits past the obliquity here.
     oob = AstrologicalSubjectFactory.from_birth_data(
-        "Out Of Bounds", 1990, 1, 1, 12, 0, "London", "GB", suppress_geonames_warning=True
+        "Out Of Bounds", 1990, 1, 1, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
     )
     data = ChartDataFactory.create_natal_chart_data(oob)
     svg = ChartDrawer(data, show_out_of_bounds=True).generate_svg_string(style="modern")

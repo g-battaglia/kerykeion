@@ -76,8 +76,11 @@ def calculate_points_in_reciprocal_houses(
         house_name = get_planet_house(point_degree, house_cusps)
         house_number = get_house_number(house_name)
 
-        # Find which house the point is in its own chart (point_subject)
-        point_owner_house_name = get_planet_house(point_degree, point_subject_house_cusps)
+        # Which house the point is in its own chart: the model already says, and
+        # says it right where the reader cannot — an angle that IS one of several
+        # coincident cusps opens its own house, which the twelve numbers alone do
+        # not tell. The reader is only for a point that carries no house.
+        point_owner_house_name = point.house or get_planet_house(point_degree, point_subject_house_cusps)
         point_owner_house_number = get_house_number(point_owner_house_name)
 
         point_in_house = PointInHouseModel(

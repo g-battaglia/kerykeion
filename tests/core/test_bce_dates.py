@@ -19,7 +19,6 @@ Usage:
 
 import importlib
 import math
-import os
 from pathlib import Path
 
 import pytest
@@ -29,6 +28,8 @@ from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
 from kerykeion.utilities import format_ancient_iso, format_iso_display, extract_year_from_iso
 
+from tests.data.compare_svg_lines import compare_svg_file
+
 
 # =============================================================================
 # CONSTANTS
@@ -37,26 +38,12 @@ from kerykeion.utilities import format_ancient_iso, format_iso_display, extract_
 SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
 
 
-def _compare_or_regenerate(baseline_path: Path, svg: str) -> None:
-    """Compare against a baseline, or rewrite it under KERYKEION_REGEN_BASELINES.
+#: Athens, as the temporal matrix casts it, and cast offline as every golden chart is.
+_ATHENS_OFFLINE = dict(
+    lat=37.9838, lng=23.7275, tz_str="Europe/Athens", city="Athens", nation="GR",
+    online=False, suppress_geonames_warning=True,
+)
 
-    These two baselines pair two BCE subjects, and only this file knows which
-    two: no script in the repository builds them. Without a way to refresh them
-    they went stale on every template change and stayed stale — the comparison
-    below is a line count within 5%, which a redrawn glyph cannot trip. The env
-    var is the same opt-in `compare_chart_svg` uses in test_chart_drawer.py, so
-    the fixtures a test owns are refreshed by running that test.
-    """
-    if os.environ.get("KERYKEION_REGEN_BASELINES"):
-        baseline_path.parent.mkdir(parents=True, exist_ok=True)
-        baseline_path.write_text(svg, encoding="utf-8")
-        return
-    if not baseline_path.exists():
-        pytest.skip("Baseline not found.")
-
-    assert len(svg.strip().splitlines()) == pytest.approx(
-        len(baseline_path.read_text().strip().splitlines()), rel=0.05
-    )
 
 # Position tolerance: accounts for polynomial approximation at extreme dates
 BCE_POSITION_TOLERANCE = 0.5  # degrees
@@ -427,18 +414,20 @@ class TestDayOfWeek:
 class TestBCEChartSVG:
     """Test SVG chart generation for BCE dates."""
 
-    @pytest.fixture(scope="class")
-    def subj_500bc(self):
-        return _create_bce_subject("ancient_500bc")
-
-    @pytest.fixture(scope="class")
-    def subj_200bc(self):
-        return _create_bce_subject("ancient_200bc")
+    # Class attributes rather than class-scoped fixtures: the golden driver
+    # (tests/data/golden_drive.py) calls setup_class as pytest would, while a
+    # test that took a fixture is one it cannot call — and one the hermetic guard
+    # therefore could not vouch for. Every test here is tier-marked, so on a
+    # kernel that cannot cast 500 BC pytest skips them before this runs.
+    @classmethod
+    def setup_class(cls):
+        cls.subj_500bc = _create_bce_subject("ancient_500bc")
+        cls.subj_200bc = _create_bce_subject("ancient_200bc")
 
     @pytest.mark.extended
-    def test_natal_chart_svg(self, subj_500bc):
+    def test_natal_chart_svg(self):
         """Natal chart SVG can be generated for a BCE subject."""
-        data = ChartDataFactory.create_natal_chart_data(subj_500bc)
+        data = ChartDataFactory.create_natal_chart_data(self.subj_500bc)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -448,25 +437,28 @@ class TestBCEChartSVG:
         assert "Ancient Greece 500BC" in svg
 
     @pytest.mark.extended
-    def test_natal_chart_baseline(self, subj_500bc):
-        """Natal chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC - Natal Chart - Classic.svg"
-        if not baseline_path.exists():
-            pytest.skip("Baseline not found. Run test generation first.")
+    @pytest.mark.reference_backend_only
+    def test_natal_chart_baseline(self):
+        """Natal chart SVG matches the golden baseline.
 
-        data = ChartDataFactory.create_natal_chart_data(subj_500bc)
+        This was a line count within five per cent, and a missing file was a skip:
+        the two escapes the single comparator retired. The file belongs to the
+        temporal matrix, which casts its subject with the subject's name for a city;
+        it is cast the same way here, because two readers of one baseline that
+        disagree on the chart can only be kept green by not comparing.
+        """
+        from tests.core.test_chart_parametrized import create_subject_from_dict
+        from tests.data.test_subjects_matrix import TEMPORAL_SUBJECTS
+
+        (matrix_500bc,) = [s for s in TEMPORAL_SUBJECTS if s["id"] == "ancient_500bc"]
+        data = ChartDataFactory.create_natal_chart_data(create_subject_from_dict(matrix_500bc))
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        baseline = baseline_path.read_text()
-
-        # Line count should be roughly the same (±5%)
-        svg_lines = svg.strip().splitlines()
-        baseline_lines = baseline.strip().splitlines()
-        assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Natal Chart - Classic.svg", svg)
 
     @pytest.mark.extended
-    def test_transit_chart_svg(self, subj_500bc, subj_200bc):
+    def test_transit_chart_svg(self):
         """Transit chart SVG can be generated between two BCE subjects."""
-        data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_transit_chart_data(self.subj_500bc, self.subj_200bc)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -475,18 +467,21 @@ class TestBCEChartSVG:
         assert "</svg>" in svg
 
     @pytest.mark.extended
-    def test_transit_chart_baseline(self, subj_500bc, subj_200bc):
+    # 500 BC and 200 BC: the two ephemerides disagree there by more than
+    # precision — an aspect falls in or out of orb and the element count changes.
+    @pytest.mark.reference_backend_only
+    def test_transit_chart_baseline(self):
         """Transit chart SVG matches the golden baseline (if available)."""
-        data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_transit_chart_data(self.subj_500bc, self.subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(
+        compare_svg_file(
             SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg", svg
         )
 
     @pytest.mark.extended
-    def test_synastry_chart_svg(self, subj_500bc, subj_200bc):
+    def test_synastry_chart_svg(self):
         """Synastry chart SVG can be generated between two BCE subjects."""
-        data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_synastry_chart_data(self.subj_500bc, self.subj_200bc)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -495,19 +490,22 @@ class TestBCEChartSVG:
         assert "</svg>" in svg
 
     @pytest.mark.extended
-    def test_synastry_chart_baseline(self, subj_500bc, subj_200bc):
+    # 500 BC and 200 BC: the two ephemerides disagree there by more than
+    # precision — an aspect falls in or out of orb and the element count changes.
+    @pytest.mark.reference_backend_only
+    def test_synastry_chart_baseline(self):
         """Synastry chart SVG matches the golden baseline (if available)."""
-        data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_synastry_chart_data(self.subj_500bc, self.subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(
+        compare_svg_file(
             SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg", svg
         )
 
     @pytest.mark.extended
-    def test_progression_chart_svg(self, subj_500bc):
+    def test_progression_chart_svg(self):
         """Progression chart SVG can be generated for a BCE subject."""
-        progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
-        data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
+        progressed = SecondaryProgressionFactory.compute(self.subj_500bc, target_year=-460)
+        data = ChartDataFactory.create_progression_chart_data(self.subj_500bc, progressed)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -517,20 +515,17 @@ class TestBCEChartSVG:
         assert "Ancient Greece 500BC" in svg
 
     @pytest.mark.extended
-    def test_progression_chart_baseline(self, subj_500bc):
-        """Progression chart SVG matches the golden baseline (if available)."""
-        baseline_path = SVG_DIR / "Ancient Greece 500BC - Progression Chart - Classic.svg"
-        if not baseline_path.exists():
-            pytest.skip("Baseline not found. Run test generation first.")
+    @pytest.mark.reference_backend_only
+    def test_progression_chart_baseline(self):
+        """Progression chart SVG matches the golden baseline.
 
-        progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
-        data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
+        The progressed target is right here — 460 BC — so the baseline was never
+        unregenerable; it was listed as such while this test compared a line count.
+        """
+        progressed = SecondaryProgressionFactory.compute(self.subj_500bc, target_year=-460)
+        data = ChartDataFactory.create_progression_chart_data(self.subj_500bc, progressed)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        baseline = baseline_path.read_text()
-
-        svg_lines = svg.strip().splitlines()
-        baseline_lines = baseline.strip().splitlines()
-        assert len(svg_lines) == pytest.approx(len(baseline_lines), rel=0.05)
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Progression Chart - Classic.svg", svg)
 
     @pytest.mark.extended
     def test_progression_bce_pre_1ce_gap_clamps_to_bce_branch(self):
@@ -552,6 +547,42 @@ class TestBCEChartSVG:
         )
         # Clamped to 1 BCE Dec 31 23:59:59 Julian — NOT rolled into 1 CE.
         assert extract_year_from_iso(progressed.iso_formatted_utc_datetime) < 1
+
+
+class TestBCEPairWithAModernPartner:
+    """Two baselines that had no reader and, the freshness gate said, no generator.
+
+    "Ancient Greece 500BC - Synastry Chart - Classic.svg" and its transit twin pair
+    a 500 BC subject with a partner cast in 1970 — and their panels record both:
+    the BCE subject is 15 June 500 BC at noon in Athens, not the matrix subject's
+    21 March, and the partner is "Transit Partner", 1 January 1970 at noon, Athens.
+    A baseline that says on its face who it was cast for is not one whose second
+    subject is unrecorded; it is one nobody had read. These read them, and through
+    the comparator's regeneration path they can be refreshed like any other.
+    """
+
+    @classmethod
+    def setup_class(cls):
+        cls.midsummer_500bc = AstrologicalSubjectFactory.from_birth_data(
+            "Ancient Greece 500BC", -500, 6, 15, 12, 0, **_ATHENS_OFFLINE
+        )
+        cls.partner_1970 = AstrologicalSubjectFactory.from_birth_data(
+            "Transit Partner", 1970, 1, 1, 12, 0, **_ATHENS_OFFLINE
+        )
+
+    @pytest.mark.extended
+    @pytest.mark.reference_backend_only
+    def test_synastry_with_a_modern_partner_baseline(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.midsummer_500bc, self.partner_1970)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Synastry Chart - Classic.svg", svg)
+
+    @pytest.mark.extended
+    @pytest.mark.reference_backend_only
+    def test_transit_from_a_modern_partner_baseline(self):
+        data = ChartDataFactory.create_transit_chart_data(self.midsummer_500bc, self.partner_1970)
+        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Transit Chart - Classic.svg", svg)
 
 
 # =============================================================================

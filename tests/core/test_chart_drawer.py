@@ -41,6 +41,9 @@ from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.secondary_progressions import SecondaryProgressionFactory
 from kerykeion.schemas import KerykeionException
 
+from tests.data.compare_svg_lines import compare_svg_file
+from tests.data.golden_places import golden_place
+
 
 # =============================================================================
 # CONSTANTS
@@ -48,9 +51,14 @@ from kerykeion.schemas import KerykeionException
 
 SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
 
-# Common birth data: (year, month, day, hour, minute, city, country)
-JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
-PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
+# Common birth data: (year, month, day, hour, minute). The place is NOT part of
+# this tuple any more: passing a city name alone let from_birth_data resolve it
+# over the network — its `online` argument defaults to True — so every golden
+# chart was cast at whatever GeoNames answered that minute. See
+# tests/data/golden_places.py for what that cost.
+JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
+PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
+LIVERPOOL = golden_place("Liverpool", "GB")
 
 
 # =============================================================================
@@ -58,106 +66,17 @@ PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
 # =============================================================================
 
 
-def _dms_to_decimal(match: re.Match) -> str:
-    """Convert a DMS string like 23°33'39' to its decimal-degree equivalent."""
-    d, m, s = int(match.group(1)), int(match.group(2)), int(match.group(3))
-    return f"{d + m / 60 + s / 3600:.6f}"
-
-
-# The seconds terminator varies with the SVG context: aspect-grid orbs render
-# it as `&quot;` (XML-escaped double quote), other labels as a bare apostrophe.
-# Both must collapse to decimal degrees, or a 1-arcsecond flip between kernel
-# builds is compared as a bare integer diff of 1 and blows the 0.5 tolerance.
-_DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)(?:&quot;|\"|')")
-
-
-def compare_svg_lines(
-    expected_line: str,
-    actual_line: str,
-    rel_tol: float = 0.5,
-    abs_tol: float = 0.5,
-) -> None:
-    """Compare two SVG lines allowing small floating-point differences.
-
-    Default tolerances (0.5) accommodate minor numerical deltas between
-    ephemeris backends (swisseph vs libephemeris).  Tighten to 1e-10 if
-    you need exact-match regression within a single backend.
-
-    DMS values (e.g. 23°33'39') are first collapsed into a single decimal
-    number so that small arcsecond differences are compared as fractions
-    of a degree rather than as standalone integers.
-    """
-    # Collapse DMS triplets into single decimal-degree values before
-    # extracting numbers, so e.g. 18°19'02' vs 18°19'05' becomes
-    # 18.317222 vs 18.318056 — well within 0.5° tolerance.
-    expected_processed = _DMS_PATTERN.sub(_dms_to_decimal, expected_line)
-    actual_processed = _DMS_PATTERN.sub(_dms_to_decimal, actual_line)
-
-    number_regex = r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?"
-
-    expected_numbers = [float(x) for x in re.findall(number_regex, expected_processed)]
-    actual_numbers = [float(x) for x in re.findall(number_regex, actual_processed)]
-
-    if len(expected_numbers) != len(actual_numbers):
-        # Structural difference (e.g. different overlap resolution across backends).
-        # Accept if the line is broadly similar (same non-numeric skeleton prefix).
-        return
-
-    # First check the non-numeric skeleton — if it differs the lines
-    # represent different SVG elements (e.g. different aspect, different
-    # planet due to cross-backend position shifts).  Treat as structural.
-    expected_text = re.sub(number_regex, "NUM", expected_processed)
-    actual_text = re.sub(number_regex, "NUM", actual_processed)
-    if expected_text != actual_text:
-        return  # structural difference, not a precision issue
-
-    for index, (e, a) in enumerate(zip(expected_numbers, actual_numbers)):
-        if abs(a - e) > max(rel_tol * abs(e), abs_tol):
-            assert False, (
-                f"Numeric values exceed tolerance at position {index}:\n"
-                f"Expected line: {expected_line}\n"
-                f"Actual line:   {actual_line}\n"
-                f"Expected: {e}, Actual: {a}"
-            )
-
-
 def compare_chart_svg(file_name: str, chart_svg: str) -> None:
-    """Compare generated SVG against a baseline file, skipping if missing.
+    """Compare a generated chart against its stored baseline.
 
-    Line counts may differ between ephemeris backends (different viewBox
-    dimensions from slightly different positions).  When line counts
-    match, every line is compared with numeric tolerance.  When they
-    differ, we only verify that the SVG is non-trivially similar
-    (same overall structure) rather than failing outright.
+    One line, because there is one comparison in this repository now. What used to
+    stand here was a copy that returned WITHOUT asserting whenever a line's number
+    count or non-numeric skeleton differed, abandoned the whole file for a +-5%
+    length ratio when the line count changed, skipped on a missing baseline, and
+    allowed fifty per cent on every number it did compare. See
+    tests/data/compare_svg_lines.py for what that let through.
     """
-    baseline = SVG_DIR / file_name
-    # Opt-in regeneration: write the freshly-rendered SVG as the baseline instead
-    # of comparing. This captures the exact file each test actually reads (the
-    # standalone regen scripts use different filenames for some variants), so the
-    # baselines can never drift out of sync with the tests' own rendering.
-    if os.environ.get("KERYKEION_REGEN_BASELINES"):
-        baseline.parent.mkdir(parents=True, exist_ok=True)
-        baseline.write_text(chart_svg, encoding="utf-8")
-        return
-    if not baseline.exists():
-        pytest.skip(f"Baseline not found: {baseline}. Run: poe regenerate:charts")
-
-    chart_svg_lines = chart_svg.splitlines()
-    with open(baseline, "r", encoding="utf-8") as f:
-        file_content_lines = f.read().splitlines()
-
-    if len(chart_svg_lines) != len(file_content_lines):
-        # Cross-backend tolerance: line counts may differ due to viewBox
-        # changes. Verify the SVG is structurally similar (within 5% lines).
-        ratio = len(chart_svg_lines) / max(len(file_content_lines), 1)
-        assert 0.95 <= ratio <= 1.05, (
-            f"Line count too different in {file_name}: "
-            f"Expected ~{len(file_content_lines)} lines, got {len(chart_svg_lines)}"
-        )
-        return
-
-    for expected_line, actual_line in zip(file_content_lines, chart_svg_lines):
-        compare_svg_lines(expected_line, actual_line)
+    compare_svg_file(SVG_DIR / file_name, chart_svg)
 
 
 # =============================================================================
@@ -189,7 +108,7 @@ def _make_john(name_suffix="", **kwargs):
     if key not in _subject_cache:
         name = f"John Lennon{' - ' + name_suffix if name_suffix else ''}"
         _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            name, *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
+            name, *JOHN_LENNON_BIRTH_DATA, **{**LIVERPOOL, "suppress_geonames_warning": True, **kwargs}
         )
     return _subject_cache[key]
 
@@ -204,7 +123,7 @@ def _make_paul(name_suffix="", **kwargs):
     if key not in _subject_cache:
         name = f"Paul McCartney{' - ' + name_suffix if name_suffix else ''}"
         _subject_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            name, *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True, **kwargs
+            name, *PAUL_MCCARTNEY_BIRTH_DATA, **{**LIVERPOOL, "suppress_geonames_warning": True, **kwargs}
         )
     return _subject_cache[key]
 
@@ -219,6 +138,7 @@ def _make_sidereal_subject(name_suffix, sidereal_mode):
             zodiac_type="Sidereal",
             sidereal_mode=sidereal_mode,
             suppress_geonames_warning=True,
+            **LIVERPOOL,
         )
     return _subject_cache[key]
 
@@ -771,9 +691,8 @@ class TestNatalChart:
             8,
             8,
             45,
-            "Atlanta",
-            "US",
             suppress_geonames_warning=True,
+            **golden_place("Atlanta", "US"),
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
@@ -835,6 +754,7 @@ class TestNatalChartSiderealModes:
             zodiac_type="Sidereal",
             sidereal_mode="LAHIRI",
             suppress_geonames_warning=True,
+            **LIVERPOOL,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data, theme="dark").generate_wheel_only_svg_string(style="classic")
@@ -906,9 +826,8 @@ class TestNatalChartLanguages:
             dy,
             hr,
             mn,
-            city,
-            nation,
             suppress_geonames_warning=True,
+            **golden_place(city, nation),
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data, chart_language=lang).generate_svg_string(style="classic")
@@ -1036,10 +955,14 @@ class TestSynastryChart:
         """The score rows print on the panel — data computed AND drawer flag on."""
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul, include_relationship_score=True)
-        # The drawer flag too: the rows print only when both are on, and without
-        # them this baseline pins a plain synastry under a score's name — which
-        # is exactly what it silently was, from the day the flag was born False.
+        # Both switches, or the panel stays empty: include_relationship_score
+        # puts the score in the chart data, show_relationship_score prints it.
+        # With only the first, this test compared two EMPTY text nodes against a
+        # baseline reading "Relationship Score: 12" — and passed, because the
+        # comparator returns without asserting when a line's non-numeric
+        # skeleton differs. Both sides of the a88 merge found this one.
         svg = ChartDrawer(data, show_relationship_score=True).generate_svg_string(style="classic")
+        assert "Relationship Score: 12" in svg
         compare_chart_svg("John Lennon - Relationship Score - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_all_active_points_list(self):
@@ -1590,6 +1513,7 @@ class TestChartOptions:
             "A" * 100,
             *JOHN_LENNON_BIRTH_DATA,
             suppress_geonames_warning=True,
+            **LIVERPOOL,
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
@@ -1634,6 +1558,9 @@ class TestChartOptions:
         compare_chart_svg("Antarctic Subject - Natal Chart - Classic.svg", svg)
 
     @pytest.mark.extended
+    # A 1500 chart: far enough back that the two ephemerides put a point in a
+    # different place and the chart gains or loses an element.
+    @pytest.mark.reference_backend_only
     def test_historical_date(self):
         subj = AstrologicalSubjectFactory.from_birth_data(
             "Historical Subject",
@@ -1642,9 +1569,8 @@ class TestChartOptions:
             15,
             12,
             0,
-            "Florence",
-            "IT",
             suppress_geonames_warning=True,
+            **golden_place("Florence", "IT"),
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
@@ -1658,9 +1584,8 @@ class TestChartOptions:
             4,
             12,
             0,
-            "New York",
-            "US",
             suppress_geonames_warning=True,
+            **golden_place("New York", "US"),
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
@@ -1728,6 +1653,7 @@ class TestPartialViews:
             *JOHN_LENNON_BIRTH_DATA,
             suppress_geonames_warning=True,
             active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+            **LIVERPOOL,
         )
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS)
         svg = ChartDrawer(data, theme="dark", transparent_background=True).generate_wheel_only_svg_string(style="classic")
@@ -1741,6 +1667,7 @@ class TestPartialViews:
             *JOHN_LENNON_BIRTH_DATA,
             suppress_geonames_warning=True,
             active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
+            **LIVERPOOL,
         )
         data = ChartDataFactory.create_natal_chart_data(subj, active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS)
         svg = ChartDrawer(data, theme="classic", transparent_background=True).generate_wheel_only_svg_string(style="classic")
@@ -1988,9 +1915,8 @@ class TestIndicatorsOff:
             9,
             18,
             30,
-            "Liverpool",
-            "GB",
             suppress_geonames_warning=True,
+            **golden_place("Liverpool", "GB"),
         )
         data = ChartDataFactory.create_natal_chart_data(john)
         svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
@@ -2004,9 +1930,8 @@ class TestIndicatorsOff:
             9,
             18,
             30,
-            "Liverpool",
-            "GB",
             suppress_geonames_warning=True,
+            **golden_place("Liverpool", "GB"),
         )
         paul = AstrologicalSubjectFactory.from_birth_data(
             "Paul McCartney",
@@ -2015,9 +1940,8 @@ class TestIndicatorsOff:
             18,
             15,
             30,
-            "Liverpool",
-            "GB",
             suppress_geonames_warning=True,
+            **golden_place("Liverpool", "GB"),
         )
         data = ChartDataFactory.create_synastry_chart_data(john, paul)
         svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
@@ -2031,9 +1955,8 @@ class TestIndicatorsOff:
             9,
             18,
             30,
-            "Liverpool",
-            "GB",
             suppress_geonames_warning=True,
+            **golden_place("Liverpool", "GB"),
         )
         paul = AstrologicalSubjectFactory.from_birth_data(
             "Paul McCartney",
@@ -2042,9 +1965,8 @@ class TestIndicatorsOff:
             18,
             15,
             30,
-            "Liverpool",
-            "GB",
             suppress_geonames_warning=True,
+            **golden_place("Liverpool", "GB"),
         )
         data = ChartDataFactory.create_transit_chart_data(john, paul)
         svg = ChartDrawer(data, show_degree_indicators=False).generate_svg_string(style="classic")
@@ -2468,9 +2390,8 @@ class TestModernChartStyle:
             23,
             10,
             0,
-            "Paris",
-            "FR",
             suppress_geonames_warning=True,
+            **golden_place("Paris", "FR"),
         )
         data = ChartDataFactory.create_natal_chart_data(subj)
         svg = ChartDrawer(data, chart_language="FR").generate_svg_string(style="modern")
