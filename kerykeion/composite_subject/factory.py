@@ -65,6 +65,7 @@ from kerykeion.schemas.literals import (
 from kerykeion.utilities.core import (
     ANGLE_CUSP_INDEX,
     angle_is_its_cusp,
+    coincident_cusp_groups,
     cusps_are_a_house_division,
     house_spans,
     get_kerykeion_point_from_degree,
@@ -914,6 +915,11 @@ class CompositeSubjectFactory:
         # happen. Worse, on a ring with gaps every house name is the last-passed-
         # cusp reading rather than a containment, and nothing said so.
         ring_is_a_division = cusps_are_a_house_division(house_degree_list_ut)
+        # The midpoint ring is a ring of its own, and it says which of its houses
+        # have no width the same way a natal chart does: two parents cast on
+        # crowded rings put their midpoints on one longitude too, and the model
+        # field promises to be empty only when the twelve cusps are distinct.
+        self.coincident_house_cusps = coincident_cusp_groups(house_degree_list_ut)
         if frame_is_coherent:
             self.house_frame: CompositeHouseFrame = "anchored"
         elif ring_is_a_division:

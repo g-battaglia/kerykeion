@@ -32,9 +32,10 @@ from kerykeion.chart_data.factory import ChartDataFactory
 
 # Import test subject definitions
 from tests.data.golden_places import golden_place
-from tests.data.regeneration_guard import require_library_from_this_checkout
+from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend
 
 require_library_from_this_checkout(__file__)
+require_the_baseline_backend()
 from tests.data.test_subjects_matrix import (
     HOUSE_SYSTEM_NAMES,
     SIDEREAL_THEME_COMBOS,

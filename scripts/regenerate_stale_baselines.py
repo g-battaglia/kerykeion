@@ -20,12 +20,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 # three sidereal-by-theme pairs against the ten the test asks for, which is the
 # same drift, in the same shape, one directory over.
 from tests.data.golden_places import golden_place  # noqa: E402
-from tests.data.regeneration_guard import require_library_from_this_checkout  # noqa: E402
+from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend  # noqa: E402
 from tests.data.test_subjects_matrix import (  # noqa: E402
     HOUSE_SYSTEM_NAMES,
     SIDEREAL_THEME_COMBOS,
 )
 require_library_from_this_checkout(__file__)
+require_the_baseline_backend()
 
 from kerykeion import AstrologicalSubjectFactory, ChartDrawer  # noqa: E402
 from kerykeion.chart_data.factory import ChartDataFactory

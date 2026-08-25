@@ -1110,7 +1110,7 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             "houses between them have no width and no point can ever be in them. "
             "Empty for every chart whose twelve cusps are twelve distinct points, "
             "which is every ordinary chart. Some systems crowd cusps together at "
-            "extreme latitudes — Sunshine at 74.25 degrees north puts the third "
+            "extreme latitudes — Sunshine at 74.25 degrees north puts the second "
             "through the sixth on one longitude — and the reference ephemeris "
             "returns the same ring, so the cusps are reported as computed rather "
             "than repaired; this says when that has happened. Added in v6.0."

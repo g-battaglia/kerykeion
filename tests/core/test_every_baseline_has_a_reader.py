@@ -8,15 +8,20 @@ records the library as it was the day it was written and says nothing when that
 changes, which is how 73 files came to be drawing a glyph the library no longer
 had and 51 went stale on a panel row.
 
-This is the gate. It does not run the suite: it asks, statically, whether each file
-is named by something. A name can be a literal in a test, or a name the parametrized
-matrix builds from its own subject lists. Anything else has to be listed below with
-a reason, and a second test refuses a reason that has stopped being true.
+This is the gate. It asks, for each file, whether a test hands it to the
+comparison. Most of the answer comes from running the golden tests with the
+comparison replaced by a recorder (tests/data/golden_drive.py); the rest from the
+source lines that name a baseline where they read or compare it — a literal in a
+docstring, or a key in another gate's exemption table, does not count, because a
+file that is only *mentioned* has no reader either. Anything else has to be listed
+below with a reason, and a second test refuses a reason that has stopped being true.
 """
 
+import functools
 import re
 from pathlib import Path
 
+from tests.data.golden_drive import drive_every_golden_test
 from tests.data.test_subjects_matrix import GEOGRAPHIC_SUBJECTS, TEMPORAL_SUBJECTS
 
 SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
@@ -28,14 +33,23 @@ TESTS_ROOT = Path(__file__).parent.parent
 #: can act on, or write the test instead.
 BASELINES_WITH_NO_READER: dict[str, str] = {}
 
+#: A source line counts as reading a baseline only if it hands the name to a
+#: comparison or builds a path to the file. The first version of this scan took
+#: any quoted "….svg" anywhere under tests/, so the four progression baselines
+#: were "read" by being keys in test_baseline_freshness.py's cannot-regenerate
+#: table, and deleting their actual tests left the gate green.
+_A_LINE_THAT_READS = re.compile(r"compare_\w*\(|SVG_DIR|read_text\(|\bopen\(")
 
-def _names_written_as_literals() -> set[str]:
-    """Every "....svg" that appears verbatim in a test source."""
+
+def _names_read_on_a_source_line() -> set[str]:
+    """Every "....svg" that appears on a line that compares it or opens it."""
     found: set[str] = set()
     for source in TESTS_ROOT.rglob("*.py"):
-        text = source.read_text(encoding="utf-8")
-        found |= set(re.findall(r'"([^"\n]+\.svg)"', text))
-        found |= set(re.findall(r"'([^'\n]+\.svg)'", text))
+        for line in source.read_text(encoding="utf-8").splitlines():
+            if not _A_LINE_THAT_READS.search(line):
+                continue
+            found |= set(re.findall(r'"([^"\n]+\.svg)"', line))
+            found |= set(re.findall(r"'([^'\n]+\.svg)'", line))
     return {Path(name).name for name in found}
 
 
@@ -69,113 +83,28 @@ def _names_gated_by_ephemeris_tier() -> set[str]:
     }
 
 
-def _parameter_sets(function):
-    """The argument tuples a @pytest.mark.parametrize'd test would be called with.
-
-    Only what this gate needs: one or more parametrize marks, positional argnames,
-    plain iterables of values. A test using anything richer falls out of the driver
-    and its baselines have to be named some other way, which the assertion says.
-    """
-    marks = [
-        mark
-        for mark in getattr(function, "pytestmark", ())
-        if mark.name == "parametrize"
-    ]
-    if not marks:
-        return [()], []
-    sets = [()]
-    names: list[str] = []
-    for mark in reversed(marks):
-        argnames, argvalues = mark.args[0], mark.args[1]
-        keys = [key.strip() for key in argnames.split(",")] if isinstance(argnames, str) else list(argnames)
-        names.extend(keys)
-        expanded = []
-        for existing in sets:
-            for value in argvalues:
-                row = tuple(value) if len(keys) > 1 else (value,)
-                expanded.append(existing + row)
-        sets = expanded
-    return sets, names
-
-
 def _names_the_golden_tests_ask_for() -> set[str]:
     """The baselines the golden tests actually reach for, by running them.
 
-    Most golden tests build their filename in an f-string from a loop variable or a
-    parametrized case — a theme, a language, a house system, a sidereal mode — so
-    reading the sources for literals finds barely half of them. The reliable
-    question is which files the comparison is handed, so ask it: drive the golden
-    tests with the comparison replaced by a recorder.
-
     Failures are irrelevant here. A test that fails still names the baseline it
-    wanted, and its own test is what reports the failure.
+    wanted, and its own test is what reports the failure; a test that fails before
+    it gets there names nothing, and its baseline shows up below as unread — which
+    is the truth.
     """
-    import importlib
-    import inspect
-
-    import tests.data.compare_svg_lines as comparison
-
     asked: set[str] = set()
 
-    def recording(baseline_path, generated_svg, **kwargs):
+    def recording(baseline_path, _generated_svg, **_kwargs):
         asked.add(Path(baseline_path).name)
 
-    modules = [
-        importlib.import_module(name)
-        for name in (
-            "tests.core.test_chart_drawer",
-            "tests.core.test_optional_mark_baselines",
-            "tests.core.test_chart_parametrized",
-            "tests.core.test_bce_dates",
-        )
-    ]
-    original = comparison.compare_svg_file
-    comparison.compare_svg_file = recording
-    patched = [module for module in modules if hasattr(module, "compare_svg_file")]
-    for module in patched:
-        module.compare_svg_file = recording
-    drawer = modules[0]
-    cached_subjects = dict(drawer._subject_cache)
-
-    def drive(function, instance):
-        offset = 1 if instance is not None else 0
-        parameter_sets, names = _parameter_sets(function)
-        if len(inspect.signature(function).parameters) - offset != len(names):
-            return  # takes fixtures this driver cannot supply
-        for arguments in parameter_sets:
-            try:
-                function(instance, *arguments) if instance is not None else function(*arguments)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except BaseException:
-                # BaseException, not Exception: a driven test that calls pytest.skip
-                # — the deep-historical charts do, on a kernel that cannot reach the
-                # date — raises Skipped, which is not an Exception and would end this
-                # gate as skipped instead of letting it record the other 300 names.
-                pass
-
-    try:
-        for module in modules:
-            for attribute_name in dir(module):
-                attribute = getattr(module, attribute_name)
-                if inspect.isclass(attribute) and attribute_name.startswith("Test"):
-                    for name in dir(attribute):
-                        if name.startswith("test_"):
-                            drive(getattr(attribute, name), attribute())
-                elif inspect.isfunction(attribute) and attribute_name.startswith("test_"):
-                    drive(attribute, None)
-    finally:
-        comparison.compare_svg_file = original
-        for module in patched:
-            module.compare_svg_file = original
-        drawer._subject_cache.clear()
-        drawer._subject_cache.update(cached_subjects)
+    drive_every_golden_test(recording)
     return asked
 
 
-def _baselines_with_a_reader() -> set[str]:
-    return (
-        _names_written_as_literals()
+@functools.lru_cache(maxsize=1)
+def _baselines_with_a_reader() -> frozenset[str]:
+    # Cached: driving the golden suite costs seconds, and both tests below ask.
+    return frozenset(
+        _names_read_on_a_source_line()
         | _names_gated_by_ephemeris_tier()
         | _names_the_golden_tests_ask_for()
     )

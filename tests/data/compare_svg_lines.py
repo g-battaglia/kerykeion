@@ -54,6 +54,12 @@ DEFAULT_ABS_TOL = 1e-4
 _DMS_PATTERN = re.compile(r"(\d+)°(\d+)'(\d+)(?:&quot;|\"|')")
 _NON_VISUAL_KR_ATTR_PATTERN = re.compile(r"\s+kr:c[xy]=(['\"])[^'\"]*\1")
 _NUMBER_PATTERN = r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?"
+# A hex colour is not a number, but `#000e10` reads as `000e10` — zero times ten
+# to the tenth — and `#1e9999` as an infinity that fails against itself. Each
+# hex digit is rewritten as a letter before the numbers are read, so a colour is
+# compared as text, exactly, and never as a value.
+_HEX_COLOUR_PATTERN = re.compile(r"#([0-9a-fA-F]{3,8})\b")
+_HEX_DIGIT_AS_LETTER = str.maketrans("0123456789", "ghijklmnop")
 
 
 def _dms_to_decimal(match: re.Match) -> str:
@@ -65,6 +71,11 @@ def _dms_to_decimal(match: re.Match) -> str:
 def _strip_non_visual_metadata_attrs(svg_line: str) -> str:
     """Remove metadata-only attributes that do not affect rendered SVG geometry."""
     return _NON_VISUAL_KR_ATTR_PATTERN.sub("", svg_line)
+
+
+def _hex_colours_as_letters(svg_line: str) -> str:
+    """Rewrite every ``#rrggbb`` so that no digit in it can be read as a number."""
+    return _HEX_COLOUR_PATTERN.sub(lambda m: "#" + m.group(1).translate(_HEX_DIGIT_AS_LETTER), svg_line)
 
 
 def active_backend() -> str:
@@ -107,8 +118,8 @@ def compare_svg_lines(
         where: File name, for the failure message.
     """
     location = f" in {where}" if where else ""
-    expected_line = _strip_non_visual_metadata_attrs(expected_line)
-    actual_line = _strip_non_visual_metadata_attrs(actual_line)
+    expected_line = _hex_colours_as_letters(_strip_non_visual_metadata_attrs(expected_line))
+    actual_line = _hex_colours_as_letters(_strip_non_visual_metadata_attrs(actual_line))
 
     expected_processed = _DMS_PATTERN.sub(_dms_to_decimal, expected_line)
     actual_processed = _DMS_PATTERN.sub(_dms_to_decimal, actual_line)
@@ -162,6 +173,11 @@ def compare_svg_file(
     name = baseline_path.name
 
     if os.environ.get("KERYKEION_REGEN_BASELINES"):
+        assert numbers_are_comparable(), (
+            f"Refusing to rewrite {name}: the baselines are {BASELINE_BACKEND} charts and "
+            f"this run is on {active_backend()}. A baseline written by the other backend "
+            f"would fail every run on the one it claims to come from."
+        )
         baseline_path.parent.mkdir(parents=True, exist_ok=True)
         baseline_path.write_text(generated_svg, encoding="utf-8")
         return

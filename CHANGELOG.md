@@ -6,7 +6,7 @@
 
 - **An angle could be filed in the wrong house, and twelve numbers could not say
   otherwise.** Where a house system brings several cusps onto one longitude —
-  Sunshine at 74.25 degrees north puts the third through the sixth on
+  Sunshine at 74.25 degrees north puts the second through the sixth on
   316.971024 — the shared reader answers with the lowest-numbered of them, so an
   Imum Coeli that IS the fourth cusp came back in the third, in the model, the
   report and the context alike. The nearest-cusp rule added in a87 settles a crowd
@@ -62,6 +62,17 @@
   `tests/data/golden_places.py` and `test_golden_charts_are_hermetic.py` fails if a
   golden chart reaches for the network.
 
+  The first version of that guard drove one module and skipped every parametrized
+  test, which is where twenty-nine of the network calls still were — the nine
+  language charts and the twenty cross-combination charts — and
+  `scripts/generate_modern_baselines.py` still resolved Liverpool too. Review
+  found them. Every golden place is pinned now, in all four golden modules and all
+  three regeneration scripts; the guard drives every golden test, every case,
+  through `tests/data/golden_drive.py` with a comparison that records nothing and
+  raises nothing, and it closes the second door as well — the timezone-for-
+  coordinates lookup `from_birth_data` opens when it has a latitude and longitude
+  but no `tz_str`.
+
 - **Eighteen baselines were read by nothing.** The charts demonstrating the
   optional marks — the station glyph, the out-of-bounds badge, the separating
   aspects, the ayanamsa offset, the polar substitution note, the relationship
@@ -69,6 +80,18 @@
   no test. They have readers now, and
   `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline
   loses one.
+
+  Its first version counted a *mention* as a reader: any quoted `….svg` anywhere
+  under `tests/`, so the four progression baselines were "read" by being keys in
+  the freshness gate's exemption table, and deleting their tests left the gate
+  green. A source line now counts only where it compares or opens the file, and
+  the driver calls `setup_class` as pytest would. Proven by deleting
+  `TestProgressionChart` from the source: the gate names all four.
+
+  Three of the new optional-mark tests asserted a word the chart carried anyway
+  — "Relationship Score" is in the subject's name, `kr:motionstate` is on every
+  chart — so a mark that silently stopped drawing would have passed. Each now
+  asserts something only the mark draws, found by rendering with and without it.
 
 - **Two charts wrote the same baseline file.** `save_svg` builds its default name
   from the subject's name, so a subject named "John Lennon - Relationship Score"
@@ -83,12 +106,36 @@
   code — including its uncommitted work — while writing into the worktree. Sixty-four
   baselines were produced that way while this branch was being written, looked like
   months of accumulated staleness, and were wrong. The scripts check before they
-  write.
+  write — and they check the backend too: a regeneration on swisseph would have
+  written swisseph charts under a constant that declares them libephemeris, and
+  the comparator's own regeneration path refuses the same way.
 
-- **Four progression baselines and two BCE ones were months stale.** They predate
-  the accessibility attributes (`role`, `aria-labelledby`, `<desc>`) and the
-  contrast-adjusted palette. The tolerant comparator could not see it; nothing else
-  in the chart changed.
+- **Nine baselines were months stale, and nine were listed as unregenerable.** Four
+  progression charts, the Ptolemaic BCE pair, the 500 BC progression, and two
+  baselines — "Ancient Greece 500BC - Synastry Chart" and its transit twin — that
+  no test read and that `test_baseline_freshness.py` exempted as "second subject
+  not recorded". Their panels record both subjects: 15 June 500 BC at noon in
+  Athens, and a "Transit Partner" cast on 1 January 1970. They have readers in
+  `test_bce_dates.py` now; the BCE natal and progression readers there, which
+  compared a ±5% line count and skipped on a missing file, go through the single
+  comparator; and `CANNOT_REGENERATE_HERE` is empty, because every one of its
+  nine entries is read by a test that refreshes it under
+  `KERYKEION_REGEN_BASELINES`. The refreshed files carry what the drawer has
+  changed since they were written — the accessibility attributes, the palette,
+  the modern glyph scale and the house-sector arcs — which is what a strict
+  comparator is for.
+
+- **A midpoint composite declared no coincident cusps** even when both parents stood
+  on the crowded ring and its midpoints did too; the Davison, cast as an ordinary
+  chart, declared them. The composite factory computes the groups on its own ring
+  now, so the field's promise — empty only when the twelve cusps are distinct —
+  holds for every model that carries it.
+
+- **A hex colour read as a number** in the comparator: `#000e10` against `#000e20`
+  passed as zero times ten to the tenth, and `#1e9999` failed against itself as an
+  infinity. Latent — no colour in the palette hits either — and closed: hex digits
+  are rewritten as letters before the numbers are read, so a colour is compared as
+  text, exactly.
 
 ### Added
 

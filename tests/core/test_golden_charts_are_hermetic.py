@@ -13,14 +13,24 @@ between runs. A baseline is a fixture; a fixture that a remote service can chang
 under you is not one, and no tolerance can be chosen against a target that does
 not hold still.
 
-This is the guard: with the network refused, the golden charts must still be
-castable. Anything that reaches for GeoNames fails here rather than passing today
-and drifting tomorrow. The places live in tests/data/golden_places.py.
+This is the guard: with the network refused, every golden test in every golden
+module must still cast its chart. Anything that reaches for GeoNames fails here
+rather than passing today and drifting tomorrow. The places live in
+tests/data/golden_places.py.
+
+The first version of this guard drove one module and skipped every parametrized
+test, which is where twenty-nine of the network calls were — the language charts
+and the cross-combination matrix. It also drove the tests through the real
+comparison, whose ``pytest.skip`` on a foreign backend ended the guard as skipped
+at the first chart. Now it drives all four modules, every case, through a
+comparison that records nothing and raises nothing.
 """
 
 import pytest
 
 from kerykeion.geonames.fetcher import FetchGeonames
+
+from tests.data.golden_drive import drive_every_golden_test
 
 
 class _NetworkWasAsked(AssertionError):
@@ -36,7 +46,10 @@ def refuse_the_network(monkeypatch):
             "place comes off the network is a fixture a remote service can change."
         )
 
+    # Both doors: the city lookup, and the timezone-for-coordinates lookup that
+    # from_birth_data opens when it has a latitude and longitude but no tz_str.
     monkeypatch.setattr(FetchGeonames, "get_serialized_data", _refuse)
+    monkeypatch.setattr(FetchGeonames, "get_timezone_for_coordinates", _refuse)
     return _refuse
 
 
@@ -62,37 +75,20 @@ def test_the_golden_subjects_are_cast_without_the_network(refuse_the_network):
 
 
 def test_every_golden_chart_test_survives_a_refused_network(refuse_the_network):
-    """The whole file, not only its two helpers.
+    """Every test in every golden module, every parametrized case."""
+    asked_the_network: list[str] = []
 
-    Four tests spread the birth-data tuple themselves rather than going through a
-    helper, and when the place came out of that tuple they were hermetic by
-    accident. They are hermetic on purpose now, and this is what says so.
-    """
-    import inspect
+    def record_nothing(_baseline_path, _generated_svg, **_kwargs):
+        pass
 
-    import tests.core.test_chart_drawer as golden
+    def note_network_calls(qualified_name: str, failure: BaseException) -> None:
+        if isinstance(failure, _NetworkWasAsked):
+            asked_the_network.append(qualified_name)
+        # Any other failure is that test's business, not this one's.
 
-    golden._subject_cache.clear()
-    failures = []
-    try:
-        for class_name in dir(golden):
-            candidate = getattr(golden, class_name)
-            if not inspect.isclass(candidate) or not class_name.startswith("Test"):
-                continue
-            for method_name in dir(candidate):
-                if not method_name.startswith("test_"):
-                    continue
-                method = getattr(candidate, method_name)
-                if len(inspect.signature(method).parameters) > 1:
-                    continue  # takes fixtures; not ours to construct
-                try:
-                    method(candidate())
-                except _NetworkWasAsked:
-                    failures.append(f"{class_name}::{method_name}")
-                except Exception:
-                    # Any other failure is that test's business, not this one's.
-                    pass
-    finally:
-        golden._subject_cache.clear()
+    drive_every_golden_test(record_nothing, on_failure=note_network_calls)
 
-    assert failures == []
+    assert sorted(set(asked_the_network)) == [], (
+        "These golden tests asked GeoNames where their chart was cast:\n  "
+        + "\n  ".join(sorted(set(asked_the_network)))
+    )

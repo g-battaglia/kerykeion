@@ -474,7 +474,7 @@ def angle_house_identities(
     angle is at the moment the cusps are computed — so it says so, instead of
     handing the longitude back to a reader that has to find it again. The reader
     cannot always succeed: above the polar circle several systems crowd cusps onto
-    one longitude, and Sunshine at 74.25 degrees north puts the third through the
+    one longitude, and Sunshine at 74.25 degrees north puts the second through the
     sixth on 316.971024. The Imum Coeli IS the fourth cusp there, bit for bit, and
     scanning twelve identical numbers answers with the earliest of them — the
     third house, in the report and in the context both.
@@ -598,7 +598,7 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     # taking the first match filed it in the eighth.
     #
     # Nearest is as far as twelve numbers can take it. Where several cusps are
-    # bit-identical — Sunshine at 74.25 degrees north puts the third through the
+    # bit-identical — Sunshine at 74.25 degrees north puts the second through the
     # sixth on one longitude — they are all equally near, and no rule written over
     # this list can say which of them a point standing there opens. The answer is
     # not in the list: it is in what the point IS, which the ephemeris knows when
