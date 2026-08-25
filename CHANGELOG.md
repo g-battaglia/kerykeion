@@ -31,9 +31,19 @@
   ("Solar Return Lunar phase"), the way the transit and progression panels, in
   this same row, always have.
 
-- **The phase row had never been trimmed to fit.** In Hindi it ran past the
-  graphics in fourteen of its sixteen phase names. It is trimmed to the room its
-  own row has, like the house and relationship-score rows beside it.
+- **The phase row had never been trimmed to fit.** Measured in Times, Helvetica
+  and Arial advances, a Russian or French return line reaches 274px against the
+  229 its row clears — 21 of 280 language-by-phase-by-wheel combinations run
+  past the graphics. It is trimmed now to the room its own row has, like the
+  house and relationship-score rows beside it, and the wheel's name is what
+  pays: the phase keeps its own words, following the rule the diurnality row
+  already states.
+
+- **The dual-wheel diurnality row was budgeted against the wrong row.** It is
+  allocated by measuring the space the wheel leaves, and that space depends on
+  which row the line lands in — the chord narrows going up, 200px on row 4
+  against 229 on row 5. The builder assumed row 5 whatever the panel did with
+  it. Now the row it lands on is the row it is measured against.
 
 ## [6.0.0a87] - 2026-08-25
 

@@ -707,7 +707,9 @@ class InfoSectionBuilder:
     def build_lunar_phase_info_line(self, subject, prefix: str = "") -> str:
         """The phase row on its own, for panels that lay their rows out as a list."""
         row: dict = {}
-        self.build_lunar_phase_info(row, subject, prefix=prefix, key_phase="row")
+        # No row index: the natal panel places this line itself and trims it to
+        # its own budget, drop included, once it knows which slot it landed in.
+        self.build_lunar_phase_info(row, subject, prefix=prefix, key_phase="row", row_index=None)
         return row.get("row", "")
 
     def _translated_house_system(self, subject, terse: bool = False) -> str:
@@ -812,6 +814,7 @@ class InfoSectionBuilder:
         subject,
         prefix: str = "",
         key_phase: str = "bottom_left_5",
+        row_index: Optional[int] = 5,
     ) -> None:
         """Populate template_dict with the lunar phase name, if available.
 
@@ -837,15 +840,29 @@ class InfoSectionBuilder:
         phase_name = subject.lunar_phase.moon_phase_name
         phase_key = phase_name.lower().replace(" ", "_")
 
-        row = f"{prefix}{phase_label}: {self._translate(phase_key, phase_name)}"
-        # Trimmed to the width the wheel leaves this row, the way the house and
-        # relationship-score rows already are. This line had never been trimmed,
-        # and in Hindi it ran past the graphics in fourteen of its sixteen phase
-        # names — a dual panel's line carries the wheel's name as well, and the
-        # chord is the scarce thing on this panel.
-        match = re.fullmatch(r"bottom_left_(\d)", key_phase)
-        if match:
-            row = truncate_to_width(row, info_row_clear_width(int(match.group(1))))
+        named_phase = f"{phase_label}: {self._translate(phase_key, phase_name)}"
+        row = f"{prefix}{named_phase}"
+
+        # Trimmed to the width the wheel leaves the row it lands on, the way the
+        # house and relationship-score rows beside it already are: measured in
+        # Times, Helvetica and Arial advances, a Russian or French return line
+        # reaches 274px against the 229 the last row clears.
+        #
+        # The wheel's name comes off first and the phase keeps its own words,
+        # following the rule the diurnality row two lines down states outright:
+        # the values are what the row exists to say, so the qualifier in front
+        # of them is what pays. Cutting from the end instead spends the budget
+        # on "Solar Return Lunar phase:" and amputates the one word a reader
+        # came for.
+        if row_index is not None:
+            budget = info_row_clear_width(row_index)
+            if estimate_text_width(row) > budget:
+                room = budget - estimate_text_width(named_phase)
+                row = f"{truncate_to_width(prefix, room)}{named_phase}" if room > 0 else named_phase
+                # Still over: the phase alone does not fit, and a row drawn
+                # under the graphics is worse than a shortened one.
+                if estimate_text_width(row) > budget:
+                    row = truncate_to_width(row, budget)
         template_dict[key_phase] = row
 
     def _diurnality_value(self, subject) -> str:
@@ -954,7 +971,13 @@ class InfoSectionBuilder:
         second_utc = getattr(second, "iso_formatted_utc_datetime", None)
         return first is not second and first_utc is not None and first_utc == second_utc
 
-    def build_dual_diurnality_info(self, first: tuple, second: tuple, second_may_be_directed: bool = False) -> str:
+    def build_dual_diurnality_info(
+        self,
+        first: tuple,
+        second: tuple,
+        second_may_be_directed: bool = False,
+        row_index: int = 5,
+    ) -> str:
         """Build one diurnality line covering both wheels of a dual chart.
 
         Diurnality belongs to a single chart: the same placement reads
@@ -1019,13 +1042,19 @@ class InfoSectionBuilder:
         # earlier version of this guard compared `fixed` and let a language pack
         # with wide values render 260px into a 228px row.
         floor = sum(estimate_text_width(truncate_to_width(name, 0.0)) for name, _ in labelled)
-        if fixed + floor > DIURNALITY_ROW_CLEAR_WIDTH:
+        # The row this line lands on, not row 5 by assumption. The chord narrows
+        # going up — row 4 clears 200px against row 5's 229 — so a panel that
+        # puts this line higher gets a smaller budget, and the constant stays
+        # the ceiling for the row it was measured on. Allocating row 5's width
+        # into row 4 is 28px of text drawn under the wheel.
+        budget = min(DIURNALITY_ROW_CLEAR_WIDTH, info_row_clear_width(row_index))
+        if fixed + floor > budget:
             # No shipped translation gets here — the widest pair of values is a
             # third of the row — but a caller's language pack can. Drop the line:
             # two bare values on a dual chart are ambiguous, so it is worth less
             # than the graphics it would otherwise sit on.
             return ""
-        names_budget = DIURNALITY_ROW_CLEAR_WIDTH - fixed
+        names_budget = budget - fixed
 
         # Water-filling: a name that wants less than its equal share hands the
         # remainder to the one that wants more, so "Natal" beside a long name
@@ -1049,7 +1078,7 @@ class InfoSectionBuilder:
         # plus a name of ǅ-digraphs) the row came out 5px over. No shipped
         # translation reaches it, but the module claims it may only ever
         # over-estimate, and an invariant with a known hole is not one.
-        return "" if estimate_text_width(row) > DIURNALITY_ROW_CLEAR_WIDTH else row
+        return "" if estimate_text_width(row) > budget else row
 
     def build_location_coordinates(
         self,
@@ -1456,6 +1485,7 @@ class TransitChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_4"] = builder.build_dual_diurnality_info(
             (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
             (d.second_obj, self._translate("chart_info_transit_label", "Transit")),
+            row_index=4,
         )
         if d.second_obj is not None and hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
             builder.build_lunar_phase_info(
@@ -1463,12 +1493,16 @@ class TransitChartRenderer(BaseChartRenderer):
                 d.second_obj,
                 prefix=f"{self._translate('Transit', 'Transit')} ",
                 key_phase="bottom_left_5",
+                row_index=5,
             )
         else:
             template_dict["bottom_left_5"] = ""
 
-        # Moon phase visualization from transit subject
-        if d.second_obj is not None and getattr(d.second_obj, "lunar_phase", None):
+        # Moon phase visualization from transit subject. The same question the
+        # caption row asks — `is not None`, not truthiness — so a present but
+        # empty phase cannot write a line naming a disc that is never drawn;
+        # the row and the picture it captions must appear together or not at all.
+        if d.second_obj is not None and getattr(d.second_obj, "lunar_phase", None) is not None:
             template_dict["makeLunarPhase"] = make_lunar_phase(
                 d.second_obj.lunar_phase["degrees_between_s_m"],  # type: ignore[index]
                 d.geolat,
@@ -1618,6 +1652,7 @@ class ProgressionChartRenderer(TransitChartRenderer):
                 # This renderer draws both secondary progressions and solar arc
                 # directions, and only the second is symbolic.
                 second_may_be_directed=True,
+                row_index=4,
             )
             if hasattr(d.second_obj, "lunar_phase") and d.second_obj.lunar_phase is not None:
                 builder = InfoSectionBuilder(d)
@@ -1626,6 +1661,7 @@ class ProgressionChartRenderer(TransitChartRenderer):
                     d.second_obj,
                     prefix=f"{self._translate('progression', 'Progression')} ",
                     key_phase="bottom_left_5",
+                    row_index=5,
                 )
 
 
@@ -1928,7 +1964,7 @@ class SingleReturnChartRenderer(BaseChartRenderer):
         # the sect of the return moment, not of the nativity behind it.
         template_dict["bottom_left_3"] = builder.build_diurnality_info(d.first_obj)
         template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
-        builder.build_lunar_phase_info(template_dict, d.first_obj, key_phase="bottom_left_5")
+        builder.build_lunar_phase_info(template_dict, d.first_obj, key_phase="bottom_left_5", row_index=5)
 
         # Lunar phase visualization
         d._setup_lunar_phase(template_dict, d.first_obj, d.geolat)
@@ -2072,17 +2108,30 @@ class DualReturnChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_4"] = builder.build_dual_diurnality_info(
             (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
             (d.second_obj, self._return_label(d.second_obj)),
+            row_index=4,
         )
         # The phase of the RETURN, not of the nativity behind it. This chart is
         # cast on the return moment and the row beside this one names both
         # wheels apart, so an unqualified "Lunar phase" carrying the natal sky
         # read as the return's own. The transit and progression panels, in this
         # same row, have always taken the second wheel and said so.
+        # "Lunar Return Lunar phase" says the same word twice, and so does
+        # "Retour Lunaire Phase Lunaire". Any word the label already carries is
+        # dropped from the wheel's name in front of it, leaving "Return Lunar
+        # phase" — still unambiguous about which of the two wheels it reads,
+        # which is the whole reason the qualifier is there. A solar return keeps
+        # its name whole, having nothing in common with the label.
+        label_words = {w.casefold() for w in self._translate("lunar_phase", "Lunar Phase").split()}
+        wheel = " ".join(
+            word for word in self._return_label(d.second_obj).split()
+            if word.casefold() not in label_words
+        )
         builder.build_lunar_phase_info(
             template_dict,
             d.second_obj,
-            prefix=f"{self._return_label(d.second_obj)} ",
+            prefix=f"{wheel} " if wheel else "",
             key_phase="bottom_left_5",
+            row_index=5,
         )
 
         # Lunar phase visualization

@@ -23,6 +23,7 @@ Usage:
     pytest tests/core/test_diurnality_svg.py -v
 """
 
+import functools
 import json
 import re
 import unicodedata
@@ -49,7 +50,6 @@ from kerykeion.charts.drawer import (
     _INFO_ROW_STEP,
     info_row_clear_width,
 )
-from kerykeion.charts.utils import estimate_text_width
 
 
 def _row_re(index: int):
@@ -165,10 +165,24 @@ def _row(svg: str, index: int | None = None) -> str:
         if found and any(word in found.group(1) for word in _DIURNALITY_WORDS):
             return found.group(1)
     # A custom language pack spells the two values however it likes, so nothing
-    # above matches. On every chart type but natal the line is still the last
-    # one written, and the rows pack downwards: read the last filled slot.
+    # above matches. The rows pack downwards, and on every chart type but natal
+    # this line is the last one that is not the phase — the phase closes the
+    # block so the disc drawn under it has the right caption. Read the last
+    # filled slot, skipping that one.
     filled = [m.group(1) for slot in range(6) if (m := _row_re(slot).search(svg)) and m.group(1)]
-    return filled[-1] if filled else ""
+    for text in reversed(filled):
+        if not _is_phase_row(text):
+            return text
+    return ""
+
+
+def _row_slot(svg: str, text: str) -> int:
+    """Which of the six slots *text* was drawn in."""
+    for slot in range(6):
+        match = _row_re(slot).search(svg)
+        if match and match.group(1) == text:
+            return slot
+    raise AssertionError(f"row not found in any slot: {text!r}")
 
 
 #: Every word any shipped language uses for the two values of the line.
@@ -240,21 +254,26 @@ def _disc_to_its_own_caption(svg: str) -> float:
     block, moon = (float(v) for v in _layout(svg))
     rows = {text: block + float(y) for text, y in
             ((t, y) for t, y in _filled_row_baselines(svg).items())}
-    caption = [y for text, y in rows.items() if _PHASE_LABELS.intersection(text.split())]
+    caption = [y for text, y in rows.items() if _is_phase_row(text)]
     assert caption, f"no phase row to caption the disc: {list(rows)}"
     target = caption[0]
     return target - (moon + 20.0) if moon + 20.0 <= target else moon - target
 
 
-#: Every translation of the phase label, so the row can be found in any language
-#: without hard-coding English. Read from the translation table, not from the
-#: drawing code these tests measure.
+#: Every translation of the phase label, whole. Matching on single words instead
+#: finds the wrong row: "Lunar" is in the English label and also in "Lunar
+#: Return", which names a wheel on the diurnality line one row up, so a lunar
+#: return would have had the tests reading that row as the phase's.
 _PHASE_LABELS = {
-    word
+    str(settings.get("lunar_phase", ""))
     for settings in LANGUAGE_SETTINGS.values()
-    for word in str(settings.get("lunar_phase", "")).split()
-    if word
+    if settings.get("lunar_phase")
 }
+
+
+def _is_phase_row(text: str) -> bool:
+    """Whether *text* is the row naming the lunar phase, in any language."""
+    return any(label in text for label in _PHASE_LABELS)
 
 
 def _solar_return():
@@ -270,6 +289,33 @@ def _solar_return():
         online=False,
     )
     return natal, factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+
+
+def _translate_phase_name(subject, language: str) -> str:
+    """The phase's name as the panel spells it in *language*."""
+    key = subject.lunar_phase.moon_phase_name.lower().replace(" ", "_")
+    return LANGUAGE_SETTINGS[language].get(key, subject.lunar_phase.moon_phase_name)
+
+
+def _lunar_return():
+    """The next lunar return of the same nativity.
+
+    Kept beside the solar one because it is the case where the wheel's name and
+    the phase label share a word — "Lunar Return" against "Lunar phase" — which
+    is what made the row stutter and what a label matched word by word finds in
+    the wrong place.
+    """
+    natal = _subject()
+    factory = PlanetaryReturnFactory(
+        natal,
+        city="Liverpool",
+        nation="GB",
+        lat=53.41058,
+        lng=-2.97794,
+        tz_str="Europe/London",
+        online=False,
+    )
+    return factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
 
 
 class TestDiurnalityValue:
@@ -484,10 +530,16 @@ class TestDiurnalityOnDualCharts:
             ChartDataFactory.create_return_chart_data(*_solar_return()),
         ]
         for data in widest:
-            row = _row(_render(data, chart_language=language))
+            svg = _render(data, chart_language=language)
+            row = _row(svg)
+            # Against the row this line actually lands on. The dual panels moved
+            # it up one slot when the phase took the last one, and the chord
+            # narrows going up: measuring every panel against row 5's width let
+            # a row 28px too wide for its own slot keep this guard green.
+            budget = min(DIURNALITY_ROW_CLEAR_WIDTH, info_row_clear_width(_row_slot(svg, row)))
             width = _measured_width(row)
-            assert width <= DIURNALITY_ROW_CLEAR_WIDTH, (
-                f"{language}: {width:.1f}px will overrun the wheel's {DIURNALITY_ROW_CLEAR_WIDTH}px: {row!r}"
+            assert width <= budget, (
+                f"{language}: {width:.1f}px will overrun the wheel's {budget:.1f}px: {row!r}"
             )
 
     # Every name class that has broken this guard, and the ones that have not
@@ -1012,9 +1064,14 @@ class TestTheDiscCaptionsItsOwnRow:
     combinations, 113 would overrun in the first row against 15 in the last.
     """
 
-    def _charts(self):
+    @staticmethod
+    @functools.lru_cache(maxsize=1)
+    def _all_charts():
+        """Built once for the whole class: nine parametrized cases were
+        recomputing a solar return and a progression each time."""
         natal = _subject()
         natal_return, solar = _solar_return()
+        lunar = _lunar_return()
         progressed = SecondaryProgressionFactory.compute(natal, target_year=2020)
         return {
             "natal": ChartDataFactory.create_natal_chart_data(natal),
@@ -1024,10 +1081,18 @@ class TestTheDiscCaptionsItsOwnRow:
             "progression": ChartDataFactory.create_progression_chart_data(natal, progressed),
             "single_return": ChartDataFactory.create_single_wheel_return_chart_data(solar),
             "dual_return": ChartDataFactory.create_return_chart_data(natal_return, solar),
+            # The one whose wheel name shares a word with the phase label, and
+            # so the one that catches both a stuttering row and a test that
+            # looks for the label by single words.
+            "dual_lunar_return": ChartDataFactory.create_return_chart_data(natal_return, lunar),
         }
 
+    def _charts(self):
+        return self._all_charts()
+
     @pytest.mark.parametrize(
-        "kind", ["natal", "transit", "progression", "single_return", "dual_return"]
+        "kind",
+        ["natal", "transit", "progression", "single_return", "dual_return", "dual_lunar_return"],
     )
     def test_the_disc_sits_against_the_row_that_names_it(self, kind):
         svg = _render(self._charts()[kind])
@@ -1042,7 +1107,10 @@ class TestTheDiscCaptionsItsOwnRow:
             "captioning somebody else's line"
         )
 
-    @pytest.mark.parametrize("kind", ["transit", "progression", "single_return", "dual_return"])
+    @pytest.mark.parametrize(
+        "kind",
+        ["transit", "progression", "single_return", "dual_return", "dual_lunar_return"],
+    )
     def test_the_phase_closes_the_block_on_every_dual_and_return_panel(self, kind):
         """Stated separately from the gap, because it is the reason for it.
 
@@ -1052,7 +1120,7 @@ class TestTheDiscCaptionsItsOwnRow:
         svg = _render(self._charts()[kind])
         rows = _filled_row_baselines(svg)
         last = max(float(y) for y in rows.values())
-        phase = [y for text, y in rows.items() if _PHASE_LABELS.intersection(text.split())]
+        phase = [y for text, y in rows.items() if _is_phase_row(text)]
         assert phase and float(phase[0]) == last, (
             f"{kind}: the phase row is not the last one; the disc is drawn "
             "below the block and would caption whatever ended up there"
@@ -1070,7 +1138,7 @@ class TestTheDiscCaptionsItsOwnRow:
             svg = _render(ChartDataFactory.create_composite_chart_data(_composite(kind)))
             assert not _draws_a_disc(svg), f"{kind} composite still draws an unlabelled disc"
             assert not any(
-                _PHASE_LABELS.intersection(text.split()) for text in _filled_row_baselines(svg)
+                _is_phase_row(text) for text in _filled_row_baselines(svg)
             ), "if the row is written the disc should come back with it"
 
     def test_a_dual_return_reads_the_return_moon_not_the_nativity(self):
@@ -1088,13 +1156,47 @@ class TestTheDiscCaptionsItsOwnRow:
         svg = _render(ChartDataFactory.create_return_chart_data(natal, solar))
         row = next(
             text for text in _filled_row_baselines(svg)
-            if _PHASE_LABELS.intersection(text.split())
+            if _is_phase_row(text)
         )
         assert solar.lunar_phase.moon_phase_name in row, f"row reads {row!r}"
         assert natal.lunar_phase.moon_phase_name not in row, f"row still reads the nativity: {row!r}"
         assert _return_type_label(solar) in row, (
             f"the row must say whose moon it is: {row!r}"
         )
+
+    @pytest.mark.parametrize("language", ["RU", "FR", "DE"])
+    def test_trimming_takes_the_wheel_name_and_leaves_the_phase(self, language):
+        """What the row exists to say must survive the cut.
+
+        `truncate_to_width` cuts from the end, so trimming the whole line spends
+        the budget on "Solar Return Lunar phase:" and amputates the one word a
+        reader came for. The wheel's name is the qualifier and pays first — the
+        rule the diurnality row two lines down already states outright.
+        """
+        natal, solar = _solar_return()
+        svg = _render(ChartDataFactory.create_return_chart_data(natal, solar),
+                      chart_language=language)
+        row = next(text for text in _filled_row_baselines(svg) if _is_phase_row(text))
+        phase_name = _translate_phase_name(solar, language)
+        assert phase_name in unescape(row), (
+            f"{language}: the phase name was cut away, leaving {row!r}"
+        )
+
+    def test_a_lunar_return_does_not_say_lunar_twice(self):
+        """"Lunar Return Lunar phase" reads as a stutter, and so does the French.
+
+        The wheel's name is there to say which of the two wheels the phase
+        belongs to, which it still does once the word the label already carries
+        is dropped from it.
+        """
+        natal = _subject()
+        svg = _render(ChartDataFactory.create_return_chart_data(natal, _lunar_return()))
+        row = unescape(next(text for text in _filled_row_baselines(svg) if _is_phase_row(text)))
+        label = LANGUAGE_SETTINGS["EN"]["lunar_phase"]
+        for word in label.split():
+            assert row.count(word) <= 1, f"{word!r} appears twice: {row!r}"
+        # Still says whose phase it is, which is the point of the qualifier.
+        assert "Return" in row, row
 
     @pytest.mark.parametrize("language", ["EN", "HI", "FR", "RU"])
     def test_the_phase_row_stays_inside_the_wheel(self, language):
@@ -1109,9 +1211,13 @@ class TestTheDiscCaptionsItsOwnRow:
         index = {float(y): i for i, y in enumerate(
             _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * i for i in range(6))}
         for text, y in rows.items():
-            if _PHASE_LABELS.intersection(text.split()):
+            if _is_phase_row(text):
                 budget = info_row_clear_width(index[float(y)])
-                assert estimate_text_width(unescape(text), 10) <= budget, (
-                    f"{language}: {text!r} overruns its row by "
-                    f"{estimate_text_width(unescape(text), 10) - budget:.0f}px"
+                # Measured from real type advances, not from the function the
+                # builder allocates with: phrased in the estimator's own terms
+                # the assertion holds however wrongly it measures, which is what
+                # `_measured_width` exists to avoid.
+                width = _measured_width(unescape(text), 10)
+                assert width <= budget, (
+                    f"{language}: {text!r} overruns its row by {width - budget:.0f}px"
                 )

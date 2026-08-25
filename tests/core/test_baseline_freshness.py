@@ -69,16 +69,27 @@ PANEL_ROWS = len(
 #: file either. They are listed rather than hand-patched: their modern variants
 #: place clusters from the ink tables, so pasting a new glyph block into them
 #: would leave the drawing disagreeing with the geometry that produced it.
+#:
+#: The four John Lennon progressions have left the list. No script in
+#: ``scripts/`` casts a progression, which is what put them here, but the test
+#: file that reads them casts one itself, and ``compare_chart_svg`` writes what
+#: it rendered when ``KERYKEION_REGEN_BASELINES`` is set — so the drawing and
+#: the geometry that produced it stay in agreement, which is the condition the
+#: paragraph above actually cares about. They were stale for several releases,
+#: still carrying a "Lunation Day" row deleted in 6.0.0a86, because being on
+#: this list exempted them from the freshness check that would have said so.
+#: Regenerate them with::
+#:
+#:     KERYKEION_REGEN_BASELINES=1 pytest tests/core/test_chart_drawer.py -k progression
+#:
+#: The five Ancient Greece and Ptolemaic entries stay: those have no caster
+#: anywhere, in a script or in a test.
 CANNOT_REGENERATE_HERE = {
     "Ancient Greece 500BC - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
     "Ancient Greece 500BC - Synastry Chart - Classic.svg": "no generator in the repo; second subject not recorded",
     "Ancient Greece 500BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
     "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg": "no generator in the repo; the pairing is not recorded",
     "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg": "no generator in the repo; transit moment not recorded",
-    "John Lennon - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
-    "John Lennon - Progression Chart - Modern.svg": "no generator in the repo; progressed target not recorded",
-    "John Lennon - Progression Chart - Table Grid.svg": "no generator in the repo; progressed target not recorded",
-    "John Lennon - Dark Theme - Progression Chart - Classic.svg": "no generator in the repo; progressed target not recorded",
 }
 
 _ROW = re.compile(r"Bottom_Left_Text_(\d+)")
