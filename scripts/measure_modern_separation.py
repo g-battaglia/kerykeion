@@ -8,7 +8,9 @@ the derivation behind ``PLANET_MIN_SEPARATION``, ``SYN_OUTER_MIN_SEPARATION``
 and ``SYN_INNER_MIN_SEPARATION``.
 
 **Re-run it after changing any ring radius, row position, font size or glyph
-scale in draw_modern** — those are the inputs the separations were derived
+scale in draw_modern — and once per glyph size**: every profile in
+``GLYPH_SIZE_PROFILES`` carries its own ceiling, measured at its own sizes and
+radii (``--glyph-size``). Those are the inputs the separations were derived
 from, and ``tests/core/test_modern_decluttering.py`` fails on purpose when they
 move, to send you back here.
 
@@ -90,7 +92,10 @@ CHUNK = 14
 #: in-between placements rather than trust any single one.
 BASE_ANGLES = (0.0, 13.0, 23.0, 37.0, 45.0, 58.0, 71.0, 84.0)
 
-SEPARATIONS = [round(4.0 + 0.25 * i, 2) for i in range(29)]
+# 4.0 .. 14.0: wide enough that every profile's touch point falls inside the
+# sweep — the large dual-inner ring needs well past the 11.0 the medium sweep
+# used to end at.
+SEPARATIONS = [round(4.0 + 0.25 * i, 2) for i in range(41)]
 
 
 def _fake_point(
@@ -134,61 +139,48 @@ def _fake_houses() -> list[KerykeionPointModel]:
 
 _SETTINGS = [{"name": name, "color": "#333333", "id": i} for i, name in enumerate(GLYPHS)]
 
-#: The three planet rings draw_modern lays out, with the arguments that make
-#: _draw_planet_ring produce each one. Kept as references to the module's own
-#: constants so this harness cannot drift from what the renderer does.
-RINGS: dict[str, dict] = {
-    "natal": {},
-    "dual-outer": dict(
-        ring_inner_r=dm.SYN_R_OUTER_PLANET_INNER,
-        ring_outer_r=dm.SYN_R_OUTER_PLANET_OUTER,
-        line_outer_y=dm.SYN_HOUSE_LINE_OUTER_Y1,
-        line_inner_y=dm.SYN_HOUSE_LINE_OUTER_Y2,
-        planet_y_config={
-            "glyph_y": dm.SYN_OUTER_PLANET_GLYPH_Y,
-            "degrees_y": dm.SYN_OUTER_DEGREES_Y,
-            "sign_y": dm.SYN_OUTER_SIGN_Y,
-            "minutes_y": dm.SYN_OUTER_MINUTES_Y,
-            "rx_y": dm.SYN_OUTER_RX_Y,
-        },
-        scale_config={
-            "planet_scale_base": dm.SYN_PLANET_SCALE,
-            "degrees_font_size": dm.SYN_DEGREES_FONT_SIZE,
-            "sign_scale_base": dm.SYN_SIGN_SCALE,
-            "minutes_font_size": dm.SYN_MINUTES_FONT_SIZE,
-            "rx_font_size": dm.SYN_RX_FONT_SIZE,
-        },
-    ),
-    "dual-inner": dict(
-        ring_inner_r=dm.SYN_R_INNER_PLANET_INNER,
-        ring_outer_r=dm.SYN_R_INNER_PLANET_OUTER,
-        line_outer_y=dm.SYN_HOUSE_LINE_INNER_Y1,
-        line_inner_y=dm.SYN_HOUSE_LINE_INNER_Y2,
-        planet_y_config={
-            "glyph_y": dm.SYN_INNER_PLANET_GLYPH_Y,
-            "degrees_y": dm.SYN_INNER_DEGREES_Y,
-            "sign_y": dm.SYN_INNER_SIGN_Y,
-            "minutes_y": dm.SYN_INNER_MINUTES_Y,
-            "rx_y": dm.SYN_INNER_RX_Y,
-        },
-        scale_config={
-            "planet_scale_base": dm.SYN_PLANET_SCALE_INNER,
-            "degrees_font_size": dm.SYN_DEGREES_FONT_SIZE_INNER,
-            "sign_scale_base": dm.SYN_SIGN_SCALE,
-            "minutes_font_size": dm.SYN_MINUTES_FONT_SIZE,
-            "rx_font_size": dm.SYN_RX_FONT_SIZE,
-        },
-    ),
-}
+#: Maps the harness's ring names to the profile keys in GLYPH_SIZE_PROFILES.
+_PROFILE_KEYS = {"natal": "natal", "dual-outer": "dual_outer", "dual-inner": "dual_inner"}
 
 
-#: The separation each ring's call site actually passes (draw_modern_dual_horoscope
-#: hands the SYN_* constants to _draw_planet_ring; the natal path takes the default).
-RING_SEPARATIONS = {
-    "natal": lambda: dm.PLANET_MIN_SEPARATION,
-    "dual-outer": lambda: dm.SYN_OUTER_MIN_SEPARATION,
-    "dual-inner": lambda: dm.SYN_INNER_MIN_SEPARATION,
-}
+def ring_configs(glyph_size: str) -> dict[str, dict]:
+    """The arguments that make _draw_planet_ring produce each ring at *glyph_size*.
+
+    Built from GLYPH_SIZE_PROFILES — the same source the renderer reads — so
+    this harness cannot drift from what the renderer does, at any size. The
+    ring radii and house-line extents are the size-independent frame.
+    (Indicator geometry is deliberately not passed, as it never was: the probe
+    measures cluster ink, and the tether is not part of any cluster's box.)
+    """
+    profiles = dm.GLYPH_SIZE_PROFILES[glyph_size]
+    return {
+        "natal": dict(
+            planet_y_config=profiles["natal"].planet_y_config(),
+            scale_config=profiles["natal"].scale_config(),
+        ),
+        "dual-outer": dict(
+            ring_inner_r=dm.SYN_R_OUTER_PLANET_INNER,
+            ring_outer_r=dm.SYN_R_OUTER_PLANET_OUTER,
+            line_outer_y=dm.SYN_HOUSE_LINE_OUTER_Y1,
+            line_inner_y=dm.SYN_HOUSE_LINE_OUTER_Y2,
+            planet_y_config=profiles["dual_outer"].planet_y_config(),
+            scale_config=profiles["dual_outer"].scale_config(),
+        ),
+        "dual-inner": dict(
+            ring_inner_r=dm.SYN_R_INNER_PLANET_INNER,
+            ring_outer_r=dm.SYN_R_INNER_PLANET_OUTER,
+            line_outer_y=dm.SYN_HOUSE_LINE_INNER_Y1,
+            line_inner_y=dm.SYN_HOUSE_LINE_INNER_Y2,
+            planet_y_config=profiles["dual_inner"].planet_y_config(),
+            scale_config=profiles["dual_inner"].scale_config(),
+        ),
+    }
+
+
+def ring_separations(glyph_size: str) -> dict[str, float]:
+    """The separation each ring's call site actually passes at *glyph_size*."""
+    profiles = dm.GLYPH_SIZE_PROFILES[glyph_size]
+    return {ring: profiles[key].min_separation for ring, key in _PROFILE_KEYS.items()}
 
 #: Content palette for the adversarial mode: (position within sign, retrograde).
 #: Cycled across a cluster so neighbours mix narrow ("0º3'") against wide
@@ -223,7 +215,9 @@ def _wheel_svg(body: str) -> str:
     return f"{head}</defs>\n{wheel}</svg>\n"
 
 
-def build_svg(ring: str, separation: float, order: list[str], base_angle: float) -> str:
+def build_svg(
+    ring: str, separation: float, order: list[str], base_angle: float, glyph_size: str = "medium"
+) -> str:
     """One ring holding *order*'s glyphs with adjacent pairs exactly *separation* apart."""
     # Hand the resolver a cluster far tighter than the separation, so it spreads
     # every pair to exactly that separation — the state the constant claims safe.
@@ -236,12 +230,14 @@ def build_svg(ring: str, separation: float, order: list[str], base_angle: float)
         min_separation=separation,
         show_zodiac_background_ring=False,
         content_aware_separation=False,  # floor mode probes EXACT spacings
-        **RINGS[ring],
+        **ring_configs(glyph_size)[ring],
     )
     return _wheel_svg(body)
 
 
-def build_adversarial_svg(ring: str, order: list[str], base_angle: float, step: float) -> str:
+def build_adversarial_svg(
+    ring: str, order: list[str], base_angle: float, step: float, glyph_size: str = "medium"
+) -> str:
     """One ring rendered exactly as the library would, with mixed content.
 
     Unlike :func:`build_svg` this does not force a separation: it passes the
@@ -259,9 +255,9 @@ def build_adversarial_svg(ring: str, order: list[str], base_angle: float, step: 
         planets_settings=_SETTINGS,
         seventh_house_degree_ut=0.0,
         houses=_fake_houses(),
-        min_separation=RING_SEPARATIONS[ring](),
+        min_separation=ring_separations(glyph_size)[ring],
         show_zodiac_background_ring=False,
-        **RINGS[ring],
+        **ring_configs(glyph_size)[ring],
     )
     return _wheel_svg(body)
 
@@ -794,18 +790,20 @@ def _probe_page() -> str:
     )
 
 
-def build_harness(out_dir: Path) -> int:
+def build_harness(out_dir: Path, glyph_size: str = "medium") -> int:
     """Write the floor-measurement SVGs, manifest, and probe page into *out_dir*."""
     svg_dir = out_dir / "svg"
     svg_dir.mkdir(parents=True, exist_ok=True)
     orders = cluster_orders()
 
     manifest = []
-    for ring in RINGS:
+    for ring in _PROFILE_KEYS:
         for separation in SEPARATIONS:
             for index, order in enumerate(orders):
                 name = f"{ring}_{separation:g}_{index}.svg"
-                (svg_dir / name).write_text(build_svg(ring, separation, order, BASE_ANGLES[index % len(BASE_ANGLES)]))
+                (svg_dir / name).write_text(
+                    build_svg(ring, separation, order, BASE_ANGLES[index % len(BASE_ANGLES)], glyph_size)
+                )
                 manifest.append({"ring": ring, "sep": separation, "file": f"svg/{name}"})
 
     (out_dir / "manifest.json").write_text(json.dumps(manifest))
@@ -813,18 +811,18 @@ def build_harness(out_dir: Path) -> int:
     return len(manifest)
 
 
-def build_adversarial_harness(out_dir: Path) -> int:
+def build_adversarial_harness(out_dir: Path, glyph_size: str = "medium") -> int:
     """Write mixed-content clusters placed by the renderer's own policy."""
     svg_dir = out_dir / "svg"
     svg_dir.mkdir(parents=True, exist_ok=True)
     orders = cluster_orders()
 
     manifest = []
-    for ring in RINGS:
+    for ring in _PROFILE_KEYS:
         for spacing_name, step in ADVERSARIAL_SPACINGS.items():
             for index, order in enumerate(orders):
                 name = f"adv_{ring}_{spacing_name}_{index}.svg"
-                svg = build_adversarial_svg(ring, order, BASE_ANGLES[index % len(BASE_ANGLES)], step)
+                svg = build_adversarial_svg(ring, order, BASE_ANGLES[index % len(BASE_ANGLES)], step, glyph_size)
                 (svg_dir / name).write_text(svg)
                 manifest.append({"ring": ring, "file": f"svg/{name}"})
 
@@ -833,7 +831,7 @@ def build_adversarial_harness(out_dir: Path) -> int:
     return len(manifest)
 
 
-def build_dump_harness(out_dir: Path) -> int:
+def build_dump_harness(out_dir: Path, glyph_size: str = "medium") -> int:
     """Write the ink-dump page (and the template it reads) into *out_dir*."""
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "template.xml").write_text(TEMPLATE.read_text())
@@ -868,11 +866,18 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=8777)
     parser.add_argument("--out", type=Path, help="where to write the harness (default: a temp dir)")
     parser.add_argument("--no-open", action="store_true", help="do not launch a browser")
+    parser.add_argument(
+        "--glyph-size",
+        choices=sorted(dm.GLYPH_SIZE_PROFILES),
+        default="medium",
+        help="which cluster profile to measure — the floors and ceilings are per size "
+        "(dump-ink ignores this: symbol artwork does not change with the profile)",
+    )
     args = parser.parse_args()
 
-    out_dir = args.out or Path(tempfile.mkdtemp(prefix="kr-modern-sep-"))
-    count = _BUILDERS[args.mode](out_dir)
-    print(f"{args.mode}: {count} file(s) in {out_dir}")
+    out_dir = args.out or Path(tempfile.mkdtemp(prefix=f"kr-modern-sep-{args.glyph_size}-"))
+    count = _BUILDERS[args.mode](out_dir, args.glyph_size)
+    print(f"{args.mode} @ {args.glyph_size}: {count} file(s) in {out_dir}")
 
     handler = functools.partial(_HarnessHandler, directory=str(out_dir))
     with socketserver.TCPServer(("127.0.0.1", args.port), handler) as server:

@@ -296,7 +296,8 @@ def test_wrap_around_cluster_at_zero_degrees():
 # =============================================================================
 
 
-def test_modern_chart_2000_02_26_neptune_order():
+@pytest.mark.parametrize("glyph_size", ["small", "medium", "large"])
+def test_modern_chart_2000_02_26_neptune_order(glyph_size):
     """
     End-to-end regression test on a real chart that reproduces the issue
     conditions: Neptune ~5° Aqu inside a dense cluster with Uranus 17° Aqu,
@@ -304,7 +305,9 @@ def test_modern_chart_2000_02_26_neptune_order():
 
     Parses the generated modern SVG and asserts that the rendered order of
     ChartPoint glyphs (by display_angle from their ``transform="rotate(...)"``
-    attribute) follows the true zodiacal order.
+    attribute) follows the true zodiacal order — at every glyph size, since a
+    bigger cluster is exactly the pressure that pushed planets past each other
+    in the original bug.
     """
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.chart_data.factory import ChartDataFactory
@@ -333,7 +336,9 @@ def test_modern_chart_2000_02_26_neptune_order():
         active_points=active,
     )
     chart_data = ChartDataFactory.create_natal_chart_data(subject, active_points=active)
-    svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
+    svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(
+        style="modern", glyph_size=glyph_size
+    )
 
     display_angles = {tag.slug: tag.display_angle for tag in parse_chart_points(svg)}
 
@@ -672,23 +677,37 @@ def test_entries_without_profiles_fall_back_to_the_uniform_separation():
 #: recorded numbers had not been re-measured this test went on passing against
 #: figures the drawing had left behind — while the inner dual ring was in fact
 #: shipping a ceiling below its own overlap point. Re-run the harness whenever a
-#: size or a row position changes; it is the only thing that makes this test
-#: mean anything.
+#: size or a row position changes — and once per glyph size, since every profile
+#: carries its own floor; it is the only thing that makes this test mean
+#: anything.
+#:
+#: Measured 2026-08-26, headless Chromium, sweep 4.0–14.0 in 0.25 steps. Two of
+#: the three medium floors reproduced the recorded figures exactly; the natal
+#: medium reads 7.25 where 7.00 stood — one sweep step, within raster variance
+#: between the browser that measured then and the one that measured now, and
+#: recorded as measured because this run is the reproducible one.
 _TOUCHING_SEPARATION = {
-    "PLANET_MIN_SEPARATION": 7.00,
-    "SYN_OUTER_MIN_SEPARATION": 5.25,
-    "SYN_INNER_MIN_SEPARATION": 8.25,
+    ("small", "natal"): 6.50,
+    ("small", "dual_outer"): 4.75,
+    ("small", "dual_inner"): 7.25,
+    ("medium", "natal"): 7.25,
+    ("medium", "dual_outer"): 5.25,
+    ("medium", "dual_inner"): 8.25,
+    ("large", "natal"): 9.00,
+    ("large", "dual_outer"): 7.25,
+    ("large", "dual_inner"): 11.75,
 }
 
 
-def test_separations_stay_above_the_measured_collision_floor():
-    for name, floor in _TOUCHING_SEPARATION.items():
-        value = getattr(draw_modern, name)
-        assert value > floor, (
-            f"{name} is {value}°, at or below the {floor}° where the adversarial "
-            "cluster's ink starts to overlap. Re-run "
-            "scripts/measure_modern_separation.py before lowering it further."
-        )
+@pytest.mark.parametrize(("size", "ring"), sorted(_TOUCHING_SEPARATION))
+def test_separations_stay_above_the_measured_collision_floor(size, ring):
+    value = draw_modern.GLYPH_SIZE_PROFILES[size][ring].min_separation
+    floor = _TOUCHING_SEPARATION[(size, ring)]
+    assert value > floor, (
+        f"{size}/{ring} ships a ceiling of {value}°, at or below the {floor}° "
+        "where the adversarial cluster's ink starts to overlap. Re-run "
+        "scripts/measure_modern_separation.py --glyph-size before lowering it."
+    )
 
 
 #: Everything the measurement depended on: where each cluster row sits, how big
@@ -752,7 +771,8 @@ def test_measured_geometry_is_unchanged(name, expected):
     assert getattr(draw_modern, name) == expected, f"{name} moved. {_REMEASURE}"
 
 
-def test_dual_rings_respect_their_own_content_derived_separations():
+@pytest.mark.parametrize("glyph_size", ["small", "medium", "large"])
+def test_dual_rings_respect_their_own_content_derived_separations(glyph_size):
     """Each dual ring spaces its planets by what they draw, at its own radius.
 
     The two rings used to share a hardcoded 10.0°; now each pair of neighbours
@@ -760,6 +780,10 @@ def test_dual_rings_respect_their_own_content_derived_separations():
     degree falls with the radius — capped at the ring's measured ceiling. This
     renders a synastry chart, rebuilds every pair's requirement from the SVG's
     own metadata, and checks the rendered spacing honours it.
+
+    Parametrised over the glyph sizes: run at large this is what proves the
+    per-size ceilings are sufficient in the renderer's own hands, not merely
+    plausible on the harness bench.
     """
     from types import SimpleNamespace
 
@@ -779,7 +803,9 @@ def test_dual_rings_respect_their_own_content_derived_separations():
     first = subject("Ring A", 2000, 2, 26, 12, 0, 51.5, 0.0, "UTC")
     second = subject("Ring B", 1993, 9, 12, 8, 30, 41.9, 12.5, "Europe/Rome")
     chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
-    svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(style="modern")
+    svg = ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(
+        style="modern", glyph_size=glyph_size
+    )
 
     rings: dict[str, list[tuple[float, SimpleNamespace]]] = {"0": [], "1": []}
     for tag in parse_chart_points(svg):
@@ -793,42 +819,25 @@ def test_dual_rings_respect_their_own_content_derived_separations():
         rings[tag.horoscope].append((tag.display_angle, point_stand_in))
 
     # horoscope "0" is subject 1 in the inner ring, "1" is subject 2 outside it;
-    # the geometry below mirrors what draw_modern_dual_horoscope passes in.
+    # the layouts are the very profiles draw_modern_dual_horoscope reads, so the
+    # test follows every size the renderer can be asked for.
+    def layout_from(profile) -> dict:
+        return dict(
+            ceiling=profile.min_separation,
+            row_radii={
+                "glyph": 50.0 - profile.glyph_y,
+                "degrees": 50.0 - profile.degrees_y,
+                "sign": 50.0 - profile.sign_y,
+                "minutes": 50.0 - profile.minutes_y,
+                "rx": 50.0 - profile.rx_y,
+            },
+            scales=profile.scale_config(),
+        )
+
+    profiles = draw_modern.GLYPH_SIZE_PROFILES[glyph_size]
     ring_layouts = {
-        "0": dict(
-            ceiling=draw_modern.SYN_INNER_MIN_SEPARATION,
-            row_radii={
-                "glyph": 50.0 - draw_modern.SYN_INNER_PLANET_GLYPH_Y,
-                "degrees": 50.0 - draw_modern.SYN_INNER_DEGREES_Y,
-                "sign": 50.0 - draw_modern.SYN_INNER_SIGN_Y,
-                "minutes": 50.0 - draw_modern.SYN_INNER_MINUTES_Y,
-                "rx": 50.0 - draw_modern.SYN_INNER_RX_Y,
-            },
-            scales=dict(
-                planet_scale_base=draw_modern.SYN_PLANET_SCALE_INNER,
-                degrees_font_size=draw_modern.SYN_DEGREES_FONT_SIZE_INNER,
-                sign_scale_base=draw_modern.SYN_SIGN_SCALE,
-                minutes_font_size=draw_modern.SYN_MINUTES_FONT_SIZE,
-                rx_font_size=draw_modern.SYN_RX_FONT_SIZE,
-            ),
-        ),
-        "1": dict(
-            ceiling=draw_modern.SYN_OUTER_MIN_SEPARATION,
-            row_radii={
-                "glyph": 50.0 - draw_modern.SYN_OUTER_PLANET_GLYPH_Y,
-                "degrees": 50.0 - draw_modern.SYN_OUTER_DEGREES_Y,
-                "sign": 50.0 - draw_modern.SYN_OUTER_SIGN_Y,
-                "minutes": 50.0 - draw_modern.SYN_OUTER_MINUTES_Y,
-                "rx": 50.0 - draw_modern.SYN_OUTER_RX_Y,
-            },
-            scales=dict(
-                planet_scale_base=draw_modern.SYN_PLANET_SCALE,
-                degrees_font_size=draw_modern.SYN_DEGREES_FONT_SIZE,
-                sign_scale_base=draw_modern.SYN_SIGN_SCALE,
-                minutes_font_size=draw_modern.SYN_MINUTES_FONT_SIZE,
-                rx_font_size=draw_modern.SYN_RX_FONT_SIZE,
-            ),
-        ),
+        "0": layout_from(profiles["dual_inner"]),
+        "1": layout_from(profiles["dual_outer"]),
     }
 
     def pair_requirement(
@@ -1049,43 +1058,44 @@ def test_spending_the_air_is_reported(caplog):
 #: The small and large profiles, pinned literal by literal. These are the
 #: printed output of scripts/derive_modern_cluster_profiles.py — the derivation
 #: tests below prove they still ARE that output; this fixture makes any drift
-#: name the exact number that moved. min_separation is the analytic seed until
-#: the measurement harness replaces it (its own fixture pins the floors).
+#: name the exact number that moved. min_separation is the exception no formula
+#: owns: measured by the harness per size, policy and floors documented at
+#: _TOUCHING_SEPARATION.
 _PROFILE_GEOMETRY = {
     ("small", "natal"): {
         "sizes": (0.163296, 2.016, 0.092781, 1.8648, 1.6128),
         "rows": (9.7328, 13.3238, 16.6358, 20.2358, 23.2598),
-        "min_separation": 6.59,
+        "min_separation": 7.0,
         "indicator": {"start_y": 5.348, "tick_length": 0.9675, "arc_radius": 43.752},
     },
     ("small", "dual_outer"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
         "rows": (8.0768, 11.1728, 13.8188, 16.1678, 18.1208),
-        "min_separation": 5.09,
+        "min_separation": 5.25,
         "indicator": {"start_y": 5.348, "tick_length": 0.63, "arc_radius": 44.022},
     },
     ("small", "dual_inner"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
         "rows": (22.462, 25.558, 28.204, 30.553, 32.506),
-        "min_separation": 7.91,
+        "min_separation": 8.0,
         "indicator": {"start_y": 20.5, "tick_length": 0.27, "arc_radius": 29.23},
     },
     ("large", "natal"): {
         "sizes": (0.22644927536231882, 2.79567, 0.128663, 2.585995, 2.236536),
         "rows": (10.1551, 14.5798, 18.3845, 22.3458, 25.6815),
-        "min_separation": 9.83,
+        "min_separation": 9.5,
         "indicator": {"start_y": 5.348, "tick_length": 0.6959, "arc_radius": 44.0046},
     },
     ("large", "dual_outer"): {
         "sizes": (0.18115942028985507, 2.90953, 0.08509, 1.674352, 1.399868),
         "rows": (8.5197, 12.3143, 15.264, 17.6455, 19.6148),
-        "min_separation": 7.99,
+        "min_separation": 7.75,
         "indicator": {"start_y": 5.348, "tick_length": 0.2881, "arc_radius": 44.3639},
     },
     ("large", "dual_inner"): {
         "sizes": (0.18115942028985507, 2.90953, 0.08509, 1.674352, 1.399868),
         "rows": (23.4697, 27.0889, 29.8331, 31.9873, 33.7656),
-        "min_separation": 12.87,
+        "min_separation": 12.5,
         "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.4311},
     },
 }
@@ -1231,7 +1241,9 @@ def test_derivation_reproduces_the_shipped_profiles(size, ring_name):
     assert profile.indicator is not None
     assert profile.indicator["tick_length"] == pytest.approx(derived.tick, abs=5e-5)
     assert profile.indicator["arc_radius"] == pytest.approx(derived.arc_radius, abs=5e-5)
-    assert profile.min_separation == pytest.approx(derived.min_separation_seed, abs=5e-3)
+    # min_separation is deliberately NOT compared: the script prints an analytic
+    # seed, but the shipped value is the harness's measurement (see
+    # _TOUCHING_SEPARATION); the two agreeing would be a coincidence.
 
 
 def test_large_is_exact_classic_parity():
@@ -1300,4 +1312,35 @@ def test_no_cluster_row_leaves_its_ring(size, ring_name):
     # ...and the last row's ink stays inside the ring.
     assert rows[4] + halves[4] <= inner_edge + 1e-9, (
         f"{size}/{ring_name}: the {_ROW_FIELDS[4]} row leaves the ring"
+    )
+
+def test_an_all_points_wheel_at_large_compresses_and_says_so(caplog):
+    """40+ points at the large ceilings over-subscribe the wheel — by design.
+
+    The resolver's documented last resort fires (air reduced, then ink
+    compressed as far as the ladder allows) and LOGS it. This pins the
+    degradation as a stated behaviour rather than a surprise: the large
+    all-points wheel is expected to fan tighter than its ceilings, and the
+    log line is the receipt.
+    """
+    import logging
+
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.chart_data.factory import ChartDataFactory
+    from kerykeion.charts.drawer import ChartDrawer
+    from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "All Points Large", 2000, 2, 26, 12, 0,
+        lat=51.5, lng=0.0, tz_str="UTC", online=False,
+        suppress_geonames_warning=True, active_points=ALL_ACTIVE_POINTS,
+    )
+    chart_data = ChartDataFactory.create_natal_chart_data(subject, active_points=ALL_ACTIVE_POINTS)
+    with caplog.at_level(logging.INFO, logger="kerykeion"):
+        ChartDrawer(chart_data=chart_data).generate_wheel_only_svg_string(
+            style="modern", glyph_size="large"
+        )
+    assert "air between clusters was reduced" in caplog.text, (
+        "the large all-points wheel no longer reports its compression — either "
+        "the ceilings shrank (check the harness) or the log line moved"
     )
