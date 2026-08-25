@@ -730,6 +730,8 @@ _MEASURED_GEOMETRY = {
     "NATAL_MINUTES_Y": 21.89,
     "NATAL_RX_Y": 25.25,
     # Natal ring
+    "NATAL_INDICATOR_TICK": 1.075,
+    "NATAL_INDICATOR_ARC_DROP": 1.0,
     "PLANET_SCALE_BASE": 0.18144,
     "DEGREES_FONT_SIZE": 2.24,
     "SIGN_SCALE_BASE": 0.10309,
@@ -1230,17 +1232,25 @@ def test_derivation_reproduces_the_shipped_profiles(size, ring_name):
 
     profile = draw_modern.GLYPH_SIZE_PROFILES[size][ring_name]
     derived = derive(RINGS[ring_name], size_factors(ring_name)[size])
+    # The literals ARE the derivation rounded (4 decimals for rows and the
+    # tether, 6 for sizes) — so compare through the same rounding, exactly,
+    # instead of a tolerance that would sit on the rounding bound itself.
+    # The large planet bases are exempt from rounding: they are expressions.
     for field, value in zip(_SIZE_FIELDS, derived.sizes):
-        assert getattr(profile, field) == pytest.approx(value, abs=5e-7), (
-            f"{size}/{ring_name}.{field} no longer matches the derivation"
-        )
+        shipped = getattr(profile, field)
+        if field == "planet_scale_base" and size == "large":
+            assert shipped == value, f"{size}/{ring_name}.{field} lost the parity expression"
+        else:
+            assert shipped == float(f"{value:.6f}"), (
+                f"{size}/{ring_name}.{field} no longer matches the derivation"
+            )
     for field, value in zip(_ROW_FIELDS, derived.rows):
-        assert getattr(profile, field) == pytest.approx(value, abs=5e-5), (
+        assert getattr(profile, field) == float(f"{value:.4f}"), (
             f"{size}/{ring_name}.{field} no longer matches the derivation"
         )
     assert profile.indicator is not None
-    assert profile.indicator["tick_length"] == pytest.approx(derived.tick, abs=5e-5)
-    assert profile.indicator["arc_radius"] == pytest.approx(derived.arc_radius, abs=5e-5)
+    assert profile.indicator["tick_length"] == float(f"{derived.tick:.4f}")
+    assert profile.indicator["arc_radius"] == float(f"{derived.arc_radius:.4f}")
     # min_separation is deliberately NOT compared: the script prints an analytic
     # seed, but the shipped value is the harness's measurement (see
     # _TOUCHING_SEPARATION); the two agreeing would be a coincidence.

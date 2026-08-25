@@ -258,7 +258,8 @@ drawer = ChartDrawer(chart_data=chart_data)
 # traditional wheel (instance-level via ChartDrawer(..., style="classic")
 # or per render). The modern wheel's planet cluster comes in three sizes:
 # glyph_size="small" | "medium" (default) | "large" — large draws the planet
-# glyph at the classic style's own size. Instance-level or per render.
+# glyph at the classic style's own size (in the default configuration —
+# zodiac background ring active). Instance-level or per render.
 svg_string = drawer.generate_svg_string()
 
 # Or save to file. Default filenames carry the style suffix:

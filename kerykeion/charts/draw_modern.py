@@ -450,6 +450,15 @@ MODERN_TEXT_FONT_FAMILY = CHART_TEXT_FONT_FAMILY
 # so its "straight" column counts the same population the renderer draws.
 STRAIGHT_TETHER_THRESHOLD = 0.5
 
+# The natal tether at medium: the defaults _draw_indicator_line falls back to
+# when a ring passes no indicator_config — which is what the natal medium
+# profile does (indicator=None). Named constants rather than signature
+# literals so the profile derivation reads the SAME numbers the renderer
+# draws with, and _MEASURED_GEOMETRY can pin them: change either and the
+# small/large natal profiles must be re-derived, not just the medium render.
+NATAL_INDICATOR_TICK = 1.075
+NATAL_INDICATOR_ARC_DROP = 1.0  # r(ruler edge) - arc_radius
+
 # Natal cluster row positions (Y in the wheel-local frame; radius = CENTER - y).
 # The single source for the renderer, the content-aware profiles, and the row
 # radii — the dual rings have their own SYN_* equivalents below.
@@ -1843,7 +1852,7 @@ def _draw_indicator_line(
     real_angle: float,
     display_angle: float,
     start_y: float = HOUSE_LINE_OUTER_Y,
-    tick_length: float = 1.075,
+    tick_length: float = NATAL_INDICATOR_TICK,
     arc_radius: Optional[float] = None,
     planet_slug: str = "",
     abs_pos: Optional[float] = None,
@@ -1873,7 +1882,7 @@ def _draw_indicator_line(
         SVG group string for the indicator line.
     """
     if arc_radius is None:
-        arc_radius = R_PLANET_OUTER - 1  # 42.5
+        arc_radius = R_PLANET_OUTER - NATAL_INDICATOR_ARC_DROP
 
     slug_attr = f' kr:slug="{escape_svg_text(planet_slug)}"' if planet_slug else ""
     pos_attr = f' kr:absoluteposition="{abs_pos}"' if abs_pos is not None else ""
@@ -1986,9 +1995,6 @@ def _draw_planet_ring(
                       minutes_font_size, rx_font_size overrides.
         gauquelin_sectors: If True, draw 36 sector lines instead of 12 house lines.
         gauquelin_cusps: 36 zodiacal longitudes for actual sector boundaries.
-        glyph_size: Which cluster profile to draw — "small", "medium" or
-            "large" (see GLYPH_SIZE_PROFILES). The drawer validates the value;
-            an unknown key raises here.
         content_aware_separation: Derive each pair's separation from the ink it
             actually draws (narrow content packs tighter, capped at
             min_separation). False falls back to the uniform separation —
@@ -3007,6 +3013,9 @@ def draw_modern_horoscope(
         aspects_settings: Aspect configuration dicts (name, color, degree).
         show_zodiac_background_ring: If True, draws the outer colored zodiac boundaries.
         gauquelin_cusps: 36 zodiacal longitudes for actual Gauquelin sector boundaries.
+        glyph_size: Which cluster profile to draw — "small", "medium" or
+            "large" (see GLYPH_SIZE_PROFILES). The drawer validates the value;
+            an unknown key raises here.
 
     Returns:
         Complete SVG content string for the modern horoscope.
