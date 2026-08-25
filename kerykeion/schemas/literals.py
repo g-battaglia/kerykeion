@@ -435,9 +435,13 @@ CompositeHouseFrame: TypeAlias = Literal["anchored", "midpoints", "gapped"]
 
 ``house_anchor`` records which angle a caller ASKED to hold. It is not always
 possible to hold one: where the two charts' houses admit no common frame — two
-rings running opposite ways, or a parent whose own cusps are not ordered — every
-position falls back to its own near midpoint and the requested anchor decides
-nothing. A chart that reports only the request describes a construction that did
+rings running opposite ways, or a parent whose own cusps are not ordered — the
+requested anchor decides nothing, and every position falls back to its own near
+midpoint. With one exception, and it is not a small one: a cusp the parents put
+exactly opposite another is kept opposite it, which is the far midpoint for one
+of the pair. Without that the fourth cusp and the tenth come out on the same
+longitude, because two points half a circle apart are the same unordered pair
+either way round and a symmetric mean cannot tell them apart. A chart that reports only the request describes a construction that did
 not happen, and all three anchors then return the same ring.
 
 - ``"anchored"``: a frame was hung from the requested angle and the twelve cover

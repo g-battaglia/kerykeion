@@ -135,11 +135,13 @@ John Lennon & Yoko Ono — Composite Report
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
-+Angularities---------+----------+
-| Point   | Angle     | Distance |
-+---------+-----------+----------+
-| Jupiter | Ascendant | 3.13°    |
-+---------+-----------+----------+
++Angularities----------+----------+
+| Point   | Angle      | Distance |
++---------+------------+----------+
+| Jupiter | Ascendant  | 3.13°    |
+| Mercury | Descendant | 5.84°    |
+| Moon    | Descendant | 6.72°    |
++---------+------------+----------+
 
 +Stelliums------+--------------------+
 | House | Count | Points             |

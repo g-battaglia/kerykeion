@@ -60,6 +60,7 @@ from kerykeion.schemas.literals import (
 from kerykeion.schemas.literals import (
     ReturnType,
     DominantMethod,
+    CompositeChartType,
     CompositeHouseAnchor,
     CompositeHouseFrame,
 )
@@ -1244,7 +1245,7 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     # Specific composite data
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
-    composite_chart_type: str
+    composite_chart_type: CompositeChartType
     #: Which angle kept its near midpoint when the cusp ring had to be repaired.
     #: Recorded because the choice can turn the whole house frame by half a turn,
     #: so a chart that carries no note of it cannot be reproduced. None on a
@@ -1257,6 +1258,29 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     #: common frame it decides nothing, and all three anchors return the same
     #: chart. See :data:`~kerykeion.schemas.literals.CompositeHouseFrame`.
     house_frame: Optional[CompositeHouseFrame] = None
+
+    @model_validator(mode="after")
+    def _davison_charts_carry_no_house_frame(self) -> "CompositeSubjectModel":
+        """A Davison chart is cast as an ordinary chart, so it has no frame at all.
+
+        Both provenance fields describe a construction only the midpoint method
+        performs. Left unconstrained, a payload could claim a Davison chart was
+        anchored on its Midheaven, and the report and the context would repeat
+        it — the report even printing a House Anchor row for a chart that has no
+        anchor to print.
+
+        The converse is deliberately NOT required. An a86 midpoint payload
+        carries neither field, and this release promises those still validate; a
+        midpoint chart without provenance is an old chart, not an impossible one.
+        """
+        if self.composite_chart_type == "Davison":
+            if self.house_anchor is not None or self.house_frame is not None:
+                raise ValueError(
+                    "A Davison composite has no house frame to record: it is cast as an "
+                    f"ordinary chart. Got house_anchor={self.house_anchor!r}, "
+                    f"house_frame={self.house_frame!r}."
+                )
+        return self
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
     # represent a real moment; None when not applicable (the midpoint method

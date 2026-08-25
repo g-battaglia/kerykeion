@@ -1505,8 +1505,8 @@ class AstrologicalSubjectFactory:
                                 "message": (
                                     f"The Gauquelin 36-sector ring has no equivalent at every "
                                     f"latitude, so it was computed at "
-                                    f"{abs(_clamped.used_latitude):.4f}\u00b0, just inside the polar "
-                                    f"limit, instead of {abs(_clamped.latitude):.4f}\u00b0. The sector "
+                                    f"{_clamped.used_latitude:.4f}\u00b0, just inside the polar "
+                                    f"limit, instead of {_clamped.latitude:.4f}\u00b0. The sector "
                                     f"ring and the per-body sector numbers are approximate; this "
                                     f"chart's house cusps, its angles, the planetary positions and "
                                     f"the persisted latitude all keep the real value."

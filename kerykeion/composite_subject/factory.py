@@ -45,6 +45,7 @@ from typing import Optional, Sequence, Union, get_args
 # Fix the circular import by changing this import
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, _GEO_TOPO_PERSPECTIVES
 from kerykeion.predictive.utils import jd_to_ymd_hms
+from kerykeion.settings.config_constants import OPPOSITE_POINTS
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.models import CompositeSubjectModel, AstrologicalSubjectModel, PolarHouseFallbackModel
 from kerykeion.schemas.literals import (
@@ -973,8 +974,10 @@ class CompositeSubjectFactory:
             # position on — a position placed on one anyway is not the position
             # the ring shows: the composite Midheaven landed in the fourth house
             # on a chart whose twelve cusps tiled perfectly, and nothing anywhere
-            # complained. Every position falls back to its own near midpoint,
-            # which is exactly what this returned before there was a frame at all,
+            # complained. Every position falls back to its own near midpoint — bar
+            # a cusp kept opposite its partner, which the snap above has already
+            # settled and which the angles inherit through their own opposites —
+            # which is close to what this returned before there was a frame at all,
             # and which keeps an angle on its cusp wherever the parents put it
             # there, because then the two are the same average.
             #
@@ -1036,13 +1039,47 @@ class CompositeSubjectFactory:
         if not frame_is_coherent:
             logger.info(
                 "No single frame spans these two subjects' houses, so this composite "
-                "has none: every position is its own near midpoint, and the angles "
+                "has none: every position is its own near midpoint except a cusp kept "
+                "opposite its partner, and the angles "
                 "follow the cusp ring where the subjects put them on a cusp."
             )
 
-        for planet in self.active_points:
+        # Every point the composite carries: the ones asked for, plus the derived
+        # opposites of any of those, whether or not they were asked for.
+        #
+        # An ordinary subject and a Davison chart keep the Descendant, the Imum
+        # Coeli and the south node even when those are not active — each is the
+        # other end of a point that IS active, and the context promises a horizon,
+        # a meridian and a node section unconditionally. The midpoint composite
+        # materialised only `active_points`, so those three came back None and
+        # vanished from its context while every other chart type showed them.
+        #
+        # Derived, not averaged. Two points half a circle apart are the same
+        # unordered pair as their own opposites, so a symmetric mean — which it
+        # must be, for the composite of A and B to equal the composite of B and A
+        # — hands both the same longitude. Averaged on its own, a south node whose
+        # parents sit at 190 and 10 came out on top of the north node, separation
+        # zero. `active_points` is left alone: it says what was asked for, and the
+        # display and aspect filters go on reading it.
+        derived_points = {
+            opposite: primary
+            for opposite, primary in OPPOSITE_POINTS.items()
+            if primary in self.active_points and opposite not in self.active_points
+        }
+        for planet in list(self.active_points) + list(derived_points):
             planet_lower = planet.lower()
             planets[planet_lower] = {}
+            if planet in derived_points:
+                planets[planet_lower]["abs_pos"] = (
+                    planets[derived_points[planet].lower()]["abs_pos"] + 180.0
+                ) % 360.0
+                self[planet_lower] = get_kerykeion_point_from_degree(
+                    planets[planet_lower]["abs_pos"], planet, "AstrologicalPoint"
+                )
+                self[planet_lower]["house"] = angle_houses.get(planet_lower) or _house_of(
+                    self[planet_lower]["abs_pos"], house_degree_list_ut
+                )
+                continue
             if planet_lower in placed_angles:
                 planets[planet_lower]["abs_pos"] = placed_angles[planet_lower]
             else:

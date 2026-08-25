@@ -2861,3 +2861,20 @@ def test_the_gauquelin_section_says_which_latitude_it_was_computed_at():
         calculate_gauquelin=True,
     )
     assert "computed at" not in ReportGenerator(ordinary).generate_report()
+
+
+def test_a_southern_clamp_keeps_its_hemisphere():
+    """Both latitudes went through `abs()`, so a chart at 78S was told its ring
+    had been computed at 66 degrees NORTH — and that the real latitude was 78
+    north too. The fields were right; only the sentence lied."""
+    from kerykeion import AstrologicalSubjectFactory
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=-78.0, lng=15.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="W", calculate_gauquelin=True,
+    )
+    record = subject.polar_house_fallbacks[0]
+    assert record.latitude < 0 and record.used_latitude < 0
+    assert f"{record.used_latitude:.4f}" in record.message
+    assert f"{record.latitude:.4f}" in record.message

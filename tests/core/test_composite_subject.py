@@ -2254,3 +2254,91 @@ def test_two_rings_running_opposite_ways_admit_no_frame():
             )
         )
     assert len(answers) == 1, "the anchor still decides a chart it cannot anchor"
+
+
+def test_the_composite_carries_the_derived_opposites_like_every_other_chart():
+    """The Descendant, the Imum Coeli and the south node are the other end of a
+    point that IS active, and every other chart type keeps them.
+
+    The midpoint composite materialised only `active_points`, so all three came
+    back `None` and vanished from its context — while the context promises a
+    horizon, a meridian and a node section unconditionally, and an ordinary
+    subject and a Davison chart both deliver them.
+    """
+    first, second = _pair(0, 7)
+    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+
+    for opposite, primary in (
+        ("descendant", "ascendant"),
+        ("imum_coeli", "medium_coeli"),
+        ("true_south_lunar_node", "true_north_lunar_node"),
+    ):
+        assert getattr(first, opposite) is not None, f"the parent lost {opposite}"
+        assert getattr(model, opposite) is not None, opposite
+        assert (
+            getattr(model, opposite).abs_pos - getattr(model, primary).abs_pos
+        ) % 360.0 == approx(180.0, abs=1e-9), opposite
+
+    # What was asked for is unchanged: it is what the display and the aspect
+    # filters read, and a derived point is not a request.
+    assert "Descendant" not in model.active_points
+    assert "Imum_Coeli" not in model.active_points
+
+
+def test_a_derived_opposite_is_derived_and_not_averaged_on_its_own():
+    """Two points half a circle apart are the same unordered pair as their own
+    opposites, so a symmetric mean hands both the same longitude.
+
+    With the two parents' nodes crossed — 10 and 190 against 190 and 10 — a south
+    node averaged on its own lands on top of the north node, separation zero. It
+    has to come from its primary plus half a turn.
+    """
+    first, second = _pair(0, 7)
+    first.true_north_lunar_node.abs_pos = 10.0
+    first.true_south_lunar_node.abs_pos = 190.0
+    second.true_north_lunar_node.abs_pos = 190.0
+    second.true_south_lunar_node.abs_pos = 10.0
+
+    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    assert (
+        model.true_south_lunar_node.abs_pos - model.true_north_lunar_node.abs_pos
+    ) % 360.0 == approx(180.0, abs=1e-9)
+
+
+def test_a_davison_chart_cannot_carry_a_house_frame():
+    """A Davison composite is cast as an ordinary chart, so it has no frame.
+
+    Both provenance fields describe something only the midpoint method does. Left
+    unconstrained, a payload could claim a Davison chart was anchored on its
+    Midheaven and the report would print a House Anchor row for a chart that has
+    no anchor to print.
+
+    The converse is deliberately not required: an a86 midpoint payload carries
+    neither field, and those still have to validate.
+    """
+    import pydantic
+
+    from kerykeion.schemas.models import CompositeSubjectModel
+
+    factory = CompositeSubjectFactory(*_pair(0, 7))
+    midpoint = factory.get_midpoint_composite_subject_model().model_dump()
+
+    with pytest.raises(pydantic.ValidationError):
+        CompositeSubjectModel.model_validate({**midpoint, "composite_chart_type": "Bogus"})
+
+    with pytest.raises(pydantic.ValidationError):
+        CompositeSubjectModel.model_validate(
+            {
+                **midpoint,
+                "composite_chart_type": "Davison",
+                "house_anchor": "midheaven",
+                "house_frame": "anchored",
+            }
+        )
+
+    # A real Davison validates, and a provenance-free midpoint payload still does.
+    davison = factory.get_davison_composite_subject_model().model_dump()
+    assert CompositeSubjectModel.model_validate(davison).house_anchor is None
+
+    legacy = {key: value for key, value in midpoint.items() if key not in ("house_anchor", "house_frame")}
+    assert CompositeSubjectModel.model_validate(legacy).house_frame is None
