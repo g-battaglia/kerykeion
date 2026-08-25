@@ -95,6 +95,11 @@ def _load_fonts() -> list[tuple[int, dict, dict]]:
 def _widest_advances(
     fonts: list[tuple[int, dict, dict]], ranges: list[tuple[int, int]], skip: frozenset[str]
 ) -> dict[int, float]:
+    """The widest advance each code point in *ranges* has across *fonts*, in em.
+
+    Characters whose Unicode category is in *skip* are left out — the two
+    tables skip different sets, which is the reason this is a parameter.
+    """
     advances: dict[int, float] = {}
     for low, high in ranges:
         for code_point in range(low, high + 1):
@@ -107,6 +112,7 @@ def _widest_advances(
 
 
 def main() -> None:
+    """Print the estimator table to paste and write the test fixture in place."""
     fonts = _load_fonts()
 
     estimator = _widest_advances(fonts, ESTIMATOR_RANGES, ESTIMATOR_SKIP_CATEGORIES)

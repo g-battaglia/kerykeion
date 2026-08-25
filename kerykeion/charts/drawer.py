@@ -1676,6 +1676,7 @@ class ProgressionChartRenderer(TransitChartRenderer):
         return self._translate("progressed_cusp", "Progressed Cusp")
 
     def setup_info_sections(self, template_dict: dict) -> None:
+        """Set up transit info, then relabel the second wheel as the progression."""
         super().setup_info_sections(template_dict)
         d = self.drawer
         if d.second_obj is not None:

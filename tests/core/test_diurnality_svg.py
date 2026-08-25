@@ -421,6 +421,7 @@ class TestDiurnalityOmitted:
         assert _states_diurnality(svg) is expected, f"{perspective}: {_row(svg)!r}"
 
     def test_midpoint_composite_has_no_single_sky(self):
+        """A midpoint composite is no moment: no diurnality row, and no disc."""
         composite = _composite("Midpoint")
         assert composite.is_diurnal is None, "a midpoint composite must not claim a diurnality"
         svg = _render(ChartDataFactory.create_composite_chart_data(composite))
@@ -1097,6 +1098,7 @@ class TestTheDiscCaptionsItsOwnRow:
         }
 
     def _charts(self):
+        """The disc-drawing panels, built once per test through the cache above."""
         return self._all_charts()
 
     @pytest.mark.parametrize(
@@ -1104,6 +1106,7 @@ class TestTheDiscCaptionsItsOwnRow:
         ["natal", "transit", "progression", "single_return", "dual_return", "dual_lunar_return"],
     )
     def test_the_disc_sits_against_the_row_that_names_it(self, kind):
+        """No panel may put another line between the disc and its caption."""
         svg = _render(self._charts()[kind])
         assert _draws_a_disc(svg), "this panel is supposed to draw one"
         gap = _disc_to_its_own_caption(svg)
@@ -1321,6 +1324,7 @@ class TestThePerspectiveRowFitsItsSlot:
 
     @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
     def test_the_perspective_row_stays_inside_the_wheel(self, language):
+        """Measured with real advances, the row fits the slot it landed on."""
         natal, solar = _solar_return()
         svg = _render(ChartDataFactory.create_return_chart_data(natal, solar), chart_language=language)
         label = LANGUAGE_SETTINGS[language].get("perspective_type", "Perspective")
@@ -1336,6 +1340,7 @@ class TestThePerspectiveRowFitsItsSlot:
 
     @staticmethod
     def _chart_data(kind):
+        """Chart data for each panel with a fixed-slot perspective row."""
         if kind == "transit":
             return ChartDataFactory.create_transit_chart_data(
                 _subject(), _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
@@ -1449,11 +1454,13 @@ class TestTheEstimatorMeasuresWhatItUsedToGuess:
     """
 
     def test_a_combining_mark_adds_nothing_to_the_estimate(self):
+        """A virama or non-spacing matra costs the zero the fonts declare."""
         base = estimate_text_width("क")
         assert estimate_text_width("क\u094d") == base  # virama
         assert estimate_text_width("क\u0941") == base  # matra u, non-spacing
 
     def test_a_spacing_matra_costs_its_measured_advance(self):
+        """A spacing matra costs real width — its own, not the block ceiling."""
         # AA (U+093E) is a spacing mark, ~0.3 em in the reference fonts — real
         # width, so it must cost something, and far less than the old ceiling.
         alone = estimate_text_width("क")

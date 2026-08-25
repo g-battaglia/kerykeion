@@ -1033,6 +1033,7 @@ class TestSynastryChart:
         compare_chart_svg("John Lennon - HI - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_with_relationship_score(self):
+        """The score rows print on the panel — data computed AND drawer flag on."""
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul, include_relationship_score=True)
         # The drawer flag too: the rows print only when both are on, and without
