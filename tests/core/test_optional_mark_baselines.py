@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The optional chart marks, and the baselines nobody was reading.
 
-Eighteen SVG baselines were generated, committed and never compared by anything.
+Twenty SVG baselines were generated, committed and never compared by anything.
 They are the charts that demonstrate the drawer's optional marks — the station
 glyph, the out-of-bounds badge, the separating-aspect dashes, the ayanamsa offset,
 the polar substitution note, the relationship score — and the "all marks on" charts

@@ -58,6 +58,10 @@ _original_write = _ChartDrawer._write_svg_to_disk
 
 
 def _write_svg_once(self, content, output_path, filename, default_suffix=""):
+    # Checked after the write, because the drawer owns the filename sanitisation
+    # and the path is only known once it has written. The second chart's file is
+    # therefore overwritten before the abort — but the regeneration exits non-zero
+    # naming the collision, and the next run, with it fixed, rewrites both.
     written = _original_write(self, content, output_path, filename, default_suffix=default_suffix)
     key = str(written)
     if key in _WRITTEN:

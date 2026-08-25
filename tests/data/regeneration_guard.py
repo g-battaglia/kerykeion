@@ -22,21 +22,30 @@ by the other one would fail every run on the backend they claim as their own.
 from pathlib import Path
 
 
-def require_library_from_this_checkout(script_file: str) -> None:
-    """Raise unless the imported kerykeion is the one in this script's repository.
+def _repository_root(inside: Path) -> Path:
+    """The checkout a file belongs to: the nearest ancestor holding pyproject.toml."""
+    for candidate in (inside, *inside.parents):
+        if (candidate / "pyproject.toml").is_file():
+            return candidate
+    raise SystemExit(f"{inside} is not inside a checkout of the repository")
+
+
+def require_library_from_this_checkout(caller_file: str) -> None:
+    """Raise unless the imported kerykeion is the one in the caller's repository.
 
     Args:
-        script_file: The regeneration script's ``__file__``.
+        caller_file: The ``__file__`` of whatever is about to write baselines — a
+            regeneration script, or the comparator on its regeneration path.
     """
     import kerykeion
 
-    repository_root = Path(script_file).resolve().parent.parent
+    repository_root = _repository_root(Path(caller_file).resolve())
     expected = repository_root / "kerykeion"
     imported = Path(kerykeion.__file__).resolve().parent
 
     if imported != expected:
         raise SystemExit(
-            f"Refusing to regenerate: this script would draw with the kerykeion at\n"
+            f"Refusing to regenerate: this would draw with the kerykeion at\n"
             f"  {imported}\n"
             f"and write baselines into\n"
             f"  {repository_root / 'tests' / 'data'}\n"

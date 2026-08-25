@@ -48,13 +48,13 @@ _ATHENS_OFFLINE = dict(
 def _compare_or_regenerate(baseline_path: Path, svg: str) -> None:
     """Compare against a baseline, or rewrite it under KERYKEION_REGEN_BASELINES.
 
-    These two baselines pair two BCE subjects, and only this file knows which
-    two: no script in the repository builds them. Without a way to refresh them
-    they went stale on every template change and stayed stale — the comparison
-    used to be a line count within 5%, which a redrawn glyph cannot trip; it is
-    now the same comparison every other baseline gets. The regeneration env var is
-    handled inside it, so the fixtures a test owns are refreshed by running that
-    test with KERYKEION_REGEN_BASELINES set.
+    The six BCE baselines are built here and nowhere else: no script in the
+    repository casts them. Without a way to refresh them they went stale on every
+    template change and stayed stale — the comparison used to be a line count
+    within 5%, which a redrawn glyph cannot trip; it is now the same comparison
+    every other baseline gets. The regeneration env var is handled inside it, so
+    a baseline is refreshed by running the test that reads it with
+    KERYKEION_REGEN_BASELINES set.
     """
     compare_svg_file(baseline_path, svg)
 
@@ -427,18 +427,20 @@ class TestDayOfWeek:
 class TestBCEChartSVG:
     """Test SVG chart generation for BCE dates."""
 
-    @pytest.fixture(scope="class")
-    def subj_500bc(self):
-        return _create_bce_subject("ancient_500bc")
-
-    @pytest.fixture(scope="class")
-    def subj_200bc(self):
-        return _create_bce_subject("ancient_200bc")
+    # Class attributes rather than class-scoped fixtures: the golden driver
+    # (tests/data/golden_drive.py) calls setup_class as pytest would, while a
+    # test that took a fixture is one it cannot call — and one the hermetic guard
+    # therefore could not vouch for. Every test here is tier-marked, so on a
+    # kernel that cannot cast 500 BC pytest skips them before this runs.
+    @classmethod
+    def setup_class(cls):
+        cls.subj_500bc = _create_bce_subject("ancient_500bc")
+        cls.subj_200bc = _create_bce_subject("ancient_200bc")
 
     @pytest.mark.extended
-    def test_natal_chart_svg(self, subj_500bc):
+    def test_natal_chart_svg(self):
         """Natal chart SVG can be generated for a BCE subject."""
-        data = ChartDataFactory.create_natal_chart_data(subj_500bc)
+        data = ChartDataFactory.create_natal_chart_data(self.subj_500bc)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -467,9 +469,9 @@ class TestBCEChartSVG:
         _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Natal Chart - Classic.svg", svg)
 
     @pytest.mark.extended
-    def test_transit_chart_svg(self, subj_500bc, subj_200bc):
+    def test_transit_chart_svg(self):
         """Transit chart SVG can be generated between two BCE subjects."""
-        data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_transit_chart_data(self.subj_500bc, self.subj_200bc)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -481,18 +483,18 @@ class TestBCEChartSVG:
     # 500 BC and 200 BC: the two ephemerides disagree there by more than
     # precision — an aspect falls in or out of orb and the element count changes.
     @pytest.mark.reference_backend_only
-    def test_transit_chart_baseline(self, subj_500bc, subj_200bc):
+    def test_transit_chart_baseline(self):
         """Transit chart SVG matches the golden baseline (if available)."""
-        data = ChartDataFactory.create_transit_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_transit_chart_data(self.subj_500bc, self.subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
         _compare_or_regenerate(
             SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg", svg
         )
 
     @pytest.mark.extended
-    def test_synastry_chart_svg(self, subj_500bc, subj_200bc):
+    def test_synastry_chart_svg(self):
         """Synastry chart SVG can be generated between two BCE subjects."""
-        data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_synastry_chart_data(self.subj_500bc, self.subj_200bc)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -504,19 +506,19 @@ class TestBCEChartSVG:
     # 500 BC and 200 BC: the two ephemerides disagree there by more than
     # precision — an aspect falls in or out of orb and the element count changes.
     @pytest.mark.reference_backend_only
-    def test_synastry_chart_baseline(self, subj_500bc, subj_200bc):
+    def test_synastry_chart_baseline(self):
         """Synastry chart SVG matches the golden baseline (if available)."""
-        data = ChartDataFactory.create_synastry_chart_data(subj_500bc, subj_200bc)
+        data = ChartDataFactory.create_synastry_chart_data(self.subj_500bc, self.subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
         _compare_or_regenerate(
             SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg", svg
         )
 
     @pytest.mark.extended
-    def test_progression_chart_svg(self, subj_500bc):
+    def test_progression_chart_svg(self):
         """Progression chart SVG can be generated for a BCE subject."""
-        progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
-        data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
+        progressed = SecondaryProgressionFactory.compute(self.subj_500bc, target_year=-460)
+        data = ChartDataFactory.create_progression_chart_data(self.subj_500bc, progressed)
         chart = ChartDrawer(data)
         svg = chart.generate_svg_string(style="classic")
 
@@ -527,14 +529,14 @@ class TestBCEChartSVG:
 
     @pytest.mark.extended
     @pytest.mark.reference_backend_only
-    def test_progression_chart_baseline(self, subj_500bc):
+    def test_progression_chart_baseline(self):
         """Progression chart SVG matches the golden baseline.
 
         The progressed target is right here — 460 BC — so the baseline was never
         unregenerable; it was listed as such while this test compared a line count.
         """
-        progressed = SecondaryProgressionFactory.compute(subj_500bc, target_year=-460)
-        data = ChartDataFactory.create_progression_chart_data(subj_500bc, progressed)
+        progressed = SecondaryProgressionFactory.compute(self.subj_500bc, target_year=-460)
+        data = ChartDataFactory.create_progression_chart_data(self.subj_500bc, progressed)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
         _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Progression Chart - Classic.svg", svg)
 
@@ -572,27 +574,26 @@ class TestBCEPairWithAModernPartner:
     the comparator's regeneration path they can be refreshed like any other.
     """
 
-    @pytest.fixture(scope="class")
-    def midsummer_500bc(self):
-        return AstrologicalSubjectFactory.from_birth_data(
+    @classmethod
+    def setup_class(cls):
+        cls.midsummer_500bc = AstrologicalSubjectFactory.from_birth_data(
             "Ancient Greece 500BC", -500, 6, 15, 12, 0, **_ATHENS_OFFLINE
         )
-
-    @pytest.fixture(scope="class")
-    def partner_1970(self):
-        return AstrologicalSubjectFactory.from_birth_data("Transit Partner", 1970, 1, 1, 12, 0, **_ATHENS_OFFLINE)
+        cls.partner_1970 = AstrologicalSubjectFactory.from_birth_data(
+            "Transit Partner", 1970, 1, 1, 12, 0, **_ATHENS_OFFLINE
+        )
 
     @pytest.mark.extended
     @pytest.mark.reference_backend_only
-    def test_synastry_with_a_modern_partner_baseline(self, midsummer_500bc, partner_1970):
-        data = ChartDataFactory.create_synastry_chart_data(midsummer_500bc, partner_1970)
+    def test_synastry_with_a_modern_partner_baseline(self):
+        data = ChartDataFactory.create_synastry_chart_data(self.midsummer_500bc, self.partner_1970)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
         _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Synastry Chart - Classic.svg", svg)
 
     @pytest.mark.extended
     @pytest.mark.reference_backend_only
-    def test_transit_from_a_modern_partner_baseline(self, midsummer_500bc, partner_1970):
-        data = ChartDataFactory.create_transit_chart_data(midsummer_500bc, partner_1970)
+    def test_transit_from_a_modern_partner_baseline(self):
+        data = ChartDataFactory.create_transit_chart_data(self.midsummer_500bc, self.partner_1970)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
         _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Transit Chart - Classic.svg", svg)
 

@@ -308,7 +308,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 - **Session-scoped subjects:** `johnny_depp`, `john_lennon`, `yoko_ono`, `paul_mccartney` (using `AstrologicalSubjectFactory.from_birth_data` with explicit coordinates, `online=False`)
 - **Comparison helpers:** `assert_position_equal`, `assert_positions_match`, `assert_report_matches_snapshot`
 - **Tolerance constants:** `POSITION_TOLERANCE=1e-2` (0.01°), `SPEED_TOLERANCE=1e-4`, `DECLINATION_TOLERANCE=1e-2`, `ORB_TOLERANCE=1e-2`, `PERCENTAGE_TOLERANCE=2` (integer percentages, ±2)
-- **SVG comparison:** the golden tests import `compare_svg_file` from `tests.data.compare_svg_lines` — the single implementation; the conftest only reads `numbers_are_comparable()` from it, for the `reference_backend_only` skip. Three other copies of it lived in the test tree, each with its own tolerance; the loosest returned without asserting on any structural difference and allowed 50% on every number.
+- **SVG comparison:** the golden tests import `compare_svg_file` from `tests.data.compare_svg_lines` — the single implementation; the conftest imports only `numbers_are_comparable()`, `active_backend()` and `BASELINE_BACKEND` from it, for the `reference_backend_only` skip and its message. Three other copies of it lived in the test tree, each with its own tolerance; the loosest returned without asserting on any structural difference and allowed 50% on every number.
 
 ### Golden-File Testing
 

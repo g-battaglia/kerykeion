@@ -11,16 +11,26 @@ when the test runs, so run it, with the comparison swapped for whatever the gate
 wants to observe.
 
 Parametrized tests are expanded from their own marks and driven once per case; a
-class with ``setup_class`` gets it called first, as pytest would. A driven test
+class with ``setup_class`` gets it called first, as pytest would — and if that
+setup fails, its tests are still looked at for whether the driver could call
+them, because that answer depends on their signatures and not on the kernel that
+could not cast the class's subject. A driven test
 that fails, or skips, is that test's business: the gate is told, if it asked, and
 carries on to the next one. ``Skipped`` is a ``BaseException``, not an
 ``Exception``, and a gate that let it through would end as skipped itself at the
 first deep-historical chart the loaded kernel cannot reach.
+
+A test that takes a fixture the driver cannot supply is NOT driven, and the
+driver says so through ``on_unreachable`` rather than passing over it: a golden
+test the guard never runs is one the guard cannot vouch for, and the first
+version of this driver skipped five baseline readers that way without a word.
 """
 
 import importlib
 import inspect
 from typing import Callable, Optional
+
+from _pytest.outcomes import Exit
 
 #: The modules whose tests read SVG baselines through ``compare_svg_file``.
 GOLDEN_TEST_MODULES = (
@@ -59,6 +69,7 @@ def parameter_sets(function):
 def drive_every_golden_test(
     on_comparison: Callable[..., None],
     on_failure: Optional[Callable[[str, BaseException], None]] = None,
+    on_unreachable: Optional[Callable[[str], None]] = None,
 ) -> None:
     """Call every golden test with ``compare_svg_file`` replaced by ``on_comparison``.
 
@@ -66,8 +77,10 @@ def drive_every_golden_test(
         on_comparison: Called in place of ``compare_svg_file(baseline_path,
             generated_svg, **kwargs)`` — the gate's observer.
         on_failure: Called with the test's qualified name and the exception when a
-            driven test raises anything, including ``Skipped``. ``KeyboardInterrupt``
-            and ``SystemExit`` are never swallowed.
+            driven test raises anything, including ``Skipped``. ``KeyboardInterrupt``,
+            ``SystemExit`` and ``pytest.exit`` are never swallowed.
+        on_unreachable: Called with the qualified name of a test the driver cannot
+            call — one that takes a fixture other than its parametrize arguments.
     """
     import tests.data.compare_svg_lines as comparison
 
@@ -76,15 +89,25 @@ def drive_every_golden_test(
     drawer = modules[0]
     cached_subjects = dict(drawer._subject_cache)
 
-    def drive(function, instance, qualified_name):
+    def drive(function, instance, qualified_name, setup_failure=None):
         offset = 1 if instance is not None else 0
         sets, names = parameter_sets(function)
         if len(inspect.signature(function).parameters) - offset != len(names):
-            return  # takes fixtures this driver cannot supply
+            if on_unreachable is not None:
+                on_unreachable(qualified_name)
+            return
+        if setup_failure is not None:
+            # The class could not be set up — on this kernel, say — so the test
+            # cannot run; but whether the driver COULD call it was just decided
+            # above, on the signature alone, and that answer does not depend on
+            # the kernel. Report the failure per test and move on.
+            if on_failure is not None:
+                on_failure(qualified_name, setup_failure)
+            return
         for arguments in sets:
             try:
                 function(instance, *arguments) if instance is not None else function(*arguments)
-            except (KeyboardInterrupt, SystemExit):
+            except (KeyboardInterrupt, SystemExit, Exit):
                 raise
             except BaseException as failure:
                 if on_failure is not None:
@@ -99,19 +122,18 @@ def drive_every_golden_test(
             for attribute_name in dir(module):
                 attribute = getattr(module, attribute_name)
                 if inspect.isclass(attribute) and attribute_name.startswith("Test"):
+                    setup_failure = None
                     setup = getattr(attribute, "setup_class", None)
                     if setup is not None:
                         try:
                             setup()
-                        except (KeyboardInterrupt, SystemExit):
+                        except (KeyboardInterrupt, SystemExit, Exit):
                             raise
                         except BaseException as failure:
-                            if on_failure is not None:
-                                on_failure(f"{attribute_name}::setup_class", failure)
-                            continue
+                            setup_failure = failure
                     for name in dir(attribute):
                         if name.startswith("test_"):
-                            drive(getattr(attribute, name), attribute(), f"{attribute_name}::{name}")
+                            drive(getattr(attribute, name), attribute(), f"{attribute_name}::{name}", setup_failure)
                 elif inspect.isfunction(attribute) and attribute_name.startswith("test_"):
                     drive(attribute, None, attribute_name)
     finally:
