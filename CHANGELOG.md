@@ -20,8 +20,9 @@
   entry points. The contract is pinned for every kind: `next(reported(N))` is
   `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
   instant for instant, and a walk of steps lands on each return exactly once.
-  Nothing reported changes; the date and year wrappers are untouched in effect
-  (their midnight seeds never share a second with a return). The one visible
+  Nothing reported changes; the date and year wrappers keep their inclusive
+  midnight seed, so a return in the first second of a date is still that
+  date's return. The one visible
   consequence: a seed inside the same second as a crossing now selects the
   following return — so a search seeded from the natal instant itself yields the
   first return rather than the birth moment (four report fixtures that pinned

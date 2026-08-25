@@ -646,7 +646,21 @@ class PlanetaryReturnFactory:
             next_return_from_date(): Date-based calculation interface
         """
 
-        julian_day = self._search_start_jd(iso_formatted_time, backwards)
+        return self._next_return_from_jd(
+            self._search_start_jd(iso_formatted_time, backwards), return_type, backwards=backwards
+        )
+
+    def _next_return_from_jd(
+        self, julian_day: float, return_type: SolarLunarReturnType, backwards: bool = False
+    ) -> PlanetReturnModel:
+        """Solar/Lunar return search from a Julian Day seed, taken as given.
+
+        The ISO entry point snaps its seed to the reporting resolution before
+        arriving here (``_search_start_jd``), so a reported instant steps to
+        the next return. The date wrapper passes its midnight seed straight
+        through, inclusive: a return in the first second of a date is that
+        date's return, as ``next_return_from_date`` has always promised.
+        """
 
         # The natal abs_pos values are expressed in the subject's zodiac
         # (tropical OR sidereal) AND perspective (apparent/true geocentric,
@@ -983,8 +997,11 @@ class PlanetaryReturnFactory:
         # Create datetime for the specified date (UTC)
         start_date = datetime(year, month, day, 0, 0, tzinfo=timezone.utc)
 
-        # Get the return using the existing method
-        return self.next_return_from_iso_formatted_time(start_date.isoformat(), return_type, backwards=backwards)
+        # Midnight is the seed, inclusive — NOT the ISO entry point, whose seed
+        # is snapped past its own second so that a reported return instant
+        # steps to the next return. "The first return of this date" must keep
+        # a return that falls in the date's first second.
+        return self._next_return_from_jd(datetime_to_julian(start_date), return_type, backwards=backwards)
 
     def next_return_from_month_and_year(self, year: int, month: int, return_type: SolarLunarReturnType) -> PlanetReturnModel:
         """
