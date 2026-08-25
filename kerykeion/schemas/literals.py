@@ -417,6 +417,10 @@ KerykeionChartStyle: TypeAlias = Literal["classic", "modern"]
 """Literal type for Kerykeion Chart Styles"""
 
 
+KerykeionGlyphSize: TypeAlias = Literal["small", "medium", "large"]
+"""Literal type for the modern wheel's planet-cluster size"""
+
+
 KerykeionChartLanguage: TypeAlias = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
 """Literal type for Kerykeion Chart Languages"""
 
