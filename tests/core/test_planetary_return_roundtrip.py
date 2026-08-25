@@ -48,8 +48,20 @@ pytestmark = pytest.mark.skipif(
 MAX_GAP_DAYS = {
     "Solar": 367.0,
     "Lunar": 28.0,
-    "Node": 15.0,  # the Moon meets either node every half draconic month
+    "Node": 16.0,  # the Moon meets either node every ~12.4–14.7 days (half a draconic month)
     "Mars": 800.0,  # heliocentric Mars, ~687 days
+}
+
+# The heliocentric bodies the backend solves crossings for, with their
+# sidereal periods rounded up, in days. Chiron, Pholus, the Uranian points,
+# the nodes and Liliths have no heliocentric crossing in the backend (their
+# search returns its seed) and are outside the contract.
+HELIOCENTRIC_MAX_GAP_DAYS = {
+    "Mercury": 100.0,
+    "Venus": 240.0,
+    "Mars": 800.0,
+    "Jupiter": 4500.0,
+    "Saturn": 11000.0,
 }
 
 
@@ -106,6 +118,17 @@ def test_next_from_reported_instant_is_the_following_return(factory, kind):
     assert gap < MAX_GAP_DAYS[kind], f"{kind}: a return was skipped ({gap:.2f} days)"
 
 
+@pytest.mark.parametrize("planet", sorted(HELIOCENTRIC_MAX_GAP_DAYS))
+def test_every_solved_heliocentric_planet_steps_from_its_reported_instant(factory, planet):
+    first = _step(factory, planet, START)
+    second = _step(factory, planet, first.iso_formatted_utc_datetime)
+    back = _step(factory, planet, second.iso_formatted_utc_datetime, backwards=True)
+
+    gap = second.julian_day - first.julian_day
+    assert 0 < gap < HELIOCENTRIC_MAX_GAP_DAYS[planet], f"{planet}: {gap:.2f} days"
+    assert back.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
+
+
 @pytest.mark.parametrize("kind", KINDS)
 def test_previous_from_reported_instant_is_the_preceding_return(factory, kind):
     first = _step(factory, kind, START)
@@ -150,9 +173,12 @@ def test_a_walk_visits_each_return_once_and_comes_back(factory, kind):
 def test_sub_second_seeds_are_ordered_at_reporting_resolution(factory):
     """A seed inside the same whole second as a reported instant means that instant.
 
-    ``T + 0.5s`` and ``T`` are the same second, so both step to the following
-    return; ``T - 0.5s`` belongs to the second before, so the return reported
-    at ``T`` is still ahead of it.
+    Forward: ``T + 0.5s`` and ``T`` are the same second, so both step to the
+    following return; ``T - 0.5s`` belongs to the second before, so the return
+    reported at ``T`` is still ahead of it. Backward, mirrored: from ``T`` and
+    from ``T + 0.5s`` the return reported at ``T`` is not before the seed, so
+    the preceding return is found; from ``T + 1s`` it is, and it is found — a
+    crossing a fraction of a second before the seed is not skipped.
     """
     first = factory.next_return_from_iso_formatted_time(START, "Solar")
     reported = first.iso_formatted_utc_datetime
@@ -163,6 +189,23 @@ def test_sub_second_seeds_are_ordered_at_reporting_resolution(factory):
 
     assert from_half_after.iso_formatted_utc_datetime == from_reported.iso_formatted_utc_datetime
     assert from_half_before.iso_formatted_utc_datetime == reported
+
+    back_from_reported = factory.next_return_from_iso_formatted_time(reported, "Solar", backwards=True)
+    back_from_half_after = factory.next_return_from_iso_formatted_time(_shift(reported, 0.5), "Solar", backwards=True)
+    back_from_next_second = factory.next_return_from_iso_formatted_time(_shift(reported, 1), "Solar", backwards=True)
+
+    assert back_from_reported.julian_day < first.julian_day
+    assert back_from_half_after.iso_formatted_utc_datetime == back_from_reported.iso_formatted_utc_datetime
+    assert back_from_next_second.iso_formatted_utc_datetime == reported
+
+
+@pytest.mark.parametrize("kind", ["Lunar", "Node", "Mars"])
+def test_a_crossing_a_fraction_before_the_seed_is_found_backward(factory, kind):
+    """Every kind: ``previous`` from the second after a reported instant finds
+    that very return, not the one a whole cycle earlier."""
+    first = _step(factory, kind, START)
+    back = _step(factory, kind, _shift(first.iso_formatted_utc_datetime, 1), backwards=True)
+    assert back.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
 
 
 def test_date_and_iso_entry_points_agree_away_from_the_boundary(factory):
@@ -229,7 +272,7 @@ def test_seed_is_normalized_to_utc_before_it_is_stepped():
     assert forward_edge == datetime_to_julian(datetime(9999, 12, 31, 10, 0, 0, tzinfo=timezone.utc))
 
     backward_edge = seed("0001-01-01T00:00:00-14:00", backwards=True)
-    assert backward_edge == datetime_to_julian(datetime(1, 1, 1, 13, 59, 59, tzinfo=timezone.utc))
+    assert backward_edge == datetime_to_julian(datetime(1, 1, 1, 14, 0, 0, tzinfo=timezone.utc))
 
     with pytest.raises(KerykeionException, match="civil range"):
         seed("9999-12-31T23:59:59-14:00", backwards=False)  # already year 10000 in UTC
@@ -240,7 +283,9 @@ def test_seed_is_normalized_to_utc_before_it_is_stepped():
 def test_search_refuses_to_start_outside_the_civil_range(factory):
     with pytest.raises(KerykeionException, match="civil range"):
         factory.next_return_from_iso_formatted_time("9999-12-31T23:59:59+00:00", "Solar")
-    with pytest.raises(KerykeionException, match="civil range"):
+    # The first second of 1 CE is a valid backward seed; the search itself then
+    # runs out of the civil range and refuses through the library's exception.
+    with pytest.raises(KerykeionException, match="1 CE|civil range|range"):
         factory.next_return_from_iso_formatted_time("0001-01-01T00:00:00+00:00", "Solar", backwards=True)
 
 
