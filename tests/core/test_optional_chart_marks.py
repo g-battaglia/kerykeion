@@ -598,8 +598,10 @@ _BIWHEEL_SIDE_TABLE_DEBT = (
 #: cleared seven of the ten languages, and leaving the marker on all ten would
 #: let those seven regress in silence. What still overruns is not the point
 #: names — it is the out-of-bounds badge against a long cusp label in French and
-#: Italian, and in Hindi a script the width estimator reads too narrow.
-_LANGUAGES_STILL_OVERRUNNING = frozenset({"FR", "IT", "HI"})
+#: Italian. Hindi left this set when Devanagari entered the estimator's
+#: measured table: its overrun was the block ceiling charging every matra a
+#: full em, not the layout.
+_LANGUAGES_STILL_OVERRUNNING = frozenset({"FR", "IT"})
 
 class TestNothingPrintsOnTopOfAnythingElse:
     """No two strings share a baseline and the same pixels.

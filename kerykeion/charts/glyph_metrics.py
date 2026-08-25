@@ -29,57 +29,67 @@ from __future__ import annotations
 # among them: a Russian synastry overran the wheel by 21px, the same magnitude
 # as the ideograph bug the table was written to fix.
 #
+# Devanagari is measured for the inverse reason: under the block ceiling every
+# code point of a shipped Hindi row cost 1.04 em — matras and viramas included —
+# which read the row at over twice its rendered width, and the trims that share
+# this estimator amputated text that fit with a third of the slot to spare.
+# Combining marks appear here at what the fonts' hmtx tables declare, most of
+# them zero: shaping only stacks and fuses, never widens, so the figure is a
+# measurement and still not an underestimate.
+#
 # Generated from the three fonts' `hmtx` tables; regenerate with
 # `poe regenerate:glyph-widths` if the reference set ever changes.
 _MEASURED_EM: dict[float, str] = {
+    0.00: 'ँं़ुूृॄॅॆेै्॒॑॓॔ॢॣ',
     0.20: "'",
-    0.24: "ɉ‛",
-    0.26: "|¦Ɩ",
-    0.28: " ,./:;\\ijlt\xa0·ìíîïĭįıĵĺļłţƫƭǀǐǰȉȋțȷͺ;·ΐίιϊϳіїјӏ",
-    0.32: "ŧ",
-    0.34: "!()-I[]`fr¡¨²³´¸¹ÌÍÎÏĬĮİŕŗřſǃǏȈȊȑȓʹ͵΄ІЇӀ‐‑‘’‚‟․‧",
-    0.36: "ŀƗƚ΅•‣",
-    0.38: "ªºƪ",
-    0.40: "°ĪīľɍΙΪґғ",
+    0.24: 'ɉ‛',
+    0.26: '|¦Ɩ',
+    0.28: ' ,./:;\\ijlt\xa0·ìíîïĭįıĵĺļłţƫƭǀǐǰȉȋțȷͺ;·ΐίιϊϳіїјӏ',
+    0.30: 'ः',
+    0.32: 'ŧािीॉॊोौ',
+    0.34: '!()-I[]`fr¡¨\xad²³´¸¹ÌÍÎÏĬĮİŕŗřſǃǏȈȊȑȓʹ͵΄ІЇ҃҅҆Ӏ।‐‑‘’‚‟․‧',
+    0.36: 'ŀƗƚ΅•‣',
+    0.38: 'ªºƪऽ॰',
+    0.40: '°ĪīľɍΙΪ҄ґғ',
     0.42: '"гѓ',
-    0.44: "ĩťϯҟӄӷ‖",
-    0.46: "Ĩѯ“”„",
-    0.48: "^{}ƺǁ",
-    0.50: "*Jcksvxyz¯çýÿćĉċčĴķĸśŝşšŷźżžƙƨƶǩșȳȼͻͼͽζξτϲЈзстухѕўѵ‗",
-    0.52: "ϩϵ϶эєҁҙқҫҭҳӟӡӭӯӱӳӿ",
-    0.54: "¶ƹƽǮǯϧчьӌ",
-    0.56: "#$0123456789?_abdeghnopqu¢£¤¥§«»àáâãäåèéêëðñòóôõöùúûüþāăąđēĕėęěĝğġģĥħĳńņňŋōŏőũūŭůűųƀƃƄƅƌƒƛƞƥƼƾƿǉǎǒǔǖǘǚǜǝǟǡǧǫǭǵǹǻȁȃȅȇȍȏȕȗȟȧȩȫȭȯȱȽɁɂɇɈέγεκλνςχϥϨϸавекнопряёђћќџѳѻҐҕҷҹһәӛӵ‒–†‡",
-    0.58: "µƈƍƬƻǂϐϜϞϮϱЃГблцѐѝҒңҧҩӈӑӓӗӣӥӧөӫ",
-    0.60: "+<=>~¬±×÷ǥийѧѷҞӃ",
-    0.62: "FLTZ¿ßøĹĻĽĿŁŢŤŦŹŻŽƐƑƩƮƴƵǿȚȾɋɏΓΣάήΰαβδηθμορσυϋόύϑϫϬϭϰТдѣѫѮҝӠӶ",
-    0.64: "ŉƷƸϒϔϪъҬ",
-    0.66: "ƔΊϕЬҔ",
-    0.68: "BEPSÈÉÊËÞďĒĔĖĘĚŚŜŞŠƂƋƎƘơƧƲǷȄȆȘȜȝȨȺɅɆΞΡΤπϷЀЁЅБВЕЗРѦѴѶҘҡҰұӖӞӾ‥",
-    0.70: "ưϠϤϦЧм҂ҽҿӋ",
-    0.72: "ϼДЛҥҵҶҸҺӴ",
-    0.74: "ACDHKNRUVXYwÀÁÂÃÄÅÇÐÑÙÚÛÜÝĀĂĄĆĈĊČĎĐĤĦĶŃŅŇŊŔŖŘŨŪŬŮŰŲŵŶŸƆƉƝƤƦǍǓǕǗǙǛǞǠǨǸǺȀȂȐȒȔȖȞȠȦȲȻɃΒΔΕΖφψϓϚϹϻϽϾϿЄЏАКНПСХЭЯыѥѱҀҚҦҪҮүҲӇӐӒӬ",
-    0.76: "©®ƁƏƱƳЌЍЎИЙУЦҢӂӘӚӢӤӮӰӲӹ",
-    0.78: "&GOQÒÓÔÕÖØĜĞĠĢĲŌŎŐƇƟǌǑǦǪǬǴǾȌȎȪȬȮȰɎΚΛΝΥΧΩΫωώϴОжюѡѲѺѽѿҜҨ",
-    0.80: "ƊƓƣǤɌΆϖӦӨӪ",
-    0.82: "ƕшњѢѩѭ",
-    0.84: "m¼½¾ƜΑΗΘΟΠΦϣϺЪфщѪѰ",
-    0.86: "ɄɊФҗӝ",
-    0.88: "ƯϢЂЋљҠ",
-    0.90: "%MæƠǈǣǽΨМӕ",
-    0.92: "ȹҼҾ",
-    0.94: "ȸЫҤҴӸ",
-    0.96: "WœŴΌΏΜШЩѨ",
-    0.98: "ѠѼѾӁ",
-    1.00: "ÆŒǋǢǼΈЖӔ—―…",
-    1.02: "@ƢЊЮѤ",
-    1.04: "Ǉ",
-    1.06: "ǆǳΎѬ",
-    1.08: "ѹ",
-    1.10: "Ή",
-    1.12: "ЉҖӜ",
-    1.24: "ǅǊǲ",
-    1.28: "Ѹ",
-    1.34: "ǄǱ",
+    0.44: 'ĩťϯҟӄӷ‖',
+    0.46: 'Ĩѯ“”„',
+    0.48: '^{}ƺǁ',
+    0.50: '*Jcksvxyz¯çýÿćĉċčĴķĸśŝşšŷźżžƙƨƶǩșȳȼͻͼͽζξτϲЈзстухѕўѵरऱ‗',
+    0.52: 'ϩϵ϶эєҁҙқҫҭҳӟӡӭӯӱӳӿट॥',
+    0.54: '¶ƹƽǮǯϧчьӌइईठढदढ़',
+    0.56: '#$0123456789?_abdeghnopqu¢£¤¥§«»àáâãäåèéêëðñòóôõöùúûüþāăąđēĕėęěĝğġģĥħĳńņňŋōŏőũūŭůűųƀƃƄƅƌƒƛƞƥƼƾƿǉǎǒǔǖǘǚǜǝǟǡǧǫǭǵǹǻȁȃȅȇȍȏȕȗȟȧȩȫȭȯȱȽɁɂɇɈέγεκλνςχϥϨϸавекнопряёђћќџѳѻҐҕҷҹһәӛӵह‒–†‡',
+    0.58: 'µƈƍƬƻǂϐϜϞϮϱЃГблцѐѝҒңҧҩӈӑӓӗӣӥӧөӫप',
+    0.60: '+<=>~¬±×÷ǥийѧѷҞӃउगडतनऩबवग़ड़',
+    0.62: 'FLTZ¿ßøĹĻĽĿŁŢŤŦŹŻŽƐƑƩƮƴƵǿȚȾɋɏΓΣάήΰαβδηθμορσυϋόύϑϫϬϭϰТдѣѫѮҝӠӶऍऎएऐयषय़',
+    0.64: 'ŉƷƸϒϔϪъҬघङथम०१२३४५६७८९',
+    0.66: 'ƔΊϕЬҔधस',
+    0.68: 'BEPSÈÉÊËÞďĒĔĖĘĚŚŜŞŠƂƋƎƘơƧƲǷȄȆȘȜȝȨȺɅɆΞΡΤπϷЀЁЅБВЕЗРѦѴѶҘҡҰұӖӞӾऌकलक़ॡ‥',
+    0.70: 'ưϠϤϦЧм҂ҽҿӋअचजञणफभशज़फ़',
+    0.72: 'ϼДЛҥҵҶҸҺӴऊछझ',
+    0.74: 'ACDHKNRUVXYwÀÁÂÃÄÅÇÐÑÙÚÛÜÝĀĂĄĆĈĊČĎĐĤĦĶŃŅŇŊŔŖŘŨŪŬŮŰŲŵŶŸƆƉƝƤƦǍǓǕǗǙǛǞǠǨǸǺȀȂȐȒȔȖȞȠȦȲȻɃΒΔΕΖφψϓϚϹϻϽϾϿЄЏАКНПСХЭЯыѥѱҀҚҦҪҮүҲӇӐӒӬखळऴख़',
+    0.76: '©®ƁƏƱƳЌЍЎИЙУЦҢӂӘӚӢӤӮӰӲӹ',
+    0.78: '&GOQÒÓÔÕÖØĜĞĠĢĲŌŎŐƇƟǌǑǦǪǬǴǾȌȎȪȬȮȰɎΚΛΝΥΧΩΫωώϴОжюѡѲѺѽѿҜҨ',
+    0.80: 'ƊƓƣǤɌΆϖӦӨӪ',
+    0.82: 'ƕшњѢѩѭ',
+    0.84: 'm¼½¾ƜΑΗΘΟΠΦϣϺЪфщѪѰ',
+    0.86: 'ɄɊФҗӝ',
+    0.88: 'ƯϢЂЋљҠ',
+    0.90: '%MæƠǈǣǽΨМӕॐ',
+    0.92: 'ȹҼҾआऋऑऒओऔॠ',
+    0.94: 'ȸЫҤҴӸ',
+    0.96: 'WœŴΌΏΜШЩѨ',
+    0.98: 'ѠѼѾӁ',
+    1.00: 'ÆŒǋǢǼΈЖӔ—―…',
+    1.02: '@ƢЊЮѤ',
+    1.04: 'Ǉ',
+    1.06: 'ǆǳΎѬ',
+    1.08: 'ѹ',
+    1.10: 'Ή',
+    1.12: 'ЉҖӜ',
+    1.24: 'ǅǊǲ',
+    1.28: 'Ѹ',
+    1.34: 'ǄǱ',
 }
 
 _MEASURED_EM_BY_CHAR: dict[str, float] = {char: em for em, chars in _MEASURED_EM.items() for char in chars}
@@ -94,12 +104,10 @@ _MEASURED_EM_BY_CHAR: dict[str, float] = {char: em for em, chars in _MEASURED_EM
 # nothing where the old figure happened to be right, and is correct where it was
 # not.
 #
-# Note there is deliberately no rule for combining marks. Charging them zero —
-# on the reasonable-sounding grounds that a matra stacks on the letter before it
-# — is another guess about the renderer, and the SOFT HYPHEN it also swept up is
-# 0.333 em of real width in all three fonts. Every character is charged; a
-# mark-heavy name truncates a little harder than it strictly needs to, which is
-# the direction this may err in.
+# Combining marks in the measured ranges above are charged their measured
+# advance like any other character — zero for most, the SOFT HYPHEN its real
+# 0.34 em. A mark OUTSIDE those ranges still pays its block ceiling: an
+# unmeasured script's renderer is a guess, and the guard may only guess high.
 _BLOCK_CEILING_EM: tuple[tuple[int, int, float], ...] = (
     (0x0000, 0x00FF, 1.02),
     (0x0100, 0x01FF, 1.34),

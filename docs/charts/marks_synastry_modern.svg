@@ -62,7 +62,7 @@
                 Mutable 24%</text>
         </g>
 
-        <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
+        <g kr:node='Bottom_Left_Text' transform='translate(0,30)'>
             <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: #000000; font-size: 10px'>Relationship Score: 12</text>
             <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: #000000; font-size: 10px'>Important</text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: #000000; font-size: 10px'>Zodiac: Tropical</text>
@@ -726,18 +726,18 @@
 <line x1='50.0' y1='34.5' x2='50.0' y2='37.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-302.374874 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='12' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='36.0' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-331.187437 50.0 50.0) rotate(421.187437 50.0 36.0)'>12</text></g>
 </g>
-<g kr:node='HouseSector' kr:house='1' kr:horoscope='0'><path d='M 50.000000,4.000000 A 46.0,46.0 0 0,0 20.549568,14.663446 L 41.997165,40.397676 A 12.5,12.5 0 0,1 50.000000,37.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='2' kr:horoscope='0'><path d='M 20.549568,14.663446 A 46.0,46.0 0 0,0 9.958226,27.358084 L 39.119083,43.847305 A 12.5,12.5 0 0,1 41.997165,40.397676 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='3' kr:horoscope='0'><path d='M 9.958226,27.358084 A 46.0,46.0 0 0,0 5.117081,39.924110 L 37.803555,47.261986 A 12.5,12.5 0 0,1 39.119083,43.847305 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='4' kr:horoscope='0'><path d='M 5.117081,39.924110 A 46.0,46.0 0 0,0 4.218685,54.480093 L 37.559425,51.217417 A 12.5,12.5 0 0,1 37.803555,47.261986 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='5' kr:horoscope='0'><path d='M 4.218685,54.480093 A 46.0,46.0 0 0,0 11.150110,74.630998 L 39.442965,56.693206 A 12.5,12.5 0 0,1 37.559425,51.217417 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='6' kr:horoscope='0'><path d='M 11.150110,74.630998 A 46.0,46.0 0 0,0 50.000000,96.000000 L 50.000000,62.500000 A 12.5,12.5 0 0,1 39.442965,56.693206 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='7' kr:horoscope='0'><path d='M 50.000000,96.000000 A 46.0,46.0 0 0,0 79.450432,85.336554 L 58.002835,59.602324 A 12.5,12.5 0 0,1 50.000000,62.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='8' kr:horoscope='0'><path d='M 79.450432,85.336554 A 46.0,46.0 0 0,0 90.041774,72.641916 L 60.880917,56.152695 A 12.5,12.5 0 0,1 58.002835,59.602324 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='9' kr:horoscope='0'><path d='M 90.041774,72.641916 A 46.0,46.0 0 0,0 94.882919,60.075890 L 62.196445,52.738014 A 12.5,12.5 0 0,1 60.880917,56.152695 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='10' kr:horoscope='0'><path d='M 94.882919,60.075890 A 46.0,46.0 0 0,0 95.781315,45.519907 L 62.440575,48.782583 A 12.5,12.5 0 0,1 62.196445,52.738014 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='11' kr:horoscope='0'><path d='M 95.781315,45.519907 A 46.0,46.0 0 0,0 88.849890,25.369002 L 60.557035,43.306794 A 12.5,12.5 0 0,1 62.440575,48.782583 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
-<g kr:node='HouseSector' kr:house='12' kr:horoscope='0'><path d='M 88.849890,25.369002 A 46.0,46.0 0 0,0 50.000000,4.000000 L 50.000000,37.500000 A 12.5,12.5 0 0,1 60.557035,43.306794 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='1' kr:horoscope='0'><path d='M 50.000000,0.000000 A 50.0,50.0 0 0,0 17.988660,11.590702 L 41.997165,40.397676 A 12.5,12.5 0 0,1 50.000000,37.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='2' kr:horoscope='0'><path d='M 17.988660,11.590702 A 50.0,50.0 0 0,0 6.476333,25.389222 L 39.119083,43.847305 A 12.5,12.5 0 0,1 41.997165,40.397676 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='3' kr:horoscope='0'><path d='M 6.476333,25.389222 A 50.0,50.0 0 0,0 1.214218,39.047946 L 37.803555,47.261986 A 12.5,12.5 0 0,1 39.119083,43.847305 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='4' kr:horoscope='0'><path d='M 1.214218,39.047946 A 50.0,50.0 0 0,0 0.237702,54.869666 L 37.559425,51.217417 A 12.5,12.5 0 0,1 37.803555,47.261986 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='5' kr:horoscope='0'><path d='M 0.237702,54.869666 A 50.0,50.0 0 0,0 7.771859,76.772824 L 39.442965,56.693206 A 12.5,12.5 0 0,1 37.559425,51.217417 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='6' kr:horoscope='0'><path d='M 7.771859,76.772824 A 50.0,50.0 0 0,0 50.000000,100.000000 L 50.000000,62.500000 A 12.5,12.5 0 0,1 39.442965,56.693206 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='7' kr:horoscope='0'><path d='M 50.000000,100.000000 A 50.0,50.0 0 0,0 82.011340,88.409298 L 58.002835,59.602324 A 12.5,12.5 0 0,1 50.000000,62.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='8' kr:horoscope='0'><path d='M 82.011340,88.409298 A 50.0,50.0 0 0,0 93.523667,74.610778 L 60.880917,56.152695 A 12.5,12.5 0 0,1 58.002835,59.602324 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='9' kr:horoscope='0'><path d='M 93.523667,74.610778 A 50.0,50.0 0 0,0 98.785782,60.952054 L 62.196445,52.738014 A 12.5,12.5 0 0,1 60.880917,56.152695 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='10' kr:horoscope='0'><path d='M 98.785782,60.952054 A 50.0,50.0 0 0,0 99.762298,45.130334 L 62.440575,48.782583 A 12.5,12.5 0 0,1 62.196445,52.738014 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='11' kr:horoscope='0'><path d='M 99.762298,45.130334 A 50.0,50.0 0 0,0 92.228141,23.227176 L 60.557035,43.306794 A 12.5,12.5 0 0,1 62.440575,48.782583 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
+<g kr:node='HouseSector' kr:house='12' kr:horoscope='0'><path d='M 92.228141,23.227176 A 50.0,50.0 0 0,0 50.000000,0.000000 L 50.000000,37.500000 A 12.5,12.5 0 0,1 60.557035,43.306794 Z' fill='transparent' stroke='none' pointer-events='all'/></g>
 <g kr:node='AspectCore'>
 <path d='M 37.5,50.0 A 12.5,12.5 0 1,1 62.5,50.0 A 12.5,12.5 0 1,1 37.5,50.0 Z' fill='#ffffff' fill-rule='evenodd'/>
 <g kr:node='Aspect' kr:aspectname='sextile' kr:to='Sun' kr:tooriginaldegrees='196.2678943501122' kr:from='Moon' kr:fromoriginaldegrees='138.20014920582454' kr:orb='1.9322548557123582' kr:aspectdegrees='60' kr:planetsdiff='58.06774514428764' kr:aspectmovement='Static' transform='translate(50.0 50.0) scale(0.37) translate(-50.0 -50.0)'>

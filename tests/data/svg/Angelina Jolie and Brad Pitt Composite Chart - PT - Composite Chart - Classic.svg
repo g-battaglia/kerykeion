@@ -243,7 +243,7 @@
                 Mutável 30%</text>
         </g>
 
-        <g kr:node='Bottom_Left_Text' transform='translate(0,0)'>
+        <g kr:node='Bottom_Left_Text' transform='translate(0,30)'>
             <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
             <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodíaco: Tropical</text>
@@ -254,16 +254,7 @@
 
         <!-- Lunar Phase -->
         <g kr:node='Lunar_Phase' transform='translate(10,532)'>
-            <g transform='rotate(0 20 10)'>
-    <defs>
-        <clipPath id='moonPhaseCutOffCircle'>
-            <circle cx='20' cy='10' r='10' />
-        </clipPath>
-    </defs>
-    <circle cx='20' cy='10' r='10' style='fill: var(--kerykeion-chart-color-lunar-phase-1)' />
-    <path d='M 20.0000 0.0000 A 10.0000 10.0000 0 0 1 20.0000 20.0000 A 9.5790 10.0000 0 0 1 20.0000 0.0000 Z' style='fill: var(--kerykeion-chart-color-lunar-phase-0)' clip-path='url(#moonPhaseCutOffCircle)' />
-    <circle cx='20' cy='10' r='10' style='fill: none; stroke: var(--kerykeion-chart-color-lunar-phase-0); stroke-width: 0.5px; stroke-opacity: 0.5' />
-</g>
+            
         </g>
 
         <!-- Full Wheel -->
