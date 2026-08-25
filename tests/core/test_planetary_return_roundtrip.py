@@ -199,10 +199,12 @@ def test_sub_second_seeds_are_ordered_at_reporting_resolution(factory):
     assert back_from_next_second.iso_formatted_utc_datetime == reported
 
 
-@pytest.mark.parametrize("kind", ["Lunar", "Node", "Mars"])
+@pytest.mark.parametrize("kind", ["Lunar", "Node", *sorted(HELIOCENTRIC_MAX_GAP_DAYS)])
 def test_a_crossing_a_fraction_before_the_seed_is_found_backward(factory, kind):
-    """Every kind: ``previous`` from the second after a reported instant finds
-    that very return, not the one a whole cycle earlier."""
+    """Every kind, every solved heliocentric planet: ``previous`` from the
+    second after a reported instant finds that very return, not the one a
+    whole cycle earlier. (The old seed, one second earlier still, passed the
+    forward/backward walk yet failed exactly this.)"""
     first = _step(factory, kind, START)
     back = _step(factory, kind, _shift(first.iso_formatted_utc_datetime, 1), backwards=True)
     assert back.iso_formatted_utc_datetime == first.iso_formatted_utc_datetime
