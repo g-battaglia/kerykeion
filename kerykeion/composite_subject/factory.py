@@ -437,31 +437,47 @@ def composite_frame(
             cusps = list(midpoints)
             coherent = False
 
-    # Where the parents put an angle exactly on a cusp, the composite has to as
-    # well — under equal houses the first cusp IS the Ascendant, and a chart whose
-    # Ascendant is drawn opposite its own first cusp is broken however sound the
-    # ring is. The two can disagree because the anchor may hold the Midheaven
-    # while it is the Ascendant that is a cusp.
+    # An angle stands at some arc from the cusp it shares a number with, and both
+    # parents have one: the composite's has to be the average of theirs. Where
+    # that arc is zero the rule reads as "an angle that IS a cusp stays one" —
+    # under equal houses the first cusp is the Ascendant, and a chart drawn with
+    # its Ascendant opposite its own first cusp is broken however sound the ring
+    # is. But zero is only the easy case, and asking only about it left every
+    # system where the arc is something else with nothing holding the two
+    # together: a whole-sign pair at 60S came back with a ring that tiles
+    # perfectly and sits half a circle from its own angles, Ascendant in the
+    # seventh house, Midheaven in the fourth, the Sun six houses out, and
+    # `house_frame` calling it anchored.
     #
     # The whole ring turns half a circle to meet it. That is free: a rotation
     # leaves the twelve tiling exactly as they were, and half a turn takes each
-    # cusp from one midpoint of its pair to the other, which is the only choice in
-    # question anyway. It fires rarely — 4 charts in 240 under equal-type systems
-    # — and never at all under a quadrant system, where the angle and the cusp
-    # share an origin and cannot disagree.
+    # cusp from one midpoint of its pair to the other, which is the only choice
+    # in question anyway.
+    #
     # Nothing rotates a ring the frame could not repair. The rotation exists to
     # make a framed ring agree with the frame; on a ring that is not on one it
     # only moves the cusp out from under an angle that cannot follow it, because
     # that angle is its own near midpoint. Ungate this and 26 frames in 148,005
     # draw an angle opposite the cusp it is.
     if coherent:
-        identities = [
-            (cusp, place_on_composite_frame(first_angles[index], second_angles[index], angle_frame))
-            for index, cusp in ((0, 0), (1, 9))
-            if _angle_is_its_cusp(
-                first_angles[index], second_angles[index], first_cusps, second_cusps, cusp
+        identities = []
+        for index, cusp in ((0, 0), (1, 9)):
+            placed_angle = place_on_composite_frame(
+                first_angles[index], second_angles[index], angle_frame
             )
-        ]
+            angle_to_cusp = circular_mean(
+                (first_angles[index] - first_cusps[cusp]) % 360.0,
+                (second_angles[index] - second_cusps[cusp]) % 360.0,
+            )
+            identities.append(
+                (
+                    cusp,
+                    (placed_angle - angle_to_cusp) % 360.0,
+                    _angle_is_its_cusp(
+                        first_angles[index], second_angles[index], first_cusps, second_cusps, cusp
+                    ),
+                )
+            )
         # The only disagreement a rotation answers is half a turn. Everything else
         # is the near midpoint and the frame's own choice being the same point
         # reached two ways, and the arithmetic error between the two is not small:
@@ -475,19 +491,41 @@ def composite_frame(
         # Half a turn is the only thing worth answering, so ask at half of it.
         disagreeing = [
             cusp
-            for cusp, placed in identities
-            if abs(((cusps[cusp] - placed + 180.0) % 360.0) - 180.0) > 90.0
+            for cusp, expected, _exact in identities
+            if abs(((cusps[cusp] - expected + 180.0) % 360.0) - 180.0) > 90.0
         ]
+        held_cusp = 0 if held == 0 else 9
+        exact = [cusp for cusp, _expected, is_exact in identities if is_exact]
         if disagreeing and len(disagreeing) == len(identities):
             cusps = [(value + 180.0) % 360.0 for value in cusps]
-        elif disagreeing:
-            # One rotation would fix one identity and break the other. Two charts
-            # running opposite ways are most of it, a single parent whose own
-            # cusps are not ordered at all is most of the rest, and a few have two
-            # plain rings running the same way, which is neither — the ratios move
-            # with whatever grid you measure, but all three occur. Leave the ring
-            # alone; the angles follow it below.
-            coherent = False
+        elif exact:
+            # One exact and one not: the exact one wins, whichever is held. "This
+            # angle IS this cusp in both parents" is a fact about the charts, and
+            # an arc that merely has to average is not — under Carter houses at
+            # 75N the Ascendant is its own first cusp while the Midheaven is 93
+            # degrees from its tenth, and holding the Midheaven there put the
+            # Ascendant opposite the cusp it is.
+            #
+            # Two exact identities in conflict would be a contradiction rather
+            # than a tie — no rotation satisfies both — and used to be answered by
+            # declaring the frame incoherent. It cannot arise any more: such a
+            # pair is refused earlier, by asking whether each parent is a house
+            # division and whether the two run the same way. Measured across
+            # 258,201 composites the branch fired zero times, so it is gone rather
+            # than left looking like it decides something.
+            if exact[0] in disagreeing:
+                cusps = [(value + 180.0) % 360.0 for value in cusps]
+        elif held_cusp in disagreeing:
+            # Where the arcs are not zero the two are not contradicting each
+            # other: under whole sign the ring is tied to the zodiac rather than
+            # to the angles, so the arc from each angle to its own cusp is its own
+            # business and the two can pull apart. That is a tie, and breaking it
+            # is the entire job `house_anchor` was added to do. Calling it an
+            # incoherent frame instead sent both angles back to their plain
+            # midpoints, and a composite Ascendant then took two values half a
+            # circle apart depending on the house system — the one thing this
+            # construction exists to prevent.
+            cusps = [(value + 180.0) % 360.0 for value in cusps]
 
     return angle_frame, cusps, coherent
 

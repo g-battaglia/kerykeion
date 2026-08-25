@@ -2452,3 +2452,90 @@ def test_a_pair_is_closed_from_whichever_end_was_asked_for():
     assert model.true_north_lunar_node.abs_pos == approx(100.0, abs=1e-9)
     assert model.true_south_lunar_node.abs_pos == approx(280.0, abs=1e-9)
     assert "True_North_Lunar_Node" not in model.active_points
+
+
+def test_a_whole_sign_ring_is_oriented_by_its_own_angles():
+    """A ring that tiles perfectly can still sit half a circle from its angles.
+
+    The reconciliation only knew one case — an angle that IS a cusp, an arc of
+    zero — so under whole sign, where the ring is tied to the zodiac and the arcs
+    are whatever they are, nothing held the two together. The plain midpoints wind
+    once, so they were accepted as they came: this pair at 60S came back with its
+    Ascendant in the SEVENTH house, its Midheaven in the fourth, the Sun six
+    houses out, and `house_frame` calling it anchored.
+
+    An angle stands at some arc from the cusp it shares a number with, and both
+    parents have one, so the composite's is the average of theirs. Zero is only
+    the easy case.
+    """
+    def whole_sign(name, hour):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 1, 1, hour, 0, city="X", nation="XX", lat=-60.0, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="W",
+        )
+
+    first, second = whole_sign("A", 0), whole_sign("B", 14)
+    assert first.ascendant.abs_pos != approx(first.first_house.abs_pos, abs=1e-6), (
+        "the fixture now puts the Ascendant on the first cusp"
+    )
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        assert model.ascendant.house == "First_House", anchor
+        assert model.medium_coeli.house == "Tenth_House", anchor
+
+    # Which half of the circle the whole chart lands on is the anchor's business
+    # and always was; what was broken is the ring parting company with its own
+    # angles. Under the default the Sun is in the sixth house, not the twelfth.
+    default = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    assert default.sun.house == "Sixth_House"
+
+
+def test_an_angle_that_is_a_cusp_outranks_one_that_merely_has_an_arc():
+    """Two constraints, one hard and one soft, and the hard one wins.
+
+    Under Carter houses at 75N the Ascendant IS the first cusp in both parents,
+    while the Midheaven stands 93 degrees from its tenth. Those are not the same
+    kind of claim: "this angle is this cusp" is a fact about the charts, an arc
+    that merely has to average is not. Letting the held angle decide regardless
+    put the Ascendant opposite the cusp it is.
+    """
+    def carter(name, hour, lat):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, hour, 0, city="X", nation="XX", lat=lat, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="F",
+        )
+
+    first, second = carter("A", 4, 75.0), carter("B", 22, 70.0)
+    for subject in (first, second):
+        assert subject.ascendant.abs_pos == approx(subject.first_house.abs_pos, abs=1e-9)
+        assert subject.medium_coeli.abs_pos != approx(subject.tenth_house.abs_pos, abs=1e-6)
+
+    for anchor in _ANCHORS:
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        cusps = _cusps_of(model)
+        assert model.ascendant.abs_pos == approx(cusps[0], abs=1e-9), anchor
+        assert model.ascendant.house == "First_House", anchor
+
+    # And the arc itself has to be measured, not assumed to be zero. Under Morinus
+    # neither angle is a cusp, so the arcs are all there is: read as nothing, this
+    # pair's ring turns half a circle and its Ascendant moves from the ninth house
+    # to the third. 144 of 588 composites on one sweep are decided by it.
+    def morinus(name, hour, lat):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, hour, 0, city="X", nation="XX", lat=lat, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="N",
+        )
+
+    decided = CompositeSubjectFactory(
+        morinus("A", 0, -66.75), morinus("B", 12, -89.0)
+    ).get_midpoint_composite_subject_model()
+    assert decided.first_house.abs_pos == approx(0.0, abs=1e-6)
+    assert decided.ascendant.house == "Ninth_House"
