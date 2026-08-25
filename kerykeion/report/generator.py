@@ -1048,6 +1048,16 @@ class ReportGenerator:
         if requested and requested != houses_system:
             houses_system = f"{houses_system} (substituted for {requested})"
         settings_data.append(["Houses System", houses_system])
+        # Some systems bring several cusps onto one longitude at extreme latitudes,
+        # and the houses between them have no width: nothing can ever be in them,
+        # and a reader counting twelve houses in this table would be counting
+        # houses this chart does not have. The reference ephemeris returns the same
+        # ring, so the cusps stand as computed and this row says what they are.
+        coincident = getattr(subject, "coincident_house_cusps", None) or ()
+        for group in coincident:
+            settings_data.append(
+                ["Cusps On One Longitude", ", ".join(str(number) for number in group)]
+            )
         settings_data.append(["Perspective Type", str(subject.perspective_type)])
 
         julian_day = getattr(subject, "julian_day", None)
