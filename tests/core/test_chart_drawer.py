@@ -3114,6 +3114,39 @@ class TestGlyphSize:
         svg = ChartDrawer(data).generate_svg_string(style="modern", glyph_size="large")
         compare_chart_svg("John Lennon - All Active Points - Natal Chart - Modern Large.svg", svg)
 
+    def test_large_parity_is_a_default_configuration_contract(self):
+        """Parity holds through the 0.92 wrapper; without the ring, large draws 8.7% over.
+
+        The large base is written against the default page: glyph px =
+        24 x base x 0.92 x 4.8 = 24.0 exactly. show_zodiac_background_ring=False
+        removes the 0.92 wrapper and scales the WHOLE modern wheel up by 1/0.92
+        — at every size, medium included — so the cluster keeps its proportions
+        to its own wheel and the glyph lands at 26.09px against classic's 24.
+        That is the stated behaviour, pinned here so the docs' qualifier ("in
+        the default configuration") stays true rather than diplomatic.
+        """
+        from kerykeion.charts.draw_modern import (
+            GLYPH_SIZE_PROFILES,
+            MODERN_PAGE_SCALE,
+            ZODIAC_BG_SCALE,
+        )
+
+        base = GLYPH_SIZE_PROFILES["large"]["natal"].planet_scale_base
+        drawer = ChartDrawer(self._natal_data())
+        with_ring = drawer.generate_svg_string(style="modern", glyph_size="large")
+        without_ring = drawer.generate_svg_string(
+            style="modern", glyph_size="large", show_zodiac_background_ring=False
+        )
+        # The emitted glyph scale is the same parity base in both renders...
+        assert f"scale({base})" in with_ring
+        assert f"scale({base})" in without_ring
+        # ...and only the ring render carries the 0.92 wrapper, so:
+        assert 24 * base * ZODIAC_BG_SCALE * MODERN_PAGE_SCALE == pytest.approx(24.0, abs=1e-12)
+        assert 24 * base * MODERN_PAGE_SCALE == pytest.approx(24.0 / ZODIAC_BG_SCALE, abs=1e-9)
+        wrapper = f"scale({ZODIAC_BG_SCALE:.6f})"
+        assert wrapper in with_ring
+        assert wrapper not in without_ring
+
     def test_glyph_size_composite_small_baseline(self):
         angelina, brad = _make_angelina(), _make_brad()
         model = CompositeSubjectFactory(angelina, brad).get_midpoint_composite_subject_model()

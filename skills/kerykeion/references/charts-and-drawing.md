@@ -151,7 +151,7 @@ Constructor: `ChartDrawer(chart_data, *, ...)` — `chart_data` is the only posi
 | `show_aspect_icons` | `True` | Classic style only. |
 | `style` | `"modern"` | `KerykeionChartStyle` — wheel geometry default for render methods. |
 | `show_zodiac_background_ring` | `True` | Colored zodiac wedges (modern only); overridable at render time. |
-| `glyph_size` | `"medium"` | `KerykeionGlyphSize` — planet-cluster size on the modern wheel (`"small"`/`"medium"`/`"large"`, large = classic-parity glyph); overridable at render time. |
+| `glyph_size` | `"medium"` | `KerykeionGlyphSize` — planet-cluster size on the modern wheel (`"small"`/`"medium"`/`"large"`; large = classic-parity glyph in the default configuration, ring active and per-glyph map applied); overridable at render time. |
 | `show_diurnality` | `True` | Diurnality line in the bottom-left info panel. |
 
 **THE TRAP — `theme` vs `style` are orthogonal axes.** `theme` selects a CSS palette and defaults to `"classic"`; `style` selects the wheel geometry and defaults to `"modern"`. The default render is therefore classic *palette* on a modern *wheel*. `"classic"` appears in both literals but means different things; to get the traditional v5-style drawing pass `style="classic"` (theme choice is independent).

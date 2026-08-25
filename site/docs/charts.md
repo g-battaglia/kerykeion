@@ -172,7 +172,7 @@ drawer.save_wheel_only_svg_file(output_path, filename="wheel")
 | Parameter                    | Type   | Default | Description                                                    |
 | :--------------------------- | :----- | :------ | :------------------------------------------------------------- |
 | `show_zodiac_background_ring`| `bool` | `True`  | Draw colored zodiac wedges behind the outer planet ring.       |
-| `glyph_size`                 | `str`  | `"medium"` | Planet-cluster size: `"small"` (medium at 90%), `"medium"`, or `"large"` (the planet glyph at the classic style's own size). |
+| `glyph_size`                 | `str`  | `"medium"` | Planet-cluster size: `"small"` (medium at 90%), `"medium"`, or `"large"` (the planet glyph at the classic style's own size, in the default configuration — zodiac background ring active, per-glyph optical map applied). |
 
 ### Classic
 

@@ -6370,6 +6370,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
                 If not provided, uses the default set in the constructor.
+            glyph_size (KerykeionGlyphSize): Planet-cluster size (modern only) —
+                "small", "medium" or "large". If not provided, uses the default
+                set in the constructor.
 
         Returns:
             None
@@ -6408,6 +6411,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
                 If not provided, uses the default set in the constructor.
+            glyph_size (KerykeionGlyphSize): Planet-cluster size (modern only) —
+                "small", "medium" or "large". If not provided, uses the default
+                set in the constructor.
 
         Returns:
             str: SVG markup for the chart wheel only.
@@ -6491,6 +6497,9 @@ class ChartDrawer:  # type: ignore[no-redef]
                 If not provided, uses the default set in the constructor.
             show_zodiac_background_ring (bool): Draw colored zodiac wedges (modern only).
                 If not provided, uses the default set in the constructor.
+            glyph_size (KerykeionGlyphSize): Planet-cluster size (modern only) —
+                "small", "medium" or "large". If not provided, uses the default
+                set in the constructor.
 
         Returns:
             None

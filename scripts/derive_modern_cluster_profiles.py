@@ -116,14 +116,15 @@ class RingGeometry:
     binding_row: int  # index into rows of the row the medium ceiling binds on
 
 
-# The natal tether: _draw_indicator_line defaults — start at the ruler's inner
-# edge, arc at R_PLANET_OUTER - 1, tab 1.075. The duals pass their own dicts.
+# The natal tether: _draw_indicator_line's defaults, read from the module's
+# own constants — the natal medium profile passes indicator=None and draws
+# with exactly these. The duals pass their own dicts.
 RINGS: dict[str, RingGeometry] = {
     "natal": RingGeometry(
         name="natal",
         start_y=dm.HOUSE_LINE_OUTER_Y,
-        arc_drop=(50.0 - dm.HOUSE_LINE_OUTER_Y) - (dm.R_PLANET_OUTER - 1.0),
-        tick=1.075,
+        arc_drop=(50.0 - dm.HOUSE_LINE_OUTER_Y) - (dm.R_PLANET_OUTER - dm.NATAL_INDICATOR_ARC_DROP),
+        tick=dm.NATAL_INDICATOR_TICK,
         inner_edge_y=50.0 - dm.R_PLANET_INNER,
         sizes=(
             dm.PLANET_SCALE_BASE,
