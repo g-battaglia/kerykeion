@@ -74,7 +74,7 @@ import logging
 
 from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List, Literal, Union, cast
 
 from kerykeion.schemas import KerykeionException
@@ -246,6 +246,47 @@ class PlanetaryReturnFactory:
             raise KerykeionException(
                 f"Invalid ISO timestamp {iso_formatted_time!r}: {exc}. "
                 "Expected an ISO 8601 datetime such as '2023-06-15T14:30:00Z'."
+            ) from exc
+
+    @classmethod
+    def _search_start_jd(cls, iso_formatted_time: str, backwards: bool) -> float:
+        """Julian Day a return search starts from: the seed's own second excluded.
+
+        Return instants are reported truncated to the whole second (the chart
+        is rebuilt from an integer ``seconds`` field), so the exact crossing of
+        a return reported at ``T`` lies in ``[T, T + 1s)`` — at or a fraction
+        of a second AFTER the value the caller holds. Seeding a forward search
+        with that value found the same crossing again, sitting just ahead of
+        the seed, so a caller stepping through the sequence of returns with the
+        instants this factory reports never advanced; backward searches only
+        worked because the truncation happens to land the seed on the right
+        side.
+
+        Ordering between a seed and a return is therefore defined at the
+        library's reporting resolution: a forward search starts from the whole
+        second after the seed's, a backward one from the whole second before
+        it. Reported instants become re-usable as seeds — ``next`` from the
+        instant of return N is N+1, ``previous`` is N−1, exactly — and nothing
+        can be skipped, since consecutive returns of every supported kind are
+        at least ~13 days apart (half a draconic month, the node crossing).
+
+        Naive timestamps are read as UTC, like every ``*_from_iso`` entry.
+        """
+        dt = cls._parse_iso(iso_formatted_time)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        whole_second = dt.replace(microsecond=0)
+        step = timedelta(seconds=-1 if backwards else 1)
+        try:
+            return datetime_to_julian(whole_second + step)
+        except OverflowError as exc:
+            # 9999-12-31T23:59:59 forward / 0001-01-01T00:00:00 backward: the
+            # next second is outside datetime's civil range. Refuse with the
+            # library's own exception, naming the range, not the ephemeris.
+            raise KerykeionException(
+                f"Cannot search {'backward' if backwards else 'forward'} from "
+                f"{iso_formatted_time!r}: the search would start outside the "
+                "supported civil range (years 1 to 9999)."
             ) from exc
 
     def __init__(
@@ -528,7 +569,10 @@ class PlanetaryReturnFactory:
             iso_formatted_time (str): Starting datetime in ISO format for the search.
                 Must be a valid ISO 8601 datetime string (e.g., "2024-01-15T10:30:00"
                 or "2024-01-15T10:30:00+00:00"). The method will find the next return
-                occurring after this moment.
+                occurring after this moment, "after" being decided at the whole
+                second — the resolution return instants are reported at — so the
+                instant of a return this factory reported is a valid seed for the
+                following (or, with ``backwards``, the preceding) return.
             return_type (SolarLunarReturnType): Type of planetary return to calculate.
                 Must be either "Solar" for Sun returns or "Lunar" for Moon returns.
                 This determines which planet's return cycle to compute.
@@ -602,8 +646,7 @@ class PlanetaryReturnFactory:
             next_return_from_date(): Date-based calculation interface
         """
 
-        date = self._parse_iso(iso_formatted_time)
-        julian_day = datetime_to_julian(date)
+        julian_day = self._search_start_jd(iso_formatted_time, backwards)
 
         # The natal abs_pos values are expressed in the subject's zodiac
         # (tropical OR sidereal) AND perspective (apparent/true geocentric,
@@ -1133,12 +1176,9 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the heliocentric return chart.
         """
-        dt = self._parse_iso(iso_formatted_time)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
         return self.next_heliocentric_return(
             planet_name=planet_name,
-            start_jd=datetime_to_julian(dt),
+            start_jd=self._search_start_jd(iso_formatted_time, backwards),
             backwards=backwards,
         )
 
@@ -1216,11 +1256,8 @@ class PlanetaryReturnFactory:
         Returns:
             PlanetReturnModel for the node crossing chart.
         """
-        dt = self._parse_iso(iso_formatted_time)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
         return self.next_lunar_node_crossing(
-            start_jd=datetime_to_julian(dt),
+            start_jd=self._search_start_jd(iso_formatted_time, backwards),
             backwards=backwards,
         )
 

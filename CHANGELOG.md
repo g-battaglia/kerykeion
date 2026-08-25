@@ -1,5 +1,39 @@
 # Changelog
 
+## [6.0.0a89] - Unreleased
+
+### Fixed
+
+- **A return instant this library reported could not seed the search for the
+  next one.** Return instants are reported truncated to the whole second (the
+  chart is rebuilt from an integer `seconds` field), so the exact crossing of a
+  return reported at `T` lies in `[T, T + 1s)` — a fraction of a second AFTER the
+  value the caller holds. A forward search seeded with that value asked the
+  ephemeris for the first crossing at or after it and got the same return back;
+  a backward search happened to work, because the truncated seed lands before
+  the crossing. A client stepping through the sequence of returns with the
+  instants it was given never advanced — for solar, lunar, heliocentric and node
+  crossing alike. Ordering between a seed and a return is now decided at the
+  resolution the factory reports at: a forward search starts from the whole
+  second after the seed's, a backward one from the whole second before it, in
+  one helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
+  entry points. The contract is pinned for every kind: `next(reported(N))` is
+  `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
+  instant for instant, and a walk of steps lands on each return exactly once.
+  Nothing reported changes; the date and year wrappers are untouched in effect
+  (their midnight seeds never share a second with a return). The one visible
+  consequence: a seed inside the same second as a crossing now selects the
+  following return — so a search seeded from the natal instant itself yields the
+  first return rather than the birth moment (four report fixtures that pinned
+  that degenerate chart are regenerated). Seeds at the edge of
+  the civil range — forward from 9999-12-31T23:59:59, backward from
+  0001-01-01T00:00:00 — used to overflow `datetime` and now refuse with
+  `KerykeionException`. Two calendar facts are pinned alongside, as the reason a
+  return is identified by its instant and never by a period: a leap year can
+  hold two solar returns (born 1 January: 1 January and 31 December 2024), and a
+  month can hold two lunar returns (2 and 29 August 2026).
+  See [release_notes/v6.0.0a89.md](release_notes/v6.0.0a89.md).
+
 ## [6.0.0a88] - 2026-08-25
 
 ### Fixed
