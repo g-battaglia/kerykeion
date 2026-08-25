@@ -51,6 +51,31 @@ from kerykeion.utilities.core import (
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
 
 
+#: Sidereal modes that request a fixed reference frame rather than an ayanamsa
+#: along the ecliptic of date; the reference keeps Sunshine 'i' on its own
+#: construction under these.
+_FIXED_EPOCH_SIDEREAL_MODES = frozenset({"J2000", "J1900", "B1950", "GALALIGN_MARDYKS"})
+
+
+def _house_system_the_reference_casts(hsys: bytes, is_sidereal: bool, sidereal_mode: Optional[str]) -> bytes:
+    """The house system the ephemeris actually computes for a sidereal request.
+
+    Under a sidereal flag the reference implementation casts Sunshine 'i'
+    (Makransky) as 'I' (Treindl) — libephemeris matches it, see its
+    ``houses_ex`` — except in the fixed-epoch modes, where 'i' stays on its own
+    construction. The natal chart got that ring because it asked with the
+    sidereal flag. This factory asks TROPICALLY and applies the subject's own
+    ayanamsa afterwards, so it has to ask for the same system the reference would
+    pick, or a sidereal 'i' relocated onto its own birthplace would come back a
+    different chart: Makransky cusps, tens of degrees from Treindl's at sixty
+    degrees north, and inside the polar circle a refused cast substituted with
+    Porphyry, where the natal has a Sunshine ring.
+    """
+    if is_sidereal and hsys == b"i" and sidereal_mode not in _FIXED_EPOCH_SIDEREAL_MODES:
+        return b"I"
+    return hsys
+
+
 class RelocatedChartFactory:
     """Create a relocated chart from an existing natal chart."""
 
@@ -174,8 +199,10 @@ class RelocatedChartFactory:
             )
 
         jd = subject.julian_day
-        hsys = subject.houses_system_identifier.encode("ascii")
         is_sidereal = subject.zodiac_type == "Sidereal"
+        hsys = _house_system_the_reference_casts(
+            subject.houses_system_identifier.encode("ascii"), is_sidereal, subject.sidereal_mode
+        )
 
         # Validate but do NOT clamp: relocating to lat 78 must persist the real
         # latitude and cast latitude-agnostic house systems there, exactly like a
