@@ -256,7 +256,9 @@ drawer = ChartDrawer(chart_data=chart_data)
 # Get SVG as string (recommended for web apps).
 # The wheel style defaults to "modern"; pass style="classic" for the
 # traditional wheel (instance-level via ChartDrawer(..., style="classic")
-# or per render).
+# or per render). The modern wheel's planet cluster comes in three sizes:
+# glyph_size="small" | "medium" (default) | "large" — large draws the planet
+# glyph at the classic style's own size. Instance-level or per render.
 svg_string = drawer.generate_svg_string()
 
 # Or save to file. Default filenames carry the style suffix:

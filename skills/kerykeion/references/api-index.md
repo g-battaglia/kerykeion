@@ -149,6 +149,7 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `KerykeionChartLanguage` | literal — `kerykeion.schemas` | `references/charts-and-drawing.md` |
 | `KerykeionChartStyle` | literal — `kerykeion.schemas` | `references/charts-and-drawing.md` |
 | `KerykeionChartTheme` | literal — `kerykeion.schemas` | `references/charts-and-drawing.md` |
+| `KerykeionGlyphSize` | literal — `kerykeion.schemas` | `references/charts-and-drawing.md` |
 | `KerykeionException` | exception | `references/subjects.md` |
 | `KerykeionPointModel` | model | `references/subjects.md` |
 | `KerykeionSettingsModel` | model | `references/charts-and-drawing.md` |
