@@ -1867,10 +1867,12 @@ def _draw_indicator_line(
     Args:
         real_angle: True zodiacal angle of the planet.
         display_angle: Display angle after collision resolution.
-        start_y: Y coordinate where the indicator line starts (default 6.5).
+        start_y: Y coordinate where the indicator line starts (default: the
+                 ruler's inner edge, HOUSE_LINE_OUTER_Y).
         tick_length: Length and direction of the initial tick. Positive = downward,
-                     negative = upward (default 1.075).
-        arc_radius: Radius for the connecting arc. If None, uses R_PLANET_OUTER - 1.
+                     negative = upward (default NATAL_INDICATOR_TICK).
+        arc_radius: Radius for the connecting arc. If None, uses
+                    R_PLANET_OUTER - NATAL_INDICATOR_ARC_DROP.
         planet_slug: Name of the celestial point (for kr:slug metadata).
         abs_pos: The owning ChartPoint's absolute position. Must be the SAME float
             the ChartPoint tag interpolates so the kr:absoluteposition strings are

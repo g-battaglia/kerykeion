@@ -209,7 +209,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
 - `KerykeionChartTheme` (3): `"classic"` (default), `"dark"`, `"black-and-white"` — CSS files in kerykeion/charts/themes/. `theme=None` emits no CSS at all, so the drawing takes its colours from the document hosting it. `"light"`, `"strawberry"` and `"dark-high-contrast"` were removed in a86: passing one raises `KerykeionException`.
 - `KerykeionChartStyle` (2): `"classic"` | `"modern"`.
-- `KerykeionGlyphSize` (3): `"small"` | `"medium"` (default) | `"large"` — the modern wheel's planet-cluster size; `"large"` draws the planet glyph at the classic style's own size.
+- `KerykeionGlyphSize` (3): `"small"` | `"medium"` (default) | `"large"` — the modern wheel's planet-cluster size; `"large"` draws the planet glyph at the classic style's own size (default configuration: zodiac background ring active, per-glyph optical map applied).
 - `KerykeionChartLanguage` (10): `"EN"`, `"FR"`, `"PT"`, `"IT"`, `"CN"`, `"ES"`, `"RU"`, `"TR"`, `"DE"`, `"HI"`.
 
 All four literals import from `kerykeion.schemas`.

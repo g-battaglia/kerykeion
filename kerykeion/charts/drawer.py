@@ -2778,9 +2778,10 @@ class ChartDrawer:  # type: ignore[no-redef]
             glyph_size (KerykeionGlyphSize, optional):
                 Default size of the planet cluster on the modern wheel — "small"
                 (the medium cluster at 90%), "medium", or "large" (the planet
-                glyph at the classic style's own size). Modern style only; the
-                classic wheel ignores it. Can be overridden at render time.
-                Defaults to "medium".
+                glyph at the classic style's own size, in the default
+                configuration: zodiac background ring active, per-glyph optical
+                map applied). Modern style only; the classic wheel ignores it.
+                Can be overridden at render time. Defaults to "medium".
             show_diurnality (bool, optional):
                 Whether to print the chart's diurnality (whether the Sun stood
                 above or below the horizon) in the bottom-left info panel.
