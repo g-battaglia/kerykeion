@@ -340,7 +340,11 @@ def info_row_clear_width(row_index: int, drop: float = 0.0) -> float:
     """
     baseline_y = _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * row_index + drop
     measured_y = baseline_y - _INFO_ROW_TEXT_RISE
-    half_chord = math.sqrt(_WHEEL_RADIUS**2 - (measured_y - _WHEEL_CENTRE_Y) ** 2)
+    # A row slid past the wheel's bottom edge sits under no chord at all. The
+    # clamp continues the curve to its tangent value — 320px from the text's
+    # x=20 — rather than raising on a height the wheel does not reach, which
+    # row 5 plus a disc-less panel's 30px drop otherwise does.
+    half_chord = math.sqrt(max(0.0, _WHEEL_RADIUS**2 - (measured_y - _WHEEL_CENTRE_Y) ** 2))
     return (_WHEEL_CENTRE_X - half_chord) - _INFO_ROW_TEXT_X
 
 
@@ -798,17 +802,25 @@ class InfoSectionBuilder:
             row_index,
         )
 
-    def build_perspective_info(self, subject, row_index: Optional[int] = None) -> str:
+    def build_perspective_info(self, subject, row_index: Optional[int] = None, drop: float = 0.0) -> str:
         """Build the perspective type string, fitted to its row when one is given.
 
         The fixed-slot renderers pass the slot the row lands on; the natal
         renderer passes nothing because it fits every row itself at placement.
         Without this the Russian apparent-geocentric string, 198px, ran 19px
         under the wheel from slot 3 (178.7px clear).
+
+        *drop* is how far the panel's block sits below the template baselines
+        when the row is drawn. The synastry and composite panels never draw a
+        moon disc, so their block always takes the disc's 30px and their rows
+        sit on a wider chord — fitted at the template height, the Russian
+        string was cut in a slot it fit with 55px to spare. The disc-bearing
+        panels pass nothing: exact when the disc is there, and merely a narrower
+        budget — never an overrun — in the rare moonless render that drops too.
         """
         row = self.drawer._get_perspective_string(subject)
         if row_index is not None:
-            row = truncate_to_width(row, info_row_clear_width(row_index))
+            row = truncate_to_width(row, info_row_clear_width(row_index, drop))
         return row
 
     def build_houses_system_info(self, subject, second_subject=None, row_index: int = 1) -> str:
@@ -1302,6 +1314,7 @@ class CompositeChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_2"] = builder.build_perspective_info(
             d.first_obj.first_subject,  # type: ignore[union-attr]
             row_index=3 if diurnality else 4,
+            drop=_MOON_GLYPH_FOOTPRINT,
         )
         template_dict["bottom_left_3"] = (
             f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
@@ -1799,7 +1812,9 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_0"], template_dict["bottom_left_1"] = builder.build_relationship_score_info()
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
         template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj, row_index=3)
-        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj, row_index=4)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(
+            d.first_obj, row_index=4, drop=_MOON_GLYPH_FOOTPRINT
+        )
         # Both natals keep their own sect: a placement that is in sect for one
         # partner can be out of sect for the other, which is precisely what a
         # synastry reading needs to see.

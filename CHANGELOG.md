@@ -60,7 +60,7 @@
   `estimate_text_width` had no measurements for Devanagari, so every code point
   of a Hindi row paid the block ceiling of 1.04 em — matras and viramas
   included, glyphs that shaping renders at zero advance. A 159px Hindi return
-  line was read as 363 and cut to "चंद्र चरण: शुक्ल पक्ष प्…", the wheel
+  line was read as 342 and cut to "चंद्र चरण: शुक्ल पक्ष प्…", the wheel
   qualifier dropped and the phase name severed mid-word, in a slot it fit with
   70px to spare — on every Hindi transit, progression and return, the moment
   the trim above began to exist. Devanagari sits in the measured table now,
@@ -75,10 +75,14 @@
   and `build_perspective_info` never measured itself: the Russian
   apparent-geocentric line, 198px, ran 19px under the wheel graphics on every
   Russian dual return — and always had on transits, from that same slot. It is
-  fitted now like every other row, and to the slot it *lands* on: a midpoint
-  composite draws it two rows below the one it is written in, the blank rows
-  having migrated to the top, and a fit taken against the authored slot was
-  measured against a chord the row is never drawn at.
+  fitted now like every other row, and to the slot it *lands* on at the height
+  the block actually sits: a midpoint composite draws the row two slots below
+  the one it is written in, the blank rows having migrated to the top, and the
+  synastry and composite blocks — which never draw a disc — take the disc's
+  30px and put their rows on a wider chord. A fit taken against the authored
+  slot, or against the template height, measures a chord the row is never
+  drawn at: the first cut the Italian composite line, the second the Russian
+  synastry line, each in a slot that held it whole.
 
 ## [6.0.0a87] - 2026-08-25
 

@@ -48,6 +48,7 @@ from kerykeion.charts.drawer import (
     ChartDrawer,
     _INFO_ROW_FIRST_Y,
     _INFO_ROW_STEP,
+    _MOON_GLYPH_FOOTPRINT,
     estimate_text_width,
     info_row_clear_width,
 )
@@ -1333,28 +1334,100 @@ class TestThePerspectiveRowFitsItsSlot:
             f"{language}: {row!r} overruns row {index} by {width - budget:.0f}px"
         )
 
-    def test_a_midpoint_composite_fits_it_to_the_slot_it_lands_on(self):
-        """Written in slot 2, drawn in slot 4: blank rows migrate to the top.
+    @staticmethod
+    def _chart_data(kind):
+        if kind == "transit":
+            return ChartDataFactory.create_transit_chart_data(
+                _subject(), _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
+            )
+        if kind == "synastry":
+            return ChartDataFactory.create_synastry_chart_data(
+                _subject(), _subject("Paul", year=1942, month=6, day=18, hour=2, minute=0)
+            )
+        if kind == "composite_midpoint":
+            return ChartDataFactory.create_composite_chart_data(_composite("Midpoint"))
+        if kind == "composite_davison":
+            return ChartDataFactory.create_composite_chart_data(_composite("Davison"))
+        natal, solar = _solar_return()
+        if kind == "single_return":
+            return ChartDataFactory.create_single_wheel_return_chart_data(solar)
+        return ChartDataFactory.create_return_chart_data(natal, solar)
 
-        A row must be fitted to the slot it lands on, not the one it is written
-        in — trimmed against slot 2's 161px, the Italian string lost text that
-        slot 4's 200px had room for, on every midpoint composite. (Italian and
-        not Russian: the Russian string sits within the estimator's rounding of
-        the landing budget itself, so it is trimmed a hair either way and can
-        prove nothing about which slot paid.)
-        """
-        svg = _render(
-            ChartDataFactory.create_composite_chart_data(_composite("Midpoint")),
-            chart_language="IT",
-        )
-        label = LANGUAGE_SETTINGS["IT"].get("perspective_type", "Perspective")
+    @staticmethod
+    def _perspective_row(svg):
+        """The rendered perspective row, the slot it landed on, the block's drop."""
         row, y = next(
-            (t, y) for t, y in _filled_row_baselines(svg).items() if unescape(t).startswith(label)
+            (unescape(t), y)
+            for t, y in _filled_row_baselines(svg).items()
+            if unescape(t).startswith("Perspective")
         )
         index = round((float(y) - _INFO_ROW_FIRST_Y) / _INFO_ROW_STEP)
-        assert index == 4, "the fixture's perspective no longer lands where this test believes"
-        assert "…" not in unescape(row), (
-            f"trimmed for the slot it is written in, not the one it lands on: {row!r}"
+        drop = float(BLOCK_TRANSFORM.search(svg).group(1))
+        return row, index, drop
+
+    @pytest.mark.parametrize(
+        "kind",
+        ["transit", "synastry", "composite_midpoint", "composite_davison", "single_return", "dual_return"],
+    )
+    def test_every_fitted_call_site_bites(self, kind):
+        """A value too wide for any slot is cut to its own slot's room — everywhere.
+
+        Rendered through a language pack no shipped translation approaches, so
+        the assertion has teeth on every panel, including the four whose shipped
+        strings fit whole and which therefore stood on no test at all. The
+        budget is read back from the SVG itself — the slot the row landed on,
+        at the height the block actually sits — so a call site that stops
+        fitting, or fits against the wrong slot in the wrong direction, fails
+        here by measurement rather than by fixture bookkeeping.
+        """
+        svg = _render(self._chart_data(kind), language_pack={"apparent_geocentric": "W" * 40})
+        row, index, drop = self._perspective_row(svg)
+        assert row.endswith("…"), f"{kind}: a 400px value was left whole: {row!r}"
+        budget = info_row_clear_width(index, drop)
+        assert estimate_text_width(row) <= budget, (
+            f"{kind}: {row!r} was fitted to some other slot than row {index} at drop {drop:.0f}"
+        )
+
+    def test_the_chord_function_survives_a_row_below_the_wheel(self):
+        """Row 5 plus a disc-less panel's 30px drop sits below the wheel's edge.
+
+        There is no chord there to bind it: the budget continues to the tangent
+        value instead of raising a math domain error on a height the wheel does
+        not reach.
+        """
+        assert info_row_clear_width(5, _MOON_GLYPH_FOOTPRINT) == pytest.approx(320.0)
+
+    @pytest.mark.parametrize(
+        "kind,slot,floor",
+        [
+            # floor: the widest budget any *wrong* fit would use. For the
+            # synastry that is the template height (drop forgotten); for the
+            # composite the candidates are the template height, slot 2 (the row
+            # it is written in) and slot 3 (the Davison branch taken on a
+            # midpoint) — the last is the widest. The value is built to clear
+            # the floor and sit inside the true dropped chord, so every one of
+            # those wrong budgets cuts it and only the right one leaves it whole.
+            ("synastry", 4, info_row_clear_width(4)),
+            ("composite_midpoint", 4, info_row_clear_width(3, _MOON_GLYPH_FOOTPRINT)),
+        ],
+    )
+    def test_a_disc_less_panel_is_fitted_at_the_height_it_sits(self, kind, slot, floor):
+        """These panels never draw a disc: their block takes the disc's 30px and
+        their rows sit on a wider chord. Fitted at the template height, the
+        Russian perspective was cut in a slot it fit with 55px to spare — the
+        amputation this class exists to prevent, reintroduced by its own fix.
+        """
+        ceiling = info_row_clear_width(slot, _MOON_GLYPH_FOOTPRINT)
+        value = "W"
+        while estimate_text_width(f"Perspective: {value}") <= floor + 8:
+            value += "W"
+        full = f"Perspective: {value}"
+        assert floor + 8 < estimate_text_width(full) <= ceiling - 8, "the fixture window collapsed"
+        svg = _render(self._chart_data(kind), language_pack={"apparent_geocentric": value})
+        row, index, drop = self._perspective_row(svg)
+        assert index == slot, f"{kind}: landed on row {index}, this test believes {slot}"
+        assert row == full, (
+            f"{kind}: cut although the chord at drop {drop:.0f} holds it whole: {row!r}"
         )
 
 
