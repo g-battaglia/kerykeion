@@ -1100,3 +1100,84 @@ def test_the_widening_slop_stays_bounded_by_the_minimum_wedge():
     # A tenth of a degree per sample; the slop cannot exceed the minimum width on
     # either side of the one wedge that needed it.
     assert disagreements / 10.0 <= 2 * MINIMUM_WEDGE_SPAN_DEGREES, disagreements
+
+
+def test_a_descending_ring_still_gets_its_cusp_labels_spaced():
+    """The crowding policy measured its gaps one way round, so it never fired on
+    a descending ring.
+
+    Campanus at 80N returns its cusps in decreasing order, and the narrowest
+    separation between two readings is 7.37 degrees — but read forwards that gap
+    is 352.63, which looks like all the room in the world. Every reading came out
+    at full size on one lane, printing through its neighbour. Measured as a
+    distance rather than a one-way gap, the policy shrinks the ring and staggers
+    the crowd, exactly as it does on an ascending one.
+    """
+    import re
+
+    from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+    from kerykeion.chart_data.factory import ChartDataFactory
+    from kerykeion.utilities.core import house_spans
+
+    def cusp_ring(lat, system):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 0, 0, city="X", nation="XX", lat=lat, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=system,
+        )
+        svg = ChartDrawer(
+            ChartDataFactory.create_natal_chart_data(subject), style="modern"
+        ).generate_svg_string()
+        segment = svg[svg.find("CuspRing"):]
+        segment = segment[: segment.find("</g>\n</g>") + 9] or segment[:9000]
+        return subject, sorted(set(re.findall(r"font-size='([0-9.]+)'", segment))), sorted(
+            set(re.findall(r"y='([0-9.-]+)'", segment))
+        )
+
+    subject, sizes, lanes = cusp_ring(80.0, "C")
+    spans, reversed_wedges = house_spans(
+        [getattr(subject, name).abs_pos for name in _CUSP_ATTRS]
+    )
+    assert set(reversed_wedges) == {True}, "the fixture's ring no longer descends"
+    assert min(spans) < 8.0, "the fixture is no longer crowded"
+
+    assert sizes and float(sizes[0]) < 1.9, "the readings are still drawn full size"
+    assert len(lanes) > 1, "the crowded readings are still all on one lane"
+
+    # An ordinary chart is untouched: full size, one lane.
+    _ordinary, plain_sizes, plain_lanes = cusp_ring(45.0, "P")
+    assert plain_sizes == ["1.9"]
+    assert len(plain_lanes) == 1
+
+
+def test_the_modern_house_targets_reach_the_zodiac_ring():
+    """The overlays live inside the wrapper that scales the chart to fit.
+
+    Passing them the zodiac ring's inner radius applied that scale a second time,
+    so the hit areas stopped at a rendered 42.32 while the chart itself reaches
+    46 — a 3.68-unit band of chart with no house under the pointer at all.
+    """
+    import re
+
+    from kerykeion import AstrologicalSubjectFactory, ChartDrawer
+    from kerykeion.chart_data.factory import ChartDataFactory
+    from kerykeion.charts.draw_modern import R_CUSP_OUTER, R_ZODIAC_BG_INNER, ZODIAC_BG_SCALE
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+    )
+    svg = ChartDrawer(
+        ChartDataFactory.create_natal_chart_data(subject), style="modern"
+    ).generate_svg_string()
+
+    scaled_at = svg.find(f"scale({ZODIAC_BG_SCALE:.6f}")
+    sector_at = svg.find("kr:node='HouseSector'")
+    assert scaled_at != -1 and sector_at > scaled_at, "the overlays left the scaled group"
+
+    radii = {
+        float(value)
+        for value in re.findall(r"A (\d+\.?\d*),", svg[sector_at : sector_at + 400])
+    }
+    assert max(radii) == pytest.approx(R_CUSP_OUTER)
+    assert max(radii) * ZODIAC_BG_SCALE == pytest.approx(R_ZODIAC_BG_INNER)

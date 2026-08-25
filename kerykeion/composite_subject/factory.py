@@ -1068,10 +1068,20 @@ class CompositeSubjectFactory:
         # second list beside it: the copy in `config_constants` had never learned
         # about Priapus, so a composite asked for Lilith came back without one
         # while its parents both had it.
+        # From either end. Asking only whether the PRIMARY is active closes the
+        # pair one way: a caller who wants the south node and not the north got
+        # its south node averaged on its own — the ambiguity this exists to avoid
+        # — and no north node at all, while both parents carry one. Which of the
+        # two is the source is a fact about the geometry, not about the request.
         derived_points = {
             opposite: pair["primary"]
             for opposite, pair in OPPOSITE_PAIRS.items()
-            if pair["primary"] in self.active_points
+            if pair["primary"] in self.active_points or opposite in self.active_points
+        }
+        primaries = {
+            pair["primary"]
+            for opposite, pair in OPPOSITE_PAIRS.items()
+            if opposite in derived_points
         }
         # Derived whether or not the opposite was ALSO asked for. Averaging an
         # explicitly active counterpart on its own walks straight into the
@@ -1080,6 +1090,11 @@ class CompositeSubjectFactory:
         ordinary_points = [
             point for point in self.active_points if point not in derived_points
         ]
+        # The source has to exist before its opposite can hang from it, whether or
+        # not anybody asked for it.
+        for primary in primaries:
+            if primary not in ordinary_points:
+                ordinary_points.append(primary)
         # And the four axes always, whatever the preset. They are already computed
         # above; materialising them only when they are active left a chart built
         # with `["Sun", "Moon", "Mercury", "Venus", "Mars"]` with no Ascendant,

@@ -228,8 +228,14 @@ def _cusp_lanes(angles: Sequence[float], band: float) -> list[Optional[int]]:
         return [None] * count
 
     #: ``tight[i]``: readings *i* and *i+1* are closer than the band they occupy.
+    # How far apart two readings are, not how far one is from the other going
+    # forwards: above the polar circle several systems return their cusps in
+    # decreasing order, and the one-way gap then reads a seven-degree crowd as
+    # three hundred and fifty-two degrees of room. Nothing was ever staggered on
+    # such a chart, and the readings sat on top of each other.
     tight = [
-        ((angles[(index + 1) % count] - angles[index]) % 360.0) < band for index in range(count)
+        abs(((angles[(index + 1) % count] - angles[index] + 180.0) % 360.0) - 180.0) < band
+        for index in range(count)
     ]
     if not any(tight):
         return [None] * count
@@ -871,7 +877,16 @@ def _draw_cusp_ring(
     # a floor, for skies no arrangement can fix.
     angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses]
     count = len(angles)
-    gaps = [(angles[(i + 1) % count] - angles[i]) % 360.0 for i in range(count)] if count > 1 else [360.0]
+    # The same correction, and for the twelve it is `house_spans` that knows: it
+    # reads the direction from all of them at once and returns each wedge's real
+    # width, whichever way the ring runs.
+    if count > 1:
+        gaps = house_spans(angles)[0] if count == 12 else [
+            abs(((angles[(i + 1) % count] - angles[i] + 180.0) % 360.0) - 180.0)
+            for i in range(count)
+        ]
+    else:
+        gaps = [360.0]
     nominal_span = _cusp_cluster_span(1.0)
     shrink_alone = min(gaps) / nominal_span
 
@@ -2749,11 +2764,15 @@ def draw_modern_horoscope(
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_house_ring(houses, seventh_house_degree_ut, horoscope_id="0")
-    # House sectors are click-only overlays; clip them to the inner edge of
-    # the zodiac background ring when the zodiac is drawn, so a click on a
-    # zodiac sign isn't intercepted by the house sector underneath. Falls
-    # back to R_CUSP_OUTER when no zodiac ring is rendered.
-    house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    # House sectors are click-only overlays and must not reach into the zodiac
+    # background ring, or a click on a sign is intercepted by the house under it.
+    # R_CUSP_OUTER is what does that, in both cases: when the ring is drawn these
+    # overlays are already inside the scale(0.92) wrapper that shrinks the whole
+    # chart to fit, so 50 here renders at 46 — exactly the ring's inner edge.
+    # Passing R_ZODIAC_BG_INNER applied that scale a second time and stopped the
+    # hit areas at a rendered 42.32, leaving 3.68 units of chart with no house
+    # under the pointer at all.
+    house_sector_outer_r = R_CUSP_OUTER
     if gauquelin_sectors:
         # Match the click hit-areas to the visible 36-sector rings above.
         out += _draw_gauquelin_sectors_modern(
@@ -2923,9 +2942,10 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
-    # Clip outer radius to the zodiac inner boundary when the zodiac ring is
-    # drawn, so clicks on a zodiac sign aren't swallowed by the house sector.
-    syn_house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    # R_CUSP_OUTER in both cases: with the zodiac ring drawn these overlays sit
+    # inside the scale(0.92) wrapper, so 50 renders at 46, the ring's inner edge.
+    # See the single-chart path for what applying that scale twice cost.
+    syn_house_sector_outer_r = R_CUSP_OUTER
     out += _draw_house_sectors_modern(
         houses_1,
         seventh_house_degree_ut,

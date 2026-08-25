@@ -2422,3 +2422,33 @@ def test_every_derived_opposite_comes_from_the_one_registry():
 
     # And every pair the subject factory knows about is covered here.
     assert set(OPPOSITE_PAIRS) >= {"Mean_Priapus", "True_Priapus", "Descendant", "Imum_Coeli"}
+
+
+def test_a_pair_is_closed_from_whichever_end_was_asked_for():
+    """Which of two opposites is the source is a fact about the geometry, not
+    about the request.
+
+    Closing the pair only when the PRIMARY is active left a caller who wants the
+    south node and not the north with a south node averaged on its own — the
+    antipodal ambiguity the derivation exists to avoid — and no north node at all,
+    while both parents carry one.
+    """
+    def south_only(name, year):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, 1, 1, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            active_points=["True_South_Lunar_Node"],
+        )
+
+    first, second = south_only("A", 1990), south_only("B", 1991)
+    assert first.true_north_lunar_node is not None, "the parent lost its north node"
+    first.true_north_lunar_node.abs_pos = 10.0
+    first.true_south_lunar_node.abs_pos = 190.0
+    second.true_north_lunar_node.abs_pos = 190.0
+    second.true_south_lunar_node.abs_pos = 10.0
+
+    model = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
+    assert model.true_north_lunar_node is not None
+    assert model.true_north_lunar_node.abs_pos == approx(100.0, abs=1e-9)
+    assert model.true_south_lunar_node.abs_pos == approx(280.0, abs=1e-9)
+    assert "True_North_Lunar_Node" not in model.active_points
