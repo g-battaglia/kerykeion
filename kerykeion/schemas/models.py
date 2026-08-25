@@ -1280,6 +1280,17 @@ class CompositeSubjectModel(AstrologicalBaseModel):
                     f"ordinary chart. Got house_anchor={self.house_anchor!r}, "
                     f"house_frame={self.house_frame!r}."
                 )
+        elif (self.house_anchor is None) != (self.house_frame is None):
+            # Both or neither. One alone says nothing anything downstream can act
+            # on: an anchor with no frame is a request nobody can tell was granted,
+            # and a frame with no anchor is an answer to a question the chart does
+            # not record. The factory never produces either, and the report and the
+            # context each describe half of it.
+            raise ValueError(
+                "A midpoint composite records both its house anchor and what became of "
+                "it, or neither — an a86 payload carries neither and still validates. "
+                f"Got house_anchor={self.house_anchor!r}, house_frame={self.house_frame!r}."
+            )
         return self
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which

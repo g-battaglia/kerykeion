@@ -446,9 +446,18 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     # a point belongs to the house whose cusp→next-cusp arc contains it via the
     # SHORTEST path (the real house span is always < 180°); a point exactly on a
     # cusp belongs to the house that cusp opens.
-    for i in range(n):
-        if abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0) < 1e-9:
-            return _HOUSE_NAMES_TUPLE[i]
+    # The NEAREST cusp within the tolerance, not the first one found. Above the
+    # polar circle several systems crowd three cusps into a few hundredths of a
+    # nanodegree: Sunshine at 89S puts the eighth, ninth and tenth within 6.6e-11
+    # of each other, and the Midheaven is the tenth exactly. Scanning upwards and
+    # taking the first match filed it in the eighth.
+    on_cusp = [
+        (abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0), i)
+        for i in range(n)
+    ]
+    closest, index = min(on_cusp)
+    if closest < 1e-9:
+        return _HOUSE_NAMES_TUPLE[index]
 
     # Where the twelve ARE a house division, ask the one function that decides
     # that — the same one the wheel is drawn from. Choosing the shorter arc for

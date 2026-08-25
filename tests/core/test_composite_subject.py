@@ -2343,6 +2343,15 @@ def test_a_davison_chart_cannot_carry_a_house_frame():
     legacy = {key: value for key, value in midpoint.items() if key not in ("house_anchor", "house_frame")}
     assert CompositeSubjectModel.model_validate(legacy).house_frame is None
 
+    # Both or neither. One alone says nothing anything downstream can act on: an
+    # anchor with no frame is a request nobody can tell was granted, and a frame
+    # with no anchor answers a question the chart does not record. The report and
+    # the context each describe half of such a state, and the factory never makes
+    # one.
+    for half in ({"house_frame": None}, {"house_anchor": None}):
+        with pytest.raises(pydantic.ValidationError):
+            CompositeSubjectModel.model_validate({**midpoint, **half})
+
 
 def test_the_axes_are_on_the_chart_whatever_the_point_preset_is():
     """Four angles, always — the same rule the context section follows.

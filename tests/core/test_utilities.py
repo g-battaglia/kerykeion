@@ -1430,3 +1430,37 @@ def test_the_house_reader_agrees_with_the_house_division_it_is_given():
     assert get_planet_house(205.0, cusps) == "Second_House"
     # The exact-on-cusp rule still comes first.
     assert get_planet_house(200.0, cusps) == "Second_House"
+
+
+def test_a_point_on_a_cusp_belongs_to_the_cusp_it_is_on():
+    """The exact-on-cusp rule has to find the nearest cusp, not the first nearby one.
+
+    Above the polar circle several systems crowd cusps together: Sunshine at 89S
+    puts the eighth, the ninth and the tenth within 6.6e-11 degrees of each other,
+    and the Midheaven IS the tenth, bit for bit. Scanning upwards and returning
+    the first match inside the tolerance filed it in the eighth — and the report
+    and the context both repeated that.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.utilities.core import get_planet_house
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="Antarctic", nation="AQ", lat=-89.0, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="I",
+    )
+    cusps = [
+        getattr(subject, name).abs_pos
+        for name in (
+            "first_house", "second_house", "third_house", "fourth_house",
+            "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+            "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+        )
+    ]
+    # The fixture's whole point: three cusps inside the tolerance of one another,
+    # and the Midheaven exactly on the last of them.
+    assert abs(cusps[7] - cusps[9]) < 1e-9 and cusps[7] != cusps[9]
+    assert subject.medium_coeli.abs_pos == cusps[9]
+
+    assert get_planet_house(subject.medium_coeli.abs_pos, cusps) == "Tenth_House"
+    assert subject.medium_coeli.house == "Tenth_House"
