@@ -952,14 +952,15 @@ class TestSynastryChart:
         compare_chart_svg("John Lennon - HI - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_with_relationship_score(self):
-        # Both switches: include_relationship_score puts the score in the chart
-        # data, show_relationship_score puts it on the panel. This test passed
-        # only the first, so it compared a chart with two EMPTY text nodes against
-        # a baseline that shows "Relationship Score: 12" — and passed, because the
-        # comparator returned without asserting whenever a line's non-numeric
-        # skeleton differed.
+        """The score rows print on the panel — data computed AND drawer flag on."""
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul, include_relationship_score=True)
+        # Both switches, or the panel stays empty: include_relationship_score
+        # puts the score in the chart data, show_relationship_score prints it.
+        # With only the first, this test compared two EMPTY text nodes against a
+        # baseline reading "Relationship Score: 12" — and passed, because the
+        # comparator returns without asserting when a line's non-numeric
+        # skeleton differs. Both sides of the a88 merge found this one.
         svg = ChartDrawer(data, show_relationship_score=True).generate_svg_string(style="classic")
         assert "Relationship Score: 12" in svg
         compare_chart_svg("John Lennon - Relationship Score - Synastry Chart - Classic.svg", svg)
