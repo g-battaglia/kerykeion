@@ -263,27 +263,36 @@ class PlanetaryReturnFactory:
         side.
 
         Ordering between a seed and a return is therefore defined at the
-        library's reporting resolution: a forward search starts from the whole
-        second after the seed's, a backward one from the whole second before
-        it. Reported instants become re-usable as seeds — ``next`` from the
-        instant of return N is N+1, ``previous`` is N−1, exactly — and nothing
-        can be skipped, since consecutive returns of every supported kind are
-        at least ~13 days apart (half a draconic month, the node crossing).
+        library's reporting resolution. A forward search starts from the whole
+        second AFTER the seed's: every crossing inside the seed's own second
+        is reported at that second, hence not "after" it. A backward search
+        starts from the seed's own whole second: the ephemeris backend's
+        backward searches are strictly past (a crossing at the start epoch is
+        never the answer), so a crossing inside the seed's second — reported
+        at that second, hence not "before" it — is excluded, while one in the
+        second before is found. Reported instants become re-usable as seeds —
+        ``next`` from the instant of return N is N+1, ``previous`` is N−1,
+        exactly — and nothing can be skipped: consecutive crossings of the
+        Sun, the Moon, the lunar nodes and the heliocentric planets the backend
+        solves (Mercury to Pluto, Ceres to Vesta) are at least ~12.4 days
+        apart (the node crossing, every half draconic month). Bodies the
+        backend has no heliocentric crossing for (Chiron, Pholus, the Uranian
+        points, the nodes and Liliths themselves) are outside this contract:
+        their search returns its seed, before and after this change alike.
 
         Naive timestamps are read as UTC, like every ``*_from_iso`` entry.
         """
         dt = cls._parse_iso(iso_formatted_time)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        step = timedelta(seconds=-1 if backwards else 1)
+        step = timedelta(seconds=0 if backwards else 1)
         try:
             # Normalize to UTC BEFORE truncating and stepping: the civil range
             # is a range of instants, and a local wall time at its edge
             # (9999-12-31T23:59:59+14:00 is a mid-morning UTC instant) must not
             # trip on the local representation. What overflows here is a seed
             # genuinely outside the range — 9999-12-31T23:59:59 UTC forward,
-            # 0001-01-01T00:00:00 UTC backward, or an aware timestamp whose
-            # UTC instant is already past the edge.
+            # or an aware timestamp whose UTC instant is already past an edge.
             whole_second = dt.astimezone(timezone.utc).replace(microsecond=0)
             return datetime_to_julian(whole_second + step)
         except OverflowError as exc:
@@ -597,8 +606,10 @@ class PlanetaryReturnFactory:
 
         Raises:
             KerykeionException: If ``return_type`` is not "Solar" or "Lunar", if
-                ``iso_formatted_time`` is not a valid ISO datetime, or if the return
-                search steps outside the available ephemeris date range.
+                ``iso_formatted_time`` is not a valid ISO datetime, if the seed's
+                UTC instant sits at the edge of the civil range (years 1 to 9999)
+                so the search cannot start inside it, or if the return search
+                steps outside the available ephemeris date range.
 
         Examples:
             Calculate next Solar Return after a specific date:
@@ -856,8 +867,10 @@ class PlanetaryReturnFactory:
         within that year. For Lunar Returns, it finds the first lunar return occurring
         in January of the specified year.
 
-        The method internally uses next_return_from_iso_formatted_time() with a starting
-        point of January 1st at midnight UTC for the specified year.
+        The method delegates to next_return_from_date() with January 1st of the
+        specified year: an inclusive midnight seed, so a return in the year's
+        first second is that year's return (unlike the ISO entry point, whose
+        seed's own second is excluded so a reported instant steps).
 
         Args:
             year (int): The calendar year to search for the return. Must be a valid
@@ -1193,7 +1206,10 @@ class PlanetaryReturnFactory:
 
         Args:
             planet_name: Planet name (e.g. "Mars", "Jupiter", "Saturn").
-            iso_formatted_time: ISO 8601 datetime string to start from.
+            iso_formatted_time: ISO 8601 datetime string to start from. Ordered
+                at the whole second, so the instant of a crossing this factory
+                reported is a valid seed for the following (or, with
+                ``backwards``, the preceding) one.
             backwards: Search backward instead of forward.
 
         Returns:
@@ -1273,7 +1289,10 @@ class PlanetaryReturnFactory:
         Mirrors :meth:`next_return_from_iso_formatted_time` (Solar/Lunar).
 
         Args:
-            iso_formatted_time: ISO 8601 datetime string to start from.
+            iso_formatted_time: ISO 8601 datetime string to start from. Ordered
+                at the whole second, so the instant of a crossing this factory
+                reported is a valid seed for the following (or, with
+                ``backwards``, the preceding) one.
             backwards: Search backward instead of forward.
 
         Returns:

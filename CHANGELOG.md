@@ -15,11 +15,17 @@
   instants it was given never advanced — for solar, lunar, heliocentric and node
   crossing alike. Ordering between a seed and a return is now decided at the
   resolution the factory reports at: a forward search starts from the whole
-  second after the seed's, a backward one from the whole second before it, in
-  one helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
-  entry points. The contract is pinned for every kind: `next(reported(N))` is
-  `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
-  instant for instant, and a walk of steps lands on each return exactly once.
+  second after the seed's, a backward one from the seed's own whole second
+  (the backend's backward searches are strictly past, so a crossing inside
+  that second is excluded and one in the second before is found), in one
+  helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
+  entry points. The contract is pinned for the Sun, the Moon, the lunar nodes
+  and the heliocentric planets the backend solves (Mercury to Saturn in the
+  tests): `next(reported(N))` is `N + 1`, `previous(reported(N))` is `N − 1`,
+  `previous(next(r))` is `r` instant for instant, and a walk of steps lands on
+  each return exactly once. Bodies the backend has no heliocentric crossing
+  for (Chiron, Pholus, the Uranian points, the nodes and Liliths themselves)
+  stay outside it — their search returned its seed before and does still.
   Nothing reported changes; the date and year wrappers keep their inclusive
   midnight seed, so a return in the first second of a date is still that
   date's return. The one visible
