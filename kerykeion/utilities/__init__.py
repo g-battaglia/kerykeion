@@ -101,8 +101,6 @@ from .core import (
 )
 
 __all__ = [
-    "house_spans",
-    "normalize_degree",
     "HOUSE_FIELD_NAMES",
     "TERRESTRIAL_PERSPECTIVES",
     "calculate_moon_phase",
@@ -130,6 +128,7 @@ __all__ = [
     "get_number_from_name",
     "get_planet_house",
     "has_terrestrial_frame",
+    "house_spans",
     "inline_css_variables_in_svg",
     "is_ambiguous",
     "is_nonexistent",
@@ -138,6 +137,7 @@ __all__ = [
     "jd_to_iso_datetime",
     "julian_to_datetime",
     "localize_naive",
+    "normalize_degree",
     "normalize_longitude",
     "normalize_zodiac_type",
     "parse_astronomical_iso_moment",

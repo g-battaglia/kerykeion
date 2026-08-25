@@ -306,3 +306,39 @@ def test_every_baseline_draws_the_current_glyphs(svg: Path):
     assert _glyph_geometry(block) == CURRENT_GEOMETRY, (
         f"{svg.name} draws a glyph set the templates no longer have. {REGENERATE_HINT}"
     )
+
+
+def test_the_extended_generator_refuses_to_report_success_after_a_failure():
+    """A regeneration that prints its failures and exits 0 reports success for a
+    set it did not produce.
+
+    The file stays as it was, the comparison test reads the stale one, and nothing
+    is red. This repository has already been bitten by that shape twice — once by
+    baselines that were never generated at all, once by a house-system list that
+    asked for ten combinations while its generator made three.
+    """
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    import pytest
+
+    script = Path(__file__).resolve().parents[2] / "scripts" / "regenerate_test_charts_extended.py"
+    spec = importlib.util.spec_from_file_location("regen_extended", script)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["regen_extended"] = module
+    spec.loader.exec_module(module)
+
+    assert module.FAILURES == [], "a failure leaked out of an earlier import"
+
+    module.FAILURES.append("generating Something: boom")
+    original = sys.argv
+    sys.argv = ["regenerate_test_charts_extended.py", "--temporal"]
+    module.generate_temporal_subject_charts = lambda: 0
+    try:
+        with pytest.raises(SystemExit) as exit_info:
+            module.main()
+        assert exit_info.value.code == 1
+    finally:
+        sys.argv = original
+        module.FAILURES.clear()

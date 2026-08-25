@@ -110,6 +110,14 @@ def create_subject_from_dict(subject_dict: dict, **kwargs):
         )
 
 
+#: Every baseline this run could not draw. A generator that prints its failures
+#: and exits 0 reports success for a set it did not produce: the file stays as it
+#: was, the comparison test reads the stale one, and nothing is red. This branch
+#: has already closed that shape twice — once for baselines that were never
+#: generated, once for a house-system list that asked for ten and made three.
+FAILURES: list[str] = []
+
+
 def generate_temporal_subject_charts():
     """Generate charts for all temporal subjects from test_subjects_matrix.py."""
     print("\n=== Generating Temporal Subject Charts ===")
@@ -135,7 +143,9 @@ def generate_temporal_subject_charts():
             print(f"  Generated: {subject_name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {subject_name}: {e}")
+            failure = f"generating {subject_name}: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Generate selected combinations for key temporal subjects
     # Ancient subjects with Dark theme
@@ -152,7 +162,9 @@ def generate_temporal_subject_charts():
                 print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
-                print(f"  ERROR generating {subject_data['name']} dark theme: {e}")
+                failure = f"generating {subject_data['name']} dark theme: {e}"
+                print(f"  ERROR {failure}")
+                FAILURES.append(failure)
 
     # Future subjects with the Black and White theme. They used to be drawn in a
     # theme called "light", which this library no longer has, and the case went on
@@ -171,7 +183,9 @@ def generate_temporal_subject_charts():
                 print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
-                print(f"  ERROR generating {subject_data['name']} black-and-white theme: {e}")
+                failure = f"generating {subject_data['name']} black-and-white theme: {e}"
+                print(f"  ERROR {failure}")
+                FAILURES.append(failure)
 
     # Modern subjects with Synastry (John + Yoko, Beatles pairs)
     john_data = next((s for s in TEMPORAL_SUBJECTS if s["id"] == "john_lennon_1940"), None)
@@ -191,7 +205,9 @@ def generate_temporal_subject_charts():
             print("  Generated: John and Yoko - Synastry Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating John and Yoko synastry: {e}")
+            failure = f"generating John and Yoko synastry: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     print(f"\n  Total temporal subject charts: {charts_generated}")
     return charts_generated
@@ -215,7 +231,9 @@ def generate_geographic_subject_charts():
             print(f"  Generated: {subject_name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {subject_name}: {e}")
+            failure = f"generating {subject_name}: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Generate Koch house system variants for all geographic subjects
     for subject_data in GEOGRAPHIC_SUBJECTS:
@@ -230,7 +248,9 @@ def generate_geographic_subject_charts():
             print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {subject_name} Koch: {e}")
+            failure = f"generating {subject_name} Koch: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Generate Whole Sign for extreme latitudes
     extreme_lat_ids = [
@@ -255,7 +275,9 @@ def generate_geographic_subject_charts():
                 print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
-                print(f"  ERROR generating {subject_data['name']} Whole Sign: {e}")
+                failure = f"generating {subject_data['name']} Whole Sign: {e}"
+                print(f"  ERROR {failure}")
+                FAILURES.append(failure)
 
     print(f"\n  Total geographic subject charts: {charts_generated}")
     return charts_generated
@@ -293,7 +315,9 @@ def generate_cross_combination_charts():
             print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {sidereal_mode} {theme}: {e}")
+            failure = f"generating {sidereal_mode} {theme}: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # House Systems × Synastry combinations, from the shared matrix the test
     # reads: a second copy here is how the sidereal list came to ask for ten
@@ -321,7 +345,9 @@ def generate_cross_combination_charts():
             print(f"  Generated: John Lennon - {house_name} - Synastry Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {house_name} synastry: {e}")
+            failure = f"generating {house_name} synastry: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # House Systems × Transit combinations
     for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
@@ -347,7 +373,9 @@ def generate_cross_combination_charts():
             print(f"  Generated: John Lennon - {house_name} - Transit Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {house_name} transit: {e}")
+            failure = f"generating {house_name} transit: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Composite subjects for language tests
     angelina = AstrologicalSubjectFactory.from_birth_data(
@@ -392,7 +420,9 @@ def generate_cross_combination_charts():
         print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic.svg")
         charts_generated += 1
     except Exception as e:
-        print(f"  ERROR generating French composite: {e}")
+        failure = f"generating French composite: {e}"
+        print(f"  ERROR {failure}")
+        FAILURES.append(failure)
 
     # Hindi Synastry
     try:
@@ -405,7 +435,9 @@ def generate_cross_combination_charts():
         print("  Generated: John Lennon - HI - Synastry Chart - Classic.svg")
         charts_generated += 1
     except Exception as e:
-        print(f"  ERROR generating Hindi synastry: {e}")
+        failure = f"generating Hindi synastry: {e}"
+        print(f"  ERROR {failure}")
+        FAILURES.append(failure)
 
     print(f"\n  Total cross-combination charts: {charts_generated}")
     return charts_generated
@@ -446,6 +478,19 @@ def main():
     print("=" * 60)
     print("\nTo run the corresponding tests:")
     print("  pytest tests/core/test_chart_parametrized.py -v")
+
+    if FAILURES:
+        print(f"\n{len(FAILURES)} baseline(s) could not be drawn:")
+        for failure in FAILURES:
+            print(f"  - {failure}")
+        if any("coverage range" in failure for failure in FAILURES):
+            print(
+                "\nSome of these are the loaded ephemeris not reaching the date, not a "
+                "bug in the drawing: the ancient baselines need a tier that covers "
+                "their century. Regenerating without it would leave those files as they "
+                "are while reporting success, which is why this exits non-zero."
+            )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

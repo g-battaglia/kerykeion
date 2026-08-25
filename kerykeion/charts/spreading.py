@@ -187,7 +187,9 @@ def spread_around_wheel(
         squeeze = slack / fitted_span if slack > 0 else 0.0
         fitted = [centre + (value - centre) * squeeze for value in fitted]
 
-    placed = [value + offset for value, offset in zip(fitted, ramp)]
+    # strict: both are `count` long by construction, and a silent truncation here
+    # would return fewer positions than it was given to place.
+    placed = [value + offset for value, offset in zip(fitted, ramp, strict=True)]
 
     result = [0.0] * count
     for position, index in enumerate(order[(cut + 1) % count :] + order[: (cut + 1) % count]):
