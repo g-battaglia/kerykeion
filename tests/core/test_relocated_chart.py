@@ -676,3 +676,76 @@ class TestRelocateExtremeYearBoundary:
                 edge, new_lat=0.0, new_lng=0.0, new_city="K", new_nation="KI",
                 new_tz_str=new_tz_str,
             )
+
+
+class TestSiderealSunshineFollowsTheReference:
+    """A sidereal Sunshine 'i' relocated onto its own birthplace is the natal chart.
+
+    The reference casts a sidereal 'i' (Makransky) as 'I' (Treindl) except in the
+    fixed-epoch modes, and the natal chart got that ring by asking with the
+    sidereal flag. The relocation asks tropically and shifts by the subject's own
+    ayanamsa, so it must ask for the same system: it used to ask for 'i', and came
+    back with Makransky cusps — at sixty degrees north the two constructions are
+    tens of degrees apart — and, inside the polar circle, with a refused cast
+    substituted by Porphyry where the natal has a crowded Sunshine ring. (At Rome
+    on this date the two constructions happen to coincide, which is why the
+    latitude here is sixty.)
+    """
+
+    _SIXTY_NORTH = dict(lng=12.5, lat=60.0, tz_str="Europe/Oslo", city="Sixty North", nation="NO")
+    _POLAR = dict(lng=0.0, lat=74.25, tz_str="UTC", city="Crowded", nation="NO")
+
+    @staticmethod
+    def _sunshine(place, **zodiac):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Sunshine", 1990, 6, 15, 3, 45, **place, online=False,
+            houses_system_identifier="i", suppress_geonames_warning=True, **zodiac,
+        )
+
+    @staticmethod
+    def _relocated_onto_itself(subject):
+        return RelocatedChartFactory.relocate(
+            subject, new_lat=subject.lat, new_lng=subject.lng, new_city=subject.city,
+            new_nation=subject.nation, new_tz_str=subject.tz_str,
+        )
+
+    @staticmethod
+    def _cusps(subject):
+        from kerykeion.utilities.core import HOUSE_FIELD_NAMES
+
+        return [getattr(subject, name).abs_pos for name in HOUSE_FIELD_NAMES]
+
+    def test_at_sixty_north_the_relocated_cusps_are_the_natal_cusps(self):
+        natal = self._sunshine(self._SIXTY_NORTH, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        relocated = self._relocated_onto_itself(natal)
+        for natal_cusp, relocated_cusp in zip(self._cusps(natal), self._cusps(relocated)):
+            assert _angular_diff(natal_cusp, relocated_cusp) < 1e-9
+
+    def test_inside_the_polar_circle_the_relocated_ring_is_the_natal_ring(self):
+        natal = self._sunshine(self._POLAR, zodiac_type="Sidereal", sidereal_mode="LAHIRI")
+        relocated = self._relocated_onto_itself(natal)
+        assert natal.polar_house_fallbacks == [] and relocated.polar_house_fallbacks == []
+        assert natal.coincident_house_cusps == relocated.coincident_house_cusps != []
+        for natal_cusp, relocated_cusp in zip(self._cusps(natal), self._cusps(relocated)):
+            assert _angular_diff(natal_cusp, relocated_cusp) < 1e-9
+
+    def test_a_fixed_epoch_mode_keeps_makransky_on_both_sides(self):
+        """The rule stops at the fixed-epoch modes, where the reference keeps 'i' as itself.
+
+        Makransky and Treindl are tens of degrees apart here, so a hundredth of a
+        degree tells them apart while absorbing the drift every fixed-epoch
+        relocation carries already (Placidus included, ~0.002 degrees): the
+        relocation shifts by a plain ayanamsa where the reference applies the
+        epoch's frame. That drift predates this test and is not its subject.
+        """
+        natal = self._sunshine(self._SIXTY_NORTH, zodiac_type="Sidereal", sidereal_mode="J2000")
+        relocated = self._relocated_onto_itself(natal)
+        for natal_cusp, relocated_cusp in zip(self._cusps(natal), self._cusps(relocated)):
+            assert _angular_diff(natal_cusp, relocated_cusp) < 0.01
+
+    def test_a_tropical_sunshine_inside_the_polar_circle_is_still_substituted(self):
+        """The rule is the reference's rule for SIDEREAL charts; a tropical 'i' is refused there as before."""
+        natal = self._sunshine(self._POLAR)
+        relocated = self._relocated_onto_itself(natal)
+        assert natal.polar_house_fallbacks and relocated.polar_house_fallbacks
+        assert relocated.effective_houses_system_identifier == natal.effective_houses_system_identifier

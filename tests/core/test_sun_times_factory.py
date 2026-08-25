@@ -187,30 +187,80 @@ def test_civil_range_edge_is_sign_dependent_not_symmetric():
     assert localize_datetime(1, 1, 1, 0, 30, tz=new_york).year == 1
 
 
+def _ephemeris_reaches_the_last_civil_year() -> bool:
+    """Can the loaded ephemeris put the Sun somewhere on 9999-12-31?
+
+    Probed, not inferred from the tier: the libephemeris full-range kernel
+    (DE441, to the year 17191) reaches it, while a swisseph install that passes
+    the tier probe at the year 1000 still needs a file (`sepl_96.se1`) it may
+    not have for the year 9999. Same probe as tests/conftest.py uses for tiers.
+    """
+    from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+    try:
+        with ephemeris_session() as iflag:
+            ephe.calc_ut(ephe.julday(9999, 12, 31, 12.0), 0, iflag)
+        return True
+    except Exception:
+        return False
+
+
 def test_civil_range_edge_days_raise_clean_exception():
     # Whatever the cause, a caller must see a KerykeionException and never a raw
-    # OverflowError or backend error. The two ends now fail for DIFFERENT reasons:
-    # year 1 east of UTC fails in the timezone layer (above), while year 9999 gets
-    # past the timezone layer and is stopped by the ephemeris coverage range. Both
-    # are asserted here because the guarantee this test protects is the exception
-    # TYPE at the public boundary, which must hold either way.
+    # OverflowError or backend error. The two ends fail for DIFFERENT reasons: year
+    # 1 east of UTC fails in the timezone layer (above) on every kernel; year 9999
+    # gets past the timezone layer and is then either stopped by the ephemeris
+    # coverage (base and medium kernels) or, on the full-range kernel, computed —
+    # a sunset on 9999-12-31 in Rome is a perfectly good sunset. What no kernel
+    # can supply is the day AFTER it, which the planetary day and the Moon's next
+    # ingress both need; those must refuse cleanly rather than overflow, and on
+    # the full-range kernel they used to overflow.
     from kerykeion.planetary_hours import PlanetaryHoursFactory
     from kerykeion.void_of_course_moon import VoidOfCourseMoonFactory
 
     with pytest.raises(KerykeionException, match="east-of-UTC"):
         SunTimesFactory.from_date(1, 1, 1, **ROME)
-    with pytest.raises(KerykeionException):
-        SunTimesFactory.from_date(9999, 12, 31, **ROME)
     with pytest.raises(KerykeionException, match="east-of-UTC"):
         PlanetaryHoursFactory.from_datetime(1, 1, 1, 0, 30, **ROME)
-    with pytest.raises(KerykeionException):
-        PlanetaryHoursFactory.from_datetime(9999, 12, 31, 23, 30, **ROME)
     with pytest.raises(KerykeionException, match="east-of-UTC"):
         VoidOfCourseMoonFactory.from_datetime(1, 1, 1, 0, 30, tz_str=ROME["tz_str"])
+
+    if _ephemeris_reaches_the_last_civil_year():
+        last_day = SunTimesFactory.from_date(9999, 12, 31, **ROME)
+        assert last_day.sunrise is not None and last_day.sunset is not None
+    else:
+        with pytest.raises(KerykeionException):
+            SunTimesFactory.from_date(9999, 12, 31, **ROME)
+
+    with pytest.raises(KerykeionException):
+        PlanetaryHoursFactory.from_datetime(9999, 12, 31, 23, 30, **ROME)
     with pytest.raises(KerykeionException):
         VoidOfCourseMoonFactory.from_datetime(9999, 12, 31, 23, 30, tz_str=ROME["tz_str"])
 
 
+@pytest.mark.extended
+def test_the_last_civil_day_on_the_full_range_kernel():
+    """Where the ephemeris reaches 9999, the civil range is the only limit left.
+
+    Before that day's sunrise the planetary day is yesterday's, which exists; after
+    it the day needs tomorrow's sunrise, which does not. The Moon at the start of
+    December still finds its next ingress inside the year; on the last evening it
+    does not. Each refusal names the civil range, not the ephemeris.
+    """
+    from kerykeion.planetary_hours import PlanetaryHoursFactory
+    from kerykeion.void_of_course_moon import VoidOfCourseMoonFactory
+
+    if not _ephemeris_reaches_the_last_civil_year():
+        pytest.skip("the loaded ephemeris does not reach 9999-12-31; the civil-range limit is not the one in play")
+
+    before_dawn = PlanetaryHoursFactory.from_datetime(9999, 12, 31, 3, 0, **ROME)
+    assert before_dawn.hours
+    with pytest.raises(KerykeionException, match="no civil date after"):
+        PlanetaryHoursFactory.from_datetime(9999, 12, 31, 23, 30, **ROME)
+
+    assert VoidOfCourseMoonFactory.from_datetime(9999, 12, 1, 12, 0, tz_str=ROME["tz_str"]).moon_sign
+    with pytest.raises(KerykeionException, match="years 1 to 9999"):
+        VoidOfCourseMoonFactory.from_datetime(9999, 12, 31, 23, 30, tz_str=ROME["tz_str"])
 def test_invalid_timezone_raises():
     with pytest.raises(KerykeionException):
         SunTimesFactory.from_date(2026, 5, 28, latitude=0.0, longitude=0.0, tz_str="Not/AZone")
