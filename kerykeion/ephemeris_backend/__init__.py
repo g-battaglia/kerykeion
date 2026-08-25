@@ -29,6 +29,8 @@ from .backend import (
     ephemeris_session,
     houses_ex2_with_polar_fallback,
     houses_ex2_with_polar_fallback_ex,
+    houses_ring_with_polar_fallback,
+    HouseRing,
     reset_ephemeris_session,
 )
 
@@ -49,5 +51,7 @@ __all__ = [
     "DEFAULT_SWEPH_DOWNLOAD_DIR",
     "houses_ex2_with_polar_fallback",
     "houses_ex2_with_polar_fallback_ex",
+    "houses_ring_with_polar_fallback",
+    "HouseRing",
     "POLAR_HOUSES_ERROR_TYPES",
 ]

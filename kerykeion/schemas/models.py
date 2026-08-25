@@ -1103,6 +1103,19 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="House systems substituted because the requested one is undefined at this "
         "latitude. Empty for every chart cast outside the polar circle.",
     )
+    coincident_house_cusps: list[list[int]] = Field(
+        default_factory=list,
+        description=(
+            "Groups of house numbers whose cusps stand on the same longitude, so the "
+            "houses between them have no width and no point can ever be in them. "
+            "Empty for every chart whose twelve cusps are twelve distinct points, "
+            "which is every ordinary chart. Some systems crowd cusps together at "
+            "extreme latitudes — Sunshine at 74.25 degrees north puts the third "
+            "through the sixth on one longitude — and the reference ephemeris "
+            "returns the same ring, so the cusps are reported as computed rather "
+            "than repaired; this says when that has happened. Added in v6.0."
+        ),
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")

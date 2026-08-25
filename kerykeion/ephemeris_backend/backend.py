@@ -72,6 +72,7 @@ import os
 from contextlib import contextmanager
 from threading import RLock, local as _thread_local
 import types
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Iterator, Optional, Sequence, Tuple
 
 if TYPE_CHECKING:
@@ -424,6 +425,67 @@ def houses_ex2_with_polar_fallback_ex(
             message=message,
         )
         return cusps, ascmc, cusps_speed, ascmc_speed, fallback
+
+
+@dataclass(frozen=True)
+class HouseRing:
+    """Everything one house call knows about the ring it just produced.
+
+    The cusps and the angles come out of the same ephemeris call, and that is the
+    only moment at which anything knows both. Twelve numbers on their own cannot
+    say which house a Midheaven standing on a crowd of identical cusps opens —
+    the information is not in them — so it is recorded here, once, instead of
+    being re-derived by each factory or guessed at by each reader.
+    """
+
+    cusps: Sequence[float]
+    ascmc: Sequence[float]
+    cusps_speed: Sequence[float]
+    ascmc_speed: Sequence[float]
+    polar_fallback: Optional["PolarHouseFallbackModel"] = None
+    #: Angle field name -> the house that angle opens, for the angles this chart
+    #: puts on their own cusp. Empty under whole sign, Morinus and meridian, where
+    #: the angles are points of their own.
+    angle_houses: dict = field(default_factory=dict)
+    #: One-based house numbers whose cusps share a longitude. Empty for every
+    #: chart whose twelve cusps are twelve distinct points.
+    coincident_cusps: list = field(default_factory=list)
+
+
+def houses_ring_with_polar_fallback(
+    tjdut: float,
+    lat: float,
+    lon: float,
+    hsys: bytes,
+    flags: int,
+    *,
+    context: str = "",
+    polar_strategy: str = "substitute_system",
+) -> HouseRing:
+    """The house ring, with what only this call can know recorded on it.
+
+    Same computation and same polar substitution as
+    :func:`houses_ex2_with_polar_fallback_ex` — this adds the two facts that are
+    knowable here and nowhere downstream: which house each angle opens, and which
+    cusps stand on top of each other. Every site that produces cusps calls this;
+    the tuple-returning siblings stay for callers that want neither.
+    """
+    # Lazy, for the import cycle documented on the sibling below: utilities does
+    # not import this module, and this module must not import utilities at load.
+    from kerykeion.utilities.core import angle_house_identities, coincident_cusp_groups
+
+    cusps, ascmc, cusps_speed, ascmc_speed, polar_fallback = houses_ex2_with_polar_fallback_ex(
+        tjdut, lat, lon, hsys, flags, context=context, polar_strategy=polar_strategy
+    )
+    return HouseRing(
+        cusps=cusps,
+        ascmc=ascmc,
+        cusps_speed=cusps_speed,
+        ascmc_speed=ascmc_speed,
+        polar_fallback=polar_fallback,
+        angle_houses=angle_house_identities(cusps, ascmc[0], ascmc[1]),
+        coincident_cusps=coincident_cusp_groups(cusps),
+    )
 
 
 def houses_ex2_with_polar_fallback(
