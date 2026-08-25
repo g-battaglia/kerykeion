@@ -48,6 +48,7 @@ from kerykeion.charts.drawer import (
     ChartDrawer,
     _INFO_ROW_FIRST_Y,
     _INFO_ROW_STEP,
+    estimate_text_width,
     info_row_clear_width,
 )
 
@@ -1206,14 +1207,19 @@ class TestTheDiscCaptionsItsOwnRow:
             f"the row must say whose moon it is: {row!r}"
         )
 
-    @pytest.mark.parametrize("language", ["RU", "FR", "DE"])
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
     def test_trimming_takes_the_wheel_name_and_leaves_the_phase(self, language):
-        """What the row exists to say must survive the cut.
+        """What the row exists to say must survive the cut, in every language.
 
         `truncate_to_width` cuts from the end, so trimming the whole line spends
         the budget on "Solar Return Lunar phase:" and amputates the one word a
         reader came for. The wheel's name is the qualifier and pays first — the
         rule the diurnality row two lines down already states outright.
+
+        Every shipped language, deliberately: an earlier list held only the
+        three the estimator measured honestly, and Hindi — which it over-read
+        at more than twice its rendered width and amputated — was precisely
+        the language left out.
         """
         natal, solar = _solar_return()
         svg = _render(ChartDataFactory.create_return_chart_data(natal, solar),
@@ -1222,6 +1228,46 @@ class TestTheDiscCaptionsItsOwnRow:
         phase_name = _translate_phase_name(solar, language)
         assert phase_name in unescape(row), (
             f"{language}: the phase name was cut away, leaving {row!r}"
+        )
+
+    def test_hindi_is_measured_not_guessed(self):
+        """The row fits, so nothing may be cut — the wheel qualifier included.
+
+        The estimator used to charge every Devanagari code point the block
+        ceiling of 1.04 em, matras and viramas included, and read this 159px
+        row as 363 in a slot that clears 229: the "सौर वापसी" qualifier was
+        dropped and the phase name cut mid-word, with a third of the slot to
+        spare. Devanagari sits in the measured table now, like Cyrillic before
+        it, and the whole row must survive.
+        """
+        natal, solar = _solar_return()
+        svg = _render(ChartDataFactory.create_return_chart_data(natal, solar), chart_language="HI")
+        row = unescape(next(t for t in _filled_row_baselines(svg) if _is_phase_row(t)))
+        assert "…" not in row, f"a row that fits was trimmed: {row!r}"
+        assert _translate_phase_name(solar, "HI") in row, row
+        assert row.startswith(LANGUAGE_SETTINGS["HI"]["solar_return"]), (
+            f"the wheel qualifier was dropped: {row!r}"
+        )
+
+    def test_a_phase_no_room_can_hold_is_end_trimmed_not_drawn_under_the_wheel(self):
+        """The trim's last resort, reachable by a caller's language pack alone.
+
+        When even the bare phase does not fit its row, the qualifier is already
+        gone and there is nothing left to pay but the phase itself: a shortened
+        row beats one drawn under the wheel graphics. No shipped language
+        reaches this branch — which is why only a mutation of it could tell,
+        until this test.
+        """
+        natal, solar = _solar_return()
+        key = solar.lunar_phase.moon_phase_name.lower().replace(" ", "_")
+        svg = _render(
+            ChartDataFactory.create_return_chart_data(natal, solar),
+            language_pack={key: "W" * 60},
+        )
+        row = unescape(next(t for t in _filled_row_baselines(svg) if _is_phase_row(t)))
+        assert "…" in row, f"a phase wider than its row was left whole: {row!r}"
+        assert estimate_text_width(row) <= info_row_clear_width(5), (
+            f"still wider than the row after the cut: {row!r}"
         )
 
     def test_a_lunar_return_does_not_say_lunar_twice(self):
@@ -1240,7 +1286,7 @@ class TestTheDiscCaptionsItsOwnRow:
         # Still says whose phase it is, which is the point of the qualifier.
         assert "Return" in row, row
 
-    @pytest.mark.parametrize("language", ["EN", "HI", "FR", "RU"])
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
     def test_the_phase_row_stays_inside_the_wheel(self, language):
         """It had never been trimmed, and in Hindi it ran past the graphics.
 
@@ -1263,3 +1309,71 @@ class TestTheDiscCaptionsItsOwnRow:
                 assert width <= budget, (
                     f"{language}: {text!r} overruns its row by {width - budget:.0f}px"
                 )
+
+class TestThePerspectiveRowFitsItsSlot:
+    """The slot reshuffle moved the perspective up where the chord is narrower.
+
+    It was the one row builder with no width fitting at all: the Russian
+    apparent-geocentric string, 198px by the reference fonts' own advances, ran
+    19px under the wheel graphics from slot 3's 179px on every dual return.
+    """
+
+    @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
+    def test_the_perspective_row_stays_inside_the_wheel(self, language):
+        natal, solar = _solar_return()
+        svg = _render(ChartDataFactory.create_return_chart_data(natal, solar), chart_language=language)
+        label = LANGUAGE_SETTINGS[language].get("perspective_type", "Perspective")
+        row, y = next(
+            (t, y) for t, y in _filled_row_baselines(svg).items() if unescape(t).startswith(label)
+        )
+        index = round((float(y) - _INFO_ROW_FIRST_Y) / _INFO_ROW_STEP)
+        width = _measured_width(unescape(row), 10)
+        budget = info_row_clear_width(index)
+        assert width <= budget, (
+            f"{language}: {row!r} overruns row {index} by {width - budget:.0f}px"
+        )
+
+    def test_a_midpoint_composite_fits_it_to_the_slot_it_lands_on(self):
+        """Written in slot 2, drawn in slot 4: blank rows migrate to the top.
+
+        A row must be fitted to the slot it lands on, not the one it is written
+        in — trimmed against slot 2's 161px, the Italian string lost text that
+        slot 4's 200px had room for, on every midpoint composite. (Italian and
+        not Russian: the Russian string sits within the estimator's rounding of
+        the landing budget itself, so it is trimmed a hair either way and can
+        prove nothing about which slot paid.)
+        """
+        svg = _render(
+            ChartDataFactory.create_composite_chart_data(_composite("Midpoint")),
+            chart_language="IT",
+        )
+        label = LANGUAGE_SETTINGS["IT"].get("perspective_type", "Perspective")
+        row, y = next(
+            (t, y) for t, y in _filled_row_baselines(svg).items() if unescape(t).startswith(label)
+        )
+        index = round((float(y) - _INFO_ROW_FIRST_Y) / _INFO_ROW_STEP)
+        assert index == 4, "the fixture's perspective no longer lands where this test believes"
+        assert "…" not in unescape(row), (
+            f"trimmed for the slot it is written in, not the one it lands on: {row!r}"
+        )
+
+
+class TestTheEstimatorMeasuresWhatItUsedToGuess:
+    """Combining marks are measured at their hmtx advance, not the block ceiling.
+
+    Charged the ceiling, every matra and virama of a Hindi row cost a full
+    1.04 em — the row read at over twice its rendered width, and the trims that
+    share the estimator amputated text that fit with a third of the slot spare.
+    """
+
+    def test_a_combining_mark_adds_nothing_to_the_estimate(self):
+        base = estimate_text_width("क")
+        assert estimate_text_width("क\u094d") == base  # virama
+        assert estimate_text_width("क\u0941") == base  # matra u, non-spacing
+
+    def test_a_spacing_matra_costs_its_measured_advance(self):
+        # AA (U+093E) is a spacing mark, ~0.3 em in the reference fonts — real
+        # width, so it must cost something, and far less than the old ceiling.
+        alone = estimate_text_width("क")
+        with_matra = estimate_text_width("क\u093e")
+        assert alone < with_matra < alone + 5.0

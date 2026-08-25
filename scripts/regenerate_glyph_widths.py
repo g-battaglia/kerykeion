@@ -47,8 +47,11 @@ REFERENCE_FONTS: list[tuple[str, int | None]] = [
 ]
 
 #: What the estimator carries in source: the scripts the shipped translations and
-#: the overwhelming majority of names are written in.
-ESTIMATOR_RANGES = [(0x20, 0x7E), (0xA0, 0x24F), (0x370, 0x3FF), (0x400, 0x4FF), (0x2010, 0x2027)]
+#: the overwhelming majority of names are written in. Devanagari is here because
+#: Hindi is a shipped chart language: under the block ceiling its mark-heavy rows
+#: read more than twice their rendered width, and the row trims that share this
+#: estimator amputated text that actually fit.
+ESTIMATOR_RANGES = [(0x20, 0x7E), (0xA0, 0x24F), (0x370, 0x3FF), (0x400, 0x4FF), (0x900, 0x97F), (0x2010, 0x2027)]
 
 #: What the test fixture carries: the above plus every script the estimator has
 #: no measurements for, so the test can measure them rather than assume.
@@ -63,15 +66,20 @@ FIXTURE_RANGES = ESTIMATOR_RANGES + [
     (0xFF00, 0xFF60),  # fullwidth forms
 ]
 
-#: Excluded from the *measured* table because they have no advance of their own
-#: — a matra stacks on the letter before it, a zero-width joiner fuses two code
-#: points into one glyph. This drops them from ``_MEASURED_EM``; the estimator
-#: then charges them its block ceiling, which over-estimates a soft hyphen (a
-#: ``Cf`` character with 0.333em of real width) at roughly 1em. That is
-#: deliberately safe — the row-width guard may only ever over-estimate — but it
-#: is an over-estimate, not the "skip" an earlier version of this comment claimed
-#: both consumers performed.
-ZERO_WIDTH_CATEGORIES = frozenset({"Mn", "Me", "Cf", "Cc"})
+#: Excluded from the *test fixture* because the row-width test treats them as
+#: what shaping makes them — zero advance: a matra stacks on the letter before
+#: it, a zero-width joiner fuses two code points into one glyph.
+#:
+#: The *estimator* table no longer excludes them. It used to, which sent every
+#: combining mark to the block ceiling; on Devanagari that charged each matra
+#: and virama a full 1.04 em, read mark-heavy Hindi rows at over twice their
+#: rendered width, and made the row trims amputate text that fit with a third
+#: of the slot to spare. What the fonts' hmtx tables declare for a mark is a
+#: measurement like any other — most are zero, the soft hyphen is its real
+#: 0.34 em — and never an underestimate of what shaping renders, which only
+#: fuses and stacks, never widens. Controls stay out of both tables.
+FIXTURE_SKIP_CATEGORIES = frozenset({"Mn", "Me", "Cf", "Cc"})
+ESTIMATOR_SKIP_CATEGORIES = frozenset({"Cc"})
 
 
 def _load_fonts() -> list[tuple[int, dict, dict]]:
@@ -84,11 +92,13 @@ def _load_fonts() -> list[tuple[int, dict, dict]]:
     return loaded
 
 
-def _widest_advances(fonts: list[tuple[int, dict, dict]], ranges: list[tuple[int, int]]) -> dict[int, float]:
+def _widest_advances(
+    fonts: list[tuple[int, dict, dict]], ranges: list[tuple[int, int]], skip: frozenset[str]
+) -> dict[int, float]:
     advances: dict[int, float] = {}
     for low, high in ranges:
         for code_point in range(low, high + 1):
-            if unicodedata.category(chr(code_point)) in ZERO_WIDTH_CATEGORIES:
+            if unicodedata.category(chr(code_point)) in skip:
                 continue
             widths = [hmtx[cmap[code_point]][0] / upem for upem, cmap, hmtx in fonts if cmap.get(code_point)]
             if widths:
@@ -99,7 +109,7 @@ def _widest_advances(fonts: list[tuple[int, dict, dict]], ranges: list[tuple[int
 def main() -> None:
     fonts = _load_fonts()
 
-    estimator = _widest_advances(fonts, ESTIMATOR_RANGES)
+    estimator = _widest_advances(fonts, ESTIMATOR_RANGES, ESTIMATOR_SKIP_CATEGORIES)
     buckets: dict[float, list[str]] = collections.defaultdict(list)
     for code_point, width in estimator.items():
         buckets[math.ceil(width * 50) / 50].append(chr(code_point))
@@ -107,7 +117,7 @@ def main() -> None:
     print(f"_MEASURED_EM: {len(estimator)} characters in {len(buckets)} buckets — paste into glyph_metrics.py:\n")
     print("_MEASURED_EM: dict[float, str] = {\n" + "\n".join(lines) + "\n}")
 
-    fixture = _widest_advances(fonts, FIXTURE_RANGES)
+    fixture = _widest_advances(fonts, FIXTURE_RANGES, FIXTURE_SKIP_CATEGORIES)
     target = ROOT / "tests" / "data" / "glyph_advances.json"
     target.write_text(
         json.dumps(

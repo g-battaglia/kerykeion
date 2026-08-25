@@ -798,9 +798,18 @@ class InfoSectionBuilder:
             row_index,
         )
 
-    def build_perspective_info(self, subject) -> str:
-        """Build the perspective type string."""
-        return self.drawer._get_perspective_string(subject)
+    def build_perspective_info(self, subject, row_index: Optional[int] = None) -> str:
+        """Build the perspective type string, fitted to its row when one is given.
+
+        The fixed-slot renderers pass the slot the row lands on; the natal
+        renderer passes nothing because it fits every row itself at placement.
+        Without this the Russian apparent-geocentric string, 198px, ran 19px
+        under the wheel from slot 3 (178.7px clear).
+        """
+        row = self.drawer._get_perspective_string(subject)
+        if row_index is not None:
+            row = truncate_to_width(row, info_row_clear_width(row_index))
+        return row
 
     def build_houses_system_info(self, subject, second_subject=None, row_index: int = 1) -> str:
         """Build compact house-system text, including a differing second wheel."""
@@ -1274,22 +1283,32 @@ class CompositeChartRenderer(BaseChartRenderer):
         template_dict["top_left_5"] = f"{second_lat} / {second_lng}"
 
         # Bottom left section
+        #
+        # Built before the perspective although it sits below it: the layout
+        # step packs blank rows to the top, so whether this row says anything
+        # decides which slot the perspective actually lands on — and a row must
+        # be fitted to the slot it lands on, not the one it is written in, or a
+        # midpoint composite trims its perspective to slot 2's 161px and then
+        # renders it in slot 4's 200. Empty for a midpoint composite
+        # (is_diurnal is None — no single sky); populated for a Davison
+        # composite, which does represent a real moment.
+        diurnality = builder.build_diurnality_info(d.first_obj)
+
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
         template_dict["bottom_left_1"] = builder.build_houses_system_info(d.first_obj)
         # Through the builder like every other renderer: interpolating the raw
         # literal printed "Перспектива: Apparent Geocentric" — label translated,
         # value not — and left the perspective translations dead on this path.
         template_dict["bottom_left_2"] = builder.build_perspective_info(
-            d.first_obj.first_subject  # type: ignore[union-attr]
+            d.first_obj.first_subject,  # type: ignore[union-attr]
+            row_index=3 if diurnality else 4,
         )
         template_dict["bottom_left_3"] = (
             f"{self._translate('composite_chart', 'Composite Chart')} - {self._translate('midpoints', 'Midpoints')}"
         )
-        # Empty for a midpoint composite (is_diurnal is None — no single sky);
-        # populated for a Davison composite, which does represent a real moment.
-        # It goes in row 4, the slot this renderer already left blank, rather than
-        # row 5: appending below an empty row would open a visible gap above it.
-        template_dict["bottom_left_4"] = builder.build_diurnality_info(d.first_obj)
+        # Row 4, the slot this renderer already left blank, rather than row 5:
+        # appending below an empty row would open a visible gap above it.
+        template_dict["bottom_left_4"] = diurnality
         template_dict["bottom_left_5"] = ""
 
         # No lunar phase disc. This panel writes no phase row — it spends its
@@ -1479,7 +1498,7 @@ class TransitChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_0"] = ""
         template_dict["bottom_left_1"] = builder.build_zodiac_info()
         template_dict["bottom_left_2"] = builder.build_domification_info(d.second_obj)
-        template_dict["bottom_left_3"] = builder.build_perspective_info(d.second_obj)
+        template_dict["bottom_left_3"] = builder.build_perspective_info(d.second_obj, row_index=3)
 
         # The phase closes the block, because the disc is drawn ten pixels under
         # the block's last line: written anywhere else the picture captions the
@@ -1780,7 +1799,7 @@ class SynastryChartRenderer(BaseChartRenderer):
         template_dict["bottom_left_0"], template_dict["bottom_left_1"] = builder.build_relationship_score_info()
         template_dict["bottom_left_2"] = builder.build_zodiac_info()
         template_dict["bottom_left_3"] = builder.build_houses_system_info(d.first_obj, d.second_obj, row_index=3)
-        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj, row_index=4)
         # Both natals keep their own sect: a placement that is in sect for one
         # partner can be out of sect for the other, which is precisely what a
         # synastry reading needs to see.
@@ -1970,7 +1989,7 @@ class SingleReturnChartRenderer(BaseChartRenderer):
         # A single-wheel return stands on its own, so it carries its own sect —
         # the sect of the return moment, not of the nativity behind it.
         template_dict["bottom_left_3"] = builder.build_diurnality_info(d.first_obj)
-        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj)
+        template_dict["bottom_left_4"] = builder.build_perspective_info(d.first_obj, row_index=4)
         builder.build_lunar_phase_info(template_dict, d.first_obj, key_phase="bottom_left_5", row_index=5)
 
         # Lunar phase visualization
@@ -2111,7 +2130,7 @@ class DualReturnChartRenderer(BaseChartRenderer):
         # move up one each.
         template_dict["bottom_left_0"] = builder.build_zodiac_info()
         template_dict["bottom_left_1"] = builder.build_domification_info(d.second_obj)
-        template_dict["bottom_left_3"] = builder.build_perspective_info(d.first_obj)
+        template_dict["bottom_left_3"] = builder.build_perspective_info(d.first_obj, row_index=3)
         template_dict["bottom_left_4"] = builder.build_dual_diurnality_info(
             (d.first_obj, self._translate("chart_info_natal_label", "Natal")),
             (d.second_obj, self._return_label(d.second_obj)),

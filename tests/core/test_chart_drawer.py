@@ -1035,7 +1035,10 @@ class TestSynastryChart:
     def test_synastry_with_relationship_score(self):
         john, paul = _make_john(), _make_paul()
         data = ChartDataFactory.create_synastry_chart_data(john, paul, include_relationship_score=True)
-        svg = ChartDrawer(data).generate_svg_string(style="classic")
+        # The drawer flag too: the rows print only when both are on, and without
+        # them this baseline pins a plain synastry under a score's name — which
+        # is exactly what it silently was, from the day the flag was born False.
+        svg = ChartDrawer(data, show_relationship_score=True).generate_svg_string(style="classic")
         compare_chart_svg("John Lennon - Relationship Score - Synastry Chart - Classic.svg", svg)
 
     def test_synastry_all_active_points_list(self):

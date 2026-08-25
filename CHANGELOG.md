@@ -13,9 +13,10 @@
   every panel that draws a disc, so the disc beneath it has nothing else it
   could be captioning. The row moved rather than the disc because the wheel's
   chord narrows going up — 147px of clear width on the first row against 229 on
-  the last — and a dual panel's phase line carries the wheel's name too: of 140
-  language-by-phase combinations, 113 would overrun at the top against 15 at the
-  bottom, and 35 overran in the row this line used to occupy.
+  the last — and a dual panel's phase line carries the wheel's name too. Of 400
+  combinations (ten languages, five wheel contexts, eight phases, measured in
+  the reference fonts' advances), 304 would overrun the top row's 134px, 98
+  overran in the rows the line used to occupy, and 21 at the bottom's 229.
 
 - **A composite drew a moon it never named.** That panel spends its six rows on
   the zodiac, the houses, the perspective, the composite method and the
@@ -32,12 +33,12 @@
   this same row, always have.
 
 - **The phase row had never been trimmed to fit.** Measured in Times, Helvetica
-  and Arial advances, a Russian or French return line reaches 274px against the
-  229 its row clears — 21 of 280 language-by-phase-by-wheel combinations run
-  past the graphics. It is trimmed now to the room its own row has, like the
-  house and relationship-score rows beside it, and the wheel's name is what
-  pays: the phase keeps its own words, following the rule the diurnality row
-  already states.
+  and Arial advances, a Russian return line reaches 287px against the 229 its
+  row clears — 21 of the same 400 combinations run past the graphics, fourteen
+  Russian, six French, one Spanish. It is trimmed now to the room its own row
+  has, like the house and relationship-score rows beside it, and the wheel's
+  name is what pays: the phase keeps its own words, following the rule the
+  diurnality row already states.
 
 - **A panel that draws no moon stopped short of the page.** The disc holds 30px
   under the block — the 10px gap it keeps below the last line, plus its own 20px
@@ -54,6 +55,30 @@
   which row the line lands in — the chord narrows going up, 200px on row 4
   against 229 on row 5. The builder assumed row 5 whatever the panel did with
   it. Now the row it lands on is the row it is measured against.
+
+- **The trim read Hindi at over twice its width and amputated rows that fit.**
+  `estimate_text_width` had no measurements for Devanagari, so every code point
+  of a Hindi row paid the block ceiling of 1.04 em — matras and viramas
+  included, glyphs that shaping renders at zero advance. A 159px Hindi return
+  line was read as 363 and cut to "चंद्र चरण: शुक्ल पक्ष प्…", the wheel
+  qualifier dropped and the phase name severed mid-word, in a slot it fit with
+  70px to spare — on every Hindi transit, progression and return, the moment
+  the trim above began to exist. Devanagari sits in the measured table now,
+  like Cyrillic before it: 104 characters at the widest advance the reference
+  fonts declare, combining marks at their true zero, the soft hyphen at its
+  real 0.34. The estimator reads those rows within 2% of the reference
+  advances, and the natal panel's Hindi lines and the point grid's Hindi names,
+  clipped and abbreviated by the same over-charge, come back whole with it.
+
+- **The perspective row moved up a slot, and it was the one row with no width
+  fitting.** The reshuffle above put it on row 3, where the chord clears 179px,
+  and `build_perspective_info` never measured itself: the Russian
+  apparent-geocentric line, 198px, ran 19px under the wheel graphics on every
+  Russian dual return — and always had on transits, from that same slot. It is
+  fitted now like every other row, and to the slot it *lands* on: a midpoint
+  composite draws it two rows below the one it is written in, the blank rows
+  having migrated to the top, and a fit taken against the authored slot was
+  measured against a chord the row is never drawn at.
 
 ## [6.0.0a87] - 2026-08-25
 

@@ -215,8 +215,8 @@
    <text x="20" y="466" kr:node="Bottom_Left_Text_1">Zodiac: Tropical</text>
    <text x="20" y="480" kr:node="Bottom_Left_Text_2">Domification: Placidus</text>
    <text x="20" y="494" kr:node="Bottom_Left_Text_3">Perspective: Apparent Geocentric</text>
-   <text x="20" y="508" kr:node="Bottom_Left_Text_4">Transit Lunar phase: Waxing Crescent</text>
-   <text x="20" y="522" kr:node="Bottom_Left_Text_5">Natal Nocturnal · Transit Diurnal</text>
+   <text x="20" y="508" kr:node="Bottom_Left_Text_4">Natal Nocturnal · Transit Diurnal</text>
+   <text x="20" y="522" kr:node="Bottom_Left_Text_5">Transit Lunar phase: Waxing Crescent</text>
   </g>
   <!-- Lunar Phase -->
   <g transform="translate(10,532)" kr:node="Lunar_Phase">
