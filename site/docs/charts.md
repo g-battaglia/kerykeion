@@ -172,6 +172,7 @@ drawer.save_wheel_only_svg_file(output_path, filename="wheel")
 | Parameter                    | Type   | Default | Description                                                    |
 | :--------------------------- | :----- | :------ | :------------------------------------------------------------- |
 | `show_zodiac_background_ring`| `bool` | `True`  | Draw colored zodiac wedges behind the outer planet ring.       |
+| `glyph_size`                 | `str`  | `"medium"` | Planet-cluster size: `"small"` (medium at 90%), `"medium"`, or `"large"` (the planet glyph at the classic style's own size). |
 
 ### Classic
 
@@ -349,6 +350,7 @@ drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 | `padding`                       | `int`                    | `20`         | Padding around the SVG content.             |
 | `style`                         | `KerykeionChartStyle`    | `"modern"`   | Chart wheel layout ("modern" or "classic"). Per-instance default for all render calls. |
 | `show_zodiac_background_ring`   | `bool`                   | `True`       | Show colored zodiac wedges (modern style only). Per-instance default for all render calls. |
+| `glyph_size`                    | `KerykeionGlyphSize`     | `"medium"`   | Planet-cluster size on the modern wheel (`"small"`, `"medium"`, `"large"`). Per-instance default for all render calls. |
 | `show_diurnality`               | `bool`                   | `True`       | Print the chart's diurnality (Sun above or below the horizon) in the info panel. |
 | `show_motion_state`             | `bool`                   | `False`      | Mark planets at a station, "SR" or "SD" (see [Optional Marks](#optional-marks)). |
 | `show_out_of_bounds`            | `bool`                   | `False`      | Badge out-of-bounds planets in the point tables.                     |
@@ -365,7 +367,7 @@ drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 
 **Public Methods:**
 
-All render/save methods accept `minify` and `remove_css_variables`. The full-chart methods (`save_svg`, `generate_svg_string`) additionally accept `custom_title`, `style`, and `show_zodiac_background_ring`; the wheel-only methods accept `style` and `show_zodiac_background_ring` (see the method list below):
+All render/save methods accept `minify` and `remove_css_variables`. The full-chart methods (`save_svg`, `generate_svg_string`) additionally accept `custom_title`, `style`, `show_zodiac_background_ring`, and `glyph_size`; the wheel-only methods accept `style`, `show_zodiac_background_ring`, and `glyph_size` (see the method list below):
 
 | Parameter              | Type   | Default | Description                                                  |
 | :--------------------- | :----- | :------ | :----------------------------------------------------------- |
@@ -374,12 +376,13 @@ All render/save methods accept `minify` and `remove_css_variables`. The full-cha
 | `custom_title`         | `Optional[str]` | `None` | Override the chart title (full chart methods only).   |
 | `style`                | `KerykeionChartStyle` | chart default | Per-call style override (e.g. `"classic"`).  |
 | `show_zodiac_background_ring` | `bool` | chart default | Per-call toggle for the zodiac background ring. |
+| `glyph_size`           | `KerykeionGlyphSize` | chart default | Per-call planet-cluster size override (modern only). |
 
-- `save_svg(output_path, filename, minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> None`
-- `generate_svg_string(minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring) -> str`
-- `generate_wheel_only_svg_string(minify, remove_css_variables, *, style, show_zodiac_background_ring) -> str`
+- `save_svg(output_path, filename, minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring, glyph_size) -> None`
+- `generate_svg_string(minify, remove_css_variables, *, custom_title, style, show_zodiac_background_ring, glyph_size) -> str`
+- `generate_wheel_only_svg_string(minify, remove_css_variables, *, style, show_zodiac_background_ring, glyph_size) -> str`
 - `generate_aspect_grid_only_svg_string(minify, remove_css_variables) -> str`
-- `save_wheel_only_svg_file(output_path, filename, minify, remove_css_variables, *, style, show_zodiac_background_ring)`
+- `save_wheel_only_svg_file(output_path, filename, minify, remove_css_variables, *, style, show_zodiac_background_ring, glyph_size)`
 - `save_aspect_grid_only_svg_file(output_path, filename, minify, remove_css_variables)`
 
 ## Machine-Readable SVG Point Metadata

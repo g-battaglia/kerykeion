@@ -21,7 +21,7 @@ license: AGPL-3.0
 
 # Using Kerykeion
 
-Verified against **kerykeion 6.0.0a88**, Python 3.12+.
+Verified against **kerykeion 6.0.0a90**, Python 3.12+.
 
 Kerykeion is a Python astrology library. Everything goes through **factories**:
 you never construct models by hand. Factories return **Pydantic models** whose

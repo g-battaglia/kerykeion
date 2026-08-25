@@ -1,5 +1,64 @@
 # Changelog
 
+## [6.0.0a90] - 2026-08-26
+
+### Added
+
+- **Three sizes for the modern wheel's planet cluster.** A new `glyph_size`
+  option — `"small"`, `"medium"` (default), `"large"` — on `ChartDrawer`, as a
+  constructor default and a per-render override on all four render methods,
+  exported as `KerykeionGlyphSize` from `kerykeion.schemas`. Medium IS the
+  existing drawing: the default render stays byte-identical to every chart
+  drawn before the option existed, and the whole pre-existing baseline suite
+  passes untouched as the proof. The classic style ignores the option in
+  silence, exactly as it ignores the zodiac background ring.
+
+- **Small is the medium cluster at 90%** — a pure homothety: the five element
+  sizes (planet glyph, degrees, sign, minutes, ℞), the air between the rows and
+  the tether's own tab all scale together, so the cluster keeps exactly the
+  proportions it was tuned to.
+
+- **Large is classic parity, and the air pays for it.** The planet glyph draws
+  at the classic engine's own size — 24px on a single wheel at the default
+  480px page, 19.2px on a dual — written as the expression
+  `classic_scale / (0.92 · 4.8)` so the parity is exact rather than a rounded
+  decimal. The cluster's ink already filled 65–69% of every ring's band, so
+  the growth is paid out of the air between the rows: the single ring keeps
+  65% of its medium air, the dual rings 41% (outer) and 23% (inner). Exact
+  dual parity over a roomier 91% was the choice made with those numbers on the
+  table: the rows of a large dual-inner ring sit nearly ink to ink (gaps of
+  0.9–1.4px at the default page, bottom margin 0.03 wheel units), and the
+  bands cannot deepen — below them there is only the aspect web, and taking a
+  third of its radius was considered and refused.
+
+- **The profiles are derived, not guessed.** A new
+  `scripts/derive_modern_cluster_profiles.py` lays every ring out under one
+  rule — sizes ×k, every quantity of air ×a = min(k, fit), rows top-down from
+  the tether's end, tab floored at a quarter unit — anchored on the glyph's
+  CORNER reach because the tether meets the box on the diagonal. The rule is a
+  fixed point at k=1 (the script proves it reproduces the shipped medium on
+  every run), the pasted literals are pinned to the derivation by test, and at
+  large the tether shortens with the air (1.075 → 0.696 natal) — without that
+  the tab would end inside the Sun's glyph box at 45°, the exact defect a88
+  fixed.
+
+- **The separation ceilings are measured, per size.** The collision harness
+  (`scripts/measure_modern_separation.py`) learned `--glyph-size` and now
+  builds its rings from the same profiles the renderer reads; its sweep
+  extends to 14°. The policy was already written in the shipped constants —
+  every medium ceiling sits exactly on the harness's "first safe with 0.25
+  units of daylight" column — and the new ceilings apply it to their own
+  measured floors: small 7.00 / 5.25 / 8.00, large 9.50 / 7.75 / 12.50
+  (touch at 6.50 / 4.75 / 7.25 and 9.00 / 7.25 / 11.75). Adversarial mode
+  passes at every size against the 0.2-unit daylight gate. An all-points
+  wheel at large over-subscribes by design; the resolver compresses and logs
+  it, and a test pins the log line so the degradation stays a stated
+  behaviour.
+
+- **Non-default sizes stamp `kr:glyphsize` on the modern root**, so a consumer
+  holding only the SVG can tell which profile drew it. Medium is unstamped on
+  purpose: the attribute's absence IS the default.
+
 ## [6.0.0a88] - 2026-08-25
 
 ### Fixed

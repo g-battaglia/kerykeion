@@ -974,6 +974,7 @@ Default filenames spell the style out: `save_svg()` writes `"{name} - {chart typ
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges as the outer zodiac annulus around the cusp ring |
+| `glyph_size` | `str` | `"medium"` | Size of the planet cluster — glyph, degrees, sign, minutes and ℞ together. `"small"` is the medium cluster at 90%; `"large"` draws the planet glyph at the classic style's own size (24px on a single wheel at the default 480px, 19.2px on a dual). Overridable per render |
 
 **Dual-chart keyword arguments** (Synastry, Transit, Composite, Dual Return):
 

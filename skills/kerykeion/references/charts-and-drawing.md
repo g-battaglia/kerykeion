@@ -151,6 +151,7 @@ Constructor: `ChartDrawer(chart_data, *, ...)` — `chart_data` is the only posi
 | `show_aspect_icons` | `True` | Classic style only. |
 | `style` | `"modern"` | `KerykeionChartStyle` — wheel geometry default for render methods. |
 | `show_zodiac_background_ring` | `True` | Colored zodiac wedges (modern only); overridable at render time. |
+| `glyph_size` | `"medium"` | `KerykeionGlyphSize` — planet-cluster size on the modern wheel (`"small"`/`"medium"`/`"large"`, large = classic-parity glyph); overridable at render time. |
 | `show_diurnality` | `True` | Diurnality line in the bottom-left info panel. |
 
 **THE TRAP — `theme` vs `style` are orthogonal axes.** `theme` selects a CSS palette and defaults to `"classic"`; `style` selects the wheel geometry and defaults to `"modern"`. The default render is therefore classic *palette* on a modern *wheel*. `"classic"` appears in both literals but means different things; to get the traditional v5-style drawing pass `style="classic"` (theme choice is independent).
@@ -208,9 +209,10 @@ with tempfile.TemporaryDirectory() as tmp:
 
 - `KerykeionChartTheme` (3): `"classic"` (default), `"dark"`, `"black-and-white"` — CSS files in kerykeion/charts/themes/. `theme=None` emits no CSS at all, so the drawing takes its colours from the document hosting it. `"light"`, `"strawberry"` and `"dark-high-contrast"` were removed in a86: passing one raises `KerykeionException`.
 - `KerykeionChartStyle` (2): `"classic"` | `"modern"`.
+- `KerykeionGlyphSize` (3): `"small"` | `"medium"` (default) | `"large"` — the modern wheel's planet-cluster size; `"large"` draws the planet glyph at the classic style's own size.
 - `KerykeionChartLanguage` (10): `"EN"`, `"FR"`, `"PT"`, `"IT"`, `"CN"`, `"ES"`, `"RU"`, `"TR"`, `"DE"`, `"HI"`.
 
-All three literals import from `kerykeion.schemas`.
+All four literals import from `kerykeion.schemas`.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
