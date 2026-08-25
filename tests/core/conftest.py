@@ -242,33 +242,10 @@ def assert_svg_wellformed(svg: str, *, expect_css_variables: bool = True) -> Non
 # =============================================================================
 
 
-def assert_svg_matches_baseline(
-    generated_svg: str, baseline_path: Path, rel_tol: float = 1e-4, abs_tol: float = 0.5
-) -> None:
-    """
-    Compare generated SVG content against a golden baseline file line-by-line.
-
-    Numeric values are compared with tolerance; non-numeric text must match exactly.
-
-    Args:
-        generated_svg: The generated SVG string
-        baseline_path: Path to the golden baseline SVG file
-        rel_tol: Relative tolerance for numeric comparisons
-        abs_tol: Absolute tolerance for numeric comparisons
-    """
-    from tests.data.compare_svg_lines import compare_svg_lines
-
-    assert baseline_path.exists(), f"Baseline SVG not found: {baseline_path}\nRegenerate with: uv run poe regenerate:svg"
-
-    expected_lines = baseline_path.read_text().splitlines()
-    actual_lines = generated_svg.splitlines()
-
-    assert len(actual_lines) == len(expected_lines), (
-        f"SVG line count mismatch: got {len(actual_lines)}, expected {len(expected_lines)}"
-    )
-
-    for i, (expected_line, actual_line) in enumerate(zip(expected_lines, actual_lines)):
-        compare_svg_lines(expected_line, actual_line, rel_tol=rel_tol, abs_tol=abs_tol)
+# `assert_svg_matches_baseline` stood here with no callers anywhere in the
+# repository — a fourth copy of the SVG comparison, with its own third tolerance,
+# that TEST.md advertised as an active helper. The one comparison lives in
+# tests/data/compare_svg_lines.py; import compare_svg_file from there.
 
 
 # =============================================================================
@@ -292,3 +269,29 @@ def assert_report_matches_snapshot(generated_report: str, snapshot_path: Path) -
     assert generated_report == expected, (
         f"Report mismatch for {snapshot_path.name}.\nRegenerate with: uv run poe regenerate:reports"
     )
+
+
+@pytest.fixture(autouse=True)
+def _skip_when_the_two_ephemerides_disagree_by_construction(request):
+    """Honour ``@pytest.mark.reference_backend_only``.
+
+    A handful of golden charts are cast two millennia back, where libephemeris and
+    swisseph genuinely compute different skies — far enough apart that a planet
+    changes house or an aspect falls in or out of orb, so the SVG differs in its
+    STRUCTURE and not only in its numbers. One stored baseline cannot be true of
+    both, and loosening the comparison until it is would reopen the hole the
+    comparator was tightened to close.
+
+    So those few say so, one at a time and with a reason, and skip off the backend
+    their baseline came from. Everything else is compared structurally on every
+    backend.
+    """
+    if request.node.get_closest_marker("reference_backend_only") is None:
+        return
+    from tests.data.compare_svg_lines import BASELINE_BACKEND, active_backend, numbers_are_comparable
+
+    if not numbers_are_comparable():
+        pytest.skip(
+            f"The baseline was generated with {BASELINE_BACKEND}; on {active_backend()} this "
+            f"chart differs in structure, not in precision."
+        )

@@ -1370,7 +1370,7 @@ def test_the_winding_test_reads_a_hair_negative_gap_as_zero():
     """
     import math
 
-    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import cusps_are_a_house_division
     from kerykeion.utilities.core import house_spans
 
     ring = [0.0, 30.0, 60.0, 90.0, 120.0, math.nextafter(120.0, 0.0)]
@@ -1383,7 +1383,7 @@ def test_the_winding_test_reads_a_hair_negative_gap_as_zero():
 
     # And still not twelve houses: one of them has no width.
     assert min(spans) < 1e-9
-    assert not _cusp_ring_winds_once(ring)
+    assert not cusps_are_a_house_division(ring)
 
 
 def test_two_charts_that_run_opposite_ways_keep_their_angles_on_their_cusps():
@@ -1710,7 +1710,7 @@ def test_a_ring_whose_wedges_run_both_ways_is_not_a_house_division():
     181,125 where that clause is the only thing standing between the ring and
     being called a house division: every arc has width, and they add to 360.
     """
-    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import cusps_are_a_house_division
     from kerykeion.utilities.core import circular_mean, house_spans
 
     first = AstrologicalSubjectFactory.from_birth_data(
@@ -1730,7 +1730,7 @@ def test_a_ring_whose_wedges_run_both_ways_is_not_a_house_division():
     assert min(spans) > 1e-9, "the fixture is now caught by the coincident-cusp test instead"
     assert len(set(reversed_wedges)) > 1, "the fixture's wedges no longer run both ways"
 
-    assert not _cusp_ring_winds_once(ring)
+    assert not cusps_are_a_house_division(ring)
 
 
 def _with_all_four_angles(**kwargs):
@@ -1877,7 +1877,7 @@ def test_a_ring_that_covers_the_circle_twice_is_not_a_house_division():
     (58,788 measured), which is exactly why it is built here: the reason it cannot
     fire is a fact about today's ephemeris, not about the function.
     """
-    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import cusps_are_a_house_division
     from kerykeion.utilities.core import house_spans
 
     ring = [(60.0 * index) % 360.0 for index in range(12)]
@@ -1886,7 +1886,7 @@ def test_a_ring_that_covers_the_circle_twice_is_not_a_house_division():
     assert min(spans) > 1e-9, "the fixture is now caught by the coincident-cusp test instead"
     assert sum(spans) == approx(720.0, abs=1e-4), "the fixture no longer goes round twice"
 
-    assert not _cusp_ring_winds_once(ring)
+    assert not cusps_are_a_house_division(ring)
 
 
 def test_two_cusps_a_hair_apart_are_the_same_point():
@@ -1898,7 +1898,7 @@ def test_two_cusps_a_hair_apart_are_the_same_point():
     because the narrowest real composite house measured was zero exactly, so
     nothing pins the tolerance between the two.
     """
-    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import cusps_are_a_house_division
     from kerykeion.utilities.core import house_spans
 
     ring = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
@@ -1906,7 +1906,7 @@ def test_two_cusps_a_hair_apart_are_the_same_point():
     spans, _reversed = house_spans(ring)
     assert 0.0 < min(spans) < 1e-9, "the fixture's narrowest house left the window"
 
-    assert not _cusp_ring_winds_once(ring)
+    assert not cusps_are_a_house_division(ring)
 
 
 def test_the_composite_of_a_and_b_is_the_composite_of_b_and_a():
@@ -1949,7 +1949,7 @@ def test_a_house_a_ten_millionth_of_a_degree_wide_is_still_a_house():
     of a degree is four ten-thousandths of an arcsecond — far below anything an
     ephemeris resolves, and still a house.
     """
-    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import cusps_are_a_house_division
     from kerykeion.utilities.core import house_spans
 
     ring = [0.0, 30.0, 60.0, 90.0, 120.0, 120.0 + 1e-7, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
@@ -1957,7 +1957,7 @@ def test_a_house_a_ten_millionth_of_a_degree_wide_is_still_a_house():
     assert 1e-9 < min(spans) < 1e-6, "the fixture's narrowest house left the window"
     assert sum(spans) == approx(360.0, abs=1e-4)
 
-    assert _cusp_ring_winds_once(ring)
+    assert cusps_are_a_house_division(ring)
 
 
 def test_an_angle_that_is_not_a_cusp_is_filed_by_looking():
@@ -2186,7 +2186,7 @@ def test_a_parent_that_is_not_a_house_division_admits_no_frame():
     back gapped with the Sun in the ninth. Nothing about the two subjects changed
     between those three calls, and the anchor decides nothing on such a pair.
     """
-    from kerykeion.composite_subject.factory import _cusp_ring_winds_once
+    from kerykeion.utilities.core import cusps_are_a_house_division
 
     def polich(name, lat, hour):
         return AstrologicalSubjectFactory.from_birth_data(
@@ -2196,8 +2196,8 @@ def test_a_parent_that_is_not_a_house_division_admits_no_frame():
         )
 
     first, second = polich("A", -89.0, 0), polich("B", -68.0, 9)
-    assert _cusp_ring_winds_once([getattr(first, name).abs_pos for name in _CUSP_ATTRS])
-    assert not _cusp_ring_winds_once(
+    assert cusps_are_a_house_division([getattr(first, name).abs_pos for name in _CUSP_ATTRS])
+    assert not cusps_are_a_house_division(
         [getattr(second, name).abs_pos for name in _CUSP_ATTRS]
     ), "the fixture's second parent is a house division again"
 
