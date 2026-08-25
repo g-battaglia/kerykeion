@@ -81,6 +81,10 @@
   of tests that compare no baseline, the BCE readers share their subjects through
   `setup_class` instead, and a class whose `setup_class` fails on this kernel is
   still checked for reachability, which depends on signatures and not on kernels.
+  A fourth pass ran every new test against a mutation aimed at it and found the
+  guard passing when no golden test could cast its chart at all — nothing reached
+  the network because nothing got that far — so it now also demands that every
+  stored baseline this kernel and backend can reach was handed to the comparison.
 
 - **Twenty baselines were read by nothing.** The charts demonstrating the
   optional marks — the station glyph, the out-of-bounds badge, the separating
@@ -97,7 +101,10 @@
   the driver calls `setup_class` as pytest would. Proven by deleting
   `TestProgressionChart` from the source: the gate names all four. The source
   scan reads tokens, not text, so a commented-out call or a docstring that
-  mentions `SVG_DIR` cannot vote either.
+  mentions `SVG_DIR` cannot vote either — and it does not vote inside the driven
+  modules at all, where a compare line in a test whose body no longer compares
+  would otherwise still count; the one reader that runs only on the full-range
+  kernel is declared, and the extended run checks the declaration.
 
   Three of the new optional-mark tests asserted a word the chart carried anyway
   — "Relationship Score" is in the subject's name, `kr:motionstate` is on every
@@ -131,7 +138,10 @@
   compared a ±5% line count and skipped on a missing file, go through the single
   comparator; and `CANNOT_REGENERATE_HERE` is empty, because every one of its
   nine entries is read by a test that refreshes it under
-  `KERYKEION_REGEN_BASELINES`. The refreshed files carry what the drawer has
+  `KERYKEION_REGEN_BASELINES` — and `poe regenerate:svg` now ends by running those
+  tests with the variable set, because a fourth review pass found it refreshing
+  335 files and leaving eleven stale while its own failure message recommended
+  it. The refreshed files carry what the drawer has
   changed since they were written — the accessibility attributes, the palette,
   the modern glyph scale and the house-sector arcs — which is what a strict
   comparator is for.
@@ -141,6 +151,13 @@
   chart, declared them. The composite factory computes the groups on its own ring
   now, so the field's promise — empty only when the twelve cusps are distinct —
   holds for every model that carries it.
+
+- **`coincident_house_cusps` accepted what it promised not to hold**, and kept a
+  promise it could not: any `list[list[int]]` validated, `[[0, 13]]` included, and
+  a pre-a88 payload of a crowded chart came back declaring `[]`. A group now names
+  at least two existing houses, ascending, none twice; and a payload without the
+  field has its groups read off the twelve cusps it does carry — a payload that
+  names the field, even as `[]`, is taken at its word.
 
 - **A hex colour read as a number** in the comparator: `#000e10` against `#000e20`
   passed as zero times ten to the tenth, and `#1e9999` failed against itself as an

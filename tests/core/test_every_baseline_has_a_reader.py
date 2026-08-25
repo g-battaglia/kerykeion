@@ -22,7 +22,7 @@ import functools
 import tokenize
 from pathlib import Path
 
-from tests.data.golden_drive import drive_every_golden_test
+from tests.data.golden_drive import GOLDEN_TEST_MODULES, drive_every_golden_test
 from tests.data.test_subjects_matrix import GEOGRAPHIC_SUBJECTS, TEMPORAL_SUBJECTS
 
 SVG_DIR = Path(__file__).parent.parent / "data" / "svg"
@@ -42,15 +42,38 @@ BASELINES_WITH_NO_READER: dict[str, str] = {}
 #: cannot-regenerate table, and deleting their actual tests left the gate green.
 _NAMES_THAT_READ = {"SVG_DIR", "read_text", "open"}
 
+#: Baselines read by a test the driver can only run on the full-range kernel — a
+#: test marked for a higher tier whose subject is not in the matrix, so the tier
+#: gate below cannot see it. Counted as read on a lower tier; on the extended
+#: kernel each of these MUST be recorded by the driver, and the second test says so.
+READ_ONLY_ON_THE_EXTENDED_KERNEL: dict[str, str] = {
+    "Historical Subject - Natal Chart - Classic.svg": (
+        "test_chart_drawer.py::TestChartOptions::test_historical_date is @extended: a 1500 "
+        "chart cannot be cast on the medium kernel"
+    ),
+}
+
 
 def _reads(name: str) -> bool:
     return name in _NAMES_THAT_READ or name.startswith("compare_")
 
 
+def _is_a_driven_module(source: Path) -> bool:
+    relative = source.relative_to(TESTS_ROOT.parent).with_suffix("")
+    return ".".join(relative.parts) in GOLDEN_TEST_MODULES
+
+
 def _names_read_on_a_source_line() -> set[str]:
-    """Every "....svg" literal on a line whose code compares it or opens it."""
+    """Every "....svg" literal on a line whose code compares it or opens it.
+
+    Outside the driven modules only: there the driver is the source of truth, and a
+    literal on a compare line inside a test whose body no longer runs the comparison
+    would otherwise still count — emptying a reader left the gate green that way.
+    """
     found: set[str] = set()
     for source in TESTS_ROOT.rglob("*.py"):
+        if _is_a_driven_module(source):
+            continue
         readers_on_line: set[int] = set()
         literals: list[tuple[int, str]] = []
         with tokenize.open(source) as handle:
@@ -80,17 +103,20 @@ def _names_gated_by_ephemeris_tier() -> set[str]:
     Declared, not guessed: every matrix subject carries the tier it needs, and the
     detected tier is what tests/conftest.py already probes for. On an extended
     kernel this set is empty and every one of these files must be recorded by the
-    driver like any other.
+    driver like any other — which is why `poe check` runs this gate a second time
+    as `test:gates:extended`: on the default tier a lost reader for one of these
+    files is invisible here, by construction.
     """
     from tests.conftest import _detect_ephemeris_tier
 
     available = _TIER_ORDER.get(_detect_ephemeris_tier(), 0)
+    declared = set(READ_ONLY_ON_THE_EXTENDED_KERNEL) if available < _TIER_ORDER["extended"] else set()
     out_of_reach = {
         subject["name"]
         for subject in (*TEMPORAL_SUBJECTS, *GEOGRAPHIC_SUBJECTS)
         if _TIER_ORDER.get(subject.get("tier", "base"), 0) > available
     }
-    return {
+    return declared | {
         path.name
         for path in SVG_DIR.glob("*.svg")
         for name in out_of_reach
@@ -98,7 +124,27 @@ def _names_gated_by_ephemeris_tier() -> set[str]:
     }
 
 
-def _names_the_golden_tests_ask_for() -> set[str]:
+def _names_out_of_the_backends_reach() -> set[str]:
+    """Baselines whose chart this run's ephemeris backend cannot compute at all.
+
+    The full point set needs per-body asteroid files that the swisseph setup cannot
+    download; tests/conftest.py already probes for that and skips the all-points
+    tests when the probe fails. The same probe, the same files.
+    """
+    from tests.conftest import _tnos_available
+
+    if _tnos_available():
+        return set()
+    return {path.name for path in SVG_DIR.glob("*.svg") if "All Active Points" in path.name}
+
+
+def _names_this_run_cannot_reach() -> set[str]:
+    """Out of reach by kernel tier or by backend: not the same as having no reader."""
+    return _names_gated_by_ephemeris_tier() | _names_out_of_the_backends_reach()
+
+
+@functools.lru_cache(maxsize=1)
+def _names_the_golden_tests_ask_for() -> frozenset[str]:
     """The baselines the golden tests actually reach for, by running them.
 
     Failures are irrelevant here. A test that fails still names the baseline it
@@ -112,7 +158,7 @@ def _names_the_golden_tests_ask_for() -> set[str]:
         asked.add(Path(baseline_path).name)
 
     drive_every_golden_test(recording)
-    return asked
+    return frozenset(asked)
 
 
 @functools.lru_cache(maxsize=1)
@@ -120,7 +166,7 @@ def _baselines_with_a_reader() -> frozenset[str]:
     # Cached: driving the golden suite costs seconds, and both tests below ask.
     return frozenset(
         _names_read_on_a_source_line()
-        | _names_gated_by_ephemeris_tier()
+        | _names_this_run_cannot_reach()
         | _names_the_golden_tests_ask_for()
     )
 
@@ -145,3 +191,13 @@ def test_the_no_reader_list_does_not_outlive_its_reason():
 
     now_read = sorted(name for name in BASELINES_WITH_NO_READER if name in with_reader)
     assert now_read == [], f"Listed as unread but a test reads them now: {now_read}"
+
+    # The extended-only readers are taken on trust below that tier; on it, the
+    # driver must actually see them, or the trust was misplaced.
+    from tests.conftest import _detect_ephemeris_tier
+
+    if _TIER_ORDER.get(_detect_ephemeris_tier(), 0) >= _TIER_ORDER["extended"]:
+        unseen = sorted(set(READ_ONLY_ON_THE_EXTENDED_KERNEL) - _names_the_golden_tests_ask_for())
+        assert unseen == [], f"Declared as read on the extended kernel, but no driven test reads them: {unseen}"
+    gone_too = sorted(name for name in READ_ONLY_ON_THE_EXTENDED_KERNEL if name not in stored)
+    assert gone_too == [], f"Declared as read on the extended kernel but no longer stored: {gone_too}"

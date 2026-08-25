@@ -26,10 +26,13 @@ at the first chart. Now it drives all four modules, every case, through a
 comparison that records nothing and raises nothing.
 """
 
+from pathlib import Path
+
 import pytest
 
 from kerykeion.geonames.fetcher import FetchGeonames
 
+from tests.core.test_every_baseline_has_a_reader import SVG_DIR, _names_this_run_cannot_reach
 from tests.data.golden_drive import drive_every_golden_test
 
 
@@ -100,14 +103,31 @@ TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE = {
 }
 
 
+#: Baselines no driven golden test hands to the comparison, and why — so the guard
+#: can demand that every other one was reached with the network refused.
+CAST_BY_NO_DRIVEN_GOLDEN_TEST = {
+    "Moon Phases.svg": "a sheet of lunar-phase icons, read by test_lunar_phase_svg.py, which casts no chart",
+    "Historical Subject - Natal Chart - Classic.svg": (
+        "a 1500 chart, @extended; on the medium kernel its test fails before it can compare"
+    ),
+}
+
+
 def test_every_golden_chart_test_survives_a_refused_network(refuse_the_network):
     """Every test in every golden module, every parametrized case — and the driver
-    says which tests it could not call, so "every" is checked rather than assumed."""
+    says which tests it could not call, so "every" is checked rather than assumed.
+
+    Two assertions carry it. Nothing asked the network; and every stored baseline
+    the kernel can reach was actually handed to the comparison — without the second,
+    a golden suite that failed for any other reason before casting its chart would
+    pass this guard by never getting as far as the network.
+    """
     asked_the_network: list[str] = []
     not_driven: list[str] = []
+    compared: set[str] = set()
 
-    def record_nothing(_baseline_path, _generated_svg, **_kwargs):
-        pass
+    def record_nothing(baseline_path, _generated_svg, **_kwargs):
+        compared.add(Path(baseline_path).name)
 
     def note_network_calls(qualified_name: str, failure: BaseException) -> None:
         if isinstance(failure, _NetworkWasAsked):
@@ -126,4 +146,10 @@ def test_every_golden_chart_test_survives_a_refused_network(refuse_the_network):
         "for shared subjects); a test that compares no baseline goes in the list above.\n"
         f"  not driven, not listed: {sorted(set(not_driven) - TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE)}\n"
         f"  listed, but driven now: {sorted(TAKES_A_FIXTURE_AND_COMPARES_NO_BASELINE - set(not_driven))}"
+    )
+    stored = {path.name for path in SVG_DIR.glob("*.svg")}
+    never_reached = sorted(stored - _names_this_run_cannot_reach() - compared - set(CAST_BY_NO_DRIVEN_GOLDEN_TEST))
+    assert never_reached == [], (
+        "With the network refused, no driven golden test got as far as comparing these "
+        "baselines, so nothing here vouches for how their charts are cast:\n  " + "\n  ".join(never_reached)
     )

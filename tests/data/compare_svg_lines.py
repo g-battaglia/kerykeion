@@ -17,9 +17,10 @@ comparator returned early on.
 So: structure is fatal, always and on every backend. Line count, count of numbers
 in a line, and the line with its numbers blanked out must all match, or the test
 fails and names the line. Numbers are then compared with NO relative component and
-a tolerance of a ten-thousandth, which absorbs a 0.36-arcsecond flip on a DMS
-label and the last digit of a coordinate printed at six decimal places, and
-nothing else.
+a tolerance of a ten-thousandth, which absorbs the last digit of a coordinate
+printed at six decimal places and nothing else. A DMS label is printed to the
+second, so a label that flips by one second moves 2.78e-4 and is rejected —
+which is the point: a label that changed is a chart that changed.
 
 Numbers are compared only on the backend the baselines were generated with. That
 is not a loophole, it is the fact that the two backends compute different charts:
@@ -45,8 +46,9 @@ BASELINE_BACKEND = "libephemeris"
 #: No relative component: a 50% allowance on a coordinate of 300 is 150 units, and
 #: that is how a chart can be redrawn into a different chart and still pass.
 DEFAULT_REL_TOL = 0.0
-#: A ten-thousandth of a unit, or of a degree on a DMS label — 0.36 arcseconds.
-#: Coordinates are printed at :.6f, so this is a hundred times the last digit.
+#: A ten-thousandth of a unit. Coordinates are printed at :.6f, so this is a
+#: hundred times the last digit; a DMS label printed to the second cannot move by
+#: less than 2.78e-4, so any flip on one is rejected.
 DEFAULT_ABS_TOL = 1e-4
 
 # Seconds mark: &quot; (current output), a literal ", or the pre-fix apostrophe
