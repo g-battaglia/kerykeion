@@ -342,8 +342,10 @@ def info_row_clear_width(row_index: int, drop: float = 0.0) -> float:
     measured_y = baseline_y - _INFO_ROW_TEXT_RISE
     # A row slid past the wheel's bottom edge sits under no chord at all. The
     # clamp continues the curve to its tangent value — 320px from the text's
-    # x=20 — rather than raising on a height the wheel does not reach, which
-    # row 5 plus a disc-less panel's 30px drop otherwise does.
+    # x=20 — rather than raising on a height the wheel does not reach. No
+    # current caller goes that deep (the deepest is slot 4 plus a disc-less
+    # panel's 30px drop, still inside the wheel); this keeps the function total
+    # for the caller that eventually does, instead of a math domain error.
     half_chord = math.sqrt(max(0.0, _WHEEL_RADIUS**2 - (measured_y - _WHEEL_CENTRE_Y) ** 2))
     return (_WHEEL_CENTRE_X - half_chord) - _INFO_ROW_TEXT_X
 

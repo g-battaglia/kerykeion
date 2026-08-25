@@ -1363,6 +1363,15 @@ class TestThePerspectiveRowFitsItsSlot:
         )
         index = round((float(y) - _INFO_ROW_FIRST_Y) / _INFO_ROW_STEP)
         drop = float(BLOCK_TRANSFORM.search(svg).group(1))
+        # The raw transform equals the drop only while the wheel itself sits at
+        # its template origin — true of every fixture here, and load-bearing:
+        # past the wheel's edge the clamp makes every slot's budget 320px, and
+        # an assertion fed that number would pass for any slot choice at all
+        # instead of failing loudly.
+        assert drop <= _MOON_GLYPH_FOOTPRINT, (
+            f"block dropped {drop:.0f}px — a right-panel layout; this helper's "
+            "budget readback would go vacuous, use a smaller fixture"
+        )
         return row, index, drop
 
     @pytest.mark.parametrize(
