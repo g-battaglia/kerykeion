@@ -26,14 +26,17 @@ pyswisseph, like the backwards suite.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from unittest.mock import patch
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
+from kerykeion.planetary_returns import factory as factory_module
 from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
+from kerykeion.utilities import datetime_to_julian
 
 pytestmark = pytest.mark.skipif(
     BACKEND_NAME == "swisseph",
@@ -162,13 +165,58 @@ def test_sub_second_seeds_are_ordered_at_reporting_resolution(factory):
     assert from_half_before.iso_formatted_utc_datetime == reported
 
 
-def test_date_and_year_entry_points_are_unchanged(factory):
-    """Whole-second seeds already start the search where they did: the first
-    return after midnight of a date is never inside that midnight second."""
+def test_date_and_iso_entry_points_agree_away_from_the_boundary(factory):
+    """Away from a date's first second, the date wrapper and an ISO midnight
+    seed select the same return."""
     by_date = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
     by_iso = factory.next_return_from_iso_formatted_time("2024-01-01T00:00:00+00:00", "Solar")
     assert by_date.iso_formatted_utc_datetime == by_iso.iso_formatted_utc_datetime
     assert by_date.iso_formatted_utc_datetime.startswith("2024-06-")
+
+
+def test_date_wrapper_keeps_its_midnight_seed_inclusive(factory):
+    """``next_return_from_date`` promises the first return ON OR AFTER the date:
+    its seed is midnight itself, not the second after it. Only the ISO entry
+    point snaps its seed past its own second (a reported instant must step)."""
+    midnight = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    original = factory_module.ephe.solcross_ut
+
+    with patch.object(factory_module.ephe, "solcross_ut", wraps=original) as spy:
+        factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        assert spy.call_args.args[1] == datetime_to_julian(midnight)
+
+    with patch.object(factory_module.ephe, "solcross_ut", wraps=original) as spy:
+        factory.next_return_from_iso_formatted_time(midnight.isoformat(), "Solar")
+        assert spy.call_args.args[1] == datetime_to_julian(midnight + timedelta(seconds=1))
+
+
+def test_a_return_in_the_first_second_of_a_date_belongs_to_that_date():
+    """Born at 00:00:00 UTC, the natal Sun sits exactly where the year's crossing
+    is found: a return in the first second of that date. The date wrapper keeps
+    it; the ISO entry point, seeded with that same instant, steps a year on."""
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Midnight",
+        1990,
+        6,
+        15,
+        0,
+        0,
+        seconds=0,
+        lat=51.5,
+        lng=0.0,
+        tz_str="UTC",
+        online=False,
+        suppress_geonames_warning=True,
+    )
+    factory = PlanetaryReturnFactory(
+        subject, city="Greenwich", nation="GB", lat=51.5, lng=0.0, tz_str="UTC", online=False
+    )
+
+    by_date = factory.next_return_from_date(1990, 6, 15, return_type="Solar")
+    assert abs(by_date.julian_day - subject.julian_day) * 86400 < 1.5, by_date.iso_formatted_utc_datetime
+
+    by_iso = factory.next_return_from_iso_formatted_time("1990-06-15T00:00:00+00:00", "Solar")
+    assert by_iso.iso_formatted_utc_datetime.startswith("1991-06-")
 
 
 def test_search_refuses_to_start_outside_the_civil_range(factory):
