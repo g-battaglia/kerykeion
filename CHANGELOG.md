@@ -1,5 +1,40 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **The moon disc was not next to the line that names it.** The disc was placed
+  by chart type — the natal panel above the block, every other panel ten pixels
+  under the block's *last* line — while the row naming it sat third or fourth
+  from the end. A transit put the picture 24 pixels and two rows from its own
+  caption, a return 38 and three: 95 charts drawing a moon that appeared to
+  belong to the diurnality line under it. The phase row now closes the block on
+  every panel that draws a disc, so the disc beneath it has nothing else it
+  could be captioning. The row moved rather than the disc because the wheel's
+  chord narrows going up — 147px of clear width on the first row against 229 on
+  the last — and a dual panel's phase line carries the wheel's name too: of 140
+  language-by-phase combinations, 113 would overrun at the top against 15 at the
+  bottom, and 35 overran in the row this line used to occupy.
+
+- **A composite drew a moon it never named.** That panel spends its six rows on
+  the zodiac, the houses, the perspective, the composite method and the
+  diurnality, and has never written a phase line — but it drew the disc anyway,
+  18 charts carrying a picture that said nothing about what it depicted. It is
+  omitted now, as the synastry panel, equally short of room, has always done.
+  The phase itself remains on the model for any caller who wants it.
+
+- **A dual return chart read the nativity's moon, not the return's.** It took
+  the phase from the natal subject and labelled it with a bare "Lunar phase"
+  while the row beside it named the two wheels apart — so the nativity's moon
+  read as the return's. It takes the return moment now and says whose it is
+  ("Solar Return Lunar phase"), the way the transit and progression panels, in
+  this same row, always have.
+
+- **The phase row had never been trimmed to fit.** In Hindi it ran past the
+  graphics in fourteen of its sixteen phase names. It is trimmed to the room its
+  own row has, like the house and relationship-score rows beside it.
+
 ## [6.0.0a87] - 2026-08-25
 
 ### Fixed

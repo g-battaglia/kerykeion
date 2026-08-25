@@ -45,7 +45,11 @@ from kerykeion.secondary_progressions import SecondaryProgressionFactory, SolarA
 from kerykeion.charts.drawer import (
     DIURNALITY_ROW_CLEAR_WIDTH,
     ChartDrawer,
+    _INFO_ROW_FIRST_Y,
+    _INFO_ROW_STEP,
+    info_row_clear_width,
 )
+from kerykeion.charts.utils import estimate_text_width
 
 
 def _row_re(index: int):
@@ -211,6 +215,46 @@ def _layout(svg: str) -> tuple:
     moon = MOON_TRANSFORM.search(svg)
     assert block and moon
     return block.group(1), moon.group(1)
+
+
+def _draws_a_disc(svg: str) -> bool:
+    """Whether the Lunar_Phase group has anything in it.
+
+    The group is in the template unconditionally, so its presence proves
+    nothing: a panel that draws no disc still ships an empty one. Asking the
+    transform instead of the contents is what let a survey of this defect count
+    54 synastry charts that draw no moon at all.
+    """
+    body = re.search(r"<g kr:node='Lunar_Phase'[^>]*>(.*?)</g>", svg, re.S)
+    return bool(body and body.group(1).strip())
+
+
+def _disc_to_its_own_caption(svg: str) -> float:
+    """Pixels between the disc and the row that names it, positive when apart.
+
+    Measured to whichever edge faces the row: the natal panel draws the disc
+    above its caption, every other panel below it. Zero would mean touching;
+    what this catches is a disc left captioning some other row, which is how
+    a transit put its picture three lines away from its own words.
+    """
+    block, moon = (float(v) for v in _layout(svg))
+    rows = {text: block + float(y) for text, y in
+            ((t, y) for t, y in _filled_row_baselines(svg).items())}
+    caption = [y for text, y in rows.items() if _PHASE_LABELS.intersection(text.split())]
+    assert caption, f"no phase row to caption the disc: {list(rows)}"
+    target = caption[0]
+    return target - (moon + 20.0) if moon + 20.0 <= target else moon - target
+
+
+#: Every translation of the phase label, so the row can be found in any language
+#: without hard-coding English. Read from the translation table, not from the
+#: drawing code these tests measure.
+_PHASE_LABELS = {
+    word
+    for settings in LANGUAGE_SETTINGS.values()
+    for word in str(settings.get("lunar_phase", "")).split()
+    if word
+}
 
 
 def _solar_return():
@@ -949,3 +993,125 @@ class TestTheReturnLabelMappingItself:
         later, and the commit message repeated it.
         """
         assert return_label_keys(_DuckTypedReturn(UserString("Solar")))[1] == "Solar Return"
+
+
+class TestTheDiscCaptionsItsOwnRow:
+    """The picture and the words that name it must be adjacent.
+
+    They were not. The disc was placed by chart type — the natal panel put it
+    above the block, every other panel ten pixels under the block's LAST line —
+    while the row naming it sat third or fourth from the end. On a transit the
+    picture ended up 24px and two rows away from its caption, on a return 38px
+    and three. The rule now is the same everywhere and it is about the row, not
+    about the type: the phase row closes the block, so the disc under it has
+    nothing else it could be captioning.
+
+    Why the row moved rather than the disc: the wheel's chord narrows going up,
+    leaving 147px on the first row against 229 on the last, and a dual panel's
+    phase line carries the wheel's name too. Of 140 language-by-phase
+    combinations, 113 would overrun in the first row against 15 in the last.
+    """
+
+    def _charts(self):
+        natal = _subject()
+        natal_return, solar = _solar_return()
+        progressed = SecondaryProgressionFactory.compute(natal, target_year=2020)
+        return {
+            "natal": ChartDataFactory.create_natal_chart_data(natal),
+            "transit": ChartDataFactory.create_transit_chart_data(
+                natal, _subject("Now", year=2024, month=6, day=15, hour=12, minute=0)
+            ),
+            "progression": ChartDataFactory.create_progression_chart_data(natal, progressed),
+            "single_return": ChartDataFactory.create_single_wheel_return_chart_data(solar),
+            "dual_return": ChartDataFactory.create_return_chart_data(natal_return, solar),
+        }
+
+    @pytest.mark.parametrize(
+        "kind", ["natal", "transit", "progression", "single_return", "dual_return"]
+    )
+    def test_the_disc_sits_against_the_row_that_names_it(self, kind):
+        svg = _render(self._charts()[kind])
+        assert _draws_a_disc(svg), "this panel is supposed to draw one"
+        gap = _disc_to_its_own_caption(svg)
+        # 15px is the clear air the natal panel has always kept above its
+        # caption, and the widest adjacency the library uses; a row is 14px, so
+        # anything beyond this has a whole line of something else in between.
+        assert 0 <= gap <= 15.0, (
+            f"{kind}: the disc stands {gap:.0f}px from its own caption, further "
+            f"than the {_INFO_ROW_STEP:.0f}px between two rows — it is "
+            "captioning somebody else's line"
+        )
+
+    @pytest.mark.parametrize("kind", ["transit", "progression", "single_return", "dual_return"])
+    def test_the_phase_closes_the_block_on_every_dual_and_return_panel(self, kind):
+        """Stated separately from the gap, because it is the reason for it.
+
+        The gap alone would also be satisfied by moving the disc, which is the
+        arrangement this replaced and which no width can support.
+        """
+        svg = _render(self._charts()[kind])
+        rows = _filled_row_baselines(svg)
+        last = max(float(y) for y in rows.values())
+        phase = [y for text, y in rows.items() if _PHASE_LABELS.intersection(text.split())]
+        assert phase and float(phase[0]) == last, (
+            f"{kind}: the phase row is not the last one; the disc is drawn "
+            "below the block and would caption whatever ended up there"
+        )
+
+    def test_a_composite_draws_no_disc_because_it_writes_no_row(self):
+        """A picture with no caption says nothing about what it depicts.
+
+        The composite panel spends its six rows elsewhere and has never written
+        a phase line, yet it drew the disc — eighteen charts carrying a moon
+        that named nothing. The synastry panel, equally short of room, has
+        always left it out.
+        """
+        for kind in ("Midpoint", "Davison"):
+            svg = _render(ChartDataFactory.create_composite_chart_data(_composite(kind)))
+            assert not _draws_a_disc(svg), f"{kind} composite still draws an unlabelled disc"
+            assert not any(
+                _PHASE_LABELS.intersection(text.split()) for text in _filled_row_baselines(svg)
+            ), "if the row is written the disc should come back with it"
+
+    def test_a_dual_return_reads_the_return_moon_not_the_nativity(self):
+        """The chart is cast on the return, so the phase is the return's.
+
+        It took the natal subject's, labelled with a bare "Lunar phase" while
+        the row beside it named the two wheels apart — so the nativity's moon
+        read as the return's. The transit and progression panels, in this same
+        row, have always taken the second wheel and said whose it is.
+        """
+        natal, solar = _solar_return()
+        assert natal.lunar_phase.moon_phase_name != solar.lunar_phase.moon_phase_name, (
+            "fixture is useless unless the two moons differ"
+        )
+        svg = _render(ChartDataFactory.create_return_chart_data(natal, solar))
+        row = next(
+            text for text in _filled_row_baselines(svg)
+            if _PHASE_LABELS.intersection(text.split())
+        )
+        assert solar.lunar_phase.moon_phase_name in row, f"row reads {row!r}"
+        assert natal.lunar_phase.moon_phase_name not in row, f"row still reads the nativity: {row!r}"
+        assert _return_type_label(solar) in row, (
+            f"the row must say whose moon it is: {row!r}"
+        )
+
+    @pytest.mark.parametrize("language", ["EN", "HI", "FR", "RU"])
+    def test_the_phase_row_stays_inside_the_wheel(self, language):
+        """It had never been trimmed, and in Hindi it ran past the graphics.
+
+        The house row and the relationship-score row are both trimmed to the
+        room their own row has; this one was not, in any language.
+        """
+        natal, solar = _solar_return()
+        svg = _render(ChartDataFactory.create_return_chart_data(natal, solar), chart_language=language)
+        rows = _filled_row_baselines(svg)
+        index = {float(y): i for i, y in enumerate(
+            _INFO_ROW_FIRST_Y + _INFO_ROW_STEP * i for i in range(6))}
+        for text, y in rows.items():
+            if _PHASE_LABELS.intersection(text.split()):
+                budget = info_row_clear_width(index[float(y)])
+                assert estimate_text_width(unescape(text), 10) <= budget, (
+                    f"{language}: {text!r} overruns its row by "
+                    f"{estimate_text_width(unescape(text), 10) - budget:.0f}px"
+                )

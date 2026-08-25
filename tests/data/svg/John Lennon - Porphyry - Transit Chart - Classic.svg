@@ -248,8 +248,8 @@
             <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Zodiac: Tropical</text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Domification: Porphyry</text>
             <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Perspective: Apparent Geocentric</text>
-            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit Lunar phase: Waxing Crescent</text>
-            <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Natal Nocturnal · Transit Diurnal</text>
+            <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Natal Nocturnal · Transit Diurnal</text>
+            <text kr:node='Bottom_Left_Text_5' x='20' y='522' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>Transit Lunar phase: Waxing Crescent</text>
         </g>
 
         <!-- Lunar Phase -->
