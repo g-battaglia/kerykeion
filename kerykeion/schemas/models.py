@@ -28,7 +28,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from datetime import datetime, timedelta
-from typing import Union, Optional, Literal
+from typing import Any, Literal, Optional, Union
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, field_validator, model_validator
 from kerykeion.schemas.literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
@@ -1103,6 +1103,19 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="House systems substituted because the requested one is undefined at this "
         "latitude. Empty for every chart cast outside the polar circle.",
     )
+    coincident_house_cusps: list[list[int]] = Field(
+        default_factory=list,
+        description=(
+            "Groups of house numbers whose cusps stand on the same longitude, so the "
+            "houses between them have no width and no point can ever be in them. "
+            "Empty for every chart whose twelve cusps are twelve distinct points, "
+            "which is every ordinary chart. Some systems crowd cusps together at "
+            "extreme latitudes — Sunshine at 74.25 degrees north puts the second "
+            "through the sixth on one longitude — and the reference ephemeris "
+            "returns the same ring, so the cusps are reported as computed rather "
+            "than repaired; this says when that has happened. Added in v6.0."
+        ),
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
@@ -1121,6 +1134,51 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="Nutation and obliquity parameters for the chart moment. "
         "Populated when calculate_nutation=True. Added in v6.0.",
     )
+
+    @field_validator("coincident_house_cusps")
+    @classmethod
+    def _each_group_is_a_real_crowd(cls, groups: list[list[int]]) -> list[list[int]]:
+        """A group names at least two existing houses, ascending, and no house twice."""
+        seen: set[int] = set()
+        for group in groups:
+            if len(group) < 2:
+                raise ValueError(f"a group of coincident cusps names at least two houses, not {group}")
+            if group != sorted(group):
+                raise ValueError(f"a group of coincident cusps is listed ascending, not {group}")
+            for house in group:
+                if not 1 <= house <= 12:
+                    raise ValueError(f"house {house} does not exist: houses are numbered 1 to 12")
+                if house in seen:
+                    raise ValueError(f"house {house} cannot be in two groups of coincident cusps")
+                seen.add(house)
+        return groups
+
+    @model_validator(mode="before")
+    @classmethod
+    def _read_coincident_cusps_off_a_pre_a88_payload(cls, data: Any) -> Any:
+        """A payload from before 6.0.0a88 carries its twelve cusps but not this field.
+
+        The field promises to be empty only when the twelve cusps are distinct, and a
+        default of ``[]`` would break that promise for an old payload of a crowded
+        chart. The cusps are right there, so the groups are read off them instead.
+        A payload that names the field, even as ``[]``, is taken at its word.
+        """
+        if not isinstance(data, dict) or data.get("coincident_house_cusps") is not None:
+            return data
+        data = {key: value for key, value in data.items() if key != "coincident_house_cusps"}
+        from kerykeion.utilities.core import HOUSE_FIELD_NAMES, coincident_cusp_groups
+
+        cusps: list[float] = []
+        for field_name in HOUSE_FIELD_NAMES:
+            house = data.get(field_name)
+            degree = house.get("abs_pos") if isinstance(house, dict) else getattr(house, "abs_pos", None)
+            if degree is None:
+                return data  # not a chart with twelve cusps; nothing to read
+            try:
+                cusps.append(float(degree))  # a JSON producer may have written "264.04"
+            except (TypeError, ValueError):
+                return data  # not a chart with twelve cusps; nothing to read
+        return {**data, "coincident_house_cusps": coincident_cusp_groups(cusps)}
 
     def find_fixed_star(self, name: str) -> Optional[KerykeionPointModel]:
         """Case-insensitive lookup in ``fixed_stars`` by IAU name or slug.
