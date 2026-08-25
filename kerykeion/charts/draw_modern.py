@@ -20,6 +20,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import math
+from dataclasses import dataclass
 from typing import Optional, Sequence
 
 from kerykeion.charts.glyph_metrics import estimate_text_width
@@ -609,6 +610,130 @@ ZODIAC_OUTER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_I
 
 # Zodiac signs in the inner planet ring (smaller base size)
 ZODIAC_INNER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_IDS}
+
+
+# =============================================================================
+# GLYPH-SIZE PROFILES
+# =============================================================================
+
+
+@dataclass(frozen=True)
+class ClusterProfile:
+    """One planet ring's cluster — sizes, row anchors, spacing — at one glyph size.
+
+    The five sizes and the five rows are the same ten numbers the renderer has
+    always read; the profile only gathers them so the wheel can be asked for at
+    more than one size. The ``medium`` entries REFERENCE the module constants
+    rather than restating them: the default path reads the very floats it read
+    before profiles existed, which is what keeps every existing baseline
+    byte-identical — and what lets ``test_measured_geometry_is_unchanged`` keep
+    guarding the profiles without knowing they exist.
+
+    ``indicator`` is the tether geometry (``start_y`` / ``tick_length`` /
+    ``arc_radius``), or ``None`` for a ring whose call site passes nothing and
+    leaves ``_draw_indicator_line`` on its own defaults — which is what the
+    natal ring has always done, so its medium entry keeps the
+    ``if indicator_config:`` branch falsy exactly as before.
+    """
+
+    planet_scale_base: float
+    degrees_font_size: float
+    sign_scale_base: float
+    minutes_font_size: float
+    rx_font_size: float
+    glyph_y: float
+    degrees_y: float
+    sign_y: float
+    minutes_y: float
+    rx_y: float
+    min_separation: float
+    indicator: Optional[dict] = None
+
+    def scale_config(self) -> dict:
+        """The five element sizes, keyed as ``_draw_planet_ring`` reads them."""
+        return {
+            "planet_scale_base": self.planet_scale_base,
+            "degrees_font_size": self.degrees_font_size,
+            "sign_scale_base": self.sign_scale_base,
+            "minutes_font_size": self.minutes_font_size,
+            "rx_font_size": self.rx_font_size,
+        }
+
+    def planet_y_config(self) -> dict:
+        """The five row anchors, keyed as ``_draw_planet_ring`` reads them."""
+        return {
+            "glyph_y": self.glyph_y,
+            "degrees_y": self.degrees_y,
+            "sign_y": self.sign_y,
+            "minutes_y": self.minutes_y,
+            "rx_y": self.rx_y,
+        }
+
+
+_MEDIUM_NATAL = ClusterProfile(
+    planet_scale_base=PLANET_SCALE_BASE,
+    degrees_font_size=DEGREES_FONT_SIZE,
+    sign_scale_base=SIGN_SCALE_BASE,
+    minutes_font_size=MINUTES_FONT_SIZE,
+    rx_font_size=RX_FONT_SIZE,
+    glyph_y=NATAL_PLANET_GLYPH_Y,
+    degrees_y=NATAL_DEGREES_Y,
+    sign_y=NATAL_SIGN_Y,
+    minutes_y=NATAL_MINUTES_Y,
+    rx_y=NATAL_RX_Y,
+    min_separation=PLANET_MIN_SEPARATION,
+    indicator=None,
+)
+
+_MEDIUM_DUAL_OUTER = ClusterProfile(
+    planet_scale_base=SYN_PLANET_SCALE,
+    degrees_font_size=SYN_DEGREES_FONT_SIZE,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=SYN_OUTER_PLANET_GLYPH_Y,
+    degrees_y=SYN_OUTER_DEGREES_Y,
+    sign_y=SYN_OUTER_SIGN_Y,
+    minutes_y=SYN_OUTER_MINUTES_Y,
+    rx_y=SYN_OUTER_RX_Y,
+    min_separation=SYN_OUTER_MIN_SEPARATION,
+    indicator={
+        "start_y": SYN_INDICATOR_OUTER_START_Y,
+        "tick_length": SYN_INDICATOR_OUTER_TICK,  # inward, toward its own cluster
+        "arc_radius": SYN_INDICATOR_OUTER_ARC_R,
+    },
+)
+
+_MEDIUM_DUAL_INNER = ClusterProfile(
+    planet_scale_base=SYN_PLANET_SCALE_INNER,
+    degrees_font_size=SYN_DEGREES_FONT_SIZE_INNER,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=SYN_INNER_PLANET_GLYPH_Y,
+    degrees_y=SYN_INNER_DEGREES_Y,
+    sign_y=SYN_INNER_SIGN_Y,
+    minutes_y=SYN_INNER_MINUTES_Y,
+    rx_y=SYN_INNER_RX_Y,
+    min_separation=SYN_INNER_MIN_SEPARATION,
+    indicator={
+        "start_y": SYN_INDICATOR_INNER_START_Y,
+        "tick_length": SYN_INDICATOR_INNER_TICK,  # inward, toward its own cluster
+        "arc_radius": SYN_INDICATOR_INNER_ARC_R,
+    },
+)
+
+#: Every cluster profile the renderer can draw, by glyph size and ring.
+#: Keyed by plain strings on purpose: ``draw_modern`` stays importable without
+#: ``kerykeion.schemas``, and the drawer — the public gate — validates the size
+#: before it ever reaches this dict.
+GLYPH_SIZE_PROFILES: dict[str, dict[str, ClusterProfile]] = {
+    "medium": {
+        "natal": _MEDIUM_NATAL,
+        "dual_outer": _MEDIUM_DUAL_OUTER,
+        "dual_inner": _MEDIUM_DUAL_INNER,
+    },
+}
 
 
 # =============================================================================
@@ -1703,6 +1828,9 @@ def _draw_planet_ring(
                       minutes_font_size, rx_font_size overrides.
         gauquelin_sectors: If True, draw 36 sector lines instead of 12 house lines.
         gauquelin_cusps: 36 zodiacal longitudes for actual sector boundaries.
+        glyph_size: Which cluster profile to draw — "small", "medium" or
+            "large" (see GLYPH_SIZE_PROFILES). The drawer validates the value;
+            an unknown key raises here.
         content_aware_separation: Derive each pair's separation from the ink it
             actually draws (narrow content packs tighter, capped at
             min_separation). False falls back to the uniform separation —
@@ -2704,6 +2832,7 @@ def draw_modern_horoscope(
     show_aspect_movement: bool = False,
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
+    glyph_size: str = "medium",
 ) -> str:
     """
     Generate the complete modern concentric-rings horoscope SVG content.
@@ -2754,8 +2883,13 @@ def draw_modern_horoscope(
     else:
         out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring, horoscope_id="0")
     out += _draw_ruler_ring()
+    profile = GLYPH_SIZE_PROFILES[glyph_size]["natal"]
     out += _draw_planet_ring(
         planets, planets_settings, seventh_house_degree_ut, houses,
+        min_separation=profile.min_separation,
+        planet_y_config=profile.planet_y_config(),
+        indicator_config=profile.indicator,
+        scale_config=profile.scale_config(),
         gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
         show_zodiac_background_ring=show_zodiac_background_ring,
         show_motion_state=show_motion_state,
@@ -2808,6 +2942,7 @@ def draw_modern_dual_horoscope(
     show_zodiac_background_ring: bool = True,
     show_motion_state: bool = False,
     show_aspect_movement: bool = False,
+    glyph_size: str = "medium",
 ) -> str:
     """
     Generate a dual modern chart with two concentric planet rings.
@@ -2828,6 +2963,9 @@ def draw_modern_dual_horoscope(
         aspects_settings: Aspect config dicts.
         chart_type: "Transit", "Synastry", or "DualReturnChart".
         show_zodiac_background_ring: If True, draw outer zodiac wedges.
+        glyph_size: Which cluster profile both rings draw — "small", "medium"
+            or "large" (see GLYPH_SIZE_PROFILES). The drawer validates the
+            value; an unknown key raises here.
 
     Returns:
         Complete SVG content string for the dual horoscope.
@@ -2857,38 +2995,25 @@ def draw_modern_dual_horoscope(
     # ─── RULER RING (Subject 1's houses — shared) ───────────────────
     out += _draw_ruler_ring()
 
+    outer_profile = GLYPH_SIZE_PROFILES[glyph_size]["dual_outer"]
+    inner_profile = GLYPH_SIZE_PROFILES[glyph_size]["dual_inner"]
+
     # ─── OUTER PLANET RING (Subject 2) ──────────────────────────────
     out += _draw_planet_ring(
         planets=planets_2,
         planets_settings=planets_settings,
         seventh_house_degree_ut=seventh_house_degree_ut,
         houses=houses_1,  # Subject 1's houses for divider lines
-        min_separation=SYN_OUTER_MIN_SEPARATION,
+        min_separation=outer_profile.min_separation,
         ring_inner_r=SYN_R_OUTER_PLANET_INNER,
         ring_outer_r=SYN_R_OUTER_PLANET_OUTER,
         ring_fill_color=COLOR_OUTER_PLANET_RING,
         line_outer_y=SYN_HOUSE_LINE_OUTER_Y1,
         line_inner_y=SYN_HOUSE_LINE_OUTER_Y2,
-        planet_y_config={
-            "glyph_y": SYN_OUTER_PLANET_GLYPH_Y,
-            "degrees_y": SYN_OUTER_DEGREES_Y,
-            "sign_y": SYN_OUTER_SIGN_Y,
-            "minutes_y": SYN_OUTER_MINUTES_Y,
-            "rx_y": SYN_OUTER_RX_Y,
-        },
-        indicator_config={
-            "start_y": SYN_INDICATOR_OUTER_START_Y,
-            "tick_length": SYN_INDICATOR_OUTER_TICK,  # inward, toward its own cluster
-            "arc_radius": SYN_INDICATOR_OUTER_ARC_R,
-        },
+        planet_y_config=outer_profile.planet_y_config(),
+        indicator_config=outer_profile.indicator,
         horoscope_id="1",
-        scale_config={
-            "planet_scale_base": SYN_PLANET_SCALE,
-            "degrees_font_size": SYN_DEGREES_FONT_SIZE,
-            "sign_scale_base": SYN_SIGN_SCALE,
-            "minutes_font_size": SYN_MINUTES_FONT_SIZE,
-            "rx_font_size": SYN_RX_FONT_SIZE,
-        },
+        scale_config=outer_profile.scale_config(),
         show_zodiac_background_ring=show_zodiac_background_ring,
         show_motion_state=show_motion_state,
     )
@@ -2899,32 +3024,16 @@ def draw_modern_dual_horoscope(
         planets_settings=planets_settings,
         seventh_house_degree_ut=seventh_house_degree_ut,
         houses=houses_1,  # Subject 1's own houses
-        min_separation=SYN_INNER_MIN_SEPARATION,
+        min_separation=inner_profile.min_separation,
         ring_inner_r=SYN_R_INNER_PLANET_INNER,
         ring_outer_r=SYN_R_INNER_PLANET_OUTER,
         ring_fill_color=COLOR_PLANET_RING,
         line_outer_y=SYN_HOUSE_LINE_INNER_Y1,
         line_inner_y=SYN_HOUSE_LINE_INNER_Y2,
-        planet_y_config={
-            "glyph_y": SYN_INNER_PLANET_GLYPH_Y,
-            "degrees_y": SYN_INNER_DEGREES_Y,
-            "sign_y": SYN_INNER_SIGN_Y,
-            "minutes_y": SYN_INNER_MINUTES_Y,
-            "rx_y": SYN_INNER_RX_Y,
-        },
-        indicator_config={
-            "start_y": SYN_INDICATOR_INNER_START_Y,
-            "tick_length": SYN_INDICATOR_INNER_TICK,  # inward, toward its own cluster
-            "arc_radius": SYN_INDICATOR_INNER_ARC_R,
-        },
+        planet_y_config=inner_profile.planet_y_config(),
+        indicator_config=inner_profile.indicator,
         horoscope_id="0",
-        scale_config={
-            "planet_scale_base": SYN_PLANET_SCALE_INNER,
-            "degrees_font_size": SYN_DEGREES_FONT_SIZE_INNER,
-            "sign_scale_base": SYN_SIGN_SCALE,
-            "minutes_font_size": SYN_MINUTES_FONT_SIZE,
-            "rx_font_size": SYN_RX_FONT_SIZE,
-        },
+        scale_config=inner_profile.scale_config(),
         show_zodiac_background_ring=show_zodiac_background_ring,
         show_motion_state=show_motion_state,
     )
