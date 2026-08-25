@@ -18,7 +18,7 @@ from xml.etree import ElementTree
 
 from kerykeion.charts.utils import make_lunar_phase
 
-from tests.data.compare_svg_lines import compare_svg_lines
+from tests.data.compare_svg_lines import compare_svg_file
 
 
 PHASE_ANGLES = (0, 45, 90, 135, 180, 225, 270, 315)
@@ -56,16 +56,7 @@ class TestLunarPhaseSVG:
 
         generated_svg = "\n".join(generated_lines)
 
-        expected_path = SVG_DIR / "Moon Phases.svg"
-        expected_lines = expected_path.read_text(encoding="utf-8").splitlines()
-        actual_lines = generated_svg.splitlines()
-
-        assert len(actual_lines) == len(expected_lines), (
-            f"Line count mismatch: expected {len(expected_lines)}, got {len(actual_lines)}"
-        )
-
-        for expected_line, actual_line in zip(expected_lines, actual_lines):
-            compare_svg_lines(expected_line, actual_line)
+        compare_svg_file(SVG_DIR / "Moon Phases.svg", generated_svg)
 
 
 class TestLunarPhaseIndividual:

@@ -158,7 +158,8 @@ def _angle_is_its_cusp(
     The one-ring question is :func:`kerykeion.utilities.core.angle_is_its_cusp`,
     and it is asked twice here rather than reimplemented: quadrant systems say yes
     for all four angles, equal houses for the Ascendant and the Descendant only,
-    whole sign and Morinus and meridian for one or both pairs. A composite may use
+    meridian houses for the Midheaven and the Imum Coeli only, whole sign and
+    Morinus for none. A composite may use
     the identity only where BOTH parents have it, because it is their cusps that
     are being averaged.
 

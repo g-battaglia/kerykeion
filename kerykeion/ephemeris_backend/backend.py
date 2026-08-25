@@ -445,8 +445,9 @@ class HouseRing:
     ascmc_speed: Sequence[float]
     polar_fallback: Optional["PolarHouseFallbackModel"] = None
     #: Angle field name -> the house that angle opens, for the angles this chart
-    #: puts on their own cusp. Empty under whole sign, Morinus and meridian, where
-    #: the angles are points of their own.
+    #: puts on their own cusp: all four under the quadrant systems, the Ascendant
+    #: and Descendant only under equal houses, the Midheaven and Imum Coeli only
+    #: under meridian houses, none under whole sign, Vehlow or Morinus.
     angle_houses: dict[str, "Houses"] = field(default_factory=dict)
     #: One-based house numbers whose cusps share a longitude. Empty for every
     #: chart whose twelve cusps are twelve distinct points.

@@ -45,20 +45,6 @@ _ATHENS_OFFLINE = dict(
 )
 
 
-def _compare_or_regenerate(baseline_path: Path, svg: str) -> None:
-    """Compare against a baseline, or rewrite it under KERYKEION_REGEN_BASELINES.
-
-    Five BCE baselines are built here and nowhere else — the natal one the
-    temporal matrix's script casts too — so `poe regenerate:svg` ends by running
-    these tests with the variable set. Without a way to refresh them they went stale on every
-    template change and stayed stale — the comparison used to be a line count
-    within 5%, which a redrawn glyph cannot trip; it is now the same comparison
-    every other baseline gets. The regeneration env var is handled inside it, so
-    a baseline is refreshed by running the test that reads it with
-    KERYKEION_REGEN_BASELINES set.
-    """
-    compare_svg_file(baseline_path, svg)
-
 # Position tolerance: accounts for polynomial approximation at extreme dates
 BCE_POSITION_TOLERANCE = 0.5  # degrees
 
@@ -467,7 +453,7 @@ class TestBCEChartSVG:
         (matrix_500bc,) = [s for s in TEMPORAL_SUBJECTS if s["id"] == "ancient_500bc"]
         data = ChartDataFactory.create_natal_chart_data(create_subject_from_dict(matrix_500bc))
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Natal Chart - Classic.svg", svg)
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Natal Chart - Classic.svg", svg)
 
     @pytest.mark.extended
     def test_transit_chart_svg(self):
@@ -488,7 +474,7 @@ class TestBCEChartSVG:
         """Transit chart SVG matches the golden baseline (if available)."""
         data = ChartDataFactory.create_transit_chart_data(self.subj_500bc, self.subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(
+        compare_svg_file(
             SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg", svg
         )
 
@@ -511,7 +497,7 @@ class TestBCEChartSVG:
         """Synastry chart SVG matches the golden baseline (if available)."""
         data = ChartDataFactory.create_synastry_chart_data(self.subj_500bc, self.subj_200bc)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(
+        compare_svg_file(
             SVG_DIR / "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg", svg
         )
 
@@ -539,7 +525,7 @@ class TestBCEChartSVG:
         progressed = SecondaryProgressionFactory.compute(self.subj_500bc, target_year=-460)
         data = ChartDataFactory.create_progression_chart_data(self.subj_500bc, progressed)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Progression Chart - Classic.svg", svg)
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Progression Chart - Classic.svg", svg)
 
     @pytest.mark.extended
     def test_progression_bce_pre_1ce_gap_clamps_to_bce_branch(self):
@@ -589,14 +575,14 @@ class TestBCEPairWithAModernPartner:
     def test_synastry_with_a_modern_partner_baseline(self):
         data = ChartDataFactory.create_synastry_chart_data(self.midsummer_500bc, self.partner_1970)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Synastry Chart - Classic.svg", svg)
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Synastry Chart - Classic.svg", svg)
 
     @pytest.mark.extended
     @pytest.mark.reference_backend_only
     def test_transit_from_a_modern_partner_baseline(self):
         data = ChartDataFactory.create_transit_chart_data(self.midsummer_500bc, self.partner_1970)
         svg = ChartDrawer(data).generate_svg_string(style="classic")
-        _compare_or_regenerate(SVG_DIR / "Ancient Greece 500BC - Transit Chart - Classic.svg", svg)
+        compare_svg_file(SVG_DIR / "Ancient Greece 500BC - Transit Chart - Classic.svg", svg)
 
 
 # =============================================================================

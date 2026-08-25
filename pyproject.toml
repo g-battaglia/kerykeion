@@ -311,7 +311,7 @@ help = "Regenerate all SVG chart baselines (tests/data/svg/)"
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:svg:test-owned"]
-cmd = "pytest tests/core/test_chart_drawer.py::TestProgressionChart tests/core/test_chart_drawer.py::TestNatalChart tests/core/test_bce_dates.py::TestBCEChartSVG tests/core/test_bce_dates.py::TestBCEPairWithAModernPartner -p no:randomly -q"
+cmd = "pytest tests/core/test_chart_drawer.py::TestProgressionChart tests/core/test_chart_drawer.py::TestNatalChart::test_minified_transit_chart tests/core/test_chart_drawer.py::TestNatalChart::test_minified_synastry_chart tests/core/test_bce_dates.py::TestBCEChartSVG::test_progression_chart_baseline tests/core/test_bce_dates.py::TestBCEChartSVG::test_synastry_chart_baseline tests/core/test_bce_dates.py::TestBCEChartSVG::test_transit_chart_baseline tests/core/test_bce_dates.py::TestBCEPairWithAModernPartner -p no:randomly -q"
 help = "The eleven baselines no script casts — progressions, the minified pair, the BCE pairs — rewritten by the tests that own them"
 
 [tool.poe.tasks."regenerate:svg:test-owned".env]

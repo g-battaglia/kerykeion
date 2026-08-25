@@ -24,8 +24,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from tests.data.golden_places import golden_place
 from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend
 
-require_library_from_this_checkout(__file__)  # noqa: E402
-require_the_baseline_backend()  # noqa: E402
+require_library_from_this_checkout(__file__)
+require_the_baseline_backend()
 
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data.factory import ChartDataFactory
