@@ -15,6 +15,8 @@ Categories:
   A9. No Zodiac Ring — 4 files (natal, synastry, composite, single return)
   A10. All Points All Aspects — 14 files (all chart types, modern style)
   A11. Optional marks — 6 files (one per opt-in mark, all styles' shared panels)
+  A12. Glyph sizes — 8 files (small/large cluster profiles; medium is every
+       other baseline in this directory and needs no twin)
 """
 
 import sys
@@ -536,6 +538,52 @@ def generate_a11_optional_marks():
     _write("Polar Fallback - Natal Chart - Modern.svg", svg)
 
 
+def generate_a12_glyph_sizes():
+    """The small and large cluster profiles, on the charts that stress them.
+
+    Eight files, chosen small on purpose — the profile numbers are pinned
+    numerically in test_modern_decluttering, so these baselines exist to catch
+    STRUCTURAL surprises (a row landing elsewhere, a tether re-anchored, the
+    resolver spreading differently), not to re-pin the profiles:
+    natal small/large (the parity chart), the large wheel-only (no 0.92/4.8
+    wrapper), synastry small/large (both dual rings, large is the tight one),
+    a transit at large (retrograde-heavy outer ring), the all-points natal at
+    large (the documented over-subscription path), and a composite at small
+    (single ring, second subject shape).
+    """
+    print("\n=== A12. Glyph sizes (8 files) ===")
+
+    john, paul = _make_john(), _make_paul()
+    natal = ChartDataFactory.create_natal_chart_data(john)
+    for size in ("small", "large"):
+        svg = ChartDrawer(natal).generate_svg_string(style="modern", glyph_size=size)
+        _write(f"John Lennon - Natal Chart - Modern {size.capitalize()}.svg", svg)
+    svg = ChartDrawer(natal).generate_wheel_only_svg_string(style="modern", glyph_size="large")
+    _write("John Lennon - Natal Chart - Modern Large Wheel Only.svg", svg)
+
+    synastry = ChartDataFactory.create_synastry_chart_data(john, paul)
+    for size in ("small", "large"):
+        svg = ChartDrawer(synastry).generate_svg_string(style="modern", glyph_size=size)
+        _write(f"John Lennon - Synastry Chart - Modern {size.capitalize()}.svg", svg)
+
+    transit = ChartDataFactory.create_transit_chart_data(john, paul)
+    svg = ChartDrawer(transit).generate_svg_string(style="modern", glyph_size="large")
+    _write("John Lennon - Transit Chart - Modern Large.svg", svg)
+
+    from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+
+    all_points = _make_john("All Active Points", active_points=ALL_ACTIVE_POINTS)
+    data = ChartDataFactory.create_natal_chart_data(all_points, active_points=ALL_ACTIVE_POINTS)
+    svg = ChartDrawer(data).generate_svg_string(style="modern", glyph_size="large")
+    _write("John Lennon - All Active Points - Natal Chart - Modern Large.svg", svg)
+
+    angelina, brad = _make_angelina(), _make_brad()
+    model = CompositeSubjectFactory(angelina, brad).get_midpoint_composite_subject_model()
+    data = ChartDataFactory.create_composite_chart_data(model)
+    svg = ChartDrawer(data).generate_svg_string(style="modern", glyph_size="small")
+    _write("Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern Small.svg", svg)
+
+
 if __name__ == "__main__":
     print(f"SVG output directory: {SVG_DIR}")
     generate_a1_synastry()
@@ -549,4 +597,5 @@ if __name__ == "__main__":
     generate_a9_no_zodiac_ring()
     generate_a10_all_points_all_aspects()
     generate_a11_optional_marks()
-    print("\nDone! Generated 49 modern SVG baselines.")
+    generate_a12_glyph_sizes()
+    print("\nDone! Generated 57 modern SVG baselines.")
