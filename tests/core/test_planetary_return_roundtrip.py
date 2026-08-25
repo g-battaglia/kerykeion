@@ -52,10 +52,11 @@ MAX_GAP_DAYS = {
     "Mars": 800.0,  # heliocentric Mars, ~687 days
 }
 
-# The heliocentric bodies the backend solves crossings for, with their
-# sidereal periods rounded up, in days. Chiron, Pholus, the Uranian points,
-# the nodes and Liliths have no heliocentric crossing in the backend (their
-# search returns its seed) and are outside the contract.
+# Heliocentric planets whose solver tolerance is under a second of their own
+# motion, with their sidereal periods rounded up, in days. The slow bodies
+# (Uranus outward, Chiron) are pinned separately below: their crossings are
+# settled by the factory itself. The lunar nodes and Liliths have no
+# heliocentric longitude in the backend and are outside the contract.
 HELIOCENTRIC_MAX_GAP_DAYS = {
     "Mercury": 100.0,
     "Venus": 240.0,
