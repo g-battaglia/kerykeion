@@ -1040,3 +1040,264 @@ def test_spending_the_air_is_reported(caplog):
     assert not [r for r in caplog.records if "air between clusters" in r.message], (
         "an uncrowded wheel reported spending air it never spent"
     )
+
+
+# =============================================================================
+# GLYPH-SIZE PROFILES
+# =============================================================================
+
+#: The small and large profiles, pinned literal by literal. These are the
+#: printed output of scripts/derive_modern_cluster_profiles.py — the derivation
+#: tests below prove they still ARE that output; this fixture makes any drift
+#: name the exact number that moved. min_separation is the analytic seed until
+#: the measurement harness replaces it (its own fixture pins the floors).
+_PROFILE_GEOMETRY = {
+    ("small", "natal"): {
+        "sizes": (0.163296, 2.016, 0.092781, 1.8648, 1.6128),
+        "rows": (9.7328, 13.3238, 16.6358, 20.2358, 23.2598),
+        "min_separation": 6.59,
+        "indicator": {"start_y": 5.348, "tick_length": 0.9675, "arc_radius": 43.752},
+    },
+    ("small", "dual_outer"): {
+        "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
+        "rows": (8.0768, 11.1728, 13.8188, 16.1678, 18.1208),
+        "min_separation": 5.09,
+        "indicator": {"start_y": 5.348, "tick_length": 0.63, "arc_radius": 44.022},
+    },
+    ("small", "dual_inner"): {
+        "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
+        "rows": (22.462, 25.558, 28.204, 30.553, 32.506),
+        "min_separation": 7.91,
+        "indicator": {"start_y": 20.5, "tick_length": 0.27, "arc_radius": 29.23},
+    },
+    ("large", "natal"): {
+        "sizes": (0.22644927536231882, 2.79567, 0.128663, 2.585995, 2.236536),
+        "rows": (10.1551, 14.5798, 18.3845, 22.3458, 25.6815),
+        "min_separation": 9.83,
+        "indicator": {"start_y": 5.348, "tick_length": 0.6959, "arc_radius": 44.0046},
+    },
+    ("large", "dual_outer"): {
+        "sizes": (0.18115942028985507, 2.90953, 0.08509, 1.674352, 1.399868),
+        "rows": (8.5197, 12.3143, 15.264, 17.6455, 19.6148),
+        "min_separation": 7.99,
+        "indicator": {"start_y": 5.348, "tick_length": 0.2881, "arc_radius": 44.3639},
+    },
+    ("large", "dual_inner"): {
+        "sizes": (0.18115942028985507, 2.90953, 0.08509, 1.674352, 1.399868),
+        "rows": (23.4697, 27.0889, 29.8331, 31.9873, 33.7656),
+        "min_separation": 12.87,
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.4311},
+    },
+}
+
+_SIZE_FIELDS = (
+    "planet_scale_base",
+    "degrees_font_size",
+    "sign_scale_base",
+    "minutes_font_size",
+    "rx_font_size",
+)
+_ROW_FIELDS = ("glyph_y", "degrees_y", "sign_y", "minutes_y", "rx_y")
+
+
+@pytest.mark.parametrize(("size", "ring"), sorted(_PROFILE_GEOMETRY))
+def test_profile_geometry_is_unchanged(size, ring):
+    profile = draw_modern.GLYPH_SIZE_PROFILES[size][ring]
+    expected = _PROFILE_GEOMETRY[(size, ring)]
+    for field, value in zip(_SIZE_FIELDS, expected["sizes"]):
+        assert getattr(profile, field) == pytest.approx(value, abs=5e-7), (
+            f"{size}/{ring}.{field} moved. Re-run "
+            "scripts/derive_modern_cluster_profiles.py and paste its output."
+        )
+    for field, value in zip(_ROW_FIELDS, expected["rows"]):
+        assert getattr(profile, field) == value, f"{size}/{ring}.{field} moved."
+    assert profile.min_separation == expected["min_separation"]
+    assert profile.indicator is not None
+    for key, value in expected["indicator"].items():
+        assert profile.indicator[key] == pytest.approx(value, abs=5e-7), (
+            f"{size}/{ring} indicator {key} moved."
+        )
+
+
+def test_medium_profile_is_the_shipped_constants():
+    """Medium carries the shipped constants, field for field.
+
+    Equality, not ``is``: CPython folds equal float literals of one module
+    into a single constant, so an identity check cannot tell a reference from
+    a re-typed copy anyway — what actually guards the default path is this
+    equality tied to _MEASURED_GEOMETRY's own pins, plus the byte-identical
+    baseline suite. ``indicator is None`` for the natal ring is load-bearing,
+    though: it keeps the ``if indicator_config:`` branch in _draw_planet_ring
+    falsy, exactly as the pre-profile call site was.
+    """
+    natal = draw_modern.GLYPH_SIZE_PROFILES["medium"]["natal"]
+    for field, constant in zip(
+        _SIZE_FIELDS + _ROW_FIELDS + ("min_separation",),
+        (
+            draw_modern.PLANET_SCALE_BASE,
+            draw_modern.DEGREES_FONT_SIZE,
+            draw_modern.SIGN_SCALE_BASE,
+            draw_modern.MINUTES_FONT_SIZE,
+            draw_modern.RX_FONT_SIZE,
+            draw_modern.NATAL_PLANET_GLYPH_Y,
+            draw_modern.NATAL_DEGREES_Y,
+            draw_modern.NATAL_SIGN_Y,
+            draw_modern.NATAL_MINUTES_Y,
+            draw_modern.NATAL_RX_Y,
+            draw_modern.PLANET_MIN_SEPARATION,
+        ),
+    ):
+        assert getattr(natal, field) == constant, f"medium natal {field} drifted from the constant"
+    assert natal.indicator is None
+
+    outer = draw_modern.GLYPH_SIZE_PROFILES["medium"]["dual_outer"]
+    inner = draw_modern.GLYPH_SIZE_PROFILES["medium"]["dual_inner"]
+    assert outer.planet_scale_base == draw_modern.SYN_PLANET_SCALE
+    assert inner.planet_scale_base == draw_modern.SYN_PLANET_SCALE_INNER
+    assert outer.min_separation == draw_modern.SYN_OUTER_MIN_SEPARATION
+    assert inner.min_separation == draw_modern.SYN_INNER_MIN_SEPARATION
+    assert outer.indicator is not None and inner.indicator is not None
+    assert outer.indicator["tick_length"] == draw_modern.SYN_INDICATOR_OUTER_TICK
+    assert outer.indicator["arc_radius"] == draw_modern.SYN_INDICATOR_OUTER_ARC_R
+    assert inner.indicator["tick_length"] == draw_modern.SYN_INDICATOR_INNER_TICK
+    assert inner.indicator["arc_radius"] == draw_modern.SYN_INDICATOR_INNER_ARC_R
+    for field, constant in zip(
+        _ROW_FIELDS,
+        (
+            draw_modern.SYN_OUTER_PLANET_GLYPH_Y,
+            draw_modern.SYN_OUTER_DEGREES_Y,
+            draw_modern.SYN_OUTER_SIGN_Y,
+            draw_modern.SYN_OUTER_MINUTES_Y,
+            draw_modern.SYN_OUTER_RX_Y,
+        ),
+    ):
+        assert getattr(outer, field) == constant, f"medium dual_outer {field} drifted from the constant"
+    for field, constant in zip(
+        _ROW_FIELDS,
+        (
+            draw_modern.SYN_INNER_PLANET_GLYPH_Y,
+            draw_modern.SYN_INNER_DEGREES_Y,
+            draw_modern.SYN_INNER_SIGN_Y,
+            draw_modern.SYN_INNER_MINUTES_Y,
+            draw_modern.SYN_INNER_RX_Y,
+        ),
+    ):
+        assert getattr(inner, field) == constant, f"medium dual_inner {field} drifted from the constant"
+
+
+def test_derivation_reproduces_medium():
+    """The scaling rule is a fixed point at k=1: it must re-lay the shipped rows.
+
+    By construction the decomposition telescopes, so this cannot fail on a
+    perturbed ink table — what it pins is the script's own coherence: the
+    layout loop, the tether handling and the decomposition must be inverses
+    of each other, or medium itself comes out somewhere else. The teeth
+    against ink/radius/policy changes are in
+    test_derivation_reproduces_the_shipped_profiles: at k != 1 every one of
+    those moves re-prices the small and large literals.
+    """
+    from scripts.derive_modern_cluster_profiles import RINGS, decompose, derive
+
+    for ring in RINGS.values():
+        decomposition = decompose(ring)  # raises if ink + air != band
+        assert decomposition.ink + decomposition.air == pytest.approx(
+            decomposition.band, abs=1e-9
+        )
+        reproduced = derive(ring, 1.0)
+        for shipped, derived in zip(ring.rows, reproduced.rows):
+            assert derived == pytest.approx(shipped, abs=1e-9), ring.name
+
+
+@pytest.mark.parametrize(("size", "ring_name"), sorted(_PROFILE_GEOMETRY))
+def test_derivation_reproduces_the_shipped_profiles(size, ring_name):
+    """The module literals are the script's output — re-run it and compare.
+
+    Kills a hand edit of any profile literal, and equally a change to the
+    derivation policy (dropping the tether scaling, the corner anchor, the
+    tick floor) that would silently re-price every profile.
+    """
+    from scripts.derive_modern_cluster_profiles import RINGS, derive, size_factors
+
+    profile = draw_modern.GLYPH_SIZE_PROFILES[size][ring_name]
+    derived = derive(RINGS[ring_name], size_factors(ring_name)[size])
+    for field, value in zip(_SIZE_FIELDS, derived.sizes):
+        assert getattr(profile, field) == pytest.approx(value, abs=5e-7), (
+            f"{size}/{ring_name}.{field} no longer matches the derivation"
+        )
+    for field, value in zip(_ROW_FIELDS, derived.rows):
+        assert getattr(profile, field) == pytest.approx(value, abs=5e-5), (
+            f"{size}/{ring_name}.{field} no longer matches the derivation"
+        )
+    assert profile.indicator is not None
+    assert profile.indicator["tick_length"] == pytest.approx(derived.tick, abs=5e-5)
+    assert profile.indicator["arc_radius"] == pytest.approx(derived.arc_radius, abs=5e-5)
+    assert profile.min_separation == pytest.approx(derived.min_separation_seed, abs=5e-3)
+
+
+def test_large_is_exact_classic_parity():
+    """The headline contract: large draws the planet glyph at the classic size.
+
+    The classic engine draws its 24-unit glyph box at scale 1.0 on a single
+    wheel and 0.8 on a dual; the modern wheel lives behind the 0.92 zodiac
+    wrapper and the 4.8 page scale. The base is WRITTEN as that expression, so
+    the assertion is exact — replace it with the rounded decimal and this
+    fails on the identity check, not on a tolerance.
+    """
+    large = draw_modern.GLYPH_SIZE_PROFILES["large"]
+    single = large["natal"].planet_scale_base
+    dual = large["dual_outer"].planet_scale_base
+    assert single == 1.0 / (draw_modern.ZODIAC_BG_SCALE * draw_modern.MODERN_PAGE_SCALE)
+    assert dual == 0.8 / (draw_modern.ZODIAC_BG_SCALE * draw_modern.MODERN_PAGE_SCALE)
+    assert large["dual_inner"].planet_scale_base == dual
+    box = 24
+    assert box * single * draw_modern.ZODIAC_BG_SCALE * draw_modern.MODERN_PAGE_SCALE == pytest.approx(24.0, abs=1e-12)
+    assert box * dual * draw_modern.ZODIAC_BG_SCALE * draw_modern.MODERN_PAGE_SCALE == pytest.approx(19.2, abs=1e-12)
+
+
+@pytest.mark.parametrize("size", ["small", "medium", "large"])
+@pytest.mark.parametrize("ring_name", ["natal", "dual_outer", "dual_inner"])
+def test_no_cluster_row_leaves_its_ring(size, ring_name):
+    """Worst-case ink of every row stays inside the ring's band, at every size.
+
+    The band runs from the tether's deepest reach to the ring's inner edge.
+    The tight spot is the large dual-inner bottom margin (0.03 units): a size
+    nudge there without a row move fails here first.
+    """
+    from scripts.derive_modern_cluster_profiles import (
+        RINGS,
+        worst_glyph_half_height,
+        worst_sign_half_height,
+    )
+
+    ring = RINGS[ring_name]
+    profile = draw_modern.GLYPH_SIZE_PROFILES[size][ring_name]
+    if profile.indicator is None:
+        tether_reach = ring.start_y + ring.arc_drop + ring.tick
+    else:
+        tether_reach = (
+            (50.0 - profile.indicator["arc_radius"]) + profile.indicator["tick_length"]
+        )
+    inner_edge = ring.inner_edge_y
+
+    halves = (
+        worst_glyph_half_height() * profile.planet_scale_base,
+        0.5 * profile.degrees_font_size,
+        worst_sign_half_height() * profile.sign_scale_base,
+        0.5 * profile.minutes_font_size,
+        0.5 * profile.rx_font_size,
+    )
+    rows = tuple(getattr(profile, field) for field in _ROW_FIELDS)
+
+    # Rows must descend and stay clear of each other's ink.
+    for i in range(4):
+        assert rows[i] + halves[i] <= rows[i + 1] - halves[i + 1] + 1e-9, (
+            f"{size}/{ring_name}: rows {i} and {i + 1} overlap ink"
+        )
+    # The glyph row keeps its row-ward ink clear of the tether's end...
+    assert rows[0] - halves[0] >= tether_reach - 1e-4, (
+        f"{size}/{ring_name}: the glyph row reaches past the tether's end"
+    )
+    # ...and the last row's ink stays inside the ring.
+    assert rows[4] + halves[4] <= inner_edge + 1e-9, (
+        f"{size}/{ring_name}: the {_ROW_FIELDS[4]} row leaves the ring"
+    )

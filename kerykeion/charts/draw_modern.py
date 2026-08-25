@@ -616,6 +616,18 @@ ZODIAC_INNER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_I
 # GLYPH-SIZE PROFILES
 # =============================================================================
 
+#: Page scale the full-chart template applies to the 100-unit modern wheel:
+#: chart.xml draws it at 2 * main_radius = 480px, so one wheel unit is 4.8px
+#: at the default page. Named here because classic parity is stated through it:
+#: the large profiles' planet base is written as classic_scale / (0.92 * 4.8).
+MODERN_PAGE_SCALE = 4.8
+
+#: Shortest tab a tether may draw. The tab scales with the cluster's air, and
+#: below a quarter unit it is under 1.2px at the default page — a stray dot,
+#: not a mark a reader can find. When the floor binds, the profile derivation
+#: pins the tab and pays the difference out of the remaining air instead.
+MIN_INDICATOR_TICK = 0.25
+
 
 @dataclass(frozen=True)
 class ClusterProfile:
@@ -723,15 +735,155 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
     },
 )
 
+# The small and large profiles below are OUTPUT, not opinion: they are what
+# ``scripts/derive_modern_cluster_profiles.py`` prints, and a test re-runs the
+# derivation and refuses any hand edit that drifts from it. The rule, in one
+# line: sizes scale by k, every quantity of air scales by a = min(k, fit), rows
+# are laid top-down from the tether's end, and the tab never drops below
+# MIN_INDICATOR_TICK. Small is k = 0.9 — a pure homothety, the medium cluster
+# at 90%. Large is classic parity, Giacomo's call on both counts: the planet
+# glyph at the classic engine's own size (scale 1.0 single, 0.8 dual, through
+# the 0.92 wrapper and the 4.8 page), written as that expression so the parity
+# is exact and not a rounded decimal. The single ring affords it at a = 0.65;
+# the dual rings only at a = 0.41 / 0.23, chosen knowingly — exact parity was
+# preferred over the 91% a shared factor would have kept, and the rows of a
+# large dual ring sit nearly ink to ink. The bands cannot deepen: below the
+# dual rings there is only the aspect core, and taking depth from it was
+# considered and refused.
+
+_SMALL_NATAL = ClusterProfile(
+    planet_scale_base=0.163296,
+    degrees_font_size=2.016,
+    sign_scale_base=0.092781,
+    minutes_font_size=1.8648,
+    rx_font_size=1.6128,
+    glyph_y=9.7328,
+    degrees_y=13.3238,
+    sign_y=16.6358,
+    minutes_y=20.2358,
+    rx_y=23.2598,
+    min_separation=6.59,  # analytic seed — the harness re-measures per size
+    indicator={
+        "start_y": HOUSE_LINE_OUTER_Y,
+        "tick_length": 0.9675,
+        "arc_radius": 43.752,
+    },
+)
+
+_SMALL_DUAL_OUTER = ClusterProfile(
+    planet_scale_base=0.1188,
+    degrees_font_size=1.908,
+    sign_scale_base=0.0558,
+    minutes_font_size=1.098,
+    rx_font_size=0.918,
+    glyph_y=8.0768,
+    degrees_y=11.1728,
+    sign_y=13.8188,
+    minutes_y=16.1678,
+    rx_y=18.1208,
+    min_separation=5.09,  # analytic seed — the harness re-measures per size
+    indicator={
+        "start_y": SYN_INDICATOR_OUTER_START_Y,
+        "tick_length": 0.63,
+        "arc_radius": 44.022,
+    },
+)
+
+_SMALL_DUAL_INNER = ClusterProfile(
+    planet_scale_base=0.1188,
+    degrees_font_size=1.908,
+    sign_scale_base=0.0558,
+    minutes_font_size=1.098,
+    rx_font_size=0.918,
+    glyph_y=22.462,
+    degrees_y=25.558,
+    sign_y=28.204,
+    minutes_y=30.553,
+    rx_y=32.506,
+    min_separation=7.91,  # analytic seed — the harness re-measures per size
+    indicator={
+        "start_y": SYN_INDICATOR_INNER_START_Y,
+        "tick_length": 0.27,
+        "arc_radius": 29.23,
+    },
+)
+
+_LARGE_NATAL = ClusterProfile(
+    planet_scale_base=1.0 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
+    degrees_font_size=2.79567,
+    sign_scale_base=0.128663,
+    minutes_font_size=2.585995,
+    rx_font_size=2.236536,
+    glyph_y=10.1551,
+    degrees_y=14.5798,
+    sign_y=18.3845,
+    minutes_y=22.3458,
+    rx_y=25.6815,
+    min_separation=9.83,  # analytic seed — the harness re-measures per size
+    indicator={
+        "start_y": HOUSE_LINE_OUTER_Y,
+        "tick_length": 0.6959,
+        "arc_radius": 44.0046,
+    },
+)
+
+_LARGE_DUAL_OUTER = ClusterProfile(
+    planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
+    degrees_font_size=2.90953,
+    sign_scale_base=0.08509,
+    minutes_font_size=1.674352,
+    rx_font_size=1.399868,
+    glyph_y=8.5197,
+    degrees_y=12.3143,
+    sign_y=15.264,
+    minutes_y=17.6455,
+    rx_y=19.6148,
+    min_separation=7.99,  # analytic seed — the harness re-measures per size
+    indicator={
+        "start_y": SYN_INDICATOR_OUTER_START_Y,
+        "tick_length": 0.2881,
+        "arc_radius": 44.3639,
+    },
+)
+
+_LARGE_DUAL_INNER = ClusterProfile(
+    planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
+    degrees_font_size=2.90953,
+    sign_scale_base=0.08509,
+    minutes_font_size=1.674352,
+    rx_font_size=1.399868,
+    glyph_y=23.4697,
+    degrees_y=27.0889,
+    sign_y=29.8331,
+    minutes_y=31.9873,
+    rx_y=33.7656,
+    min_separation=12.87,  # analytic seed — the harness re-measures per size
+    indicator={
+        "start_y": SYN_INDICATOR_INNER_START_Y,
+        "tick_length": MIN_INDICATOR_TICK,  # the floor binds at a = 0.23
+        "arc_radius": 29.4311,
+    },
+)
+
 #: Every cluster profile the renderer can draw, by glyph size and ring.
 #: Keyed by plain strings on purpose: ``draw_modern`` stays importable without
 #: ``kerykeion.schemas``, and the drawer — the public gate — validates the size
 #: before it ever reaches this dict.
 GLYPH_SIZE_PROFILES: dict[str, dict[str, ClusterProfile]] = {
+    "small": {
+        "natal": _SMALL_NATAL,
+        "dual_outer": _SMALL_DUAL_OUTER,
+        "dual_inner": _SMALL_DUAL_INNER,
+    },
     "medium": {
         "natal": _MEDIUM_NATAL,
         "dual_outer": _MEDIUM_DUAL_OUTER,
         "dual_inner": _MEDIUM_DUAL_INNER,
+    },
+    "large": {
+        "natal": _LARGE_NATAL,
+        "dual_outer": _LARGE_DUAL_OUTER,
+        "dual_inner": _LARGE_DUAL_INNER,
     },
 }
 
