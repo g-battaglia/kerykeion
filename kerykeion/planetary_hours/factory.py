@@ -17,6 +17,25 @@ _POLAR_MESSAGE = (
 )
 
 
+def _civil_day_beside(year: int, month: int, day: int, offset_days: int) -> date:
+    """The civil date ``offset_days`` away, or a clean refusal at either end of the range.
+
+    A planetary day runs from one sunrise to the next, so the last evening of
+    9999 needs a sunrise on 10000-01-01 and the first morning of year 1 needs a
+    sunset on the day before it; ``date`` has neither and raises ``OverflowError``.
+    Only the full-range ephemeris ever gets this far — on a narrower kernel the
+    coverage check refuses first — which is how the raw error went unseen.
+    """
+    try:
+        return date(year, month, day) + timedelta(days=offset_days)
+    except OverflowError as exc:
+        which = "after" if offset_days > 0 else "before"
+        raise KerykeionException(
+            f"Planetary hours for {year:04d}-{month:02d}-{day:02d} need the sunrise of the day {which} it, "
+            f"and there is no civil date {which} this one: the library represents years 1 to 9999."
+        ) from exc
+
+
 class PlanetaryHoursFactory:
     """
     Factory for the planetary (Chaldean) hours of a moment at a location.
@@ -102,14 +121,14 @@ class PlanetaryHoursFactory:
             # The moment is within today's planetary day (sunrise → next sunrise).
             if today.sunset is None:
                 raise KerykeionException(_POLAR_MESSAGE)
-            tomorrow = date(year, month, day) + timedelta(days=1)
+            tomorrow = _civil_day_beside(year, month, day, +1)
             next_events = compute_sun_events(tomorrow.year, tomorrow.month, tomorrow.day, latitude, longitude, tz)
             if next_events.sunrise is None:
                 raise KerykeionException(_POLAR_MESSAGE)
             sunrise, sunset, next_sunrise = today.sunrise, today.sunset, next_events.sunrise
         else:
             # Before today's sunrise → still in the previous planetary day's night.
-            yesterday = date(year, month, day) - timedelta(days=1)
+            yesterday = _civil_day_beside(year, month, day, -1)
             prev_events = compute_sun_events(yesterday.year, yesterday.month, yesterday.day, latitude, longitude, tz)
             if prev_events.sunrise is None or prev_events.sunset is None:
                 raise KerykeionException(_POLAR_MESSAGE)

@@ -4,6 +4,33 @@
 
 ### Fixed
 
+- **Two factories let a raw error out at the end of the civil range.** On the
+  full-range kernel (DE441, to the year 17191) 9999-12-31 is computable, and it is
+  the day AFTER it that does not exist: the planetary day beginning at that
+  evening's sunrise needs a sunrise on 10000-01-01 and overflowed `date`
+  arithmetic with a bare `OverflowError`; the void-of-course Moon walking to its
+  next ingress past the year's end surfaced a bare `ValueError` from the Julian
+  Day conversion. Both refuse with `KerykeionException` now, naming the civil
+  range rather than the ephemeris. The test that guards this had asserted that
+  9999-12-31 itself must fail — true on the base and medium kernels, where the
+  coverage check refuses first, and false on the extended one, where it never
+  reached the two lines that would have caught the real defect. It says the
+  truth at every tier now, and an extended-only test pins the asymmetry: before
+  that day's sunrise the planetary hours work (yesterday exists), after it they
+  cannot.
+
+- **A sidereal Sunshine `i` relocated onto its own birthplace was a different
+  chart.** The reference implementation casts a sidereal `i` (Makransky) as `I`
+  (Treindl) — libephemeris matches it — except in the fixed-epoch modes; the
+  natal chart got that ring by asking with the sidereal flag, while the relocated
+  chart asks tropically and applies the subject's ayanamsa afterwards, so it asked
+  for `i` and got Makransky: at sixty degrees north the two constructions are
+  tens of degrees apart, and inside the polar circle the tropical `i` is refused
+  and substituted with Porphyry where the natal has a crowded Sunshine ring. The
+  relocation asks for the system the reference would cast, with the fixed-epoch
+  modes left on Makransky as the reference leaves them. Nothing to change
+  upstream: both backends behave the same way, and that way is Swiss Ephemeris'.
+
 - **An angle could be filed in the wrong house, and twelve numbers could not say
   otherwise.** Where a house system brings several cusps onto one longitude —
   Sunshine at 74.25 degrees north puts the second through the sixth on
