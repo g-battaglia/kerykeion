@@ -3055,6 +3055,27 @@ class TestGlyphSize:
         assert medium != large
         assert f"scale({GLYPH_SIZE_PROFILES['large']['natal'].planet_scale_base})" in large
 
+    def test_the_arc_tether_dash_stops_where_its_arc_begins(self):
+        """The lengthened dash is for the straight case; the arc case caps it.
+
+        An SVG A-segment forced through a point off its own circle bends into
+        a visible kink — the artefact Giacomo photographed on the large duals.
+        The cap lands the dash on the arc's depth (never below the end tab),
+        and at medium every length coincides so nothing moves.
+        """
+        from kerykeion.charts.draw_modern import _draw_indicator_line
+
+        arc = _draw_indicator_line(
+            10.0, 13.0, start_y=5.348, tick_length=0.3959,
+            arc_radius=44.0046, start_tick_length=1.0224,
+        )
+        assert "l 0 0.6474 " in arc  # (50 - 44.0046) - 5.348, non 1.0224
+        straight = _draw_indicator_line(
+            10.0, 10.1, start_y=5.348, tick_length=0.3959,
+            arc_radius=44.0046, start_tick_length=1.0224,
+        )
+        assert "l 0 1.0224" in straight
+
     def test_non_medium_sizes_stamp_the_root(self):
         """small/large stamp kr:glyphsize on the modern root; medium does not.
 

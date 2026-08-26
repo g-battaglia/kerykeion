@@ -1953,6 +1953,17 @@ def _draw_indicator_line(
         r_arc = arc_radius
         sweep = 0 if angle_diff > 0 else 1
 
+        # The initial dash must MEET the arc it hands off to: an A-segment
+        # forced through a point off its own circle bends into a visible kink
+        # (the derived sizes lengthened the dash for the straight case, where
+        # there is no arc to meet — at medium all lengths coincided and the
+        # question never arose). Cap the dash at the arc's depth, never below
+        # the end tab's length, the historical minimum; at medium the cap is
+        # exactly tick_length and the emitted bytes do not move.
+        arc_start_tick = round(
+            min(start_tick_length, max((CENTER - r_arc) - start_y, tick_length)), 4
+        )
+
         # Calculate arc endpoint (angle_diff > 0 is CCW, which in SVG with Y-down is -X direction)
         end_rad = _deg_to_rad(angle_diff)
         end_x = CENTER - r_arc * math.sin(end_rad)
@@ -1965,7 +1976,7 @@ def _draw_indicator_line(
 
         out += (
             f"  <path "
-            f'd="M {CENTER} {start_y} l 0 {start_tick_length} '
+            f'd="M {CENTER} {start_y} l 0 {arc_start_tick} '
             f"A {r_arc} {r_arc} 0 0 {sweep} {end_x:.10f} {end_y:.10f} "
             f'L {end_x_inner:.10f} {end_y_inner:.10f}" '
             f'fill="transparent" stroke="{COLOR_INDICATOR}" stroke-width="0.1"/>\n'
