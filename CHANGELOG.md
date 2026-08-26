@@ -22,7 +22,7 @@
   entry points. The backend's solvers do not reach that resolution on their
   own — their at-crossing dead band is ~90 ms for the Sun, and their 0.001″
   tolerance is six seconds of Pluto's motion, so a seed one second past a
-  slow body's crossing came back as its own answer — so every ISO search is
+  slow body's crossing came back as its own answer — so every supported ISO search is
   held to the contract (`_settled`): heliocentric crossings are settled to a
   millisecond by bisection around the solver's answer, a crossing inside the
   second before a backward seed is looked for explicitly, and a result that
