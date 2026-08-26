@@ -56,22 +56,31 @@
        graphic object needs, while --kerykeion-modern-stroke keeps outlining the
        rings at whatever weight the palette likes. */
     --kerykeion-modern-cusp: #81818d;
+    /* Solid dim tones for the stretch of a cusp behind a reading: the exact
+       0.35-alpha composite of the cusp colour over each ring's fill. Solid so
+       a host that shows through the chart cannot wash the axis out. */
+    --kerykeion-modern-cusp-dim: #ccccd1;
+    --kerykeion-modern-cusp-dim-outer: #c4c4cb;
     --kerykeion-modern-retrograde: #b03030;
     --kerykeion-modern-stationary: #8a5a12;
     --kerykeion-modern-indicator: #8a8278;
-    --kerykeion-modern-zodiac-bg-0: #ff7200;
-    --kerykeion-modern-zodiac-bg-1: #6b3d00;
-    --kerykeion-modern-zodiac-bg-2: #69acf1;
-    --kerykeion-modern-zodiac-bg-3: #2b4972;
-    --kerykeion-modern-zodiac-bg-4: #ff7200;
-    --kerykeion-modern-zodiac-bg-5: #6b3d00;
-    --kerykeion-modern-zodiac-bg-6: #69acf1;
-    --kerykeion-modern-zodiac-bg-7: #2b4972;
-    --kerykeion-modern-zodiac-bg-8: #ff7200;
-    --kerykeion-modern-zodiac-bg-9: #6b3d00;
-    --kerykeion-modern-zodiac-bg-10: #69acf1;
-    --kerykeion-modern-zodiac-bg-11: #2b4972;
-    --kerykeion-modern-zodiac-bg-opacity: 0.5;
+    /* Opaque pastels: the exact per-channel composite of the old element
+       colors at 0.5 over white paper. Same tone the theme always had, but a
+       host that shows through the chart (Studio's glass) no longer bleeds
+       into the wedges. The dark theme was already opaque. */
+    --kerykeion-modern-zodiac-bg-0: #ffb880;
+    --kerykeion-modern-zodiac-bg-1: #b59e80;
+    --kerykeion-modern-zodiac-bg-2: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-3: #95a4b8;
+    --kerykeion-modern-zodiac-bg-4: #ffb880;
+    --kerykeion-modern-zodiac-bg-5: #b59e80;
+    --kerykeion-modern-zodiac-bg-6: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-7: #95a4b8;
+    --kerykeion-modern-zodiac-bg-8: #ffb880;
+    --kerykeion-modern-zodiac-bg-9: #b59e80;
+    --kerykeion-modern-zodiac-bg-10: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-11: #95a4b8;
+    --kerykeion-modern-zodiac-bg-opacity: 1;
     --kerykeion-chart-color-zodiac-bg-0: #ff7200;
     --kerykeion-chart-color-zodiac-bg-1: #6b3d00;
     --kerykeion-chart-color-zodiac-bg-2: #69acf1;
@@ -483,11 +492,11 @@
 <g kr:node='PlanetRing'>
 <path d='M 5.347999999999999,50.0 A 44.652,44.652 0 1,1 94.652,50.0 A 44.652,44.652 0 1,1 5.347999999999999,50.0 M 28.0,50.0 A 22.0,22.0 0 1,1 72.0,50.0 A 22.0,22.0 0 1,1 28.0,50.0 Z' fill='var(--kerykeion-modern-planet-ring, #e8e8ed)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='8.417' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='8.417' x2='50.0' y2='23.376' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='8.417' x2='50.0' y2='23.376' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-27.795286 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='8.029' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-62.878631 50.0 50.0)'/>
-<line x1='50.0' y1='8.029' x2='50.0' y2='26.596' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-62.878631 50.0 50.0)'/>
+<line x1='50.0' y1='8.029' x2='50.0' y2='26.596' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-62.878631 50.0 50.0)'/>
 <line x1='50.0' y1='26.596' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-62.878631 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-101.935313 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-135.316735 50.0 50.0)'/>
@@ -496,7 +505,7 @@
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-207.795286 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-242.878631 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='8.572' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-281.935313 50.0 50.0)'/>
-<line x1='50.0' y1='8.572' x2='50.0' y2='23.376' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-281.935313 50.0 50.0)'/>
+<line x1='50.0' y1='8.572' x2='50.0' y2='23.376' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.6' transform='rotate(-281.935313 50.0 50.0)'/>
 <line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-281.935313 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-315.316735 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-340.694504 50.0 50.0)'/>
