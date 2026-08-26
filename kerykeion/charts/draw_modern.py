@@ -290,13 +290,15 @@ PLANET_GLYPH_BOX = 24
 PLANET_SCALE_BASE = 0.18144  # Planet glyph: 24 * 0.18144 ≈ 4.35 visual units
 DEGREES_FONT_SIZE = 2.24  # Degrees text font size
 # The sign glyph carries its size differently from everything around it: a thin
-# outline beside solid figures reads smaller than it measures, and at 0.08736 it
-# was the one mark in the cluster that looked undersized. Up 18%, and it costs
-# nothing at the ruler — it sits in the middle of the block, so it grows into
-# the air between the rows rather than into the tether's room. The planet glyph
-# was left alone for exactly that reason: it is the row nearest the ruler, and
-# it would have had to move inward again to pay for its own growth.
-SIGN_SCALE_BASE = 0.10309  # Zodiac sign: 32 * 0.10309 ≈ 3.30 visual units
+# outline beside solid figures reads smaller than it measures — at 0.08736 it
+# looked undersized and went up 18%, then at 0.10309 it crowded the numerals
+# either side and the cluster lost its step-down. Giacomo, on the rendered
+# wheel: «non c'è progressività quasi, il glifo del segno è troppo grande —
+# solo un po' di più, che sia visibile». So: down 8%, half the earlier raise —
+# a visible step in the hierarchy without swinging back to undersized. It sits
+# in the middle of the block, so the change spends and returns only the air
+# between the rows, never the tether's room.
+SIGN_SCALE_BASE = 0.09484  # Zodiac sign: 32 * 0.09484 ≈ 3.03 visual units
 MINUTES_FONT_SIZE = 2.072  # Minutes text font size
 RX_FONT_SIZE = 1.792  # Retrograde indicator font size
 
@@ -534,7 +536,7 @@ SYN_PLANET_SCALE = 0.132  # Planet glyph, both rings
 SYN_PLANET_SCALE_INNER = SYN_PLANET_SCALE
 SYN_DEGREES_FONT_SIZE = 2.12  # Degrees text, both rings
 SYN_DEGREES_FONT_SIZE_INNER = SYN_DEGREES_FONT_SIZE
-SYN_SIGN_SCALE = 0.062  # Zodiac sign
+SYN_SIGN_SCALE = 0.05704  # Zodiac sign — down 8% with the natal one, same call
 SYN_MINUTES_FONT_SIZE = 1.22  # Minutes text
 SYN_RX_FONT_SIZE = 1.02  # Retrograde indicator
 
