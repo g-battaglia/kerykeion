@@ -297,6 +297,17 @@ def test_crossing_between_finds_a_sign_change_to_a_millisecond():
     assert PlanetaryReturnFactory._crossing_between(arc_through_the_antipode, root - 1.0, root + 1.0) is None
 
 
+def test_a_probe_outside_the_ephemeris_range_fails_with_the_library_exception():
+    """A probe window at the edge of the ephemeris range fails like the solver
+    calls do: with ``KerykeionException``, never a raw backend error."""
+
+    def out_of_range(_jd: float) -> float:
+        raise RuntimeError("jd outside the ephemeris range")
+
+    with pytest.raises(KerykeionException, match="ephemeris date range"):
+        PlanetaryReturnFactory._crossing_between(out_of_range, 2460000.0, 2460001.0)
+
+
 def test_previous_from_the_natal_instant_is_the_return_before_birth():
     """The natal instant is a crossing by construction (every body sits at its
     natal position). Seeded with it, ``previous`` must find the cycle before

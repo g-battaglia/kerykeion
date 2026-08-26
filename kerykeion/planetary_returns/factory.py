@@ -363,26 +363,34 @@ class PlanetaryReturnFactory:
         ordering contract excludes. Roots within a tenth of a millisecond of
         ``hi`` are treated the same, below the resolution of the bisection.
         """
-        f_lo, f_hi = offset(lo), offset(hi)
-        if max(abs(f_lo), abs(f_hi)) > cls._CROSSING_ARC_LIMIT:
-            return None  # the window straddles the antipode, not the target
-        if f_lo == 0.0:
-            return lo
-        if f_hi == 0.0 or (f_lo < 0.0) == (f_hi < 0.0):
-            return None
-        top = hi
-        for _ in range(64):
-            if hi - lo < cls._CROSSING_RESOLUTION:
-                break
-            mid = 0.5 * (lo + hi)
-            f_mid = offset(mid)
-            if f_mid == 0.0:
-                lo = hi = mid
-                break
-            if (f_mid < 0.0) == (f_lo < 0.0):
-                lo, f_lo = mid, f_mid
-            else:
-                hi, f_hi = mid, f_mid
+        try:
+            f_lo, f_hi = offset(lo), offset(hi)
+            if max(abs(f_lo), abs(f_hi)) > cls._CROSSING_ARC_LIMIT:
+                return None  # the window straddles the antipode, not the target
+            if f_lo == 0.0:
+                return lo
+            if f_hi == 0.0 or (f_lo < 0.0) == (f_hi < 0.0):
+                return None
+            top = hi
+            for _ in range(64):
+                if hi - lo < cls._CROSSING_RESOLUTION:
+                    break
+                mid = 0.5 * (lo + hi)
+                f_mid = offset(mid)
+                if f_mid == 0.0:
+                    lo = hi = mid
+                    break
+                if (f_mid < 0.0) == (f_lo < 0.0):
+                    lo, f_lo = mid, f_mid
+                else:
+                    hi, f_hi = mid, f_mid
+        except _BACKEND_ERRORS as exc:
+            # A probe at the edge of the ephemeris range fails like the solver
+            # calls do: with the library's own exception, not a raw backend one.
+            raise KerykeionException(
+                "The crossing refinement stepped outside the available ephemeris date range; "
+                f"narrow the search window. ({exc})"
+            ) from exc
         root = 0.5 * (lo + hi)
         if top - root < cls._CROSSING_RESOLUTION:
             return None  # at the seed, within the resolution
