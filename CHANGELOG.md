@@ -1,5 +1,31 @@
 # Changelog
 
+## [6.0.0a90] — unreleased
+
+### Fixed
+
+- **The classic theme's zodiac wedges are opaque now.** They were the element
+  colours at `fill-opacity: 0.5` — a pastel only because white paper sat
+  underneath. On a host that shows through the chart (Studio's glass) the
+  backdrop bled into the ring. The theme now ships the exact per-channel
+  composites of those colours over white (#ffb880, #b59e80, #b4d6f8,
+  #95a4b8) at opacity 1: the same tone the theme always had, on any host.
+  The dark theme was already opaque and is untouched.
+
+- **A dimmed cusp stretch is a solid tone, not an opacity.** Where a reading
+  crosses a cusp line, the line dimmed via `stroke-opacity: 0.35` — and on a
+  see-through host the whole stretch washed out, so the axes of a dual wheel
+  appeared to stop mid-air (the As axis lost eleven units of its inner-ring
+  run behind its own reading). The dim is now a SOLID pre-composited tone,
+  per ring and per theme (`--kerykeion-modern-cusp-dim`,
+  `--kerykeion-modern-cusp-dim-outer`), numerically identical to what the
+  opacity produced over each ring's own fill.
+
+- **Dual house lines start at the ruler.** They hung 1.15 units short of it
+  (y 6.5, where the natal lines and every tether anchor at 5.348), which
+  read as axes not reaching the wheel's edge on every dual chart.
+
+
 ## [6.0.0a89] - 2026-08-26
 
 ### Fixed

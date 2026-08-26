@@ -114,11 +114,15 @@ NORMAL_STROKE_WIDTH = 0.07
 
 # A cusp and a reading can occupy the same place: an angle's cluster sits on its
 # own cusp by construction, and any point within a couple of degrees of one
-# lands there too. Where that happens the line drops to this opacity for the
-# length of the reading — it passes behind the words rather than through them,
-# so the axis stays whole and the text keeps the contrast of the ring under it
-# (2.09:1 → 5.02:1 on the light theme, 2.48 → 5.81 on the dark).
-CUSP_DIM_OPACITY = 0.35
+# lands there too. Where that happens the line turns to a SOLID dimmed tone for
+# the length of the reading — it passes behind the words rather than through
+# them, so the axis stays whole and the text keeps the contrast of the ring
+# under it. Solid, not translucent: the tone IS the old 0.35-opacity composite
+# of the cusp colour over the ring it crosses, baked per ring and per theme —
+# a stroke-opacity dim vanished on hosts that show through the chart (Studio's
+# glass), because what it composited with was no longer the ring.
+COLOR_CUSP_DIM = "var(--kerykeion-modern-cusp-dim, #c4c4cb)"
+COLOR_CUSP_DIM_OUTER = "var(--kerykeion-modern-cusp-dim-outer, #babac6)"
 # How close a mark must come before the line makes room: a hair past touching,
 # not a clearance. Measured ink, so a wider tolerance dims lines that are still
 # visibly clear of the text.
@@ -323,7 +327,11 @@ SYN_R_OUTER_PLANET_INNER = 29.5
 SYN_R_OUTER_PLANET_OUTER = R_RULER_INNER
 
 # House division line endpoints (Subject 1's cusps drawn in both rings)
-SYN_HOUSE_LINE_OUTER_Y1 = 6.5  # Outer ring: top (near ruler)
+# Outer ring: top AT the ruler's inner edge, the same anchor the natal lines
+# and every tether hang from. It sat at 6.5 — 1.15 units short of the ruler —
+# and the axes of a dual wheel visibly stopped mid-air (Giacomo, on the
+# rendered chart: «assi e cuspidi non arrivano in fondo, solo nelle doppie»).
+SYN_HOUSE_LINE_OUTER_Y1 = HOUSE_LINE_OUTER_Y
 SYN_HOUSE_LINE_OUTER_Y2 = 20.5  # Outer ring: bottom (at boundary)
 SYN_HOUSE_LINE_INNER_Y1 = 20.5  # Inner ring: top (at boundary)
 SYN_HOUSE_LINE_INNER_Y2 = 34.5  # Inner ring: bottom (near house numbers)
@@ -1639,6 +1647,7 @@ def _draw_gauquelin_division_lines(
     seventh_house_degree_ut: float = 0.0,
     clusters: Sequence[dict] = (),
     row_radii: Optional[dict[str, float]] = None,
+    dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """Draw 36 Gauquelin sector division lines through the planet ring.
 
@@ -1656,7 +1665,7 @@ def _draw_gauquelin_division_lines(
         is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
         out += _cusp_line_svg(angle, stroke_w, line_outer_y, line_inner_y,
-                              clusters, row_radii)
+                              clusters, row_radii, dim_stroke)
     return out
 
 
@@ -1680,6 +1689,7 @@ def _draw_planet_ring(
     show_zodiac_background_ring: bool = True,
     show_motion_state: bool = False,
     content_aware_separation: bool = True,
+    cusp_dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """
     Draw the planet ring with data clusters and indicator lines.
@@ -1781,11 +1791,11 @@ def _draw_planet_ring(
         out += _draw_gauquelin_division_lines(
             line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps,
             seventh_house_degree_ut=seventh_house_degree_ut,
-            clusters=resolved, row_radii=row_radii)
+            clusters=resolved, row_radii=row_radii, dim_stroke=cusp_dim_stroke)
     else:
         out += _draw_house_division_lines(
             houses, seventh_house_degree_ut, line_outer_y, line_inner_y,
-            clusters=resolved, row_radii=row_radii)
+            clusters=resolved, row_radii=row_radii, dim_stroke=cusp_dim_stroke)
 
 
     # Prepare indicator kwargs
@@ -2077,33 +2087,37 @@ def _cusp_line_svg(
     line_inner_y: float,
     clusters: Sequence[dict] = (),
     row_radii: Optional[dict[str, float]] = None,
+    dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """One cusp line, dimmed over the stretch a reading is written across it.
 
-    The line is never broken and never recoloured: only its opacity drops, so
-    the axis stays continuous and passes behind the words instead of through
-    them. Without clusters to consult — the measurement harness, a ring drawn
-    before its points are resolved — it comes out whole, exactly as before.
+    The line is never broken: the dimmed stretch is drawn in *dim_stroke*, the
+    SOLID pre-composited tone of the cusp colour over this ring's fill, so the
+    axis stays continuous and passes behind the words instead of through them
+    — and stays visible on hosts that show through the chart, where a
+    stroke-opacity dim used to vanish. Without clusters to consult — the
+    measurement harness, a ring drawn before its points are resolved — it
+    comes out whole, exactly as before.
     """
     y_top, y_bottom = sorted((line_outer_y, line_inner_y))
     head = f'<line x1="{CENTER}" y1="{{y1}}" x2="{CENTER}" y2="{{y2}}" '
-    tail = (f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}"{{fade}} '
+    tail = (f'stroke="{{stroke}}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n')
 
     span = (_reading_span_on_line(cusp_angle, y_top, y_bottom, clusters, row_radii)
             if clusters and row_radii else None)
     if span is None:
-        return (head + tail).format(y1=line_outer_y, y2=line_inner_y, fade="")
+        return (head + tail).format(y1=line_outer_y, y2=line_inner_y, stroke=COLOR_CUSP)
 
     lo, hi = span
     pieces = []
     if lo > y_top + 0.05:
-        pieces.append((y_top, lo, ""))
-    pieces.append((lo, hi, f' stroke-opacity="{CUSP_DIM_OPACITY}"'))
+        pieces.append((y_top, lo, COLOR_CUSP))
+    pieces.append((lo, hi, dim_stroke))
     if hi < y_bottom - 0.05:
-        pieces.append((hi, y_bottom, ""))
-    return "".join((head + tail).format(y1=f"{a:.3f}", y2=f"{b:.3f}", fade=fade)
-                   for a, b, fade in pieces)
+        pieces.append((hi, y_bottom, COLOR_CUSP))
+    return "".join((head + tail).format(y1=f"{a:.3f}", y2=f"{b:.3f}", stroke=stroke)
+                   for a, b, stroke in pieces)
 
 
 def _draw_house_division_lines(
@@ -2113,6 +2127,7 @@ def _draw_house_division_lines(
     line_inner_y: float = HOUSE_LINE_INNER_Y,
     clusters: Sequence[dict] = (),
     row_radii: Optional[dict[str, float]] = None,
+    dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """
     Draw house division lines that cross the planet ring.
@@ -2137,7 +2152,7 @@ def _draw_house_division_lines(
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
         stroke_w = ANGULAR_STROKE_WIDTH if house_num in ANGULAR_HOUSES else NORMAL_STROKE_WIDTH
         out += _cusp_line_svg(cusp_angle, stroke_w, line_outer_y, line_inner_y,
-                              clusters, row_radii)
+                              clusters, row_radii, dim_stroke)
 
     return out
 
@@ -2869,6 +2884,7 @@ def draw_modern_dual_horoscope(
         ring_fill_color=COLOR_OUTER_PLANET_RING,
         line_outer_y=SYN_HOUSE_LINE_OUTER_Y1,
         line_inner_y=SYN_HOUSE_LINE_OUTER_Y2,
+        cusp_dim_stroke=COLOR_CUSP_DIM_OUTER,
         planet_y_config={
             "glyph_y": SYN_OUTER_PLANET_GLYPH_Y,
             "degrees_y": SYN_OUTER_DEGREES_Y,

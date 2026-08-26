@@ -3,10 +3,11 @@ Regression tests for the cusp line dimming under a cluster's reading.
 
 An angle's cluster sits on its own cusp by construction, so "As 19º ♈ 45'" is
 always written across the angular line, and any point within a couple of degrees
-of a cusp lands on one too. Where that happens the line drops to
-``CUSP_DIM_OPACITY`` for the length of the reading: it passes behind the words
-instead of through them, and the text keeps the contrast of the ring under it
-rather than the 2:1 it had against the line.
+of a cusp lands on one too. Where that happens the line turns to a SOLID dimmed
+tone (``COLOR_CUSP_DIM`` / ``COLOR_CUSP_DIM_OUTER`` — the pre-composited value
+of the old 0.35 opacity over each ring's fill) for the length of the reading:
+it passes behind the words instead of through them, keeps the text's contrast,
+and cannot be washed out by a host that shows through the chart.
 
 Four properties are worth defending, because each was got wrong on the way here:
 
@@ -32,7 +33,6 @@ from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 from kerykeion.charts.draw_modern import (
     CENTER,
     CUSP_DIM_MARGIN,
-    CUSP_DIM_OPACITY,
     HOUSE_LINE_INNER_Y,
     HOUSE_LINE_OUTER_Y,
     _reading_span_on_line,
@@ -138,7 +138,7 @@ def _wheel(**kwargs) -> str:
 
 
 def _dimmed(svg: str) -> list[str]:
-    return re.findall(rf"<line[^>]*stroke-opacity='{CUSP_DIM_OPACITY}'[^>]*/>", svg)
+    return re.findall(r"<line[^>]*modern-cusp-dim[^>]*/>", svg)
 
 
 def test_the_axes_readings_dim_their_own_cusps():
@@ -150,11 +150,29 @@ def test_a_wheel_without_axis_readings_keeps_its_lines_whole():
     assert _dimmed(_wheel(active_points=POINTS)) == []
 
 
-def test_dimming_never_breaks_or_recolours_the_line():
-    """Only the opacity moves: same colour, same width, no gaps in the axis."""
+def test_dual_house_lines_hang_from_the_ruler():
+    """The dual rings' lines share the natal anchor — the ruler's inner edge.
+
+    They sat 1.15 units short of it, and every dual wheel's axes visibly
+    stopped mid-air (Giacomo, on the rendered chart). One constant, pinned
+    so a retune of the dual bands cannot quietly re-open the gap.
+    """
+    from kerykeion.charts.draw_modern import SYN_HOUSE_LINE_OUTER_Y1
+
+    assert SYN_HOUSE_LINE_OUTER_Y1 == HOUSE_LINE_OUTER_Y
+
+
+def test_dimming_never_breaks_the_line():
+    """The dim is a solid themable tone: same width, no opacity, no gaps.
+
+    Solid on purpose — a stroke-opacity dim composited with whatever sat
+    behind the chart, and on a see-through host the axis washed out entirely
+    (the defect Giacomo photographed on the dual wheels).
+    """
     svg = _wheel(active_points=WITH_AXES)
     for line in _dimmed(svg):
-        assert "modern-cusp" in line
+        assert "modern-cusp-dim" in line
+        assert "stroke-opacity" not in line
         assert "stroke-width='0.6'" in line
     # the pieces of a split line still cover it end to end
     for angle in ("-0.000000", "-257.312566"):
