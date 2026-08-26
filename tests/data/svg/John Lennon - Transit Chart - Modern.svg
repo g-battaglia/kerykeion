@@ -511,7 +511,7 @@
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='var(--kerykeion-chart-color-venus)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(119.318698 50.0 11.82) translate(0 0.2120)'>19º</text>
-  <g transform='translate(50.0 14.76) rotate(119.318698) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(119.318698) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-chart-color-venus)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(119.318698 50.0 17.37) translate(0 0.1159)'>3'</text>
@@ -524,7 +524,7 @@
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='var(--kerykeion-chart-color-uranus)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-uranus)' font-weight='500' transform='rotate(131.293276 50.0 11.82) translate(0 0.2279)'>1º</text>
-  <g transform='translate(50.0 14.76) rotate(131.293276) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(131.293276) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='var(--kerykeion-chart-color-uranus)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-uranus)' font-weight='500' transform='rotate(131.293276 50.0 17.37) translate(0 0.1159)'>58'</text>
@@ -537,7 +537,7 @@
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='var(--kerykeion-chart-color-saturn)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-saturn)' font-weight='500' transform='rotate(136.401392 50.0 11.82) translate(0 0.2120)'>5º</text>
-  <g transform='translate(50.0 14.76) rotate(136.401392) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(136.401392) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='var(--kerykeion-chart-color-saturn)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-saturn)' font-weight='500' transform='rotate(136.401392 50.0 17.37) translate(0 0.1250)'>12'</text>
@@ -550,7 +550,7 @@
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(148.589683 50.0 11.82) translate(0 0.2120)'>18º</text>
-  <g transform='translate(50.0 14.76) rotate(148.589683) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(148.589683) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(148.589683 50.0 17.37) translate(0 0.1159)'>20'</text>
@@ -564,7 +564,7 @@
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(156.921872 50.0 11.82) translate(0 0.2120)'>26º</text>
-  <g transform='translate(50.0 14.76) rotate(156.921872) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(156.921872) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='var(--kerykeion-chart-color-sun)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(156.921872 50.0 17.37) translate(0 0.1159)'>40'</text>
@@ -577,7 +577,7 @@
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='var(--kerykeion-chart-color-jupiter)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-jupiter)' font-weight='500' transform='rotate(162.100348 50.0 11.82) translate(0 0.2279)'>1º</text>
-  <g transform='translate(50.0 14.76) rotate(162.100348) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(162.100348) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-jupiter)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-jupiter)' font-weight='500' transform='rotate(162.100348 50.0 17.37) translate(0 0.1159)'>50'</text>
@@ -590,7 +590,7 @@
     <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(174.693100 50.0 11.82) translate(0 0.2279)'>14º</text>
-  <g transform='translate(50.0 14.76) rotate(174.693100) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(174.693100) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Can' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(174.693100 50.0 17.37) translate(0 0.1159)'>26'</text>
@@ -603,7 +603,7 @@
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(191.845311 50.0 11.82) translate(0 0.2279)'>2º</text>
-  <g transform='translate(50.0 14.76) rotate(191.845311) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(191.845311) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-mars)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(191.845311 50.0 17.37) translate(0 0.1159)'>43'</text>
@@ -616,7 +616,7 @@
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(195.652047 50.0 11.82) translate(0 0.2279)'>4º</text>
-  <g transform='translate(50.0 14.76) rotate(195.652047) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(195.652047) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(195.652047 50.0 17.37) translate(0 0.1159)'>16'</text>
@@ -629,7 +629,7 @@
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(202.410409 50.0 11.82) translate(0 0.2279)'>12º</text>
-  <g transform='translate(50.0 14.76) rotate(202.410409) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(202.410409) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(202.410409 50.0 17.37) translate(0 0.1159)'>9'</text>
@@ -642,7 +642,7 @@
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-moon)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(208.453382 50.0 11.82) translate(0 0.2120)'>18º</text>
-  <g transform='translate(50.0 14.76) rotate(208.453382) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(208.453382) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-moon)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(208.453382 50.0 17.37) translate(0 0.1250)'>12'</text>
@@ -655,7 +655,7 @@
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(226.898903 50.0 11.82) translate(0 0.2120)'>6º</text>
-  <g transform='translate(50.0 14.76) rotate(226.898903) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(226.898903) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(226.898903 50.0 17.37) translate(0 0.1159)'>38'</text>
@@ -669,7 +669,7 @@
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(247.372745 50.0 11.82) translate(0 0.2279)'>27º</text>
-  <g transform='translate(50.0 14.76) rotate(247.372745) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(247.372745) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(247.372745 50.0 17.37) translate(0 0.1220)'>7'</text>
@@ -682,7 +682,7 @@
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='11.82' font-size='2.12' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(261.033459 50.0 11.82) translate(0 0.2120)'>10º</text>
-  <g transform='translate(50.0 14.76) rotate(261.033459) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 14.76) rotate(261.033459) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='17.37' font-size='1.22' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(261.033459 50.0 17.37) translate(0 0.1159)'>46'</text>
@@ -717,7 +717,7 @@
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(90.000000 50.0 26.12) translate(0 0.2120)'>19º</text>
-  <g transform='translate(50.0 29.06) rotate(90.000000) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(90.000000) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='var(--kerykeion-chart-color-first-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-first-house)' font-weight='500' transform='rotate(90.000000 50.0 31.67) translate(0 0.1220)'>44'</text>
@@ -730,7 +730,7 @@
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(110.290315 50.0 26.12) translate(0 0.2120)'>13º</text>
-  <g transform='translate(50.0 29.06) rotate(110.290315) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(110.290315) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(110.290315 50.0 31.67) translate(0 0.1250)'>12'</text>
@@ -744,7 +744,7 @@
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(117.123034 50.0 26.12) translate(0 0.2120)'>13º</text>
-  <g transform='translate(50.0 29.06) rotate(117.123034) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(117.123034) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(117.123034 50.0 31.67) translate(0 0.1250)'>41'</text>
@@ -758,7 +758,7 @@
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(125.805249 50.0 26.12) translate(0 0.2120)'>25º</text>
-  <g transform='translate(50.0 29.06) rotate(125.805249) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(125.805249) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='var(--kerykeion-modern-retrograde, #c43a5e)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-modern-retrograde, #c43a5e)' font-weight='500' transform='rotate(125.805249 50.0 31.67) translate(0 0.1159)'>33'</text>
@@ -772,7 +772,7 @@
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(189.468105 50.0 26.12) translate(0 0.2120)'>0º</text>
-  <g transform='translate(50.0 29.06) rotate(189.468105) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(189.468105) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-chiron)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-chiron)' font-weight='500' transform='rotate(189.468105 50.0 31.67) translate(0 0.1159)'>34'</text>
@@ -785,7 +785,7 @@
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(195.794666 50.0 26.12) translate(0 0.2279)'>4º</text>
-  <g transform='translate(50.0 29.06) rotate(195.794666) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(195.794666) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Leo' fill='var(--kerykeion-chart-color-pluto)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-pluto)' font-weight='500' transform='rotate(195.794666 50.0 31.67) translate(0 0.1250)'>11'</text>
@@ -798,7 +798,7 @@
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='var(--kerykeion-chart-color-venus)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(223.468650 50.0 26.12) translate(0 0.2120)'>3º</text>
-  <g transform='translate(50.0 29.06) rotate(223.468650) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(223.468650) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-venus)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-venus)' font-weight='500' transform='rotate(223.468650 50.0 31.67) translate(0 0.1250)'>12'</text>
@@ -811,7 +811,7 @@
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(246.283352 50.0 26.12) translate(0 0.2120)'>26º</text>
-  <g transform='translate(50.0 29.06) rotate(246.283352) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(246.283352) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='var(--kerykeion-chart-color-neptune)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-neptune)' font-weight='500' transform='rotate(246.283352 50.0 31.67) translate(0 0.1250)'>1'</text>
@@ -824,7 +824,7 @@
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='var(--kerykeion-chart-color-mars)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(252.915764 50.0 26.12) translate(0 0.2279)'>2º</text>
-  <g transform='translate(50.0 29.06) rotate(252.915764) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(252.915764) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-mars)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-mars)' font-weight='500' transform='rotate(252.915764 50.0 31.67) translate(0 0.1159)'>39'</text>
@@ -837,7 +837,7 @@
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(260.798616 50.0 26.12) translate(0 0.2279)'>11º</text>
-  <g transform='translate(50.0 29.06) rotate(260.798616) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(260.798616) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-true-node)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-true-node)' font-weight='500' transform='rotate(260.798616 50.0 31.67) translate(0 0.1250)'>1'</text>
@@ -850,7 +850,7 @@
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='var(--kerykeion-chart-color-sun)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(266.999991 50.0 26.12) translate(0 0.2120)'>16º</text>
-  <g transform='translate(50.0 29.06) rotate(266.999991) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(266.999991) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Lib' fill='var(--kerykeion-chart-color-sun)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-sun)' font-weight='500' transform='rotate(266.999991 50.0 31.67) translate(0 0.1159)'>16'</text>
@@ -863,7 +863,7 @@
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(288.811465 50.0 26.12) translate(0 0.2120)'>8º</text>
-  <g transform='translate(50.0 29.06) rotate(288.811465) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(288.811465) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='var(--kerykeion-chart-color-mercury)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-mercury)' font-weight='500' transform='rotate(288.811465 50.0 31.67) translate(0 0.1159)'>33'</text>
@@ -876,7 +876,7 @@
     <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(347.324212 50.0 26.12) translate(0 0.2279)'>7º</text>
-  <g transform='translate(50.0 29.06) rotate(347.324212) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(347.324212) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='var(--kerykeion-chart-color-tenth-house)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-tenth-house)' font-weight='500' transform='rotate(347.324212 50.0 31.67) translate(0 0.1220)'>4'</text>
@@ -889,7 +889,7 @@
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='var(--kerykeion-chart-color-moon)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='26.12' font-size='2.12' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(373.799858 50.0 26.12) translate(0 0.2120)'>3º</text>
-  <g transform='translate(50.0 29.06) rotate(373.799858) scale(0.0558) translate(-16 -16)'>
+  <g transform='translate(50.0 29.06) rotate(373.799858) scale(0.051336) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='var(--kerykeion-chart-color-moon)' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='31.67' font-size='1.22' fill='var(--kerykeion-chart-color-moon)' font-weight='500' transform='rotate(373.799858 50.0 31.67) translate(0 0.1159)'>32'</text>
