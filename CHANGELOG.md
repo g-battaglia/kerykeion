@@ -33,15 +33,16 @@
   instant for instant, `previous` from the second after a reported instant
   finds it (twenty consecutive solar returns, dead band included), and a walk
   of steps lands on each return exactly once. One limit is the ephemeris'
-  own: a crossing within some tens of microseconds of a whole second cannot
+  own: a crossing within a tenth of a millisecond of a whole second cannot
   be told from a crossing at that second, and is treated as one — the natal
   instant, a crossing by construction, being the case that matters: seeded
   with it, `previous` finds the cycle before birth, never a return a second
-  before the birth itself. The lunar nodes and Liliths are
-  not heliocentric bodies and stay outside, as before. Solar, lunar and node
-  instants are reported as they were; heliocentric instants settle onto the
-  crossing itself, which for the slow bodies can move the reported second by
-  up to ~1.5 s from the solver's (about one in eight Uranus–Pluto crossings).
+  before the birth itself. Outside the contract, as before: the heliocentric
+  search for the lunar nodes and the Liliths, which are not heliocentric
+  bodies. Solar, lunar and node instants are reported as they were;
+  heliocentric instants settle onto the crossing itself, which moves the
+  reported second of about half the Uranus–Pluto crossings, by up to the
+  solver's tolerance — some 2 s for Uranus, 4 s for Neptune, 9 s for Pluto.
   The date and year wrappers keep their inclusive
   midnight seed, so a return in the first second of a date is still that
   date's return. The one visible
