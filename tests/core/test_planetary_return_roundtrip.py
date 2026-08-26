@@ -214,12 +214,14 @@ def test_a_crossing_a_fraction_before_the_seed_is_found_backward(factory, kind):
 @pytest.mark.parametrize(
     "start",
     [
-        # Solar returns whose exact crossing falls in the last ~90 ms of its
-        # reported second — inside the backend's at-crossing dead band, where
-        # a backward search from the next second used to jump a whole year.
-        "1985-03-01T00:00:00+00:00",
-        "2021-03-01T00:00:00+00:00",
-        "2024-03-01T00:00:00+00:00",
+        # The first two are solar returns whose exact crossing falls in the
+        # last ~90 ms of its reported second — inside the backend's at-crossing
+        # dead band, where a backward search from the next second used to jump
+        # a whole year. The third is a control from outside the band.
+        "1984-03-01T00:00:00+00:00",  # 52 ms before the next second
+        "2004-03-01T00:00:00+00:00",  # 76 ms
+        "2021-03-01T00:00:00+00:00",  # 6 ms
+        "2024-03-01T00:00:00+00:00",  # a control from outside the band
     ],
 )
 def test_a_solar_return_in_the_dead_band_is_still_found_backward(factory, start):
@@ -231,7 +233,10 @@ def test_a_solar_return_in_the_dead_band_is_still_found_backward(factory, start)
 def test_twenty_consecutive_solar_returns_are_found_from_the_second_after(factory):
     """The dead band catches ~9% of solar returns at random; a run of twenty
     consecutive ones leaves no room for luck."""
-    current = _step(factory, "Solar", "1980-01-01T00:00:00+00:00")
+    # From 1986: the 1985 return's crossing sits 15 µs before a whole second,
+    # under the ephemeris' own resolution — indistinguishable from a crossing
+    # at that second, and treated as one (see _crossing_between).
+    current = _step(factory, "Solar", "1986-01-01T00:00:00+00:00")
     for _ in range(20):
         back = _step(factory, "Solar", _shift(current.iso_formatted_utc_datetime, 1), backwards=True)
         assert back.iso_formatted_utc_datetime == current.iso_formatted_utc_datetime
@@ -273,6 +278,66 @@ def test_crossing_between_finds_a_sign_change_to_a_millisecond():
     # A decreasing offset (the Moon's latitude at a descending node) is a sign change too.
     falling = PlanetaryReturnFactory._crossing_between(lambda jd: root - jd, root - 1.0, root + 1.0)
     assert falling is not None and abs(falling - root) * 86400.0 < 1e-3
+
+    # A root AT the window's end is not inside it: the natal instant is a
+    # crossing by construction, and a backward seed on it must not be told
+    # there is a return a millisecond before itself.
+    assert PlanetaryReturnFactory._crossing_between(lambda jd: jd - root, root - 1.0, root) is None
+    almost = root - 0.2e-3 / 86400.0
+    assert PlanetaryReturnFactory._crossing_between(lambda jd: jd - almost, root - 1.0, root) is None
+
+    # A signed arc flips sign at the antipode too; that is an opposition, not a crossing.
+    def arc_through_the_antipode(jd: float) -> float:
+        return PlanetaryReturnFactory._signed_arc(180.0 + (jd - root) * 3600.0, 0.0)
+
+    assert PlanetaryReturnFactory._crossing_between(arc_through_the_antipode, root - 1.0, root + 1.0) is None
+
+
+def test_previous_from_the_natal_instant_is_the_return_before_birth():
+    """The natal instant is a crossing by construction (every body sits at its
+    natal position). Seeded with it, ``previous`` must find the cycle before
+    birth — never a return a second before the birth itself."""
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Natal Seed",
+        1985,
+        6,
+        10,
+        12,
+        23,
+        lat=45.41,
+        lng=10.39,
+        tz_str="Europe/Rome",
+        online=False,
+        suppress_geonames_warning=True,
+    )
+    factory = PlanetaryReturnFactory(
+        subject, city="Montichiari", nation="IT", lat=45.41, lng=10.39, tz_str="Europe/Rome", online=False
+    )
+    natal = subject.iso_formatted_utc_datetime
+
+    for kind, min_gap_days in (("Solar", 300.0), ("Lunar", 20.0), ("Jupiter", 4000.0)):
+        before = _step(factory, kind, natal, backwards=True)
+        gap = subject.julian_day - before.julian_day
+        assert gap > min_gap_days, (
+            f"{kind}: previous from the natal instant returned {before.iso_formatted_utc_datetime}"
+        )
+
+
+def test_a_seed_just_past_an_opposition_does_not_return_the_opposition(factory):
+    """A backward seed one second after the Sun opposed the natal Sun: the
+    signed arc flips sign in that second, at the antipode. The answer is the
+    previous solar return, not the opposition."""
+    natal_sun = factory.subject.sun.abs_pos
+    opposition_jd = factory_module.ephe.solcross_ut(
+        (natal_sun + 180.0) % 360.0, datetime_to_julian(datetime(2024, 3, 1, tzinfo=timezone.utc))
+    )
+    opposition = factory_module.julian_to_datetime(opposition_jd).replace(tzinfo=timezone.utc, microsecond=0)
+    seed = (opposition + timedelta(seconds=1)).isoformat()
+
+    before = factory.next_return_from_iso_formatted_time(seed, "Solar", backwards=True)
+    arc = PlanetaryReturnFactory._signed_arc(before.sun.abs_pos, natal_sun)
+    assert abs(arc) < 0.01, f"the 'return' sits {arc:.3f} degrees from the natal Sun"
+    assert before.julian_day < opposition_jd - 1.0
 
 
 def test_date_and_iso_entry_points_agree_away_from_the_boundary(factory):
