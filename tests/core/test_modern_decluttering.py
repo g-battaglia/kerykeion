@@ -1123,7 +1123,12 @@ def test_profile_geometry_is_unchanged(size, ring):
         )
     for field, value in zip(_ROW_FIELDS, expected["rows"]):
         assert getattr(profile, field) == value, f"{size}/{ring}.{field} moved."
-    assert profile.min_separation == expected["min_separation"]
+    assert profile.min_separation == expected["min_separation"], (
+        f"{size}/{ring}.min_separation moved. This one is MEASURED, not derived: "
+        "re-run scripts/measure_modern_separation.py --glyph-size and record "
+        "what it reports — pasting the derivation script's analytic seed here "
+        "would silently revert a measured ceiling."
+    )
     assert profile.indicator is not None
     for key, value in expected["indicator"].items():
         assert profile.indicator[key] == pytest.approx(value, abs=5e-7), (

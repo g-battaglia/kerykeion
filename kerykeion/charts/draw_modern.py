@@ -690,6 +690,16 @@ class ClusterProfile:
             "rx_y": self.rx_y,
         }
 
+    def indicator_config(self) -> Optional[dict]:
+        """A fresh copy of the tether geometry, or None for the natal default.
+
+        A copy for the same reason the two methods above build fresh dicts:
+        the profiles are module singletons, and handing the renderer the
+        stored dict itself would let any caller's mutation poison every
+        later render process-wide.
+        """
+        return dict(self.indicator) if self.indicator is not None else None
+
 
 _MEDIUM_NATAL = ClusterProfile(
     planet_scale_base=PLANET_SCALE_BASE,
@@ -2087,7 +2097,7 @@ def _draw_planet_ring(
     if indicator_config:
         ind_kwargs = {
             "start_y": indicator_config.get("start_y", HOUSE_LINE_OUTER_Y),
-            "tick_length": indicator_config.get("tick_length", 1.075),
+            "tick_length": indicator_config.get("tick_length", NATAL_INDICATOR_TICK),
             "arc_radius": indicator_config.get("arc_radius", None),
         }
 
@@ -3063,7 +3073,7 @@ def draw_modern_horoscope(
         planets, planets_settings, seventh_house_degree_ut, houses,
         min_separation=profile.min_separation,
         planet_y_config=profile.planet_y_config(),
-        indicator_config=profile.indicator,
+        indicator_config=profile.indicator_config(),
         scale_config=profile.scale_config(),
         gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
         show_zodiac_background_ring=show_zodiac_background_ring,
@@ -3188,7 +3198,7 @@ def draw_modern_dual_horoscope(
         line_outer_y=SYN_HOUSE_LINE_OUTER_Y1,
         line_inner_y=SYN_HOUSE_LINE_OUTER_Y2,
         planet_y_config=outer_profile.planet_y_config(),
-        indicator_config=outer_profile.indicator,
+        indicator_config=outer_profile.indicator_config(),
         horoscope_id="1",
         scale_config=outer_profile.scale_config(),
         show_zodiac_background_ring=show_zodiac_background_ring,
@@ -3208,7 +3218,7 @@ def draw_modern_dual_horoscope(
         line_outer_y=SYN_HOUSE_LINE_INNER_Y1,
         line_inner_y=SYN_HOUSE_LINE_INNER_Y2,
         planet_y_config=inner_profile.planet_y_config(),
-        indicator_config=inner_profile.indicator,
+        indicator_config=inner_profile.indicator_config(),
         horoscope_id="0",
         scale_config=inner_profile.scale_config(),
         show_zodiac_background_ring=show_zodiac_background_ring,
