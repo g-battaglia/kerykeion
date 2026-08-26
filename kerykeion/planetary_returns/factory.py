@@ -273,11 +273,12 @@ class PlanetaryReturnFactory:
         second before is found. Reported instants become re-usable as seeds —
         ``next`` from the instant of return N is N+1, ``previous`` is N-1,
         exactly — and nothing can be skipped: consecutive crossings of any
-        one kind are at least ~12.4 days apart (the node crossing, every half
-        draconic month). The backend's solvers do not reach this resolution
-        on their own — their at-crossing dead band spans ~90 ms for the Sun,
-        their 0.001″ tolerance is seconds of a slow heliocentric body's motion
-        — so ``_settled`` holds every ISO search to the contract: heliocentric
+        one kind are at least ~12.4 days apart (the shortest interval between
+        the Moon's node crossings; half a draconic month is 13.6 days on
+        average). The backend's solvers do not reach this resolution on their
+        own — their at-crossing dead band spans ~90 ms for the Sun, their
+        0.001″ tolerance is seconds of a slow heliocentric body's motion — so
+        ``_settled`` holds every supported ISO search to the contract: heliocentric
         crossings are settled to a millisecond by bisection, a crossing inside
         the second before a backward seed is looked for explicitly, and a
         result that has not moved past the seed's second restarts from outside
@@ -403,15 +404,15 @@ class PlanetaryReturnFactory:
         from well outside that basin.
         """
         seed_second = round(datetime_to_julian(self._seed_whole_second(iso_formatted_time)) * 86400.0)
-        model = search(self._search_start_jd(iso_formatted_time, backwards))
+        start_jd = self._search_start_jd(iso_formatted_time, backwards)
         for _ in range(2):
+            model = search(start_jd)
             if model.julian_day is None:
                 raise KerykeionException("The return chart carries no Julian Day; cannot order it against the seed.")
             reported_second = round(model.julian_day * 86400.0)
             if (reported_second < seed_second) if backwards else (reported_second > seed_second):
                 return model
-            escape = model.julian_day + (-self._ESCAPE_DAYS if backwards else self._ESCAPE_DAYS)
-            model = search(escape)
+            start_jd = model.julian_day + (-self._ESCAPE_DAYS if backwards else self._ESCAPE_DAYS)
         raise KerykeionException(
             f"The return search could not move past its seed {iso_formatted_time!r}: "
             "the backend keeps answering with the crossing the seed came from."

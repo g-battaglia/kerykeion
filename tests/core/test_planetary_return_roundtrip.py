@@ -48,7 +48,7 @@ pytestmark = pytest.mark.skipif(
 MAX_GAP_DAYS = {
     "Solar": 367.0,
     "Lunar": 28.0,
-    "Node": 16.0,  # the Moon meets either node every ~12.4-14.7 days (half a draconic month)
+    "Node": 16.0,  # the Moon meets either node every 12.4-14.7 days (13.6 on average)
     "Mars": 800.0,  # heliocentric Mars, ~687 days
 }
 
