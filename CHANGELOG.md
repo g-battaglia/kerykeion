@@ -34,17 +34,16 @@
   is text-heavy by construction — its reading stands at 0.67 of its glyph
   against the natal 0.51 — and one factor for everything made the dual degree
   numerals at large larger than the single wheel's (12.9px against 12.3).
-  Judged on the rendered gallery and refused: at large the dual glyph takes
-  its parity factor (×1.372) while the reading — degrees, sign, minutes, ℞ —
-  follows the SINGLE wheel's typographic progression (×1.248), so a reader
-  meets the same type ramp on every wheel (dual degrees land at 11.7px, under
-  the single wheel's 12.3). The cluster's ink already filled 65–69% of every
-  ring's band, so the growth is paid out of the air between the rows: the
-  single ring keeps 65% of its medium air, and the split hands the dual rings
-  back what one factor had taken — 54% (outer) and 39% (inner), with the
-  inner gaps at 1.7–2.2px against the 1.0–1.3px a shared parity factor left.
-  The bands cannot deepen — below them there is only the aspect web, and
-  taking a third of its radius was considered and refused.
+  Chosen on a rendered four-way comparison (×1.372 shared, ×1.248 the single
+  wheel's ramp, ×1.12, ×1.0): at large the dual glyph takes its parity factor
+  (×1.372) while the reading — degrees, sign, minutes, ℞ — **stays at the
+  medium size**, the one every wheel already trains the eye on; even the
+  single wheel's ramp read oversized in the dual rings' packed context. That
+  choice also hands the air back: the single ring affords large at 65% of its
+  medium air, the dual rings at 78% (outer) and 72% (inner), with the inner
+  gaps at 3.1–4.0px — against the 1.0–1.3px the shared parity factor left
+  them. The bands cannot deepen — below them there is only the aspect web,
+  and taking a third of its radius was considered and refused.
 
 - **The profiles are derived, not guessed.** A new
   `scripts/derive_modern_cluster_profiles.py` lays every ring out under one

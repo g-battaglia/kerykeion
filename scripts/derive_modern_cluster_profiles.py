@@ -198,22 +198,21 @@ RINGS: dict[str, RingGeometry] = {
 # 4.8 page scale of the default template.
 #
 # On the dual rings the two factors SPLIT at large. Parity is the glyph's
-# contract alone: the dual reading — degrees, sign, minutes, ℞ — follows the
-# SINGLE wheel's typographic progression (the natal k) instead of the dual
-# glyph's ×1.372. The dual cluster is text-heavy by construction (its reading
-# stands at 0.67 of its glyph against the natal 0.51), and one factor for
-# everything made the dual degree numerals at large larger than the single
-# wheel's — judged on the rendered gallery, and refused: a reader should meet
-# the same type ramp on every wheel, and only the glyph has a parity to chase.
+# contract alone: the dual reading — degrees, sign, minutes, ℞ — stays at the
+# MEDIUM size (k_text = 1.0). Chosen by Giacomo on a rendered four-way
+# comparison (×1.372 shared, ×1.248 the single wheel's ramp, ×1.12, ×1.0):
+# the dual cluster is text-heavy by construction (its reading stands at 0.67
+# of its glyph against the natal 0.51), the shared factor made the dual
+# numerals outgrow the single wheel's, and even the single wheel's ramp read
+# too large in the dual rings' packed context. At large a dual wheel grows
+# its glyphs to classic parity and keeps the reading it always had.
 def size_factors(ring_name: str) -> dict[str, tuple[float, float]]:
     """Per size for *ring_name*: ``(k_glyph, k_text)`` multipliers."""
     base = RINGS[ring_name].sizes[0]
     classic_scale = 1.0 if ring_name == "natal" else 0.8
     parity_base = classic_scale / (dm.ZODIAC_BG_SCALE * dm.MODERN_PAGE_SCALE)
     k_glyph_large = parity_base / base
-    natal_base = RINGS["natal"].sizes[0]
-    natal_k_large = (1.0 / (dm.ZODIAC_BG_SCALE * dm.MODERN_PAGE_SCALE)) / natal_base
-    k_text_large = k_glyph_large if ring_name == "natal" else natal_k_large
+    k_text_large = k_glyph_large if ring_name == "natal" else 1.0
     return {
         "small": (0.9, 0.9),
         "medium": (1.0, 1.0),
@@ -367,23 +366,25 @@ def derive(ring: RingGeometry, k: float, k_text: float | None = None) -> Derived
         shift = min(OUTWARD_SHIFT, s_max)
 
     tick = max(a * ring.tick - shift, dm.MIN_INDICATOR_TICK)
-    # The visible dash — the straight tether's whole body, and the arc case's
-    # initial mark at the true position — keeps its rule length: the shift
-    # shortens only the END segment, whose reach the corner guard owns. Its
-    # depth (start_y + start_tick) stays inside the tether's deepest reach by
-    # construction, since start_tick <= a*tick_med <= a*arc_drop + tick + shift
-    # never exceeds T for the shipped geometries (asserted below).
-    start_tick = max(a * ring.tick, tick)
     arc_radius = (50.0 - ring.start_y) - a * ring.arc_drop
     tether_reach = ring.start_y + a * ring.arc_drop + tick
-    assert ring.start_y + start_tick <= tether_reach + 1e-9, (
-        f"{ring.name}: the visible dash would reach past the tether's own end"
-    )
 
     rows = [tether_reach + a * d.corner_clearance + corner - (shift - (max(a * ring.tick, dm.MIN_INDICATOR_TICK) - tick))]
     for i in range(4):
         rows.append(rows[i] + halves[i] + a * d.gaps[i] + halves[i + 1])
     bottom_margin = ring.inner_edge_y - (rows[4] + halves[4])
+
+    # The visible dash — the straight tether's whole body, and the arc case's
+    # mark at the true position — grows back toward the MEDIUM dash length,
+    # limited only by the glyph's corner budget (the dash sits at the true
+    # position, so on a straight tether it points straight at the glyph and
+    # must stop clear of its corner reach). Judged on the rendered wheels: a
+    # dash at the air-scaled length still read short, and the medium length is
+    # the one every wheel already trains the eye on. Never shorter than the
+    # end tab, and at k = 1 the budget always affords the medium dash whole,
+    # keeping the fixed point.
+    corner_budget = (rows[0] - corner - TETHER_INK_GAP_MIN) - ring.start_y
+    start_tick = max(min(ring.tick, corner_budget), tick)
 
     # The ceiling seed: the medium ceiling, scaled by the binding row's ink
     # growth and by the arc it loses moving inward. A seed, not a measurement.
