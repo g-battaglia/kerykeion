@@ -863,19 +863,23 @@ _LARGE_NATAL = ClusterProfile(
     planet_scale_base=1.0 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
     degrees_font_size=2.79567,
     sign_scale_base=0.118367,
-    minutes_font_size=2.585995,
-    rx_font_size=2.236536,
-    glyph_y=9.8817,
-    degrees_y=14.3180,
-    sign_y=18.0804,
-    minutes_y=22.0046,
-    rx_y=25.3583,
+    # Minutes and ℞ stay at the MEDIUM size (referenced, not retyped) — the
+    # same call already made for the whole dual reading: at large the single
+    # wheel's secondary reading was crowding the cluster (Giacomo, on the
+    # rendered wheel), and only degrees and sign ride the ×1.248 ramp.
+    minutes_font_size=MINUTES_FONT_SIZE,
+    rx_font_size=RX_FONT_SIZE,
+    glyph_y=10.0944,
+    degrees_y=14.6234,
+    sign_y=18.5275,
+    minutes_y=22.3769,
+    rx_y=25.3945,
     min_separation=9.5,
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
-        "tick_length": 0.4094,
-        "start_tick_length": 1.049,
-        "arc_radius": 43.9921,
+        "tick_length": 0.5173,
+        "start_tick_length": 1.075,
+        "arc_radius": 43.8918,
     },
 )
 

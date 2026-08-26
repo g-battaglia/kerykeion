@@ -1093,10 +1093,10 @@ _PROFILE_GEOMETRY = {
         "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.23},
     },
     ("large", "natal"): {
-        "sizes": (0.22644927536231882, 2.79567, 0.118367, 2.585995, 2.236536),
-        "rows": (9.8817, 14.318, 18.0804, 22.0046, 25.3583),
+        "sizes": (0.22644927536231882, 2.79567, 0.118367, 2.072, 1.792),
+        "rows": (10.0944, 14.6234, 18.5275, 22.3769, 25.3945),
         "min_separation": 9.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.4094, "start_tick_length": 1.049, "arc_radius": 43.9921},
+        "indicator": {"start_y": 5.348, "tick_length": 0.5173, "start_tick_length": 1.075, "arc_radius": 43.8918},
     },
     # Dual large: the glyph keeps classic parity (×1.372) while the reading
     # stays at the MEDIUM size (k_text = 1.0) — Giacomo's pick on a rendered
@@ -1250,8 +1250,8 @@ def test_derivation_reproduces_the_shipped_profiles(size, ring_name):
     from scripts.derive_modern_cluster_profiles import RINGS, derive, size_factors
 
     profile = draw_modern.GLYPH_SIZE_PROFILES[size][ring_name]
-    k, k_text = size_factors(ring_name)[size]
-    derived = derive(RINGS[ring_name], k, k_text)
+    k, k_text, k_minor = size_factors(ring_name)[size]
+    derived = derive(RINGS[ring_name], k, k_text, k_minor)
     # The literals ARE the derivation rounded (4 decimals for rows and the
     # tether, 6 for sizes) — so compare through the same rounding, exactly,
     # instead of a tolerance that would sit on the rounding bound itself.
