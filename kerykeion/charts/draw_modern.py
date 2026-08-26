@@ -803,7 +803,7 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
 _SMALL_NATAL = ClusterProfile(
     planet_scale_base=0.163296,
     degrees_font_size=2.016,
-    sign_scale_base=0.092781,
+    sign_scale_base=0.085356,
     minutes_font_size=1.8648,
     rx_font_size=1.6128,
     glyph_y=9.4328,
@@ -823,7 +823,7 @@ _SMALL_NATAL = ClusterProfile(
 _SMALL_DUAL_OUTER = ClusterProfile(
     planet_scale_base=0.1188,
     degrees_font_size=1.908,
-    sign_scale_base=0.0558,
+    sign_scale_base=0.051336,
     minutes_font_size=1.098,
     rx_font_size=0.918,
     glyph_y=7.7768,
@@ -843,7 +843,7 @@ _SMALL_DUAL_OUTER = ClusterProfile(
 _SMALL_DUAL_INNER = ClusterProfile(
     planet_scale_base=0.1188,
     degrees_font_size=1.908,
-    sign_scale_base=0.0558,
+    sign_scale_base=0.051336,
     minutes_font_size=1.098,
     rx_font_size=0.918,
     glyph_y=22.3441,
@@ -862,20 +862,20 @@ _SMALL_DUAL_INNER = ClusterProfile(
 _LARGE_NATAL = ClusterProfile(
     planet_scale_base=1.0 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
     degrees_font_size=2.79567,
-    sign_scale_base=0.128663,
+    sign_scale_base=0.118367,
     minutes_font_size=2.585995,
     rx_font_size=2.236536,
-    glyph_y=9.8551,
-    degrees_y=14.2798,
-    sign_y=18.0845,
-    minutes_y=22.0458,
-    rx_y=25.3815,
+    glyph_y=9.8817,
+    degrees_y=14.3180,
+    sign_y=18.0804,
+    minutes_y=22.0046,
+    rx_y=25.3583,
     min_separation=9.5,
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
-        "tick_length": 0.3959,
-        "start_tick_length": 1.0224,
-        "arc_radius": 44.0046,
+        "tick_length": 0.4094,
+        "start_tick_length": 1.049,
+        "arc_radius": 43.9921,
     },
 )
 
@@ -889,17 +889,17 @@ _LARGE_DUAL_OUTER = ClusterProfile(
     sign_scale_base=SYN_SIGN_SCALE,
     minutes_font_size=SYN_MINUTES_FONT_SIZE,
     rx_font_size=SYN_RX_FONT_SIZE,
-    glyph_y=8.6024,
-    degrees_y=12.3607,
-    sign_y=15.0559,
-    minutes_y=17.3951,
-    rx_y=19.3375,
+    glyph_y=8.6069,
+    degrees_y=12.3693,
+    sign_y=15.0567,
+    minutes_y=17.3886,
+    rx_y=19.3356,
     min_separation=7.5,  # measured — the parity glyph is the binding row now
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
-        "tick_length": MIN_INDICATOR_TICK,
-        "start_tick_length": 0.4567,
-        "arc_radius": 44.1037,
+        "tick_length": 0.2513,
+        "start_tick_length": 0.4612,
+        "arc_radius": 44.1007,
     },
 )
 
@@ -909,16 +909,16 @@ _LARGE_DUAL_INNER = ClusterProfile(
     sign_scale_base=SYN_SIGN_SCALE,
     minutes_font_size=SYN_MINUTES_FONT_SIZE,
     rx_font_size=SYN_RX_FONT_SIZE,
-    glyph_y=23.1094,
-    degrees_y=26.8099,
-    sign_y=29.4375,
-    minutes_y=31.7019,
-    rx_y=33.5815,
+    glyph_y=23.1085,
+    degrees_y=26.8161,
+    sign_y=29.4358,
+    minutes_y=31.6931,
+    rx_y=33.5804,
     min_separation=11.5,  # measured — the parity glyph is the binding row now
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
         "tick_length": MIN_INDICATOR_TICK,  # the floor binds; the corner budget gives the dash nothing either
-        "arc_radius": 29.283,
+        "arc_radius": 29.2808,
     },
 )
 
