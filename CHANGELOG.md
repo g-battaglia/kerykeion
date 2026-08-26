@@ -56,10 +56,12 @@
   large the tether shortens with the air — without that the tab would end
   inside the Sun's glyph box at 45°, the exact defect a88 fixed. On top of
   the rule, every derived cluster slides 0.3 units OUTWARD toward its
-  indicator (the tab absorbing the slide, floored and capped so it never
-  reaches the glyph's ink): the ℞ row steps off the ring's inner edge on
-  every chart type — the natal large tab lands at 0.396 from its 1.075 —
-  and medium, the byte-identity anchor, does not move.
+  indicator (the END tab absorbing the slide, floored and capped so it
+  never reaches the glyph's ink, while the VISIBLE dash — the straight
+  tether's body and the arc's mark at the true position — keeps its rule
+  length via a new start_tick_length, so the mark never degrades to a
+  stray dot): the ℞ row steps off the ring's inner edge on every chart
+  type, and medium, the byte-identity anchor, does not move.
 
 - **The separation ceilings are measured, per size.** The collision harness
   (`scripts/measure_modern_separation.py`) learned `--glyph-size` and now
