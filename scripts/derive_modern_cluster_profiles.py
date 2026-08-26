@@ -196,12 +196,29 @@ RINGS: dict[str, RingGeometry] = {
 # renders at the classic engine's own size — scale 1.0 (24 units) on a single
 # wheel, 0.8 (19.2) on a dual — through the 0.92 zodiac-ring wrapper and the
 # 4.8 page scale of the default template.
-def size_factors(ring_name: str) -> dict[str, float]:
-    """The multiplier ``k`` per size for *ring_name*'s cluster."""
+#
+# On the dual rings the two factors SPLIT at large. Parity is the glyph's
+# contract alone: the dual reading — degrees, sign, minutes, ℞ — follows the
+# SINGLE wheel's typographic progression (the natal k) instead of the dual
+# glyph's ×1.372. The dual cluster is text-heavy by construction (its reading
+# stands at 0.67 of its glyph against the natal 0.51), and one factor for
+# everything made the dual degree numerals at large larger than the single
+# wheel's — judged on the rendered gallery, and refused: a reader should meet
+# the same type ramp on every wheel, and only the glyph has a parity to chase.
+def size_factors(ring_name: str) -> dict[str, tuple[float, float]]:
+    """Per size for *ring_name*: ``(k_glyph, k_text)`` multipliers."""
     base = RINGS[ring_name].sizes[0]
     classic_scale = 1.0 if ring_name == "natal" else 0.8
     parity_base = classic_scale / (dm.ZODIAC_BG_SCALE * dm.MODERN_PAGE_SCALE)
-    return {"small": 0.9, "medium": 1.0, "large": parity_base / base}
+    k_glyph_large = parity_base / base
+    natal_base = RINGS["natal"].sizes[0]
+    natal_k_large = (1.0 / (dm.ZODIAC_BG_SCALE * dm.MODERN_PAGE_SCALE)) / natal_base
+    k_text_large = k_glyph_large if ring_name == "natal" else natal_k_large
+    return {
+        "small": (0.9, 0.9),
+        "medium": (1.0, 1.0),
+        "large": (k_glyph_large, k_text_large),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -222,15 +239,24 @@ class Decomposition:
     band: float  # inner_edge_y - T
 
 
-def _ink_half_heights(ring: RingGeometry, k: float = 1.0) -> tuple[float, ...]:
-    """Row-ward ink half-heights of the five rows at ``k`` times medium size."""
-    base, deg, sign, minutes, rx = (v * k for v in ring.sizes)
+def _ink_half_heights(
+    ring: RingGeometry, k_glyph: float = 1.0, k_text: float | None = None
+) -> tuple[float, ...]:
+    """Row-ward ink half-heights of the five rows, per-element factors applied.
+
+    The glyph row scales by ``k_glyph``; the reading — degrees, sign, minutes,
+    ℞ — by ``k_text`` (defaults to ``k_glyph``: one factor, the single-wheel
+    case).
+    """
+    if k_text is None:
+        k_text = k_glyph
+    base, deg, sign, minutes, rx = ring.sizes
     return (
-        worst_glyph_half_height() * base,
-        0.5 * deg,
-        worst_sign_half_height() * sign,
-        0.5 * minutes,
-        0.5 * rx,
+        worst_glyph_half_height() * base * k_glyph,
+        0.5 * deg * k_text,
+        worst_sign_half_height() * sign * k_text,
+        0.5 * minutes * k_text,
+        0.5 * rx * k_text,
     )
 
 
@@ -263,6 +289,7 @@ class DerivedProfile:
 
     name: str
     k: float
+    k_text: float
     a: float
     sizes: tuple[float, float, float, float, float]
     rows: tuple[float, float, float, float, float]
@@ -274,26 +301,36 @@ class DerivedProfile:
     bottom_margin: float
 
 
-def derive(ring: RingGeometry, k: float) -> DerivedProfile:
-    """Lay *ring* out at size factor ``k`` under the one documented rule."""
+def derive(ring: RingGeometry, k: float, k_text: float | None = None) -> DerivedProfile:
+    """Lay *ring* out under the one documented rule.
+
+    ``k`` scales the planet glyph; ``k_text`` (default ``k``) scales the
+    reading — degrees, sign, minutes, ℞. They split only on the dual rings at
+    large, where parity belongs to the glyph alone and the reading follows the
+    single wheel's progression. The air factor caps at the LARGER of the two:
+    small stays a pure homothety, and a ring that cannot afford its ink pays
+    from the air exactly as before.
+    """
+    if k_text is None:
+        k_text = k
     d = decompose(ring)
-    ink_k = d.ink * k
+    halves = _ink_half_heights(ring, k, k_text)
+    corner = worst_glyph_corner() * ring.sizes[0] * k
+    ink_k = corner + halves[0] + 2 * sum(halves[1:])
     tether_span = ring.arc_drop + ring.tick
     room = ring.inner_edge_y - ring.start_y
 
-    # fit: start + a*(tether + air) + k*ink == inner edge
+    # fit: start + a*(tether + air) + ink == inner edge
     fit = (room - ink_k) / (tether_span + d.air)
     if fit * ring.tick < dm.MIN_INDICATOR_TICK:
         # The tab has hit its floor: pin it and re-solve for the rest.
         fit = (room - dm.MIN_INDICATOR_TICK - ink_k) / (ring.arc_drop + d.air)
-    a = min(k, fit)
+    a = min(max(k, k_text), fit)
 
     tick = max(a * ring.tick, dm.MIN_INDICATOR_TICK)
     arc_radius = (50.0 - ring.start_y) - a * ring.arc_drop
     tether_reach = ring.start_y + a * ring.arc_drop + tick
 
-    halves = _ink_half_heights(ring, k)
-    corner = worst_glyph_corner() * ring.sizes[0] * k
     rows = [tether_reach + a * d.corner_clearance + corner]
     for i in range(4):
         rows.append(rows[i] + halves[i] + a * d.gaps[i] + halves[i + 1])
@@ -301,14 +338,21 @@ def derive(ring: RingGeometry, k: float) -> DerivedProfile:
 
     # The ceiling seed: the medium ceiling, scaled by the binding row's ink
     # growth and by the arc it loses moving inward. A seed, not a measurement.
+    # The binding row is text on every ring, so it grows by k_text.
     r_med = 50.0 - ring.rows[ring.binding_row]
     r_new = 50.0 - rows[ring.binding_row]
-    seed = ring.min_separation * k * (r_med / r_new)
+    seed = ring.min_separation * k_text * (r_med / r_new)
 
-    sizes = tuple(v * k for v in ring.sizes)
+    sizes = (
+        ring.sizes[0] * k,
+        ring.sizes[1] * k_text,
+        ring.sizes[2] * k_text,
+        ring.sizes[3] * k_text,
+        ring.sizes[4] * k_text,
+    )
     return DerivedProfile(
-        ring.name, k, a, sizes, tuple(rows), ring.start_y, tick, arc_radius, seed,  # type: ignore[arg-type]
-        d.gaps if a == k else tuple(g * a for g in d.gaps), bottom_margin,  # type: ignore[arg-type]
+        ring.name, k, k_text, a, sizes, tuple(rows), ring.start_y, tick, arc_radius, seed,  # type: ignore[arg-type]
+        d.gaps if a == k == k_text else tuple(g * a for g in d.gaps), bottom_margin,  # type: ignore[arg-type]
     )
 
 
@@ -316,7 +360,7 @@ def self_check() -> None:
     """The rule is a fixed point at ``k = 1``: it must reproduce the shipped rows."""
     for ring in RINGS.values():
         decompose(ring)  # raises if ink + air != band
-        reproduced = derive(ring, 1.0)
+        reproduced = derive(ring, 1.0, 1.0)
         for shipped, derived in zip(ring.rows, reproduced.rows):
             if abs(shipped - derived) > 1e-9:
                 raise AssertionError(
@@ -361,10 +405,10 @@ def main() -> None:
             f"  [corner {d.corner_clearance:+.4f}, gaps {', '.join(f'{g:.4f}' for g in d.gaps)},"
             f" bottom {d.bottom:.4f}]"
         )
-        for size, k in size_factors(ring_name).items():
-            p = derive(ring, k)
+        for size, (k, k_text) in size_factors(ring_name).items():
+            p = derive(ring, k, k_text)
             print(
-                f"{size:>7}: k={p.k:.6f} a={p.a:.4f}  rows {_fmt_rows(p)}\n"
+                f"{size:>7}: k={p.k:.6f} k_text={p.k_text:.6f} a={p.a:.4f}  rows {_fmt_rows(p)}\n"
                 f"         sizes {_fmt_sizes(p)}  tick {p.tick:.4f} arc {p.arc_radius:.4f}"
                 f"  sep-seed {p.min_separation_seed:.2f}  bottom {p.bottom_margin:.4f}"
             )
@@ -372,8 +416,8 @@ def main() -> None:
     print("\n--- literals for draw_modern.GLYPH_SIZE_PROFILES " + "-" * 30)
     for size in ("small", "large"):
         for ring_name, ring in RINGS.items():
-            k = size_factors(ring_name)[size]
-            p = derive(ring, k)
+            k, k_text = size_factors(ring_name)[size]
+            p = derive(ring, k, k_text)
             var = f"_{size.upper()}_{ring_name.upper()}"
             classic_scale = "1.0" if ring_name == "natal" else "0.8"
             base_expr = (

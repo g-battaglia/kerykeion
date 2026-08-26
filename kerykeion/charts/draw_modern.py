@@ -769,12 +769,17 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
 # at 90%. Large is classic parity, Giacomo's call on both counts: the planet
 # glyph at the classic engine's own size (scale 1.0 single, 0.8 dual, through
 # the 0.92 wrapper and the 4.8 page), written as that expression so the parity
-# is exact and not a rounded decimal. The single ring affords it at a = 0.65;
-# the dual rings only at a = 0.41 / 0.23, chosen knowingly — exact parity was
-# preferred over the 91% a shared factor would have kept, and the rows of a
-# large dual ring sit nearly ink to ink. The bands cannot deepen: below the
-# dual rings there is only the aspect core, and taking depth from it was
-# considered and refused.
+# is exact and not a rounded decimal. On the dual rings the factors SPLIT at
+# large: parity is the glyph's contract alone (×1.372), while the reading —
+# degrees, sign, minutes, ℞ — follows the SINGLE wheel's progression (×1.248).
+# One factor for everything made the dual degree numerals larger than the
+# single wheel's, because the dual cluster is text-heavy by construction
+# (reading at 0.67 of its glyph against the natal 0.51) — judged on the
+# rendered gallery and refused: a reader meets the same type ramp on every
+# wheel, and only the glyph has a parity to chase. The split also hands air
+# back: the single ring affords large at a = 0.65, the dual rings at
+# a = 0.54 / 0.39. The bands cannot deepen: below the dual rings there is
+# only the aspect core, and taking depth from it was considered and refused.
 
 _SMALL_NATAL = ClusterProfile(
     planet_scale_base=0.163296,
@@ -854,39 +859,39 @@ _LARGE_NATAL = ClusterProfile(
 
 _LARGE_DUAL_OUTER = ClusterProfile(
     planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
-    degrees_font_size=2.90953,
-    sign_scale_base=0.08509,
-    minutes_font_size=1.674352,
-    rx_font_size=1.399868,
-    glyph_y=8.5197,
-    degrees_y=12.3143,
-    sign_y=15.264,
-    minutes_y=17.6455,
-    rx_y=19.6148,
-    min_separation=7.75,
+    degrees_font_size=2.645902,
+    sign_scale_base=0.07738,
+    minutes_font_size=1.522642,
+    rx_font_size=1.273028,
+    glyph_y=8.6475,
+    degrees_y=12.4299,
+    sign_y=15.2947,
+    minutes_y=17.6621,
+    rx_y=19.6224,
+    min_separation=7.5,
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
-        "tick_length": 0.2881,
-        "arc_radius": 44.3639,
+        "tick_length": 0.375,
+        "arc_radius": 44.277,
     },
 )
 
 _LARGE_DUAL_INNER = ClusterProfile(
     planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
-    degrees_font_size=2.90953,
-    sign_scale_base=0.08509,
-    minutes_font_size=1.674352,
-    rx_font_size=1.399868,
-    glyph_y=23.4697,
-    degrees_y=27.0889,
-    sign_y=29.8331,
-    minutes_y=31.9873,
-    rx_y=33.7656,
-    min_separation=12.5,
+    degrees_font_size=2.645902,
+    sign_scale_base=0.07738,
+    minutes_font_size=1.522642,
+    rx_font_size=1.273028,
+    glyph_y=23.4495,
+    degrees_y=27.0959,
+    sign_y=29.8012,
+    minutes_y=31.9922,
+    rx_y=33.8043,
+    min_separation=11.5,
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
-        "tick_length": MIN_INDICATOR_TICK,  # the floor binds at a = 0.23
-        "arc_radius": 29.4311,
+        "tick_length": MIN_INDICATOR_TICK,  # the floor binds at a = 0.39
+        "arc_radius": 29.3816,
     },
 )
 

@@ -685,7 +685,10 @@ def test_entries_without_profiles_fall_back_to_the_uniform_separation():
 #: the three medium floors reproduced the recorded figures exactly; the natal
 #: medium reads 7.25 where 7.00 stood — one sweep step, within raster variance
 #: between the browser that measured then and the one that measured now, and
-#: recorded as measured because this run is the reproducible one.
+#: recorded as measured because this run is the reproducible one. The large
+#: dual floors were re-measured after the reading dropped to the single
+#: wheel's ramp (7.25→7.00 outer, 11.75→10.75 inner); the natal large run in
+#: the same sweep reproduced its floors unchanged.
 _TOUCHING_SEPARATION = {
     ("small", "natal"): 6.50,
     ("small", "dual_outer"): 4.75,
@@ -694,8 +697,8 @@ _TOUCHING_SEPARATION = {
     ("medium", "dual_outer"): 5.25,
     ("medium", "dual_inner"): 8.25,
     ("large", "natal"): 9.00,
-    ("large", "dual_outer"): 7.25,
-    ("large", "dual_inner"): 11.75,
+    ("large", "dual_outer"): 7.00,
+    ("large", "dual_inner"): 10.75,
 }
 
 
@@ -1088,17 +1091,21 @@ _PROFILE_GEOMETRY = {
         "min_separation": 9.5,
         "indicator": {"start_y": 5.348, "tick_length": 0.6959, "arc_radius": 44.0046},
     },
+    # Dual large: the glyph keeps classic parity (×1.372) while the reading
+    # follows the single wheel's progression (×1.248) — Giacomo's call on the
+    # rendered gallery: the dual degree numerals must not outgrow the single
+    # wheel's, and parity belongs to the glyph alone.
     ("large", "dual_outer"): {
-        "sizes": (0.18115942028985507, 2.90953, 0.08509, 1.674352, 1.399868),
-        "rows": (8.5197, 12.3143, 15.264, 17.6455, 19.6148),
-        "min_separation": 7.75,
-        "indicator": {"start_y": 5.348, "tick_length": 0.2881, "arc_radius": 44.3639},
+        "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
+        "rows": (8.6475, 12.4299, 15.2947, 17.6621, 19.6224),
+        "min_separation": 7.5,
+        "indicator": {"start_y": 5.348, "tick_length": 0.375, "arc_radius": 44.277},
     },
     ("large", "dual_inner"): {
-        "sizes": (0.18115942028985507, 2.90953, 0.08509, 1.674352, 1.399868),
-        "rows": (23.4697, 27.0889, 29.8331, 31.9873, 33.7656),
-        "min_separation": 12.5,
-        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.4311},
+        "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
+        "rows": (23.4495, 27.0959, 29.8012, 31.9922, 33.8043),
+        "min_separation": 11.5,
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.3816},
     },
 }
 
@@ -1236,7 +1243,8 @@ def test_derivation_reproduces_the_shipped_profiles(size, ring_name):
     from scripts.derive_modern_cluster_profiles import RINGS, derive, size_factors
 
     profile = draw_modern.GLYPH_SIZE_PROFILES[size][ring_name]
-    derived = derive(RINGS[ring_name], size_factors(ring_name)[size])
+    k, k_text = size_factors(ring_name)[size]
+    derived = derive(RINGS[ring_name], k, k_text)
     # The literals ARE the derivation rounded (4 decimals for rows and the
     # tether, 6 for sizes) — so compare through the same rounding, exactly,
     # instead of a tolerance that would sit on the rounding bound itself.

@@ -28,15 +28,23 @@
   their row), and it is a default-configuration contract — with
   `show_zodiac_background_ring=False` the whole modern wheel, cluster
   included, draws 1/0.92 larger at every size, so the large glyph lands at
-  26.09px against classic's 24 (pinned by test as stated behaviour). The
-  cluster's ink already filled 65–69% of every ring's band, so the growth is
-  paid out of the air between the rows: the single ring keeps 65% of its
-  medium air, the dual rings 41% (outer) and 23% (inner). Exact dual parity
-  over a roomier 91% was the choice made with those numbers on the table: the
-  rows of a large dual-inner ring sit nearly ink to ink (gaps of 1.0–1.3px at
-  the default page, bottom margin 0.03 wheel units), and the bands cannot
-  deepen — below them there is only the aspect web, and taking a third of its
-  radius was considered and refused.
+  26.09px against classic's 24 (pinned by test as stated behaviour).
+
+- **On the dual rings, parity belongs to the glyph alone.** The dual cluster
+  is text-heavy by construction — its reading stands at 0.67 of its glyph
+  against the natal 0.51 — and one factor for everything made the dual degree
+  numerals at large larger than the single wheel's (12.9px against 12.3).
+  Judged on the rendered gallery and refused: at large the dual glyph takes
+  its parity factor (×1.372) while the reading — degrees, sign, minutes, ℞ —
+  follows the SINGLE wheel's typographic progression (×1.248), so a reader
+  meets the same type ramp on every wheel (dual degrees land at 11.7px, under
+  the single wheel's 12.3). The cluster's ink already filled 65–69% of every
+  ring's band, so the growth is paid out of the air between the rows: the
+  single ring keeps 65% of its medium air, and the split hands the dual rings
+  back what one factor had taken — 54% (outer) and 39% (inner), with the
+  inner gaps at 1.7–2.2px against the 1.0–1.3px a shared parity factor left.
+  The bands cannot deepen — below them there is only the aspect web, and
+  taking a third of its radius was considered and refused.
 
 - **The profiles are derived, not guessed.** A new
   `scripts/derive_modern_cluster_profiles.py` lays every ring out under one
