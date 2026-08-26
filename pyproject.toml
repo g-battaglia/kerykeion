@@ -358,6 +358,13 @@ help = "Render the whole SVG surface into svg_validation_gallery/ for visual rev
 # drawn as failure cards; the sweep deliberately includes them.
 LIBEPHEMERIS_PRECISION = "extended"
 
+[tool.poe.tasks.playground]
+cmd = "python scripts/generate_glyph_playground.py"
+help = "Rebuild scripts/glyph_playground.html — the modern-cluster tuning page"
+
+[tool.poe.tasks.playground.env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks."gallery:index"]
 cmd = "python scripts/generate_svg_validation_gallery.py --index-only"
 help = "Rewrite the gallery page from cards.json, without re-rendering the charts"

@@ -41,6 +41,7 @@ outside the loaded ephemeris and their fixtures are silently left stale.
 | :-- | :-- | :-- |
 | `generate_svg_validation_gallery.py` | `gallery`, `gallery:index` | The visual validation sweep (see below). |
 | `generate_glyph_gallery.py` | — | A self-contained poster of every chart glyph, plus its Markdown page. |
+| `generate_glyph_playground.py` | `playground` | `glyph_playground.html` — the modern cluster's three sizes and nine air steps per ring, pre-drawn, with sliders for the sizes and the row spacing. See below. |
 | `report_modern_displacement.py` | — | How far the modern decluttering moves each planet from its true position. Reads the SVG back through `charts.svg_metadata`, so it measures what was drawn rather than what was intended. |
 | `benchmark.py` | `benchmark` | Timings for subject creation, aspects and SVG rendering. |
 
@@ -119,3 +120,32 @@ A render that raises becomes a red card rather than stopping the run: a sweep
 that omits what broke is worse than none. The sweep writes `cards.json`, and
 `poe gallery:index` rebuilds the page from that alone — reworking the viewer
 costs a second instead of a full re-render.
+
+---
+
+## The glyph playground
+
+`poe playground` rewrites `scripts/glyph_playground.html`: one self-contained
+page, no external requests, openable from disk. It exists because the numbers
+behind the modern cluster — glyph, degrees, sign, minutes, ℞ — only look right
+or wrong on screen, and an eye needs the alternatives side by side rather than
+one at a time.
+
+It offers two kinds of knob and is explicit about the difference. **Air between
+clusters** is the renderer's own `clearance`, which no public API exposes, so
+the page cannot move it live: the script pre-renders one real chart per value
+per ring instead — 270 in all, wheel-only, across the three glyph sizes — and
+the page swaps between them. **Sizes and row spacing** are rewritten in the
+browser, where a font-size is a font-size, with the caveat printed on the page:
+the row positions a chosen size implies still have to come back out of
+`derive_modern_cluster_profiles.py`.
+
+The first air notch is the chart exactly as the library ships it, measured
+ceiling included; every notch above lifts `min_separation` out of the way so
+the clearance is what decides. Where the shipped ceiling genuinely binds — the
+small synastry — the page says so instead of hiding the discontinuity.
+
+The 270 charts fit in under two megabytes because each one travels as a
+line-level diff against the shipped chart of its size, and most changed lines
+differ only in one rotation angle.
+`tests/core/test_glyph_playground.py` holds the round trip to real renders.
