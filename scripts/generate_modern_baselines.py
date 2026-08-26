@@ -545,8 +545,9 @@ def generate_a12_glyph_sizes():
     numerically in test_modern_decluttering, so these baselines exist to catch
     STRUCTURAL surprises (a row landing elsewhere, a tether re-anchored, the
     resolver spreading differently), not to re-pin the profiles:
-    natal small/large (the parity chart), the large wheel-only (no 0.92/4.8
-    wrapper), synastry small/large (both dual rings, large is the tight one),
+    natal small/large (the parity chart), the large wheel-only (no page
+    scale — the 0.92 wrapper is present there too), synastry small/large
+    (both dual rings, large is the tight one),
     a transit at large (retrograde-heavy outer ring), the all-points natal at
     large (the documented over-subscription path), and a composite at small
     (single ring, second subject shape).
