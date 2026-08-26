@@ -214,10 +214,10 @@ def test_a_crossing_a_fraction_before_the_seed_is_found_backward(factory, kind):
 @pytest.mark.parametrize(
     "start",
     [
-        # The first two are solar returns whose exact crossing falls in the
+        # The first three are solar returns whose exact crossing falls in the
         # last ~90 ms of its reported second — inside the backend's at-crossing
         # dead band, where a backward search from the next second used to jump
-        # a whole year. The third is a control from outside the band.
+        # a whole year. The fourth is a control from outside the band.
         "1984-03-01T00:00:00+00:00",  # 52 ms before the next second
         "2004-03-01T00:00:00+00:00",  # 76 ms
         "2021-03-01T00:00:00+00:00",  # 6 ms
@@ -283,12 +283,16 @@ def test_crossing_between_finds_a_sign_change_to_a_millisecond():
     # crossing by construction, and a backward seed on it must not be told
     # there is a return a millisecond before itself.
     assert PlanetaryReturnFactory._crossing_between(lambda jd: jd - root, root - 1.0, root) is None
-    almost = root - 0.2e-3 / 86400.0
+    almost = root - 0.05e-3 / 86400.0  # 50 µs before the seed: below the resolution, at the seed
     assert PlanetaryReturnFactory._crossing_between(lambda jd: jd - almost, root - 1.0, root) is None
+    near = root - 0.3e-3 / 86400.0  # 300 µs before the seed: a crossing before it
+    found = PlanetaryReturnFactory._crossing_between(lambda jd: jd - near, root - 1.0, root)
+    assert found is not None and abs(found - near) * 86400.0 < 0.2e-3
 
-    # A signed arc flips sign at the antipode too; that is an opposition, not a crossing.
+    # A signed arc flips sign at the antipode too; that is an opposition, not a
+    # crossing. A slow sweep through 180°: +179.9° at one end, -179.9° at the other.
     def arc_through_the_antipode(jd: float) -> float:
-        return PlanetaryReturnFactory._signed_arc(180.0 + (jd - root) * 3600.0, 0.0)
+        return PlanetaryReturnFactory._signed_arc(180.0 + (jd - root) * 0.1, 0.0)
 
     assert PlanetaryReturnFactory._crossing_between(arc_through_the_antipode, root - 1.0, root + 1.0) is None
 
