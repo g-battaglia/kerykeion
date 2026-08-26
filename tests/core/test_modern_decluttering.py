@@ -690,7 +690,10 @@ def test_entries_without_profiles_fall_back_to_the_uniform_separation():
 #: single wheel's ramp, and when every derived cluster slid 0.3 outward —
 #: rows further out buy more arc per degree, so the small floors eased a step
 #: (natal 6.50→6.25, dual-outer 4.75→4.50) and large dual-outer 7.00→6.75,
-#: while the rest reproduced unchanged.
+#: while the rest reproduced unchanged. When the large dual reading then
+#: dropped to the medium size, the floors barely moved (inner 10.75→10.50,
+#: outer back at 7.00): the parity glyph, not the text, is the binding row of
+#: a large dual ring.
 _TOUCHING_SEPARATION = {
     ("small", "natal"): 6.25,
     ("small", "dual_outer"): 4.50,
@@ -699,8 +702,8 @@ _TOUCHING_SEPARATION = {
     ("medium", "dual_outer"): 5.25,
     ("medium", "dual_inner"): 8.25,
     ("large", "natal"): 9.00,
-    ("large", "dual_outer"): 6.75,
-    ("large", "dual_inner"): 10.75,
+    ("large", "dual_outer"): 7.00,
+    ("large", "dual_inner"): 10.50,
 }
 
 
@@ -1075,41 +1078,41 @@ _PROFILE_GEOMETRY = {
         "sizes": (0.163296, 2.016, 0.092781, 1.8648, 1.6128),
         "rows": (9.4328, 13.0238, 16.3358, 19.9358, 22.9598),
         "min_separation": 6.75,
-        "indicator": {"start_y": 5.348, "tick_length": 0.6675, "start_tick_length": 0.9675, "arc_radius": 43.752},
+        "indicator": {"start_y": 5.348, "tick_length": 0.6675, "start_tick_length": 1.075, "arc_radius": 43.752},
     },
     ("small", "dual_outer"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
         "rows": (7.7768, 10.8728, 13.5188, 15.8678, 17.8208),
         "min_separation": 5.0,
-        "indicator": {"start_y": 5.348, "tick_length": 0.33, "start_tick_length": 0.63, "arc_radius": 44.022},
+        "indicator": {"start_y": 5.348, "tick_length": 0.33, "start_tick_length": 0.5769, "arc_radius": 44.022},
     },
     ("small", "dual_inner"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
         "rows": (22.3441, 25.4401, 28.0861, 30.4351, 32.3881),
         "min_separation": 8.0,
-        "indicator": {"start_y": 20.5, "tick_length": 0.25, "start_tick_length": 0.27, "arc_radius": 29.23},
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.23},
     },
     ("large", "natal"): {
         "sizes": (0.22644927536231882, 2.79567, 0.128663, 2.585995, 2.236536),
         "rows": (9.8551, 14.2798, 18.0845, 22.0458, 25.3815),
         "min_separation": 9.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.3959, "start_tick_length": 0.6959, "arc_radius": 44.0046},
+        "indicator": {"start_y": 5.348, "tick_length": 0.3959, "start_tick_length": 1.0224, "arc_radius": 44.0046},
     },
     # Dual large: the glyph keeps classic parity (×1.372) while the reading
-    # follows the single wheel's progression (×1.248) — Giacomo's call on the
-    # rendered gallery: the dual degree numerals must not outgrow the single
-    # wheel's, and parity belongs to the glyph alone.
+    # stays at the MEDIUM size (k_text = 1.0) — Giacomo's pick on a rendered
+    # four-way comparison: parity belongs to the glyph alone, and a large
+    # dual wheel keeps the reading it always had.
     ("large", "dual_outer"): {
-        "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
-        "rows": (8.3475, 12.1299, 14.9947, 17.3621, 19.3224),
+        "sizes": (0.18115942028985507, 2.12, 0.062, 1.22, 1.02),
+        "rows": (8.6024, 12.3607, 15.0559, 17.3951, 19.3375),
         "min_separation": 7.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.25, "start_tick_length": 0.375, "arc_radius": 44.277},
+        "indicator": {"start_y": 5.348, "tick_length": 0.25, "start_tick_length": 0.4567, "arc_radius": 44.1037},
     },
     ("large", "dual_inner"): {
-        "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
-        "rows": (23.1495, 26.7959, 29.5012, 31.6922, 33.5043),
+        "sizes": (0.18115942028985507, 2.12, 0.062, 1.22, 1.02),
+        "rows": (23.1094, 26.8099, 29.4375, 31.7019, 33.5815),
         "min_separation": 11.5,
-        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.3816},
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.283},
     },
 }
 

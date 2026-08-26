@@ -771,15 +771,15 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
 # the 0.92 wrapper and the 4.8 page), written as that expression so the parity
 # is exact and not a rounded decimal. On the dual rings the factors SPLIT at
 # large: parity is the glyph's contract alone (×1.372), while the reading —
-# degrees, sign, minutes, ℞ — follows the SINGLE wheel's progression (×1.248).
-# One factor for everything made the dual degree numerals larger than the
-# single wheel's, because the dual cluster is text-heavy by construction
-# (reading at 0.67 of its glyph against the natal 0.51) — judged on the
-# rendered gallery and refused: a reader meets the same type ramp on every
-# wheel, and only the glyph has a parity to chase. The split also hands air
-# back: the single ring affords large at a = 0.65, the dual rings at
-# a = 0.54 / 0.39. The bands cannot deepen: below the dual rings there is
-# only the aspect core, and taking depth from it was considered and refused.
+# degrees, sign, minutes, ℞ — stays at the MEDIUM size (k_text = 1.0),
+# Giacomo's pick on a rendered four-way comparison: the dual cluster is
+# text-heavy by construction (reading at 0.67 of its glyph against the natal
+# 0.51) and every larger ramp read oversized in the dual rings' packed
+# context. A large dual wheel grows its glyphs to classic parity and keeps
+# the reading it always had — which also hands the air back: the single ring
+# affords large at a = 0.65, the dual rings at a = 0.78 / 0.72. The bands
+# cannot deepen: below the dual rings there is only the aspect core, and
+# taking depth from it was considered and refused.
 # Every derived cluster also slides 0.3 units OUTWARD, toward its indicator
 # (Giacomo's call: the ℞ row must not sit on the ring's inner edge, and the
 # tether side has the slack) — the END tab shortens with it so the tab-to-
@@ -805,7 +805,7 @@ _SMALL_NATAL = ClusterProfile(
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
         "tick_length": 0.6675,
-        "start_tick_length": 0.9675,
+        "start_tick_length": 1.075,
         "arc_radius": 43.752,
     },
 )
@@ -825,7 +825,7 @@ _SMALL_DUAL_OUTER = ClusterProfile(
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
         "tick_length": 0.33,
-        "start_tick_length": 0.63,
+        "start_tick_length": 0.5769,
         "arc_radius": 44.022,
     },
 )
@@ -845,7 +845,6 @@ _SMALL_DUAL_INNER = ClusterProfile(
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
         "tick_length": MIN_INDICATOR_TICK,  # the shift is capped here: 0.05 to the glyph ink
-        "start_tick_length": 0.27,
         "arc_radius": 29.23,
     },
 )
@@ -865,47 +864,51 @@ _LARGE_NATAL = ClusterProfile(
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
         "tick_length": 0.3959,
-        "start_tick_length": 0.6959,
+        "start_tick_length": 1.0224,
         "arc_radius": 44.0046,
     },
 )
 
+# The large dual reading IS the medium reading — Giacomo's pick on a rendered
+# four-way comparison — so the four text sizes REFERENCE the SYN_* constants,
+# the same referenced-not-retyped virtue the medium profiles carry: only the
+# glyph chases classic parity.
 _LARGE_DUAL_OUTER = ClusterProfile(
     planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
-    degrees_font_size=2.645902,
-    sign_scale_base=0.07738,
-    minutes_font_size=1.522642,
-    rx_font_size=1.273028,
-    glyph_y=8.3475,
-    degrees_y=12.1299,
-    sign_y=14.9947,
-    minutes_y=17.3621,
-    rx_y=19.3224,
-    min_separation=7.5,
+    degrees_font_size=SYN_DEGREES_FONT_SIZE,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=8.6024,
+    degrees_y=12.3607,
+    sign_y=15.0559,
+    minutes_y=17.3951,
+    rx_y=19.3375,
+    min_separation=7.5,  # measured — the parity glyph is the binding row now
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
-        "tick_length": MIN_INDICATOR_TICK,  # the end tab absorbed 0.125 of the shift, then floored
-        "start_tick_length": 0.375,
-        "arc_radius": 44.277,
+        "tick_length": MIN_INDICATOR_TICK,
+        "start_tick_length": 0.4567,
+        "arc_radius": 44.1037,
     },
 )
 
 _LARGE_DUAL_INNER = ClusterProfile(
     planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
-    degrees_font_size=2.645902,
-    sign_scale_base=0.07738,
-    minutes_font_size=1.522642,
-    rx_font_size=1.273028,
-    glyph_y=23.1495,
-    degrees_y=26.7959,
-    sign_y=29.5012,
-    minutes_y=31.6922,
-    rx_y=33.5043,
-    min_separation=11.5,
+    degrees_font_size=SYN_DEGREES_FONT_SIZE_INNER,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=23.1094,
+    degrees_y=26.8099,
+    sign_y=29.4375,
+    minutes_y=31.7019,
+    rx_y=33.5815,
+    min_separation=11.5,  # measured — the parity glyph is the binding row now
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
-        "tick_length": MIN_INDICATOR_TICK,  # the floor binds at a = 0.39
-        "arc_radius": 29.3816,
+        "tick_length": MIN_INDICATOR_TICK,  # the floor binds; the corner budget gives the dash nothing either
+        "arc_radius": 29.283,
     },
 )
 
