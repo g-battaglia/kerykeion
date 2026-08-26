@@ -2,6 +2,15 @@
 
 ## [6.0.0a90] — unreleased
 
+### Changed
+
+- **The cluster's sign glyph steps down 8%** (natal 0.10309 → 0.09484, dual
+  0.062 → 0.05704). At its a87 size it crowded the numerals either side and
+  the cluster read with almost no hierarchy — judged on the rendered wheel:
+  a visible step down, half the raise that had brought it up, without
+  swinging back to the undersized mark that raise was correcting. It sits in
+  the middle of the block, so the change moves only the air between the rows.
+
 ### Fixed
 
 - **The classic theme's zodiac wedges are opaque now.** They were the element
