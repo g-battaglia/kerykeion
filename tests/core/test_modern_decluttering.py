@@ -1075,25 +1075,25 @@ _PROFILE_GEOMETRY = {
         "sizes": (0.163296, 2.016, 0.092781, 1.8648, 1.6128),
         "rows": (9.4328, 13.0238, 16.3358, 19.9358, 22.9598),
         "min_separation": 6.75,
-        "indicator": {"start_y": 5.348, "tick_length": 0.6675, "arc_radius": 43.752},
+        "indicator": {"start_y": 5.348, "tick_length": 0.6675, "start_tick_length": 0.9675, "arc_radius": 43.752},
     },
     ("small", "dual_outer"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
         "rows": (7.7768, 10.8728, 13.5188, 15.8678, 17.8208),
         "min_separation": 5.0,
-        "indicator": {"start_y": 5.348, "tick_length": 0.33, "arc_radius": 44.022},
+        "indicator": {"start_y": 5.348, "tick_length": 0.33, "start_tick_length": 0.63, "arc_radius": 44.022},
     },
     ("small", "dual_inner"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
         "rows": (22.3441, 25.4401, 28.0861, 30.4351, 32.3881),
         "min_separation": 8.0,
-        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.23},
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "start_tick_length": 0.27, "arc_radius": 29.23},
     },
     ("large", "natal"): {
         "sizes": (0.22644927536231882, 2.79567, 0.128663, 2.585995, 2.236536),
         "rows": (9.8551, 14.2798, 18.0845, 22.0458, 25.3815),
         "min_separation": 9.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.3959, "arc_radius": 44.0046},
+        "indicator": {"start_y": 5.348, "tick_length": 0.3959, "start_tick_length": 0.6959, "arc_radius": 44.0046},
     },
     # Dual large: the glyph keeps classic parity (×1.372) while the reading
     # follows the single wheel's progression (×1.248) — Giacomo's call on the
@@ -1103,7 +1103,7 @@ _PROFILE_GEOMETRY = {
         "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
         "rows": (8.3475, 12.1299, 14.9947, 17.3621, 19.3224),
         "min_separation": 7.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.25, "arc_radius": 44.277},
+        "indicator": {"start_y": 5.348, "tick_length": 0.25, "start_tick_length": 0.375, "arc_radius": 44.277},
     },
     ("large", "dual_inner"): {
         "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
@@ -1267,6 +1267,9 @@ def test_derivation_reproduces_the_shipped_profiles(size, ring_name):
         )
     assert profile.indicator is not None
     assert profile.indicator["tick_length"] == float(f"{derived.tick:.4f}")
+    assert profile.indicator.get("start_tick_length", profile.indicator["tick_length"]) == float(
+        f"{derived.start_tick:.4f}"
+    )
     assert profile.indicator["arc_radius"] == float(f"{derived.arc_radius:.4f}")
     # min_separation is deliberately NOT compared: the script prints an analytic
     # seed, but the shipped value is the harness's measurement (see

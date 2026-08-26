@@ -314,6 +314,7 @@ class DerivedProfile:
     rows: tuple[float, float, float, float, float]
     start_y: float
     tick: float
+    start_tick: float
     arc_radius: float
     min_separation_seed: float
     gaps: tuple[float, float, float, float]
@@ -366,8 +367,18 @@ def derive(ring: RingGeometry, k: float, k_text: float | None = None) -> Derived
         shift = min(OUTWARD_SHIFT, s_max)
 
     tick = max(a * ring.tick - shift, dm.MIN_INDICATOR_TICK)
+    # The visible dash — the straight tether's whole body, and the arc case's
+    # initial mark at the true position — keeps its rule length: the shift
+    # shortens only the END segment, whose reach the corner guard owns. Its
+    # depth (start_y + start_tick) stays inside the tether's deepest reach by
+    # construction, since start_tick <= a*tick_med <= a*arc_drop + tick + shift
+    # never exceeds T for the shipped geometries (asserted below).
+    start_tick = max(a * ring.tick, tick)
     arc_radius = (50.0 - ring.start_y) - a * ring.arc_drop
     tether_reach = ring.start_y + a * ring.arc_drop + tick
+    assert ring.start_y + start_tick <= tether_reach + 1e-9, (
+        f"{ring.name}: the visible dash would reach past the tether's own end"
+    )
 
     rows = [tether_reach + a * d.corner_clearance + corner - (shift - (max(a * ring.tick, dm.MIN_INDICATOR_TICK) - tick))]
     for i in range(4):
@@ -389,7 +400,7 @@ def derive(ring: RingGeometry, k: float, k_text: float | None = None) -> Derived
         ring.sizes[4] * k_text,
     )
     return DerivedProfile(
-        ring.name, k, k_text, a, sizes, tuple(rows), ring.start_y, tick, arc_radius, seed,  # type: ignore[arg-type]
+        ring.name, k, k_text, a, sizes, tuple(rows), ring.start_y, tick, start_tick, arc_radius, seed,  # type: ignore[arg-type]
         d.gaps if a == k == k_text else tuple(g * a for g in d.gaps), bottom_margin,  # type: ignore[arg-type]
     )
 
@@ -406,9 +417,11 @@ def self_check() -> None:
                     f"where the shipped medium has {shipped}: the derivation no "
                     "longer reproduces the layout it claims to scale."
                 )
-        if abs(reproduced.tick - ring.tick) > 1e-9 or abs(
-            reproduced.arc_radius - ((50.0 - ring.start_y) - ring.arc_drop)
-        ) > 1e-9:
+        if (
+            abs(reproduced.tick - ring.tick) > 1e-9
+            or abs(reproduced.start_tick - ring.tick) > 1e-9
+            or abs(reproduced.arc_radius - ((50.0 - ring.start_y) - ring.arc_drop)) > 1e-9
+        ):
             raise AssertionError(f"{ring.name}: the tether at k=1 is not the shipped tether.")
 
 
@@ -463,9 +476,15 @@ def main() -> None:
                 if size == "large"
                 else f"{p.sizes[0]:.6f}"
             )
+            start_tick_line = (
+                f'        "start_tick_length": {p.start_tick:.4f},\n'
+                if abs(p.start_tick - p.tick) > 1e-9
+                else ""
+            )
             indicator = (
                 f'{{\n        "start_y": {"HOUSE_LINE_OUTER_Y" if ring.start_y == dm.HOUSE_LINE_OUTER_Y else p.start_y},\n'
                 f'        "tick_length": {p.tick:.4f},\n'
+                f"{start_tick_line}"
                 f'        "arc_radius": {p.arc_radius:.4f},\n    }}'
             )
             print(

@@ -782,9 +782,13 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
 # only the aspect core, and taking depth from it was considered and refused.
 # Every derived cluster also slides 0.3 units OUTWARD, toward its indicator
 # (Giacomo's call: the ℞ row must not sit on the ring's inner edge, and the
-# tether side has the slack) — the tab shortens with it so the tab-to-glyph
-# distance holds, floored at MIN_INDICATOR_TICK and capped where the floor
-# binds so the tab never reaches the glyph's ink. Medium does not move.
+# tether side has the slack) — the END tab shortens with it so the tab-to-
+# glyph distance holds, floored at MIN_INDICATOR_TICK and capped where the
+# floor binds so the tab never reaches the glyph's ink. The VISIBLE dash
+# (start_tick_length: the straight tether's body, and the arc case's mark at
+# the true position) keeps its rule length — a dash cut to the floor read as
+# a stray dot, Giacomo's second call on the rendered wheel. Medium does not
+# move.
 
 _SMALL_NATAL = ClusterProfile(
     planet_scale_base=0.163296,
@@ -801,6 +805,7 @@ _SMALL_NATAL = ClusterProfile(
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
         "tick_length": 0.6675,
+        "start_tick_length": 0.9675,
         "arc_radius": 43.752,
     },
 )
@@ -820,6 +825,7 @@ _SMALL_DUAL_OUTER = ClusterProfile(
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
         "tick_length": 0.33,
+        "start_tick_length": 0.63,
         "arc_radius": 44.022,
     },
 )
@@ -839,6 +845,7 @@ _SMALL_DUAL_INNER = ClusterProfile(
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
         "tick_length": MIN_INDICATOR_TICK,  # the shift is capped here: 0.05 to the glyph ink
+        "start_tick_length": 0.27,
         "arc_radius": 29.23,
     },
 )
@@ -858,6 +865,7 @@ _LARGE_NATAL = ClusterProfile(
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
         "tick_length": 0.3959,
+        "start_tick_length": 0.6959,
         "arc_radius": 44.0046,
     },
 )
@@ -876,7 +884,8 @@ _LARGE_DUAL_OUTER = ClusterProfile(
     min_separation=7.5,
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
-        "tick_length": MIN_INDICATOR_TICK,  # the tab absorbed 0.125 of the shift, then floored
+        "tick_length": MIN_INDICATOR_TICK,  # the end tab absorbed 0.125 of the shift, then floored
+        "start_tick_length": 0.375,
         "arc_radius": 44.277,
     },
 )
@@ -1877,6 +1886,7 @@ def _draw_indicator_line(
     planet_slug: str = "",
     abs_pos: Optional[float] = None,
     horoscope_id: Optional[str] = None,
+    start_tick_length: Optional[float] = None,
 ) -> str:
     """
     Draw a tether/indicator line from a displaced planet to its true position.
@@ -1899,12 +1909,20 @@ def _draw_indicator_line(
             identical (downstream focus code matches them by string equality).
         horoscope_id: Owner subject id ("0"/"1") emitted as kr:horoscope in dual
             charts so the indicator can be tied to the correct ring.
+        start_tick_length: Length of the INITIAL dash — the mark hanging from
+            start_y at the true position (and the straight tether's whole
+            body). None means tick_length, the historical behaviour. The two
+            lengths split on the derived glyph sizes: the outward cluster
+            shift shortens the END segment (whose reach the corner guard
+            owns) while the visible dash keeps its rule length.
 
     Returns:
         SVG group string for the indicator line.
     """
     if arc_radius is None:
         arc_radius = R_PLANET_OUTER - NATAL_INDICATOR_ARC_DROP
+    if start_tick_length is None:
+        start_tick_length = tick_length
 
     slug_attr = f' kr:slug="{escape_svg_text(planet_slug)}"' if planet_slug else ""
     pos_attr = f' kr:absoluteposition="{abs_pos}"' if abs_pos is not None else ""
@@ -1916,7 +1934,7 @@ def _draw_indicator_line(
     if abs(angle_diff) < STRAIGHT_TETHER_THRESHOLD:
         # Simple straight indicator line
         out += (
-            f'  <path d="M {CENTER} {start_y} l 0 {tick_length}" '
+            f'  <path d="M {CENTER} {start_y} l 0 {start_tick_length}" '
             f'fill="transparent" stroke="{COLOR_INDICATOR}" stroke-width="0.1"/>\n'
         )
     else:
@@ -1936,7 +1954,7 @@ def _draw_indicator_line(
 
         out += (
             f"  <path "
-            f'd="M {CENTER} {start_y} l 0 {tick_length} '
+            f'd="M {CENTER} {start_y} l 0 {start_tick_length} '
             f"A {r_arc} {r_arc} 0 0 {sweep} {end_x:.10f} {end_y:.10f} "
             f'L {end_x_inner:.10f} {end_y_inner:.10f}" '
             f'fill="transparent" stroke="{COLOR_INDICATOR}" stroke-width="0.1"/>\n'
@@ -2109,6 +2127,7 @@ def _draw_planet_ring(
             "start_y": indicator_config.get("start_y", HOUSE_LINE_OUTER_Y),
             "tick_length": indicator_config.get("tick_length", NATAL_INDICATOR_TICK),
             "arc_radius": indicator_config.get("arc_radius", None),
+            "start_tick_length": indicator_config.get("start_tick_length", None),
         }
 
     # Draw planet clusters and indicators
