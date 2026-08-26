@@ -281,8 +281,8 @@ class PlanetaryReturnFactory:
         crossings are settled to a millisecond by bisection, a crossing inside
         the second before a backward seed is looked for explicitly, and a
         result that has not moved past the seed's second restarts from outside
-        the solver's basin. The lunar nodes and Liliths have no heliocentric
-        longitude in the backend and are outside this contract, as they were.
+        the solver's basin. The lunar nodes and Liliths are not heliocentric
+        bodies and are outside this contract, as they were.
 
         Naive timestamps are read as UTC, like every ``*_from_iso`` entry.
         """
@@ -329,37 +329,61 @@ class PlanetaryReturnFactory:
 
     @staticmethod
     def _signed_arc(longitude: float, target: float) -> float:
-        """Signed arc from ``target`` to ``longitude``, in (-180, 180]."""
+        """Signed arc from ``target`` to ``longitude``, in [-180, 180)."""
         return ((longitude - target + 180.0) % 360.0) - 180.0
 
-    @staticmethod
-    def _crossing_between(offset: Callable[[float], float], lo: float, hi: float) -> Optional[float]:
-        """The root of a monotone signed ``offset`` inside ``[lo, hi)``, to a millisecond — or None.
+    # A sign change of a signed arc is a crossing only when the arc is small
+    # on both sides: the arc also flips sign at the antipode of the target,
+    # where it jumps from +180 to -180, and that is an opposition, not a
+    # return. Over any window used here (a second; a minute around a solver's
+    # answer) a body moves a few arcseconds at most, so a genuine crossing
+    # keeps the arc within a fraction of a degree of zero.
+    _CROSSING_ARC_LIMIT = 90.0
+    # Resolution of the bisection, in days (one millisecond).
+    _CROSSING_RESOLUTION = 1e-3 / 86400.0
+
+    @classmethod
+    def _crossing_between(cls, offset: Callable[[float], float], lo: float, hi: float) -> Optional[float]:
+        """The root of a monotone signed ``offset`` strictly inside ``[lo, hi)``, to a millisecond — or None.
 
         ``offset`` is negative on one side of the crossing and positive on the
         other; a sign change across the window is the crossing, found by
         bisection. This reaches the resolution the backend's solvers do not:
-        inside one second (their at-crossing dead band spans ~90 ms for the
-        Sun) and inside the convergence basin of a slow heliocentric body
-        (their 0.001″ tolerance is six seconds of Pluto's motion).
+        inside one second (their at-crossing dead band is ~90 ms either side
+        of the target for the Sun) and inside the convergence basin of a slow
+        heliocentric body (their 0.001″ tolerance is six seconds of Pluto's
+        motion).
+
+        A root at ``hi`` itself — a seed that IS a crossing, the natal instant
+        being one by construction — is not inside the window and yields None:
+        a crossing at the seed is inside the seed's own second, which the
+        ordering contract excludes. Roots within a millisecond of ``hi`` are
+        treated the same, below the resolution of the bisection.
         """
         f_lo, f_hi = offset(lo), offset(hi)
+        if max(abs(f_lo), abs(f_hi)) > cls._CROSSING_ARC_LIMIT:
+            return None  # the window straddles the antipode, not the target
         if f_lo == 0.0:
             return lo
-        if (f_lo < 0.0) == (f_hi < 0.0):
+        if f_hi == 0.0 or (f_lo < 0.0) == (f_hi < 0.0):
             return None
+        top = hi
         for _ in range(64):
-            if (hi - lo) * 86400.0 < 1e-3:
+            if hi - lo < cls._CROSSING_RESOLUTION:
                 break
             mid = 0.5 * (lo + hi)
             f_mid = offset(mid)
             if f_mid == 0.0:
-                return mid
+                lo = hi = mid
+                break
             if (f_mid < 0.0) == (f_lo < 0.0):
                 lo, f_lo = mid, f_mid
             else:
                 hi, f_hi = mid, f_mid
-        return 0.5 * (lo + hi)
+        root = 0.5 * (lo + hi)
+        if top - root < cls._CROSSING_RESOLUTION:
+            return None  # at the seed, within the resolution
+        return root
 
     def _settled(
         self,
@@ -379,7 +403,8 @@ class PlanetaryReturnFactory:
         seed_second = round(datetime_to_julian(self._seed_whole_second(iso_formatted_time)) * 86400.0)
         model = search(self._search_start_jd(iso_formatted_time, backwards))
         for _ in range(2):
-            assert model.julian_day is not None
+            if model.julian_day is None:
+                raise KerykeionException("The return chart carries no Julian Day; cannot order it against the seed.")
             reported_second = round(model.julian_day * 86400.0)
             if (reported_second < seed_second) if backwards else (reported_second > seed_second):
                 return model
@@ -1320,7 +1345,7 @@ class PlanetaryReturnFactory:
             if backwards:
                 # The Moon crosses its node where its latitude changes sign. A
                 # crossing inside the second before the seed is before it at
-                # reporting resolution; the solver's dead band (~20 ms) may
+                # reporting resolution; the solver's dead band (up to ~90 ms) may
                 # skip it — look for it explicitly.
                 def moon_latitude(jd: float) -> float:
                     return ephe.calc_ut(jd, ephe.MOON, iflag)[0][1]

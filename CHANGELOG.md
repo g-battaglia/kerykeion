@@ -32,9 +32,17 @@
   is `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
   instant for instant, `previous` from the second after a reported instant
   finds it (twenty consecutive solar returns, dead band included), and a walk
-  of steps lands on each return exactly once. The lunar nodes and Liliths
-  have no heliocentric longitude in the backend and stay outside, as before.
-  Nothing reported changes; the date and year wrappers keep their inclusive
+  of steps lands on each return exactly once. One limit is the ephemeris'
+  own: a crossing within some tens of microseconds of a whole second cannot
+  be told from a crossing at that second, and is treated as one — the natal
+  instant, a crossing by construction, being the case that matters: seeded
+  with it, `previous` finds the cycle before birth, never a return a second
+  before the birth itself. The lunar nodes and Liliths are
+  not heliocentric bodies and stay outside, as before. Solar, lunar and node
+  instants are reported as they were; heliocentric instants settle onto the
+  crossing itself, which for the slow bodies can move the reported second by
+  up to ~1.5 s from the solver's (about one in eight Uranus–Pluto crossings).
+  The date and year wrappers keep their inclusive
   midnight seed, so a return in the first second of a date is still that
   date's return. The one visible
   consequence: a seed inside the same second as a crossing now selects the
