@@ -279,7 +279,7 @@ class PlanetaryReturnFactory:
         own — their at-crossing dead band spans ~90 ms for the Sun, their
         0.001″ tolerance is seconds of a slow heliocentric body's motion — so
         ``_settled`` holds every supported ISO search to the contract: heliocentric
-        crossings are settled to a millisecond by bisection, a crossing inside
+        crossings are settled to a tenth of a millisecond by bisection, a crossing inside
         the second before a backward seed is looked for explicitly, and a
         result that has not moved past the seed's second restarts from outside
         the solver's basin. Outside it, as before: the heliocentric search for
@@ -1281,7 +1281,7 @@ class PlanetaryReturnFactory:
             # The solver converges to 0.001″ — six seconds of Pluto's motion,
             # two of Uranus', one of Chiron's — so its answer can sit seconds
             # from the crossing, and a seed one second on may be handed back as
-            # its own answer. Settle the crossing to a millisecond by bisection
+            # its own answer. Settle the crossing to a tenth of a millisecond by bisection
             # around the solver's result (no other crossing lies within a
             # minute: the shortest heliocentric period is Mercury's 88 days),
             # so the instant reported is the crossing's own, whatever the seed.
