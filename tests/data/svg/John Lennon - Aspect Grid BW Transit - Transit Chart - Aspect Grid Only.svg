@@ -40,6 +40,11 @@
     --kerykeion-modern-stroke: #a0a0a0;
     /* See classic.css: the cusp is read, the ring outline is only seen. */
     --kerykeion-modern-cusp: #727272;
+    /* Solid dim tones for the stretch of a cusp behind a reading: the exact
+       0.35-alpha composite of the cusp colour over each ring's fill. Solid so
+       a host that shows through the chart cannot wash the axis out. */
+    --kerykeion-modern-cusp-dim: #bfbfbf;
+    --kerykeion-modern-cusp-dim-outer: #b4b4b4;
     --kerykeion-modern-retrograde: #444444;
     --kerykeion-modern-stationary: #6e6e6e;
     --kerykeion-modern-indicator: #808080;

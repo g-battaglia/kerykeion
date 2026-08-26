@@ -189,9 +189,24 @@ result = return_factory.next_return_from_iso_formatted_time("2024-06-15T12:00:00
 
 | Parameter            | Type         | Default      | Description                              |
 | :------------------- | :----------- | :----------- | :--------------------------------------- |
-| `iso_formatted_time` | `str`        | **Required** | ISO 8601 timestamp at which to start the search. |
+| `iso_formatted_time` | `str`        | **Required** | ISO 8601 timestamp at which to start the search (naive values are read as UTC). |
 | `return_type`        | `ReturnType` | **Required** | `"Solar"` or `"Lunar"`.                  |
 | `backwards`          | `bool`       | `False`      | If `True`, search for the most recent return before the timestamp. |
+
+Return instants are reported truncated to the whole second, and the search is
+ordered at that resolution: the instant of a return this factory reported is a
+valid seed for the following one (or, with `backwards=True`, the preceding one),
+so a walk of `next_return_from_iso_formatted_time` calls seeded with each result's
+`iso_formatted_utc_datetime` visits every return exactly once. A seed inside the
+same second as a crossing selects the return after it (forward) or before it
+(backward). The date and year wrappers above keep an inclusive midnight seed: "the
+first return of this date" includes a return in the date's first second.
+
+```python
+first = return_factory.next_return_from_iso_formatted_time("2024-03-01T00:00:00+00:00", "Solar")
+second = return_factory.next_return_from_iso_formatted_time(first.iso_formatted_utc_datetime, "Solar")
+assert second.julian_day > first.julian_day  # the following return, not the same one again
+```
 
 Backward Solar/Lunar return search requires the default libephemeris backend;
 the optional pyswisseph backend does not expose backward crossing searches and
