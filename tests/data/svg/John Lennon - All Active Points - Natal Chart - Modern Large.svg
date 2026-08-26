@@ -56,22 +56,31 @@
        graphic object needs, while --kerykeion-modern-stroke keeps outlining the
        rings at whatever weight the palette likes. */
     --kerykeion-modern-cusp: #81818d;
+    /* Solid dim tones for the stretch of a cusp behind a reading: the exact
+       0.35-alpha composite of the cusp colour over each ring's fill. Solid so
+       a host that shows through the chart cannot wash the axis out. */
+    --kerykeion-modern-cusp-dim: #ccccd1;
+    --kerykeion-modern-cusp-dim-outer: #c4c4cb;
     --kerykeion-modern-retrograde: #b03030;
     --kerykeion-modern-stationary: #8a5a12;
     --kerykeion-modern-indicator: #8a8278;
-    --kerykeion-modern-zodiac-bg-0: #ff7200;
-    --kerykeion-modern-zodiac-bg-1: #6b3d00;
-    --kerykeion-modern-zodiac-bg-2: #69acf1;
-    --kerykeion-modern-zodiac-bg-3: #2b4972;
-    --kerykeion-modern-zodiac-bg-4: #ff7200;
-    --kerykeion-modern-zodiac-bg-5: #6b3d00;
-    --kerykeion-modern-zodiac-bg-6: #69acf1;
-    --kerykeion-modern-zodiac-bg-7: #2b4972;
-    --kerykeion-modern-zodiac-bg-8: #ff7200;
-    --kerykeion-modern-zodiac-bg-9: #6b3d00;
-    --kerykeion-modern-zodiac-bg-10: #69acf1;
-    --kerykeion-modern-zodiac-bg-11: #2b4972;
-    --kerykeion-modern-zodiac-bg-opacity: 0.5;
+    /* Opaque pastels: the exact per-channel composite of the old element
+       colors at 0.5 over white paper. Same tone the theme always had, but a
+       host that shows through the chart (Studio's glass) no longer bleeds
+       into the wedges. The dark theme was already opaque. */
+    --kerykeion-modern-zodiac-bg-0: #ffb880;
+    --kerykeion-modern-zodiac-bg-1: #b59e80;
+    --kerykeion-modern-zodiac-bg-2: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-3: #95a4b8;
+    --kerykeion-modern-zodiac-bg-4: #ffb880;
+    --kerykeion-modern-zodiac-bg-5: #b59e80;
+    --kerykeion-modern-zodiac-bg-6: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-7: #95a4b8;
+    --kerykeion-modern-zodiac-bg-8: #ffb880;
+    --kerykeion-modern-zodiac-bg-9: #b59e80;
+    --kerykeion-modern-zodiac-bg-10: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-11: #95a4b8;
+    --kerykeion-modern-zodiac-bg-opacity: 1;
     --kerykeion-chart-color-zodiac-bg-0: #ff7200;
     --kerykeion-chart-color-zodiac-bg-1: #6b3d00;
     --kerykeion-chart-color-zodiac-bg-2: #69acf1;
@@ -483,36 +492,36 @@
 <g kr:node='PlanetRing'>
 <path d='M 5.347999999999999,50.0 A 44.652,44.652 0 1,1 94.652,50.0 A 44.652,44.652 0 1,1 5.347999999999999,50.0 M 28.0,50.0 A 22.0,22.0 0 1,1 72.0,50.0 A 22.0,22.0 0 1,1 28.0,50.0 Z' fill='var(--kerykeion-modern-planet-ring, #e8e8ed)' fill-rule='evenodd' stroke='var(--kerykeion-modern-stroke, #b0b0bf)' stroke-width='0.25'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.118' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='7.118' x2='50.0' y2='26.950' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='7.118' x2='50.0' y2='26.950' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='26.950' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.232' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-39.792588 50.0 50.0)'/>
-<line x1='50.0' y1='7.232' x2='50.0' y2='26.950' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-39.792588 50.0 50.0)'/>
+<line x1='50.0' y1='7.232' x2='50.0' y2='26.950' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-39.792588 50.0 50.0)'/>
 <line x1='50.0' y1='26.950' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-39.792588 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.220' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-60.492258 50.0 50.0)'/>
-<line x1='50.0' y1='7.220' x2='50.0' y2='26.950' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-60.492258 50.0 50.0)'/>
+<line x1='50.0' y1='7.220' x2='50.0' y2='26.950' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-60.492258 50.0 50.0)'/>
 <line x1='50.0' y1='26.950' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-60.492258 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.231' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-77.324212 50.0 50.0)'/>
-<line x1='50.0' y1='7.231' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-77.324212 50.0 50.0)'/>
+<line x1='50.0' y1='7.231' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.6' transform='rotate(-77.324212 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-77.324212 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.118' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-95.566944 50.0 50.0)'/>
-<line x1='50.0' y1='7.118' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-95.566944 50.0 50.0)'/>
+<line x1='50.0' y1='7.118' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-95.566944 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-95.566944 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.118' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-122.358654 50.0 50.0)'/>
-<line x1='50.0' y1='7.118' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-122.358654 50.0 50.0)'/>
+<line x1='50.0' y1='7.118' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-122.358654 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-122.358654 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.661' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
-<line x1='50.0' y1='7.661' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-180.000000 50.0 50.0)'/>
+<line x1='50.0' y1='7.661' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.639' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-219.792588 50.0 50.0)'/>
-<line x1='50.0' y1='7.639' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-219.792588 50.0 50.0)'/>
+<line x1='50.0' y1='7.639' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-219.792588 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-219.792588 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-240.492258 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.910' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-257.324212 50.0 50.0)'/>
-<line x1='50.0' y1='7.910' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-257.324212 50.0 50.0)'/>
+<line x1='50.0' y1='7.910' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.6' transform='rotate(-257.324212 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.6' transform='rotate(-257.324212 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-275.566944 50.0 50.0)'/>
 <line x1='50.0' y1='5.348' x2='50.0' y2='7.197' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-302.358654 50.0 50.0)'/>
-<line x1='50.0' y1='7.197' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-302.358654 50.0 50.0)'/>
+<line x1='50.0' y1='7.197' x2='50.0' y2='23.789' stroke='var(--kerykeion-modern-cusp-dim, #c4c4cb)' stroke-width='0.07' transform='rotate(-302.358654 50.0 50.0)'/>
 <line x1='50.0' y1='23.789' x2='50.0' y2='28.000' stroke='var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))' stroke-width='0.07' transform='rotate(-302.358654 50.0 50.0)'/>
 <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Ari' kr:absoluteposition='19.74676719464139' kr:signposition='19.74676719464139' kr:slug='Ascendant' kr:speed='886.832442' kr:cx='172.64967759772486' kr:cy='524.5733230249433' transform='rotate(-4.099156 50.0 50.0)'>
   <g transform='translate(50.0 9.8551) rotate(94.099156) scale(0.21512681159420285) translate(-12 -12)'>
