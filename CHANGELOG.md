@@ -53,9 +53,13 @@
   CORNER reach because the tether meets the box on the diagonal. The rule is a
   fixed point at k=1 (the script proves it reproduces the shipped medium on
   every run), the pasted literals are pinned to the derivation by test, and at
-  large the tether shortens with the air (1.075 → 0.696 natal) — without that
-  the tab would end inside the Sun's glyph box at 45°, the exact defect a88
-  fixed.
+  large the tether shortens with the air — without that the tab would end
+  inside the Sun's glyph box at 45°, the exact defect a88 fixed. On top of
+  the rule, every derived cluster slides 0.3 units OUTWARD toward its
+  indicator (the tab absorbing the slide, floored and capped so it never
+  reaches the glyph's ink): the ℞ row steps off the ring's inner edge on
+  every chart type — the natal large tab lands at 0.396 from its 1.075 —
+  and medium, the byte-identity anchor, does not move.
 
 - **The separation ceilings are measured, per size.** The collision harness
   (`scripts/measure_modern_separation.py`) learned `--glyph-size` and now
