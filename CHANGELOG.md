@@ -38,10 +38,13 @@
   wheel's ramp, ×1.12, ×1.0): at large the dual glyph takes its parity factor
   (×1.372) while the reading — degrees, sign, minutes, ℞ — **stays at the
   medium size**, the one every wheel already trains the eye on; even the
-  single wheel's ramp read oversized in the dual rings' packed context. That
-  choice also hands the air back: the single ring affords large at 65% of its
-  medium air, the dual rings at 78% (outer) and 72% (inner), with the inner
-  gaps at 3.1–4.0px — against the 1.0–1.3px the shared parity factor left
+  single wheel's ramp read oversized in the dual rings' packed context. The
+  single wheel splits the same way one step down: at large its degrees keep
+  the ×1.248 ramp while minutes and ℞ stay at the medium size — the coda
+  was what crowded, not the ramp. That
+  choice also hands the air back: the single ring affords large at 76% of its
+  medium air, the dual rings at 79% (outer) and 73% (inner), with the inner
+  gaps at 3.4–4.6px — against the 1.0–1.3px the shared parity factor left
   them. The bands cannot deepen — below them there is only the aspect web,
   and taking a third of its radius was considered and refused.
 
@@ -66,10 +69,10 @@
   (`scripts/measure_modern_separation.py`) learned `--glyph-size` and now
   builds its rings from the same profiles the renderer reads; its sweep
   extends to 14°. The policy was already written in the shipped constants —
-  every medium ceiling sits exactly on the harness's "first safe with 0.25
-  units of daylight" column — and the new ceilings apply it to their own
-  measured floors: small 7.00 / 5.25 / 8.00, large 9.50 / 7.75 / 12.50
-  (touch at 6.50 / 4.75 / 7.25 and 9.00 / 7.25 / 11.75). Adversarial mode
+  every ceiling sits half a degree above its measured touch — and the new
+  ceilings apply it to their own measured floors: small 6.75 / 5.00 / 8.00,
+  large 9.50 / 7.50 / 11.50 (touch at 6.25 / 4.50 / 7.25 and
+  9.00 / 7.00 / 10.50). Adversarial mode
   passes at every size against the 0.2-unit daylight gate. An all-points
   wheel at large over-subscribes by design; the resolver compresses and logs
   it, and a test pins the log line so the degradation stays a stated
