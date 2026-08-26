@@ -685,19 +685,21 @@ def test_entries_without_profiles_fall_back_to_the_uniform_separation():
 #: the three medium floors reproduced the recorded figures exactly; the natal
 #: medium reads 7.25 where 7.00 stood — one sweep step, within raster variance
 #: between the browser that measured then and the one that measured now, and
-#: recorded as measured because this run is the reproducible one. The large
-#: dual floors were re-measured after the reading dropped to the single
-#: wheel's ramp (7.25→7.00 outer, 11.75→10.75 inner); the natal large run in
-#: the same sweep reproduced its floors unchanged.
+#: recorded as measured because this run is the reproducible one. Re-measured
+#: twice more as the profiles moved: when the dual reading dropped to the
+#: single wheel's ramp, and when every derived cluster slid 0.3 outward —
+#: rows further out buy more arc per degree, so the small floors eased a step
+#: (natal 6.50→6.25, dual-outer 4.75→4.50) and large dual-outer 7.00→6.75,
+#: while the rest reproduced unchanged.
 _TOUCHING_SEPARATION = {
-    ("small", "natal"): 6.50,
-    ("small", "dual_outer"): 4.75,
+    ("small", "natal"): 6.25,
+    ("small", "dual_outer"): 4.50,
     ("small", "dual_inner"): 7.25,
     ("medium", "natal"): 7.25,
     ("medium", "dual_outer"): 5.25,
     ("medium", "dual_inner"): 8.25,
     ("large", "natal"): 9.00,
-    ("large", "dual_outer"): 7.00,
+    ("large", "dual_outer"): 6.75,
     ("large", "dual_inner"): 10.75,
 }
 
@@ -1065,31 +1067,33 @@ def test_spending_the_air_is_reported(caplog):
 #: tests below prove they still ARE that output; this fixture makes any drift
 #: name the exact number that moved. min_separation is the exception no formula
 #: owns: measured by the harness per size, policy and floors documented at
-#: _TOUCHING_SEPARATION.
+#: _TOUCHING_SEPARATION. Every derived cluster sits 0.3 units outward of its
+#: rule-laid position (capped by the tether-side slack) — the OUTWARD_SHIFT
+#: policy, folded into these literals by the derivation itself.
 _PROFILE_GEOMETRY = {
     ("small", "natal"): {
         "sizes": (0.163296, 2.016, 0.092781, 1.8648, 1.6128),
-        "rows": (9.7328, 13.3238, 16.6358, 20.2358, 23.2598),
-        "min_separation": 7.0,
-        "indicator": {"start_y": 5.348, "tick_length": 0.9675, "arc_radius": 43.752},
+        "rows": (9.4328, 13.0238, 16.3358, 19.9358, 22.9598),
+        "min_separation": 6.75,
+        "indicator": {"start_y": 5.348, "tick_length": 0.6675, "arc_radius": 43.752},
     },
     ("small", "dual_outer"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
-        "rows": (8.0768, 11.1728, 13.8188, 16.1678, 18.1208),
-        "min_separation": 5.25,
-        "indicator": {"start_y": 5.348, "tick_length": 0.63, "arc_radius": 44.022},
+        "rows": (7.7768, 10.8728, 13.5188, 15.8678, 17.8208),
+        "min_separation": 5.0,
+        "indicator": {"start_y": 5.348, "tick_length": 0.33, "arc_radius": 44.022},
     },
     ("small", "dual_inner"): {
         "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
-        "rows": (22.462, 25.558, 28.204, 30.553, 32.506),
+        "rows": (22.3441, 25.4401, 28.0861, 30.4351, 32.3881),
         "min_separation": 8.0,
-        "indicator": {"start_y": 20.5, "tick_length": 0.27, "arc_radius": 29.23},
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.23},
     },
     ("large", "natal"): {
         "sizes": (0.22644927536231882, 2.79567, 0.128663, 2.585995, 2.236536),
-        "rows": (10.1551, 14.5798, 18.3845, 22.3458, 25.6815),
+        "rows": (9.8551, 14.2798, 18.0845, 22.0458, 25.3815),
         "min_separation": 9.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.6959, "arc_radius": 44.0046},
+        "indicator": {"start_y": 5.348, "tick_length": 0.3959, "arc_radius": 44.0046},
     },
     # Dual large: the glyph keeps classic parity (×1.372) while the reading
     # follows the single wheel's progression (×1.248) — Giacomo's call on the
@@ -1097,13 +1101,13 @@ _PROFILE_GEOMETRY = {
     # wheel's, and parity belongs to the glyph alone.
     ("large", "dual_outer"): {
         "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
-        "rows": (8.6475, 12.4299, 15.2947, 17.6621, 19.6224),
+        "rows": (8.3475, 12.1299, 14.9947, 17.3621, 19.3224),
         "min_separation": 7.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.375, "arc_radius": 44.277},
+        "indicator": {"start_y": 5.348, "tick_length": 0.25, "arc_radius": 44.277},
     },
     ("large", "dual_inner"): {
         "sizes": (0.18115942028985507, 2.645902, 0.07738, 1.522642, 1.273028),
-        "rows": (23.4495, 27.0959, 29.8012, 31.9922, 33.8043),
+        "rows": (23.1495, 26.7959, 29.5012, 31.6922, 33.5043),
         "min_separation": 11.5,
         "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.3816},
     },

@@ -283,6 +283,25 @@ def decompose(ring: RingGeometry) -> Decomposition:
     return Decomposition(tether_reach, corner_clearance, gaps, bottom, ink, air, band)  # type: ignore[arg-type]
 
 
+#: How far every DERIVED cluster slides outward, toward its indicator, in
+#: wheel units. Giacomo's call on the rendered dual wheels: the ℞ row must not
+#: sit on the ring's inner edge, and the space to buy it from is the tether's
+#: side, where the tab leaves slack. The whole cluster moves together and the
+#: tab shortens by the same amount (floored at MIN_INDICATOR_TICK), so the
+#: tab-to-glyph distance stays as designed wherever the floor does not bind.
+#: Where it DOES bind, the shift is capped by the tether-side slack: the tab
+#: must never reach the glyph's row-ward ink (TETHER_INK_GAP_MIN of daylight
+#: kept) — without the cap, the small dual-inner ring's tether would land
+#: 0.13 units INSIDE its glyph's ink. Applied to every ring and every derived
+#: size — all chart types, one treatment — and NEVER to medium, which is the
+#: byte-identity anchor.
+OUTWARD_SHIFT = 0.3
+
+#: The hair of daylight the tab keeps from the glyph's row-ward ink when the
+#: outward shift is capped by the tick floor.
+TETHER_INK_GAP_MIN = 0.05
+
+
 @dataclass(frozen=True)
 class DerivedProfile:
     """One ring's layout at one glyph size, as the rule lays it out."""
@@ -327,11 +346,30 @@ def derive(ring: RingGeometry, k: float, k_text: float | None = None) -> Derived
         fit = (room - dm.MIN_INDICATOR_TICK - ink_k) / (ring.arc_drop + d.air)
     a = min(max(k, k_text), fit)
 
-    tick = max(a * ring.tick, dm.MIN_INDICATOR_TICK)
+    # The outward shift: everything but medium slides toward the indicator.
+    # k == k_text == 1 is the medium fixed point and must reproduce the
+    # shipped constants exactly, so the shift is zero there by definition.
+    #
+    # While the tab is above its floor, tab and cluster retreat together and
+    # the tab-to-ink gap is unchanged; once the floor binds, every further
+    # unit of shift eats the gap one for one. The cap solves that in closed
+    # form: s_free is the shift the tab can absorb, and beyond it the shift
+    # may spend the gap down to TETHER_INK_GAP_MIN and no further.
+    if k == k_text == 1.0:
+        shift = 0.0
+    else:
+        tick0 = max(a * ring.tick, dm.MIN_INDICATOR_TICK)
+        row0_glyph = ring.start_y + a * ring.arc_drop + tick0 + a * d.corner_clearance + corner
+        gap0 = (row0_glyph - halves[0]) - (ring.start_y + a * ring.arc_drop + tick0)
+        s_free = max(a * ring.tick - dm.MIN_INDICATOR_TICK, 0.0)
+        s_max = s_free + max(gap0 - TETHER_INK_GAP_MIN, 0.0)
+        shift = min(OUTWARD_SHIFT, s_max)
+
+    tick = max(a * ring.tick - shift, dm.MIN_INDICATOR_TICK)
     arc_radius = (50.0 - ring.start_y) - a * ring.arc_drop
     tether_reach = ring.start_y + a * ring.arc_drop + tick
 
-    rows = [tether_reach + a * d.corner_clearance + corner]
+    rows = [tether_reach + a * d.corner_clearance + corner - (shift - (max(a * ring.tick, dm.MIN_INDICATOR_TICK) - tick))]
     for i in range(4):
         rows.append(rows[i] + halves[i] + a * d.gaps[i] + halves[i + 1])
     bottom_margin = ring.inner_edge_y - (rows[4] + halves[4])

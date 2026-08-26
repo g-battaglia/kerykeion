@@ -780,6 +780,11 @@ _MEDIUM_DUAL_INNER = ClusterProfile(
 # back: the single ring affords large at a = 0.65, the dual rings at
 # a = 0.54 / 0.39. The bands cannot deepen: below the dual rings there is
 # only the aspect core, and taking depth from it was considered and refused.
+# Every derived cluster also slides 0.3 units OUTWARD, toward its indicator
+# (Giacomo's call: the ℞ row must not sit on the ring's inner edge, and the
+# tether side has the slack) — the tab shortens with it so the tab-to-glyph
+# distance holds, floored at MIN_INDICATOR_TICK and capped where the floor
+# binds so the tab never reaches the glyph's ink. Medium does not move.
 
 _SMALL_NATAL = ClusterProfile(
     planet_scale_base=0.163296,
@@ -787,15 +792,15 @@ _SMALL_NATAL = ClusterProfile(
     sign_scale_base=0.092781,
     minutes_font_size=1.8648,
     rx_font_size=1.6128,
-    glyph_y=9.7328,
-    degrees_y=13.3238,
-    sign_y=16.6358,
-    minutes_y=20.2358,
-    rx_y=23.2598,
-    min_separation=7.0,
+    glyph_y=9.4328,
+    degrees_y=13.0238,
+    sign_y=16.3358,
+    minutes_y=19.9358,
+    rx_y=22.9598,
+    min_separation=6.75,
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
-        "tick_length": 0.9675,
+        "tick_length": 0.6675,
         "arc_radius": 43.752,
     },
 )
@@ -806,15 +811,15 @@ _SMALL_DUAL_OUTER = ClusterProfile(
     sign_scale_base=0.0558,
     minutes_font_size=1.098,
     rx_font_size=0.918,
-    glyph_y=8.0768,
-    degrees_y=11.1728,
-    sign_y=13.8188,
-    minutes_y=16.1678,
-    rx_y=18.1208,
-    min_separation=5.25,
+    glyph_y=7.7768,
+    degrees_y=10.8728,
+    sign_y=13.5188,
+    minutes_y=15.8678,
+    rx_y=17.8208,
+    min_separation=5.0,
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
-        "tick_length": 0.63,
+        "tick_length": 0.33,
         "arc_radius": 44.022,
     },
 )
@@ -825,15 +830,15 @@ _SMALL_DUAL_INNER = ClusterProfile(
     sign_scale_base=0.0558,
     minutes_font_size=1.098,
     rx_font_size=0.918,
-    glyph_y=22.462,
-    degrees_y=25.558,
-    sign_y=28.204,
-    minutes_y=30.553,
-    rx_y=32.506,
+    glyph_y=22.3441,
+    degrees_y=25.4401,
+    sign_y=28.0861,
+    minutes_y=30.4351,
+    rx_y=32.3881,
     min_separation=8.0,
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
-        "tick_length": 0.27,
+        "tick_length": MIN_INDICATOR_TICK,  # the shift is capped here: 0.05 to the glyph ink
         "arc_radius": 29.23,
     },
 )
@@ -844,15 +849,15 @@ _LARGE_NATAL = ClusterProfile(
     sign_scale_base=0.128663,
     minutes_font_size=2.585995,
     rx_font_size=2.236536,
-    glyph_y=10.1551,
-    degrees_y=14.5798,
-    sign_y=18.3845,
-    minutes_y=22.3458,
-    rx_y=25.6815,
+    glyph_y=9.8551,
+    degrees_y=14.2798,
+    sign_y=18.0845,
+    minutes_y=22.0458,
+    rx_y=25.3815,
     min_separation=9.5,
     indicator={
         "start_y": HOUSE_LINE_OUTER_Y,
-        "tick_length": 0.6959,
+        "tick_length": 0.3959,
         "arc_radius": 44.0046,
     },
 )
@@ -863,15 +868,15 @@ _LARGE_DUAL_OUTER = ClusterProfile(
     sign_scale_base=0.07738,
     minutes_font_size=1.522642,
     rx_font_size=1.273028,
-    glyph_y=8.6475,
-    degrees_y=12.4299,
-    sign_y=15.2947,
-    minutes_y=17.6621,
-    rx_y=19.6224,
+    glyph_y=8.3475,
+    degrees_y=12.1299,
+    sign_y=14.9947,
+    minutes_y=17.3621,
+    rx_y=19.3224,
     min_separation=7.5,
     indicator={
         "start_y": SYN_INDICATOR_OUTER_START_Y,
-        "tick_length": 0.375,
+        "tick_length": MIN_INDICATOR_TICK,  # the tab absorbed 0.125 of the shift, then floored
         "arc_radius": 44.277,
     },
 )
@@ -882,11 +887,11 @@ _LARGE_DUAL_INNER = ClusterProfile(
     sign_scale_base=0.07738,
     minutes_font_size=1.522642,
     rx_font_size=1.273028,
-    glyph_y=23.4495,
-    degrees_y=27.0959,
-    sign_y=29.8012,
-    minutes_y=31.9922,
-    rx_y=33.8043,
+    glyph_y=23.1495,
+    degrees_y=26.7959,
+    sign_y=29.5012,
+    minutes_y=31.6922,
+    rx_y=33.5043,
     min_separation=11.5,
     indicator={
         "start_y": SYN_INDICATOR_INNER_START_Y,
