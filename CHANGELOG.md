@@ -79,6 +79,86 @@
   holding only the SVG can tell which profile drew it. Medium is unstamped on
   purpose: the attribute's absence IS the default.
 
+### Fixed
+
+- **The classic theme's zodiac wedges are opaque now.** They were the element
+  colours at `fill-opacity: 0.5` — a pastel only because white paper sat
+  underneath. On a host that shows through the chart (Studio's glass) the
+  backdrop bled into the ring. The theme now ships the exact per-channel
+  composites of those colours over white (#ffb880, #b59e80, #b4d6f8,
+  #95a4b8) at opacity 1: the same tone the theme always had, on any host.
+  The dark theme was already opaque and is untouched.
+
+- **A dimmed cusp stretch is a solid tone, not an opacity.** Where a reading
+  crosses a cusp line, the line dimmed via `stroke-opacity: 0.35` — and on a
+  see-through host the whole stretch washed out, so the axes of a dual wheel
+  appeared to stop mid-air (the As axis lost eleven units of its inner-ring
+  run behind its own reading). The dim is now a SOLID pre-composited tone,
+  per ring and per theme (`--kerykeion-modern-cusp-dim`,
+  `--kerykeion-modern-cusp-dim-outer`), numerically identical to what the
+  opacity produced over each ring's own fill.
+
+- **Dual house lines start at the ruler.** They hung 1.15 units short of it
+  (y 6.5, where the natal lines and every tether anchor at 5.348), which
+  read as axes not reaching the wheel's edge on every dual chart.
+
+## [6.0.0a89] - 2026-08-26
+
+### Fixed
+
+- **A return instant this library reported could not seed the search for the
+  next one.** Return instants are reported truncated to the whole second (the
+  chart is rebuilt from an integer `seconds` field), so the exact crossing of a
+  return reported at `T` lies in `[T, T + 1s)` — a fraction of a second AFTER the
+  value the caller holds. A forward search seeded with that value asked the
+  ephemeris for the first crossing at or after it and got the same return back;
+  a backward search happened to work, because the truncated seed lands before
+  the crossing. A client stepping through the sequence of returns with the
+  instants it was given never advanced — for solar, lunar, heliocentric and node
+  crossing alike. Ordering between a seed and a return is now decided at the
+  resolution the factory reports at: a forward search starts from the whole
+  second after the seed's, a backward one from the seed's own whole second
+  (the backend's backward searches are strictly past, so a crossing inside
+  that second is excluded and one in the second before is found), in one
+  helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
+  entry points. The backend's solvers do not reach that resolution on their
+  own — their at-crossing dead band is ~90 ms for the Sun, and their 0.001″
+  tolerance is six seconds of Pluto's motion, so a seed one second past a
+  slow body's crossing came back as its own answer — so every supported ISO search is
+  held to the contract (`_settled`): heliocentric crossings are settled to a
+  millisecond by bisection around the solver's answer, a crossing inside the
+  second before a backward seed is looked for explicitly, and a result that
+  has not moved past the seed's second restarts from outside the solver's
+  basin. The contract is pinned for the Sun, the Moon, the lunar nodes and the
+  heliocentric bodies from Mercury to Pluto plus Chiron: `next(reported(N))`
+  is `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
+  instant for instant, `previous` from the second after a reported instant
+  finds it (twenty consecutive solar returns, dead band included), and a walk
+  of steps lands on each return exactly once. One limit is the ephemeris'
+  own: a crossing within a tenth of a millisecond of a whole second cannot
+  be told from a crossing at that second, and is treated as one — the natal
+  instant, a crossing by construction, being the case that matters: seeded
+  with it, `previous` finds the cycle before birth, never a return a second
+  before the birth itself. Outside the contract, as before: the heliocentric
+  search for the lunar nodes and the Liliths, which are not heliocentric
+  bodies. Solar, lunar and node instants are reported as they were;
+  heliocentric instants settle onto the crossing itself, which moves the
+  reported second of about half the Uranus–Pluto crossings, by up to the
+  solver's tolerance — some 2 s for Uranus, 4 s for Neptune, 9 s for Pluto.
+  The date and year wrappers keep their inclusive
+  midnight seed, so a return in the first second of a date is still that
+  date's return. The one visible
+  consequence: a seed inside the same second as a crossing now selects the
+  following return — so a search seeded from the natal instant itself yields the
+  first return rather than the birth moment (four report fixtures that pinned
+  that degenerate chart are regenerated). Seeds at the edge of
+  the civil range — forward from 9999-12-31T23:59:59, backward from
+  0001-01-01T00:00:00 — used to overflow `datetime` and now refuse with
+  `KerykeionException`. Two calendar facts are pinned alongside, as the reason a
+  return is identified by its instant and never by a period: a leap year can
+  hold two solar returns (born 1 January: 1 January and 31 December 2024), and a
+  month can hold two lunar returns (2 and 29 August 2026).
+  See [release_notes/v6.0.0a89.md](release_notes/v6.0.0a89.md).
 ## [6.0.0a88] - 2026-08-25
 
 ### Fixed
