@@ -1075,44 +1075,44 @@ def test_spending_the_air_is_reported(caplog):
 #: policy, folded into these literals by the derivation itself.
 _PROFILE_GEOMETRY = {
     ("small", "natal"): {
-        "sizes": (0.163296, 2.016, 0.092781, 1.8648, 1.6128),
+        "sizes": (0.163296, 2.016, 0.085356, 1.8648, 1.6128),
         "rows": (9.4328, 13.0238, 16.3358, 19.9358, 22.9598),
         "min_separation": 6.75,
         "indicator": {"start_y": 5.348, "tick_length": 0.6675, "start_tick_length": 1.075, "arc_radius": 43.752},
     },
     ("small", "dual_outer"): {
-        "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
+        "sizes": (0.1188, 1.908, 0.051336, 1.098, 0.918),
         "rows": (7.7768, 10.8728, 13.5188, 15.8678, 17.8208),
         "min_separation": 5.0,
         "indicator": {"start_y": 5.348, "tick_length": 0.33, "start_tick_length": 0.5769, "arc_radius": 44.022},
     },
     ("small", "dual_inner"): {
-        "sizes": (0.1188, 1.908, 0.0558, 1.098, 0.918),
+        "sizes": (0.1188, 1.908, 0.051336, 1.098, 0.918),
         "rows": (22.3441, 25.4401, 28.0861, 30.4351, 32.3881),
         "min_separation": 8.0,
         "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.23},
     },
     ("large", "natal"): {
-        "sizes": (0.22644927536231882, 2.79567, 0.128663, 2.585995, 2.236536),
-        "rows": (9.8551, 14.2798, 18.0845, 22.0458, 25.3815),
+        "sizes": (0.22644927536231882, 2.79567, 0.118367, 2.585995, 2.236536),
+        "rows": (9.8817, 14.318, 18.0804, 22.0046, 25.3583),
         "min_separation": 9.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.3959, "start_tick_length": 1.0224, "arc_radius": 44.0046},
+        "indicator": {"start_y": 5.348, "tick_length": 0.4094, "start_tick_length": 1.049, "arc_radius": 43.9921},
     },
     # Dual large: the glyph keeps classic parity (×1.372) while the reading
     # stays at the MEDIUM size (k_text = 1.0) — Giacomo's pick on a rendered
     # four-way comparison: parity belongs to the glyph alone, and a large
     # dual wheel keeps the reading it always had.
     ("large", "dual_outer"): {
-        "sizes": (0.18115942028985507, 2.12, 0.062, 1.22, 1.02),
-        "rows": (8.6024, 12.3607, 15.0559, 17.3951, 19.3375),
+        "sizes": (0.18115942028985507, 2.12, 0.05704, 1.22, 1.02),
+        "rows": (8.6069, 12.3693, 15.0567, 17.3886, 19.3356),
         "min_separation": 7.5,
-        "indicator": {"start_y": 5.348, "tick_length": 0.25, "start_tick_length": 0.4567, "arc_radius": 44.1037},
+        "indicator": {"start_y": 5.348, "tick_length": 0.2513, "start_tick_length": 0.4612, "arc_radius": 44.1007},
     },
     ("large", "dual_inner"): {
-        "sizes": (0.18115942028985507, 2.12, 0.062, 1.22, 1.02),
-        "rows": (23.1094, 26.8099, 29.4375, 31.7019, 33.5815),
+        "sizes": (0.18115942028985507, 2.12, 0.05704, 1.22, 1.02),
+        "rows": (23.1085, 26.8161, 29.4358, 31.6931, 33.5804),
         "min_separation": 11.5,
-        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.283},
+        "indicator": {"start_y": 20.5, "tick_length": 0.25, "arc_radius": 29.2808},
     },
 }
 
