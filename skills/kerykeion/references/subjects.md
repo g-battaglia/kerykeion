@@ -248,7 +248,11 @@ carries over with the mode.
 Only a mode actually used is inherited — a natal that computed no nakshatras
 records `None` too, and that `None` is not the legacy opt-out, so
 `PlanetaryReturnFactory(..., calculate_nakshatra=True)` on such a natal starts
-from the `"LAHIRI"` default.
+from the `"LAHIRI"` default. `PlanetaryReturnFactory` also TAKES the kwarg
+(right after `calculate_nakshatra`), and an explicit value outranks the natal —
+`None` included, which is why its default is a sentinel rather than `None`.
+Secondary progressions and the Davison composite take no such override; they
+read the natal.
 
 ## Composite subjects
 

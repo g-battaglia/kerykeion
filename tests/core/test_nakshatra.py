@@ -534,6 +534,11 @@ class TestNakshatraAyanamsaTravelsToDerivedCharts:
         suppress_geonames_warning=True,
     )
 
+    _LOCATION = dict(
+        city="Rome", nation="IT", lng=12.5, lat=41.9,
+        tz_str="Europe/Rome", online=False,
+    )
+
     @pytest.fixture(scope="class")
     def natal(self):
         return AstrologicalSubjectFactory.from_birth_data(
@@ -556,6 +561,93 @@ class TestNakshatraAyanamsaTravelsToDerivedCharts:
         )
         solar_return = factory.next_return_from_date(2020, 6, 1, return_type="Solar")
         assert solar_return.nakshatra_ayanamsa == "RAMAN"
+        assert solar_return.sun.nakshatra is not None
+
+    def test_an_explicit_ayanamsa_outranks_the_natal(self):
+        """Inheritance is the fallback, not the rule. A caller who names the mode
+        for THIS return gets it, whatever the natal was placed with — and the
+        values follow the mode asked for, checked against the same instant cast
+        directly rather than a memorised name."""
+        from kerykeion.planetary_returns import PlanetaryReturnFactory
+
+        lahiri_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Natal LAHIRI", calculate_nakshatra=True, nakshatra_ayanamsa="LAHIRI", **self._BIRTH
+        )
+        factory = PlanetaryReturnFactory(
+            lahiri_natal, calculate_nakshatra=True, nakshatra_ayanamsa="RAMAN", **self._LOCATION
+        )
+        solar_return = factory.next_return_from_date(2020, 6, 1, return_type="Solar")
+
+        assert solar_return.nakshatra_ayanamsa == "RAMAN"
+
+        same_instant = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Same instant",
+            solar_return.iso_formatted_utc_datetime,
+            calculate_nakshatra=True,
+            nakshatra_ayanamsa="RAMAN",
+            **self._LOCATION,
+        )
+        assert solar_return.nakshatra_ayanamsa_value == same_instant.nakshatra_ayanamsa_value
+        assert solar_return.sun.nakshatra == same_instant.sun.nakshatra
+
+    def test_an_explicit_none_opts_out_even_under_a_natal_that_had_a_mode(self, caplog):
+        """``None`` from the caller is the legacy uncorrected division, asked for
+        on purpose. It has to outrank a natal that DID place its nakshatras, or
+        the one parameter that reproduces pre-v6 values cannot be used on a
+        derived chart at all — hence the sentinel default: silence and ``None``
+        are different answers."""
+        import logging
+
+        from kerykeion.planetary_returns import PlanetaryReturnFactory
+
+        lahiri_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Natal LAHIRI", calculate_nakshatra=True, nakshatra_ayanamsa="LAHIRI", **self._BIRTH
+        )
+        legacy_factory = PlanetaryReturnFactory(
+            lahiri_natal, nakshatra_ayanamsa=None, **self._LOCATION
+        )
+        with caplog.at_level(logging.WARNING, logger="kerykeion.astrological_subject.factory"):
+            legacy = legacy_factory.next_return_from_date(2020, 6, 1, return_type="Solar")
+
+        assert legacy.nakshatra_ayanamsa is None
+        assert legacy.nakshatra_ayanamsa_value is None
+        assert legacy.sun.nakshatra is not None
+        assert [r for r in caplog.records if "legacy behaviour" in r.getMessage()]
+
+        inherited = PlanetaryReturnFactory(lahiri_natal, **self._LOCATION).next_return_from_date(
+            2020, 6, 1, return_type="Solar"
+        )
+        assert inherited.nakshatra_ayanamsa == "LAHIRI"
+        assert legacy.sun.nakshatra != inherited.sun.nakshatra
+
+    def test_user_without_a_definition_is_refused_by_the_constructor(self):
+        """``"USER"`` names no ayanamsa by itself: t0 and ayan_t0 ARE the mode.
+        The refusal belongs on the line that got the value wrong, not three
+        method calls later inside the recast — and it is scoped like the subject
+        factory's, so a return that would never cast one is not asked for it."""
+        from kerykeion.planetary_returns import PlanetaryReturnFactory
+        from kerykeion.schemas.exceptions import KerykeionException
+
+        bare = AstrologicalSubjectFactory.from_birth_data("Natal bare", **self._BIRTH)
+
+        with pytest.raises(KerykeionException, match="nakshatra_ayanamsa='USER'"):
+            PlanetaryReturnFactory(
+                bare, calculate_nakshatra=True, nakshatra_ayanamsa="USER", **self._LOCATION
+            )
+
+        # No nakshatras to cast, no definition demanded.
+        PlanetaryReturnFactory(bare, nakshatra_ayanamsa="USER", **self._LOCATION)
+
+        with_definition = PlanetaryReturnFactory(
+            bare,
+            calculate_nakshatra=True,
+            nakshatra_ayanamsa="USER",
+            custom_ayanamsa_t0=2451545.0,
+            custom_ayanamsa_ayan_t0=23.85,
+            **self._LOCATION,
+        )
+        solar_return = with_definition.next_return_from_date(2020, 6, 1, return_type="Solar")
+        assert solar_return.nakshatra_ayanamsa == "USER"
         assert solar_return.sun.nakshatra is not None
 
     def test_davison_composite_inherits_the_shared_ayanamsa(self, natal):
@@ -719,6 +811,28 @@ class TestANatalWithoutNakshatrasIsNotAnOptOut:
 
         assert solar_return.sun.nakshatra is None
         assert solar_return.nakshatra_ayanamsa is None
+
+    def test_an_explicit_ayanamsa_still_outranks_the_default(self, bare_natal):
+        """The default is what silence gets. A caller who names ``None`` on a
+        natal that has no mode of its own is asking for the legacy values, and
+        must not be handed the corrected default instead — the sentinel is the
+        only thing keeping those two apart."""
+        from kerykeion.planetary_returns import PlanetaryReturnFactory
+        from kerykeion.settings.config_constants import DEFAULT_NAKSHATRA_AYANAMSA
+
+        legacy = PlanetaryReturnFactory(
+            bare_natal, calculate_nakshatra=True, nakshatra_ayanamsa=None, **self._LOCATION
+        ).next_return_from_date(2020, 6, 1, return_type="Solar")
+
+        assert legacy.nakshatra_ayanamsa is None
+        assert legacy.sun.nakshatra is not None
+
+        default = PlanetaryReturnFactory(
+            bare_natal, calculate_nakshatra=True, **self._LOCATION
+        ).next_return_from_date(2020, 6, 1, return_type="Solar")
+
+        assert default.nakshatra_ayanamsa == DEFAULT_NAKSHATRA_AYANAMSA
+        assert legacy.sun.nakshatra != default.sun.nakshatra
 
     def test_the_progression_is_not_affected(self, bare_natal):
         """Pinned, not assumed: `SecondaryProgressionFactory` copies the natal's

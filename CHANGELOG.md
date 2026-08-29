@@ -33,9 +33,10 @@ drawing changed except the words of the lunar phase.
   records `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Sidereal charts
   are untouched. `nakshatra_ayanamsa=None` restores the uncorrected values,
   still with the warning. Returns, progressions and Davison composites inherit
-  the setting — and for `"USER"` the definition (`custom_ayanamsa_t0` /
-  `custom_ayanamsa_ayan_t0`) travels with the name, which alone is not an
-  ayanamsa. A chart that asks for no nakshatras is never asked for one either.
+  the setting, and `PlanetaryReturnFactory` takes it as a keyword of its own,
+  where an explicit value outranks the natal — and for `"USER"` the definition
+  (`custom_ayanamsa_t0` / `custom_ayanamsa_ayan_t0`) travels with the name,
+  which alone is not an ayanamsa. A chart that asks for no nakshatras is never asked for one either.
 
 - **`moonrise` / `moonset` are populated.** The four fields on
   `MoonPhaseMoonSummaryModel` existed, the XML serialiser printed them, and

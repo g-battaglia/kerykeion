@@ -155,6 +155,7 @@ Constructor (`kerykeion/planetary_returns/factory.py`) — first arg `subject` (
 | `altitude` | `None` | meters; only affects Topocentric perspective |
 | `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0` | `None` | fall back to the values on the subject; both required for `sidereal_mode="USER"` |
 | `active_fixed_stars`, `calculate_dignities`, `calculate_nakshatra`, `calculate_gauquelin`, `calculate_nutation`, `calculate_local_space` | `None`/`False` | v6 enrichment flags; when not passed they are INFERRED from the natal subject's populated fields |
+| `nakshatra_ayanamsa` | *inherited* | sits right after `calculate_nakshatra`. An explicit value WINS over the natal — `None` included, which is the legacy uncorrected division, so the default is a sentinel and not `None`. Unpassed: the mode the natal actually used, else `"LAHIRI"`. `"USER"` needs `custom_ayanamsa_t0`/`custom_ayanamsa_ayan_t0` and is refused by the constructor without them (only when `calculate_nakshatra` and the natal is not sidereal) |
 
 The return chart copies the natal frame (`zodiac_type`, `sidereal_mode`,
 `houses_system_identifier`, `perspective_type`, `active_points`) and is cast at the
