@@ -1189,3 +1189,144 @@ class TestFactoryFromSubjectRangeEdge:
         assert overview.moon is not None
         assert overview.moon.detailed is not None
         assert overview.moon.detailed.upcoming_phases is not None
+
+
+class TestTheMidnightThatOpensADayOfUnusualLength:
+    """A civil midnight is not always one instant, and one rule has to name it.
+
+    Both ends of the rise/set window are a midnight: the one that opens the day
+    and the one that opens the next. When a zone changes its offset AT 00:00 the
+    two readings of that wall time are an hour apart, and the choice is not free
+    — whatever the opening boundary excludes, the closing boundary of the
+    previous day has to include, or an hour of the calendar belongs to two days
+    or to none.
+
+    Inside a fall-back FOLD the day opens at the FIRST occurrence: the repeated
+    hour is already the new civil day. Both boundaries used to take the second,
+    which opened the day an hour late and closed the day before an hour late, so
+    a moonrise in that hour was filed under the wrong date.
+
+    Across a spring-forward GAP midnight never happens, and the reading that
+    lands past the gap — the day's real first instant — is the other one. The
+    resolver has to tell the two cases apart; a single ``is_dst`` cannot.
+    """
+
+    _HAVANA = dict(
+        lng=-82.3589, lat=23.1136, tz_str="America/Havana", city="Havana", nation="CU"
+    )
+    _SANTIAGO = dict(
+        lng=-70.6483, lat=-33.4569, tz_str="America/Santiago", city="Santiago", nation="CL"
+    )
+
+    @pytest.fixture(autouse=True)
+    def _no_real_backend_calls(self):
+        """Shadow the module blindfold: the real backend answers here."""
+        yield
+
+    @staticmethod
+    def _subject(name: str, year: int, month: int, day: int, **location):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, month, day, 12, 0,
+            online=False, suppress_geonames_warning=True, **location,
+        )
+
+    @staticmethod
+    def _window(subject) -> tuple[float, float]:
+        """``(jd_midnight, jd_next_midnight)`` — the day's two boundaries."""
+        from kerykeion.moon_phase_details.factory import (
+            _local_civil_day_window,
+            _next_local_midnight,
+        )
+
+        window = _local_civil_day_window(subject)
+        assert window is not None
+        tzinfo, dt_local, jd_midnight = window
+        return jd_midnight, _next_local_midnight(dt_local, tzinfo)
+
+    @staticmethod
+    def _jd_of_utc(year: int, month: int, day: int, hour: int) -> float:
+        from kerykeion.utilities.core import datetime_to_julian
+
+        return datetime_to_julian(datetime(year, month, day, hour, tzinfo=timezone.utc))
+
+    def test_the_two_zones_really_do_it_at_midnight(self) -> None:
+        """The premise, asserted rather than assumed: a tz database that moved
+        either transition off 00:00 would leave the tests below green for a
+        reason that has nothing to do with the resolver."""
+        from zoneinfo import ZoneInfo
+
+        from kerykeion.utilities.core import is_ambiguous, is_nonexistent
+
+        assert is_ambiguous(datetime(2026, 11, 1), ZoneInfo("America/Havana"))
+        assert is_nonexistent(datetime(2026, 9, 6), ZoneInfo("America/Santiago"))
+
+    def test_a_folded_midnight_opens_the_day_at_its_first_occurrence(self) -> None:
+        """Havana's clocks fall back at 00:00 on 2026-11-01, so the day is 25
+        hours long and opens at 04:00 UTC — the summer reading. The second
+        occurrence, 05:00 UTC, is already an hour into the day."""
+        jd_midnight, jd_next = self._window(
+            self._subject("Havana fold", 2026, 11, 1, **self._HAVANA)
+        )
+
+        assert jd_midnight == pytest.approx(self._jd_of_utc(2026, 11, 1, 4), abs=1e-9)
+        assert jd_next == pytest.approx(self._jd_of_utc(2026, 11, 2, 5), abs=1e-9)
+        assert (jd_next - jd_midnight) * 24.0 == pytest.approx(25.0, abs=1e-6)
+
+    def test_the_day_before_the_fold_ends_where_the_folded_day_begins(self) -> None:
+        """The invariant the shared resolver exists for: the two boundaries are
+        the same instant, so the repeated hour is counted once, on the right
+        side. October 31 is an ordinary 24-hour day."""
+        jd_midnight_31, jd_next_31 = self._window(
+            self._subject("Havana eve", 2026, 10, 31, **self._HAVANA)
+        )
+        jd_midnight_01, _ = self._window(
+            self._subject("Havana fold", 2026, 11, 1, **self._HAVANA)
+        )
+
+        assert jd_next_31 == pytest.approx(jd_midnight_01, abs=1e-9)
+        assert (jd_next_31 - jd_midnight_31) * 24.0 == pytest.approx(24.0, abs=1e-6)
+
+    def test_a_midnight_inside_a_gap_still_opens_the_day_after_it(self) -> None:
+        """Santiago's clocks jump 00:00 -> 01:00 on 2026-09-06: midnight never
+        happens, the day is 23 hours long, and it opens at the first instant
+        that does exist. Unchanged by the fold correction."""
+        jd_midnight, jd_next = self._window(
+            self._subject("Santiago gap", 2026, 9, 6, **self._SANTIAGO)
+        )
+
+        assert jd_midnight == pytest.approx(self._jd_of_utc(2026, 9, 6, 4), abs=1e-9)
+        assert jd_next == pytest.approx(self._jd_of_utc(2026, 9, 7, 3), abs=1e-9)
+        assert (jd_next - jd_midnight) * 24.0 == pytest.approx(23.0, abs=1e-6)
+
+    def test_the_sunrise_does_not_move_with_the_boundary(self) -> None:
+        """The correction moves the day's opening an hour earlier; the Sun's
+        answer is unchanged, because sunrise is found by searching FORWARD and
+        the Havana sunrise is six hours past both readings of midnight. Asserted
+        rather than assumed: a resolver change that DID move the Sun would be a
+        different release."""
+        from kerykeion.ephemeris_backend.backend import ephemeris_session
+        from kerykeion.moon_phase_details.factory import _compute_sun_times
+        from kerykeion.moon_phase_details.utils import compute_sun_rise_set_ephe
+        from kerykeion.utilities.core import julian_to_datetime
+
+        subject = self._subject("Havana sun", 2026, 11, 1, **self._HAVANA)
+        result = _compute_sun_times(subject)
+        assert result is not None
+        sunrise, sunset, _solar_noon = result
+        assert sunrise is not None and sunset is not None
+        assert sunrise.date() == date(2026, 11, 1)
+
+        jd_midnight, _jd_next = self._window(subject)
+        with ephemeris_session():
+            # The pre-fix boundary: the fold's SECOND occurrence, an hour later.
+            from_the_later_reading, _ = compute_sun_rise_set_ephe(
+                jd_midnight + 1.0 / 24.0, subject.lat, subject.lng
+            )
+        assert from_the_later_reading is not None
+        from_the_later_reading_local = julian_to_datetime(from_the_later_reading).replace(
+            tzinfo=timezone.utc
+        ).astimezone(sunrise.tzinfo)
+        # Same sunrise, to well inside a second: the backend's root-finder starts
+        # from the boundary it is given, so the two runs differ only by the last
+        # digits of its own convergence.
+        assert abs((from_the_later_reading_local - sunrise).total_seconds()) < 1.0

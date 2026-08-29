@@ -690,12 +690,17 @@ class ChartConfiguration:
                     f"Available modes are: {get_args(SiderealMode)}"
                 )
             if (
-                self.nakshatra_ayanamsa == "USER"
+                self.calculate_nakshatra
+                and self.nakshatra_ayanamsa == "USER"
                 and self.zodiac_type != "Sidereal"
                 and (self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None)
             ):
-                # On a sidereal chart the value is ignored, so only the chart
-                # that would actually cast it needs the definition.
+                # Only the chart that would actually CAST it needs the definition,
+                # and two things keep a chart from casting it: a sidereal zodiac,
+                # which supplies the rotation itself, and `calculate_nakshatra=False`,
+                # which never asks for one. The same pair gates the persistence of
+                # the definition further down, so a configuration accepted here is
+                # exactly the one recorded there.
                 raise KerykeionException(
                     "nakshatra_ayanamsa='USER' requires both custom_ayanamsa_t0 (reference epoch as "
                     "Julian Day) and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."

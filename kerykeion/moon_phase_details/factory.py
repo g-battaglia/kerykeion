@@ -67,6 +67,8 @@ from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
 from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName, LunarPhaseStage
 from kerykeion.utilities.core import (
     datetime_to_julian,
+    is_ambiguous,
+    is_nonexistent,
     julian_to_datetime,
     localize_naive,
     lunar_major_phase_from_degrees,
@@ -224,6 +226,41 @@ def _build_upcoming_phases(
     )
 
 
+def _resolve_civil_midnight(naive: datetime, tzinfo: ZoneInfo) -> datetime:
+    """
+    Resolve a civil midnight to the instant the day actually opens.
+
+    The two boundaries of the window — this day's midnight and the next one —
+    have to be resolved by the SAME rule, or the day they enclose is not a day:
+    what one boundary excludes the other has to include, and a single shared
+    resolver is the only way to keep that true.
+
+    Midnight is not always one instant. A zone that falls back at 00:00
+    (America/Havana 2026-11-01) makes it happen TWICE, and the day opens at the
+    first of the two: the repeated hour belongs to the new civil day, so the
+    larger-offset reading is the boundary. Taking the smaller one instead — as
+    both call sites did — opened the day an hour late AND closed the previous
+    day an hour late, so an event inside that hour was dropped from the day it
+    belongs to and filed under the day before.
+
+    A zone that springs forward at 00:00 (America/Santiago 2026-09-06,
+    America/Sao_Paulo 2018-11-04, Africa/Cairo 2023-04-28) makes midnight
+    happen NOT AT ALL, and there the smaller-offset reading is the answer it
+    already gave: it lands past the gap, on the first instant of the civil day
+    that exists.
+
+    The two answers are opposite readings of the same wall time, which is why
+    the fold has to be recognised rather than defaulted — ``is_dst`` alone
+    cannot serve both.
+    """
+    # Gap before fold: a nonexistent wall time also reports two different fold
+    # offsets, so testing the fold first would misclassify every gap.
+    if not is_nonexistent(naive, tzinfo) and is_ambiguous(naive, tzinfo):
+        # Fall-back fold: the FIRST occurrence, i.e. the larger UTC offset.
+        return localize_naive(naive, tzinfo, is_dst=True)
+    return localize_naive(naive, tzinfo, is_dst=False)
+
+
 def _local_civil_day_window(
     subject: AstrologicalSubjectModel,
 ) -> Optional[tuple[ZoneInfo, datetime, float]]:
@@ -274,20 +311,12 @@ def _local_civil_day_window(
     dt_local = dt_utc.astimezone(tzinfo)
 
     # Calculate JD for midnight local time (start of the day)
-    # IMPORTANT: resolve the wall time through localize_naive rather than attaching
-    # the tzinfo directly, so DST edge cases are decided instead of defaulted.
     midnight_naive = datetime(
         year=dt_local.year,
         month=dt_local.month,
         day=dt_local.day,
     )
-    # Civil midnight can be ambiguous (fall-back fold) or nonexistent (spring-forward
-    # gap at 00:00 — America/Sao_Paulo 2018-11-04, Africa/Cairo 2023-04-28). The
-    # smaller-offset reading answers both correctly: inside a fold it is the
-    # post-transition occurrence, and across a gap it is the first instant of the
-    # civil day that actually exists. A bare localize silently took a default here.
-    midnight_local = localize_naive(midnight_naive, tzinfo, is_dst=False)
-    midnight_utc = midnight_local.astimezone(timezone.utc)
+    midnight_utc = _resolve_civil_midnight(midnight_naive, tzinfo).astimezone(timezone.utc)
     jd_midnight = datetime_to_julian(midnight_utc)
 
     return tzinfo, dt_local, jd_midnight
@@ -306,10 +335,12 @@ def _next_local_midnight(dt_local: datetime, tzinfo: ZoneInfo) -> float:
     raises ``OverflowError`` on 9999-12-31, and computing it eagerly took the
     sunrise down with the moonrise on the last day the calendar can hold.
 
-    Tomorrow's midnight is resolved through ``localize_naive`` rather than as
-    ``jd_midnight + 1``: across a DST transition the civil day is 23 or 25 hours
-    long, and a fixed 24 would either clip an event out of the day or let
-    tomorrow's in.
+    Tomorrow's midnight is resolved through :func:`_resolve_civil_midnight`
+    rather than as ``jd_midnight + 1``: across a DST transition the civil day is
+    23 or 25 hours long, and a fixed 24 would either clip an event out of the
+    day or let tomorrow's in. It is the same resolver the opening boundary uses,
+    which is what makes the two agree about where one day ends and the next
+    begins.
 
     Raises:
         OverflowError: on 9999-12-31, whose civil day has no closing midnight
@@ -320,7 +351,7 @@ def _next_local_midnight(dt_local: datetime, tzinfo: ZoneInfo) -> float:
         month=dt_local.month,
         day=dt_local.day,
     ) + timedelta(days=1)
-    next_midnight_local = localize_naive(next_naive, tzinfo, is_dst=False)
+    next_midnight_local = _resolve_civil_midnight(next_naive, tzinfo)
     return datetime_to_julian(next_midnight_local.astimezone(timezone.utc))
 
 
