@@ -1125,12 +1125,9 @@ class TestXhighReviewFixes:
 
         _spy.__signature__ = inspect.Signature(parameters=real_params)
         monkeypatch.setattr(AstrologicalSubjectFactory, "from_birth_data", _spy)
-        flags = sr.build_flags(
+        flags = sr.SubjectFlags(
             name="A", date="2000-01-01", time="12:30:45", seconds=0,
-            iso_utc=None, lat=45.0, lng=9.0, tz="Europe/Rome", city=None,
-            nation=None, online=None, offline=True, altitude=None, zodiac=None,
-            sidereal_mode=None, houses=None, perspective=None, points=None,
-            fixed_stars=None, with_flags=None, without_flags=None, set_flags=None,
+            lat=45.0, lng=9.0, tz="Europe/Rome", offline=True,
         )
         sr.resolve_subject(flags, None)
         # Without the fix seconds=0 is dropped (absent); with it, forwarded as 0.

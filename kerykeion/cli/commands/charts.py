@@ -1,24 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Chart commands: ``natal``, ``synastry``, ``transit`` and the rest.
+"""Chart commands: ``natal``, ``now``, ``synastry``, ``transit``, ``composite``, ``return``, ``progression``.
 
-Each function here is a plain callable annotated with the shared ``Annotated``
-option aliases from :mod:`kerykeion.cli.options`; :mod:`kerykeion.cli.app`
-registers them as top-level commands. Keeping them decorator-free means the
-functions are callable directly from tests without going through Click.
-
-Design choice: the relationship/predictive charts (``synastry``, ``transit``,
-``composite``, ``return``, ``progression``) take the base subject as
-``-s <profile>`` only — you ``subject save`` a profile once, then reuse it. Only
-``natal`` and ``now`` spell the full inline flag set, because a one-off natal is
-the most common interactive use. SVG always goes through
-:meth:`ChartDrawer.generate_svg_string` (never ``save_svg``).
+The relationship and predictive charts take the base subject as ``-s <profile>``
+only — save it once, reuse it. ``natal`` and ``now`` spell the inline flag set,
+because a one-off natal is the common interactive use. SVG always goes through
+``ChartDrawer.generate_svg_string``, never ``save_svg`` (which writes into the
+home directory and prints to stdout).
 """
 
 from __future__ import annotations
 
 from typing import Optional
 
-from kerykeion.cli import subject_resolver, warnings
+from kerykeion.cli import subject_resolver
 from kerykeion.cli.commands._shared import _emit, _stored_subject, _subject_from, with_render_flags
 from kerykeion.cli.options import (
     DayOpt,
@@ -58,23 +52,61 @@ from kerykeion.cli.options import (
 from kerykeion.cli.rendering import formats
 
 _RETURN_TYPES = ("Solar", "Lunar")
-
-
-def _natal_chart(subject: object) -> object:
-    from kerykeion import ChartDataFactory
-
-    # ``subject`` is the AstrologicalSubjectModel returned by resolve_subject;
-    # typed ``object`` here because the resolver is intentionally untyped.
-    return ChartDataFactory.create_natal_chart_data(subject)  # type: ignore[arg-type]
+# The natal frame a transit wheel must share, as SubjectFlags field → model attribute.
+# The custom-ayanamsa pair is part of it: a natal cast with --sidereal-mode USER
+# needs its two numbers on every rebuild.
+_FRAME = {
+    "zodiac": "zodiac_type",
+    "sidereal_mode": "sidereal_mode",
+    "houses": "houses_system_identifier",
+    "perspective": "perspective_type",
+    "custom_ayanamsa_t0": "custom_ayanamsa_t0",
+    "custom_ayanamsa_ayan_t0": "custom_ayanamsa_ayan_t0",
+}
 
 
 def _emit_subject_or_chart(subject: object, fmt: Optional[str], output: Optional[str], opts: object = None) -> None:
     """Subject for text/json/xml; a natal chart-data wrapper for SVG."""
     resolved = formats.resolve_format(fmt, output)
     if resolved == "svg":
-        warnings.output_with_warnings(_natal_chart(subject), resolved, output, opts=opts)
-    else:
-        warnings.output_with_warnings(subject, resolved, output, opts=opts)
+        from kerykeion import ChartDataFactory
+
+        subject = ChartDataFactory.create_natal_chart_data(subject)  # type: ignore[arg-type]
+    _emit(subject, resolved, output, opts)
+
+
+def _relocation(
+    lat: Optional[float],
+    lng: Optional[float],
+    tz: Optional[str],
+    city: Optional[str],
+    online: Optional[bool],
+    offline: Optional[bool],
+    cmd: str,
+) -> bool:
+    """Validate the relocated-place flags ``transit`` and ``return`` share; True when coordinates were given.
+
+    Coordinates come as a whole group: the natal timezone standing in for a new
+    latitude/longitude would localise the moment in the wrong zone — a
+    multi-hour error in the houses, with no warning. A city geocodes, so it
+    excludes coordinates and cannot be honoured offline.
+    """
+    given = [value for value in (lat, lng, tz) if value is not None]
+    if 0 < len(given) < 3:
+        raise ValueError(
+            f"a relocated {cmd} needs --lat, --lng and --tz together (or none, to use the natal birthplace); "
+            "the natal timezone does not match new coordinates."
+        )
+    if city is not None and given:
+        raise ValueError(
+            "pass either --city or --lat/--lng/--tz, not both: mixing them silently picks one place and drops the other."
+        )
+    if city is not None and (offline is True or online is False):
+        raise ValueError(
+            "--city cannot be resolved with --offline; drop it (geocoding needs the network) or pass "
+            f"--lat/--lng/--tz for an offline relocated {cmd}."
+        )
+    return bool(given)
 
 
 @with_render_flags
@@ -108,8 +140,7 @@ def natal(
     opts: object = None,
 ) -> None:
     """Natal chart for a subject: report (text), JSON, XML or SVG."""
-    flags = _subject_from(locals())
-    model = subject_resolver.resolve_subject(flags, profile)
+    model = subject_resolver.resolve_subject(_subject_from(locals()), profile)
     _emit_subject_or_chart(model, fmt, output, opts)
 
 
@@ -139,16 +170,8 @@ def now(
     opts: object = None,
 ) -> None:
     """Subject for the current moment (transit-style snapshot)."""
-    flags = _subject_from(
-        locals(),
-        date=None,
-        time=None,
-        seconds=None,
-        iso_utc=None,
-        mode_override="current",
-    )
-    model = subject_resolver.resolve_subject(flags, None)
-    _emit_subject_or_chart(model, fmt, output, opts)
+    flags = _subject_from(locals(), date=None, time=None, seconds=None, iso_utc=None, mode_override="current")
+    _emit_subject_or_chart(subject_resolver.resolve_subject(flags, None), fmt, output, opts)
 
 
 @with_render_flags
@@ -165,8 +188,7 @@ def synastry(
 
     first = _stored_subject(profile, "synastry")
     second = _stored_subject(subject2, "synastry", "-S")
-    chart = ChartDataFactory.create_synastry_chart_data(first, second)
-    _emit(chart, fmt, output, opts)
+    _emit(ChartDataFactory.create_synastry_chart_data(first, second), fmt, output, opts)
 
 
 @with_render_flags
@@ -189,79 +211,40 @@ def transit(
 ) -> None:
     """Transit dual wheel: natal (inner) vs a transit moment (outer).
 
-    The transit moment defaults to now at the natal birthplace (offline), so
-    ``transit -s ada`` works without re-typing coordinates. Pass ``--lat``/
-    ``--lng``/``--tz`` for a relocated transit, or ``--city --online`` to
-    geocode. For a specific moment, pass ``--to-date`` and ``--to-time``
-    together; omit both for the current moment.
+    The moment defaults to now at the natal birthplace (offline). Pass
+    ``--lat/--lng/--tz`` for a relocated transit, or ``--city`` to geocode; pass
+    ``--to-date`` and ``--to-time`` together for a specific moment.
     """
-    if to_time is not None and to_date is None:
-        raise ValueError("--to-time requires --to-date (omit both to transit the current moment).")
-    if to_date is not None and to_time is None:
-        raise ValueError("--to-date also requires --to-time (omit both to transit the current moment).")
-    # A relocated transit needs matching coordinates AND timezone. Letting the
-    # natal tz_str stand in when only --lat/--lng are overridden would localise
-    # the transit moment in the natal zone (e.g. Rome) at the new coordinates
-    # (e.g. New York) — a multi-hour UTC error in the houses/Ascendant, with no
-    # warning. Require the whole inline group, or none (use the natal place).
-    _geo_provided = [v for v in (lat, lng, tz) if v is not None]
-    if 0 < len(_geo_provided) < 3:
-        raise ValueError(
-            "a relocated transit needs --lat, --lng and --tz together (or none, "
-            "to use the natal birthplace); the natal timezone does not match new "
-            "coordinates."
-        )
-    # ``--city`` relocates by geocoding, so the natal coordinates must NOT be
-    # inherited: the factory only geocodes when coordinates are missing, and
-    # inherited ones satisfied that gate — the wheel stayed cast for the natal
-    # birthplace while the requested city appeared as a display label. Geocoding
-    # needs the network, so an explicit --offline alongside a bare --city has
-    # no honest resolution.
-    if city is not None and not _geo_provided:
-        if offline is True or online is False:
-            raise ValueError(
-                "--city cannot be resolved with --offline; drop it (geocoding "
-                "needs the network) or pass --lat/--lng/--tz for an offline "
-                "relocation."
-            )
-    _inherit_geo = city is None
+    if (to_time is None) != (to_date is None):
+        raise ValueError("--to-date and --to-time go together (omit both to transit the current moment).")
+    relocated = _relocation(lat, lng, tz, city, online, offline, "transit")
     from kerykeion import ChartDataFactory
 
     natal = _stored_subject(profile, "transit", online=online, offline=offline)
-    # The transit moment is a minimal subject: just a place and a moment, but it
-    # MUST share the natal frame (zodiac, sidereal mode, houses, perspective) —
-    # ``create_transit_chart_data`` passes both subjects verbatim to
-    # ``create_chart_data``; it does not re-frame the transit wheel. Without
-    # inheriting these the outer ring would always be Tropical/Placidus/
-    # Apparent-Geocentric regardless of the natal, producing a dual wheel whose
-    # two rings disagree. ``series transits`` does the same inheritance. The
-    # custom-ayanamsa pair is part of that frame: without it a natal cast with
-    # ``--sidereal-mode USER`` crashes the transit resolution (the mode needs
-    # its two numbers on every rebuild).
+    # A city geocodes its own place; otherwise the natal birthplace stands unless relocated.
+    if relocated:
+        place = {"lat": lat, "lng": lng, "tz": tz}
+    elif city is not None:
+        place = {}
+    else:
+        place = {"lat": natal.lat, "lng": natal.lng, "tz": natal.tz_str}
+    # ``create_transit_chart_data`` passes both subjects verbatim, so the transit
+    # moment must share the natal frame or the two rings would disagree.
     transit_flags = subject_resolver.SubjectFlags(
         name="Transit",
         date=to_date,
         time=to_time,
-        lat=lat if lat is not None else (getattr(natal, "lat", None) if _inherit_geo else None),
-        lng=lng if lng is not None else (getattr(natal, "lng", None) if _inherit_geo else None),
-        tz=tz if tz is not None else (getattr(natal, "tz_str", None) if _inherit_geo else None),
         city=city,
         nation=nation,
         online=online,
         offline=offline,
         altitude=altitude,
-        zodiac=getattr(natal, "zodiac_type", None),
-        sidereal_mode=getattr(natal, "sidereal_mode", None),
-        houses=getattr(natal, "houses_system_identifier", None),
-        perspective=getattr(natal, "perspective_type", None),
-        custom_ayanamsa_t0=getattr(natal, "custom_ayanamsa_t0", None),
-        custom_ayanamsa_ayan_t0=getattr(natal, "custom_ayanamsa_ayan_t0", None),
-        # Default to "now" when no --to-date is given.
         mode_override=None if to_date else "current",
+        **place,
+        **{flag: getattr(natal, attr, None) for flag, attr in _FRAME.items()},
     )
     transit_subject = subject_resolver.resolve_subject(transit_flags, None)
-    chart = ChartDataFactory.create_transit_chart_data(natal, transit_subject)
-    _emit(chart, fmt, output, opts)
+    _emit(ChartDataFactory.create_transit_chart_data(natal, transit_subject), fmt, output, opts)
 
 
 @with_render_flags
@@ -279,8 +262,7 @@ def composite(
     first = _stored_subject(profile, "composite")
     second = _stored_subject(subject2, "composite", "-S")
     composite_subject = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
-    chart = ChartDataFactory.create_composite_chart_data(composite_subject)
-    _emit(chart, fmt, output, opts)
+    _emit(ChartDataFactory.create_composite_chart_data(composite_subject), fmt, output, opts)
 
 
 @with_render_flags
@@ -304,77 +286,31 @@ def return_chart(
 ) -> None:
     """Planetary return (Solar/Lunar) as a dual wheel: natal + return chart.
 
-    The return is cast for the natal birthplace by default (offline, no network).
-    Override the location for a relocated return with ``--lat/--lng/--tz`` or
-    with ``--city --nation`` (geocoded; never mix the two — exit 4, one command
-    one place).
+    Cast for the natal birthplace by default (offline). Relocate with
+    ``--lat/--lng/--tz`` or with ``--city --nation`` (geocoded), never both.
     """
     if year is None:
         raise ValueError("return needs --year")
-    # Case-insensitive like every other enum-style flag (`--lot`, `--rate`,
-    # `--zodiac`): `--type solar` must not fail where `--zodiac tropical` works.
     rtype = {t.lower(): t for t in _RETURN_TYPES}.get(str(return_type or "Solar").strip().lower())
     if rtype is None:
         raise ValueError(f"--type must be {' or '.join(_RETURN_TYPES)}, got {return_type!r}")
-    # Same relocated-location invariant as `transit`: --lat/--lng/--tz must be
-    # given together, otherwise the natal timezone would silently localise the
-    # return at the new coordinates (wrong houses/Ascendant).
-    _geo_provided = [v for v in (lat, lng, tz) if v is not None]
-    if 0 < len(_geo_provided) < 3:
-        raise ValueError(
-            "a relocated return needs --lat, --lng and --tz together (or none, "
-            "to use the natal birthplace); the natal timezone does not match new "
-            "coordinates."
-        )
+    relocated = _relocation(lat, lng, tz, city, online, offline, "return")
     from kerykeion import ChartDataFactory, PlanetaryReturnFactory
 
     natal = _stored_subject(profile, "return", online=online, offline=offline)
-    # PlanetaryReturnFactory does its own geocoding (unlike the other chart
-    # factories): it needs a return-chart location. Default to the natal
-    # birthplace (offline); explicit flags relocate the return.
-    r_lat = lat if lat is not None else getattr(natal, "lat", None)
-    r_lng = lng if lng is not None else getattr(natal, "lng", None)
-    r_tz = tz if tz is not None else getattr(natal, "tz_str", None)
-    coords = r_lat is not None and r_lng is not None and r_tz is not None
-    if city is not None and any(v is not None for v in (lat, lng, tz)):
-        # A city and explicit coordinates are two answers to the same question:
-        # whichever the factory honoured, the other would be silently dropped.
-        raise ValueError(
-            "pass either --city or --lat/--lng/--tz, not both: mixing them "
-            "silently picks one place and drops the other."
-        )
+    # PlanetaryReturnFactory geocodes on its own, so it takes the place directly.
     if city is not None:
-        # The city decides the return place, geocoded like `transit` — no
-        # explicit --online needed (the geocode runs offline through the default
-        # local database when no GeoNames username is configured). It used to be
-        # honoured only under --online and silently ignored otherwise, recasting
-        # the return at the natal birthplace with the city as a label.
-        if offline is True or online is False:
-            raise ValueError(
-                "--city cannot be resolved with --offline; drop it (geocoding "
-                "needs the network) or pass --lat/--lng/--tz for an offline "
-                "relocated return."
-            )
         factory = PlanetaryReturnFactory(natal, city=city, nation=nation, online=True)
-    elif coords:
-        # Complete coordinates (inline or inherited from the natal) decide the
-        # place even under --online: the location is already specified and
-        # geocoding has nothing to add. Requiring --city first used to reject
-        # `--lat/--lng/--tz --online` — a fully specified relocated return.
-        factory = PlanetaryReturnFactory(natal, lat=r_lat, lng=r_lng, tz_str=r_tz, online=False)
     else:
-        raise ValueError(
-            "return needs the return-chart location: pass --lat/--lng/--tz "
-            "(or -s a profile with coordinates), or --city (geocoded)."
-        )
-    return_subject = factory.next_return_from_date(
-        year,
-        month,
-        day,
-        return_type=rtype,  # type: ignore[arg-type]  # validated above
-    )
-    chart = ChartDataFactory.create_return_chart_data(natal, return_subject)
-    _emit(chart, fmt, output, opts)
+        place = (lat, lng, tz) if relocated else (natal.lat, natal.lng, natal.tz_str)
+        if any(value is None for value in place):
+            raise ValueError(
+                "return needs the return-chart location: pass --lat/--lng/--tz (or -s a profile with coordinates), "
+                "or --city (geocoded)."
+            )
+        factory = PlanetaryReturnFactory(natal, lat=place[0], lng=place[1], tz_str=place[2], online=False)
+    return_subject = factory.next_return_from_date(year, month, day, return_type=rtype)  # type: ignore[arg-type]
+    _emit(ChartDataFactory.create_return_chart_data(natal, return_subject), fmt, output, opts)
 
 
 @with_render_flags
@@ -386,16 +322,11 @@ def progression(
     *,
     opts: object = None,
 ) -> None:
-    """Secondary progression dual wheel for a target year.
-
-    Progressed angles follow the Q2 / daily-houses convention (MC ~360 deg/year),
-    not astro.com's solar-arc default.
-    """
+    """Secondary progression dual wheel for a target year (Q2 / daily-houses angles)."""
     if target_year is None:
         raise ValueError("progression needs --target-year")
     from kerykeion import ChartDataFactory, SecondaryProgressionFactory
 
     natal = _stored_subject(profile, "progression")
     progressed = SecondaryProgressionFactory.compute(natal, target_year=target_year)
-    chart = ChartDataFactory.create_progression_chart_data(natal, progressed)
-    _emit(chart, fmt, output, opts)
+    _emit(ChartDataFactory.create_progression_chart_data(natal, progressed), fmt, output, opts)

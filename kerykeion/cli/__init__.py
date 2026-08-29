@@ -1,31 +1,14 @@
 # -*- coding: utf-8 -*-
 """Optional command-line interface for Kerykeion.
 
-The console-script entry point ``kerykeion`` (``[project.scripts]``) and
-``python -m kerykeion`` both resolve to :func:`main` here. The full CLI lives in
-the ``kerykeion[cli]`` extra (typer + rich), but the command is installed for
-EVERY user — static metadata — so this module is deliberately importable
-WITHOUT those dependencies and offers a small stdlib-only surface when the
-extra is absent:
+The ``kerykeion`` console script and ``python -m kerykeion`` both resolve to
+:func:`main`. The full CLI needs the ``kerykeion[cli]`` extra (typer + rich),
+but the command is installed for every user, so this module imports only the
+stdlib at module level and serves ``status``, ``--version`` and ``--help`` on
+its own; any other command prints an install hint and exits 3.
 
-* ``kerykeion status``        — runtime state (backend, LEB data, calc mode);
-* ``kerykeion --version``/``-V``;
-* ``kerykeion --help``/``-h`` (and a bare ``kerykeion``).
-
-Any *other* subcommand (the chart/technique/sky suite) prints an install hint
-and exits 3 — never a traceback.
-
-Import discipline: this module imports ONLY stdlib at module level. typer,
-rich, :mod:`kerykeion.cli.app` and :mod:`kerykeion.cli.diagnostics` are imported
-lazily inside functions, so ``import kerykeion.cli`` stays **typer-free** — the
-invariant pinned by ``tests/core/test_cli.py`` and the cold-import gate, and the
-reason a no-extra install can serve ``status``/``--version``/``--help`` at all.
-
-It does not make the command *fast*: the entry point is ``kerykeion.cli:main``,
-and importing a submodule imports its parent package first, so
-``kerykeion/__init__.py`` (backend selection, LEB pin) always runs — about 1.3 s
-before ``main()`` is even entered. Making that lazy is a separate change to
-``kerykeion/__init__.py`` (PEP 562), tracked outside this module.
+(It is not *fast*: importing a submodule imports ``kerykeion`` first — about
+1.3 s of backend selection. Making that lazy is a change to ``kerykeion/__init__.py``.)
 """
 
 from __future__ import annotations
@@ -35,7 +18,6 @@ import importlib.util
 import sys
 
 __all__ = ["main"]
-
 
 _INSTALL_HINT = (
     "That command is part of the kerykeion command-line interface, which needs "
@@ -70,13 +52,6 @@ Full command-line interface:
 
 
 def _version_string() -> str:
-    """The installed kerykeion version, read from package metadata.
-
-    Uses ``importlib.metadata`` — the same source ``kerykeion.__version__``
-    derives from — so ``--version`` needs no attribute off the package and no
-    typer. (The package itself is already imported by the time this runs: the
-    entry point is a submodule of ``kerykeion``. See the module docstring.)
-    """
     try:
         return importlib.metadata.version("kerykeion")
     except importlib.metadata.PackageNotFoundError:
@@ -84,44 +59,23 @@ def _version_string() -> str:
 
 
 def _typer_available() -> bool:
-    """True iff the [cli] extra's framework is importable.
-
-    Uses :func:`importlib.util.find_spec` (no import side effects) for the
-    happy path. The actual ``from kerykeion.cli.app import run`` in :func:`main`
-    is still wrapped in try/except to catch a typer install that find_spec sees
-    but fails to import. A third-party meta_path finder that raises on unknown
-    names should not crash the decision either: treat that as "not usable".
-    """
+    """True iff typer is importable (``find_spec`` has no import side effects)."""
     try:
         return importlib.util.find_spec("typer") is not None
-    except (ImportError, ModuleNotFoundError):  # pragma: no cover - defensive
+    except (ImportError, ModuleNotFoundError):  # pragma: no cover - a hostile meta_path finder
         return False
 
 
 def _stdlib_dispatch(args: list[str]) -> int:
-    """Serve the command with the stdlib alone (no typer/rich).
-
-    Returns the process exit code. Only ``status``, ``--version`` and
-    ``--help``/bare do real work; every other invocation is a request for the
-    full [cli] suite, signalled with the install hint + exit 3.
-    """
-    # No arguments -> base help, exit 0 (mirrors the typer app's bare behaviour).
-    if not args:
-        sys.stdout.write(_BASE_HELP)
-        return 0
-
-    first, rest = args[0], args[1:]
-
+    """Serve ``status``/``--version``/``--help`` with the stdlib alone; anything else gets the install hint (exit 3)."""
+    first, rest = (args[0], args[1:]) if args else ("--help", [])
     if first in ("--help", "-h"):
         sys.stdout.write(_BASE_HELP)
         return 0
-
     if first in ("--version", "-V"):
         sys.stdout.write(_version_string() + "\n")
         return 0
-
     if first == "status":
-        # ``status`` accepts only the --json flag; anything else is invalid input.
         unknown = [a for a in rest if a != "--json"]
         if unknown:
             sys.stderr.write(
@@ -132,47 +86,31 @@ def _stdlib_dispatch(args: list[str]) -> int:
 
         diagnostics.render(json_out="--json" in rest)
         return 0
-
-    # Anything else - a full-CLI command (natal, transit, ...) or an unknown
-    # token - needs the [cli] extra. Surface the install hint, exit 3.
     sys.stderr.write(_INSTALL_HINT)
     return 3
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Console-script entry point (also reached by ``python -m kerykeion``).
-
-    With the ``[cli]`` extra: run the full Typer application. Without it: fall
-    back to :func:`_stdlib_dispatch`, which still serves ``status``,
-    ``--version`` and ``--help``.
-    """
+    """Console-script entry point: the Typer app with the ``[cli]`` extra, the stdlib fallback without."""
     args = sys.argv[1:] if argv is None else list(argv)
-
-    if _typer_available():
-        try:
-            from kerykeion.cli.app import run
-        except ModuleNotFoundError as exc:
-            # find_spec saw typer but importing the app still failed on typer/
-            # rich (a broken install) -> degrade to the stdlib core. Any other
-            # missing module is a genuine bug; re-raise so it is not swallowed.
-            if exc.name in {"typer", "rich"}:
-                return _stdlib_dispatch(args)
-            raise
-        # Click reads ``sys.argv`` directly, so an explicit *argv* (programmatic
-        # callers, ``python -m`` tests) must be swapped in for the call. The
-        # console-script path (argv is None) uses the real command line as-is.
-        if argv is not None:
-            saved = sys.argv
-            sys.argv = ["kerykeion", *args]
-            try:
-                run()
-            finally:
-                sys.argv = saved
-        else:
-            run()
+    if not _typer_available():
+        return _stdlib_dispatch(args)
+    try:
+        from kerykeion.cli.app import run
+    except ModuleNotFoundError as exc:
+        if exc.name in {"typer", "rich"}:  # find_spec saw typer but the install is broken
+            return _stdlib_dispatch(args)
+        raise
+    if argv is None:
+        run()
         return 0
-
-    return _stdlib_dispatch(args)
+    # Click reads sys.argv directly; an explicit argv is swapped in for the call.
+    saved, sys.argv = sys.argv, ["kerykeion", *args]
+    try:
+        run()
+    finally:
+        sys.argv = saved
+    return 0
 
 
 if __name__ == "__main__":

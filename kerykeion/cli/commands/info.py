@@ -111,7 +111,7 @@ def houses(
 
     _emit(
         {
-            "letters": sorted(subject_resolver._valid_house_letters()),
+            "letters": sorted(subject_resolver.literal_values("HousesSystemIdentifier")),
             "names": dict(sorted(subject_resolver._HOUSES_BY_NAME.items())),
         },
         fmt,

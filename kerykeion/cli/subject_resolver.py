@@ -1,34 +1,27 @@
 # -*- coding: utf-8 -*-
-"""Turn a profile + inline flags into an :class:`AstrologicalSubjectModel`.
+"""Turn a profile + inline flags into an ``AstrologicalSubjectModel``.
 
-The merge precedence (lowest → highest): the library's own defaults → profile
-recipe → inline flags. Because every CLI flag alias is ``Optional`` with a
-``None`` default, "not given" is just ``None`` and overrides nothing — no need
-to consult Click's parameter source for the standard flags.
-
-Non-obvious mappings live here and nowhere else:
-
-* ``--date`` → year/month/day via **regex**, never ``date.fromisoformat`` (which
-  rejects year < 1; BCE dates are a real case);
-* ``--time`` → hour/minute/seconds (``seconds`` is keyword-only in the factory);
-* ``--houses placidus`` → ``P``; ``--points all`` → the full point-set constant;
-* online default is False when lat+lng+tz are all known, else True;
-* ``--set key=value`` is whitelisted against the factory signature and refuses
-  underscore-prefixed (private) parameters.
+Precedence, lowest to highest: library defaults → profile recipe → inline flags.
+Every flag is ``Optional`` and ``None`` means "not given", so it overrides
+nothing. Dates go through a regex, never ``date.fromisoformat`` (it rejects
+year < 1, and BCE is a real case). No kerykeion import at module level: the
+cold-import gate keeps ``import kerykeion.cli`` cheap.
 """
 
 from __future__ import annotations
 
+import difflib
 import functools
 import re
-from dataclasses import dataclass, field, fields
+import sys
+import typing
+from dataclasses import dataclass, field
 from typing import Any, Optional
-
-# ── Parsing helpers ──────────────────────────────────────────────────────────
 
 _DATE_RE = re.compile(r"^\s*(-?\d{1,5})-(\d{1,2})-(\d{1,2})\s*$")
 _TIME_RE = re.compile(r"^\s*(\d{1,2}):(\d{2})(?::(\d{2}))?\s*$")
 
+# Porphyry is "O" ("B" is Alcabitius); APC/topocentric is "Y". See HousesSystemIdentifier.
 _HOUSES_BY_NAME = {
     "placidus": "P",
     "plac": "P",
@@ -41,8 +34,6 @@ _HOUSES_BY_NAME = {
     "equal": "A",
     "equal_house": "A",
     "morinus": "M",
-    # Porphyry is "O" — "B" is Alcabitius (see the HousesSystemIdentifier Literal
-    # in kerykeion/schemas/literals.py). APC (topocentric) is "Y".
     "porphyry": "O",
     "porphyrius": "O",
     "meridian": "X",
@@ -61,8 +52,11 @@ _CALC_KEYS = {
 }
 
 
+# ── Parsing and canonicalisation ─────────────────────────────────────────────
+
+
 def parse_date(value: str) -> tuple[int, int, int]:
-    """Split a ``YYYY-MM-DD`` string (negative year = BCE) into ints."""
+    """``YYYY-MM-DD`` (negative year = BCE) → ints."""
     match = _DATE_RE.match(value)
     if match is None:
         raise ValueError(f"invalid date {value!r}; expected YYYY-MM-DD (negative year = BCE)")
@@ -75,7 +69,7 @@ def parse_date(value: str) -> tuple[int, int, int]:
 
 
 def parse_time(value: str) -> tuple[int, int, int]:
-    """Split ``HH:MM`` or ``HH:MM:SS`` into hour, minute, seconds."""
+    """``HH:MM`` or ``HH:MM:SS`` → hour, minute, seconds."""
     match = _TIME_RE.match(value)
     if match is None:
         raise ValueError(f"invalid time {value!r}; expected HH:MM or HH:MM:SS")
@@ -89,60 +83,23 @@ def parse_time(value: str) -> tuple[int, int, int]:
     return hour, minute, seconds
 
 
-_VALID_HOUSE_LETTERS: Optional[frozenset[str]] = None
+@functools.cache
+def literal_values(name: str) -> frozenset[str]:
+    """The members of a ``kerykeion.schemas.literals`` alias, imported lazily."""
+    from kerykeion.schemas import literals
 
-
-def _valid_house_letters() -> frozenset[str]:
-    """The single-letter codes the factory accepts (``HousesSystemIdentifier``).
-
-    Resolved lazily so this module stays free of a kerykeion import at module
-    load (the cold-import invariant). Cached after first use.
-    """
-    global _VALID_HOUSE_LETTERS
-    if _VALID_HOUSE_LETTERS is None:
-        import typing
-
-        from kerykeion.schemas.literals import HousesSystemIdentifier
-
-        _VALID_HOUSE_LETTERS = frozenset(typing.get_args(HousesSystemIdentifier))
-    return _VALID_HOUSE_LETTERS
-
-
-_VALID_SIDEREAL_MODES: Optional[frozenset[str]] = None
-
-
-def _valid_sidereal_modes() -> frozenset[str]:
-    """The exact ``SiderealMode`` strings the factory accepts (``LAHIRI``…)."""
-    global _VALID_SIDEREAL_MODES
-    if _VALID_SIDEREAL_MODES is None:
-        import typing
-
-        from kerykeion.schemas.literals import SiderealMode
-
-        _VALID_SIDEREAL_MODES = frozenset(typing.get_args(SiderealMode))
-    return _VALID_SIDEREAL_MODES
+    return frozenset(typing.get_args(getattr(literals, name)))
 
 
 def resolve_sidereal_mode(value: Optional[str]) -> Optional[str]:
-    """Canonicalise a ``SiderealMode`` name, case-insensitively.
-
-    ``--sidereal-mode lahari`` must work exactly like ``--houses placidus``
-    already does, and a typo must fail *here* (exit 4, invalid input) instead
-    of inside the factory as a ``KerykeionException`` (exit 5), which breaks
-    the documented exit-code contract for pipeline branching.
-    """
+    """Canonicalise a ``SiderealMode`` name case-insensitively; a typo is invalid input (exit 4)."""
     if value is None:
         return None
-    v = value.strip()
-    modes = _valid_sidereal_modes()
-    if v in modes:
-        return v
-    up = v.upper()
-    if up in modes:
-        return up
-    import difflib
-
-    close = difflib.get_close_matches(up, modes, n=3, cutoff=0.5)
+    modes = literal_values("SiderealMode")
+    for candidate in (value.strip(), value.strip().upper()):
+        if candidate in modes:
+            return candidate
+    close = difflib.get_close_matches(value.strip().upper(), modes, n=3, cutoff=0.5)
     hint = f" Did you mean: {', '.join(close)}?" if close else ""
     raise ValueError(
         f"unknown sidereal mode {value!r} (see `kerykeion info literals SiderealMode` for the valid names).{hint}"
@@ -150,59 +107,41 @@ def resolve_sidereal_mode(value: Optional[str]) -> Optional[str]:
 
 
 def resolve_perspective(value: Optional[str]) -> Optional[str]:
-    """Canonicalise a ``PerspectiveType`` name, case/separator-insensitively.
-
-    The Literal's values contain spaces (``"Apparent Geocentric"``); accept
-    ``apparent geocentric``, ``Apparent-Geocentric`` and ``apparent_geocentric``
-    alike, and fail here (exit 4) on a typo instead of letting the factory
-    raise a kerykeion-level error (exit 5).
-    """
+    """Canonicalise a ``PerspectiveType``: case-, space-, dash- and underscore-insensitive."""
     if value is None:
         return None
-    import typing
-
-    from kerykeion.schemas.literals import PerspectiveType
-
-    valid = list(typing.get_args(PerspectiveType))
-    by_key = {v.lower(): v for v in valid}
+    valid = literal_values("PerspectiveType")
     key = value.strip().lower().replace("-", " ").replace("_", " ")
-    if key in by_key:
-        return by_key[key]
-    raise ValueError(f"unknown perspective {value!r}; give one of: {', '.join(valid)}.")
+    match = {v.lower(): v for v in valid}.get(key)
+    if match is None:
+        raise ValueError(f"unknown perspective {value!r}; give one of: {', '.join(sorted(valid))}.")
+    return match
 
 
 def resolve_house_system(value: Optional[str]) -> Optional[str]:
-    """Accept a single letter or a common house-system name; return the letter."""
+    """A single letter or a common name → the ``HousesSystemIdentifier`` letter.
+
+    Case matters for letters ("i" and "I" are two systems): a letter valid as
+    typed is kept, otherwise the upper-case form is tried, then rejected.
+    """
     if value is None:
         return None
     v = value.strip()
+    letters = literal_values("HousesSystemIdentifier")
     if len(v) == 1 and v.isalpha():
-        # Case is significant: "i" (Sunshine/alt.) and "I" (Sunshine) are two
-        # different systems. Accept a letter that is already valid exactly as
-        # given, so `--houses i` selects "i" instead of silently becoming "I"
-        # (which made "i" unreachable from the CLI), and so a natal cast with
-        # "i" keeps that system when `transit` inherits its letter. Only a
-        # letter that is not valid as typed gets the upper-case convenience.
-        if v in _valid_house_letters():
+        if v in letters:
             return v
-        up = v.upper()
-        # Validate membership here rather than letting an unknown letter (G, J,
-        # E, …) reach the factory, where it becomes a confusing pydantic
-        # "input does not match the literal" ValidationError with no hint that
-        # the house-system letter was the cause.
-        if up not in _valid_house_letters():
-            raise ValueError(
-                f"unknown house-system letter {value!r}; give a valid letter "
-                f"({', '.join(sorted(_valid_house_letters()))}) or a name "
-                "(placidus, koch, whole-sign, porphyry, …)."
-            )
-        return up
+        if v.upper() in letters:
+            return v.upper()
+        raise ValueError(
+            f"unknown house-system letter {value!r}; give a valid letter ({', '.join(sorted(letters))}) "
+            "or a name (placidus, koch, whole-sign, porphyry, …)."
+        )
     key = v.lower().replace("-", "_")
     if key in _HOUSES_BY_NAME:
         return _HOUSES_BY_NAME[key]
     raise ValueError(
-        f"unknown house system {value!r}; give a letter (P, K, W, C, R, A, M, …) "
-        "or a name (placidus, koch, whole-sign, …)."
+        f"unknown house system {value!r}; give a letter (P, K, W, C, R, A, M, …) or a name (placidus, koch, whole-sign, …)."
     )
 
 
@@ -221,20 +160,6 @@ def _point_sets() -> dict[str, list[str]]:
     }
 
 
-def resolve_points(value: Optional[str]) -> Optional[list[str]]:
-    """A preset alias, or a comma-separated list of point names."""
-    if value is None:
-        return None
-    key = value.strip().lower()
-    sets = _point_sets()
-    if key in sets:
-        return sets[key]
-    parts = [p.strip() for p in value.split(",") if p.strip()]
-    if not parts:
-        raise ValueError(f"empty point set {value!r}")
-    return parts
-
-
 def _fixed_star_sets() -> dict[str, list[str]]:
     from kerykeion.settings import config_constants as cc
 
@@ -242,72 +167,47 @@ def _fixed_star_sets() -> dict[str, list[str]]:
         "royal": list(cc.ROYAL_FIXED_STARS),
         "behenian": list(cc.BEHENIAN_FIXED_STARS),
         "default_stars": list(cc.DEFAULT_FIXED_STARS),
-        "default-stars": list(cc.DEFAULT_FIXED_STARS),
     }
 
 
-def resolve_fixed_stars(value: Optional[str]) -> Optional[list[str]]:
+def _preset_or_list(value: Optional[str], presets: dict[str, list[str]], label: str) -> Optional[list[str]]:
+    """A preset alias (``all``, ``royal``, ``default-stars``…) or a comma-separated list of names."""
     if value is None:
         return None
     key = value.strip().lower().replace("-", "_")
-    sets = _fixed_star_sets()
-    if key in sets:
-        return sets[key]
+    if key in presets:
+        return presets[key]
     parts = [p.strip() for p in value.split(",") if p.strip()]
     if not parts:
-        raise ValueError(f"empty fixed-star set {value!r}")
+        raise ValueError(f"empty {label} {value!r}")
     return parts
 
 
-def _coerce_set_value(raw: str) -> Any:
-    """Best-effort scalar coercion for ``--set key=value``."""
-    lowered = raw.lower()
-    if lowered in {"true", "false"}:
-        return lowered == "true"
-    if lowered in {"none", "null"}:
-        return None
-    try:
-        return int(raw)
-    except ValueError:
-        pass
-    try:
-        return float(raw)
-    except ValueError:
-        pass
-    return raw
+def resolve_points(value: Optional[str]) -> Optional[list[str]]:
+    return _preset_or_list(value, _point_sets(), "point set")
 
 
-def _coerce_set_value_typed(annotation: Any, raw: str) -> Any:
-    """Coerce a ``--set`` value for a ``ProfileInput`` field of *annotation*.
-
-    Scalar fields use :func:`_coerce_set_value` (so ``true``/``false``/``none``/
-    ints/floats still work as before). List fields (``active_points``,
-    ``active_fixed_stars`` — both ``Optional[list[str]]``) split a
-    comma-separated value, so ``--set active_points=sun,moon`` persists
-    ``["sun", "moon"]`` instead of a bare string the recipe then rejects. This
-    matches how the dedicated ``--points`` flag and ``introspect.coerce_value``
-    (``--param``) already handle lists, so the two advanced-parameter paths agree.
-    """
-    import typing
-
-    origin = typing.get_origin(annotation)
-    if origin is typing.Union:  # unwrap Optional[list[...]] -> list[...]
-        non_none = [a for a in typing.get_args(annotation) if a is not type(None)]
-        if len(non_none) == 1:
-            annotation = non_none[0]
-            origin = typing.get_origin(annotation)
-    if origin in (list, set):
-        parts = [p.strip() for p in raw.split(",") if p.strip()]
-        return origin(parts)
-    return _coerce_set_value(raw)
+def resolve_fixed_stars(value: Optional[str]) -> Optional[list[str]]:
+    return _preset_or_list(value, _fixed_star_sets(), "fixed-star set")
 
 
-# ── Flag collection ──────────────────────────────────────────────────────────
+def _coerce_set_value(annotation: Any, raw: str) -> Any:
+    """Coerce a ``--set key=value`` for a ``ProfileInput`` field: lists split on commas, scalars as ``--param``."""
+    from kerykeion.cli.introspect import coerce_scalar
+
+    if typing.get_origin(annotation) is typing.Union:
+        (annotation,) = [a for a in typing.get_args(annotation) if a is not type(None)] or (annotation,)
+    if typing.get_origin(annotation) in (list, set):
+        return [p.strip() for p in raw.split(",") if p.strip()]
+    return coerce_scalar(raw)
+
+
+# ── Flags → recipe → subject ─────────────────────────────────────────────────
 
 
 @dataclass
 class SubjectFlags:
-    """Inline subject flags gathered from a command (None = not given)."""
+    """Inline subject flags gathered from a command (``None`` = not given)."""
 
     name: Optional[str] = None
     date: Optional[str] = None
@@ -326,9 +226,8 @@ class SubjectFlags:
     sidereal_mode: Optional[str] = None
     houses: Optional[str] = None
     perspective: Optional[str] = None
-    # Not wired to dedicated CLI flags (``--set`` and the profile recipe carry
-    # them); these fields exist so a transit wheel can inherit a natal frame
-    # that uses a USER-defined ayanamsa (see `transit` in commands/charts.py).
+    # No dedicated flags (``--set`` and the recipe carry them); ``transit``
+    # inherits them so a natal cast with a USER ayanamsa still rebuilds.
     custom_ayanamsa_t0: Optional[float] = None
     custom_ayanamsa_ayan_t0: Optional[float] = None
     points: Optional[str] = None
@@ -336,60 +235,22 @@ class SubjectFlags:
     with_flags: list[str] = field(default_factory=list)
     without_flags: list[str] = field(default_factory=list)
     set_flags: list[str] = field(default_factory=list)
-    # Commands that do not derive from a birth date (``now``) set this to
-    # "current" so materialize() dispatches to from_current_time.
+    # ``now`` sets "current" so materialize() dispatches to from_current_time.
     mode_override: Optional[str] = None
 
 
-def build_flags(**given: Any) -> SubjectFlags:
-    """Gather a command's subject parameters into a :class:`SubjectFlags`.
-
-    Every subject-building command (``subject save``, ``natal``, ``synastry`` …)
-    spells the same flags in its signature and passes them here by keyword. The
-    field names are the flag names, so the mapping is the identity — but it is
-    checked, not assumed: an unknown keyword raises here rather than being
-    silently dropped, which is how a flag ends up quietly doing nothing.
-    """
-    known = {f.name for f in fields(SubjectFlags)}
-    unknown = sorted(set(given) - known)
-    if unknown:
-        raise AssertionError(f"build_flags got unknown subject flags: {', '.join(unknown)}")
-    # The three repeatable options arrive as None when not given; the dataclass
-    # wants a list.
-    for name in ("with_flags", "without_flags", "set_flags"):
-        given[name] = given.get(name) or []
-    return SubjectFlags(**given)
-
-
 def _profile_input_dict(profile_spec: Optional[str]) -> dict[str, Any]:
-    """Load a profile recipe (if any) and return its non-None input fields."""
+    """The non-None recipe fields of a profile, with its ``extra`` (``--set`` values) folded in."""
     if profile_spec is None:
         return {}
     from kerykeion.cli import profiles
 
-    path = profiles.resolve_path(profile_spec)
-    profile = profiles.load(path)
-    base = profile.input.model_dump(exclude_none=True)
-    # 'extra' holds --set-style advanced params persisted to the recipe.
+    base = profiles.load(profiles.resolve_path(profile_spec)).input.model_dump(exclude_none=True)
     extra = base.pop("extra", None) or {}
     return {**base, **extra}
 
 
-def _apply_calc_toggles(merged: dict[str, Any], flags: SubjectFlags) -> None:
-    """Fold ``--with`` / ``--without`` onto the calculate_* parameters."""
-    current = {param: merged.get(param) for param in _CALC_KEYS.values()}
-    for feature in flags.with_flags:
-        key = _calc_param_for(feature)
-        current[key] = True
-    for feature in flags.without_flags:
-        key = _calc_param_for(feature)
-        current[key] = False
-    for key, value in current.items():
-        if value is not None:
-            merged[key] = value
-
-
-def _calc_param_for(feature: str) -> str:
+def _calc_param(feature: str) -> str:
     key = feature.strip().lower().removeprefix("calculate_")
     if key not in _CALC_KEYS:
         raise ValueError(
@@ -399,15 +260,7 @@ def _calc_param_for(feature: str) -> str:
 
 
 def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
-    """Whitelisted advanced parameters from ``--set key=value``.
-
-    The whitelist is the profile recipe shape (:class:`ProfileInput` fields),
-    **not** the raw ``from_birth_data`` signature: ``--set`` values are persisted
-    to the recipe, and factory-only keys like ``year``/``month``/``hour``/
-    ``suppress_geonames_warning`` would either collide in :func:`materialize`
-    (duplicate keyword) or break ``subject save`` (``ProfileInput`` rejects them).
-    Use the dedicated flags (``--date``/``--time``/``--lat``…) for those.
-    """
+    """``--set key=value``, whitelisted against the recipe shape (``ProfileInput``), never the raw factory signature."""
     if not set_flags:
         return
     from kerykeion.cli.profiles import ProfileInput
@@ -416,26 +269,24 @@ def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
     for item in set_flags:
         if "=" not in item:
             raise ValueError(f"--set expects key=value, got {item!r}")
-        raw_key, raw_value = item.split("=", 1)
-        key = raw_key.strip()
+        key, raw_value = (part.strip() for part in item.split("=", 1))
         if key.startswith("_"):
             raise ValueError(f"--set refuses private parameter {key!r}")
         if key not in allowed:
             raise ValueError(f"--set {key!r} is not a profile field (known: {', '.join(sorted(allowed))})")
-        merged[key] = _coerce_set_value_typed(ProfileInput.model_fields[key].annotation, raw_value)
+        merged[key] = _coerce_set_value(ProfileInput.model_fields[key].annotation, raw_value)
 
 
 def merge_inputs(flags: SubjectFlags, profile_spec: Optional[str] = None) -> dict[str, Any]:
-    """Return the merged recipe dict (in ``ProfileInput`` field names).
+    """The merged recipe dict, in ``ProfileInput`` field names.
 
-    Every layer applied here, none in ``materialize``: profile base → inline flags
-    → resolved structured flags (houses/points/fixed-stars) → calculate_* toggles
-    → ``--set`` → online default → mode. ``date``/``time`` stay as strings — they
-    are a recipe shape, not a factory call. ``materialize`` turns this dict into a
-    subject; ``subject save`` persists it verbatim.
+    Profile → inline flags → structured flags → ``--with``/``--without`` →
+    ``--set`` → online default → mode. ``date``/``time`` stay strings (it is a
+    recipe, not a factory call); ``materialize`` turns it into a subject and
+    ``subject save`` persists it verbatim. Every check here fails as invalid
+    input (exit 4) rather than inside the factory (exit 5).
     """
-    merged: dict[str, Any] = {}
-    merged.update(_profile_input_dict(profile_spec))
+    merged = _profile_input_dict(profile_spec)
     inline = {
         "name": flags.name,
         "date": flags.date,
@@ -453,100 +304,58 @@ def merge_inputs(flags: SubjectFlags, profile_spec: Optional[str] = None) -> dic
         "perspective_type": flags.perspective,
         "custom_ayanamsa_t0": flags.custom_ayanamsa_t0,
         "custom_ayanamsa_ayan_t0": flags.custom_ayanamsa_ayan_t0,
+        "houses_system_identifier": resolve_house_system(flags.houses),
+        "active_points": resolve_points(flags.points),
+        "active_fixed_stars": resolve_fixed_stars(flags.fixed_stars),
     }
-    for key, value in inline.items():
-        if value is not None:
-            merged[key] = value
-
-    # Resolve structured flags into factory parameter names.
-    houses = resolve_house_system(flags.houses) or merged.get("houses_system_identifier")
-    if houses is not None:
-        merged["houses_system_identifier"] = houses
-    points = resolve_points(flags.points)
-    if points is not None:
-        merged["active_points"] = points
-    fixed_stars = resolve_fixed_stars(flags.fixed_stars)
-    if fixed_stars is not None:
-        merged["active_fixed_stars"] = fixed_stars
-
-    _apply_calc_toggles(merged, flags)
+    merged.update({key: value for key, value in inline.items() if value is not None})
+    for feature in flags.with_flags:
+        merged[_calc_param(feature)] = True
+    for feature in flags.without_flags:
+        merged[_calc_param(feature)] = False
     _apply_set_flags(merged, flags.set_flags)
 
-    # Canonicalise the enum-shaped recipe values wherever they came from
-    # (inline flag, profile recipe or --set): a typo must be invalid input
-    # (exit 4), not a kerykeion-level error (exit 5) that pipeline branching
-    # cannot distinguish from a library bug.
+    # Enum-shaped values are canonicalised wherever they came from (flag, recipe or --set).
     if merged.get("sidereal_mode") is not None:
         merged["sidereal_mode"] = resolve_sidereal_mode(str(merged["sidereal_mode"]))
     if merged.get("perspective_type") is not None:
         merged["perspective_type"] = resolve_perspective(str(merged["perspective_type"]))
 
-    # Coordinates are all-or-nothing. A partial group (--lat without --lng and
-    # --tz, or a recipe edited that way) would silently blend the user's values
-    # with the geocoded defaults — the factory fills the gaps from its default
-    # city, producing a chart at the user's latitude on Greenwich's longitude
-    # and timezone. `transit` and `return` already enforce this invariant for
-    # relocated charts; this is the same rule for the base subject.
-    _partial_geo = [
-        flag_name
-        for flag_name, key in (("--lat", "lat"), ("--lng", "lng"), ("--tz", "tz_str"))
-        if merged.get(key) is not None
+    # A partial coordinate group would silently blend with the geocoded defaults.
+    partial = [
+        flag for flag, key in (("--lat", "lat"), ("--lng", "lng"), ("--tz", "tz_str")) if merged.get(key) is not None
     ]
-    if 0 < len(_partial_geo) < 3:
+    if 0 < len(partial) < 3:
         raise ValueError(
-            f"coordinates are all-or-nothing: only {', '.join(_partial_geo)} "
-            "given. Pass --lat, --lng and --tz together, or none of them (and "
-            "let the city/geocode default supply the place); a partial group "
+            f"coordinates are all-or-nothing: only {', '.join(partial)} given. Pass --lat, --lng and --tz "
+            "together, or none of them (and let the city/geocode default supply the place); a partial group "
             "silently mixes your values with geocoded defaults."
         )
 
-    # Decide online (explicit flag — including --no-online — > recipe > inferred
-    # from coordinates). ``--no-online`` arrives as ``flags.online is False`` and
-    # must override a profile's ``online=True``: a falsy flag is an explicit
-    # choice, not "not given".
+    # Online: explicit flag (--no-online included) > recipe > inferred from coordinates.
     if flags.online is True and flags.offline is True:
-        # Contradictory: silently letting --online win would geocode a subject the
-        # user explicitly asked to keep offline (a network call in a pipeline).
         raise ValueError(
-            "--online and --offline are mutually exclusive; pass one (or use "
-            "--no-online, which means the same as --offline)."
+            "--online and --offline are mutually exclusive; pass one (or use --no-online, which means the same as --offline)."
         )
     if flags.online is True:
         merged["online"] = True
     elif flags.offline is True or flags.online is False:
         merged["online"] = False
     elif "online" not in merged:
-        coords_complete = (
-            merged.get("lat") is not None and merged.get("lng") is not None and merged.get("tz_str") is not None
-        )
-        merged["online"] = not coords_complete
+        merged["online"] = any(merged.get(key) is None for key in ("lat", "lng", "tz_str"))
 
-    # A city and explicit coordinates are two answers to the same question.
-    # Whoever the factory honoured, the other would be silently dropped — a
-    # chart cast at one place while the user typed two. Refuse the mix for every
-    # command that goes through this merge (natal, now, transit's transiting
-    # subject, `subject save`); `return` enforces the same rule locally because
-    # its location goes straight to the factory.
+    # A city and coordinates are two answers to one question; a city offline has none.
     if merged.get("city") is not None and any(merged.get(key) is not None for key in ("lat", "lng", "tz_str")):
         raise ValueError(
-            "pass either --city or --lat/--lng/--tz, not both: mixing them "
-            "silently picks one place and drops the other."
+            "pass either --city or --lat/--lng/--tz, not both: mixing them silently picks one place and drops the other."
         )
-    # Offline geocoding cannot run. Rejecting here makes the mistake invalid
-    # input (exit 4) for every command, instead of the factory's kerykeion-level
-    # error (exit 5) that pipeline branching cannot tell apart from a bug — and
-    # `subject save` fails at the keyboard rather than at the first read.
     if merged.get("city") is not None and merged.get("online") is False:
         raise ValueError(
-            "--city cannot be resolved with --offline; drop it (geocoding "
-            "needs the network) or pass --lat/--lng/--tz for an offline subject."
+            "--city cannot be resolved with --offline; drop it (geocoding needs the network) or pass "
+            "--lat/--lng/--tz for an offline subject."
         )
 
-    # Mode is derived from what is *actually* present, so a profile saved in one
-    # mode cannot pin it: an inline --iso-utc forces iso_utc mode, inline
-    # --date/--time force birth mode, and only when neither is given does the
-    # profile's (or the default) mode survive. ``mode_override`` (the ``now``
-    # command) always wins.
+    # Mode follows what is actually present, so a profile saved in one mode cannot pin it.
     if flags.mode_override:
         merged["mode"] = flags.mode_override
     elif flags.iso_utc is not None:
@@ -558,97 +367,80 @@ def merge_inputs(flags: SubjectFlags, profile_spec: Optional[str] = None) -> dic
     return merged
 
 
-def materialize(merged: dict[str, Any]):
-    """Turn a merged recipe dict into an ``AstrologicalSubjectModel``.
+@functools.cache
+def _factory_params(mode: str) -> frozenset[str]:
+    """The parameter names the factory method for *mode* accepts (read once, shared read-only)."""
+    import inspect
 
-    Raises ``ValueError`` with a readable message on any bad input; the command
-    layer turns that into exit 4.
-    """
     from kerykeion import AstrologicalSubjectFactory
+
+    method = {
+        "birth": AstrologicalSubjectFactory.from_birth_data,
+        "current": AstrologicalSubjectFactory.from_current_time,
+    }.get(mode, AstrologicalSubjectFactory.from_iso_utc_time)
+    return frozenset(inspect.signature(method).parameters)
+
+
+def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
+    """Drop the keys the chosen factory method does not accept (a recipe may carry birth-only keys)."""
+    allowed = _factory_params(mode)
+    return {k: v for k, v in merged.items() if k in allowed}
+
+
+def materialize(merged: dict[str, Any]):
+    """A merged recipe → ``AstrologicalSubjectModel``; bad input raises ``ValueError`` (exit 4)."""
+    from kerykeion import AstrologicalSubjectFactory as Factory
 
     name = merged.get("name") or "Now"
     mode = merged.get("mode", "birth")
-    iso_utc = merged.get("iso_utc_time")
-
-    # The factory never wants to hear from GeoNames unprompted from a pipeline.
-    factory_kwargs = {**merged, "suppress_geonames_warning": True}
+    kwargs = {**merged, "suppress_geonames_warning": True}
+    # The moment is passed explicitly below; same-named recipe keys must not collide.
+    for key in ("name", "mode", "date", "time", "seconds", "iso_utc_time", "year", "month", "day", "hour", "minute"):
+        kwargs.pop(key, None)
 
     if mode == "iso_utc":
-        if not iso_utc:
+        if not merged.get("iso_utc_time"):
             raise ValueError("iso_utc mode needs --iso-utc")
-        factory_kwargs.pop("date", None)
-        factory_kwargs.pop("time", None)
-        factory_kwargs.pop("seconds", None)
-        factory_kwargs.pop("name", None)
-        factory_kwargs.pop("mode", None)
-        factory_kwargs.pop("iso_utc_time", None)
-        return AstrologicalSubjectFactory.from_iso_utc_time(
-            name=name, iso_utc_time=iso_utc, **_kwargs_for(factory_kwargs, "iso_utc")
+        return Factory.from_iso_utc_time(
+            name=name, iso_utc_time=merged["iso_utc_time"], **_kwargs_for(kwargs, "iso_utc")
         )
-
     if mode == "current":
-        # from_current_time derives year/month/day/hour/minute from now(); the
-        # birth-date fields are irrelevant and not accepted by its signature.
-        for k in ("date", "time", "seconds", "iso_utc_time"):
-            factory_kwargs.pop(k, None)
-        factory_kwargs.pop("name", None)
-        factory_kwargs.pop("mode", None)
-        return AstrologicalSubjectFactory.from_current_time(name=name, **_kwargs_for(factory_kwargs, "current"))
-
-    date_str = factory_kwargs.pop("date", None)
-    time_str = factory_kwargs.pop("time", None)
-    if not date_str:
+        return Factory.from_current_time(name=name, **_kwargs_for(kwargs, "current"))
+    if not merged.get("date"):
         raise ValueError("birth mode needs --date (or a profile with a date)")
-    if not time_str:
-        # ``from_birth_data`` fills ``hour=minute=None`` from ``datetime.now()``,
-        # which would make a date-only natal non-deterministic across runs. A
-        # natal chart needs a birth time for the houses and Ascendant.
+    if not merged.get("time"):
+        # The factory would fill hour/minute from now(), making a date-only natal nondeterministic.
         raise ValueError(
-            "birth mode needs --time (HH:MM[:SS]); a natal chart requires a birth "
-            "time. Pass --time, or use `kerykeion now` for the current moment."
+            "birth mode needs --time (HH:MM[:SS]); a natal chart requires a birth time. "
+            "Pass --time, or use `kerykeion now` for the current moment."
         )
-    year, month, day = parse_date(date_str)
-    seconds = factory_kwargs.pop("seconds", None)
-    hour, minute, parsed_seconds = parse_time(time_str)
-    seconds = seconds if seconds is not None else parsed_seconds
-    # ``is not None`` (not truthiness): an explicit ``--seconds 0`` must reach
-    # the factory, not be dropped — same falsy-zero guard the codebase already
-    # applies to ``--step``. Today the factory default is ``seconds: int = 0``
-    # so the drop is latent, but the moment that default widens to
-    # ``Optional[int]`` (→ now.second, the pattern used for hour/minute) an
-    # explicit 0 would silently turn nondeterministic.
-    if seconds is not None:
-        factory_kwargs["seconds"] = seconds
-    # The birth date/time components are passed explicitly below; drop any
-    # same-named keys (e.g. from a hand-edited profile's ``extra``) so they
-    # cannot collide as duplicate keyword arguments.
-    for k in ("name", "mode", "iso_utc_time", "year", "month", "day", "hour", "minute"):
-        factory_kwargs.pop(k, None)
-    return AstrologicalSubjectFactory.from_birth_data(
+    year, month, day = parse_date(merged["date"])
+    hour, minute, parsed_seconds = parse_time(merged["time"])
+    seconds = merged["seconds"] if merged.get("seconds") is not None else parsed_seconds
+    return Factory.from_birth_data(
         name=name,
         year=year,
         month=month,
         day=day,
         hour=hour,
         minute=minute,
-        **_kwargs_for(factory_kwargs, "birth"),
+        seconds=seconds,
+        **_kwargs_for(kwargs, "birth"),
     )
+
+
+# ── Snapshots ────────────────────────────────────────────────────────────────
 
 
 def snapshot_is_usable(meta: Optional[dict[str, Any]]) -> Optional[str]:
     """``None`` if a snapshot written with *meta* is still trustworthy, else why not.
 
-    A snapshot is a cache of computed positions. Reusing one produced by a
-    different kerykeion version or a different ephemeris backend would answer
-    with numbers this installation would not compute — a silently wrong result,
-    which is worse than the recomputation it saves. Provenance mismatch is the
-    one thing we can check cheaply, so we check it and fall back.
+    A snapshot from another kerykeion version or backend would answer with
+    numbers this installation would not compute; provenance is the cheap check.
     """
+    from kerykeion import BACKEND_NAME, __version__
+
     meta = meta or {}
-    try:
-        from kerykeion import BACKEND_NAME, __version__
-    except Exception:  # pragma: no cover - defensive; kerykeion is the core dep
-        return None
     stored_version = meta.get("kerykeion_version")
     if stored_version and stored_version != __version__:
         return f"written by kerykeion {stored_version}, running {__version__}"
@@ -658,31 +450,26 @@ def snapshot_is_usable(meta: Optional[dict[str, Any]]) -> Optional[str]:
     return None
 
 
-def _subject_from_snapshot(flags: SubjectFlags, profile_spec: Optional[str]):
-    """The stored subject for *profile_spec*, or ``None`` to compute it normally.
+def _note(message: str) -> None:
+    sys.stderr.write(f"kerykeion: note: {message}\n")
 
-    Only taken when the read is unambiguous: a profile was named, it carries a
-    snapshot, **no inline flag overrides the recipe** (an override means the user
-    asked for something the snapshot does not describe), and the provenance still
-    matches. Anything else falls through to the ordinary path — including a
-    broken profile, so the real error comes from there rather than from here.
-    """
+
+def _subject_from_snapshot(flags: SubjectFlags, profile_spec: Optional[str]):
+    """The stored subject, only when the read is unambiguous: a profile, no inline override, matching provenance."""
     if profile_spec is None or flags != SubjectFlags():
         return None
-
     from kerykeion.cli import profiles
 
     try:
         profile = profiles.load(profiles.resolve_path(profile_spec))
     except Exception:
-        return None
+        return None  # the ordinary path reports the real error
     if not profile.snapshot:
         return None
     reason = snapshot_is_usable(profile.meta)
     if reason is not None:
         _note(f"ignoring the stored snapshot for {profile_spec!r} ({reason}); recomputing.")
         return None
-
     from kerykeion.schemas.models import AstrologicalSubjectModel
 
     try:
@@ -692,54 +479,9 @@ def _subject_from_snapshot(flags: SubjectFlags, profile_spec: Optional[str]):
         return None
 
 
-def _note(message: str) -> None:
-    """A diagnostic line on stderr, never on the payload stream."""
-    import sys
-
-    sys.stderr.write(f"kerykeion: note: {message}\n")
-
-
 def resolve_subject(flags: SubjectFlags, profile_spec: Optional[str] = None):
-    """Build an ``AstrologicalSubjectModel`` from a profile plus inline flags.
-
-    Uses a stored ``--snapshot`` when one is present and trustworthy; see
-    :func:`_subject_from_snapshot`. Callers that must exercise the recipe itself
-    (``subject verify``) skip this and call ``materialize(merge_inputs(...))``.
-    """
+    """Build the subject from a profile plus inline flags, reusing a trustworthy ``--snapshot`` when present."""
     stored = _subject_from_snapshot(flags, profile_spec)
     if stored is not None:
         return stored
     return materialize(merge_inputs(flags, profile_spec))
-
-
-@functools.cache
-def _factory_params(mode: str) -> frozenset[str]:
-    """The parameter names accepted by the factory method for *mode*.
-
-    Cached and immutable (a ``frozenset``): the signature is resolved once per
-    mode and shared, but callers cannot mutate it — matching
-    :func:`registry.public_names`, which returns a read-only ``MappingProxyType``.
-    """
-    import inspect
-
-    from kerykeion import AstrologicalSubjectFactory
-
-    method = (
-        AstrologicalSubjectFactory.from_birth_data
-        if mode == "birth"
-        else AstrologicalSubjectFactory.from_current_time
-        if mode == "current"
-        else AstrologicalSubjectFactory.from_iso_utc_time
-    )
-    return frozenset(inspect.signature(method).parameters)
-
-
-def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:
-    """Drop keys the chosen factory method does not accept.
-
-    Guards against a recipe or --set carrying a key valid for ``from_birth_data``
-    (e.g. ``is_dst``, ``cache_expire_after_days``) into ``from_iso_utc_time``,
-    which would raise ``TypeError`` from an unexpected keyword.
-    """
-    allowed = _factory_params(mode)
-    return {k: v for k, v in merged.items() if k in allowed}

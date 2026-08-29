@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 """``kerykeion sky <sub>`` — astronomical events (sun, moon, planets).
 
-Two input shapes meet here:
-
-* **moment** commands (``sun-times``, ``hours``) take a single date/time and a
-  location, given either inline (``--lat/--lng/--tz``) or derived from
-  ``-s <profile>``;
-* **range** commands (``lunations``, ``ingresses``, ``stations``, and ``voc``
-  with ``--to``) take ``--from``/``--to`` and need no location;
-* ``voc`` without ``--to`` and ``eclipses`` straddle the two.
-
-The functions are decorator-free; :mod:`kerykeion.cli.app` registers the group.
+Moment commands (``sun-times``, ``hours``) take one date/time and a place —
+inline ``--lat/--lng/--tz`` or from ``-s <profile>``; range commands
+(``lunations``, ``ingresses``, ``stations``, ``mundane``, ``voc --to``) take
+``--from``/``--to`` and no place; ``voc`` without ``--to`` and ``eclipses``
+straddle the two.
 """
 
 from __future__ import annotations
@@ -19,14 +14,7 @@ from datetime import datetime
 from typing import Any, Literal, Optional, overload
 
 from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import (
-    _aspect_names,
-    _emit,
-    _given,
-    _parse_aspects,
-    _parse_dt,
-    _split_csv,
-)
+from kerykeion.cli.commands._shared import _aspect_names, _emit, _given, _parse_aspects, _parse_dt, _split_csv
 from kerykeion.cli.options import (
     AspectsOpt,
     CountOpt,
@@ -56,21 +44,15 @@ sky_app = KerykeionTyper(
 
 
 def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[str, Any]:
-    kwargs: dict[str, Any] = {}
+    """``--zodiac``/``--sidereal-mode`` as factory kwargs, spelled the way the library itself normalises them."""
+    kwargs = _given(sidereal_mode=sidereal_mode)
     if zodiac is not None:
-        # Delegate to the library helper the factories themselves call, rather
-        # than re-implementing its spelling table here: a hand-rolled copy
-        # accepts exactly today's spellings, so the moment the library widens
-        # what it takes, `sky --zodiac X` would reject a value every other entry
-        # point accepts. Only the error message is ours (it names the flag).
         from kerykeion.utilities import normalize_zodiac_type
 
         try:
             kwargs["zodiac_type"] = normalize_zodiac_type(zodiac)
         except ValueError:
             raise ValueError("--zodiac must be Tropical or Sidereal") from None
-    if sidereal_mode is not None:
-        kwargs["sidereal_mode"] = sidereal_mode
     return kwargs
 
 
@@ -101,16 +83,12 @@ def _location(
     *,
     require_tz: bool = True,
 ) -> tuple[float, float, Optional[str]]:
-    """Resolve a place from inline flags first, then a profile.
+    """A place from the inline flags first, then the profile (an explicit value wins, as in ``transit``).
 
-    Inline flags take precedence (universal CLI convention: an explicit value
-    wins), so a relocated reading is honoured even when a profile supplies the
-    birthplace — mirroring ``charts.transit``. ``require_tz=False`` is for the
-    commands that take no timezone (``eclipses``, ``occultations``).
+    ``require_tz=False`` serves the commands that take no timezone (``eclipses``,
+    ``occultations``). A fully inline place never materialises the profile.
     """
     wanted = ("--lat", "--lng", "--tz") if require_tz else ("--lat", "--lng")
-    # Everything given inline: the profile would be materialised (a full
-    # ephemeris subject build) only for its values to be overridden below.
     if lat is not None and lng is not None and (tz is not None or not require_tz):
         return lat, lng, tz
     if profile:
@@ -124,14 +102,15 @@ def _location(
     raise ValueError(f"{cmd} needs -s <profile> or {'/'.join(wanted)}")
 
 
-def _attach_tz_offset(value: str, tz_str: Optional[str], cmd: str) -> str:
-    """Return *value* as an ISO string, attaching *tz_str*'s offset if naive.
+def _profile_tz(profile: Optional[str], tz: Optional[str]) -> Optional[str]:
+    """``--tz`` if given, else the profile's zone, else ``None``."""
+    if tz is None and profile:
+        return getattr(subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile), "tz_str", None)
+    return tz
 
-    ``VoidOfCourseMoonFactory.from_iso_range`` is UTC-only: naive ISO bounds are
-    read as UTC. When the user gives ``--tz`` (or ``-s`` a profile with a zone)
-    we interpret a naive bound in that zone and emit an offset-aware ISO string,
-    so the library converts it to the UTC instant the user meant.
-    """
+
+def _attach_tz_offset(value: str, tz_str: Optional[str], cmd: str) -> str:
+    """A naive ISO bound with *tz_str*'s offset attached — ``from_iso_range`` reads naive bounds as UTC."""
     if tz_str is None:
         return value
     dt = _parse_dt(value)
@@ -140,32 +119,19 @@ def _attach_tz_offset(value: str, tz_str: Optional[str], cmd: str) -> str:
     from zoneinfo import ZoneInfo
 
     try:
-        tz = ZoneInfo(tz_str)
+        return dt.replace(tzinfo=ZoneInfo(tz_str)).isoformat()
     except Exception:
         raise ValueError(f"{cmd}: unknown timezone {tz_str!r}") from None
-    return dt.replace(tzinfo=tz).isoformat()
 
 
 def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> datetime:
-    """Parse ``--from`` into the wall-clock components the moment factories use.
+    """``--from`` as the naive wall-clock moment the ``from_datetime``/``from_date`` factories take in *tz_str*.
 
-    The moment factories (``from_datetime``/``from_date``) take naive year/month/
-    day/hour/minute in ``tz_str``. An offset-bearing input (``...T12:30:00Z`` or
-    ``...+01:00``) denotes an *absolute instant*; extracting its raw components
-    and re-fitting them into ``tz_str`` would shift the moment by the offset
-    (e.g. 12:30Z re-read as 12:30 Europe/Rome = 10:30Z — a two-hour error). When
-    the input is offset-aware we convert the instant into ``tz_str`` first, so
-    the wall-clock parts match what the user meant. A naive input is already
-    wall-clock and is returned as-is.
-
-    Seconds are truncated: the ``from_datetime`` factories do not accept them
-    (sub-minute lunar motion, at most ~0.008°, is below their resolution).
-
-    An aware instant that lands on the *second* reading of a DST fall-back
-    (``fold=1``) cannot be carried through the naive components — the factories
-    rebuild without ``fold`` and would silently pick the first reading, shifting
-    the instant by one hour. That ambiguity is surfaced as an error instead of
-    guessed.
+    An offset-bearing input is an absolute instant: it is converted into *tz_str*
+    first, or its components would be re-read in the wrong zone (12:30Z as 12:30
+    Rome is a two-hour error). Seconds are truncated (the factories take none).
+    An instant on the second reading of a DST fall-back cannot survive the naive
+    components, so it is refused rather than silently shifted by an hour.
     """
     if value is None:
         raise ValueError(f"{cmd} needs --from (an ISO date or datetime)")
@@ -176,13 +142,26 @@ def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> dat
         local = dt.astimezone(ZoneInfo(tz_str))
         if local.fold:
             raise ValueError(
-                f"{cmd}: {value!r} falls on an ambiguous wall time in "
-                f"{tz_str!r} (the second reading of a DST fall-back). The moment "
-                "factories take wall-clock components without DST disambiguation; "
+                f"{cmd}: {value!r} falls on an ambiguous wall time in {tz_str!r} (the second reading of a DST "
+                "fall-back). The moment factories take wall-clock components without DST disambiguation; "
                 "use a non-ambiguous moment or drop the UTC offset."
             )
         dt = local.replace(tzinfo=None)
     return dt
+
+
+def _range_query(
+    cmd: str,
+    from_: Optional[str],
+    to: Optional[str],
+    zodiac: Optional[str],
+    sidereal_mode: Optional[str],
+    **lists: Optional[list[str]],
+) -> tuple[str, str, dict[str, Any]]:
+    """Validate ``--from``/``--to`` and assemble the kwargs a range search shares (*lists* under the factory's names)."""
+    if from_ is None or to is None:
+        raise ValueError(f"{cmd} needs --from and --to")
+    return from_, to, {**_zodiac_kwargs(zodiac, sidereal_mode), **_given(**lists)}
 
 
 @sky_app.command("sun-times")
@@ -199,9 +178,8 @@ def sun_times(
     from kerykeion import SunTimesFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "sun-times")
-    moment = _moment(from_, "sun-times", tz_str)
-    model = SunTimesFactory.from_date(moment.year, moment.month, moment.day, latitude=la, longitude=lo, tz_str=tz_str)
-    _emit(model, fmt, output)
+    m = _moment(from_, "sun-times", tz_str)
+    _emit(SunTimesFactory.from_date(m.year, m.month, m.day, latitude=la, longitude=lo, tz_str=tz_str), fmt, output)
 
 
 @sky_app.command("hours")
@@ -218,16 +196,9 @@ def hours(
     from kerykeion import PlanetaryHoursFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "hours")
-    moment = _moment(from_, "hours", tz_str)
+    m = _moment(from_, "hours", tz_str)
     model = PlanetaryHoursFactory.from_datetime(
-        moment.year,
-        moment.month,
-        moment.day,
-        moment.hour,
-        moment.minute,
-        latitude=la,
-        longitude=lo,
-        tz_str=tz_str,
+        m.year, m.month, m.day, m.hour, m.minute, latitude=la, longitude=lo, tz_str=tz_str
     )
     _emit(model, fmt, output)
 
@@ -243,46 +214,25 @@ def voc(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Void-of-Course Moon: the status at a moment, or the windows in a range.
-
-    With ``--to`` it lists VoC windows across the range; without it, the Moon's
-    status at ``--from`` (needs ``--tz`` or ``-s``).
-    """
+    """Void-of-Course Moon: the windows in a range (with ``--to``), or the status at ``--from`` (needs ``--tz`` or ``-s``)."""
     from kerykeion import VoidOfCourseMoonFactory
 
     extra = _zodiac_kwargs(zodiac, sidereal_mode)
-    model: object
+    tz_str = _profile_tz(profile, tz)
     if to is not None:
         if from_ is None:
             raise ValueError("voc --to also needs --from")
-        # from_iso_range is UTC-only; honour --tz (or a profile's timezone) by
-        # attaching that zone's offset to naive bounds so the library converts
-        # them to the intended UTC instants rather than reading them as UTC.
-        range_tz = tz
-        if range_tz is None and profile:
-            subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-            range_tz = getattr(subject, "tz_str", None)
-        start_iso = _attach_tz_offset(from_, range_tz, "voc")
-        end_iso = _attach_tz_offset(to, range_tz, "voc")
-        model = VoidOfCourseMoonFactory.from_iso_range(start_iso, end_iso, **extra)
-    else:
-        tz_str = tz
-        if tz_str is None and profile:
-            subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-            tz_str = getattr(subject, "tz_str", None)
-        if tz_str is None:
-            raise ValueError("voc at a moment needs --tz (or -s a profile with a timezone)")
-        moment = _moment(from_, "voc", tz_str)
-        model = VoidOfCourseMoonFactory.from_datetime(
-            moment.year,
-            moment.month,
-            moment.day,
-            moment.hour,
-            moment.minute,
-            tz_str=tz_str,
-            **extra,
-        )
-    _emit(model, fmt, output)
+        start, end = _attach_tz_offset(from_, tz_str, "voc"), _attach_tz_offset(to, tz_str, "voc")
+        _emit(VoidOfCourseMoonFactory.from_iso_range(start, end, **extra), fmt, output)
+        return
+    if tz_str is None:
+        raise ValueError("voc at a moment needs --tz (or -s a profile with a timezone)")
+    m = _moment(from_, "voc", tz_str)
+    _emit(
+        VoidOfCourseMoonFactory.from_datetime(m.year, m.month, m.day, m.hour, m.minute, tz_str=tz_str, **extra),
+        fmt,
+        output,
+    )
 
 
 @sky_app.command("eclipses")
@@ -300,37 +250,14 @@ def eclipses(
     """Solar and lunar eclipses. Located (with -s/--lat/--lng) or global."""
     from kerykeion import EclipseFactory
 
-    extra = _zodiac_kwargs(zodiac, sidereal_mode)
-    # A partially-supplied location (only one of --lat/--lng) is almost certainly
-    # a typo; don't silently fall back to a global search that ignores the coord.
-    if (lat is None) != (lng is None):
+    if (lat is None) != (lng is None):  # a half-given place is a typo, not a global search
         raise ValueError("eclipses needs both --lat and --lng (or neither, for a global search).")
-    kwargs = _given(start_year=start_year, count=count)
-    if (lat is not None and lng is not None) or profile is not None:
+    kwargs = {**_given(start_year=start_year, count=count), **_zodiac_kwargs(zodiac, sidereal_mode)}
+    if lat is not None or profile is not None:
         la, lo, _ = _location(profile, lat, lng, None, "eclipses", require_tz=False)
-        model = EclipseFactory.search_from_location(la, lo, **kwargs, **extra)
+        _emit(EclipseFactory.search_from_location(la, lo, **kwargs), fmt, output)
     else:
-        model = EclipseFactory.search_global(**kwargs, **extra)
-    _emit(model, fmt, output)
-
-
-def _range_query(
-    cmd: str,
-    from_: Optional[str],
-    to: Optional[str],
-    zodiac: Optional[str],
-    sidereal_mode: Optional[str],
-    **lists: Optional[list[str]],
-) -> tuple[str, str, dict[str, Any]]:
-    """Validate ``--from``/``--to`` and assemble the kwargs a range search shares.
-
-    *lists* carries the already-split list flags under the name the factory wants
-    for them (``planets=``, ``points=``, ``phases=``): they differ per command,
-    everything else does not.
-    """
-    if from_ is None or to is None:
-        raise ValueError(f"{cmd} needs --from and --to")
-    return from_, to, {**_zodiac_kwargs(zodiac, sidereal_mode), **_given(**lists)}
+        _emit(EclipseFactory.search_global(**kwargs), fmt, output)
 
 
 @sky_app.command("lunations")
@@ -405,8 +332,7 @@ def mundane(
         zodiac,
         sidereal_mode,
         points=_split_csv(planets),
-        # This factory takes aspect names only; a per-aspect ':orb' is refused.
-        aspects=_aspect_names(_parse_aspects(aspects), "mundane aspects"),
+        aspects=_aspect_names(_parse_aspects(aspects), "mundane aspects"),  # names only: no per-aspect orb here
     )
     _emit(MundaneAspectFactory.from_iso_range(start, end, **extra), fmt, output)
 
@@ -424,12 +350,7 @@ def phenomena(
     if not profile:
         raise ValueError("phenomena needs -s <profile> for the moment to describe")
     subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-    active = _split_csv(planets)
-    _emit(
-        PlanetaryPhenomenaFactory.from_subject(subject, active),  # type: ignore[arg-type]
-        fmt,
-        output,
-    )
+    _emit(PlanetaryPhenomenaFactory.from_subject(subject, _split_csv(planets)), fmt, output)  # type: ignore[arg-type]
 
 
 @sky_app.command("occultations")
@@ -444,10 +365,9 @@ def occultations(
 ) -> None:
     """Lunar occultations of a body, globally or as seen from a place.
 
-    The factory searches forward from a Julian day, and the library exposes no
-    public date-to-JD helper, so the starting instant comes from ``-s``'s subject
-    (``technique stars`` reads its ``julian_day`` the same way). Give
-    ``--lat``/``--lng`` — or a profile that has them — for a local search.
+    The search starts from ``-s``'s moment (the library exposes no public
+    date-to-JD helper). Give ``--lat/--lng`` — or a profile that has them — for
+    a local search.
     """
     from kerykeion import OccultationFactory
 
@@ -456,30 +376,21 @@ def occultations(
             "occultations needs -s <profile> to fix the moment to search from "
             "(use `subject save now-ish ...` for an arbitrary date)."
         )
+    if planet is None:  # no honest default: the Moon is the occulter, not the occulted
+        raise ValueError(
+            "occultations needs --planet: the body being occulted by the Moon (e.g. Venus, Mars, Aldebaran)."
+        )
+    if (lat is None) != (lng is None):
+        raise ValueError("occultations needs both --lat and --lng (or neither).")
     subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     julian_day = getattr(subject, "julian_day", None)
     if julian_day is None:
         raise ValueError("the subject has no julian_day to search occultations from")
-
-    if planet is None:
-        # No default is honest here: the Moon is the occulter, not the occulted
-        # body, so there is no "obvious" one to pick. A wrong name gets the
-        # library's own message, which lists every occultable body.
-        raise ValueError(
-            "occultations needs --planet: the body being occulted by the Moon (e.g. Venus, Mars, Aldebaran)."
-        )
     kwargs: dict[str, Any] = {"planet_id": planet, **_given(count=count)}
-    # A half-given coordinate is a typo, not a global search (same rule as
-    # ``sky eclipses``).
-    if (lat is None) != (lng is None):
-        raise ValueError("occultations needs both --lat and --lng (or neither).")
     la = lat if lat is not None else getattr(subject, "lat", None)
     lo = lng if lng is not None else getattr(subject, "lng", None)
-
     factory = OccultationFactory()
-    model: Any
     if la is not None and lo is not None:
-        model = factory.search_local(julian_day, lat=float(la), lng=float(lo), **kwargs)
+        _emit(factory.search_local(julian_day, lat=float(la), lng=float(lo), **kwargs), fmt, output)
     else:
-        model = factory.search_global(julian_day, **kwargs)
-    _emit(model, fmt, output)
+        _emit(factory.search_global(julian_day, **kwargs), fmt, output)
