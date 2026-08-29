@@ -945,6 +945,49 @@ class TestMoonPhaseOverviewToContext:
         assert "<moonset>06:15</moonset>" in context
         assert "<moonset_timestamp>1696917300</moonset_timestamp>" in context
 
+    def test_real_overview_reaches_the_serializer_with_its_moon_times(self):
+        """End to end, from a real subject: the four elements above were dead
+        lines for as long as the factory never wrote the fields, so a test that
+        hand-builds the model could not have noticed. This one goes through
+        MoonPhaseDetailsFactory, which is the only path that ever fills them.
+
+        2026-08-28 at Greenwich has both events, so both must print.
+        """
+        from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich Moon Times", 2026, 8, 28, 12, 0,
+            lng=0.0, lat=51.4779, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+        context = moon_phase_overview_to_context(overview)
+
+        assert f"<moonrise>{overview.moon.moonrise}</moonrise>" in context
+        assert f"<moonrise_timestamp>{overview.moon.moonrise_timestamp}</moonrise_timestamp>" in context
+        assert f"<moonset>{overview.moon.moonset}</moonset>" in context
+        assert f"<moonset_timestamp>{overview.moon.moonset_timestamp}</moonset_timestamp>" in context
+        assert "2026-08-28T18:56" in context
+        assert "2026-08-28T05:15" in context
+
+    def test_a_day_without_a_moonrise_prints_no_moonrise(self):
+        """The elements are omitted, not emptied: 2026-01-09 at Greenwich has a
+        moonset and no moonrise, and the XML must say exactly that."""
+        from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "No Moonrise", 2026, 1, 9, 12, 0,
+            lng=0.0, lat=51.4779, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        context = moon_phase_overview_to_context(MoonPhaseDetailsFactory.from_subject(subject))
+
+        assert "<moonrise>" not in context
+        assert "<moonrise_timestamp>" not in context
+        assert "<moonset>" in context
+
     def test_overview_with_next_lunar_eclipse(self):
         """Test MoonPhaseOverviewModel with next lunar eclipse."""
         from kerykeion.schemas.models import (
