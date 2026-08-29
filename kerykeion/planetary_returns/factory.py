@@ -75,7 +75,7 @@ import logging
 from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 
 from datetime import datetime, timedelta, timezone
-from typing import Callable, List, Literal, Optional, Union, cast
+from typing import Any, Callable, List, Literal, Optional, Union, cast, get_args
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.geonames.fetcher import FetchGeonames
@@ -87,7 +87,7 @@ from kerykeion.astrological_subject.factory import (
 )
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
 from kerykeion.settings.config_constants import DEFAULT_NAKSHATRA_AYANAMSA
-from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode
 from kerykeion.schemas.models import PlanetReturnModel, AstrologicalSubjectModel
 
 
@@ -102,6 +102,12 @@ _BACKEND_ERRORS: tuple = tuple({RuntimeError, getattr(ephe, "Error", RuntimeErro
 # (next_heliocentric_return / next_lunar_node_crossing) and are rejected here. Use
 # the narrow alias so a type checker matches the runtime-accepted set.
 SolarLunarReturnType = Literal["Solar", "Lunar"]
+
+# "the caller said nothing" for `nakshatra_ayanamsa`, whose every other value is a
+# real choice — `None` included, since it selects the legacy uncorrected division.
+# A `None` default would collapse silence into that opt-out, which is exactly the
+# reading this factory exists to avoid, so the default is a sentinel instead.
+_UNSET: Any = object()
 
 
 class PlanetaryReturnFactory:
@@ -451,6 +457,7 @@ class PlanetaryReturnFactory:
         active_fixed_stars: Union[List[str], None] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Union[Optional[SiderealMode], object] = _UNSET,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -509,11 +516,18 @@ class PlanetaryReturnFactory:
                 enrichment flags for the return chart. Each is additive over what the
                 natal already carries: the flag is on when it is passed here OR when the
                 natal subject shows the enrichment populated, so a return never computes
-                less than its own natal. There is no ``nakshatra_ayanamsa`` parameter —
-                the return inherits the mode the natal actually placed its nakshatras
-                with, and falls back to ``DEFAULT_NAKSHATRA_AYANAMSA`` when the natal
-                placed none (a natal without nakshatras carries ``None``, which is the
-                legacy opt-out, not a mode).
+                less than its own natal.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to place
+                the nakshatras on a non-sidereal return chart, exactly as on the subject
+                factory. Three sources, in this order: what is passed here wins; failing
+                that the return inherits the mode the natal actually placed its
+                nakshatras with; failing that it starts from
+                ``DEFAULT_NAKSHATRA_AYANAMSA`` (a natal without nakshatras carries
+                ``None``, which is the legacy opt-out, not a mode). ``None`` passed
+                explicitly IS the legacy uncorrected division and wins like any other
+                value, which is why the default is a sentinel and not ``None``.
+                ``"USER"`` requires ``custom_ayanamsa_t0`` and
+                ``custom_ayanamsa_ayan_t0``, and only on a return that would cast it.
 
         Raises:
             KerykeionException: If city is not provided when online=True.
@@ -616,9 +630,16 @@ class PlanetaryReturnFactory:
         # from the same instant cast directly. `natal_has_nakshatra` is the
         # discriminator: inherit only a mode that was actually used, and
         # otherwise start from the same default the subject factory would.
-        self.nakshatra_ayanamsa = (
-            subject.nakshatra_ayanamsa if natal_has_nakshatra else DEFAULT_NAKSHATRA_AYANAMSA
-        )
+        # An explicit argument outranks both: the caller casting THIS return knows
+        # something the natal does not, and `None` from the caller is the legacy
+        # opt-out asked for on purpose. `_UNSET` is what keeps that `None` apart
+        # from the silence that means "inherit".
+        if nakshatra_ayanamsa is _UNSET:
+            self.nakshatra_ayanamsa: Optional[SiderealMode] = (
+                subject.nakshatra_ayanamsa if natal_has_nakshatra else DEFAULT_NAKSHATRA_AYANAMSA
+            )
+        else:
+            self.nakshatra_ayanamsa = cast(Optional[SiderealMode], nakshatra_ayanamsa)
         self.calculate_gauquelin = calculate_gauquelin or (subject.gauquelin_sector_cusps is not None)
         self.calculate_nutation = calculate_nutation or (subject.nutation is not None)
         self.calculate_local_space = calculate_local_space or _any_point_has("azimuth")
@@ -633,6 +654,29 @@ class PlanetaryReturnFactory:
                 "PlanetaryReturnFactory requires both custom_ayanamsa_t0 and "
                 "custom_ayanamsa_ayan_t0 when sidereal_mode='USER'."
             )
+
+        # Validate the nakshatra ayanamsa here rather than letting the subject
+        # factory raise once a return instant has already been searched for: it is
+        # the constructor that received the value, and the same rule applies. It is
+        # a mode name in its own right, independent of `sidereal_mode`, so it is
+        # legitimate on a Tropical chart; only a return that would actually CAST it
+        # needs a 'USER' definition, which is why the flag and the zodiac gate it.
+        if self.nakshatra_ayanamsa is not None:
+            if self.nakshatra_ayanamsa not in get_args(SiderealMode):
+                raise KerykeionException(
+                    f"'{self.nakshatra_ayanamsa}' is not a valid nakshatra ayanamsa! "
+                    f"Available modes are: {get_args(SiderealMode)}"
+                )
+            if (
+                self.calculate_nakshatra
+                and self.nakshatra_ayanamsa == "USER"
+                and subject.zodiac_type != "Sidereal"
+                and (self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None)
+            ):
+                raise KerykeionException(
+                    "nakshatra_ayanamsa='USER' requires both custom_ayanamsa_t0 (reference epoch as "
+                    "Julian Day) and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."
+                )
 
         # Geonames username
         if geonames_username is None and online and (lat is None or lng is None or not tz_str):
