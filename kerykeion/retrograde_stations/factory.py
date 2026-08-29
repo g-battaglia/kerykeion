@@ -247,14 +247,19 @@ def _fold_retrograde_periods(
     # the speed snapshot: the motion BEFORE an SR is direct, before an SD it is
     # retrograde. Such a station is the range start itself (the scan may place
     # it a hair to either side).
-    on_start = 0
-    if ordered and abs(ordered[0].julian_day - start_jd) <= _EDGE_TOL_DAYS:
-        retro_at_start = ordered[0].station_type == "SD"
-        ordered[0] = ordered[0].model_copy(update={"julian_day": start_jd})
-        on_start = 1
     # Likewise a station within the solver's resolution of the range end is
     # the range end itself: an SD there closes the open span unclipped, an SR
-    # there opens nothing that this range can see.
+    # there opens nothing that this range can see. A station within reach of
+    # BOTH bounds (a range shorter than the tolerance, straddling it) goes to
+    # the bound that keeps the motion the range does contain: an SR opens at
+    # the start, an SD closes at the end.
+    on_start = 0
+    if ordered and abs(ordered[0].julian_day - start_jd) <= _EDGE_TOL_DAYS:
+        near_end_too = len(ordered) == 1 and abs(ordered[0].julian_day - end_jd) <= _EDGE_TOL_DAYS
+        if not (near_end_too and ordered[0].station_type == "SD"):
+            retro_at_start = ordered[0].station_type == "SD"
+            ordered[0] = ordered[0].model_copy(update={"julian_day": start_jd})
+            on_start = 1
     if len(ordered) > on_start and abs(ordered[-1].julian_day - end_jd) <= _EDGE_TOL_DAYS:
         ordered[-1] = ordered[-1].model_copy(update={"julian_day": end_jd})
 

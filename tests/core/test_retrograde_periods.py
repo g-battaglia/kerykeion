@@ -90,7 +90,10 @@ class TestEdges:
         sr = next(s for s in stations if s.station_type == "SR")
         sd = next(s for s in stations if s.station_type == "SD")
         half = 0.5 / 86400.0
-        periods = lambda a, b: RetrogradeStationFactory.retrograde_periods_from_julian_day(a, b, ["Mercury"]).periods
+
+        def periods(a, b):
+            return RetrogradeStationFactory.retrograde_periods_from_julian_day(a, b, ["Mercury"]).periods
+
         starting_before = periods(sr.julian_day - half, sr.julian_day + 10)
         assert [(p.start_clipped, p.end_clipped) for p in starting_before] == [(False, True)]
         assert 0 < starting_before[0].start_jd - (sr.julian_day - half) < 2 * half
@@ -101,6 +104,28 @@ class TestEdges:
         ending_after = periods(sd.julian_day - 10, sd.julian_day + half)
         assert [(p.start_clipped, p.end_clipped) for p in ending_after] == [(True, False)]
         assert 0 < (sd.julian_day + half) - ending_after[0].end_jd < 2 * half
+
+    def test_a_range_shorter_than_the_tolerance_straddling_a_station_keeps_its_motion(self):
+        # 40 ms around a station: the station is within the solver's resolution
+        # of BOTH bounds. It goes to the bound that keeps the motion the range
+        # contains — an SD to the end (retrograde until it), an SR to the start
+        # (retrograde from it) — never to a bound that empties the span.
+        stations = RetrogradeStationFactory.from_iso_range("2020-06-01", "2020-07-31", ["Mercury"]).stations
+        sr = next(s for s in stations if s.station_type == "SR")
+        sd = next(s for s in stations if s.station_type == "SD")
+        tick = 0.02 / 86400.0
+        around_sd = RetrogradeStationFactory.retrograde_periods_from_julian_day(
+            sd.julian_day - tick, sd.julian_day + tick, ["Mercury"]
+        )
+        assert [(p.start_jd, p.end_jd, p.start_clipped, p.end_clipped) for p in around_sd.periods] == [
+            (sd.julian_day - tick, sd.julian_day + tick, True, False)
+        ]
+        around_sr = RetrogradeStationFactory.retrograde_periods_from_julian_day(
+            sr.julian_day - tick, sr.julian_day + tick, ["Mercury"]
+        )
+        assert [(p.start_jd, p.end_jd, p.start_clipped, p.end_clipped) for p in around_sr.periods] == [
+            (sr.julian_day - tick, sr.julian_day + tick, False, True)
+        ]
 
     def test_a_sub_second_range_inside_retrograde_motion_is_one_span(self):
         # Mercury is retrograde from 15 March to 7 April 2025: half a second of
