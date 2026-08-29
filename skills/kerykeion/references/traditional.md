@@ -24,7 +24,7 @@ zodiacal_releasing,horary,primary_directions,receptions}/factory.py`, plus
 
 ## Frame prerequisites and refusals
 
-Each factory validates its own prerequisites and raises `KerykeionException`. Verified in 6.0.0a90:
+Each factory validates its own prerequisites and raises `KerykeionException`. Verified in 6.0.0a91:
 
 | Factory | Heliocentric / barycentric / selenocentric / planetocentric subject | Midpoint composite subject |
 |---|---|---|
