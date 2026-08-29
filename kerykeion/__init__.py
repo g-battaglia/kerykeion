@@ -87,11 +87,15 @@ from .lunations import LunationFinderFactory, LunationModel, LunationsCollection
 from .retrograde_stations import (
     RetrogradeStationFactory,
     StationModel,
+    RetrogradePeriodModel,
+    RetrogradePeriodsCollectionModel,
     RetrogradeStationsCollectionModel,
 )
 from .sign_ingresses import (
     SignIngressFactory,
     IngressModel,
+    SignPeriodModel,
+    SignPeriodsCollectionModel,
     SignIngressesCollectionModel,
 )
 from .mundane_aspects import (
@@ -228,9 +232,13 @@ __all__ = [
     "LunationsCollectionModel",
     "RetrogradeStationFactory",
     "StationModel",
+    "RetrogradePeriodModel",
+    "RetrogradePeriodsCollectionModel",
     "RetrogradeStationsCollectionModel",
     "SignIngressFactory",
     "IngressModel",
+    "SignPeriodModel",
+    "SignPeriodsCollectionModel",
     "SignIngressesCollectionModel",
     "MundaneAspectFactory",
     "MundaneAspectModel",

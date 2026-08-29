@@ -119,6 +119,18 @@ Pluto` (Sun/Moon never station and are not accepted). `StationModel`: `planet`,
 `station_type` (`"SR"` = turns retrograde, `"SD"` = turns direct),
 `julian_day`, `iso_utc`, `sign`, `sign_num`, `degree`, `ecliptic_longitude`.
 
+### Retrograde periods (a92)
+
+`RetrogradeStationFactory.retrograde_periods_from_iso_range(start, end, planets=None, zodiac_type, sidereal_mode)`
+/ `retrograde_periods_from_julian_day(...)` → `RetrogradePeriodsCollectionModel`
+(`start_jd`, `end_jd`, `periods`). Each `RetrogradePeriodModel` is one retrograde
+span clipped to the range: `planet`, `start_jd`, `end_jd`, `start`, `end`,
+`start_clipped`, `end_clipped`. The motion state at the range start comes from
+the speed there (a station on the first second decides it deterministically);
+SR opens a span, SD closes it; clipped bounds are flagged and nothing is
+searched outside the range. `"Chiron"` is accepted opt-in by both the station
+finder and the periods (default set unchanged).
+
 ## SignIngressFactory
 
 Static; same pair of entry points with `planets=None` →
@@ -357,3 +369,14 @@ Cross-references: subjects in `references/subjects.md`; provenance in
 `references/backends-and-provenance.md`; sidereal modes in
 `references/zodiac-houses-perspectives.md`; VoC Moon / sun times / planetary
 hours in `references/calendars-hours-moon.md`.
+
+### Sign periods (a92)
+
+`SignIngressFactory.sign_periods_from_iso_range(start, end, planets=None, zodiac_type, sidereal_mode)`
+/ `sign_periods_from_julian_day(...)` → `SignPeriodsCollectionModel` (`start_jd`,
+`end_jd`, `periods`). Per planet, contiguous `SignPeriodModel` stays covering
+the whole range: `planet`, `sign`, `sign_num`, `start_jd`, `end_jd`, `start`,
+`end`, `start_clipped`, `end_clipped`. The sign at the range start is read in
+the same ephemeris session (same frame) as the ingress scan, so stays and
+ingresses never disagree — a sidereal request yields sidereal stays. The Moon
+is opt-in, as for ingresses.

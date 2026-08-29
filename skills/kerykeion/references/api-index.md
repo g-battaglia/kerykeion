@@ -236,6 +236,8 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `resolve_subject_local_now` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `RetrogradeStationFactory` | factory | `references/mundane-events.md` |
 | `RetrogradeStationsCollectionModel` | model | `references/mundane-events.md` |
+| `RetrogradePeriodModel` | model | `references/mundane-events.md` |
+| `RetrogradePeriodsCollectionModel` | model | `references/mundane-events.md` |
 | `ReturnType` | literal — `kerykeion.schemas` | `references/predictive.md` |
 | `ROYAL_FIXED_STARS` | subpackage import — `kerykeion.settings.config_constants` | `references/subjects.md` |
 | `safe_timezone` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
@@ -247,6 +249,8 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `Sign` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `SIGN_CODES` | literal — `kerykeion.schemas` | `references/zodiac-houses-perspectives.md` |
 | `SignIngressesCollectionModel` | model | `references/mundane-events.md` |
+| `SignPeriodModel` | model | `references/mundane-events.md` |
+| `SignPeriodsCollectionModel` | model | `references/mundane-events.md` |
 | `SignIngressFactory` | factory | `references/mundane-events.md` |
 | `SignNumbers` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `single_chart_data_to_context` | subpackage import — `kerykeion.context` | `references/reports-and-ai-context.md` |

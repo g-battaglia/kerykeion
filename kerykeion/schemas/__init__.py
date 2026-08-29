@@ -161,8 +161,12 @@ _FEATURE_MODEL_HOMES = {
     "LunationsCollectionModel": "kerykeion.lunations.factory",
     "StationModel": "kerykeion.retrograde_stations.factory",
     "RetrogradeStationsCollectionModel": "kerykeion.retrograde_stations.factory",
+    "RetrogradePeriodModel": "kerykeion.retrograde_stations.factory",
+    "RetrogradePeriodsCollectionModel": "kerykeion.retrograde_stations.factory",
     "IngressModel": "kerykeion.sign_ingresses.factory",
     "SignIngressesCollectionModel": "kerykeion.sign_ingresses.factory",
+    "SignPeriodModel": "kerykeion.sign_ingresses.factory",
+    "SignPeriodsCollectionModel": "kerykeion.sign_ingresses.factory",
     "MundaneAspectModel": "kerykeion.mundane_aspects.factory",
     "MundaneAspectsCollectionModel": "kerykeion.mundane_aspects.factory",
     "MidpointModel": "kerykeion.midpoints.factory",
@@ -192,8 +196,15 @@ if TYPE_CHECKING:  # static analyzers see the lazy re-exports as plain imports
     from kerykeion.retrograde_stations.factory import (
         StationModel,
         RetrogradeStationsCollectionModel,
+        RetrogradePeriodModel,
+        RetrogradePeriodsCollectionModel,
     )
-    from kerykeion.sign_ingresses.factory import IngressModel, SignIngressesCollectionModel
+    from kerykeion.sign_ingresses.factory import (
+        IngressModel,
+        SignIngressesCollectionModel,
+        SignPeriodModel,
+        SignPeriodsCollectionModel,
+    )
     from kerykeion.mundane_aspects.factory import MundaneAspectModel, MundaneAspectsCollectionModel
     from kerykeion.midpoints.factory import MidpointModel, MidpointAspectModel
     from kerykeion.secondary_progressions.factory import (
@@ -368,8 +379,12 @@ __all__ = [
     "LunationsCollectionModel",
     "StationModel",
     "RetrogradeStationsCollectionModel",
+    "RetrogradePeriodModel",
+    "RetrogradePeriodsCollectionModel",
     "IngressModel",
     "SignIngressesCollectionModel",
+    "SignPeriodModel",
+    "SignPeriodsCollectionModel",
     "MundaneAspectModel",
     "MundaneAspectsCollectionModel",
     "MidpointModel",
