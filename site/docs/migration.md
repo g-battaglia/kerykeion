@@ -227,6 +227,9 @@ It applies even if you were already using the v5 factory API correctly. Nothing 
 | Orbs on non-natal charts | same defaults as natal | flat 3° (`PREDICTIVE_ACTIVE_ASPECTS`) | Transits, returns and progressions report far fewer aspects |
 | Sun/Moon orb bonus | none | `+1.5°`, natal-family charts only | Slightly wider orbs for luminaries |
 | Chart style | `"classic"` | `"modern"` | A different drawing, and a different filename |
+| Nakshatras on a non-sidereal chart | tropical longitude used as-is | rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) | Different nakshatra, pada and lord — about two nakshatras' worth |
+| Lunar phase name | 28 fixed bins | windows centred on the syzygies | `moon_phase_name` and `moon_emoji` change near a boundary; `moon_phase` (1-28) does not |
+| Moon's apsides | `perihelion` / `aphelion` only | `periapsis` / `apoapsis` / `apsis_kind` | Old fields still populated; new ones are correct for the Moon |
 
 These are deliberate v6 choices, not oversights. What follows is how to opt back into the old behaviour where you need continuity.
 
@@ -307,6 +310,40 @@ print(len(chart_data.aspects), len(chart_data_v5.aspects))
 For a transit chart, pass the same `active_aspects` to `create_transit_chart_data` — there `point_orb_adjustments` is already empty, so only the aspect list matters.
 
 `AspectsFactory.single_chart_aspects` applies no orb adjustment by default, so it and `ChartDataFactory` can disagree on the same subject unless you pass the same arguments to both.
+
+### Nakshatras on a non-sidereal chart
+
+Nakshatras divide the sidereal zodiac. In v5 a tropical chart's longitudes were handed to the 27-fold division as they were, so every `nakshatra`, `nakshatra_pada` and `nakshatra_lord` came out about two nakshatras off. In v6 a non-sidereal chart's longitudes are rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) for the division only: the chart stays tropical, and its nakshatras agree exactly with the sidereal chart cast in the same mode.
+
+If you stored v5 values and need to reproduce them, pass `nakshatra_ayanamsa=None`. That is the legacy path; it logs one warning per subject.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+corrected = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_nakshatra=True,
+)
+legacy = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_nakshatra=True, nakshatra_ayanamsa=None,   # the v5 numbers
+)
+print(corrected.moon.nakshatra, "vs", legacy.moon.nakshatra)
+```
+
+A sidereal chart is unaffected: `nakshatra_ayanamsa` is ignored there, and `subject.nakshatra_ayanamsa` reads `None`.
+
+### Lunar phase names moved onto the event
+
+`moon_phase_name` and `moon_emoji` used to come from 28 equal bins, which put the label a little ahead of or behind the event it names. They now come from windows centred on the syzygies: New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and the four crescent/gibbous names fill the rest. A moment near a boundary can therefore report a different name than it did in v5 — a closer one.
+
+The `moon_phase` index (1-28) is unchanged, and so are `get_moon_phase_name_from_phase_int` / `get_moon_emoji_from_phase_int`, which only ever see that index: they remain the 28-bin approximation and can disagree with the model near a boundary. `LunarPhaseModel` also gained `major_phase` (the nearest of the four syzygies) and `stage` (`"waxing"` / `"waning"`).
+
+### `perihelion` / `aphelion` are deprecated
+
+`PlanetaryNodeModel` now exposes the apsides as `periapsis` and `apoapsis`, with `apsis_kind` saying which body they are measured against. The old `perihelion` / `aphelion` name the Sun — right for the eight planets, wrong for the Moon, which goes round the Earth. They are still populated with the same objects, so nothing that reads them breaks; new code should read the generic pair.
 
 ### Chart style
 

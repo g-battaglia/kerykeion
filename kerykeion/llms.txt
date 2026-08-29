@@ -150,6 +150,13 @@ if subject.lunar_phase:
     print(f"Emoji: {phase.moon_emoji}")
 ```
 
+`moon_phase_name` and `moon_emoji` come from windows centred on the syzygies
+(New/Full ±6.4286°, the quarters ±19.2857°), so the name tracks the event rather
+than a bin boundary. `moon_phase` stays a 1-28 index; `major_phase` is the
+nearest of the four syzygies and `stage` is `"waxing"` or `"waning"`. The two
+`get_moon_*_from_phase_int` helpers see only the index and remain the older
+28-bin approximation.
+
 ## 4. Chart Data Factory
 
 ### Natal Chart Data
@@ -453,6 +460,57 @@ classical planets. `HoraryIndicatorsFactory` assembles horary significators (1st
 house), classical considerations (Ascendant degree, Saturn, Moon void), and
 receptions. All require terrestrial perspective.
 
+## 5C. Observational Phenomena, Apsides and Moonrise
+
+```python
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    MoonPhaseDetailsFactory,
+    PlanetaryNodesFactory,
+    PlanetaryPhenomenaFactory,
+)
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+
+# Nearness to the Sun, named: cazimi / combust / under_the_beams / free.
+phenomena = PlanetaryPhenomenaFactory.from_subject(subject)
+mercury = next(p for p in phenomena.phenomena if p.name == "Mercury")
+print(mercury.solar_phase, round(mercury.elongation, 3))
+print(phenomena.solar_phase_thresholds.combust_deg)   # 8.5, replaceable
+
+# Apsides under generic names, with the frame they are measured in.
+nodes = PlanetaryNodesFactory.from_subject(subject, planets=["Moon", "Mars"])
+for entry in nodes.nodes:
+    print(entry.planet_name, entry.apsis_kind, round(entry.apoapsis.abs_pos, 4))
+
+# Moonrise and moonset for the subject's civil day.
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+print(overview.moon.moonrise, overview.moon.moonset)
+print(overview.moon.moonrise_timestamp, overview.moon.moonset_timestamp)
+```
+
+`solar_phase` is read off the published `elongation` against the collection's
+`solar_phase_thresholds` (`SolarPhaseThresholdsModel` from `kerykeion.schemas`:
+0.2833° / 8.5° / 17°). Those cut-offs are conventions, so pass your own instance
+to either constructor; the one used is echoed on the collection.
+`is_morning_star` / `is_evening_star` are purely geometric — which side of the
+Sun the planet stands on — and say nothing about visibility.
+
+`periapsis` / `apoapsis` are the generic apsis names and are always right;
+`perihelion` / `aphelion` are deprecated (they name the Sun, wrong for the Moon)
+but still populated with the same objects. `apsis_kind` is `"geocentric"` for the
+Moon alone, whose apoapsis equals `mean_lilith` (`method="mean"`) or
+`true_lilith` (`method="osculating"`) to the decimal.
+
+`moonrise` / `moonset` are ISO-8601 strings in the subject's local zone, with
+`moonrise_timestamp` / `moonset_timestamp` the same instants as Unix seconds.
+Each is `None` when the subject's civil day has no such event: the Moon rises
+~50 minutes later each day, so about one day in thirty has no moonrise and
+another has no moonset.
+
 ## 6. AI Context Serialization
 
 Convert any Kerykeion model to AI-readable XML:
@@ -639,8 +697,31 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     houses_system_identifier="W",  # Whole Sign
+    calculate_nakshatra=True,
     online=False
 )
+print(subject.moon.nakshatra, subject.moon.nakshatra_pada, subject.moon.nakshatra_lord)
+```
+
+### Nakshatras on a Tropical Chart
+
+Nakshatras divide the sidereal zodiac. A non-sidereal chart's longitudes are
+rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) for the 27-fold division
+only: the chart stays tropical, and its nakshatras match the sidereal chart cast
+in the same mode. On a sidereal chart the parameter is ignored.
+`nakshatra_ayanamsa=None` restores the pre-v6 uncorrected values and warns.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+tropical = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    calculate_nakshatra=True,
+)
+print(tropical.moon.sign, tropical.moon.nakshatra)     # Pis Purva Bhadrapada
+print(tropical.nakshatra_ayanamsa)                     # LAHIRI
+print(round(tropical.nakshatra_ayanamsa_value, 4))     # 23.7273
 ```
 
 ### Horary Question
@@ -732,6 +813,7 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Midpoints        | `MidpointFactory`              | Subject          |
 | Eclipses         | `EclipseFactory`               | Start year       |
 | Phenomena        | `PlanetaryPhenomenaFactory`    | Subject          |
+| Solar phase      | `PlanetaryPhenomenaFactory`    | `solar_phase_thresholds` |
 | Nodes/Apsides    | `PlanetaryNodesFactory`        | Subject/JD       |
 | Heliacal         | `HeliacalFactory`              | JD + geopos      |
 | Occultations     | `OccultationFactory`           | JD + planet      |

@@ -15,6 +15,7 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `ALL_ACTIVE_POINTS` | constant/function — `kerykeion.settings` | `references/subjects.md` |
 | `AlmutenFigurisStrategy` | subpackage import — `kerykeion.dominants` | `references/analysis.md` |
 | `AngularityModel` | model | `references/charts-and-drawing.md` |
+| `ApsisKind` | literal — `kerykeion.schemas` | `references/mundane-events.md` |
 | `aspect_to_context` | subpackage import — `kerykeion.context` | `references/reports-and-ai-context.md` |
 | `AspectModel` | model | `references/aspects-and-orbs.md` |
 | `AspectMovementType` | literal — `kerykeion.schemas` | `references/aspects-and-orbs.md` |
@@ -44,9 +45,12 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `civil_jd` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `civil_leap_year` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `classify_motion_state` | subpackage import — `kerykeion.motion` | `references/utilities.md` |
+| `classify_solar_phase` | module import — `kerykeion.planetary_phenomena.factory` | `references/utilities.md` |
 | `CompositeChartType` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `CompositeSubjectFactory` | factory | `references/subjects.md` |
 | `CompositeSubjectModel` | model | `references/subjects.md` |
+| `compute_rise_set_ephe` | module import — `kerykeion.moon_phase_details.utils` | `references/utilities.md` |
+| `compute_sun_rise_set_ephe` | module import — `kerykeion.moon_phase_details.utils` | `references/utilities.md` |
 | `datetime_to_julian` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `DEFAULT_ACTIVE_ASPECTS` | constant/function — `kerykeion.settings` | `references/aspects-and-orbs.md` |
 | `DEFAULT_ACTIVE_POINTS` | constant/function — `kerykeion.settings` | `references/subjects.md` |
@@ -255,6 +259,8 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `SolarArcSubjectModel` | model | `references/predictive.md` |
 | `SolarEclipseModel` | model | `references/mundane-events.md` |
 | `SolarLunarReturnType` | subpackage import — `kerykeion.planetary_returns.factory` | `references/predictive.md` |
+| `SolarPhase` | literal — `kerykeion.schemas` | `references/mundane-events.md` |
+| `SolarPhaseThresholdsModel` | model — `kerykeion.schemas` | `references/mundane-events.md` |
 | `SpeculumEntryModel` | model | `references/traditional.md` |
 | `StationModel` | model | `references/mundane-events.md` |
 | `StelliumModel` | model | `references/charts-and-drawing.md` |

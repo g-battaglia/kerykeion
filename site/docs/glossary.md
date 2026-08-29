@@ -119,6 +119,11 @@ The lunar apogee, associated with shadow self and repressed desires.
 - **Mean Lilith**: Averaged position
 - **True Lilith**: Oscillating position
 
+### Perigee / Apogee
+The two ends of the Moon's orbit around the Earth: the perigee is the point nearest the Earth, the apogee the point farthest from it. They are the Moon's **apsides**. The names *perihelion* and *aphelion* mean the same two ends of an orbit around the **Sun**, which is what the eight planets go round — so they are wrong for the Moon, and the apogee is precisely the point the tradition calls the Black Moon Lilith.
+
+> **In Kerykeion:** `PlanetaryNodesFactory` reports both ends of every orbit as `periapsis` / `apoapsis`, with `apsis_kind` saying which body they are measured against (`"geocentric"` for the Moon alone). The Moon's `apoapsis` equals `mean_lilith` with `method="mean"` and `true_lilith` with `method="osculating"`. The older `perihelion` / `aphelion` fields are deprecated but still populated.
+
 ### Asteroids
 Minor bodies in the asteroid belt:
 - **Ceres**: Nurturing, agriculture
@@ -257,6 +262,25 @@ The oldest predictive technique in Western astrology. Measures the arc a promiss
 The first morning a celestial body becomes visible above the eastern horizon just before sunrise after a period of invisibility (hidden by the Sun's glare). Heliacal settings are the opposite: the last evening visibility before the body disappears into the Sun's glare.
 
 > **In Kerykeion:** Use `HeliacalFactory().next_heliacal_rising(jd, planet, geopos)`.
+
+### Cazimi, Combust, Under the Beams
+Three classical names for how near the Sun a body stands, read as a condition of visibility rather than as a number of degrees. From the closest outwards:
+
+| Term | Meaning | Default cut-off |
+|:-----|:--------|:----------------|
+| **Cazimi** | In the heart of the Sun | within 0.2833° (16 arcminutes) |
+| **Combust** | Burnt; invisible in the glare | within 8.5° |
+| **Under the Beams** | Still inside the Sun's rays | within 17° |
+| **Free** | Far enough to be seen in a dark sky | 17° or more |
+
+The cut-offs are conventions, not measurements, and the schools disagree on all three — some read the beams at 15°, some scale combustion by planet.
+
+> **In Kerykeion:** every `PlanetaryPhenomenaModel` carries `solar_phase` (`"cazimi"` / `"combust"` / `"under_the_beams"` / `"free"`), read against the collection's `solar_phase_thresholds`, which you may replace. Note that `is_morning_star` / `is_evening_star` are purely geometric — which side of the Sun the planet stands on — and say nothing about visibility.
+
+### Major Phase (Moon)
+The nearest of the Moon's four syzygies — New Moon, First Quarter, Full Moon, Last Quarter — to a given moment. The eight-name phase (`Waxing Crescent`, `Waning Gibbous`, …) says where in the cycle the Moon is; the major phase says which of the four turning points it is closest to, and `stage` says whether it is `"waxing"` or `"waning"`.
+
+> **In Kerykeion:** `subject.lunar_phase.major_phase` / `.stage`, and the same two fields on `MoonPhaseDetailsFactory`'s `overview.moon`.
 
 ### Occultation
 An event where the Moon passes in front of a planet or star as seen from Earth, temporarily hiding it from view. Similar to an eclipse, but involving a body other than the Sun.

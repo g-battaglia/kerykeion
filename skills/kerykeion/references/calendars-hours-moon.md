@@ -16,10 +16,10 @@ location_precision=0)` → `MoonPhaseOverviewModel`. The two extras are
 keyword-only metadata echoed into the result's `location` block.
 
 Subjects carry `subject.lunar_phase` (`LunarPhaseModel`: `degrees_between_s_m`,
-`moon_phase` int, `moon_emoji`, `moon_phase_name`) — but it is `None` when
-`calculate_lunar_phase=False`, when Sun or Moon is not among the active points,
-or in non-geo/topocentric perspectives (see `references/subjects.md`); guard
-access. This factory builds a much richer, UI/API-oriented overview around
+`moon_phase` int 1–28, `moon_emoji`, `moon_phase_name`, `major_phase`, `stage`)
+— but it is `None` when `calculate_lunar_phase=False`, when Sun or Moon is not
+among the active points, or in non-geo/topocentric perspectives (see
+`references/subjects.md`); guard access. This factory builds a much richer, UI/API-oriented overview around
 that instant:
 
 - `MoonPhaseOverviewModel`: `timestamp` (Unix), `datestamp` (RFC-2822 style),
@@ -31,8 +31,19 @@ that instant:
   `lunar_cycle`, `emoji`, `zodiac` (Sun/Moon signs), `next_lunar_eclipse`, and
   `detailed.upcoming_phases` — precise last/next instants for New Moon, First
   Quarter, Full Moon, Last Quarter (each with timestamp, datestamp and
-  days_ago/days_ahead). `moonrise`/`moonset` fields exist but are not populated
-  by this factory.
+  days_ago/days_ahead), plus `moonrise`/`moonset` and their
+  `moonrise_timestamp`/`moonset_timestamp`.
+- `moonrise`/`moonset` are ISO-8601 strings in the subject's **local** zone (the
+  same zone `sun.sunrise` uses); the two `*_timestamp` fields are the same
+  instants as Unix seconds (UTC). They are the refracted upper limb with
+  topocentric parallax — the almanac convention — computed for the subject's
+  civil day, DST-correct at both midnights. Each is `None` when that day has no
+  such event: the Moon rises ~50 min later each day, so roughly one day in
+  thirty has no moonrise and another no moonset. Polar latitudes and an
+  unresolvable timezone also give `None`. Unlike the rest of the `moon` block
+  these are computed even when the subject carries no lunar phase (heliocentric
+  chart, or Sun not in `active_points`) — a horizon crossing is a fact about the
+  place and the day.
 - `sun` (`MoonPhaseSunInfoModel`): `sunrise`, `sunset`, `solar_noon` as
   **subject-local** aware datetimes (unlike `SunTimesModel`, which is UTC),
   `day_length`, `position` (altitude/azimuth/distance), `next_solar_eclipse`.
@@ -53,6 +64,9 @@ overview = MoonPhaseDetailsFactory.from_subject(subject)
 m = overview.moon
 print(m.phase_name, m.emoji, m.stage, m.illumination, m.age_days)
 print(overview.sun.sunrise, overview.sun.day_length)   # subject-local tz
+# This day is one of the ~1-in-30 with no moonrise at all: None, then a moonset.
+print(m.moonrise, m.moonset)
+print(m.moonrise_timestamp, m.moonset_timestamp)   # same instants, Unix seconds
 ```
 
 ## SunTimesFactory

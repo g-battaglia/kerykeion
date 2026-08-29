@@ -83,7 +83,7 @@ Helper function to calculate accurate lunar phases.
 
 | Function                                  | Description                                                        |
 | :---------------------------------------- | :----------------------------------------------------------------- |
-| `calculate_moon_phase(moon_deg, sun_deg)` | Returns `LunarPhaseModel` with the Sun-Moon angle, phase number (1-28), phase name, and emoji. |
+| `calculate_moon_phase(moon_deg, sun_deg)` | Returns `LunarPhaseModel`: the Sun-Moon angle, phase number (1-28), phase name, emoji, `major_phase` and `stage`. |
 
 ```python
 from kerykeion.utilities import calculate_moon_phase
@@ -91,6 +91,8 @@ from kerykeion.utilities import calculate_moon_phase
 phase = calculate_moon_phase(180, 0) # Full Moon
 print(f"{phase.moon_emoji} {phase.moon_phase_name}")
 ```
+
+The name and the emoji come from windows **centred on the syzygies**: New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and the four crescent/gibbous names fill the rest. The name therefore tracks the event rather than a bin boundary. The `moon_phase` index (1-28) is unchanged.
 
 ## Data Utilities
 
@@ -113,6 +115,8 @@ Additional moon phase formatting utilities.
 | :------------------------------------------ | :--------------------------------- |
 | `get_moon_emoji_from_phase_int(phase)`      | Returns emoji for a lunation day (1-28). |
 | `get_moon_phase_name_from_phase_int(phase)` | Returns name for a lunation day (1-28).  |
+
+Both take only the 1-28 index, so they cannot use the centred windows described above: they are the older 28-bin approximation, kept for callers that hold an index and nothing else, and they disagree with `LunarPhaseModel.moon_phase_name` near a boundary. Read the fields off the model when you have it.
 
 ---
 
