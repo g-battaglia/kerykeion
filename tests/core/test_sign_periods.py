@@ -97,20 +97,31 @@ class TestFrameAndEdges:
             assert all(a.end_jd == b.start_jd for a, b in zip(stays, stays[1:]))
 
 
-class TestRangeStartingOnAnIngress:
-    """A range that begins on the ingress instant opens the entered sign unclipped."""
+class TestRangeBoundsOnAnIngress:
+    """A range that begins or ends on an ingress instant — the instant this
+    factory reported, which bisection leaves a hair to either side of the true
+    crossing — opens or closes the stay there: unclipped, and whole (no
+    hair-thin stay on the wrong side of the crossing)."""
 
-    def test_first_stay_is_not_clipped_when_the_range_starts_on_the_ingress(self):
-        aries = next(
-            x for x in SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"]).ingresses if x.sign == "Ari"
-        )
+    @staticmethod
+    def _aries_ingress(year: int):
+        found = SignIngressFactory.from_iso_range(f"{year}-03-15", f"{year}-03-25", ["Sun"]).ingresses
+        return next(x for x in found if x.sign == "Ari")
+
+    @pytest.mark.parametrize("year", range(2019, 2028))
+    def test_first_stay_is_not_clipped_when_the_range_starts_on_the_ingress(self, year):
+        aries = self._aries_ingress(year)
         res = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day, aries.julian_day + 10, ["Sun"])
-        assert [p.sign for p in res.periods] == ["Ari"]
-        first = res.periods[0]
-        assert first.start_jd == aries.julian_day
-        assert not first.start_clipped
-        assert first.end_clipped
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in res.periods] == [("Ari", False, True)]
+        assert res.periods[0].start_jd == aries.julian_day
 
-    def test_first_stay_is_clipped_when_the_range_starts_mid_sign(self):
+    @pytest.mark.parametrize("year", range(2019, 2028))
+    def test_last_stay_is_not_clipped_when_the_range_ends_on_the_ingress(self, year):
+        aries = self._aries_ingress(year)
+        res = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day - 10, aries.julian_day, ["Sun"])
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in res.periods] == [("Pis", True, False)]
+        assert res.periods[0].end_jd == aries.julian_day
+
+    def test_stays_are_clipped_when_the_range_cuts_mid_sign(self):
         res = SignIngressFactory.sign_periods_from_iso_range("2026-03-01", "2026-03-10", ["Sun"])
-        assert res.periods[0].start_clipped
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in res.periods] == [("Pis", True, True)]

@@ -297,18 +297,34 @@ class SignPeriodsCollectionModel(SubscriptableBaseModel):
     periods: List[SignPeriodModel]
 
 
+# An ingress within one second of a range bound IS that bound: the stay it
+# opens or closes meets the bound unclipped, and no hair-thin stay is emitted
+# on the far side of it. One second is far coarser than the bisection (which
+# resolves a crossing to milliseconds) and far finer than any real stay.
 _EDGE_TOL_DAYS = 1.0 / 86400.0
 
 
-def _entered_at_start(start_jd: float, body: int, iflag: int, sign0: int) -> bool:
-    """True when the sign read at ``start_jd`` was entered on that very
-    instant — the range starts on an ingress — so the first stay is not a
-    clipped one. Probes one second before the range; at the very edge of the
-    ephemeris that second does not exist and the stay counts as clipped."""
-    try:
-        return int(_lon(start_jd - _EDGE_TOL_DAYS, body, iflag) // 30) != sign0
-    except KerykeionException:
-        return False
+def _scan_edges(
+    name: str, body: int, start_jd: float, end_jd: float, iflag: int, tropical: bool, found: List[IngressModel]
+) -> List[IngressModel]:
+    """Crossings within the second just outside either bound — typically a
+    root this very factory produced, which bisection may leave a hair to either
+    side of the true instant — so the fold can treat them as sitting on the
+    bound. Scanned apart from the range so the in-range brackets, hence the
+    in-range instants, stay exactly those of :meth:`from_julian_day`. At the
+    very edge of the ephemeris that second does not exist and the bound
+    stands. A crossing the range scan already holds is not reported twice."""
+    edges: List[IngressModel] = []
+    before, after = start_jd - _EDGE_TOL_DAYS, end_jd + _EDGE_TOL_DAYS
+    for a, b, probe in ((before, start_jd, before), (end_jd, after, after)):
+        try:
+            _lon(probe, body, iflag)
+        except KerykeionException:
+            continue
+        for ingress in SignIngressFactory._scan_planet(name, body, a, b, iflag, tropical):
+            if all(abs(ingress.julian_day - known.julian_day) > _EDGE_TOL_DAYS for known in found):
+                edges.append(ingress)
+    return edges
 
 
 def _fold_sign_periods(
@@ -317,12 +333,13 @@ def _fold_sign_periods(
     ingresses: List[IngressModel],
     start_jd: float,
     end_jd: float,
-    entered_at_start: bool = False,
 ) -> List[SignPeriodModel]:
-    """Turn the sign at the range start plus the in-range ingresses into
-    contiguous stays: open at ``start_jd`` (clipped, unless the range starts
-    on the ingress itself), hand over at each ingress, close the last at
-    ``end_jd`` (clipped)."""
+    """Turn the sign at the range start plus the scanned ingresses into
+    contiguous stays: open at ``start_jd``, hand over at each ingress, close
+    the last at ``end_jd``. A stay that reaches a bound is clipped — unless an
+    ingress sits on that bound (within ``_EDGE_TOL_DAYS``, the scan's edge
+    probe): then the bound is the ingress, the stay opens or closes there
+    unclipped, and whatever lies beyond belongs to the neighbouring range."""
 
     def period(sign_num: int, a: float, b: float, a_clipped: bool, b_clipped: bool) -> SignPeriodModel:
         return SignPeriodModel(
@@ -338,14 +355,19 @@ def _fold_sign_periods(
         )
 
     out: List[SignPeriodModel] = []
-    cur_sign, cur_start, cur_clipped = sign0, start_jd, not entered_at_start
+    cur_sign, cur_start, cur_clipped = sign0, start_jd, True
     for ingress in sorted(ingresses, key=lambda i: i.julian_day):
-        if ingress.julian_day <= cur_start:
-            # An ingress on the very first sample: the snapshot already reads
-            # the entered sign, so the stay it would close is empty — and the
-            # stay that starts here was entered on the range start, not before.
+        if not out and cur_start == start_jd and ingress.julian_day <= start_jd + _EDGE_TOL_DAYS:
+            # On the range start: the entered sign opens the range, unclipped.
+            # The snapshot may read either side of the crossing — it does not
+            # matter, the ingress decides.
             cur_sign, cur_clipped = ingress.sign_num, False
             continue
+        if ingress.julian_day >= end_jd - _EDGE_TOL_DAYS:
+            # On the range end: the current stay closes there, unclipped; the
+            # entered sign is the next range's business.
+            out.append(period(cur_sign, cur_start, end_jd, cur_clipped, False))
+            return out
         out.append(period(cur_sign, cur_start, ingress.julian_day, cur_clipped, False))
         cur_sign, cur_start, cur_clipped = ingress.sign_num, ingress.julian_day, False
     out.append(period(cur_sign, cur_start, end_jd, cur_clipped, True))
@@ -476,6 +498,13 @@ class SignIngressFactory:
         sidereal stays with sidereal ingress instants. Per planet the periods
         are contiguous and ordered; an empty or inverted range yields none.
 
+        The in-range instants are exactly those :meth:`from_julian_day` reports
+        for the same range. The scan also looks one second beyond either bound:
+        a range that starts or ends on an ingress — say, on an instant this
+        factory reported — opens or closes the stay there unclipped instead of
+        emitting a hair-thin stay on the wrong side of the crossing. Beyond
+        that second nothing is searched outside the range.
+
         Raises:
             KerykeionException / ValueError: as :meth:`from_julian_day`.
         """
@@ -491,16 +520,8 @@ class SignIngressFactory:
                 for name, body in bodies:
                     sign0 = int(_lon(start_jd, body, iflag) // 30)
                     ingresses = SignIngressFactory._scan_planet(name, body, start_jd, end_jd, iflag, tropical)
-                    periods.extend(
-                        _fold_sign_periods(
-                            name,
-                            sign0,
-                            ingresses,
-                            start_jd,
-                            end_jd,
-                            entered_at_start=_entered_at_start(start_jd, body, iflag, sign0),
-                        )
-                    )
+                    ingresses += _scan_edges(name, body, start_jd, end_jd, iflag, tropical, ingresses)
+                    periods.extend(_fold_sign_periods(name, sign0, ingresses, start_jd, end_jd))
 
         return SignPeriodsCollectionModel(start_jd=start_jd, end_jd=end_jd, periods=periods)
 

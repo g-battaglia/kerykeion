@@ -28,9 +28,9 @@ class TestMarch2025:
     def test_span_starts_are_the_retrograde_stations(self):
         periods = RetrogradeStationFactory.retrograde_periods_from_iso_range("2025-01-01", "2025-12-31").periods
         stations = RetrogradeStationFactory.from_iso_range("2025-01-01", "2025-12-31").stations
-        # The period scan starts one second before the range (edge rule), so
-        # its brackets differ from the station scan's and the bisected instants
-        # agree to well under a second — never compare the floats for equality.
+        # The in-range brackets are the station scan's own, so the instants
+        # agree exactly; only a station snapped onto a range bound (edge rule)
+        # moves, by under a second.
         sr = [(s.planet, s.julian_day) for s in stations if s.station_type == "SR"]
         sd = [(s.planet, s.julian_day) for s in stations if s.station_type == "SD"]
 
@@ -67,6 +67,31 @@ class TestEdges:
         assert abs(period.start_jd - sr.julian_day) <= ONE_SECOND
         assert not period.start_clipped
         assert period.end_clipped
+
+    def test_a_station_on_the_range_end_closes_the_span_unclipped(self):
+        # Every Mercury direct station of 2020-2025 as the range end: the
+        # bisected instant may sit a hair on the retrograde side of the true
+        # zero, which must not turn the closing station into a clipped edge.
+        stations = RetrogradeStationFactory.from_iso_range("2020-01-01", "2025-12-31", ["Mercury"]).stations
+        direct = [s for s in stations if s.station_type == "SD"]
+        assert len(direct) >= 15
+        for sd in direct:
+            res = RetrogradeStationFactory.retrograde_periods_from_julian_day(
+                sd.julian_day - 10, sd.julian_day, ["Mercury"]
+            )
+            assert [(p.start_clipped, p.end_clipped) for p in res.periods] == [(True, False)], sd.julian_day
+            assert res.periods[0].end_jd == sd.julian_day
+
+    def test_a_sub_second_range_inside_retrograde_motion_is_one_span(self):
+        # Mercury is retrograde from 15 March to 7 April 2025: half a second of
+        # it is still a retrograde span, clipped at both ends — not nothing.
+        jd = datetime_to_julian(datetime(2025, 3, 20, 12))
+        end = jd + ONE_SECOND / 2
+        res = RetrogradeStationFactory.retrograde_periods_from_julian_day(jd, end, ["Mercury"])
+        assert len(res.periods) == 1
+        period = res.periods[0]
+        assert (period.start_jd, period.end_jd) == (jd, end)
+        assert period.start_clipped and period.end_clipped
 
     def test_chiron_is_opt_in_and_luminaries_stay_rejected(self):
         res = RetrogradeStationFactory.retrograde_periods_from_iso_range("2025-01-01", "2025-12-31", ["Chiron"])

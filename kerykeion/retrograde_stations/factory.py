@@ -65,9 +65,11 @@ _BISECTION_ITERS = 30
 # Backstop on samples per scan (~38,000 years at the 7-day step). Ranges that
 # would exceed it are rejected explicitly rather than silently truncated.
 _MAX_SAMPLES = 2_000_000
-# A station within one second of the range start decides the initial motion
-# state deterministically, instead of leaving it to the sign of a speed that
-# is numerically ~0 there.
+# A station within one second of a range bound IS that bound: at the start it
+# decides the initial motion state deterministically (instead of the sign of
+# a speed that is numerically ~0 there), at the end it closes the span
+# unclipped. One second is far coarser than the bisection (milliseconds) and
+# far finer than any real retrograde span.
 _EDGE_TOL_DAYS = 1.0 / 86400.0
 
 
@@ -195,22 +197,36 @@ class RetrogradePeriodsCollectionModel(SubscriptableBaseModel):
     periods: List[RetrogradePeriodModel]
 
 
-def _probe_start(start_jd: float, body: int) -> float:
-    """``start_jd`` minus the one-second boundary probe, or ``start_jd`` itself
-    when that second lies before the ephemeris begins."""
-    probe = start_jd - _EDGE_TOL_DAYS
-    try:
-        _speed(probe, body)
-    except KerykeionException:
-        return start_jd
-    return probe
+def _scan_edges(
+    name: str, body: int, start_jd: float, end_jd: float, iflag: int, found: List[StationModel]
+) -> List[StationModel]:
+    """Stations within the second just outside either bound — typically an
+    instant this very factory reported, which bisection may leave a hair to
+    either side of the true zero — so the fold can treat them as sitting on
+    the bound. Scanned apart from the range so the in-range brackets, hence
+    the in-range instants, stay exactly those of :meth:`from_julian_day`. At
+    the very edge of the ephemeris that second does not exist and the bound
+    stands. A station the range scan already holds is not reported twice."""
+    edges: List[StationModel] = []
+    before, after = start_jd - _EDGE_TOL_DAYS, end_jd + _EDGE_TOL_DAYS
+    for a, b, probe in ((before, start_jd, before), (end_jd, after, after)):
+        try:
+            _speed(probe, body)
+        except KerykeionException:
+            continue
+        for station in RetrogradeStationFactory._scan_planet(name, body, a, b, iflag):
+            if all(abs(station.julian_day - known.julian_day) > _EDGE_TOL_DAYS for known in found):
+                edges.append(station)
+    return edges
 
 
 def _fold_retrograde_periods(
     name: str, retro_at_start: bool, stations: List[StationModel], start_jd: float, end_jd: float
 ) -> List[RetrogradePeriodModel]:
-    """Turn the motion state at the range start plus the in-range stations into
-    retrograde spans: SR opens, SD closes, the edges clip."""
+    """Turn the motion state at the range start plus the scanned stations into
+    retrograde spans: SR opens, SD closes, the edges clip — unless a station
+    sits on the edge, which then opens or closes the span unclipped. Only an
+    empty span is dropped; a span is as short as the range makes it."""
 
     def period(a: float, b: float, a_clipped: bool, b_clipped: bool) -> RetrogradePeriodModel:
         return RetrogradePeriodModel(
@@ -224,12 +240,20 @@ def _fold_retrograde_periods(
         )
 
     ordered = sorted(stations, key=lambda s: s.julian_day)
-    # A station on the range's first second overrides the speed snapshot: the
-    # motion BEFORE an SR is direct, before an SD it is retrograde. Such a
-    # station is the range start itself (the scan may place it a hair before).
+    # A station within a second of the range start overrides the speed
+    # snapshot: the motion BEFORE an SR is direct, before an SD it is
+    # retrograde. Such a station is the range start itself (the scan may place
+    # it a hair to either side).
+    on_start = 0
     if ordered and abs(ordered[0].julian_day - start_jd) <= _EDGE_TOL_DAYS:
         retro_at_start = ordered[0].station_type == "SD"
         ordered[0] = ordered[0].model_copy(update={"julian_day": start_jd})
+        on_start = 1
+    # Likewise a station within a second of the range end is the range end
+    # itself: an SD there closes the open span unclipped, an SR there opens
+    # nothing that this range can see.
+    if len(ordered) > on_start and abs(ordered[-1].julian_day - end_jd) <= _EDGE_TOL_DAYS:
+        ordered[-1] = ordered[-1].model_copy(update={"julian_day": end_jd})
 
     out: List[RetrogradePeriodModel] = []
     open_jd: Optional[float] = start_jd if retro_at_start else None
@@ -246,10 +270,10 @@ def _fold_retrograde_periods(
                 raise KerykeionException(
                     f"{name}: direct station at JD {station.julian_day:.5f} while not retrograde."
                 )
-            if station.julian_day - open_jd > _EDGE_TOL_DAYS:
+            if station.julian_day > open_jd:
                 out.append(period(open_jd, station.julian_day, open_clipped, False))
             open_jd = None
-    if open_jd is not None and end_jd - open_jd > _EDGE_TOL_DAYS:
+    if open_jd is not None and end_jd > open_jd:
         out.append(period(open_jd, end_jd, open_clipped, True))
     return out
 
@@ -414,10 +438,14 @@ class RetrogradeStationFactory:
 
         The motion state at the range start is read from the longitudinal speed
         there; the in-range stations open (SR) and close (SD) the spans; spans
-        touching an edge are clipped and flagged. Beyond a one-second probe
-        before the range start (to catch a station sitting on it), nothing is
-        searched outside the range, so a span open at the edge does not tell
-        where its real station is. An empty or inverted range yields none.
+        touching an edge are clipped and flagged — unless a station sits on
+        that edge (say, an instant this factory reported), which then opens or
+        closes the span there unclipped. The in-range instants are exactly
+        those :meth:`from_julian_day` reports for the same range. Beyond a
+        one-second probe past either bound (to catch such a station), nothing
+        is searched outside the range, so a span open at the edge does not
+        tell where its real station is. An empty or inverted range yields
+        none; a span is as short as the range makes it.
 
         Raises:
             KerykeionException: as :meth:`from_julian_day`, and when the
@@ -443,15 +471,13 @@ class RetrogradeStationFactory:
             with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
                 for name, body in bodies:
                     retro_at_start = _speed(start_jd, body) < 0.0
-                    # Start the scan one second early: a station sitting on the
-                    # range start is then bracketed and found, and the fold's
-                    # edge rule decides the initial state from it rather than
-                    # from a speed that is numerically ~0 there. At the very
-                    # edge of the ephemeris that second does not exist: then
-                    # the scan starts on the range and the snapshot decides.
-                    stations = RetrogradeStationFactory._scan_planet(
-                        name, body, _probe_start(start_jd, body), end_jd, iflag
-                    )
+                    # The range scan, then one second beyond either bound: a
+                    # station sitting on the range start is bracketed and
+                    # found, and the fold's edge rule decides the initial state
+                    # from it rather than from a speed that is numerically ~0
+                    # there; one on the range end closes its span unclipped.
+                    stations = RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd, iflag)
+                    stations += _scan_edges(name, body, start_jd, end_jd, iflag, stations)
                     periods.extend(_fold_retrograde_periods(name, retro_at_start, stations, start_jd, end_jd))
 
         return RetrogradePeriodsCollectionModel(start_jd=start_jd, end_jd=end_jd, periods=periods)
