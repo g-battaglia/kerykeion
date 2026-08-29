@@ -6,15 +6,16 @@ verified without ephemeris data files or real ephe calls. This isolates the
 factory's orchestration, model assembly, and edge-case handling.
 
 Mocking strategy:
-    All SIX ephemeris helpers imported by factory.py are patched via
-    ``kerykeion.moon_phase_details.factory.<function>``. The transit is patched by
-    a MODULE-level autouse fixture rather than per class: it was added later, and
-    patching it only in the two blocks that obviously needed it left thirteen
-    tests in this file making real backend calls — including the one asserting
-    that solar noon survives a rise/set failure, whose green then depended on a
-    real ephemeris succeeding. A per-class fixture cannot prevent that recurring;
-    a module-level one can. The two NON-mocked classes at the bottom
-    (`TestMoonPhaseDetailsIntegration`, `TestFactoryFromSubjectRangeEdge`)
+    All SEVEN ephemeris helpers imported by factory.py are patched via
+    ``kerykeion.moon_phase_details.factory.<function>``. The transit and the
+    generalized rise/set call (the Moon's) are patched by a MODULE-level autouse
+    fixture rather than per class: both were added after this file was written,
+    and patching such a helper only in the two blocks that obviously needed it
+    left thirteen tests in this file making real backend calls — including the
+    one asserting that solar noon survives a rise/set failure, whose green then
+    depended on a real ephemeris succeeding. A per-class fixture cannot prevent
+    that recurring; a module-level one can. The two NON-mocked classes at the
+    bottom (`TestMoonPhaseDetailsIntegration`, `TestFactoryFromSubjectRangeEdge`)
     override it back to the real call: an earlier revision blindfolded them too,
     silently zeroing the file's only real-ephemeris transit coverage while the
     commit message claimed the opposite.
@@ -23,7 +24,8 @@ Mocking strategy:
         - compute_lunar_phase_jd
         - compute_next_solar_eclipse_jd
         - compute_next_lunar_eclipse_jd
-        - compute_sun_rise_set_ephe
+        - compute_sun_rise_set_ephe   (the Sun's rise/set, via its alias)
+        - compute_rise_set_ephe       (the Moon's, called with body=ephe.MOON)
         - compute_sun_transit_ephe
         - compute_sun_position
 """
@@ -31,7 +33,7 @@ Mocking strategy:
 from __future__ import annotations
 
 import math
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from types import SimpleNamespace
 from typing import Optional
 from unittest.mock import MagicMock, patch
@@ -57,6 +59,7 @@ from kerykeion.schemas.models import (
     MoonPhaseMajorPhaseWindowModel,
     MoonPhaseEventMomentModel,
 )
+from kerykeion.utilities import calculate_moon_phase
 
 
 # ---------------------------------------------------------------------------
@@ -90,6 +93,14 @@ _SUNRISE_JD = 2449270.80208
 # assertion is one of the few things here that still says something.
 _SOLAR_NOON_JD = 2449270.9913192377
 _SUNSET_JD = 2449271.26250
+
+# Moonrise/moonset for the same subject and the same civil day (London,
+# 1993-10-10, which starts at 1993-10-09T23:00Z under BST). Real values, and —
+# unlike the Sun's — they have to be: the factory keeps only events that fall
+# inside the civil day, so a fabricated pair outside it would be filtered to
+# None and every assertion below would read as a missing event.
+_MOONRISE_JD = 2449270.48193  # 1993-10-09 23:33:59 UTC = 00:33 BST
+_MOONSET_JD = 2449271.10791  # 1993-10-10 14:35:23 UTC = 15:35 BST
 
 
 # ---------------------------------------------------------------------------
@@ -180,18 +191,24 @@ def _side_effect_lunar_phase_jd(jd_start: float, target_angle: float, forward: b
 
 
 @pytest.fixture(autouse=True)
-def _no_real_transit_calls():
-    """Patch the transit for EVERY test in this module.
+def _no_real_backend_calls():
+    """Patch the late-arriving helpers for EVERY test in this module.
 
     Module-scoped autouse, deliberately. `compute_sun_transit_ephe` arrived after
     this file was written, and patching it inside the two fixtures that obviously
     needed it left thirteen tests calling the real backend — the exact thing the
-    module docstring promises does not happen. Tests that want their own value
-    still override it with a nested `patch`; this only guarantees the floor.
-    The two real-ephemeris classes shadow this fixture with a no-op, or their
-    transit-path coverage would be silently zero.
+    module docstring promises does not happen. `compute_rise_set_ephe` (the
+    moonrise/moonset path) arrived later still and would have repeated the
+    lesson exactly, so it joins the same floor rather than the per-class
+    fixtures. Tests that want their own values still override with a nested
+    `patch`; this only guarantees the floor. The two real-ephemeris classes
+    shadow this fixture with a no-op, or their coverage of these paths would be
+    silently zero.
     """
-    with patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD):
+    with (
+        patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD),
+        patch(f"{_FACTORY}.compute_rise_set_ephe", return_value=(_MOONRISE_JD, _MOONSET_JD)),
+    ):
         yield
 
 class TestSafeParseIsoDatetime:
@@ -329,6 +346,51 @@ class TestFactoryFromSubjectMocked:
         subject = _make_mock_subject()
         overview = MoonPhaseDetailsFactory.from_subject(subject)
         assert isinstance(overview, MoonPhaseOverviewModel)
+
+    def test_moonrise_and_moonset_are_populated(self) -> None:
+        """The four fields existed on the model from the start and were never
+        written: the summary simply did not pass them."""
+        subject = _make_mock_subject()
+        moon = MoonPhaseDetailsFactory.from_subject(subject).moon
+
+        assert moon.moonrise is not None
+        assert moon.moonset is not None
+        assert moon.moonrise_timestamp is not None
+        assert moon.moonset_timestamp is not None
+
+    def test_moonrise_carries_the_subject_local_zone(self) -> None:
+        """Same zone as `sun.sunrise` — the moon-phase context is presented for
+        the subject's civil day, so both endpoints read in its clock."""
+        subject = _make_mock_subject()
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        moonrise = datetime.fromisoformat(overview.moon.moonrise)
+        assert moonrise.utcoffset() is not None
+        assert moonrise.utcoffset() == overview.sun.sunrise.utcoffset()
+        # 1993-10-09 23:33:59 UTC read in BST: the civil day is 1993-10-10.
+        assert moonrise.date().isoformat() == "1993-10-10"
+        assert moonrise.strftime("%H:%M") == "00:33"
+
+    def test_moon_timestamps_are_the_utc_instants(self) -> None:
+        subject = _make_mock_subject()
+        moon = MoonPhaseDetailsFactory.from_subject(subject).moon
+
+        for iso, timestamp in ((moon.moonrise, moon.moonrise_timestamp), (moon.moonset, moon.moonset_timestamp)):
+            assert timestamp == int(datetime.fromisoformat(iso).timestamp())
+
+    def test_moon_times_are_asked_of_the_moon(self) -> None:
+        """The generalized helper is called with the Moon's body id — not left
+        at its Sun default, which would silently republish the sunrise."""
+        from kerykeion.ephemeris_backend.backend import ephe as _ephe
+
+        subject = _make_mock_subject()
+        with patch(
+            f"{_FACTORY}.compute_rise_set_ephe", return_value=(_MOONRISE_JD, _MOONSET_JD)
+        ) as mocked:
+            MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert mocked.call_args is not None
+        assert mocked.call_args.kwargs["body"] == _ephe.MOON
 
     def test_timestamp_and_datestamp(self) -> None:
         subject = _make_mock_subject()
@@ -474,6 +536,48 @@ class TestFactoryEdgeCasesNullReturns:
         assert overview.moon.phase_name is None
         assert overview.moon.stage is None
         assert overview.moon.detailed is None
+
+    def test_moonrise_moonset_fail(self) -> None:
+        """A day with no moonrise or moonset (or a backend that cannot answer)
+        leaves the four fields None — never an exception, and never a stale
+        value borrowed from another day."""
+        subject = _make_mock_subject()
+
+        with (
+            patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
+            patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
+            patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            patch(f"{_FACTORY}.compute_rise_set_ephe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
+        ):
+            overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert overview.moon.moonrise is None
+        assert overview.moon.moonrise_timestamp is None
+        assert overview.moon.moonset is None
+        assert overview.moon.moonset_timestamp is None
+        # The rest of the summary is unharmed: a missing horizon crossing says
+        # nothing about the phase.
+        assert overview.moon.phase is not None
+
+    def test_moon_event_outside_the_civil_day_is_not_reported(self) -> None:
+        """`rise_trans` always answers with the NEXT event, so on a day with no
+        moonrise it hands back tomorrow's. Reporting that as today's moonrise —
+        a day late, and paired with today's moonset — is the failure the window
+        exists to prevent."""
+        subject = _make_mock_subject()
+
+        with patch(
+            f"{_FACTORY}.compute_rise_set_ephe",
+            # +1 day: still the next event, but it belongs to 1993-10-11.
+            return_value=(_MOONRISE_JD + 1.0, _MOONSET_JD),
+        ):
+            overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert overview.moon.moonrise is None
+        assert overview.moon.moonrise_timestamp is None
+        assert overview.moon.moonset is not None
 
     def test_eclipse_calculation_fails(self) -> None:
         """Factory handles None eclipse results gracefully."""
@@ -626,12 +730,14 @@ class TestComputeLunarPhaseMetrics:
 
     @staticmethod
     def _make_lunar_phase(degrees: float = 290.65) -> LunarPhaseModel:
-        return LunarPhaseModel(
-            degrees_between_s_m=degrees,
-            moon_phase=23,
-            moon_emoji="\U0001f318",
-            moon_phase_name="Waning Crescent",
-        )
+        """The lunar phase a subject carries at a given Sun-Moon separation.
+
+        Built from the separation rather than hand-written: this used to pin
+        "Waning Crescent" / 🌘 / lunation day 23 whatever ``degrees`` was, so the
+        90° and 180° probes below were handed a model whose own name contradicted
+        the angle the metrics then read.
+        """
+        return calculate_moon_phase(degrees, 0.0)
 
     @staticmethod
     def _make_upcoming_phases() -> MoonPhaseUpcomingPhasesModel:
@@ -703,11 +809,12 @@ class TestMoonPhaseDetailsIntegration:
     """Integration test exercising real ephemeris backend calls."""
 
     @pytest.fixture(autouse=True)
-    def _no_real_transit_calls(self):
+    def _no_real_backend_calls(self):
         """Shadow the module blindfold: this class IS the real-ephemeris path.
 
         With the module fixture active its transit coverage was silently zero —
-        five real helpers plus one fake, while the commit message said six.
+        five real helpers plus one fake, while the commit message said six. The
+        moonrise/moonset call is shadowed for the same reason.
         """
         yield
 
@@ -752,6 +859,236 @@ class TestMoonPhaseDetailsIntegration:
         assert overview.sun.solar_noon is not None
         assert overview.sun.day_length is not None
         assert overview.sun.position is not None
+        # 1940-10-09 at Liverpool has both crossings; through the real path they
+        # are filled and read in the subject's own zone (BST that day).
+        assert overview.moon.moonrise is not None
+        assert overview.moon.moonset is not None
+        assert overview.moon.moonrise_timestamp is not None
+        assert overview.moon.moonset_timestamp is not None
+        assert datetime.fromisoformat(overview.moon.moonrise).date().isoformat() == "1940-10-09"
+
+
+class TestRiseSetRealValues:
+    """Real ephemeris, no mocks: the generalized rise/set call.
+
+    Two things are pinned here. First, that generalizing the helper left the
+    SUN alone — same pressure, same temperature, same flags, same refracted
+    upper limb, to the last bit. Second, the Moon's own answer against
+    independently checked times, and against the days it simply has no answer
+    for.
+    """
+
+    # Royal Observatory, Greenwich. The reference times below were measured at
+    # this latitude; 51.5 is ~2 arcseconds of time away, which the 1 s window
+    # would not forgive.
+    _LAT = 51.4779
+    _LNG = 0.0
+
+    @pytest.fixture(autouse=True)
+    def _no_real_backend_calls(self):
+        """Shadow the module blindfold: this class IS the real backend."""
+        yield
+
+    @staticmethod
+    def _jd_midnight_utc(year: int, month: int, day: int) -> float:
+        from kerykeion.utilities.core import datetime_to_julian
+
+        return datetime_to_julian(datetime(year, month, day, tzinfo=timezone.utc))
+
+    def test_the_sun_path_is_unchanged(self) -> None:
+        """`compute_sun_rise_set_ephe` is now an alias. Exact equality, not
+        approximate: a changed flag or a dropped refraction constant would move
+        the answer by seconds, and seconds are what this file measures in."""
+        from kerykeion.ephemeris_backend.backend import ephe as _ephe, ephemeris_session
+        from kerykeion.moon_phase_details.utils import (
+            compute_rise_set_ephe,
+            compute_sun_rise_set_ephe,
+        )
+
+        jd = self._jd_midnight_utc(2026, 8, 28)
+        with ephemeris_session():
+            alias = compute_sun_rise_set_ephe(jd, self._LAT, self._LNG)
+            explicit = compute_rise_set_ephe(jd, self._LAT, self._LNG, body=_ephe.SUN)
+            defaulted = compute_rise_set_ephe(jd, self._LAT, self._LNG)
+
+        assert alias[0] is not None and alias[1] is not None
+        assert alias == explicit == defaulted
+
+    def test_the_moon_is_not_the_sun(self) -> None:
+        """Guards the default: a `body` left at SUN would have republished the
+        sunrise under the moonrise's name, and every 'is not None' assertion in
+        this file would still have passed."""
+        from kerykeion.ephemeris_backend.backend import ephe as _ephe, ephemeris_session
+        from kerykeion.moon_phase_details.utils import compute_rise_set_ephe
+
+        jd = self._jd_midnight_utc(2026, 8, 28)
+        with ephemeris_session():
+            sun = compute_rise_set_ephe(jd, self._LAT, self._LNG, body=_ephe.SUN)
+            moon = compute_rise_set_ephe(jd, self._LAT, self._LNG, body=_ephe.MOON)
+
+        assert abs(sun[0] - moon[0]) > 1.0 / 24.0
+        assert abs(sun[1] - moon[1]) > 1.0 / 24.0
+
+    def test_greenwich_2026_08_28_moon_times(self) -> None:
+        """Independently checked: moonrise 18:56:01 UTC, moonset 05:15:21 UTC.
+        One second of tolerance — enough for the last bits of the Julian Day,
+        not enough for a wrong horizon convention."""
+        from kerykeion.moon_phase_details.factory import _compute_moon_times
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich Moon", 2026, 8, 28, 12, 0,
+            lng=self._LNG, lat=self._LAT, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        moonrise, moonset = _compute_moon_times(subject)
+
+        assert moonrise is not None and moonset is not None
+        assert abs((moonrise - datetime(2026, 8, 28, 18, 56, 1, tzinfo=timezone.utc)).total_seconds()) <= 1.0
+        assert abs((moonset - datetime(2026, 8, 28, 5, 15, 21, tzinfo=timezone.utc)).total_seconds()) <= 1.0
+
+    @pytest.mark.parametrize(
+        "year, month, day, expect_rise, expect_set",
+        [
+            # The Moon rises ~50 min later each day, so it skips one civil day
+            # in roughly thirty: on 2026-01-09 at Greenwich it never rises, and
+            # on 2026-01-25 it never sets. Both must read None rather than
+            # borrowing tomorrow's event, which is what `rise_trans` hands back.
+            (2026, 1, 9, False, True),
+            (2026, 1, 25, True, False),
+            (2026, 8, 28, True, True),
+        ],
+        ids=["no-moonrise", "no-moonset", "both"],
+    )
+    def test_days_without_a_moonrise_or_a_moonset(
+        self, year: int, month: int, day: int, expect_rise: bool, expect_set: bool
+    ) -> None:
+        from kerykeion.moon_phase_details.factory import _compute_moon_times
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich", year, month, day, 12, 0,
+            lng=self._LNG, lat=self._LAT, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        moonrise, moonset = _compute_moon_times(subject)
+
+        assert (moonrise is not None) is expect_rise
+        assert (moonset is not None) is expect_set
+        for event in (moonrise, moonset):
+            if event is not None:
+                assert event.date() == datetime(year, month, day).date()
+
+    def test_the_overview_carries_the_real_times(self) -> None:
+        """The four model fields, filled by the real factory path."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich Overview", 2026, 8, 28, 12, 0,
+            lng=self._LNG, lat=self._LAT, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        moon = MoonPhaseDetailsFactory.from_subject(subject).moon
+
+        assert moon.moonrise is not None and moon.moonrise.startswith("2026-08-28T18:56:0")
+        assert moon.moonset is not None and moon.moonset.startswith("2026-08-28T05:15:2")
+        assert moon.moonrise_timestamp == int(datetime.fromisoformat(moon.moonrise).timestamp())
+        assert moon.moonset_timestamp == int(datetime.fromisoformat(moon.moonset).timestamp())
+
+
+class TestTheLastCivilDayOfTheCalendar:
+    """9999-12-31 has no tomorrow that `datetime` can name.
+
+    The midnight that CLOSES the civil day belongs to the Moon alone — it is how
+    a day with no moonrise is told apart from one whose moonrise the backend
+    borrowed from tomorrow. Computing it in the shared window made it the first
+    thing BOTH paths did, so on `date.max` a bare
+    `datetime(...) + timedelta(days=1)` raised `OverflowError` and took the Sun's
+    answer down with a question the Sun had never asked. It is lazy now, and the
+    lunar path names the exception it can meet.
+    """
+
+    _LAT = 51.4779
+    _LNG = 0.0
+
+    @pytest.fixture(autouse=True)
+    def _no_real_backend_calls(self):
+        """Shadow the module blindfold: the real backend answers here."""
+        yield
+
+    @staticmethod
+    def _greenwich(name: str):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 2026, 8, 28, 12, 0,
+            lng=TestTheLastCivilDayOfTheCalendar._LNG,
+            lat=TestTheLastCivilDayOfTheCalendar._LAT,
+            tz_str="Etc/UTC", city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+
+    @pytest.fixture
+    def last_day(self):
+        """A real subject re-dated to `date.max`.
+
+        No ephemeris covers the year 9999, so a chart cannot be cast there at
+        all; the day is reached the only way it can be, by moving a valid
+        subject's timestamps onto it. Both functions under test read exactly
+        those two fields (through `_get_utc_datetime`) plus the coordinates.
+        """
+        return self._greenwich("Greenwich").model_copy(
+            update={
+                "iso_formatted_utc_datetime": f"{date.max.isoformat()}T12:00:00+00:00",
+                "iso_formatted_local_datetime": f"{date.max.isoformat()}T12:00:00+00:00",
+            }
+        )
+
+    def test_the_window_opens_but_tomorrow_does_not_exist(self, last_day) -> None:
+        """The split, stated: the day resolves, its successor cannot — which is
+        precisely why the successor is computed lazily and only for the Moon."""
+        from kerykeion.moon_phase_details.factory import (
+            _local_civil_day_window,
+            _next_local_midnight,
+        )
+
+        window = _local_civil_day_window(last_day)
+        assert window is not None
+        tzinfo, dt_local, jd_midnight = window
+        assert dt_local.date() == date.max
+        assert isinstance(jd_midnight, float)
+
+        with pytest.raises(OverflowError):
+            _next_local_midnight(dt_local, tzinfo)
+
+    def test_the_sun_still_answers(self, last_day) -> None:
+        """No exception, and the same shape as any other day: a 3-tuple whose
+        elements the caller tests. Whether the backend can reach the year 9999
+        is its own business — raising was not."""
+        from kerykeion.moon_phase_details.factory import _compute_sun_times
+
+        result = _compute_sun_times(last_day)
+
+        assert result is not None
+        assert len(result) == 3
+
+    def test_the_moon_answers_none(self, last_day) -> None:
+        """A day whose window cannot be closed has no event that can be proved
+        to fall inside it, so both are None — reported, not raised."""
+        from kerykeion.moon_phase_details.factory import _compute_moon_times
+
+        assert _compute_moon_times(last_day) == (None, None)
+
+    def test_the_sun_never_asks_for_tomorrows_midnight(self, monkeypatch) -> None:
+        """The structural guard on an ordinary day: if the Sun ever reaches for
+        the closing midnight again, this fails long before `date.max` does."""
+        from kerykeion.moon_phase_details.factory import _compute_sun_times
+
+        def _boom(*_args, **_kwargs):
+            raise AssertionError("the Sun asked for tomorrow's midnight")
+
+        monkeypatch.setattr(f"{_FACTORY}._next_local_midnight", _boom)
+
+        sunrise, sunset, solar_noon = _compute_sun_times(self._greenwich("Greenwich Sun"))
+
+        assert sunrise is not None and sunset is not None and solar_noon is not None
 
 
 class TestFactoryFromSubjectRangeEdge:
@@ -771,11 +1108,11 @@ class TestFactoryFromSubjectRangeEdge:
     silently substitute a lower-precision source")."""
 
     @pytest.fixture(autouse=True)
-    def _no_real_transit_calls(self):
+    def _no_real_backend_calls(self):
         """Shadow the module blindfold — same reason as the class above: the
         whole point of this class is that the REAL backend degrades cleanly,
-        transit included (it computes fine at 2649-12-20; the edge the class
-        exercises is the forward phase scan, not the transit)."""
+        transit and moonrise/moonset included (they compute fine at 2649-12-20;
+        the edge the class exercises is the forward phase scan)."""
         yield
 
     def test_range_end_subject_returns_model(self) -> None:
@@ -852,3 +1189,144 @@ class TestFactoryFromSubjectRangeEdge:
         assert overview.moon is not None
         assert overview.moon.detailed is not None
         assert overview.moon.detailed.upcoming_phases is not None
+
+
+class TestTheMidnightThatOpensADayOfUnusualLength:
+    """A civil midnight is not always one instant, and one rule has to name it.
+
+    Both ends of the rise/set window are a midnight: the one that opens the day
+    and the one that opens the next. When a zone changes its offset AT 00:00 the
+    two readings of that wall time are an hour apart, and the choice is not free
+    — whatever the opening boundary excludes, the closing boundary of the
+    previous day has to include, or an hour of the calendar belongs to two days
+    or to none.
+
+    Inside a fall-back FOLD the day opens at the FIRST occurrence: the repeated
+    hour is already the new civil day. Both boundaries used to take the second,
+    which opened the day an hour late and closed the day before an hour late, so
+    a moonrise in that hour was filed under the wrong date.
+
+    Across a spring-forward GAP midnight never happens, and the reading that
+    lands past the gap — the day's real first instant — is the other one. The
+    resolver has to tell the two cases apart; a single ``is_dst`` cannot.
+    """
+
+    _HAVANA = dict(
+        lng=-82.3589, lat=23.1136, tz_str="America/Havana", city="Havana", nation="CU"
+    )
+    _SANTIAGO = dict(
+        lng=-70.6483, lat=-33.4569, tz_str="America/Santiago", city="Santiago", nation="CL"
+    )
+
+    @pytest.fixture(autouse=True)
+    def _no_real_backend_calls(self):
+        """Shadow the module blindfold: the real backend answers here."""
+        yield
+
+    @staticmethod
+    def _subject(name: str, year: int, month: int, day: int, **location):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, year, month, day, 12, 0,
+            online=False, suppress_geonames_warning=True, **location,
+        )
+
+    @staticmethod
+    def _window(subject) -> tuple[float, float]:
+        """``(jd_midnight, jd_next_midnight)`` — the day's two boundaries."""
+        from kerykeion.moon_phase_details.factory import (
+            _local_civil_day_window,
+            _next_local_midnight,
+        )
+
+        window = _local_civil_day_window(subject)
+        assert window is not None
+        tzinfo, dt_local, jd_midnight = window
+        return jd_midnight, _next_local_midnight(dt_local, tzinfo)
+
+    @staticmethod
+    def _jd_of_utc(year: int, month: int, day: int, hour: int) -> float:
+        from kerykeion.utilities.core import datetime_to_julian
+
+        return datetime_to_julian(datetime(year, month, day, hour, tzinfo=timezone.utc))
+
+    def test_the_two_zones_really_do_it_at_midnight(self) -> None:
+        """The premise, asserted rather than assumed: a tz database that moved
+        either transition off 00:00 would leave the tests below green for a
+        reason that has nothing to do with the resolver."""
+        from zoneinfo import ZoneInfo
+
+        from kerykeion.utilities.core import is_ambiguous, is_nonexistent
+
+        assert is_ambiguous(datetime(2026, 11, 1), ZoneInfo("America/Havana"))
+        assert is_nonexistent(datetime(2026, 9, 6), ZoneInfo("America/Santiago"))
+
+    def test_a_folded_midnight_opens_the_day_at_its_first_occurrence(self) -> None:
+        """Havana's clocks fall back at 00:00 on 2026-11-01, so the day is 25
+        hours long and opens at 04:00 UTC — the summer reading. The second
+        occurrence, 05:00 UTC, is already an hour into the day."""
+        jd_midnight, jd_next = self._window(
+            self._subject("Havana fold", 2026, 11, 1, **self._HAVANA)
+        )
+
+        assert jd_midnight == pytest.approx(self._jd_of_utc(2026, 11, 1, 4), abs=1e-9)
+        assert jd_next == pytest.approx(self._jd_of_utc(2026, 11, 2, 5), abs=1e-9)
+        assert (jd_next - jd_midnight) * 24.0 == pytest.approx(25.0, abs=1e-6)
+
+    def test_the_day_before_the_fold_ends_where_the_folded_day_begins(self) -> None:
+        """The invariant the shared resolver exists for: the two boundaries are
+        the same instant, so the repeated hour is counted once, on the right
+        side. October 31 is an ordinary 24-hour day."""
+        jd_midnight_31, jd_next_31 = self._window(
+            self._subject("Havana eve", 2026, 10, 31, **self._HAVANA)
+        )
+        jd_midnight_01, _ = self._window(
+            self._subject("Havana fold", 2026, 11, 1, **self._HAVANA)
+        )
+
+        assert jd_next_31 == pytest.approx(jd_midnight_01, abs=1e-9)
+        assert (jd_next_31 - jd_midnight_31) * 24.0 == pytest.approx(24.0, abs=1e-6)
+
+    def test_a_midnight_inside_a_gap_still_opens_the_day_after_it(self) -> None:
+        """Santiago's clocks jump 00:00 -> 01:00 on 2026-09-06: midnight never
+        happens, the day is 23 hours long, and it opens at the first instant
+        that does exist. Unchanged by the fold correction."""
+        jd_midnight, jd_next = self._window(
+            self._subject("Santiago gap", 2026, 9, 6, **self._SANTIAGO)
+        )
+
+        assert jd_midnight == pytest.approx(self._jd_of_utc(2026, 9, 6, 4), abs=1e-9)
+        assert jd_next == pytest.approx(self._jd_of_utc(2026, 9, 7, 3), abs=1e-9)
+        assert (jd_next - jd_midnight) * 24.0 == pytest.approx(23.0, abs=1e-6)
+
+    def test_the_sunrise_does_not_move_with_the_boundary(self) -> None:
+        """The correction moves the day's opening an hour earlier; the Sun's
+        answer is unchanged, because sunrise is found by searching FORWARD and
+        the Havana sunrise is six hours past both readings of midnight. Asserted
+        rather than assumed: a resolver change that DID move the Sun would be a
+        different release."""
+        from kerykeion.ephemeris_backend.backend import ephemeris_session
+        from kerykeion.moon_phase_details.factory import _compute_sun_times
+        from kerykeion.moon_phase_details.utils import compute_sun_rise_set_ephe
+        from kerykeion.utilities.core import julian_to_datetime
+
+        subject = self._subject("Havana sun", 2026, 11, 1, **self._HAVANA)
+        result = _compute_sun_times(subject)
+        assert result is not None
+        sunrise, sunset, _solar_noon = result
+        assert sunrise is not None and sunset is not None
+        assert sunrise.date() == date(2026, 11, 1)
+
+        jd_midnight, _jd_next = self._window(subject)
+        with ephemeris_session():
+            # The pre-fix boundary: the fold's SECOND occurrence, an hour later.
+            from_the_later_reading, _ = compute_sun_rise_set_ephe(
+                jd_midnight + 1.0 / 24.0, subject.lat, subject.lng
+            )
+        assert from_the_later_reading is not None
+        from_the_later_reading_local = julian_to_datetime(from_the_later_reading).replace(
+            tzinfo=timezone.utc
+        ).astimezone(sunrise.tzinfo)
+        # Same sunrise, to well inside a second: the backend's root-finder starts
+        # from the boundary it is given, so the two runs differ only by the last
+        # digits of its own convergence.
+        assert abs((from_the_later_reading_local - sunrise).total_seconds()) < 1.0

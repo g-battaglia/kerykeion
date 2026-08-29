@@ -41,12 +41,39 @@ from kerykeion.utilities.core import (
     normalize_longitude,
     safe_timezone,
     get_kerykeion_point_from_degree,
+    angle_house_identities,
+    coincident_cusp_groups,
     get_planet_house,
     _assemble_ancient_iso,
     _split_decimal_hour_with_carry,
 )
 
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
+
+
+#: Sidereal modes that request a fixed reference frame rather than an ayanamsa
+#: along the ecliptic of date; the reference keeps Sunshine 'i' on its own
+#: construction under these.
+_FIXED_EPOCH_SIDEREAL_MODES = frozenset({"J2000", "J1900", "B1950", "GALALIGN_MARDYKS"})
+
+
+def _house_system_the_reference_casts(hsys: bytes, is_sidereal: bool, sidereal_mode: Optional[str]) -> bytes:
+    """The house system the ephemeris actually computes for a sidereal request.
+
+    Under a sidereal flag the reference implementation casts Sunshine 'i'
+    (Makransky) as 'I' (Treindl) — libephemeris matches it, see its
+    ``houses_ex`` — except in the fixed-epoch modes, where 'i' stays on its own
+    construction. The natal chart got that ring because it asked with the
+    sidereal flag. This factory asks TROPICALLY and applies the subject's own
+    ayanamsa afterwards, so it has to ask for the same system the reference would
+    pick, or a sidereal 'i' relocated onto its own birthplace would come back a
+    different chart: Makransky cusps, tens of degrees from Treindl's at sixty
+    degrees north, and inside the polar circle a refused cast substituted with
+    Porphyry, where the natal has a Sunshine ring.
+    """
+    if is_sidereal and hsys == b"i" and sidereal_mode not in _FIXED_EPOCH_SIDEREAL_MODES:
+        return b"I"
+    return hsys
 
 
 class RelocatedChartFactory:
@@ -172,8 +199,10 @@ class RelocatedChartFactory:
             )
 
         jd = subject.julian_day
-        hsys = subject.houses_system_identifier.encode("ascii")
         is_sidereal = subject.zodiac_type == "Sidereal"
+        hsys = _house_system_the_reference_casts(
+            subject.houses_system_identifier.encode("ascii"), is_sidereal, subject.sidereal_mode
+        )
 
         # Validate but do NOT clamp: relocating to lat 78 must persist the real
         # latitude and cast latitude-agnostic house systems there, exactly like a
@@ -235,6 +264,11 @@ class RelocatedChartFactory:
         # Build house degree list for planet house assignment
         houses_degree_ut = list(cusps)
 
+        # Decided on the cusps and angles this chart will actually carry — after
+        # the sidereal shift, which moves both by the same arc and so cannot
+        # change which cusp an angle is standing on, but is part of making them.
+        angle_houses = angle_house_identities(houses_degree_ut, ascmc[0], ascmc[1])
+
         # Create house KerykeionPointModels
         house_data = {}
         house_names = [
@@ -292,7 +326,12 @@ class RelocatedChartFactory:
 
         for field_name, (point_name, degree) in axis_degrees.items():
             point = get_kerykeion_point_from_degree(degree, point_name, "AstrologicalPoint")
-            point.house = get_planet_house(degree, houses_degree_ut)
+            # Relocating TOWARDS a polar latitude is the common way a real user
+            # meets a ring with cusps on top of each other, so this is exactly
+            # where an angle must be given the house it opens rather than the
+            # earliest cusp that happens to share its longitude. The Vertex has no
+            # such identity — it is nobody's cusp — and reads as before.
+            point.house = angle_houses.get(field_name) or get_planet_house(degree, houses_degree_ut)
             point.retrograde = False
             house_data[field_name] = point
 
@@ -328,6 +367,7 @@ class RelocatedChartFactory:
         # nulled: carrying it over would attribute a substitution to a latitude
         # that no longer produced these cusps.
         relocated_data["polar_house_fallbacks"] = [polar_fallback] if polar_fallback is not None else []
+        relocated_data["coincident_house_cusps"] = coincident_cusp_groups(houses_degree_ut)
         # As in the natal path, the requested system stays in
         # `houses_system_identifier` so a further recast is not poisoned by a
         # substitution that belonged to one location. Rendering reads

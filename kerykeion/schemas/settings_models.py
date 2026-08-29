@@ -264,6 +264,49 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         title="Nocturnal",
         description="The 'Sun below the horizon' value in the chart, in the language",
     )
+    relationship_score: str = Field(
+        default="Relationship Score",
+        title="Relationship Score",
+        description="The relationship score label in the chart, in the language",
+    )
+    relationship_score_minimal: str = Field(
+        default="Minimal",
+        title="Relationship Score: Minimal",
+        description="The 'Minimal' relationship score band in the chart, in the language",
+    )
+    relationship_score_medium: str = Field(
+        default="Medium",
+        title="Relationship Score: Medium",
+        description="The 'Medium' relationship score band in the chart, in the language",
+    )
+    relationship_score_important: str = Field(
+        default="Important",
+        title="Relationship Score: Important",
+        description="The 'Important' relationship score band in the chart, in the language",
+    )
+    relationship_score_very_important: str = Field(
+        default="Very Important",
+        title="Relationship Score: Very Important",
+        description="The 'Very Important' relationship score band in the chart, in the language",
+    )
+    relationship_score_exceptional: str = Field(
+        default="Exceptional",
+        title="Relationship Score: Exceptional",
+        description="The 'Exceptional' relationship score band in the chart, in the language",
+    )
+    relationship_score_rare_exceptional: str = Field(
+        default="Rare Exceptional",
+        title="Relationship Score: Rare Exceptional",
+        description="The 'Rare Exceptional' relationship score band in the chart, in the language",
+    )
+    polar_fallback: str = Field(
+        default="polar fallback",
+        title="Polar Fallback",
+        description=(
+            "The parenthetical note appended to the house system label when a polar "
+            "latitude forced a substitute system, in the language"
+        ),
+    )
     day: str = Field(title="Day", description="The day label in the chart, in the language")
     celestial_points: KerykeionLanguageCelestialPointModel = Field(
         title="Celestial Points", description="The celestial points translations in the chart, in the language"
@@ -287,6 +330,60 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     topocentric: str = Field(title="Topocentric", description="The topocentric label in the chart, in the language")
     true_geocentric: str = Field(
         title="True Geocentric", description="The true geocentric label in the chart, in the language"
+    )
+    # The remaining seven members of PerspectiveType. Every value the literal
+    # admits needs a field here, or a chart cast in that perspective falls back
+    # to the raw English literal in every language and no language_pack can
+    # supply the missing string (extra keys are dropped before model_dump).
+    # tests/core/test_translation_coverage.py holds the two sides together.
+    #
+    # Each carries an English default, like every other key on this model: a new
+    # field without one is a required field, and a required field invalidates
+    # every third-party language pack written before it existed. See
+    # ``_KEYS_ADDED_HERE`` in tests/core/test_settings.py, which pins both halves
+    # of that promise — a pack may omit the key, a shipped pack may not.
+    selenocentric: str = Field(
+        default="Selenocentric",
+        title="Selenocentric",
+        description="The selenocentric label in the chart, in the language",
+    )
+    mercurycentric: str = Field(
+        default="Mercurycentric",
+        title="Mercurycentric",
+        description="The mercurycentric label in the chart, in the language",
+    )
+    venuscentric: str = Field(
+        default="Venuscentric",
+        title="Venuscentric",
+        description="The venuscentric label in the chart, in the language",
+    )
+    marscentric: str = Field(
+        default="Marscentric",
+        title="Marscentric",
+        description="The marscentric label in the chart, in the language",
+    )
+    jupitercentric: str = Field(
+        default="Jupitercentric",
+        title="Jupitercentric",
+        description="The jupitercentric label in the chart, in the language",
+    )
+    saturncentric: str = Field(
+        default="Saturncentric",
+        title="Saturncentric",
+        description="The saturncentric label in the chart, in the language",
+    )
+    barycentric: str = Field(
+        default="Barycentric",
+        title="Barycentric",
+        description="The barycentric label in the chart, in the language",
+    )
+    chart_contents: str = Field(
+        default="{points} points, {aspects} aspects",
+        title="Chart Contents",
+        description=(
+            "Accessibility summary of what the chart holds, read out by the SVG <desc>. "
+            "Takes {points} and {aspects} placeholders."
+        ),
     )
     new_moon: str = Field(title="New Moon", description="The new moon label in the chart, in the language")
     waxing_crescent: str = Field(

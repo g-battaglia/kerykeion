@@ -8,6 +8,7 @@ Default output: tests/data/v6_gallery/
 """
 
 import sys
+from typing import get_args
 from pathlib import Path
 
 # Add project root to path
@@ -20,6 +21,7 @@ from kerykeion import (
     CompositeSubjectFactory,
     PlanetaryReturnFactory,
 )
+from kerykeion.schemas.literals import KerykeionChartTheme
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_POINTS,
     DEFAULT_ACTIVE_POINTS,
@@ -30,7 +32,7 @@ from kerykeion.settings.config_constants import (
 OUTPUT_DIR = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent.parent / "tests" / "data" / "v6_gallery"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-THEMES = ["dark", "light", "classic", "dark-high-contrast", "strawberry", "black-and-white"]
+THEMES = list(get_args(KerykeionChartTheme))
 STYLES = ["classic", "modern"]
 
 charts = []  # (filename, title, description, aspect_ratio)
@@ -141,7 +143,7 @@ save(ChartDrawer(chart_data=cd_full, theme="dark"), "gauquelin_all_points", "cla
 # ===========================================================================
 print("\n--- Uranian Planets ---")
 
-for theme in ["dark", "light", "classic"]:
+for theme in THEMES:
     cd = ChartDataFactory.create_natal_chart_data(john_uran)
     save(ChartDrawer(chart_data=cd, theme=theme), f"uranian_{theme}", "classic",
          f"Uranian Planets - {theme}", "Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon")
@@ -209,6 +211,57 @@ save(ChartDrawer(chart_data=cd_sid, theme="dark"), "sidereal_lahiri", "classic",
 
 
 # ===========================================================================
+# SECTION 6: OPTIONAL MARKS
+# ===========================================================================
+# Every mark switched on, on four subjects that between them carry every
+# referent. A mark draws nothing where there is nothing to mark, so one chart
+# could never show the set — and turning them all on means none of these can
+# claim something its own sky does not have.
+print("\n--- Optional Marks ---")
+
+MARKS_ALL_ON = dict(
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
+    show_relationship_score=True,
+    show_ayanamsa_value=True,
+    show_polar_fallback_note=True,
+)
+
+# 25 August 1990: Mercury at 0.012°/day is a stationary retrograde, and Uranus
+# sits past the Sun's maximum declination.
+station = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    city="London", nation="GB", online=False,
+)
+cd_marks = ChartDataFactory.create_natal_chart_data(station)
+for style in STYLES:
+    save(ChartDrawer(chart_data=cd_marks, theme="dark", **MARKS_ALL_ON), f"marks_wheel_{style}", style,
+         f"Wheel marks - {style}", "Station SR on Mercury, out-of-bounds Uranus, separating aspects dashed")
+
+# Placidus is undefined inside the polar circle; the note says which system
+# actually drew the cusps.
+polar = AstrologicalSubjectFactory.from_birth_data(
+    "Longyearbyen", 1990, 6, 15, 12, 0,
+    lng=15.6, lat=78.2, tz_str="Arctic/Longyearbyen",
+    city="Longyearbyen", nation="SJ", online=False,
+    houses_system_identifier="P",
+)
+cd_polar = ChartDataFactory.create_natal_chart_data(polar)
+save(ChartDrawer(chart_data=cd_polar, theme="dark", **MARKS_ALL_ON), "marks_polar", "classic",
+     "Polar fallback note", "Placidus undefined at 78°N — the domification line admits the substitution")
+
+cd_sid_marks = ChartDataFactory.create_natal_chart_data(john_sid)
+save(ChartDrawer(chart_data=cd_sid_marks, theme="dark", **MARKS_ALL_ON), "marks_ayanamsa", "classic",
+     "Ayanamsa offset", "The offset in degrees next to the mode name")
+
+cd_syn_marks = ChartDataFactory.create_synastry_chart_data(john, paul)
+save(ChartDrawer(chart_data=cd_syn_marks, theme="dark", **MARKS_ALL_ON), "marks_relationship_score", "classic",
+     "Relationship score", "The synastry score and its band in the info panel")
+
+
+# ===========================================================================
 # GENERATE HTML INDEX
 # ===========================================================================
 print(f"\nGenerating HTML index ({len(charts)} charts)...")
@@ -219,6 +272,7 @@ sections = {
     "Full v6 Features": [c for c in charts if "full_v6" in c[0].lower()],
     "Synastry / Composite / Return": [c for c in charts if any(k in c[0] for k in ["synastry", "composite", "transit", "return"])],
     "Sidereal": [c for c in charts if "sidereal" in c[0].lower()],
+    "Optional Marks": [c for c in charts if c[0].startswith("marks_")],
 }
 
 html = """<!DOCTYPE html>

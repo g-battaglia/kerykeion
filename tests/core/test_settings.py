@@ -308,11 +308,34 @@ class TestDeepMerge:
 # =============================================================================
 
 
-#: The keys this change added, in the order their English defaults are asserted.
-#: Named once so the "a pack may omit it" test and the "a shipped pack may not"
-#: test cannot cover different subsets — they did, and the two that only the
-#: first one covered were the two nobody had noticed were new.
-_KEYS_ADDED_HERE = ("diurnality", "diurnal", "nocturnal", "heliocentric_return", "node_return")
+#: Every key carrying an English default on ``KerykeionLanguageModel``, in the
+#: order those defaults are asserted below. Named once so the "a pack may omit
+#: it" test and the "a shipped pack may not" test cannot cover different subsets
+#: — they did, and the two that only the first one covered were the two nobody
+#: had noticed were new. Append here whenever a defaulted key is added.
+_KEYS_ADDED_HERE = (
+    "diurnality",
+    "diurnal",
+    "nocturnal",
+    "heliocentric_return",
+    "node_return",
+    "relationship_score",
+    "relationship_score_minimal",
+    "relationship_score_medium",
+    "relationship_score_important",
+    "relationship_score_very_important",
+    "relationship_score_exceptional",
+    "relationship_score_rare_exceptional",
+    "polar_fallback",
+    "selenocentric",
+    "mercurycentric",
+    "venuscentric",
+    "marscentric",
+    "jupitercentric",
+    "saturncentric",
+    "barycentric",
+    "chart_contents",
+)
 
 
 class TestKerykeionLanguageModelRoundTrip:
@@ -348,8 +371,8 @@ class TestKerykeionLanguageModelRoundTrip:
         A pack is a plain dict handed to ``KerykeionLanguageModel``. Declaring a
         new key as required rejects every pack written before it existed, with a
         pydantic ``missing`` error rather than a fallback — and there is nothing
-        the pack's author can do about a release that has already shipped. The
-        sixteen keys added before these five all carry English defaults for
+        the pack's author can do about a release that has already shipped. Every
+        key added since the model was frozen carries an English default for
         exactly this reason; this test is what keeps the rest honest.
         """
         pack = dict(LANGUAGE_SETTINGS["EN"])
@@ -362,6 +385,22 @@ class TestKerykeionLanguageModelRoundTrip:
             "Nocturnal",
             "Heliocentric Return",
             "Node Return",
+            "Relationship Score",
+            "Minimal",
+            "Medium",
+            "Important",
+            "Very Important",
+            "Exceptional",
+            "Rare Exceptional",
+            "polar fallback",
+            "Selenocentric",
+            "Mercurycentric",
+            "Venuscentric",
+            "Marscentric",
+            "Jupitercentric",
+            "Saturncentric",
+            "Barycentric",
+            "{points} points, {aspects} aspects",
         ]
 
     @pytest.mark.parametrize("language", sorted(LANGUAGE_SETTINGS))
@@ -371,10 +410,11 @@ class TestKerykeionLanguageModelRoundTrip:
         Every language kerykeion ships must carry its own value for each, or a
         locale would silently render English while the test above stayed green.
 
-        Covering all five and not just the three named for this feature:
-        `heliocentric_return` and `node_return` were added by the same change and
-        carry English defaults for the same reason, so leaving them out would
-        have let a pack ship without them under a test that reads as complete.
+        Covering every defaulted key and not just the ones named for whichever
+        feature is in flight: `heliocentric_return` and `node_return` rode along
+        with the diurnality change and carry English defaults for the same
+        reason, so leaving them out would have let a pack ship without them
+        under a test that reads as complete.
         """
         source = LANGUAGE_SETTINGS[language]
         for key in _KEYS_ADDED_HERE:

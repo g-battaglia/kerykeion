@@ -306,6 +306,8 @@ print(record.threshold)     # 66.558... — the polar circle for this epoch
 print(record.affects)       # ["house_cusps"] — the angles are not listed
 ```
 
+**On the chart:** the info panel has always printed the system actually used, not the one requested. `ChartDrawer(..., show_polar_fallback_note=True)` also admits that a substitution happened, printing `Porphyry* (polar fallback)` on the domification line — the difference between a reader trusting the line and a reader being misled by it. The note is absent whenever the requested system was honoured.
+
 **Reason:** Quadrant systems divide the semi-diurnal arc of a degree of the ecliptic. Inside the polar circle some degrees never rise or set, so that arc does not exist and there is nothing to divide. Latitude-agnostic systems (Whole Sign, Equal, Porphyry, ...) have no such limit, which is why one of them can stand in.
 
 **About "±66°":** that figure is a rule of thumb, not the boundary. The polar circle sits at 90° minus the true obliquity of the ecliptic, which drifts with the epoch — 66.558° for a modern date, closer to 65.85° around 3000 BCE. The backend measures it per chart and reports it in the record's `threshold` field, alongside the `obliquity` it was derived from. Do not hardcode 66.

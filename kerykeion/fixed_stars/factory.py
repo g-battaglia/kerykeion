@@ -33,6 +33,15 @@ from kerykeion.utilities.core import get_kerykeion_point_from_degree, get_planet
 
 logger = logging.getLogger(__name__)
 
+# Swisseph cannot address most of the libephemeris catalog's Bayer abbreviations
+# — around 58% of the 1447 entries fail even with sefstars.txt in place — so the
+# unresolved share is not a fault signal on its own, and warning on it once per
+# subject would train users to filter this logger. Say it once per process
+# instead: the advice ("install sefstars.txt, or switch backend") is the same
+# every time, and repeating it per chart is what would bury the genuinely empty
+# case among the routine ones.
+_swisseph_catalog_warning_emitted = False
+
 
 def _collect_planet_positions(subject: AstrologicalSubjectModel) -> list[tuple[str, float]]:
     """Collect calculated active point positions for conjunction checks."""
@@ -105,7 +114,10 @@ def _star_source_trace() -> Iterator[dict[str, str | None]]:
                 holder["source"] = str(next(iter(trace_map.values())))
             try:
                 token.var.reset(token)
-            except (RuntimeError, ValueError):
+            except Exception:
+                # Broad on purpose: raising from a finally would replace the
+                # exception in flight. Same reasoning as the twin in
+                # astrological_subject.factory.ephemeris_trace.
                 pass
 
 
@@ -216,6 +228,7 @@ class FixedStarDiscoveryFactory:
         houses_degree_ut = _collect_house_cusps(subject)
         prominent: list[KerykeionPointModel] = []
         seen_names: set[str] = set()
+        unresolved = 0
         with ephemeris_session(
             zodiac_type=getattr(subject, "zodiac_type", None),
             sidereal_mode=getattr(subject, "sidereal_mode", None),
@@ -264,22 +277,49 @@ class FixedStarDiscoveryFactory:
                         )
                     )
                 except Exception as e:
+                    # The catalog is an open set and a name the backend cannot
+                    # address is not an error on its own — but the count is not
+                    # noise: see the warning below.
+                    unresolved += 1
                     logger.debug(f"Skipping star {star_name}: {e}")
                     continue
 
-        # v6: emit a single actionable warning when nothing was returned on
-        # the swisseph backend — almost always means sefstars.txt is missing
-        # from KERYKEION_EPHE_PATH. See site/docs/swisseph_configuration.md.
-        if not prominent and BACKEND_NAME == "swisseph":
-            logger.warning(
-                "FixedStarDiscoveryFactory found no stars on the swisseph backend. "
-                "The catalog file 'sefstars.txt' is not bundled with kerykeion due "
-                "to licensing. Download it from "
-                "https://github.com/aloistr/swisseph/tree/master/ephe and place it "
-                "in KERYKEION_EPHE_PATH (%s). Alternatively use "
-                "KERYKEION_BACKEND=libephemeris (ships its own catalog).",
-                EPHE_DATA_PATH or "<unset>",
-            )
+        # v6: warn on the swisseph backend when a material share of the catalog
+        # could not be addressed. The catalog is always the libephemeris list,
+        # whose Bayer abbreviations swisseph mostly cannot resolve: roughly 58%
+        # of the 1447 entries fail even with sefstars.txt in place. Gating this
+        # on `not prominent` meant the warning never fired in exactly the case
+        # that needs it — a partially resolved catalog, where the caller gets a
+        # silently truncated list and no way to know. See
+        # site/docs/swisseph_configuration.md.
+        if unresolved and BACKEND_NAME == "swisseph":
+            # seen_names is filled before the attempt, so it already counts every
+            # star the loop reached — resolved and unresolved alike.
+            global _swisseph_catalog_warning_emitted
+            scanned = len(seen_names)
+            unresolved_share = unresolved / scanned if scanned else 0.0
+            # An empty result is worth repeating (it is the broken-install case);
+            # a partial one is said once and then left alone. "Empty" is the
+            # backend resolving nothing, not the search finding no conjunction:
+            # a small orb legitimately returns none while the catalog resolved
+            # fine, and keying on that repeated the warning on every call.
+            resolved_nothing = unresolved == scanned
+            if resolved_nothing or not _swisseph_catalog_warning_emitted:
+                _swisseph_catalog_warning_emitted = True
+                logger.warning(
+                    "FixedStarDiscoveryFactory could not resolve %d of %d catalog stars "
+                    "(%.0f%%) on the swisseph backend; the returned list is incomplete. "
+                    "Most catalog names are Bayer abbreviations that swisseph does not "
+                    "address, and the catalog file 'sefstars.txt' is not bundled with "
+                    "kerykeion due to licensing. Download it from "
+                    "https://github.com/aloistr/swisseph/tree/master/ephe and place it "
+                    "in KERYKEION_EPHE_PATH (%s). Alternatively use "
+                    "KERYKEION_BACKEND=libephemeris (ships its own catalog).",
+                    unresolved,
+                    scanned,
+                    unresolved_share * 100,
+                    EPHE_DATA_PATH or "<unset>",
+                )
 
         prominent.sort(key=lambda p: p.magnitude if p.magnitude is not None else 99)
         return prominent

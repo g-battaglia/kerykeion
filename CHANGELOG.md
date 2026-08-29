@@ -1,6 +1,929 @@
 # Changelog
 
-## [Unreleased]
+## [6.0.0a91] - 2026-08-29
+
+Five defects that reached the screen of a downstream client as data that
+contradicted itself, each fixed where the semantics live. Nothing in the
+drawing changed except the words of the lunar phase.
+
+### Fixed
+
+- **The lunar phase name is centred on the event.** `calculate_moon_phase`
+  quantised the Sun–Moon separation into 28 bins and then handed the four
+  major phases bins that sat entirely to one side of the exact instant — Full
+  Moon covered [167.14°, 180.00°), so one minute after the true opposition a
+  chart read "Waning Gibbous" while the illumination read 100%. The names now
+  come from windows centred on the syzygy or quadrature with the widths they
+  always had (New and Full Moon ±6.4286°, the quarters ±19.2857°, the four
+  intermediate phases filling the rest). The 365 historical syzygies pinned in
+  `test_moon_phase_historical_verification.py` are all named correctly — 95
+  were not, and the test used to accept the wrong neighbour. The 1–28
+  `moon_phase` index (the "lunation day") is unchanged; `LunarPhaseModel`
+  gains `major_phase` (nearest of the four) and `stage` (`"waxing"` /
+  `"waning"`), the same two fields `MoonPhaseDetailsFactory` already exposed,
+  now computed by one definition for both. 14.29% of the circle changes name;
+  24 SVG baselines and one report fixture changed by exactly their phase line.
+
+- **Nakshatras on a tropical chart are the nakshatras the sky has.**
+  `calculate_nakshatra=True` used to run the 27-fold division on tropical
+  longitudes as they were — ~24° off, about two mansions — and log a warning
+  nobody downstream could see. The factory now rotates the longitudes by an
+  ayanamsa for the division only (`nakshatra_ayanamsa`, default `"LAHIRI"`,
+  any `SiderealMode` incl. `"USER"`), leaving the chart tropical; the subject
+  records `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Sidereal charts
+  are untouched. `nakshatra_ayanamsa=None` restores the uncorrected values,
+  still with the warning. Returns, progressions and Davison composites inherit
+  the setting, and `PlanetaryReturnFactory` takes it as a keyword of its own,
+  where an explicit value outranks the natal — and for `"USER"` the definition
+  (`custom_ayanamsa_t0` / `custom_ayanamsa_ayan_t0`) travels with the name,
+  which alone is not an ayanamsa. A chart that asks for no nakshatras is never asked for one either.
+
+- **`moonrise` / `moonset` are populated.** The four fields on
+  `MoonPhaseMoonSummaryModel` existed, the XML serialiser printed them, and
+  no producer had ever filled them. `MoonPhaseDetailsFactory` now computes
+  them for the subject's civil day (ISO-8601 in the subject's zone plus the
+  Unix instant), `None` on the roughly one day in thirty when the Moon does
+  not rise, or does not set. `compute_rise_set_ephe(body=…)` generalises the
+  Sun-only routine; `compute_sun_rise_set_ephe` stays as an alias and is
+  pinned byte-identical. The day's opening and closing midnights are resolved
+  by one shared rule, so a zone that changes its offset at 00:00 gets a 25- or
+  23-hour day that encloses exactly its own hours: a fall-back fold opens the
+  day at the FIRST occurrence of midnight, a spring-forward gap at the first
+  instant past it.
+
+- **A planet one degree from the Sun is no longer just "an evening star".**
+  `is_morning_star` / `is_evening_star` were, and remain, pure geometry
+  (which side of the Sun), with no visibility threshold. Every
+  `PlanetaryPhenomenaModel` now also carries `solar_phase` — `"cazimi"`,
+  `"combust"`, `"under_the_beams"`, `"free"` — read from the published
+  `elongation` against `SolarPhaseThresholdsModel` (defaults 17′ / 8°30′ /
+  17°, parametric, echoed on the collection). `classify_solar_phase` is
+  public.
+
+- **The Moon has an apogee, not an aphelion.** `PlanetaryNodeModel` named
+  the Moon's apsides with the heliocentric words; the far one is, to the
+  decimal, the mean (or true) Black Moon Lilith. The model gains
+  `periapsis` / `apoapsis` and `apsis_kind` (`"geocentric"` for the Moon
+  alone); `perihelion` / `aphelion` are kept, populated with the same
+  objects, and deprecated in the docs.
+
+### Notes
+
+- `moon_phase_name` on existing charts can change for separations within
+  6.43° of a syzygy or quadrature boundary — that is the fix. `major_phase`
+  is the field to key display logic on.
+- A `LunarPhaseModel` payload produced by a90 or earlier — without
+  `major_phase` and `stage` — still validates: the two fields are derived from
+  `degrees_between_s_m` when absent, so stored charts and cached JSON load
+  unchanged.
+
+## [6.0.0a90] - 2026-08-26
+
+### Added
+
+- **Three sizes for the modern wheel's planet cluster.** A new `glyph_size`
+  option — `"small"`, `"medium"` (default), `"large"` — on `ChartDrawer`, as a
+  constructor default and a per-render override on all four render methods,
+  exported as `KerykeionGlyphSize` from `kerykeion.schemas`. Medium IS the
+  existing drawing: the default render is asserted string-identical to an
+  explicit `"medium"` render, and the whole pre-existing baseline suite
+  passes untouched. The classic style ignores the option in silence, exactly
+  as it ignores the zodiac background ring.
+
+- **Small is the medium cluster at 90%** — a pure homothety: the five element
+  sizes (planet glyph, degrees, sign, minutes, ℞), the air between the rows and
+  the tether's own tab all scale together, so the cluster keeps exactly the
+  proportions it was tuned to.
+
+- **Large is classic parity, and the air pays for it.** The planet glyph draws
+  at the classic engine's own size — 24px on a single wheel at the default
+  480px page, 19.2px on a dual — written as the expression
+  `classic_scale / (0.92 · 4.8)` so the parity is exact rather than a rounded
+  decimal. Two qualifiers, stated rather than implied: parity is exact for
+  glyphs at optical weight 1.0 (the per-glyph map stays applied — the Sun
+  draws 10% over, the ×0.95 bodies 5% under, as they always have relative to
+  their row), and it is a default-configuration contract — with
+  `show_zodiac_background_ring=False` the whole modern wheel, cluster
+  included, draws 1/0.92 larger at every size, so the large glyph lands at
+  26.09px against classic's 24 (pinned by test as stated behaviour).
+
+- **On the dual rings, parity belongs to the glyph alone.** The dual cluster
+  is text-heavy by construction — its reading stands at 0.67 of its glyph
+  against the natal 0.51 — and one factor for everything made the dual degree
+  numerals at large larger than the single wheel's (12.9px against 12.3).
+  Chosen on a rendered four-way comparison (×1.372 shared, ×1.248 the single
+  wheel's ramp, ×1.12, ×1.0): at large the dual glyph takes its parity factor
+  (×1.372) while the reading — degrees, sign, minutes, ℞ — **stays at the
+  medium size**, the one every wheel already trains the eye on; even the
+  single wheel's ramp read oversized in the dual rings' packed context. The
+  single wheel splits the same way one step down: at large its degrees keep
+  the ×1.248 ramp while minutes and ℞ stay at the medium size — the coda
+  was what crowded, not the ramp. That
+  choice also hands the air back: the single ring affords large at 76% of its
+  medium air, the dual rings at 79% (outer) and 73% (inner), with the inner
+  gaps at 3.4–4.6px — against the 1.0–1.3px the shared parity factor left
+  them. The bands cannot deepen — below them there is only the aspect web,
+  and taking a third of its radius was considered and refused.
+
+- **The profiles are derived, not guessed.** A new
+  `scripts/derive_modern_cluster_profiles.py` lays every ring out under one
+  rule — sizes ×k, every quantity of air ×a = min(k, fit), rows top-down from
+  the tether's end, tab floored at a quarter unit — anchored on the glyph's
+  CORNER reach because the tether meets the box on the diagonal. The rule is a
+  fixed point at k=1 (the script proves it reproduces the shipped medium on
+  every run), the pasted literals are pinned to the derivation by test, and at
+  large the tether shortens with the air — without that the tab would end
+  inside the Sun's glyph box at 45°, the exact defect a88 fixed. On top of
+  the rule, every derived cluster slides 0.3 units OUTWARD toward its
+  indicator (the END tab absorbing the slide, floored and capped so it
+  never reaches the glyph's ink, while the VISIBLE dash — the straight
+  tether's body and the arc's mark at the true position — keeps its rule
+  length via a new start_tick_length, so the mark never degrades to a
+  stray dot): the ℞ row steps off the ring's inner edge on every chart
+  type, and medium, the byte-identity anchor, does not move.
+
+- **The separation ceilings are measured, per size.** The collision harness
+  (`scripts/measure_modern_separation.py`) learned `--glyph-size` and now
+  builds its rings from the same profiles the renderer reads; its sweep
+  extends to 14°. The policy was already written in the shipped constants —
+  every ceiling sits half a degree above its measured touch — and the new
+  ceilings apply it to their own measured floors: small 6.75 / 5.00 / 8.00,
+  large 9.50 / 7.50 / 11.50 (touch at 6.25 / 4.50 / 7.25 and
+  9.00 / 7.00 / 10.50). Adversarial mode
+  passes at every size against the 0.2-unit daylight gate. An all-points
+  wheel at large over-subscribes by design; the resolver compresses and logs
+  it, and a test pins the log line so the degradation stays a stated
+  behaviour.
+
+- **Non-default sizes stamp `kr:glyphsize` on the modern root**, so a consumer
+  holding only the SVG can tell which profile drew it. Medium is unstamped on
+  purpose: the attribute's absence IS the default.
+
+### Changed
+
+- **The cluster's sign glyph steps down 8%** (natal 0.10309 → 0.09484, dual
+  0.062 → 0.05704). At its a87 size it crowded the numerals either side and
+  the cluster read with almost no hierarchy — judged on the rendered wheel:
+  a visible step down, half the raise that had brought it up, without
+  swinging back to the undersized mark that raise was correcting. It sits in
+  the middle of the block, so the change moves only the air between the rows.
+
+### Fixed
+
+- **The classic theme's zodiac wedges are opaque now.** They were the element
+  colours at `fill-opacity: 0.5` — a pastel only because white paper sat
+  underneath. On a host that shows through the chart (Studio's glass) the
+  backdrop bled into the ring. The theme now ships the exact per-channel
+  composites of those colours over white (#ffb880, #b59e80, #b4d6f8,
+  #95a4b8) at opacity 1: the same tone the theme always had, on any host.
+  The dark theme was already opaque and is untouched.
+
+- **A dimmed cusp stretch is a solid tone, not an opacity.** Where a reading
+  crosses a cusp line, the line dimmed via `stroke-opacity: 0.35` — and on a
+  see-through host the whole stretch washed out, so the axes of a dual wheel
+  appeared to stop mid-air (the As axis lost eleven units of its inner-ring
+  run behind its own reading). The dim is now a SOLID pre-composited tone,
+  per ring and per theme (`--kerykeion-modern-cusp-dim`,
+  `--kerykeion-modern-cusp-dim-outer`), numerically identical to what the
+  opacity produced over each ring's own fill.
+
+- **Dual house lines start at the ruler.** They hung 1.15 units short of it
+  (y 6.5, where the natal lines and every tether anchor at 5.348), which
+  read as axes not reaching the wheel's edge on every dual chart.
+
+## [6.0.0a89] - 2026-08-26
+
+### Fixed
+
+- **A return instant this library reported could not seed the search for the
+  next one.** Return instants are reported truncated to the whole second (the
+  chart is rebuilt from an integer `seconds` field), so the exact crossing of a
+  return reported at `T` lies in `[T, T + 1s)` — a fraction of a second AFTER the
+  value the caller holds. A forward search seeded with that value asked the
+  ephemeris for the first crossing at or after it and got the same return back;
+  a backward search happened to work, because the truncated seed lands before
+  the crossing. A client stepping through the sequence of returns with the
+  instants it was given never advanced — for solar, lunar, heliocentric and node
+  crossing alike. Ordering between a seed and a return is now decided at the
+  resolution the factory reports at: a forward search starts from the whole
+  second after the seed's, a backward one from the seed's own whole second
+  (the backend's backward searches are strictly past, so a crossing inside
+  that second is excluded and one in the second before is found), in one
+  helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
+  entry points. The backend's solvers do not reach that resolution on their
+  own — their at-crossing dead band is ~90 ms for the Sun, and their 0.001″
+  tolerance is six seconds of Pluto's motion, so a seed one second past a
+  slow body's crossing came back as its own answer — so every supported ISO search is
+  held to the contract (`_settled`): heliocentric crossings are settled to a
+  millisecond by bisection around the solver's answer, a crossing inside the
+  second before a backward seed is looked for explicitly, and a result that
+  has not moved past the seed's second restarts from outside the solver's
+  basin. The contract is pinned for the Sun, the Moon, the lunar nodes and the
+  heliocentric bodies from Mercury to Pluto plus Chiron: `next(reported(N))`
+  is `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
+  instant for instant, `previous` from the second after a reported instant
+  finds it (twenty consecutive solar returns, dead band included), and a walk
+  of steps lands on each return exactly once. One limit is the ephemeris'
+  own: a crossing within a tenth of a millisecond of a whole second cannot
+  be told from a crossing at that second, and is treated as one — the natal
+  instant, a crossing by construction, being the case that matters: seeded
+  with it, `previous` finds the cycle before birth, never a return a second
+  before the birth itself. Outside the contract, as before: the heliocentric
+  search for the lunar nodes and the Liliths, which are not heliocentric
+  bodies. Solar, lunar and node instants are reported as they were;
+  heliocentric instants settle onto the crossing itself, which moves the
+  reported second of about half the Uranus–Pluto crossings, by up to the
+  solver's tolerance — some 2 s for Uranus, 4 s for Neptune, 9 s for Pluto.
+  The date and year wrappers keep their inclusive
+  midnight seed, so a return in the first second of a date is still that
+  date's return. The one visible
+  consequence: a seed inside the same second as a crossing now selects the
+  following return — so a search seeded from the natal instant itself yields the
+  first return rather than the birth moment (four report fixtures that pinned
+  that degenerate chart are regenerated). Seeds at the edge of
+  the civil range — forward from 9999-12-31T23:59:59, backward from
+  0001-01-01T00:00:00 — used to overflow `datetime` and now refuse with
+  `KerykeionException`. Two calendar facts are pinned alongside, as the reason a
+  return is identified by its instant and never by a period: a leap year can
+  hold two solar returns (born 1 January: 1 January and 31 December 2024), and a
+  month can hold two lunar returns (2 and 29 August 2026).
+  See [release_notes/v6.0.0a89.md](release_notes/v6.0.0a89.md).
+## [6.0.0a88] - 2026-08-25
+
+### Fixed
+
+- **Two factories let a raw error out at the end of the civil range.** On the
+  full-range kernel (DE441, to the year 17191) 9999-12-31 is computable, and it is
+  the day AFTER it that does not exist: the planetary day beginning at that
+  evening's sunrise needs a sunrise on 10000-01-01 and overflowed `date`
+  arithmetic with a bare `OverflowError`; the void-of-course Moon walking to its
+  next ingress past the year's end surfaced a bare `ValueError` from the Julian
+  Day conversion. Both refuse with `KerykeionException` now, naming the civil
+  range rather than the ephemeris. The test that guards this had asserted that
+  9999-12-31 itself must fail — true on the base and medium kernels, where the
+  coverage check refuses first, and false on the extended one, where it never
+  reached the two lines that would have caught the real defect. It says the
+  truth at every tier now, and an extended-only test pins the asymmetry: before
+  that day's sunrise the planetary hours work (yesterday exists), after it they
+  cannot.
+
+- **A sidereal Sunshine `i` relocated onto its own birthplace was a different
+  chart.** The reference implementation casts a sidereal `i` (Makransky) as `I`
+  (Treindl) — libephemeris matches it — except in the fixed-epoch modes; the
+  natal chart got that ring by asking with the sidereal flag, while the relocated
+  chart asks tropically and applies the subject's ayanamsa afterwards, so it asked
+  for `i` and got Makransky: at sixty degrees north the two constructions are
+  tens of degrees apart, and inside the polar circle the tropical `i` is refused
+  and substituted with Porphyry where the natal has a crowded Sunshine ring. The
+  relocation asks for the system the reference would cast, with the fixed-epoch
+  modes left on Makransky as the reference leaves them. Nothing to change
+  upstream: both backends behave the same way, and that way is Swiss Ephemeris'.
+
+- **An angle could be filed in the wrong house, and twelve numbers could not say
+  otherwise.** Where a house system brings several cusps onto one longitude —
+  Sunshine at 74.25 degrees north puts the second through the sixth on
+  316.971024 — the shared reader answers with the lowest-numbered of them, so an
+  Imum Coeli that IS the fourth cusp came back in the third, in the model, the
+  report and the context alike. The nearest-cusp rule added in a87 settles a crowd
+  whose members differ by a fraction of a nanodegree; it cannot settle one whose
+  members are the same float, because they are all equally near.
+
+  The answer is not in the twelve numbers. It is in what the point IS, which the
+  ephemeris knows at the moment it returns the cusps and the angles from one call.
+  `angle_house_identities` in `kerykeion/utilities/core.py` states that once, and
+  it is applied where the cusps are made: in the natal factory through
+  `houses_ring_with_polar_fallback`, and in the relocated chart, which shifts the
+  ring by the ayanamsa first and then asks the same question of the shifted ring.
+  (A third copy of the houses call, kept in the factory "for the Arabic Parts",
+  turned out to be unreachable — the houses are always cast first — and is gone.)
+  No consumer of `get_planet_house` changed, and `get_planet_house` itself
+  behaves exactly as before: the roughly twenty other callers project a point into
+  a ring that is not its own, where no identity exists.
+
+  Whole sign, Vehlow and Morinus charts claim no identity and read as they always
+  have — there the angle is a point of its own and may legitimately fall in a
+  neighbouring house; equal houses claim the Ascendant and Descendant only, and
+  meridian and equal-from-MC charts the Midheaven and Imum Coeli only. Measured
+  across 5,520 charts (23 systems, 15
+  latitudes, 8 hours, 2 minutes) one angle was misfiled before and none is now; at
+  a quarter of an hour's resolution over the eight systems that crowd their cusps
+  and fourteen latitudes beyond 66 degrees, some 10,700 charts, the same. Davison
+  composites inherit the fix by being cast as ordinary charts.
+
+  **The cusps themselves are unchanged.** pyswisseph returns the same crowded ring
+  for that chart, so repairing it would diverge from the implementation this
+  library is validated against. What is new is that the chart says so: see
+  `coincident_house_cusps` below.
+
+- **The SVG golden comparison could not fail.** `compare_svg_lines` returned
+  WITHOUT asserting whenever a line's count of numbers or its non-numeric skeleton
+  differed, `compare_chart_svg` abandoned the whole file for a ±5% length ratio
+  when the line count changed, a missing baseline skipped, and what was left was
+  compared at `rel_tol=0.5` — fifty per cent, ±150 units on a coordinate of 300.
+  Three further copies of the comparison lived in the test tree with three further
+  tolerances, one of them with no callers at all.
+
+  There is one comparison now, in `tests/data/compare_svg_lines.py`. Structure is
+  fatal on every backend: line count, count of numbers in a line, and the line
+  with its numbers blanked out. Numbers are compared with `rel_tol=0.0,
+  abs_tol=1e-4` and only on the backend the baselines were generated with; on
+  another the structural assertions still run and the test then reports SKIPPED,
+  naming the backend, because the two compute different charts rather than less
+  precise ones. A handful of charts cast two millennia back differ structurally
+  between the backends and carry `@pytest.mark.reference_backend_only`, one at a
+  time and with a reason.
+
+- **The golden charts asked a remote service where they were cast.**
+  `from_birth_data` defaults to `online=True`, and both the tests and the
+  regeneration scripts passed a bare city name — so a regeneration baked one day's
+  GeoNames answer into 346 files while a test run compared against another day's.
+  Running the comparison at four tolerances over one afternoon on one unchanged
+  tree gave 2, 6, 63 and 69 failures. The coordinates are frozen in
+  `tests/data/golden_places.py` and `test_golden_charts_are_hermetic.py` fails if a
+  golden chart reaches for the network.
+
+  Every golden place is pinned, in all five golden modules and all four
+  regeneration scripts. The guard drives every golden test, every parametrized
+  case, through `tests/data/golden_drive.py` with a comparison that records and
+  raises nothing, closes both GeoNames doors (the city lookup and the timezone-
+  for-coordinates lookup), reports every test it cannot call against a named
+  allowlist of tests that compare no baseline, and demands that every stored
+  baseline within this kernel's and backend's reach was actually handed to the
+  comparison — without that last demand a suite that failed before casting any
+  chart would pass by never getting as far as the network.
+
+- **Twenty baselines were read by nothing.** The charts demonstrating the
+  optional marks — the station glyph, the out-of-bounds badge, the separating
+  aspects, the ayanamsa offset, the polar substitution note, the relationship
+  score — seventeen of them, plus three plain natal charts, were generated,
+  committed and compared by no test. They have readers now, and
+  `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline
+  loses one.
+
+  Inside the golden modules the only witness is the driver; elsewhere a source
+  line counts only where its tokens compare or open the file, so a mention in a
+  docstring, a comment, or another gate's exemption table is not a reader. The
+  one reader that runs only on the full-range kernel is declared, and the
+  extended run of the gate — `poe check` runs it as `test:gates:extended`, and
+  refuses to run it on a narrower kernel than it asked for — checks the
+  declaration. Proven by deleting `TestProgressionChart` from the source and by
+  emptying a reader's body: the gate names the files both times.
+
+  Three of the new optional-mark tests asserted a word the chart carried anyway
+  — "Relationship Score" is in the subject's name, `kr:motionstate` is on every
+  chart — so a mark that silently stopped drawing would have passed. Each now
+  asserts something only the mark draws, found by rendering with and without it.
+
+- **Two charts wrote the same baseline file.** `save_svg` builds its default name
+  from the subject's name, so a subject named "John Lennon - Relationship Score"
+  collided with the explicitly-named file for that same variation and silently
+  overwrote it. The comparison test then reproduced the loser: it rendered a chart
+  with two EMPTY panel rows against a baseline showing "Relationship Score: 12",
+  and passed. The regeneration refuses to overwrite its own output now.
+
+- **The regeneration scripts could draw with another checkout's library.** An
+  editable install resolves to the path it was installed from, so running a
+  regeneration from a git worktree of the same repository uses the ORIGINAL tree's
+  code — including its uncommitted work — while writing into the worktree. Sixty-four
+  baselines were produced that way while this branch was being written, looked like
+  months of accumulated staleness, and were wrong. The scripts check before they
+  write — and they check the backend too: a regeneration on swisseph would have
+  written swisseph charts under a constant that declares them libephemeris, and
+  the comparator's own regeneration path refuses both the same way.
+
+- **Nine baselines were months stale, and nine were listed as unregenerable.** Four
+  progression charts, the Ptolemaic BCE pair, the 500 BC progression, and two
+  baselines — "Ancient Greece 500BC - Synastry Chart" and its transit twin — that
+  no test read and that `test_baseline_freshness.py` exempted as "second subject
+  not recorded". Their panels record both subjects: 15 June 500 BC at noon in
+  Athens, and a "Transit Partner" cast on 1 January 1970. They have readers in
+  `test_bce_dates.py` now; the BCE natal and progression readers there, which
+  compared a ±5% line count and skipped on a missing file, go through the single
+  comparator; and `CANNOT_REGENERATE_HERE` is empty, because every one of its
+  nine entries is read by a test that refreshes it under
+  `KERYKEION_REGEN_BASELINES` — and `poe regenerate:svg` now ends by running those
+  tests with the variable set, because a fourth review pass found it refreshing
+  335 files and leaving eleven stale while its own failure message recommended
+  it. The refreshed files carry what the drawer has
+  changed since they were written — the accessibility attributes, the palette,
+  the modern glyph scale and the house-sector arcs — which is what a strict
+  comparator is for.
+
+- **The house comparison refiled an angle with the reader.** `house_comparison`
+  recomputed a point's house in its own chart from the twelve cusps instead of
+  reading the house the model already carries, so on the crowded ring the
+  synastry and transit tables said Third where the model said Fourth. It reads
+  `point.house` now, and asks the reader only for a point that has none. The
+  solar-arc direction did the same for a directed angle at an arc of zero — the
+  natal angle, still its cusp — and keeps that house now; at any other arc the
+  angle has left its cusp and is read as before.
+
+- **`poe check` never reached its test steps.** The sequence stopped at a pyright
+  error in the report generator (`_model_kind` assigned through a tuple the
+  checker widened to `str`), so the new baseline gates would not have run from
+  the maintainer's command; the generator indexes the matched entry instead.
+
+- **A midpoint composite declared no coincident cusps** even when both parents stood
+  on the crowded ring and its midpoints did too; the Davison, cast as an ordinary
+  chart, declared them. The composite factory computes the groups on its own ring
+  now, so the field's promise — empty only when the twelve cusps are distinct —
+  holds for every model that carries it.
+
+- **`coincident_house_cusps` accepted what it promised not to hold**, and kept a
+  promise it could not: any `list[list[int]]` validated, `[[0, 13]]` included, and
+  a pre-a88 payload of a crowded chart came back declaring `[]`. A group now names
+  at least two existing houses, ascending, none twice; and a payload without the
+  field has its groups read off the twelve cusps it does carry — a payload that
+  names the field, even as `[]`, is taken at its word.
+
+- **A hex colour read as a number** in the comparator: `#000e10` against `#000e20`
+  passed as zero times ten to the tenth, and `#1e9999` failed against itself as an
+  infinity. Latent — no colour in the palette hits either — and closed: hex digits
+  are rewritten as letters before the numbers are read, so a colour is compared as
+  text, exactly.
+
+- **The moon disc was not next to the line that names it.** The disc was placed
+  by chart type — the natal panel above the block, every other panel ten pixels
+  under the block's *last* line — while the row naming it sat third or fourth
+  from the end. A transit put the picture 24 pixels and two rows from its own
+  caption, a return 38 and three: 95 charts drawing a moon that appeared to
+  belong to the diurnality line under it. The phase row now closes the block on
+  every panel that draws a disc, so the disc beneath it has nothing else it
+  could be captioning. The row moved rather than the disc because the wheel's
+  chord narrows going up — 147px of clear width on the first row against 229 on
+  the last — and a dual panel's phase line carries the wheel's name too. Of 400
+  combinations (ten languages, five wheel contexts, eight phases, measured in
+  the reference fonts' advances), 304 would overrun the top row's 134px, 98
+  overran in the rows the line used to occupy, and 21 at the bottom's 229.
+
+- **A composite drew a moon it never named.** That panel spends its six rows on
+  the zodiac, the houses, the perspective, the composite method and the
+  diurnality, and has never written a phase line — but it drew the disc anyway,
+  18 charts carrying a picture that said nothing about what it depicted. It is
+  omitted now, as the synastry panel, equally short of room, has always done.
+  The phase itself remains on the model for any caller who wants it.
+
+- **A dual return chart read the nativity's moon, not the return's.** It took
+  the phase from the natal subject and labelled it with a bare "Lunar phase"
+  while the row beside it named the two wheels apart — so the nativity's moon
+  read as the return's. It takes the return moment now and says whose it is
+  ("Solar Return Lunar phase"), the way the transit and progression panels, in
+  this same row, always have.
+
+- **The phase row had never been trimmed to fit.** Measured in Times, Helvetica
+  and Arial advances, a Russian return line reaches 287px against the 229 its
+  row clears — 21 of the same 400 combinations run past the graphics, fourteen
+  Russian, six French, one Spanish. It is trimmed now to the room its own row
+  has, like the house and relationship-score rows beside it, and the wheel's
+  name is what pays: the phase keeps its own words, following the rule the
+  diurnality row already states.
+
+- **A panel that draws no moon stopped short of the page.** The disc holds 30px
+  under the block — the 10px gap it keeps below the last line, plus its own 20px
+  of height — so a synastry, which names no phase, and a midpoint composite,
+  which has no moment to have one, ended 30px above where every other panel
+  ends, with a strip of empty page under the last line. The block takes that
+  room now and closes where a disc's foot would have been: the panel has one
+  bottom edge whether or not there is a moon to draw. The natal panel is
+  unaffected — its disc rides above the block, so its absence frees nothing
+  below.
+
+- **The dual-wheel diurnality row was budgeted against the wrong row.** It is
+  allocated by measuring the space the wheel leaves, and that space depends on
+  which row the line lands in — the chord narrows going up, 200px on row 4
+  against 229 on row 5. The builder assumed row 5 whatever the panel did with
+  it. Now the row it lands on is the row it is measured against.
+
+- **The trim read Hindi at over twice its width and amputated rows that fit.**
+  `estimate_text_width` had no measurements for Devanagari, so every code point
+  of a Hindi row paid the block ceiling of 1.04 em — matras and viramas
+  included, glyphs that shaping renders at zero advance. A 159px Hindi return
+  line was read as 342 and cut to "चंद्र चरण: शुक्ल पक्ष प्…", the wheel
+  qualifier dropped and the phase name severed mid-word, in a slot it fit with
+  70px to spare — on every Hindi transit, progression and return, the moment
+  the trim above began to exist. Devanagari sits in the measured table now,
+  like Cyrillic before it: 104 characters at the widest advance the reference
+  fonts declare, combining marks at their true zero, the soft hyphen at its
+  real 0.34. The estimator reads those rows within 2% of the reference
+  advances, and the natal panel's Hindi lines and the point grid's Hindi names,
+  clipped and abbreviated by the same over-charge, come back whole with it.
+
+- **The perspective row moved up a slot, and it was the one row with no width
+  fitting.** The reshuffle above put it on row 3, where the chord clears 179px,
+  and `build_perspective_info` never measured itself: the Russian
+  apparent-geocentric line, 198px, ran 19px under the wheel graphics on every
+  Russian dual return — and always had on transits, from that same slot. It is
+  fitted now like every other row, and to the slot it *lands* on at the height
+  the block actually sits: a midpoint composite draws the row two slots below
+  the one it is written in, the blank rows having migrated to the top, and the
+  synastry and composite blocks — which never draw a disc — take the disc's
+  30px and put their rows on a wider chord. A fit taken against the authored
+  slot, or against the template height, measures a chord the row is never
+  drawn at: the first cut the Italian composite line, the second the Russian
+  synastry line, each in a slot that held it whole.
+
+### Added
+
+- `coincident_house_cusps` on `AstrologicalSubjectModel` and its siblings: the
+  groups of house numbers whose cusps stand on one longitude, so the houses between
+  them have no width and no point can ever be in them. Empty for every ordinary
+  chart, so an a87 payload validates unchanged. The report prints it as a "Cusps On
+  One Longitude" row and the context emits `<coincident_house_cusps>`.
+- `houses_ring_with_polar_fallback` and `HouseRing` in
+  `kerykeion.ephemeris_backend`: the cusps, the angles, the polar-fallback record,
+  the angle-to-house identities and the coincident groups from one call. The two
+  tuple-returning siblings keep their signatures.
+- `angle_house_identities` and `coincident_cusp_groups` in `kerykeion.utilities`;
+  the predicates and constants behind them — `ANGLE_CUSP_INDEX`,
+  `ON_CUSP_TOLERANCE_DEGREES`, `angle_is_its_cusp`, `angular_separation`,
+  `cusps_are_a_house_division` — live in `kerykeion.utilities.core`. Two of them
+  replace private copies inside the composite factory (`_angle_is_its_cusp`,
+  `_cusp_ring_winds_once`); there is one of each now.
+
+## [6.0.0a87] - 2026-08-25
+
+### Fixed
+
+- **Six house systems draw their houses backwards, and the wheel did not know.**
+  Above roughly 68 degrees Campanus, Regiomontanus, Sunshine, Polich/Page and APC
+  return descending cusps, and the horizon system does it on the equator. Read
+  forwards, a six-degree house measured 354: the twelve transparent hit-wedges
+  were each painted as a near-complete ring, stacked, so a click anywhere on the
+  chart was answered by whichever was drawn last, and every house number sat on
+  the far side of the wheel from the house it names. Direction is now read from
+  all twelve at once — twelve widths cover the circle exactly once whichever way
+  the houses run, so the total tells them apart.
+
+- **A house too thin to draw could not be clicked.** Two cusps inside one whole
+  degree collapse onto one offset when the classic ring is quantised, and an arc
+  whose endpoints coincide is dropped by the SVG specification, leaving a path of
+  no area that still declares `pointer-events: all`. The boundaries are separated
+  in house order now, so they stay shared, and where the cusps genuinely cross —
+  Polich/Page and Sunshine/alt inside the polar circle — each wedge keeps at least
+  a degree by moving only its own end.
+
+- **The composite chart's twelve cusps were not always a house division.** About
+  one couple in sixteen produced twelve arcs totalling 1080 degrees instead of
+  360, with the house numbers out of order and the Midheaven below the horizon.
+  The repair follows the practice the field documents: one angle keeps its near
+  midpoint and the others move onto their far one. The new `house_anchor`
+  argument chooses which — `auto` (the default), `ascendant` or `midheaven` —
+  and is recorded on the resulting model.
+
+- **The composite kept a private copy of the library's house reader**, and the
+  copy was the old one: on a descending cusp ring it filed ten points out of ten
+  in the wrong house, while the same model's house-comparison field, which used
+  the shared function, disagreed with it.
+
+- **House numbers were sized against the wrong ring.** Their reach was measured
+  at the radius where the cusp line ends rather than where the number is drawn,
+  making every extent 1.6 times too large on a natal wheel and 1.95 on a dual
+  chart's inner ring. Two related mismatches are closed with it: the inner ring
+  mixed a truncated base with an exact span, which on a crowded chart printed 10
+  before 9 and 4 before 3; the outer ring of a dual chart labelled exact lines
+  with truncated numbers.
+
+- **`% 360` where the library meant `normalize_degree`**, in four more files. For
+  a hair-negative angle Python's modulo answers exactly 360.0, which is outside
+  the range the callers promise. `normalize_degree` and `house_spans` now live in
+  `kerykeion.utilities.core`, where calculation code can reach them without
+  importing the charts package — which is why those copies existed. Both remain
+  importable from `kerykeion.charts.utils`.
+
+- **`poe regenerate:glyph-gallery` had been dead** since the theme removal: it
+  named a stylesheet that went with the themes, so `regenerate:all` died on it.
+
+- **The default fixed-star lists spelled Deneb Algedi with a space**, the one
+  form that is neither in `AstrologicalPoint` nor in the translations.
+
+- **The modern engine drew the Gauquelin ring off its own wheel.** Those
+  thirty-six cusps descend by construction; the span was corrected for that and
+  both sweep flags were left as the ascending case set them, which is the one
+  combination that moves an arc onto the mirrored circle SVG puts through any two
+  points. The wedges sat on circles up to 92 units from a wheel of radius 50.
+
+- **A point exactly on a cusp was filed by the first cusp inside the tolerance,
+  not the cusp it is on.** Above the polar circle several systems crowd cusps
+  together — Sunshine at 89S puts the eighth, the ninth and the tenth within
+  6.6e-11 degrees — and the Midheaven, bit-identical to the tenth, was filed in
+  the eighth. `get_planet_house` takes the nearest cusp now, and where the
+  twelve are a house division it reads containment from `house_spans` rather
+  than choosing the shorter arc pair by pair. Across 3,685 real charts this
+  moves 35 assignments, every one of them a Midheaven returning to the tenth
+  house.
+
+- **`scripts/regenerate_test_charts_extended.py` reported success whatever
+  happened.** Twelve handlers printed their errors and carried on, and the run
+  exited 0, so a baseline that could not be drawn stayed stale while the suite
+  compared against it in green. Failures are recorded and the run exits
+  non-zero, naming them — which immediately surfaced that the two ancient-date
+  baselines cannot be drawn at all on an ephemeris that covers 1550 onwards.
+
+- **The text report and `to_context` dropped house information the library
+  records.** A chart asked for in Placidus above the polar circle is cast in
+  Porphyry and both said only "Porphyry"; the composite's `house_anchor`, which
+  can turn the whole house frame by half a turn, reached neither. Degrees printed
+  beside a sign were bounded at 360 rather than at that sign's ceiling, so a point
+  a hundredth short of a cusp printed as the first degree of the next sign.
+
+### Changed
+
+- `AstrologicalSubjectFactory` writes its log lines to its own module logger
+  rather than the root logger, so a host that silences `kerykeion.*` now does.
+- `CompositeSubjectModel` gains `house_anchor` and `house_frame`: the angle the
+  caller asked to hold, and what became of it — `anchored` when the ring stands
+  on that frame, `midpoints` when no frame spans the two charts and the plain
+  midpoints are kept, `gapped` when the twelve are not a house division at all.
+  Both `None` on a Davison chart, which is cast as an ordinary chart. A model
+  may carry both or neither, never one alone; an a86 payload, which carries
+  neither, still validates.
+- `normalize_degree` and `house_spans` moved to `kerykeion.utilities.core`, and
+  are still importable from `kerykeion.charts.utils`.
+- **Kerykeion no longer installs a handler on the root logger.** a86 called
+  `logging.warning` at module level, which runs `basicConfig()` as a side effect;
+  an application that never configured logging saw formatted output because of
+  that and now sees only Python's last-resort handler. Configure the `kerykeion`
+  logger to get INFO-level lines back.
+- The modern wheel-only template paints its background like the other three; pass
+  `transparent_background=True` to composite it over your own surface.
+- An inverted hours range in `EphemerisDataFactory` raises instead of returning
+  one sample outside the window.
+- **Midpoint composites read differently where a86 was wrong.** On one grid of
+  random pairs (four house systems, the same pairs for both versions, three
+  anchors on a87), cusp rings that are not a division of the circle into twelve
+  houses fall from 7.7% to none at latitudes up to 65 degrees and from 34.0% to
+  21.7% between the polar circle and 89 degrees; a Midheaven that both parents
+  put on their own tenth cusp is filed outside the tenth house by a86 above the
+  polar circle and never by a87 — zero in a 13,440-composite polar sweep. A
+  stored a86 composite re-rendered on a87 can read a planet in the opposite
+  house; the two are distinguishable because a87 records `house_anchor`.
+
+## [6.0.0a86]
+
+### Fixed
+
+- **Every mark a reader has to read now carries the contrast it needs.** The
+  three shipped themes were measured against the surface each mark is actually
+  drawn on — not against the page — and where a point's colour doubles as text
+  it is held to 7:1 rather than 3:1. House cusp lines got a variable of their
+  own, `--kerykeion-modern-cusp`, because a boundary is information and was
+  being drawn at the weight of decoration. Every chart also declares
+  `role="img"` and names itself through `<title>` and a new `<desc>`, so a
+  screen reader announces the subject, the date, the place and the house system
+  instead of "graphic".
+
+- **A cusp line no longer prints through the reading that sits on it.** An
+  angle's cluster is written across its own line by construction, so "As 19º ♈
+  45'" always had a 0.6-wide stroke running through the words. Where a reading
+  crosses a line the line drops to 0.35 for exactly the span of that reading —
+  all of it or none, because a line dimmed under some rows and solid under the
+  others reads as damage. The trigger is geometric, never "this point is that
+  axis": a planet within a degree of a cusp covers the line just as squarely.
+
+- **The outer ring of a dual wheel had no visible indicators.** Not missing:
+  misplaced. Both rings anchored their tether at the boundary between them,
+  which is the inner ring's outer edge and the outer ring's *inner* edge — so
+  every outer tether was drawn twelve units from the planet it points at,
+  pointing outward at nothing. The boundary then carried two families of
+  identical brackets back to back, which is why the inner ring's own tether
+  looked as though it pointed the wrong way. It never did.
+
+- **The chart angles are placed like any other point.** The four angles had a
+  radius of their own, further out than the two the points alternate between,
+  but the code that recognised one did it by index in a fixed list and the v6
+  catalog moved them off those indices. For years that outer lane went to Ceres,
+  Pallas, Juno and Vesta while the angles alternated with everything else.
+  Repairing the classification sent the angles into the zodiac ring, so the lane
+  is removed rather than restored: an angle is a point.
+
+- **A lunar disc no longer hangs halfway up a tall page.** On a Natal chart
+  taller than the usual 580 the glyph followed the blank rows inside its text
+  block but not the offset of the block itself, so on a chart with every point
+  active it stayed 500 pixels above the lines it captions.
+
+- **A long point name no longer runs into the column beside it.** Grid names are
+  capped by inked width — ten Latin characters and ten CJK ones are not the same
+  amount of room — and any trailing marker survives the cut, because dropping
+  the "(T)" would print the true lunar node under the mean node's label.
+
+### Changed
+
+- **The modern wheel grows on a canvas that has room for it.** A chart with
+  every point active is drawn twice as tall, because the aspect grid is a
+  pyramid; the wheel was a fixed 480 regardless, so it occupied 13% of the page
+  with glyphs the size of a chart a quarter as large. It now takes a scale on
+  the two canvas shapes that have margin — measured by an ink-overlap sweep, not
+  assumed — and none at all below that, where ordinary charts stay byte for byte
+  what they were.
+
+- **The cluster reads at the size the ring can afford.** The cusp ring is as
+  thick as the zodiac band beside it, the planet cluster is 12% larger with the
+  room that freed, the sign glyph is 18% larger again because a thin outline
+  beside solid figures reads smaller than it measures, and the aspect web —
+  lines and the marks that name them — is heavier so it survives being read at a
+  glance. Each row is also centred on its own ink rather than on its anchor: a
+  middle-anchored string centres its advance width while the ink sits a tenth of
+  the font size high, and the cluster read as a crooked skewer.
+
+- **The bottom-left panel is ordered longest-last.** The wheel's chord limits
+  those rows and stops narrowing them towards the bottom, so the house system
+  moved down next to last and the zodiac line goes last of all when it carries
+  an ayanamsa. The lunation day is gone: the phase already says where in the
+  cycle the moon is, in the words a reader thinks in, and the disc beside it
+  says the same in a picture.
+
+### Removed
+
+- **Three of the six chart themes are gone: `light`, `strawberry` and
+  `dark-high-contrast`.** They were the three the accessibility pass never
+  covered, and measuring them says why: against the surface each mark is drawn
+  on, `light` had 66 marks under threshold, `strawberry` 72, `dark-high-contrast`
+  19 — while `classic`, `dark` and `black-and-white` have none. The worst of them
+  was the one called `light`, which is the first name anyone tries for a pale
+  chart: its Ascendant sat at 1.51:1, yellow on white.
+
+  What ships now: **`classic`** (the light rainbow theme, still the default),
+  **`dark`**, **`black-and-white`**, and `theme=None` for a drawing that takes
+  its colours from the document hosting it. Passing a removed name raises
+  `KerykeionException`, as any unknown name always has — there is no silent
+  fallback to a theme the caller did not ask for.
+
+  The 40 committed baselines that verified the removed themes are deleted with
+  them; the remaining 338 cover the three that ship. The theming guide is rewritten
+  around the mechanism — how to override the properties, and what each family of
+  names paints — rather than around a list of themes.
+
+
+### Changed
+
+- **A rendered chart needs no fonts, and every glyph carries the same weight.**
+  All 80 `<symbol>` definitions are geometry. The six lettered marks (As/Mc/Ds/Ic,
+  Vx, Av) were live `<text>` and rendered in whatever face the *viewer* happened
+  to have, at whatever width; they are traced to outlines now like everything
+  else. Fonts are still used at build time — Symbola, Noto Sans Symbols 2 and
+  Noto Sans, downloaded to a git-ignored cache and never redistributed — but
+  nothing a reader loads depends on one.
+
+  The weight is measured rather than chosen. Filled silhouettes cannot be
+  re-weighted (their stem is baked into the contour, so a `stroke-width` has
+  nothing to act on), so they are the fixed point: their stem is 7.41% of their
+  ink at the median across all 45 of them, and the drawn glyphs are stroked to
+  land there. Seven unrelated widths were in use before, and the aspects — drawn
+  in a 10-unit box — reached 16% of their own ink, better than twice the
+  silhouettes. The Sun read thinner than the Moon beside it.
+
+  Jupiter, the four lunar nodes, both centaurs, Eris, both Priapus points, the
+  White Moon and the Interpolated Perigee are drawn rather than traced. The
+  redraws are visible: a chart rendered with 6.0.0a85 does not match one rendered
+  before it pixel for pixel.
+
+- **The six lunar-apside points are told apart by colour, not by six shapes.**
+  Mean, True and Interpolated Lilith share one crescent; Mean Priapus, True
+  Priapus and the Interpolated Perigee share its opposite. The glyph says which
+  end of the apsidal line a point is, the colour says which method computed it.
+  White Moon keeps a mark of its own — it is a different point, not a third way
+  of finding the same one.
+
+### Fixed
+
+- **Four points drew their glyph in one colour and their degree in another.**
+  A point's colour is written in two places: the `var()` inside its `<symbol>`,
+  which paints the mark, and `DEFAULT_CELESTIAL_POINTS_SETTINGS["color"]`, which
+  paints the degree text and the pointer line. True Lilith, Interpolated Lilith,
+  True Priapus and the Interpolated Perigee had the second still set to the mean
+  apogee's colour, so each rendered in two colours at once. **Visible change:**
+  the degree readout and pointer for those four points now match their glyph.
+  White Moon no longer borrows the mean apogee's colour at all.
+
+- **The published glyph gallery was missing five symbols and three months old.**
+  `site/docs/chart-glyphs.md` and its poster carried their own section table and
+  their own copy of the box rule, and had drifted: Interpolated Lilith, Mean and
+  True Priapus, White Moon and the Interpolated Perigee appeared nowhere. Both
+  are generated from `scripts/glyph_catalog.py` now, the same list the templates
+  are built from, and the poster resolves the light theme's real colours instead
+  of flattening every `var()` to one ink — without which the six apside points
+  would print as two shapes repeated three times each.
+
+- **Seventy-three committed SVGs drew a glyph set the library no longer had**,
+  nineteen of them the documentation charts the README serves by raw URL. Three
+  generators produced committed output and had no task, so `regenerate:all` never
+  reached them; they have one now (`regenerate:docs-charts`, `regenerate:gallery-v6`,
+  `regenerate:glyph-gallery`) and are part of that sequence. Five baselines that
+  no script produced at all — three natal charts and the two paired-BCE charts —
+  are reproducible now too.
+
+- **Every rendered chart credits the fonts its glyphs come from.** The header
+  line named two sources; Noto Sans became the third when the lettered marks were
+  traced, and was recorded in `NOTICE` but not in the output.
+
+- **An over-subscribed modern wheel now spends its air before its ink.** Each
+  adjacent pair of clusters asks for the arc its own ink needs plus
+  `DEFAULT_CLUSTER_CLEARANCE` of daylight, and on a very full wheel those asks
+  can sum past what a circle has. The only answer was to scale every separation
+  down together, which compresses the ink reservations — so clusters overlap
+  *and* land further from their true degrees. The clearance is the cheaper thing
+  to give up: it is air, and the ink is the reading. Past the budget the
+  affordable clearance is now solved by bisection, down to none if that is what
+  it takes, and only what remains falls back to the old uniform compression. On a
+  54-cluster stress fixture the worst ink overrun halves.
+
+  Dormant on everything that ships today: the default fourteen points ask for
+  about a quarter of the budget, no committed baseline changed, and the reduction
+  is logged at INFO when it happens rather than being applied silently.
+
+### Added
+
+- **`--kerykeion-chart-color-white-moon`**, in all six themes. White Moon shared
+  the mean apogee's variable, which made the colour axis say it was a way of
+  computing the Black Moon. It keeps the family's hue at low saturation instead —
+  pale where the three method colours are vivid.
+- **`--kerykeion-chart-color-interpolated-lilith`**, in all six themes, for the
+  third rung of the apside ladder.
+
+### Changed
+
+- **`kr:angularity` carries every angle a point stands on, and
+  `kr:angularitydistance` is gone.** The value is now a space-separated list of
+  `Angle:distance` pairs, closest first — `Ascendant:0.8991 Medium_Coeli:4.3156`.
+  Near the poles the Ascendant and the Midheaven close on each other and a
+  planet can sit within orb of both, which a scalar pair of attributes could
+  only express by repeating the attribute names — invalid XML. `ChartPointTag`
+  exposes the pairs already split as `angularities`.
+
+### Changed
+
+- **The stationary band is symmetric, and the two stations are named.**
+  `MotionState` gains `"stationary_retrograde"` and `"stationary_direct"`. The
+  band of < 5% of mean daily motion now brackets zero on both sides and is
+  tested **before** the sign of the speed; previously a negative speed answered
+  `"retrograde"` one branch earlier, so only the forward half of the band could
+  ever report a station. A planet creeping backwards at a hundredth of its mean
+  motion was reported as plainly retrograde, hiding the very event the reader
+  was looking for.
+
+  Which station it is comes from the trend, not the sign: both stations are
+  approached from one side of zero and left on the other. `classify_motion_state`
+  takes an optional `speed_sampler` and, for a body already inside the band,
+  asks it for the speed one day later — falling through the band opens the
+  retrograde phase (`"stationary_retrograde"`), rising through it closes the
+  phase (`"stationary_direct"`). Without a usable second sample the generic
+  `"stationary"` stands, which is an absence of a claim rather than a guess. The
+  subject factory supplies the sampler as a closure over the same ephemeris
+  flags, so the extra call is only ever spent on a body already stationary.
+
+  **This is a behavioural change with two edges for downstream code.** A chart
+  cast within the band of a station now reports a different `motion_state` than
+  it did before — `"stationary_retrograde"` where it said `"retrograde"`, and
+  either named station where it said `"stationary"`. And any consumer that
+  matches the literal exhaustively — a `match` statement, a dict keyed by every
+  value, a mirrored TypeScript union — must be extended before it meets one of
+  the new values.
+
+### Added
+
+- **Point state and chart analyses in the `kr:` SVG metadata.** Every rendered
+  ChartPoint now carries `kr:motionstate`, `kr:speed`, `kr:declination` and
+  `kr:oob`, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars.
+  Angularity and stelliums are annotated onto the finished markup as
+  `kr:angularity` with `kr:angularitydistance`, and `kr:stellium`; in a dual
+  wheel each ring is annotated from its own subject's analysis. A consumer
+  reading the SVG no longer has to re-fetch the JSON to say what the wheel
+  already knows.
+
+  These are unconditional — no rendering flag gates them, in either style and in
+  full or wheel-only output — because an attribute only some serializers emit
+  leaves a consumer unable to tell a body that has no such state from a style
+  that forgot to say so. An attribute is **absent** when the model does not
+  carry the value, so silence means "this chart does not compute it" rather than
+  zero or false; `kr:oob` follows `kr:retrograde` and marks only the exception.
+  Attribute names are lowercase letters with no separators, since consumers
+  rewrite the namespace with a general pattern and a name carrying an underscore
+  would be dropped in silence. The emitter, `point_state_attributes`, lives in
+  `kerykeion.charts.svg_metadata` beside the parser.
+
+- **Six opt-in marks on `ChartDrawer`**, each drawing something the chart data
+  already carried and the wheel never showed. All default to `False`: passing
+  every one of them its own default reproduces the previous SVG byte for byte,
+  in both styles. Each is silent where it has no referent.
+
+  | Parameter | Draws |
+  | :-- | :-- |
+  | `show_motion_state` | `SR`/`SD` at a station — modern recolours the cluster and reuses the row that holds `RX`, classic writes the letters at the foot of the glyph |
+  | `show_out_of_bounds` | An `OOB` badge in the point tables; in the Gauquelin grid, off the declination column |
+  | `show_aspect_movement` | A dashed line for a separating aspect |
+  | `show_relationship_score` | The synastry score in the info panel (needs a score on the chart data) |
+  | `show_ayanamsa_value` | The ayanamsa offset in degrees and minutes, after the mode name |
+  | `show_polar_fallback_note` | A note on the domification line when the requested house system was substituted |
+
+  Nine language keys across all ten languages (`relationship_score` and its six
+  bands, `polar_fallback`), each with an English default on the model so a
+  language pack written before this release still validates, and a new
+  `--kerykeion-modern-stationary` CSS variable in the six themes.
+
+- `examples/svg_extended_example.py`: all six marks, each on a subject that
+  genuinely has its referent — Mercury at its August 1990 station (with Uranus
+  out of bounds), a Longyearbyen chart whose Placidus request could not be
+  honoured, a sidereal Lahiri chart, and a synastry pair. Runs offline.
 
 ## 6.0.0a85 - 2026-08-12
 

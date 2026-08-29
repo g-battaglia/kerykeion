@@ -171,6 +171,13 @@ if subject.lunar_phase:
     print(f"Emoji: {phase.moon_emoji}")
 ```
 
+`moon_phase_name` and `moon_emoji` come from windows centred on the syzygies
+(New/Full ±6.4286°, the quarters ±19.2857°), so the name tracks the event rather
+than a bin boundary. `moon_phase` stays a 1-28 index; `major_phase` is the
+nearest of the four syzygy/quadrature events and `stage` is `"waxing"` or
+`"waning"`. The two `get_moon_*_from_phase_int` helpers see only the index and
+remain the older 28-bin approximation.
+
 ## 4. Chart Data Factory
 
 ### Natal Chart Data
@@ -277,7 +284,10 @@ drawer = ChartDrawer(chart_data=chart_data)
 # Get SVG as string (recommended for web apps).
 # The wheel style defaults to "modern"; pass style="classic" for the
 # traditional wheel (instance-level via ChartDrawer(..., style="classic")
-# or per render).
+# or per render). The modern wheel's planet cluster comes in three sizes:
+# glyph_size="small" | "medium" (default) | "large" — large draws the planet
+# glyph at the classic style's own size (in the default configuration —
+# zodiac background ring active). Instance-level or per render.
 svg_string = drawer.generate_svg_string()
 
 # Or save to file. Default filenames carry the style suffix:
@@ -298,7 +308,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(
     chart_data=chart_data,
-    theme="dark",  # "classic", "light", "strawberry", "dark-high-contrast"
+    theme="dark",  # "classic", "dark", "black-and-white", or None for no CSS
     chart_language="IT",  # "EN", "FR", "ES", "PT", "CN", "RU", "TR", "DE", "HI"
     transparent_background=True
 )
@@ -318,6 +328,41 @@ wheel_only = drawer.generate_wheel_only_svg_string()  # Just the wheel
 aspects_only = drawer.generate_aspect_grid_only_svg_string()  # Just aspects
 ```
 
+### Optional Marks
+
+Six constructor booleans draw facts the chart data already carries. All default
+to `False`, and each is silent where it has no referent (no station, no score,
+a tropical zodiac, a house system that was honoured), so turning one on never
+produces an empty claim.
+
+-   `show_motion_state`: mark a planet at a station, `SR` (retrograde phase
+    opening) or `SD` (closing). Modern recolours the cluster and reuses the row
+    that holds `RX`; classic writes the letters at the foot of the glyph.
+-   `show_out_of_bounds`: `OOB` badge in the point tables.
+-   `show_aspect_movement`: dash the separating aspect lines.
+-   `show_relationship_score`: synastry score in the info panel; needs a score
+    on the chart data (`create_synastry_chart_data` computes one by default).
+-   `show_ayanamsa_value`: ayanamsa offset in degrees and minutes on the zodiac
+    line of a sidereal chart.
+-   `show_polar_fallback_note`: mark the domification line when the requested
+    house system was substituted at a polar latitude.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+drawer = ChartDrawer(
+    chart_data,
+    show_motion_state=True,     # Mercury is stationary_retrograde here
+    show_out_of_bounds=True,    # Uranus is out of bounds here
+    show_aspect_movement=True,
+)
+svg = drawer.generate_svg_string()
+```
+
 ### Dual-chart SVG house metadata
 
 Each `<g kr:node="ChartPoint">` keeps the owner placement in `kr:house` and
@@ -326,6 +371,42 @@ Progression wheels, `kr:projectedhouse` is the point's house in the other
 subject's cusp system and `kr:projectedhoroscope` identifies that target ring.
 The contract is identical in classic/modern and full/wheel-only output, even
 when house-comparison data is disabled.
+
+### SVG point state metadata
+
+Every ChartPoint also carries its physical state and the chart analyses it
+takes part in. No rendering option gates these — the marks above only decide
+whether they are drawn — and they are identical across classic/modern and
+full/wheel-only output.
+
+-   `kr:motionstate` — a `MotionState` literal
+-   `kr:speed` — degrees/day, 6 decimals
+-   `kr:declination` — degrees, 4 decimals
+-   `kr:oob` — `"true"`, only when the body IS out of bounds
+-   `kr:magnitude`, `kr:nearpoint`, `kr:orb` — fixed stars
+-   `kr:angularity` — every angle the point stands on, as space-separated
+    `Angle:distance` pairs, closest first (a point near the poles can stand on two)
+-   `kr:stellium` — the house of the stellium the point belongs to
+
+An attribute is absent when the model does not carry the value: silence means
+"this chart does not compute it", which differs from zero or false (a
+heliocentric chart has no motion state, a midpoint composite none at all).
+Attribute names are lowercase letters only, with no separators or digits —
+consumers rewrite `kr:name` with a general pattern, so `motion_state` would be
+dropped in silence. `kerykeion.charts.svg_metadata` holds both the emitter
+(`point_state_attributes`) and the parser (`parse_chart_points`).
+
+```python
+from kerykeion.charts.svg_metadata import parse_chart_points
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string()
+for point in parse_chart_points(svg):
+    print(point.slug, point.motion_state, point.speed, point.out_of_bounds)
+```
 
 ## 5A. Calendar and Civil-Time Factories
 
@@ -399,6 +480,57 @@ nocturnal) with seven-planet sub-periods; all arithmetic on Julian Days.
 classical planets. `HoraryIndicatorsFactory` assembles horary significators (1st/7th
 house), classical considerations (Ascendant degree, Saturn, Moon void), and
 receptions. All require terrestrial perspective.
+
+## 5C. Observational Phenomena, Apsides and Moonrise
+
+```python
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    MoonPhaseDetailsFactory,
+    PlanetaryNodesFactory,
+    PlanetaryPhenomenaFactory,
+)
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+
+# Nearness to the Sun, named: cazimi / combust / under_the_beams / free.
+phenomena = PlanetaryPhenomenaFactory.from_subject(subject)
+mercury = next(p for p in phenomena.phenomena if p.name == "Mercury")
+print(mercury.solar_phase, round(mercury.elongation, 3))
+print(phenomena.solar_phase_thresholds.combust_deg)   # 8.5, replaceable
+
+# Apsides under generic names, with the frame they are measured in.
+nodes = PlanetaryNodesFactory.from_subject(subject, planets=["Moon", "Mars"])
+for entry in nodes.nodes:
+    print(entry.planet_name, entry.apsis_kind, round(entry.apoapsis.abs_pos, 4))
+
+# Moonrise and moonset for the subject's civil day.
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+print(overview.moon.moonrise, overview.moon.moonset)
+print(overview.moon.moonrise_timestamp, overview.moon.moonset_timestamp)
+```
+
+`solar_phase` is read off the published `elongation` against the collection's
+`solar_phase_thresholds` (`SolarPhaseThresholdsModel` from `kerykeion.schemas`:
+0.2833° / 8.5° / 17°). Those cut-offs are conventions, so pass your own instance
+to either constructor; the one used is echoed on the collection.
+`is_morning_star` / `is_evening_star` are purely geometric — which side of the
+Sun the planet stands on — and say nothing about visibility.
+
+`periapsis` / `apoapsis` are the generic apsis names and are always right;
+`perihelion` / `aphelion` are deprecated (they name the Sun, wrong for the Moon)
+but still populated with the same objects. `apsis_kind` is `"geocentric"` for the
+Moon alone, whose apoapsis equals `mean_lilith` (`method="mean"`) or
+`true_lilith` (`method="osculating"`) to the decimal.
+
+`moonrise` / `moonset` are ISO-8601 strings in the subject's local zone, with
+`moonrise_timestamp` / `moonset_timestamp` the same instants as Unix seconds.
+Each is `None` when the subject's civil day has no such event: the Moon rises
+~50 minutes later each day, so about one day in thirty has no moonrise and
+another has no moonset.
 
 ## 6. AI Context Serialization
 
@@ -515,6 +647,22 @@ Uranian: Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon
 Lilith variants: Mean_Lilith, True_Lilith, Interpolated_Lilith, Mean_Priapus, True_Priapus
 Others: Earth, Vertex, Anti_Vertex
 
+### Motion States
+
+`KerykeionPointModel.motion_state` (`MotionState` literal, the ten planets in
+Earth-centred perspectives; `None` elsewhere):
+
+`fast` (> 120% of mean daily motion), `average` (80-120%), `slow` (< 80%),
+`retrograde` (backward, outside the stationary band), `stationary` (inside the
+band of < 5% of mean motion, either direction, turn unknown),
+`stationary_retrograde` (inside the band, speed falling — the retrograde phase
+opens), `stationary_direct` (inside the band, speed rising — the phase closes).
+
+The band brackets zero and is tested before the sign, so a body creeping
+backwards inside it reports a station, not `retrograde`. The two stations are
+told apart by a second speed sample a day later, never by the sign. Code that
+matches this literal exhaustively must handle both stationary variants.
+
 ### Aspect Types
 
 Major: conjunction (0°), opposition (180°), trine (120°), square (90°), sextile (60°)
@@ -570,8 +718,31 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     houses_system_identifier="W",  # Whole Sign
+    calculate_nakshatra=True,
     online=False
 )
+print(subject.moon.nakshatra, subject.moon.nakshatra_pada, subject.moon.nakshatra_lord)
+```
+
+### Nakshatras on a Tropical Chart
+
+Nakshatras divide the sidereal zodiac. A non-sidereal chart's longitudes are
+rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) for the 27-fold division
+only: the chart stays tropical, and its nakshatras match the sidereal chart cast
+in the same mode. On a sidereal chart the parameter is ignored.
+`nakshatra_ayanamsa=None` restores the pre-v6 uncorrected values and warns.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+tropical = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    calculate_nakshatra=True,
+)
+print(tropical.moon.sign, tropical.moon.nakshatra)     # Pis Purva Bhadrapada
+print(tropical.nakshatra_ayanamsa)                     # LAHIRI
+print(round(tropical.nakshatra_ayanamsa_value, 4))     # 23.7273
 ```
 
 ### Horary Question
@@ -663,6 +834,7 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Midpoints        | `MidpointFactory`              | Subject          |
 | Eclipses         | `EclipseFactory`               | Start year       |
 | Phenomena        | `PlanetaryPhenomenaFactory`    | Subject          |
+| Solar phase      | `PlanetaryPhenomenaFactory`    | `solar_phase_thresholds` |
 | Nodes/Apsides    | `PlanetaryNodesFactory`        | Subject/JD       |
 | Heliacal         | `HeliacalFactory`              | JD + geopos      |
 | Occultations     | `OccultationFactory`           | JD + planet      |

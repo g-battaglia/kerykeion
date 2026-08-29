@@ -940,6 +940,22 @@ point's house in the other subject's cusp system, while
 available in classic/modern, full/wheel-only output even when house-comparison
 data or tables are disabled.
 
+Each point also carries the physical state the model computed for it —
+`kr:motionstate`, `kr:speed`, `kr:declination`, `kr:oob` when the body is out of
+bounds, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars — and the
+chart-level analyses it takes part in: `kr:angularity` (one attribute listing
+every angle the point stands on, as `Ascendant:0.8991 Medium_Coeli:4.3156`,
+closest first) and `kr:stellium`. None of these are gated by a
+rendering option; the opt-in marks above only decide whether a reader sees them
+drawn. An attribute is **absent** when the model does not carry the value, so
+silence means "this chart does not compute it" rather than zero or false — a
+heliocentric chart states no motion state, a midpoint composite none at all.
+Attribute names are lowercase letters with no separators (`motionstate`, not
+`motion_state`), because consumers rewrite the namespace with a general pattern
+and a name carrying an underscore would be dropped silently. See the
+[charts documentation](https://www.kerykeion.net/content/docs/charts) for the
+full table.
+
 ## Classic Chart Style
 
 Since v6 the **modern** concentric-ring layout is the default chart style. The traditional **classic** wheel remains fully supported: set it at the instance level via `ChartDrawer(chart_data=..., style="classic")` or per-render via `save_svg(style="classic")`. Both styles work with all six themes.
@@ -959,6 +975,7 @@ Default filenames spell the style out: `save_svg()` writes `"{name} - {chart typ
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges as the outer zodiac annulus around the cusp ring |
+| `glyph_size` | `str` | `"medium"` | Size of the planet cluster — glyph, degrees, sign, minutes and ℞. `"small"` is the medium cluster at 90%; `"large"` draws the planet glyph at the classic style's own size — 24px single / 19.2px dual at the default page with the zodiac background ring active, for glyphs at optical weight 1.0 (the per-glyph map stays applied; with the ring off the whole modern wheel, cluster included, draws 1/0.92 larger at every size). On the dual rings parity belongs to the glyph alone: the reading follows the single wheel's ×1.248 progression, so the dual numerals never outgrow the single wheel's. Overridable per render |
 
 **Dual-chart keyword arguments** (Synastry, Transit, Composite, Dual Return):
 
@@ -973,6 +990,69 @@ Default filenames spell the style out: `save_svg()` writes `"{name} - {chart typ
 | `external_view` | `bool` | `False` | Place planets outside the zodiac ring (Natal charts only) |
 | `show_degree_indicators` | `bool` | `True` | Show degree indicators on planets |
 | `show_aspect_icons` | `bool` | `True` | Show aspect icons on aspect lines |
+
+**Opt-in marks** (constructor only, both styles). Six facts the chart data already carries and the wheel did not show. Every one defaults to `False`, so no chart gains a mark it was not asked for, and every one is silent where it has no referent — a chart with no station, data that never computed a score, a tropical zodiac, a house system that was honoured:
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `show_motion_state` | `bool` | `False` | Mark a planet at a station: `SR` where the retrograde phase opens, `SD` where it closes. Modern recolours the cluster and uses the row that holds `RX`; classic writes the two letters at the foot of the glyph, where its `℞` sits |
+| `show_out_of_bounds` | `bool` | `False` | Badge out-of-bounds planets `OOB` in the point tables (in the Gauquelin grid, off the declination column) |
+| `show_aspect_movement` | `bool` | `False` | Dash the separating aspect lines; applying ones stay solid |
+| `show_relationship_score` | `bool` | `False` | Print the synastry relationship score in the info panel. Needs a score on the chart data, which `create_synastry_chart_data` computes by default |
+| `show_ayanamsa_value` | `bool` | `False` | Append the ayanamsa offset in degrees and minutes to the zodiac line of a sidereal chart |
+| `show_polar_fallback_note` | `bool` | `False` | Mark the domification line when the requested house system was undefined at that latitude and another stood in for it |
+
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+
+# 25 August 1990: Mercury is at a station, Uranus is out of bounds.
+station = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+drawer = ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(station),
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
+)
+svg = drawer.generate_svg_string()
+
+print(station.mercury.motion_state)     # stationary_retrograde
+print(station.uranus.is_out_of_bounds)  # True
+```
+
+`examples/svg_extended_example.py` renders all six, each on a subject that has its referent.
+
+Rendered, with every option on. A mark draws nothing where there is nothing to
+mark, so no single chart shows the set — these four between them carry every
+referent, and none of them claims something its own sky does not have:
+
+<table>
+  <tr>
+    <td align="center"><b>Stations, out-of-bounds and separating aspects</b><br><sub>Mercury at its August 1990 station; Uranus past the obliquity</sub></td>
+    <td align="center"><b>The same sky, classic</b><br><sub>SR at the foot of the glyph, where ℞ sits</sub></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_modern.svg" width="380" alt="Modern wheel with station, out-of-bounds and separating-aspect marks"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_classic.svg" width="380" alt="Classic wheel with station, out-of-bounds and separating-aspect marks"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Ayanamsa offset</b><br><sub>Sidereal Lahiri — the offset next to the mode name</sub></td>
+    <td align="center"><b>Polar fallback note</b><br><sub>Placidus undefined at 78°N, so the line says what drew the cusps</sub></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_sidereal_classic.svg" width="380" alt="Sidereal chart showing the ayanamsa offset in degrees"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_polar_classic.svg" width="380" alt="Polar chart admitting the house-system substitution"></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><b>Relationship score</b><br><sub>The synastry score and its band, in a panel row that was empty</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_synastry_classic.svg" width="770" alt="Synastry chart printing the relationship score"></td>
+  </tr>
+</table>
 
 ### Classic Birth Chart
 
@@ -1141,7 +1221,7 @@ Each report contains:
 
 - A chart-aware title summarising the subject(s) and chart type
 - Birth/event metadata and configuration settings
-- Celestial points with sign, position, **daily motion**, **motion state**, **declination**, retrograde flag, and house (an **out-of-bounds** column appears when a point actually is)
+- Celestial points with sign, position, **daily motion**, **motion state** (including the two named stations, SR and SD), **declination**, retrograde flag, and house (an **out-of-bounds** column appears when a point actually is)
 - Arabic Parts, fixed stars (with **constellation**) and midpoints in tables of their own, when active
 - House cusp tables for every subject involved
 - Essential dignities, nakshatras and Gauquelin sectors, when the chart computed them
@@ -1488,26 +1568,23 @@ johnny = AstrologicalSubjectFactory.from_birth_data(
     <td></td>
     <td align="center"><strong>Classic</strong></td>
     <td align="center"><strong>Dark</strong></td>
-    <td align="center"><strong>Light</strong></td>
     <td align="center"><strong>Black & White</strong></td>
   </tr>
   <tr>
     <td align="center"><strong>Modern Style</strong> (default)</td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
   </tr>
   <tr>
     <td align="center"><strong>Classic Style</strong></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
     <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
   </tr>
 </table>
 
-Kerykeion provides 6 chart themes: **Classic** (default), **Dark**, **Dark High Contrast**, **Light**, **Black & White** (optimized for monochrome printing), and **Strawberry**. Each is available in both **modern** (the default style) and **classic** chart styles — the theme picks the palette, the style picks the wheel layout.
+Kerykeion ships three chart themes — **Classic** (the default: light, with the rainbow zodiac band), **Dark**, and **Black & White** (for monochrome printing) — plus the option of no theme at all. Each works in both **modern** (the default style) and **classic** chart styles: the theme picks the palette, the style picks the wheel layout. All three meet WCAG AAA on the text a reader reads.
 
 Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
 
@@ -1536,11 +1613,11 @@ dark_theme_subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 
 # Step 3: Create visualization with dark high contrast theme
-dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
+dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark")
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-dark_theme_natal_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-dark-high-contrast")
+dark_theme_natal_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-dark")
 ```
 
 ![John Lennon](https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
@@ -1714,7 +1791,7 @@ print(johnny.model_dump_json(indent=2))
 
 ## Moon Phase Details
 
-The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use the ephemeris backend for ~1 second precision.
+The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, moonrise/moonset, and apparent solar position. All timings use the ephemeris backend for ~1 second precision. `moonrise` and `moonset` are ISO-8601 strings in the subject's local zone, with the same instants as Unix timestamps beside them; either is `None` on the roughly one civil day in thirty that has no such event.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
@@ -1812,6 +1889,10 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
     "stage": "waxing",
     "illumination": "12%",
     "emoji": "🌒",
+    "moonrise": "2025-04-01T06:29:49.367603+00:00",
+    "moonrise_timestamp": 1743488989,
+    "moonset": "2025-04-01T23:37:11.433132+00:00",
+    "moonset_timestamp": 1743550631,
     "next_lunar_eclipse": { "type": "Total Lunar Eclipse", "...": "..." },
     "detailed": { "upcoming_phases": { "...": "..." }, "illumination_details": { "...": "..." } }
   },
@@ -1950,14 +2031,20 @@ print(f"Sun dignity: {subject.sun.essential_dignity}")
 
 Lunar mansions with pada and Vimsottari Dasha lord.
 
+The nakshatras divide the *sidereal* zodiac. A sidereal chart supplies those
+longitudes itself; on a tropical chart they are rotated by `nakshatra_ayanamsa`
+(default `"LAHIRI"`) for the 27-fold division only, so the chart stays tropical
+and still names the nakshatra a Jyotish chart would name. Pass
+`nakshatra_ayanamsa=None` to get back the pre-v6 uncorrected values.
+
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1985, 4, 15, 8, 30,
     lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
-    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
     calculate_nakshatra=True,
 )
 print(f"Moon nakshatra: {subject.moon.nakshatra}, pada: {subject.moon.nakshatra_pada}")
+print(f"Rotated by {subject.nakshatra_ayanamsa}: {subject.nakshatra_ayanamsa_value:.4f} deg")
 ```
 
 ### Eclipse Search
@@ -1978,7 +2065,15 @@ for ecl in result.lunar_eclipses:
 
 ### Planetary Phenomena
 
-Phase angle, elongation, apparent magnitude, and morning/evening star status.
+Phase angle, elongation, apparent magnitude, morning/evening star status, and the
+solar phase.
+
+`solar_phase` names the classical condition near the Sun — `"cazimi"`,
+`"combust"`, `"under_the_beams"` or `"free"` — read off the elongation against
+the collection's `solar_phase_thresholds` (0.2833° / 8.5° / 17° by default, and
+replaceable, since the schools disagree). `is_morning_star` / `is_evening_star`
+are a different question and purely geometric: which side of the Sun the planet
+stands on, with no visibility threshold at all.
 
 ```python
 from kerykeion import PlanetaryPhenomenaFactory, AstrologicalSubjectFactory
@@ -1990,13 +2085,20 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 phenom = PlanetaryPhenomenaFactory.from_subject(subject)
 venus = next(p for p in phenom.phenomena if p.name == "Venus")
 print(f"Venus elongation: {venus.elongation:.2f}, magnitude: {venus.apparent_magnitude:.2f}")
+print(f"Solar phase: {venus.solar_phase}")
 ```
 
 **📖 Full documentation: [Planetary Phenomena Factory](https://www.kerykeion.net/content/docs/planetary_phenomena_factory)**
 
 ### Planetary Nodes & Apsides
 
-Ascending/descending node and perihelion/aphelion positions.
+Ascending/descending node and the orbit's periapsis/apoapsis.
+
+The apsides carry two names for the same two points. `periapsis`/`apoapsis` are
+generic and always correct; `perihelion`/`aphelion` are deprecated — they name
+the Sun, which is right for the planets and wrong for the Moon, which goes round
+the Earth. `apsis_kind` says which reading applies (`"geocentric"` for the Moon
+alone, whose apoapsis is to the decimal the Black Moon Lilith).
 
 ```python
 from kerykeion import PlanetaryNodesFactory
@@ -2004,6 +2106,7 @@ from kerykeion import PlanetaryNodesFactory
 nodes = PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Mars", "Jupiter"])
 for entry in nodes.nodes:
     print(f"{entry.planet_name}: ascending node {entry.ascending_node.abs_pos:.2f}")
+    print(f"  apoapsis {entry.apoapsis.abs_pos:.2f} ({entry.apsis_kind})")
 ```
 
 **📖 Full documentation: [Planetary Nodes & Apsides](https://www.kerykeion.net/content/docs/planetary_nodes_factory)**
@@ -2075,6 +2178,31 @@ print(f"Tokyo ASC: {relocated.first_house.abs_pos:.2f}")
 ```
 
 **📖 Full documentation: [Relocated Chart Factory](https://www.kerykeion.net/content/docs/relocated_chart_factory)**
+
+### Motion State & Stations
+
+Every planet carries a `motion_state`: `"fast"`, `"average"`, `"slow"`,
+`"retrograde"`, or one of the three stationary values. The stationary band
+brackets zero speed on both sides and is tested before the sign, so a planet
+edging backwards at a hundredth of its mean motion reports a station rather than
+a plain retrograde. Which station it is comes from the trend, not the sign —
+both stations are approached from one side of zero and left on the other — so
+the factory samples the speed again a day later: falling through the band opens
+the retrograde phase (`"stationary_retrograde"`, SR), rising through it closes
+the phase (`"stationary_direct"`, SD). Where no second sample is available the
+generic `"stationary"` stands.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+)
+print(f"Mercury: {subject.mercury.motion_state} at {subject.mercury.speed:.5f}°/day")
+# Mercury: stationary_retrograde at 0.01237°/day
+```
+
+`ChartDrawer(..., show_motion_state=True)` draws these as SR/SD on the wheel;
+`RetrogradeStationFactory` finds the instants of the stations themselves.
 
 ### Declination & Out-of-Bounds Detection
 

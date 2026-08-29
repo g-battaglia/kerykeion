@@ -9,14 +9,17 @@ This script creates all types of SVG charts used in tests:
 - Transit charts
 - Wheel-only charts
 - Aspect-grid-only charts
-- Charts with different themes (dark, light, high-contrast)
+- Charts with different themes (dark, black-and-white)
 - Multilingual charts
 - Composite charts
 - Charts with transparent background
 
-All files are saved to tests/data/svg/ with geonames authentication included.
+All files are saved to tests/data/svg/. Places come from tests/data/golden_places.py:
+a regeneration that resolved city names over the network would bake one day's
+answers into every baseline and leave the comparison expecting another day's.
 """
 
+import sys
 from functools import partial
 
 from pathlib import Path
@@ -36,7 +39,56 @@ from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, TRADITIONAL_A
 # ChartDrawer calls below. Call-site kwargs still override the partial's.
 ChartDrawer = partial(_ChartDrawer, style="classic")
 
+
+# Two charts, one filename, and the second silently wins. It happened: the
+# relationship-score chart was written twice, once with the score on the panel and
+# once without, and the comparison test reproduced the loser while the stored
+# baseline was the winner. save_svg builds its default name from the SUBJECT's
+# name, so a subject named after the variation it demonstrates collides with the
+# explicitly-named file for that same variation, and nothing says so.
+#
+# A regeneration that overwrites its own output is a bug in the regeneration, not
+# a policy: refuse it here, where the name is chosen, rather than discovering it in
+# a diff months later.
+# Guarded at _write_svg_to_disk, which is where the final name is resolved:
+# save_svg returns None and its `filename` is None for every default-named chart,
+# so the collision is invisible one level up — which is how this one survived.
+_WRITTEN: set = set()
+_original_write = _ChartDrawer._write_svg_to_disk
+
+
+def _write_svg_once(self, content, output_path, filename, default_suffix=""):
+    # Checked after the write, because the drawer owns the filename sanitisation
+    # and the path is only known once it has written. The second chart's file is
+    # therefore overwritten before the abort — but the regeneration exits non-zero
+    # naming the collision, and the next run, with it fixed, rewrites both.
+    written = _original_write(self, content, output_path, filename, default_suffix=default_suffix)
+    key = str(written)
+    if key in _WRITTEN:
+        raise SystemExit(
+            f"Two charts write {Path(key).name!r}: this regeneration overwrites its own "
+            f"output, so one of the two charts has no baseline and the test that "
+            f"reproduces it compares against the other one. Give one of them an explicit "
+            f"filename= that names the variation it demonstrates."
+        )
+    _WRITTEN.add(key)
+    return written
+
+
+_ChartDrawer._write_svg_to_disk = _write_svg_once
+
 # Set output directory for all chart SVGs
+# The places the golden charts are cast at, frozen. This script and the tests that
+# compare its output must resolve a city the SAME way, or a regeneration bakes one
+# answer into 346 files while the comparison expects another — which is what a
+# bare city name did, because from_birth_data resolves it over the network.
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from tests.data.golden_places import golden_place
+from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend
+
+require_library_from_this_checkout(__file__)
+require_the_baseline_backend()
+
 OUTPUT_DIR = Path(__file__).parent.parent / "tests" / "data" / "svg"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR_STR = str(OUTPUT_DIR)
@@ -74,10 +126,10 @@ def regenerate_lunar_phase_reference_sheet() -> None:
 
 
 first = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 second = AstrologicalSubjectFactory.from_birth_data(
-    "Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "Paul McCartney", 1942, 6, 18, 15, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 
 regenerate_lunar_phase_reference_sheet()
@@ -96,7 +148,7 @@ black_and_white_natal_chart.save_svg(
 
 # External Natal Chart (using external_view parameter)
 external_natal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - ExternalNatal", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 external_natal_chart_data = ChartDataFactory.create_natal_chart_data(external_natal_subject)
 external_natal_chart = ChartDrawer(external_natal_chart_data, external_view=True)
@@ -220,8 +272,7 @@ sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     suppress_geonames_warning=True,
@@ -238,8 +289,7 @@ sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="FAGAN_BRADLEY",
     suppress_geonames_warning=True,
@@ -256,8 +306,7 @@ sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="DELUCE",
     suppress_geonames_warning=True,
@@ -274,8 +323,7 @@ sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="J2000",
     suppress_geonames_warning=True,
@@ -292,8 +340,7 @@ morinus_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="M",
     suppress_geonames_warning=True,
 )
@@ -318,8 +365,7 @@ true_geocentric_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     perspective_type="True Geocentric",
     suppress_geonames_warning=True,
 )
@@ -335,8 +381,7 @@ heliocentric_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     perspective_type="Heliocentric",
     suppress_geonames_warning=True,
 )
@@ -352,8 +397,7 @@ topocentric_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     perspective_type="Topocentric",
     suppress_geonames_warning=True,
 )
@@ -363,7 +407,7 @@ topocentric_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Minified SVG
 minified_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Minified", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Minified", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 minified_chart_data = ChartDataFactory.create_natal_chart_data(minified_subject)
 minified_chart = ChartDrawer(minified_chart_data)
@@ -371,33 +415,15 @@ minified_chart.save_svg(output_path=OUTPUT_DIR_STR, minify=True)
 
 # Dark Theme Natal Chart
 dark_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Dark Theme", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 dark_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
 dark_theme_natal_chart = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
 dark_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
-# Dark High Contrast Theme Natal Chart
-dark_high_contrast_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark High Contrast Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-dark_high_contrast_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(dark_high_contrast_theme_subject)
-dark_high_contrast_theme_natal_chart = ChartDrawer(
-    dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast"
-)
-dark_high_contrast_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
-# Light Theme Natal Chart
-light_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-light_theme_natal_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_subject)
-light_theme_natal_chart = ChartDrawer(light_theme_natal_chart_data, theme="light")
-light_theme_natal_chart.save_svg(output_path=OUTPUT_DIR_STR)
-
 # Dark Theme External Natal Chart
 dark_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Dark Theme External", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 dark_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_external_subject)
 dark_theme_external_chart = ChartDrawer(dark_theme_external_chart_data, theme="dark", external_view=True)
@@ -405,7 +431,7 @@ dark_theme_external_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Dark Theme Synastry Chart
 dark_theme_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - DTS", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - DTS", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 dark_theme_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(dark_theme_synastry_subject, second)
 dark_theme_synastry_chart = ChartDrawer(dark_theme_synastry_chart_data, theme="dark")
@@ -413,7 +439,7 @@ dark_theme_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Wheel Natal Only Chart
 wheel_only_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel Only", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_only_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only_subject)
 wheel_only_chart = ChartDrawer(wheel_only_chart_data)
@@ -421,7 +447,7 @@ wheel_only_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Wheel External Natal Only Chart
 wheel_external_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel External Only", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_external_chart_data = ChartDataFactory.create_natal_chart_data(wheel_external_subject)
 wheel_external_chart = ChartDrawer(wheel_external_chart_data, external_view=True)
@@ -429,7 +455,7 @@ wheel_external_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Wheel Synastry Only Chart
 wheel_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel Synastry Only", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(wheel_synastry_subject, second)
 wheel_synastry_chart = ChartDrawer(wheel_synastry_chart_data)
@@ -437,7 +463,7 @@ wheel_synastry_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Wheel Transit Only Chart
 wheel_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel Transit Only", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_transit_chart_data = ChartDataFactory.create_transit_chart_data(wheel_transit_subject, second)
 wheel_transit_chart = ChartDrawer(wheel_transit_chart_data)
@@ -451,8 +477,7 @@ sidereal_dark_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     suppress_geonames_warning=True,
@@ -460,24 +485,6 @@ sidereal_dark_subject = AstrologicalSubjectFactory.from_birth_data(
 sidereal_dark_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_dark_subject)
 sidereal_dark_chart = ChartDrawer(sidereal_dark_chart_data, theme="dark")
 sidereal_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-
-# Wheel Sidereal Birth Chart (Fagan-Bradley) Light Theme
-sidereal_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon Fagan-Bradley - Light Theme",
-    1940,
-    10,
-    9,
-    18,
-    30,
-    "Liverpool",
-    "GB",
-    zodiac_type="Sidereal",
-    sidereal_mode="FAGAN_BRADLEY",
-    suppress_geonames_warning=True,
-)
-sidereal_light_chart_data = ChartDataFactory.create_natal_chart_data(sidereal_light_subject)
-sidereal_light_chart = ChartDrawer(sidereal_light_chart_data, theme="light")
-sidereal_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Wheel Only Dark Transparent Natal Chart (Hero Image)
 # Uses TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: Sun to Saturn + lunar nodes
@@ -488,9 +495,8 @@ wheel_dark_transparent_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
 )
 wheel_dark_transparent_chart_data = ChartDataFactory.create_natal_chart_data(
@@ -509,9 +515,8 @@ wheel_classic_transparent_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
 )
 wheel_classic_transparent_chart_data = ChartDataFactory.create_natal_chart_data(
@@ -525,7 +530,7 @@ wheel_classic_transparent_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_
 
 # Aspect Grid Only Natal Chart
 aspect_grid_only_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid Only", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_only_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_only_subject)
 aspect_grid_only_chart = ChartDrawer(aspect_grid_only_chart_data)
@@ -533,23 +538,15 @@ aspect_grid_only_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR
 
 # Aspect Grid Only Dark Theme Natal Chart
 aspect_grid_dark_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Dark Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid Dark Theme", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_dark_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_dark_subject)
 aspect_grid_dark_chart = ChartDrawer(aspect_grid_dark_chart_data, theme="dark")
 aspect_grid_dark_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
-# Aspect Grid Only Light Theme Natal Chart
-aspect_grid_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Light Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-aspect_grid_light_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_light_subject)
-aspect_grid_light_chart = ChartDrawer(aspect_grid_light_chart_data, theme="light")
-aspect_grid_light_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-
 # Synastry Chart Aspect Grid Only
 aspect_grid_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(aspect_grid_synastry_subject, second)
 aspect_grid_synastry_chart = ChartDrawer(aspect_grid_synastry_chart_data)
@@ -557,7 +554,7 @@ aspect_grid_synastry_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR
 
 # Transit Chart Aspect Grid Only
 aspect_grid_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid Transit", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_transit_chart_data = ChartDataFactory.create_transit_chart_data(aspect_grid_transit_subject, second)
 aspect_grid_transit_chart = ChartDrawer(aspect_grid_transit_chart_data)
@@ -565,7 +562,7 @@ aspect_grid_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_
 
 # Synastry Chart Aspect Grid Only Dark Theme
 aspect_grid_dark_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid Dark Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_dark_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
     aspect_grid_dark_synastry_subject, second
@@ -575,7 +572,7 @@ aspect_grid_dark_synastry_chart.save_aspect_grid_only_svg_file(output_path=OUTPU
 
 # Synastry Chart With draw_transit_aspect_list table
 synastry_chart_with_table_list_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - SCTWL", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - SCTWL", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 synastry_chart_with_table_list_data = ChartDataFactory.create_synastry_chart_data(
     synastry_chart_with_table_list_subject, second
@@ -587,7 +584,7 @@ synastry_chart_with_table_list.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Transit Chart With draw_transit_aspect_grid table
 transit_chart_with_table_grid_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - TCWTG", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - TCWTG", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 transit_chart_with_table_grid_data = ChartDataFactory.create_transit_chart_data(
     transit_chart_with_table_grid_subject, second
@@ -599,7 +596,7 @@ transit_chart_with_table_grid.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Chinese Language Chart
 chinese_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Hua Chenyu", 1990, 2, 7, 12, 0, "Hunan", "CN", suppress_geonames_warning=True
+    "Hua Chenyu", 1990, 2, 7, 12, 0, suppress_geonames_warning=True, **golden_place("Hunan", "CN")
 )
 chinese_chart_data = ChartDataFactory.create_natal_chart_data(chinese_subject)
 chinese_chart = ChartDrawer(chinese_chart_data, chart_language="CN")
@@ -607,7 +604,7 @@ chinese_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # French Language Chart
 french_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Jeanne Moreau", 1928, 1, 23, 10, 0, "Paris", "FR", suppress_geonames_warning=True
+    "Jeanne Moreau", 1928, 1, 23, 10, 0, suppress_geonames_warning=True, **golden_place("Paris", "FR")
 )
 french_chart_data = ChartDataFactory.create_natal_chart_data(french_subject)
 french_chart = ChartDrawer(french_chart_data, chart_language="FR")
@@ -615,7 +612,7 @@ french_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Spanish Language Chart
 spanish_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Antonio Banderas", 1960, 8, 10, 12, 0, "Malaga", "ES", suppress_geonames_warning=True
+    "Antonio Banderas", 1960, 8, 10, 12, 0, suppress_geonames_warning=True, **golden_place("Malaga", "ES")
 )
 spanish_chart_data = ChartDataFactory.create_natal_chart_data(spanish_subject)
 spanish_chart = ChartDrawer(spanish_chart_data, chart_language="ES")
@@ -623,7 +620,7 @@ spanish_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Portuguese Language Chart
 portuguese_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Cristiano Ronaldo", 1985, 2, 5, 5, 25, "Funchal", "PT", suppress_geonames_warning=True
+    "Cristiano Ronaldo", 1985, 2, 5, 5, 25, suppress_geonames_warning=True, **golden_place("Funchal", "PT")
 )
 portuguese_chart_data = ChartDataFactory.create_natal_chart_data(portuguese_subject)
 portuguese_chart = ChartDrawer(portuguese_chart_data, chart_language="PT")
@@ -631,7 +628,7 @@ portuguese_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Italian Language Chart
 italian_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sophia Loren", 1934, 9, 20, 2, 0, "Rome", "IT", suppress_geonames_warning=True
+    "Sophia Loren", 1934, 9, 20, 2, 0, suppress_geonames_warning=True, **golden_place("Rome", "IT")
 )
 italian_chart_data = ChartDataFactory.create_natal_chart_data(italian_subject)
 italian_chart = ChartDrawer(italian_chart_data, chart_language="IT")
@@ -639,7 +636,7 @@ italian_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Russian Language Chart
 russian_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Mikhail Bulgakov", 1891, 5, 15, 12, 0, "Kiev", "UA", suppress_geonames_warning=True
+    "Mikhail Bulgakov", 1891, 5, 15, 12, 0, suppress_geonames_warning=True, **golden_place("Kiev", "UA")
 )
 russian_chart_data = ChartDataFactory.create_natal_chart_data(russian_subject)
 russian_chart = ChartDrawer(russian_chart_data, chart_language="RU")
@@ -647,7 +644,7 @@ russian_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Turkish Language Chart
 turkish_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Mehmet Oz", 1960, 6, 11, 12, 0, "Istanbul", "TR", suppress_geonames_warning=True
+    "Mehmet Oz", 1960, 6, 11, 12, 0, suppress_geonames_warning=True, **golden_place("Istanbul", "TR")
 )
 turkish_chart_data = ChartDataFactory.create_natal_chart_data(turkish_subject)
 turkish_chart = ChartDrawer(turkish_chart_data, chart_language="TR")
@@ -655,7 +652,7 @@ turkish_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # German Language Chart
 german_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Albert Einstein", 1879, 3, 14, 11, 30, "Ulm", "DE", suppress_geonames_warning=True
+    "Albert Einstein", 1879, 3, 14, 11, 30, suppress_geonames_warning=True, **golden_place("Ulm", "DE")
 )
 german_chart_data = ChartDataFactory.create_natal_chart_data(german_subject)
 german_chart = ChartDrawer(german_chart_data, chart_language="DE")
@@ -663,7 +660,7 @@ german_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Hindi Language Chart
 hindi_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Amitabh Bachchan", 1942, 10, 11, 4, 0, "Allahabad", "IN", suppress_geonames_warning=True
+    "Amitabh Bachchan", 1942, 10, 11, 4, 0, suppress_geonames_warning=True, **golden_place("Allahabad", "IN")
 )
 hindi_chart_data = ChartDataFactory.create_natal_chart_data(hindi_subject)
 hindi_chart = ChartDrawer(hindi_chart_data, chart_language="HI")
@@ -671,7 +668,7 @@ hindi_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Kanye West Natal Chart
 kanye_west_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Kanye", 1977, 6, 8, 8, 45, "Atlanta", "US", suppress_geonames_warning=True
+    "Kanye", 1977, 6, 8, 8, 45, suppress_geonames_warning=True, **golden_place("Atlanta", "US")
 )
 kanye_west_chart_data = ChartDataFactory.create_natal_chart_data(kanye_west_subject)
 kanye_west_chart = ChartDrawer(kanye_west_chart_data)
@@ -869,7 +866,7 @@ lunar_single_return_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 ## Transparent Background
 transparent_background_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Transparent Background", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Transparent Background", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 transparent_background_chart_data = ChartDataFactory.create_natal_chart_data(transparent_background_subject)
 transparent_background_chart = ChartDrawer(transparent_background_chart_data, transparent_background=True)
@@ -883,9 +880,8 @@ all_points_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     active_points=ALL_ACTIVE_POINTS[0:],
 )
 all_points_chart_data = ChartDataFactory.create_natal_chart_data(
@@ -905,9 +901,8 @@ all_points_second_subject = AstrologicalSubjectFactory.from_birth_data(
     18,
     15,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     active_points=ALL_ACTIVE_POINTS[0:],
 )
 all_points_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
@@ -985,8 +980,7 @@ raman_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="RAMAN",
     suppress_geonames_warning=True,
@@ -1002,8 +996,7 @@ ushashashi_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="USHASHASHI",
     suppress_geonames_warning=True,
@@ -1019,8 +1012,7 @@ krishnamurti_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="KRISHNAMURTI",
     suppress_geonames_warning=True,
@@ -1036,8 +1028,7 @@ djwhal_khul_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="DJWHAL_KHUL",
     suppress_geonames_warning=True,
@@ -1053,8 +1044,7 @@ yukteshwar_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="YUKTESHWAR",
     suppress_geonames_warning=True,
@@ -1070,8 +1060,7 @@ jn_bhasin_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="JN_BHASIN",
     suppress_geonames_warning=True,
@@ -1087,8 +1076,7 @@ babyl_kugler1_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="BABYL_KUGLER1",
     suppress_geonames_warning=True,
@@ -1104,8 +1092,7 @@ babyl_kugler2_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="BABYL_KUGLER2",
     suppress_geonames_warning=True,
@@ -1121,8 +1108,7 @@ babyl_kugler3_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="BABYL_KUGLER3",
     suppress_geonames_warning=True,
@@ -1138,8 +1124,7 @@ babyl_huber_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="BABYL_HUBER",
     suppress_geonames_warning=True,
@@ -1155,8 +1140,7 @@ babyl_etpsc_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="BABYL_ETPSC",
     suppress_geonames_warning=True,
@@ -1172,8 +1156,7 @@ aldebaran_15tau_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="ALDEBARAN_15TAU",
     suppress_geonames_warning=True,
@@ -1189,8 +1172,7 @@ hipparchos_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="HIPPARCHOS",
     suppress_geonames_warning=True,
@@ -1206,8 +1188,7 @@ sassanian_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="SASSANIAN",
     suppress_geonames_warning=True,
@@ -1223,8 +1204,7 @@ j1900_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="J1900",
     suppress_geonames_warning=True,
@@ -1240,8 +1220,7 @@ b1950_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     zodiac_type="Sidereal",
     sidereal_mode="B1950",
     suppress_geonames_warning=True,
@@ -1262,8 +1241,7 @@ equal_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="A",
     suppress_geonames_warning=True,
 )
@@ -1278,8 +1256,7 @@ alcabitius_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="B",
     suppress_geonames_warning=True,
 )
@@ -1294,8 +1271,7 @@ campanus_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="C",
     suppress_geonames_warning=True,
 )
@@ -1310,8 +1286,7 @@ equal_mc_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="D",
     suppress_geonames_warning=True,
 )
@@ -1326,8 +1301,7 @@ carter_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="F",
     suppress_geonames_warning=True,
 )
@@ -1342,8 +1316,7 @@ horizon_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="H",
     suppress_geonames_warning=True,
 )
@@ -1358,8 +1331,7 @@ sunshine_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="I",
     suppress_geonames_warning=True,
 )
@@ -1374,8 +1346,7 @@ sunshine_alt_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="i",
     suppress_geonames_warning=True,
 )
@@ -1390,8 +1361,7 @@ koch_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="K",
     suppress_geonames_warning=True,
 )
@@ -1406,8 +1376,7 @@ pullen_sd_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="L",
     suppress_geonames_warning=True,
 )
@@ -1422,8 +1391,7 @@ equal_aries_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="N",
     suppress_geonames_warning=True,
 )
@@ -1438,8 +1406,7 @@ porphyry_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="O",
     suppress_geonames_warning=True,
 )
@@ -1454,8 +1421,7 @@ placidus_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="P",
     suppress_geonames_warning=True,
 )
@@ -1470,8 +1436,7 @@ pullen_sr_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="Q",
     suppress_geonames_warning=True,
 )
@@ -1486,8 +1451,7 @@ regiomontanus_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="R",
     suppress_geonames_warning=True,
 )
@@ -1502,8 +1466,7 @@ sripati_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="S",
     suppress_geonames_warning=True,
 )
@@ -1518,8 +1481,7 @@ polich_page_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="T",
     suppress_geonames_warning=True,
 )
@@ -1534,8 +1496,7 @@ krusinski_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="U",
     suppress_geonames_warning=True,
 )
@@ -1550,8 +1511,7 @@ vehlow_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="V",
     suppress_geonames_warning=True,
 )
@@ -1566,8 +1526,7 @@ whole_sign_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="W",
     suppress_geonames_warning=True,
 )
@@ -1582,8 +1541,7 @@ meridian_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="X",
     suppress_geonames_warning=True,
 )
@@ -1598,8 +1556,7 @@ apc_house_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
+    **golden_place("Liverpool", "GB"),
     houses_system_identifier="Y",
     suppress_geonames_warning=True,
 )
@@ -1609,35 +1566,6 @@ ChartDrawer(apc_house_chart_data).save_svg(output_path=OUTPUT_DIR_STR)
 # ----------------------------------------------------------------------------
 # Section 4: Theme + Chart Type Combinations
 # ----------------------------------------------------------------------------
-
-# Light Theme Synastry Chart
-light_theme_synastry_chart = ChartDrawer(synastry_chart_data, theme="light")
-light_theme_synastry_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Synastry Chart - Classic",
-)
-
-# Light Theme Transit Chart
-light_theme_transit_chart = ChartDrawer(transits_chart_data, theme="light")
-light_theme_transit_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="John Lennon - Light Theme - Transit Chart - Classic",
-)
-
-# Light Theme Composite Chart
-light_theme_composite_chart = ChartDrawer(composite_chart_data, theme="light")
-light_theme_composite_chart.save_svg(
-    output_path=OUTPUT_DIR_STR,
-    filename="Angelina Jolie and Brad Pitt Composite Chart - Light Theme - Composite Chart - Classic",
-)
-
-# Light Theme External Natal Chart
-light_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Light Theme External", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-light_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(light_theme_external_subject)
-light_theme_external_chart = ChartDrawer(light_theme_external_chart_data, theme="light", external_view=True)
-light_theme_external_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Dark Theme Transit Chart
 dark_theme_transit_chart = ChartDrawer(transits_chart_data, theme="dark")
@@ -1661,9 +1589,8 @@ bw_theme_external_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
 )
 bw_theme_external_chart_data = ChartDataFactory.create_natal_chart_data(bw_theme_external_subject)
 bw_theme_external_chart = ChartDrawer(bw_theme_external_chart_data, theme="black-and-white", external_view=True)
@@ -1689,23 +1616,15 @@ bw_lunar_single_return_chart.save_svg(
 
 # Wheel Only Dark Theme Natal Chart
 wheel_only_dark_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Only Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel Only Dark", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_only_dark_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only_dark_subject)
 wheel_only_dark_chart = ChartDrawer(wheel_only_dark_chart_data, theme="dark")
 wheel_only_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
-# Wheel Only Light Theme Natal Chart
-wheel_only_light_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Only Light", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-wheel_only_light_chart_data = ChartDataFactory.create_natal_chart_data(wheel_only_light_subject)
-wheel_only_light_chart = ChartDrawer(wheel_only_light_chart_data, theme="light")
-wheel_only_light_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-
 # Wheel Synastry Dark Theme
 wheel_synastry_dark_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Synastry Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel Synastry Dark", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_synastry_dark_chart_data = ChartDataFactory.create_synastry_chart_data(wheel_synastry_dark_subject, second)
 wheel_synastry_dark_chart = ChartDrawer(wheel_synastry_dark_chart_data, theme="dark")
@@ -1713,7 +1632,7 @@ wheel_synastry_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Wheel Transit Dark Theme
 wheel_transit_dark_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Wheel Transit Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Wheel Transit Dark", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 wheel_transit_dark_chart_data = ChartDataFactory.create_transit_chart_data(wheel_transit_dark_subject, second)
 wheel_transit_dark_chart = ChartDrawer(wheel_transit_dark_chart_data, theme="dark")
@@ -1721,7 +1640,7 @@ wheel_transit_dark_chart.save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Aspect Grid Black and White Natal
 aspect_grid_bw_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid BW", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid BW", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_bw_chart_data = ChartDataFactory.create_natal_chart_data(aspect_grid_bw_subject)
 aspect_grid_bw_chart = ChartDrawer(aspect_grid_bw_chart_data, theme="black-and-white")
@@ -1729,7 +1648,7 @@ aspect_grid_bw_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # Aspect Grid Black and White Synastry
 aspect_grid_bw_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid BW Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid BW Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_bw_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
     aspect_grid_bw_synastry_subject, second
@@ -1739,7 +1658,7 @@ aspect_grid_bw_synastry_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_
 
 # Aspect Grid Black and White Transit
 aspect_grid_bw_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid BW Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid BW Transit", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_bw_transit_chart_data = ChartDataFactory.create_transit_chart_data(aspect_grid_bw_transit_subject, second)
 aspect_grid_bw_transit_chart = ChartDrawer(aspect_grid_bw_transit_chart_data, theme="black-and-white")
@@ -1747,23 +1666,13 @@ aspect_grid_bw_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_D
 
 # Aspect Grid Dark Transit
 aspect_grid_dark_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Dark Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Aspect Grid Dark Transit", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 aspect_grid_dark_transit_chart_data = ChartDataFactory.create_transit_chart_data(
     aspect_grid_dark_transit_subject, second
 )
 aspect_grid_dark_transit_chart = ChartDrawer(aspect_grid_dark_transit_chart_data, theme="dark")
 aspect_grid_dark_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-
-# Aspect Grid Light Transit
-aspect_grid_light_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Aspect Grid Light Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-aspect_grid_light_transit_chart_data = ChartDataFactory.create_transit_chart_data(
-    aspect_grid_light_transit_subject, second
-)
-aspect_grid_light_transit_chart = ChartDrawer(aspect_grid_light_transit_chart_data, theme="light")
-aspect_grid_light_transit_chart.save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
 
 # ----------------------------------------------------------------------------
 # Section 6: Composite Chart Variations
@@ -1783,7 +1692,7 @@ composite_chart_aspect_grid_only.save_aspect_grid_only_svg_file(output_path=OUTP
 
 # Custom Title Natal Chart
 custom_title_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Title", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Title", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_title_chart_data = ChartDataFactory.create_natal_chart_data(custom_title_subject)
 custom_title_chart = ChartDrawer(custom_title_chart_data, custom_title="My Custom Chart Title")
@@ -1791,7 +1700,7 @@ custom_title_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # No Aspect Icons Natal Chart
 no_aspect_icons_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - No Aspect Icons", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - No Aspect Icons", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 no_aspect_icons_chart_data = ChartDataFactory.create_natal_chart_data(no_aspect_icons_subject)
 no_aspect_icons_chart = ChartDrawer(no_aspect_icons_chart_data, show_aspect_icons=False)
@@ -1799,7 +1708,7 @@ no_aspect_icons_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Auto Size False Natal Chart
 auto_size_false_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Auto Size False", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Auto Size False", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 auto_size_false_chart_data = ChartDataFactory.create_natal_chart_data(auto_size_false_subject)
 auto_size_false_chart = ChartDrawer(auto_size_false_chart_data, auto_size=False)
@@ -1807,7 +1716,7 @@ auto_size_false_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # No CSS Variables Natal Chart (remove_css_variables=True is used in generate_svg_string)
 no_css_vars_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - No CSS Variables", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - No CSS Variables", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 no_css_vars_chart_data = ChartDataFactory.create_natal_chart_data(no_css_vars_subject)
 no_css_vars_chart = ChartDrawer(no_css_vars_chart_data)
@@ -1815,7 +1724,7 @@ no_css_vars_chart.save_svg(output_path=OUTPUT_DIR_STR, remove_css_variables=True
 
 # Custom Padding Natal Chart
 custom_padding_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Padding", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Padding", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_padding_chart_data = ChartDataFactory.create_natal_chart_data(custom_padding_subject)
 custom_padding_chart = ChartDrawer(custom_padding_chart_data, padding=50)
@@ -1829,9 +1738,8 @@ all_points_transit_subject = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     active_points=ALL_ACTIVE_POINTS,
 )
 all_points_transit_second_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -1841,9 +1749,8 @@ all_points_transit_second_subject = AstrologicalSubjectFactory.from_birth_data(
     18,
     15,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     active_points=ALL_ACTIVE_POINTS,
 )
 all_points_transit_chart_data = ChartDataFactory.create_transit_chart_data(
@@ -1878,7 +1785,7 @@ solar_return_aspect_grid_only_chart.save_aspect_grid_only_svg_file(
 
 # English Natal Chart (explicit)
 english_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - EN", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - EN", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 english_chart_data = ChartDataFactory.create_natal_chart_data(english_subject)
 english_chart = ChartDrawer(english_chart_data, chart_language="EN")
@@ -1886,7 +1793,7 @@ english_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # French Synastry Chart
 french_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - FR", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - FR", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 french_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(french_synastry_subject, second)
 french_synastry_chart = ChartDrawer(french_synastry_chart_data, chart_language="FR")
@@ -1894,7 +1801,7 @@ french_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # German Synastry Chart
 german_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - DE", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - DE", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 german_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(german_synastry_subject, second)
 german_synastry_chart = ChartDrawer(german_synastry_chart_data, chart_language="DE")
@@ -1902,7 +1809,7 @@ german_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Chinese Transit Chart
 chinese_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - CN", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - CN", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 chinese_transit_chart_data = ChartDataFactory.create_transit_chart_data(chinese_transit_subject, second)
 chinese_transit_chart = ChartDrawer(chinese_transit_chart_data, chart_language="CN")
@@ -1910,7 +1817,7 @@ chinese_transit_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Spanish Transit Chart
 spanish_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - ES", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - ES", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 spanish_transit_chart_data = ChartDataFactory.create_transit_chart_data(spanish_transit_subject, second)
 spanish_transit_chart = ChartDrawer(spanish_transit_chart_data, chart_language="ES")
@@ -1932,7 +1839,7 @@ portuguese_composite_chart.save_svg(
 
 # Russian Transit Chart
 russian_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - RU", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - RU", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 russian_transit_chart_data = ChartDataFactory.create_transit_chart_data(russian_transit_subject, second)
 russian_transit_chart = ChartDrawer(russian_transit_chart_data, chart_language="RU")
@@ -1940,7 +1847,7 @@ russian_transit_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Turkish Synastry Chart
 turkish_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - TR", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - TR", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 turkish_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(turkish_synastry_subject, second)
 turkish_synastry_chart = ChartDrawer(turkish_synastry_chart_data, chart_language="TR")
@@ -1958,9 +1865,8 @@ heliocentric_synastry_first = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     perspective_type="Heliocentric",
 )
 heliocentric_synastry_second = AstrologicalSubjectFactory.from_birth_data(
@@ -1970,9 +1876,8 @@ heliocentric_synastry_second = AstrologicalSubjectFactory.from_birth_data(
     18,
     15,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     perspective_type="Heliocentric",
 )
 heliocentric_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
@@ -1992,9 +1897,8 @@ topocentric_transit_first = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     perspective_type="Topocentric",
 )
 topocentric_transit_second = AstrologicalSubjectFactory.from_birth_data(
@@ -2004,9 +1908,8 @@ topocentric_transit_second = AstrologicalSubjectFactory.from_birth_data(
     18,
     15,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     perspective_type="Topocentric",
 )
 topocentric_transit_chart_data = ChartDataFactory.create_transit_chart_data(
@@ -2026,9 +1929,8 @@ true_geocentric_synastry_first = AstrologicalSubjectFactory.from_birth_data(
     9,
     18,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     perspective_type="True Geocentric",
 )
 true_geocentric_synastry_second = AstrologicalSubjectFactory.from_birth_data(
@@ -2038,9 +1940,8 @@ true_geocentric_synastry_second = AstrologicalSubjectFactory.from_birth_data(
     18,
     15,
     30,
-    "Liverpool",
-    "GB",
     suppress_geonames_warning=True,
+    **golden_place("Liverpool", "GB"),
     perspective_type="True Geocentric",
 )
 true_geocentric_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
@@ -2056,13 +1957,23 @@ true_geocentric_synastry_chart.save_svg(
 # Section 10: Relationship Score Tests
 # ----------------------------------------------------------------------------
 
-# Synastry Chart with Relationship Score
+# Synastry Chart with Relationship Score.
+#
+# BOTH switches, and they are not the same switch: include_relationship_score
+# puts the score in the chart DATA, show_relationship_score puts it on the panel.
+# This chart carried only the first, so the file named for the relationship score
+# was drawn with two empty text nodes where the score belongs — and a second block
+# further down wrote a DIFFERENT chart to the same filename and overwrote it, which
+# is the only reason the stored baseline showed a score at all. One chart, one
+# filename, and the name now describes what is in it.
 relationship_score_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(
     first,
     second,
     include_relationship_score=True,
 )
-relationship_score_synastry_chart = ChartDrawer(relationship_score_synastry_chart_data)
+relationship_score_synastry_chart = ChartDrawer(
+    relationship_score_synastry_chart_data, show_relationship_score=True
+)
 relationship_score_synastry_chart.save_svg(
     output_path=OUTPUT_DIR_STR,
     filename="John Lennon - Relationship Score - Synastry Chart - Classic",
@@ -2074,7 +1985,7 @@ relationship_score_synastry_chart.save_svg(
 
 # theme=None (no CSS theme)
 theme_none_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - No Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - No Theme", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 theme_none_chart_data = ChartDataFactory.create_natal_chart_data(theme_none_subject)
 theme_none_chart = ChartDrawer(theme_none_chart_data, theme=None)
@@ -2082,7 +1993,7 @@ theme_none_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # show_degree_indicators=False
 no_degree_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - No Degree Indicators", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - No Degree Indicators", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 no_degree_chart_data = ChartDataFactory.create_natal_chart_data(no_degree_subject)
 no_degree_chart = ChartDrawer(no_degree_chart_data, show_degree_indicators=False)
@@ -2100,7 +2011,7 @@ custom_colors = DEFAULT_CHART_COLORS.copy()
 custom_colors["paper_0"] = "#ff0000"
 custom_colors["paper_1"] = "#00ff00"
 custom_colors_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Colors", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Colors", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_colors_chart_data = ChartDataFactory.create_natal_chart_data(custom_colors_subject)
 custom_colors_chart = ChartDrawer(custom_colors_chart_data, colors_settings=custom_colors)
@@ -2114,7 +2025,7 @@ for aspect in custom_aspects:
     elif aspect["name"] == "opposition":
         aspect["color"] = "#0000FF"  # Blue
 custom_aspects_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Aspect Colors", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Aspect Colors", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_aspects_chart_data = ChartDataFactory.create_natal_chart_data(custom_aspects_subject)
 custom_aspects_chart = ChartDrawer(custom_aspects_chart_data, aspects_settings=custom_aspects)
@@ -2128,7 +2039,7 @@ for point in custom_points:
     elif point["name"] == "Moon":
         point["color"] = "#C0C0C0"
 custom_points_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Planet Colors", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Planet Colors", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_points_chart_data = ChartDataFactory.create_natal_chart_data(custom_points_subject)
 custom_points_chart = ChartDrawer(custom_points_chart_data, celestial_points_settings=custom_points)
@@ -2136,7 +2047,7 @@ custom_points_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # language_pack override
 language_pack_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Language Pack", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Language Pack", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 language_pack_chart_data = ChartDataFactory.create_natal_chart_data(language_pack_subject)
 language_pack_chart = ChartDrawer(
@@ -2150,7 +2061,7 @@ language_pack_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Transparent + Dark theme
 transparent_dark_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Transparent Dark", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Transparent Dark", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 transparent_dark_chart_data = ChartDataFactory.create_natal_chart_data(transparent_dark_subject)
 transparent_dark_chart = ChartDrawer(transparent_dark_chart_data, theme="dark", transparent_background=True)
@@ -2158,7 +2069,7 @@ transparent_dark_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Transparent Synastry
 transparent_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Transparent Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Transparent Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 transparent_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(transparent_synastry_subject, second)
 transparent_synastry_chart = ChartDrawer(transparent_synastry_chart_data, transparent_background=True)
@@ -2166,7 +2077,7 @@ transparent_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Custom title synastry
 custom_title_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Title Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Title Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_title_synastry_chart_data = ChartDataFactory.create_synastry_chart_data(custom_title_synastry_subject, second)
 custom_title_synastry_chart = ChartDrawer(custom_title_synastry_chart_data, custom_title="Beatles Synastry Analysis")
@@ -2174,7 +2085,7 @@ custom_title_synastry_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Custom title transit
 custom_title_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Custom Title Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Custom Title Transit", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 custom_title_transit_chart_data = ChartDataFactory.create_transit_chart_data(custom_title_transit_subject, second)
 custom_title_transit_chart = ChartDrawer(custom_title_transit_chart_data, custom_title="Transit Analysis 2024")
@@ -2182,7 +2093,7 @@ custom_title_transit_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Zero padding
 zero_padding_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Zero Padding", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Zero Padding", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 zero_padding_chart_data = ChartDataFactory.create_natal_chart_data(zero_padding_subject)
 zero_padding_chart = ChartDrawer(zero_padding_chart_data, padding=0)
@@ -2190,7 +2101,7 @@ zero_padding_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Large padding (100px)
 large_padding_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Large Padding", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Large Padding", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 large_padding_chart_data = ChartDataFactory.create_natal_chart_data(large_padding_subject)
 large_padding_chart = ChartDrawer(large_padding_chart_data, padding=100)
@@ -2198,7 +2109,7 @@ large_padding_chart.save_svg(output_path=OUTPUT_DIR_STR)
 
 # Minify + remove CSS variables combined
 minify_css_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Minify CSS", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Minify CSS", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 minify_css_chart_data = ChartDataFactory.create_natal_chart_data(minify_css_subject)
 minify_css_chart = ChartDrawer(minify_css_chart_data)
@@ -2211,7 +2122,7 @@ minify_css_svg = minify_css_chart.generate_svg_string(minify=True, remove_css_va
 
 # Very long name
 long_name_subject = AstrologicalSubjectFactory.from_birth_data(
-    "A" * 100, 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "A" * 100, 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 long_name_chart_data = ChartDataFactory.create_natal_chart_data(long_name_subject)
 long_name_chart = ChartDrawer(long_name_chart_data)
@@ -2262,7 +2173,7 @@ antarctic_chart.save_svg(output_path=OUTPUT_DIR_STR)
 # so a stale baseline is harmless there.
 try:
     historical_subject = AstrologicalSubjectFactory.from_birth_data(
-        "Historical Subject", 1500, 3, 15, 12, 0, "Florence", "IT", suppress_geonames_warning=True
+        "Historical Subject", 1500, 3, 15, 12, 0, suppress_geonames_warning=True, **golden_place("Florence", "IT")
     )
     historical_chart_data = ChartDataFactory.create_natal_chart_data(historical_subject)
     historical_chart = ChartDrawer(historical_chart_data)
@@ -2276,7 +2187,7 @@ except KerykeionException as e:
 
 # Future date (2100)
 future_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Future Subject", 2100, 7, 4, 12, 0, "New York", "US", suppress_geonames_warning=True
+    "Future Subject", 2100, 7, 4, 12, 0, suppress_geonames_warning=True, **golden_place("New York", "US")
 )
 future_chart_data = ChartDataFactory.create_natal_chart_data(future_subject)
 future_chart = ChartDrawer(future_chart_data)
@@ -2313,29 +2224,13 @@ modern_natal_chart.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 dark_theme_modern_natal = ChartDrawer(dark_theme_natal_chart_data, theme="dark")
 dark_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
-# Modern Natal Chart - Light Theme
-light_theme_modern_natal = ChartDrawer(light_theme_natal_chart_data, theme="light")
-light_theme_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
 # Modern Natal Chart - Black and White Theme
 bw_modern_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Black and White Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Black and White Theme", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 bw_modern_natal_data = ChartDataFactory.create_natal_chart_data(bw_modern_subject)
 bw_modern_natal = ChartDrawer(bw_modern_natal_data, theme="black-and-white")
 bw_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
-# Modern Natal Chart - Strawberry Theme
-strawberry_modern_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Strawberry Theme", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
-)
-strawberry_modern_natal_data = ChartDataFactory.create_natal_chart_data(strawberry_modern_subject)
-strawberry_modern_natal = ChartDrawer(strawberry_modern_natal_data, theme="strawberry")
-strawberry_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
-
-# Modern Natal Chart - Dark High Contrast Theme
-dhc_modern_natal = ChartDrawer(dark_high_contrast_theme_natal_chart_data, theme="dark-high-contrast")
-dhc_modern_natal.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
 # Modern Synastry Chart
 modern_synastry = ChartDrawer(synastry_chart_data)
@@ -2343,7 +2238,7 @@ modern_synastry.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
 # Modern Synastry Chart - Dark Theme
 dark_theme_modern_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark Theme Synastry", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Dark Theme Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 dark_theme_modern_synastry_data = ChartDataFactory.create_synastry_chart_data(
     dark_theme_modern_synastry_subject, second
@@ -2357,7 +2252,7 @@ modern_transit.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 
 # Modern Transit Chart - Dark Theme
 dark_theme_modern_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark Theme Transit", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon - Dark Theme Transit", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
 )
 dark_theme_modern_transit_data = ChartDataFactory.create_transit_chart_data(dark_theme_modern_transit_subject, second)
 dark_theme_modern_transit = ChartDrawer(dark_theme_modern_transit_data, theme="dark")
@@ -2390,5 +2285,168 @@ modern_single_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
 # Modern Dual Return Solar Chart
 modern_dual_return = ChartDrawer(dual_return_chart_data)
 modern_dual_return.save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# ---------------------------------------------------------------------------
+# Opt-in chart marks (classic style)
+#
+# Each subject is chosen so the mark has a real referent: a chart with nothing
+# to mark would pin an empty promise. The suffix in the subject name is what
+# names the baseline file, as everywhere else in this script.
+# ---------------------------------------------------------------------------
+
+# show_motion_state — Mercury turns retrograde on this date
+station_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - Motion State", 1990, 8, 25, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
+)
+station_chart_data = ChartDataFactory.create_natal_chart_data(station_subject)
+ChartDrawer(station_chart_data, show_motion_state=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_aspect_movement — same sky, separating aspects dashed
+movement_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - Aspect Movement", 1990, 8, 25, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
+)
+movement_chart_data = ChartDataFactory.create_natal_chart_data(movement_subject)
+ChartDrawer(movement_chart_data, show_aspect_movement=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_out_of_bounds — Uranus sits past the obliquity here
+oob_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Out Of Bounds", 1990, 1, 1, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
+)
+oob_chart_data = ChartDataFactory.create_natal_chart_data(oob_subject)
+ChartDrawer(oob_chart_data, show_out_of_bounds=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_relationship_score is covered by the Section 10 chart above. It used to be
+# covered here too, by a subject NAMED "John Lennon - Relationship Score" — and
+# save_svg builds its default filename from the subject's name, so this wrote to
+# the same file as Section 10 and silently won. Two charts, one filename, and the
+# comparison test reproduced the loser.
+
+# show_ayanamsa_value — the offset in degrees on a sidereal chart
+ayanamsa_subject = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - Ayanamsa Value",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    **golden_place("Liverpool", "GB"),
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    suppress_geonames_warning=True,
+)
+ayanamsa_chart_data = ChartDataFactory.create_natal_chart_data(ayanamsa_subject)
+ChartDrawer(ayanamsa_chart_data, show_ayanamsa_value=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# show_polar_fallback_note — Placidus is undefined this far north
+polar_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Polar Fallback",
+    1990,
+    6,
+    15,
+    12,
+    0,
+    "Longyearbyen",
+    "SJ",
+    lng=15.6,
+    lat=78.2,
+    tz_str="Arctic/Longyearbyen",
+    houses_system_identifier="P",
+    suppress_geonames_warning=True,
+)
+polar_chart_data = ChartDataFactory.create_natal_chart_data(polar_subject)
+ChartDrawer(polar_chart_data, show_polar_fallback_note=True).save_svg(output_path=OUTPUT_DIR_STR)
+
+# ---------------------------------------------------------------------------
+# Complete charts with every mark switched on
+#
+# The six baselines above each isolate one mark, which is what a regression on
+# that mark needs. These four are the other half of the picture: whole charts
+# rendered the way someone who turns the feature on actually sees them, with
+# every option enabled at once. A mark stays silent where its subject has no
+# referent, so between them these carry the full set without any one of them
+# claiming something its own sky does not have.
+# ---------------------------------------------------------------------------
+
+ALL_MARKS_ON = dict(
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
+    show_relationship_score=True,
+    show_ayanamsa_value=True,
+    show_polar_fallback_note=True,
+)
+
+# Station, out-of-bounds body and separating aspects, in both styles.
+all_marks_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station - All Marks", 1990, 8, 25, 12, 0, suppress_geonames_warning=True, **golden_place("London", "GB")
+)
+all_marks_chart_data = ChartDataFactory.create_natal_chart_data(all_marks_subject)
+ChartDrawer(all_marks_chart_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
+ChartDrawer(all_marks_chart_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Sidereal: the ayanamsa offset joins the marks that the sky supports.
+all_marks_sidereal = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Marks Sidereal",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    **golden_place("Liverpool", "GB"),
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
+    suppress_geonames_warning=True,
+)
+ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(all_marks_sidereal), **ALL_MARKS_ON
+).save_svg(output_path=OUTPUT_DIR_STR)
+
+# Polar: the domification line admits the substitution.
+all_marks_polar = AstrologicalSubjectFactory.from_birth_data(
+    "Polar Fallback - All Marks",
+    1990,
+    6,
+    15,
+    12,
+    0,
+    "Longyearbyen",
+    "SJ",
+    lng=15.6,
+    lat=78.2,
+    tz_str="Arctic/Longyearbyen",
+    houses_system_identifier="P",
+    suppress_geonames_warning=True,
+)
+ChartDrawer(
+    ChartDataFactory.create_natal_chart_data(all_marks_polar), **ALL_MARKS_ON
+).save_svg(output_path=OUTPUT_DIR_STR)
+
+# Synastry: the score, on a dual wheel that also carries wheel marks.
+all_marks_syn_first = AstrologicalSubjectFactory.from_birth_data(
+    "John Lennon - All Marks Synastry", 1940, 10, 9, 18, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
+)
+all_marks_syn_second = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney", 1942, 6, 18, 15, 30, suppress_geonames_warning=True, **golden_place("Liverpool", "GB")
+)
+all_marks_syn_data = ChartDataFactory.create_synastry_chart_data(all_marks_syn_first, all_marks_syn_second)
+ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR)
+ChartDrawer(all_marks_syn_data, **ALL_MARKS_ON).save_svg(output_path=OUTPUT_DIR_STR, style="modern")
+
+# Three plain natal baselines that had been committed without a generator. No
+# test read them and no script wrote them, so they quietly kept a picture of an
+# older library — they were still drawing the font-traced Jupiter six commits
+# after it was redrawn. The birth data below is read straight off the panels of
+# the files they replace, so these regenerate what was there rather than
+# redefining it.
+for _name, _y, _m, _d, _hh, _mm, _city, _nation in (
+    ("Johnny Depp", 1963, 6, 9, 0, 0, "Owensboro", "US"),
+    ("Paul McCartney", 1942, 6, 18, 15, 30, "Liverpool", "GB"),
+    ("Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP"),
+):
+    _subject = AstrologicalSubjectFactory.from_birth_data(
+        _name, _y, _m, _d, _hh, _mm, suppress_geonames_warning=True,
+        **golden_place(_city, _nation),
+    )
+    ChartDrawer(ChartDataFactory.create_natal_chart_data(_subject)).save_svg(output_path=OUTPUT_DIR_STR)
 
 print("All charts regenerated successfully!")

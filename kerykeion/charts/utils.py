@@ -17,9 +17,25 @@ The module is organized in the following sections:
 
 import datetime
 import math
+import re
 from typing import Literal, Mapping, Optional, Sequence, Union
+
+# Both live in utilities.core now, and are re-exported here so the name
+# `kerykeion.charts.utils.normalize_degree` keeps working for anything outside
+# this repository that reached for it. They are angle arithmetic, not drawing:
+# keeping them under charts/ meant the composite subject factory had to import
+# the charts package to ask which way a ring runs, and it meant three other
+# modules wrote their own `% 360` rather than reach across that line - which is
+# the very trap normalize_degree exists to close.
+from kerykeion.utilities.core import (  # noqa: F401
+    _HOUSE_WINDING_TOLERANCE_DEGREES,
+    house_spans,
+    normalize_degree,
+)
 from xml.sax.saxutils import escape as _xml_escape
 
+from kerykeion.charts.glyph_metrics import estimate_text_width
+from kerykeion.charts.spreading import spread_around_wheel
 from kerykeion.schemas import ChartType, KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint
 from kerykeion.schemas.models import (
@@ -51,6 +67,63 @@ _XML_TEXT_ENTITIES = {'"': "&quot;", "'": "&apos;"}
 # containing one would make the SVG unparseable — strip them first. Mirrors
 # context_serializer._strip_illegal.
 _SVG_ILLEGAL_TRANSLATION = {c: None for c in range(0x20) if c not in (0x09, 0x0A, 0x0D)}
+
+
+# The two stations, as chart tables have long abbreviated them. Both renderers
+# mark a station, so the wording lives here rather than in either of them —
+# and both marks are two characters wide, which is what lets the modern style
+# reuse the retrograde row without remeasuring its separation model.
+# Dash pattern for a separating aspect line in the classic wheel, whose
+# aspect lines are drawn at stroke-width 1 in root units.
+SEPARATING_DASH_ARRAY = "5 3.2"
+
+# The one font stack every chart text renders in, in both styles, declared on
+# the root of all four templates so no text node can miss it. Without it the
+# SVG inherits whatever the embedding page uses — the same chart came out serif
+# standalone, sans in one host page, monospace in another — and no spacing
+# model can reserve room for an unknown font.
+#
+# Arial, Helvetica and Liberation Sans are metric-compatible, and Liberation is
+# named explicitly so Linux systems that have it never fall through to generic
+# sans-serif (usually DejaVu Sans, whose digits run ~10-14% wider than the
+# measured ink tables). A system with none of the three still resolves to its
+# own sans and can render wider than reserved — that residual risk is the price
+# of not padding every chart for the rarest platform.
+#
+# Two of these three are also in the reference set glyph_metrics.py measured
+# its width table against (Times, Helvetica, Arial Unicode), and that table is
+# the per-character *maximum* over the set. Naming a font from inside the set
+# therefore keeps every width estimate a valid upper bound and makes it tighter;
+# naming one from outside would break the "never an underestimate" contract the
+# panel's truncation relies on.
+#
+# Liberation Sans is deliberately unquoted: CSS allows multi-word family names
+# as bare identifiers, and the SVG post-processing rewrites double quotes to
+# single quotes, which nested quotes would corrupt.
+CHART_TEXT_FONT_FAMILY = "Arial, Helvetica, Liberation Sans, sans-serif"
+
+
+# Badge for an out-of-bounds body in the point tables. It sits past the
+# retrograde glyph, in the gap before the next column, so a table that gains
+# it keeps every column where it was.
+OUT_OF_BOUNDS_BADGE = "OOB"
+OUT_OF_BOUNDS_BADGE_X = 84
+
+
+def out_of_bounds_badge_svg(point: object, text_color: str) -> str:
+    """The OOB badge for *point*, or nothing when it is inside the bounds."""
+    if not getattr(point, "is_out_of_bounds", None):
+        return ""
+    return (
+        f'<text text-anchor="start" x="{OUT_OF_BOUNDS_BADGE_X}" '
+        f'style="fill:{text_color}; font-size: 7px; font-weight: 700;">{OUT_OF_BOUNDS_BADGE}</text>'
+    )
+
+
+STATION_LABELS: dict[str, str] = {
+    "stationary_retrograde": "SR",
+    "stationary_direct": "SD",
+}
 
 
 def escape_svg_text(value: object) -> str:
@@ -359,8 +432,139 @@ _TRANSIT_LIKE_HEADER_TYPES: tuple[ChartType, ...] = ("Transit", "Progression")
 #: Width in pixels of each column in the planet grid.
 _GRID_COLUMN_WIDTH: int = 125
 
+#: Right edge of a grid row's own content: the retrograde glyph sits at x=74 at
+#: half scale, so the row's ink stops just past it — or past the OOB badge when
+#: one is drawn.
+_GRID_ROW_CONTENT_RIGHT: float = 87.0
+
+#: Gap left between one column's content and the next column's name.
+_GRID_COLUMN_GUTTER: float = 8.0
+
+
+def label_separation_degrees(label_width_px: float, radius_px: float, gutter_px: float = 3.0) -> float:
+    """Degrees two labels of this width need at this radius so their ink clears.
+
+    An arc of one degree is ``2·pi·r/360`` long, so a label needs its own width
+    plus a gap, divided by that. Radius matters as much as the font does: the
+    same "11" that sits comfortably on the natal ring at r=192 has two thirds of
+    the room on a biwheel's inner ring at r=156.
+    """
+    if radius_px <= 0:
+        return 0.0
+    arc_per_degree = 2.0 * math.pi * radius_px / 360.0
+    return (label_width_px + gutter_px) / arc_per_degree if arc_per_degree else 0.0
+
+
+def planet_grid_column_width(
+    names: "Sequence[str]" = (),
+    show_out_of_bounds: bool = False,
+    font_size: float = 10.0,
+) -> int:
+    """Column stride wide enough that a name never lands on the row before it.
+
+    A row draws rightward from its origin — glyph, degrees, sign, retrograde
+    mark, and the out-of-bounds badge when asked for — while its *name* is
+    right-aligned at that origin and therefore extends leftward, into whatever
+    the previous column left behind. The fixed 125px stride works only while
+    every name is short: it leaves 25px of room, and "N. Node (M)" wants 56, so
+    two node labels printed on top of each other in the charts that carry both.
+
+    Measured from the names actually being drawn rather than from the widest
+    name imaginable, so an ordinary chart keeps the layout it always had.
+    """
+    content_right = _GRID_ROW_CONTENT_RIGHT
+    if show_out_of_bounds:
+        content_right = OUT_OF_BOUNDS_BADGE_X + estimate_text_width(OUT_OF_BOUNDS_BADGE, 7)
+    widest_name = max((estimate_text_width(n, font_size) for n in names), default=0.0)
+    return max(_GRID_COLUMN_WIDTH, math.ceil(content_right + widest_name + _GRID_COLUMN_GUTTER))
+
+
+#: Where a planet-grid row ends its reading and starts the sign glyph after it.
+#: The reading is anchored at its END, which is the whole trick: left-anchored,
+#: it ran from x=19 to anywhere between 57 and 62.8 depending on how many digits
+#: the degrees needed, so "29°59'59"" printed its seconds mark across the sign
+#: glyph at 60 while "3°32'47"" left a hole beside it. Anchored at the end, every
+#: row hands the sign glyph the same gap, and the digits line up in a column as
+#: figures should.
+#:
+#: The room comes from the left, not the right. Everything after the sign — the
+#: retrograde mark at 74, the out-of-bounds badge at 84 — is already as far
+#: right as it can go: the houses grid is drawn immediately beside this one, and
+#: pushing the badge out by six units put it 1.1 units into "Cusp 8:".
+#: Right edge of the planet glyph that opens the row: drawn at x=5 at scale 0.4
+#: in a 24-unit box, so its box ends at 14.6. The reading must start after it.
+_GRID_PLANET_GLYPH_RIGHT: float = 14.6
+_GRID_READING_RIGHT: int = 61
+_GRID_SIGN_X: int = 63
+_GRID_RETROGRADE_X: int = 74
+
+#: Widest a point's name may print in a planet grid before it is abbreviated.
+#: Sized on the names the grids were laid out for: the longest English label
+#: ("N. Node (T)") inks 53 units at the grid's 10px, so 56 leaves every name the
+#: layout was built around untouched and catches only the ones that outgrow it.
+#: A translated name has no such ceiling — German prints "Nordknoten (T)" at 68
+#: — and a name is the one thing in the row that grows leftward, into whatever
+#: block the grid was placed beside.
+_GRID_NAME_MAX_WIDTH: float = 56.0
+
+#: Matches a trailing parenthesised marker, e.g. the "(T)"/"(M)" that separates
+#: the true lunar node from the mean one.
+_TRAILING_MARKER = re.compile(r"\s*(\([^()]{1,3}\))\s*$")
+
+
+def abbreviate_point_name(
+    name: str,
+    max_width: float = _GRID_NAME_MAX_WIDTH,
+    font_size: float = 10.0,
+) -> str:
+    """Shorten *name* with a full stop until it inks no wider than *max_width*.
+
+    A trailing marker survives the cut, and the head is what gets shortened:
+    "Nordknoten (T)" becomes "Nordkn. (T)", never "Nordknoten." — dropping the
+    marker would merge the true lunar node with the mean one, which is the one
+    distinction the parenthesis exists to make.
+
+    Cutting by inked width rather than by a character count is what makes this
+    work in every language the charts ship: ten Latin characters and ten CJK
+    ones are not the same amount of room, and the grid cares about the room.
+    """
+    if estimate_text_width(name, font_size) <= max_width:
+        return name
+
+    marker_match = _TRAILING_MARKER.search(name)
+    marker = f" {marker_match.group(1)}" if marker_match else ""
+    head = name[: marker_match.start()] if marker_match else name
+
+    budget = max_width - estimate_text_width(marker, font_size)
+    # One character at a time, because the widths are per-character: cutting a
+    # proportional share of the string overshoots on "Nordknoten" and undershoots
+    # on a string of narrow letters.
+    for cut in range(len(head) - 1, 0, -1):
+        candidate = f"{head[:cut].rstrip()}."
+        if estimate_text_width(candidate, font_size) <= budget:
+            return f"{candidate}{marker}"
+    return f"{head[:1]}.{marker}"
+
+
 #: Width in pixels of each column in the Gauquelin unified grid.
 _GAUQUELIN_COLUMN_WIDTH: int = 220
+
+#: Room the OOB badge needs in the Gauquelin table. Its columns run right up to
+#: their width — the declination text ends around x=186 and the right-aligned
+#: sector value starts there — so unlike the standard grids, which have slack
+#: after the retrograde glyph, this one has nowhere to put a badge and must be
+#: widened for it.
+_GAUQUELIN_OOB_BADGE_WIDTH: int = 26
+
+
+def gauquelin_column_width(with_out_of_bounds: bool = False) -> int:
+    """Width of one Gauquelin column, wider when it has to carry OOB badges.
+
+    Shared with the drawer's width estimator: the grid and the canvas that has
+    to hold it must be sized from the same number, or the table is drawn wider
+    than the space reserved for it and the last column is clipped.
+    """
+    return _GAUQUELIN_COLUMN_WIDTH + (_GAUQUELIN_OOB_BADGE_WIDTH if with_out_of_bounds else 0)
 
 #: Maximum rows per column in the Gauquelin unified grid.
 _GAUQUELIN_MAX_ROWS: int = 18
@@ -410,7 +614,11 @@ def _select_planet_grid_thresholds(chart_type: ChartType, num_points: int = 0) -
     return rows_per_col, rows_per_col * 2, rows_per_col * 3
 
 
-def _planet_grid_layout_position(index: int, thresholds: Optional[tuple[int, int, int]] = None) -> tuple[int, int]:
+def _planet_grid_layout_position(
+    index: int,
+    thresholds: Optional[tuple[int, int, int]] = None,
+    column_width: Optional[int] = None,
+) -> tuple[int, int]:
     """
     Calculate the grid position for a planet at the given index.
 
@@ -441,7 +649,7 @@ def _planet_grid_layout_position(index: int, thresholds: Optional[tuple[int, int
         column = 3
         row = index - fourth_threshold
 
-    offset = -(_GRID_COLUMN_WIDTH * column)
+    offset = -((column_width if column_width is not None else _GRID_COLUMN_WIDTH) * column)
     return offset, row
 
 
@@ -524,21 +732,11 @@ def degree_sum(a: Union[int, float], b: Union[int, float]) -> float:
     Returns:
         float: normalized sum of a and b in the range [0, 360)
     """
-    # Use Python's % (not math.fmod) so the result is always in [0, 360) even for
-    # negative inputs (math.fmod keeps the dividend's sign, breaking the contract).
-    return (a + b) % 360.0
-
-
-def normalize_degree(angle: Union[int, float]) -> float:
-    """Normalize an angle to the range [0, 360).
-
-    Args:
-        angle (int | float): The input angle in degrees.
-
-    Returns:
-        float: The normalized angle in the range [0, 360).
-    """
-    return angle % 360 if angle % 360 != 0 else 0.0
+    # Through normalize_degree rather than a second `% 360.0`: the modulo alone
+    # returns exactly 360.0 for a tiny negative sum, which is outside the range
+    # this docstring promises. That was the defect normalize_degree was rewritten to fix;
+    # having the two share one implementation is what stops it being fixed once.
+    return normalize_degree(a + b)
 
 
 def timedelta_to_decimal_hours(datetime_offset: Union[datetime.timedelta, None]) -> float:
@@ -661,6 +859,95 @@ def draw_zodiac_slice(
     return f'<g kr:node="ZodiacSign" kr:sign="{type}" kr:signnumber="{num}">' + slice_path + sign + "</g>"
 
 
+# The narrowest wedge worth drawing, so the arc is still there and the house
+# stays clickable. One degree is the resolution the classic engine quantises to,
+# so nothing finer would survive there anyway. The modern engine keeps its exact
+# degrees and imports this all the same: for that one it is not a quantisation
+# limit but a floor on what a pointer can hit, and the ring brings cusps close
+# enough on its own to need it.
+MINIMUM_WEDGE_SPAN_DEGREES = 1.0
+
+
+
+def separate_collapsed_wedges(
+    boundaries: Sequence[float],
+    spans: Sequence[float],
+    reversed_wedges: Sequence[bool],
+    minimum: float,
+) -> tuple[list[float], list[float]]:
+    """Give every wedge at least *minimum* degrees, out of what the widest can spare.
+
+    Two cusps inside the same whole degree collapse onto one offset when the ring
+    is quantised, and an arc whose endpoints coincide is dropped by the SVG spec:
+    a zero-area path that still declares ``pointer-events: all`` is a house that
+    can never be clicked.
+
+    The widths are adjusted and the boundaries rebuilt from them, walking the
+    twelve in house order. That is what keeps the boundaries **shared** — wedge i
+    ends exactly where wedge i+1 begins, so there is no overlap for the hit test
+    to resolve and no gap to fall through — and it is why the twelve angles are
+    not simply handed to ``spread_around_wheel``. That function sorts what it is
+    given and breaks ties by list index, which is not the order round the wheel:
+    where house 12 and house 1 shared a degree it returned them swapped, and the
+    twelfth wedge was then drawn backwards across 359 degrees of the annulus,
+    invisible, taking every click on the chart.
+
+    A wedge that had to grow takes its room from the wedges with room to give, in
+    proportion to what each has above the minimum, so the twelve still cover
+    exactly 360 degrees. A boundary can end up a fair way off the cusp line it was
+    quantised from — five degrees at the worst of 16,422 charts swept, Campanus at
+    72S, because five cusps on one degree have to be spread five degrees wide
+    before any of them is clickable. That is the price of the house existing on
+    the wheel at all, and it is paid only where the alternative is a house with no
+    target.
+
+    Args:
+        boundaries: The twelve offsets, in house order.
+        spans: Their widths, from :func:`house_spans`.
+        reversed_wedges: Their directions, from :func:`house_spans`.
+        minimum: The narrowest wedge worth drawing, in degrees.
+
+    Returns:
+        The rebuilt boundaries and widths — equal to the arguments, value for
+        value, when nothing was below the minimum, when the cusps are too tangled
+        to have a direction in common, or when the wide wedges cannot spare what
+        the thin ones need. Copies either way: a caller that mutated what
+        it got back would otherwise reach into the list it passed in.
+    """
+    unchanged = (list(boundaries), list(spans))
+    deficit = sum(minimum - span for span in spans if span < minimum)
+    if deficit <= 0.0:
+        return unchanged
+    if len(set(reversed_wedges)) != 1:
+        # The cusps cross, so the houses do not tile and there is no order to
+        # rebuild them in. Leave them: overlapping wedges are what the data says.
+        return unchanged
+
+    surplus = sum(span - minimum for span in spans if span > minimum)
+    if surplus <= deficit:
+        return unchanged
+
+    shrink = 1.0 - deficit / surplus
+    adjusted = [
+        minimum if span <= minimum else minimum + (span - minimum) * shrink for span in spans
+    ]
+    step = -1.0 if reversed_wedges[0] else 1.0
+    rebuilt = [float(boundaries[0])]
+    for index in range(len(adjusted) - 1):
+        rebuilt.append(rebuilt[-1] + step * adjusted[index])
+    return rebuilt, adjusted
+
+
+def _wedges_overlap(spans: Sequence[float], reversed_wedges: Sequence[bool]) -> bool:
+    """Do these twelve wedges cover any longitude more than once?
+
+    They do exactly when the ring is not a house division: twelve arcs that run
+    the same way and add to a full turn share only their endpoints, and any other
+    ring has at least one longitude under two wedges at once.
+    """
+    return len(set(reversed_wedges)) != 1 or abs(sum(spans) - 360.0) > _HOUSE_WINDING_TOLERANCE_DEGREES
+
+
 def draw_house_sectors(
     r: Union[int, float],
     houses_list: list[KerykeionPointModel],
@@ -672,6 +959,7 @@ def draw_house_sectors(
     seventh_house_abs_override: Union[float, None] = None,
     outer_r_offset: Union[int, float, None] = None,
     inner_r_offset: Union[int, float, None] = None,
+    quantize_offsets_to_whole_degrees: bool = True,
 ) -> str:
     """
     Draw transparent house sector wedges for interactive highlighting.
@@ -691,6 +979,13 @@ def draw_house_sectors(
         horoscope_id: Subject identifier ("0" for first, "1" for second) or None.
         seventh_house_abs_override: Override for the 7th house position used to orient
             the wheel. When None, uses houses_list[6].abs_pos.
+        quantize_offsets_to_whole_degrees: Truncate each offset to the whole degree,
+            as ``draw_houses_cusps_and_text_number`` does for the inner ring. The wedge
+            only has to agree with the line it bounds, and a dual chart draws its two
+            rings with two different conventions: the first subject's cusps are
+            truncated, the second subject's are not (see the ``t_offset`` branch
+            there). Pass False for the outer ring, or the wedges drift off the
+            lines they are supposed to follow.
         outer_r_offset: Override for the outer radius offset (distance from r).
         inner_r_offset: Override for the inner radius offset (distance from r).
 
@@ -708,13 +1003,95 @@ def draw_house_sectors(
         outer_visual_r = r - c1  # outer boundary (c1=first_circle_radius)
         inner_visual_r = r - c3  # inner boundary (c3=third_circle_radius)
 
-    output = ""
+    # Match whichever convention the cusp lines of *this* ring use. The classic
+    # engine quantises the inner ring to the whole degree (`-int(seventh) +
+    # int(cusp)`, the same expression draw_planets uses for glyphs), and a wedge
+    # that kept exact degrees sat up to 0.7° off the line it bounds — about 3px
+    # at r=240, enough that a click just inside a cusp selected the neighbouring
+    # house. The outer ring of a dual chart is drawn at full precision instead,
+    # so quantising there would recreate the very drift this fixes, on the other
+    # subject.
+    if quantize_offsets_to_whole_degrees:
+        boundaries = [
+            float(-int(seventh_house_abs) + int(house.abs_pos)) for house in houses_list[:12]
+        ]
+    else:
+        boundaries = [-seventh_house_abs + house.abs_pos for house in houses_list[:12]]
+
+    # Which way the houses run, read once from all twelve. Above the polar circle
+    # several quadrant systems reverse, and the wedge for a house that measures
+    # 6 degrees backwards was being painted as the 354 degrees forwards: twelve
+    # near-complete rings stacked on each other, each one invisible and each one
+    # declaring pointer-events:all, so every click on the wheel was answered by
+    # whichever was drawn last.
+    #
+    # Then any wedge too thin to be drawn is widened out of what the wide ones can
+    # spare, in house order, so the boundaries stay shared and an ordinary chart
+    # comes out of here with the same offsets its cusp lines were drawn from, to
+    # the bit.
+    spans, reversed_wedges = house_spans(boundaries)
+    # The arcs the house READER measures, taken from the exact longitudes and not
+    # from the boundaries above: those are quantised to the whole degree so the
+    # wedges land on their own cusp lines, and rounding can swap which of two
+    # neighbours is the narrower. Polich/Page at 68S has houses 7 and 9 at
+    # 9.370 and 9.428 degrees — the reader says the seventh — and quantised they
+    # become 10 and 9, so the ninth was painted on top and took the click. The
+    # geometry keeps the rounding it needs; the ownership question is answered
+    # from the same numbers the reader answers it from.
+    true_spans, _true_directions = house_spans(
+        [house.abs_pos for house in houses_list[:12]]
+    )
+    # A wedge narrower than the minimum is widened so it can be clicked at all,
+    # and a widened wedge necessarily covers longitudes outside its own arc: on a
+    # crossing ring where it is also the narrowest, it is painted on top and
+    # answers for them. Polich/Page at 70.5N has an eleventh house 0.348 degrees
+    # wide, so it answers for up to 0.652 degrees either side that the reader
+    # gives its neighbour.
+    #
+    # Painting the widened ones underneath instead was tried and is worse: the
+    # tenth house crosses the eleventh on that same ring, so the eleventh loses
+    # its own middle and goes back to being unclickable, which is the defect the
+    # widening exists for. No single paint order settles both. The slop is bounded
+    # by the minimum width, and that is the trade.
+    #
+    # A click exactly ON a cusp is outside all of this: an SVG path is closed, so
+    # both wedges that share a boundary contain it, and no linear order of twelve
+    # cyclic wedges can give every cusp to the house it opens. The reader does —
+    # it has an exact-on-cusp rule — so the two differ on a set of measure zero.
+    # The rendered widths, before the widening trades them about: whether the
+    # wedges a pointer meets actually overlap is a question about the geometry
+    # that was drawn, while which of them owns the overlap is a question about
+    # the chart. The two are asked of different numbers on purpose.
+    drawn_spans = list(spans)
+    boundaries, spans = separate_collapsed_wedges(
+        boundaries, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
+    )
+
+    sectors: list[str] = []
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        offset_start = -seventh_house_abs + houses_list[i].abs_pos
-        offset_end = -seventh_house_abs + houses_list[next_i].abs_pos
+        offset_start = boundaries[i]
+        offset_end = boundaries[next_i]
+        span = spans[i]
+
+        # A wedge the separation above could not widen, because on this ring
+        # there was nothing to widen it into: where the cusps cross rather than
+        # merely run backwards, the twelve do not tile and the widths cannot be
+        # traded between them. Left alone, a width of zero puts both endpoints of
+        # the arc on the same point, SVG drops the arc segment entirely, and what
+        # remains is a path of no area still declaring pointer-events:all — the
+        # unclickable house this whole passage exists to prevent. Sunshine/alt at 67N
+        # produced six of them in one chart.
+        #
+        # So this one wedge takes its degree and moves only its own end. It then
+        # overlaps its neighbour, which is honest: the cusps overlap. On a ring
+        # that does tile, the separation has already given every wedge its
+        # minimum, so this never fires and the drawing is unchanged to the bit.
+        if span < MINIMUM_WEDGE_SPAN_DEGREES:
+            span = MINIMUM_WEDGE_SPAN_DEGREES
+            offset_end = offset_start + (-span if reversed_wedges[i] else span)
 
         # Use wheel_x/Y (which has built-in +1 centering) + dropin offset.
         # This matches the cusp line coordinate system exactly.
@@ -731,27 +1108,68 @@ def draw_house_sectors(
         ix2 = wheel_x(0, inner_visual_r, offset_end) + inner_dropin
         iy2 = wheel_y(0, inner_visual_r, offset_end) + inner_dropin
 
-        span = (houses_list[next_i].abs_pos - houses_list[i].abs_pos) % 360
+        # From the truncated offsets, not the exact degrees: the flag has to agree
+        # with the endpoints it is steering. Reading the exact span while the arc
+        # ends on whole degrees puts them at odds either side of 180° — cusps at
+        # 10.1° and 190.9° span 180.8° exactly (large_arc=1) but only 180° once
+        # truncated, and SVG then takes the long way round, painting the wedge
+        # over the opposite half of the wheel.
+        # Through normalize_degree, not a bare `% 360`: for a span that comes out
+        # a hair negative — two cusps coinciding to within float noise, in the
+        # wrong order — the modulo alone returns exactly 360.0, which reads as
+        # "more than half the circle" and paints the wedge the long way round
+        # over the whole annulus. Invisible, and with pointer-events:all it then
+        # takes every click meant for the houses drawn before it.
+        #
+        # The separation above already catches that input, so this is the second
+        # line and not the first. It is here because the rule is the rule — a
+        # bare `% 360` on an angle is the trap normalize_degree was rewritten to
+        # close, and leaving one behind invites the next
+        # person to copy it.
         large_arc = 1 if span > 180 else 0
+        outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 
         # Path from cusp N to cusp N+1.
         # sweep=0 for outer arc, sweep=1 for inner arc → both curve outward
         # (convex away from chart center, following the concentric circles).
+        # Both flip when the houses run backwards: the endpoints are the same two
+        # points either way, and it is the pair (sweep, large_arc) that says which
+        # of the two arcs between them the wedge is. Keeping sweep while the span
+        # shortens would pick the arc off a mirrored circle and lift the wedge
+        # clean off its own ring.
         d = (
             f"M {ox1},{oy1} "
-            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},0 {ox2},{oy2} "
+            f"A {outer_visual_r},{outer_visual_r} 0 {large_arc},{outer_sweep} {ox2},{oy2} "
             f"L {ix2},{iy2} "
-            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},1 {ix1},{iy1} Z"
+            f"A {inner_visual_r},{inner_visual_r} 0 {large_arc},{inner_sweep} {ix1},{iy1} Z"
         )
 
         horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
-        output += (
+        sectors.append(
             f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" style="fill: transparent; stroke: none; pointer-events: all;"/>'
             f"</g>"
         )
 
-    return output
+    # House order, unless the twelve overlap. Where the cusps cross, one longitude
+    # is inside several wedges at once, and the last one painted is the one a
+    # pointer finds — so painting 1 to 12 handed the click to the highest-numbered
+    # house containing the point while ``get_planet_house`` answers with the
+    # NARROWEST. Polich/Page at 70N put a point inside houses 7, 9 and 12: the
+    # model said the ninth, the wheel answered the twelfth.
+    #
+    # Painting widest first puts the narrowest on top, which is the reader's own
+    # rule. Ties go the same way it breaks them: it scans upwards and keeps the
+    # first of two equal arcs, so the LOWER house number must end up on top, which
+    # means painting it last. On a ring that tiles nothing overlaps, so the order
+    # is left alone and an ordinary chart comes out of here byte for byte.
+    if _wedges_overlap(drawn_spans, reversed_wedges):
+        sectors = [
+            sectors[index]
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], -index))
+        ]
+
+    return "".join(sectors)
 
 
 # =============================================================================
@@ -825,6 +1243,7 @@ def draw_aspect_line(
     show_aspect_icon: bool = True,
     rendered_icon_positions: Optional[list[tuple[float, float, int]]] = None,
     icon_collision_threshold: float = 16.0,
+    show_aspect_movement: bool = False,
 ) -> str:
     """Draws svg aspects: ring, aspect ring, degreeA degreeB
 
@@ -902,9 +1321,17 @@ def draw_aspect_line(
             if rendered_icon_positions is not None:
                 rendered_icon_positions.append((mid_x, mid_y, current_aspect_degrees))
 
+    # A separating aspect is dashed only on request: the movement has always
+    # been in the metadata, but drawing it changes how every existing chart looks.
+    dash_style = (
+        f" stroke-dasharray: {SEPARATING_DASH_ARRAY};"
+        if show_aspect_movement and str(aspect["aspect_movement"]).lower() == "separating"
+        else ""
+    )
+
     return (
         f'<g kr:node="Aspect" kr:aspectname="{escape_svg_text(aspect["aspect"])}" kr:to="{escape_svg_text(aspect["p1_name"])}" kr:tooriginaldegrees="{aspect["p1_abs_pos"]}" kr:from="{escape_svg_text(aspect["p2_name"])}" kr:fromoriginaldegrees="{aspect["p2_abs_pos"]}" kr:orb="{aspect["orbit"]}" kr:aspectdegrees="{aspect["aspect_degrees"]}" kr:planetsdiff="{aspect["diff"]}" kr:aspectmovement="{aspect["aspect_movement"]}">'
-        f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;"/>'
+        f'<line class="aspect" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke: {color}; stroke-width: 1; stroke-opacity: .9;{dash_style}"/>'
         f"{aspect_icon_svg}"
         f"</g>"
     )
@@ -1241,6 +1668,58 @@ def draw_aspect_grid(
     return "".join(parts)
 
 
+#: Cap height of a digit as a fraction of the font size. Figures in the fonts
+#: these charts pin have no descender, so this is their whole inked height.
+_DIGIT_CAP_HEIGHT_RATIO: float = 0.716
+
+#: Font size the house numbers are drawn at, and the air wanted between two of
+#: them. The gutter is halved into each label's own half-extent, so a pair gets
+#: the whole of it and a label at the seam is not charged for a neighbour twice.
+#:
+#: Nothing, not three: when four cusps share three degrees the numbers have
+#: nowhere honest to go, and Giacomo's call is that they should sit against each
+#: other rather than march away from the houses they name. Zero here means the
+#: inked figures just touch — the reach is a cap height, and figures carry no
+#: descender, so touching is the tightest a stack can be drawn and still be
+#: read. What a reader cannot do is work out which of four lines "11" belongs
+#: to once it has been pushed a house away.
+_HOUSE_NUMBER_FONT_SIZE: float = 14.0
+_HOUSE_NUMBER_GUTTER: float = 0.0
+
+
+def _house_number_half_extents(wanted_angles: "Sequence[float]", radius_px: float) -> list[float]:
+    """How far each house number reaches along the wheel, in degrees.
+
+    A number is drawn upright while the arc it sits on turns, so what one of
+    them has to clear depends on where it is: at the top of the wheel two
+    numbers stand side by side and their widths meet, on the flank they stack
+    and only their heights do. Projecting the label box onto the tangent gives
+    both ends of that and everything between — and the flanks are exactly where
+    a quadrant system at high latitude piles four cusps into three degrees, so
+    charging those pairs a full "12" of width walked the crowd out of its own
+    houses.
+
+    Measured at the angle each number *wants*, not the one it ends up at: the
+    spread has to know the requirement before it can satisfy it. A label that
+    moves far enough to change which way it stacks is one already inside a crowd
+    being spread, where the estimate is a shade generous rather than short.
+    """
+    arc_per_degree = 2.0 * math.pi * radius_px / 360.0
+    if arc_per_degree <= 0:
+        return [0.0] * len(wanted_angles)
+
+    half_height = _HOUSE_NUMBER_FONT_SIZE * _DIGIT_CAP_HEIGHT_RATIO / 2.0
+    out = []
+    for index, angle in enumerate(wanted_angles):
+        half_width = estimate_text_width(str(index + 1), _HOUSE_NUMBER_FONT_SIZE) / 2.0
+        radians = math.radians(angle)
+        # The tangent at this angle is (-sin, -cos) in the drawing's frame, so
+        # the width counts by |sin| and the height by |cos|.
+        reach = half_width * abs(math.sin(radians)) + half_height * abs(math.cos(radians))
+        out.append((reach + _HOUSE_NUMBER_GUTTER / 2.0) / arc_per_degree)
+    return out
+
+
 def draw_houses_cusps_and_text_number(
     r: Union[int, float],
     first_subject_houses_list: list[KerykeionPointModel],
@@ -1289,6 +1768,70 @@ def draw_houses_cusps_and_text_number(
     parts: list[str] = []
     xr = 12
 
+    # Where each house number wants to sit, and where it can actually go.
+    #
+    # The wanted angle is the middle of the sector, and the forward arc is what
+    # defines that middle — not `degree_difference`, which returns the *shorter*
+    # way round and so placed the number outside its own house whenever a house
+    # ran past 180°, reachable with Placidus at high latitude. The halves are
+    # kept as floats too: rounding each to a whole degree drifted every number
+    # the same way by up to a third of its own width.
+    #
+    # Quadrant systems make houses wildly unequal — Campanus manages it at
+    # Liverpool, Placidus inside the polar circle — and three or four numbers
+    # then want the same few degrees. They are spread apart by the least
+    # movement that separates them, which keeps a crowd centred on the houses
+    # it belongs to instead of sliding it into the neighbouring quadrant.
+    # Measured on the ring the number is drawn on, which is not the one the cusp
+    # line ends at. A label's reach in degrees is its reach in pixels over the arc
+    # a degree covers, so the radius divides straight into the answer: taken at
+    # the line's inner end (r - c3 = 120 on a natal wheel) instead of the text's
+    # own ring (r - 48 = 192), every extent came out 1.6x too large, and 1.95x on
+    # a dual chart's inner ring. That is a wider push than the uniform figure this
+    # replaced, so the crowd ended up further out of its houses than before.
+    _number_dropin = 100 if external_view else (84 if chart_type in DOUBLE_CHART_TYPES else 48)
+    _label_radius = r - _number_dropin
+    # Truncated, like the cusp lines these numbers label. A truncated base with an
+    # exact span sat the number up to half a degree off the middle of its own
+    # wedge, and where two cusps share a whole degree - so their bases coincide -
+    # the two half spans were the only thing separating them: the wheel read 10
+    # before 9, and 4 before 3. The middle is measured in the direction the houses
+    # run, which above the polar circle is not always forwards.
+    _cusps = [float(int(_house.abs_pos)) for _house in first_subject_houses_list[:xr]]
+    _spans, _reversed = house_spans(_cusps)
+    _zero = -int(first_subject_houses_list[int(xr / 2)].abs_pos)
+    _wanted = [
+        _zero + _cusps[_i] + (-0.5 if _reversed[_i] else 0.5) * _spans[_i] for _i in range(xr)
+    ]
+    _placed = spread_around_wheel(
+        _wanted,
+        0.0,
+        half_extents=_house_number_half_extents(_wanted, max(_label_radius, 1.0)),
+    )
+
+    # The outer wheel of a dual chart draws its own set, on a wider ring.
+    _placed_second: list[float] = []
+    if second_subject_houses_list is not None:
+        # Exact, because the outer ring's cusp lines are: t_offset below keeps the
+        # fraction. Truncating the base here while the line does not drifts the
+        # number off its own line by up to a degree - four pixels out at this
+        # radius - which is the mismatch draw_house_sectors already guards with
+        # quantize_offsets_to_whole_degrees, one function over.
+        _second_cusps = [_house.abs_pos for _house in second_subject_houses_list[:xr]]
+        _second_spans, _second_reversed = house_spans(_second_cusps)
+        _second_zero = -first_subject_houses_list[int(xr / 2)].abs_pos
+        _second_wanted = [
+            _second_zero
+            + _second_cusps[_i]
+            + (-0.5 if _second_reversed[_i] else 0.5) * _second_spans[_i]
+            for _i in range(xr)
+        ]
+        _placed_second = spread_around_wheel(
+            _second_wanted,
+            0.0,
+            half_extents=_house_number_half_extents(_second_wanted, max(r - 8, 1.0)),
+        )
+
     for i in range(xr):
         # Determine offsets based on chart type
         dropin, roff, t_roff = (
@@ -1304,11 +1847,8 @@ def draw_houses_cusps_and_text_number(
         x2 = wheel_x(0, r - roff, offset) + roff
         y2 = wheel_y(0, r - roff, offset) + roff
 
-        # Calculate the text offset for the house number
-        next_index = (i + 1) % xr
-        text_offset = offset + int(
-            degree_difference(first_subject_houses_list[next_index].abs_pos, first_subject_houses_list[i].abs_pos) / 2
-        )
+        # Where the number goes, after spreading (see above).
+        text_offset = _placed[i]
 
         # Determine the line color based on the house index
         linecolor = {0: first_house_color, 9: tenth_house_color, 6: seventh_house_color, 3: fourth_house_color}.get(
@@ -1331,10 +1871,8 @@ def draw_houses_cusps_and_text_number(
             t_x2 = wheel_x(0, r, t_offset)
             t_y2 = wheel_y(0, r, t_offset)
 
-            # Calculate the text offset for the second subject's house number
-            t_text_offset = t_offset + int(
-                degree_difference(second_subject_houses_list[next_index].abs_pos, second_subject_houses_list[i].abs_pos) / 2
-            )
+            # Where the outer wheel's number goes, spread the same way (see above).
+            t_text_offset = _placed_second[i]
             t_linecolor = linecolor if i in [0, 9, 6, 3] else transit_house_cusp_color
             xtext = wheel_x(0, (r - 8), t_text_offset) + 8
             ytext = wheel_y(0, (r - 8), t_text_offset) + 8
@@ -1357,11 +1895,9 @@ def draw_houses_cusps_and_text_number(
             )
             parts.append("</g>")
 
-        # Adjust dropin based on chart type and external view
-        if external_view:
-            dropin = 100
-        else:
-            dropin = 84 if chart_type in DOUBLE_CHART_TYPES else 48
+        # The same inset the extents above were measured at, so the room a label
+        # was given is the room it has where it lands.
+        dropin = _number_dropin
         xtext = wheel_x(0, (r - dropin), text_offset) + dropin
         ytext = wheel_y(0, (r - dropin), text_offset) + dropin
 
@@ -1668,7 +2204,7 @@ def _gauquelin_grid_thresholds(n: int) -> tuple[int, int, int]:
     return (rows_per_col, rows_per_col * 2, rows_per_col * 3)
 
 
-def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int]) -> tuple[int, int]:
+def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int], column_width: Optional[int] = None) -> tuple[int, int]:
     """Calculate grid position for a point in the Gauquelin unified grid.
 
     Args:
@@ -1687,7 +2223,7 @@ def _gauquelin_grid_layout_position(index: int, thresholds: tuple[int, int, int]
         col, row = 2, index - t3
     else:
         col, row = 3, index - t4
-    offset = -(_GAUQUELIN_COLUMN_WIDTH * col)
+    offset = -((column_width if column_width is not None else _GAUQUELIN_COLUMN_WIDTH) * col)
     return offset, row
 
 
@@ -1698,6 +2234,7 @@ def draw_gauquelin_unified_grid(
     y_position: int = 0,
     celestial_point_language: Optional["KerykeionLanguageCelestialPointModel"] = None,
     plus_zone_color: str = "var(--kerykeion-color-warning, #e6a817)",
+    show_out_of_bounds: bool = False,
 ) -> str:
     """Unified Gauquelin table replacing both planet grid and house cusp grid.
 
@@ -1749,6 +2286,13 @@ def draw_gauquelin_unified_grid(
     COL_DECL = 135  # Declination text start
     COL_SECTOR_END = 212  # Sector text-anchor="end"
 
+    # The badge only earns its extra width when a body actually needs it, so
+    # switching the option on for a table with nothing out of bounds leaves the
+    # layout exactly as it was.
+    badge_shown = show_out_of_bounds and any(getattr(p, "is_out_of_bounds", None) for p in gauq_points)
+    COL_SECTOR_END = COL_SECTOR_END + (_GAUQUELIN_OOB_BADGE_WIDTH if badge_shown else 0)
+    column_width = gauquelin_column_width(badge_shown)
+
     # Multi-column thresholds
     thresholds = _gauquelin_grid_thresholds(n)
 
@@ -1772,7 +2316,7 @@ def draw_gauquelin_unified_grid(
     hdr_y = 24
     hdr_fs = max(fs - 1, 7)
     for col in range(num_cols):
-        col_offset = -(_GAUQUELIN_COLUMN_WIDTH * col)
+        col_offset = -(column_width * col)
         svg += (
             f'<g transform="translate({col_offset},{hdr_y})" opacity="0.55">'
             f'<text text-anchor="end" x="{COL_NAME_END}" style="fill:{text_color}; font-size:{hdr_fs}px;">Planet</text>'
@@ -1785,7 +2329,7 @@ def draw_gauquelin_unified_grid(
     BASE_Y = 30  # Below title + header
 
     for i, point in enumerate(gauq_points):
-        offset, row_index = _gauquelin_grid_layout_position(i, thresholds)
+        offset, row_index = _gauquelin_grid_layout_position(i, thresholds, column_width)
         y = BASE_Y + 10 + row_index * row_h
 
         # Get display name (localized, with fallback)
@@ -1802,6 +2346,9 @@ def draw_gauquelin_unified_grid(
         # Longitude string + retrograde marker
         long_str = convert_decimal_to_degree_string(point.position)
         r_str = " R" if point.retrograde else ""
+        # Out of bounds is a claim about the declination, so it rides on that
+        # column instead of asking the table for a new one.
+        oob_str = " OOB" if show_out_of_bounds and getattr(point, "is_out_of_bounds", None) else ""
 
         # Declination in DMS
         decl = getattr(point, "declination", None)
@@ -1837,7 +2384,7 @@ def draw_gauquelin_unified_grid(
         # Longitude + retrograde
         svg += f'<text x="{COL_LONG}" style="fill:{text_color}; font-size:{fs}px;">{long_str}{r_str}</text>'
         # Declination
-        svg += f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{fs}px;">{decl_str}</text>'
+        svg += f'<text x="{COL_DECL}" style="fill:{text_color}; font-size:{fs}px;">{decl_str}{oob_str}</text>'
         # Sector (highlighted if plus zone)
         svg += (
             f'<text text-anchor="end" x="{COL_SECTOR_END}" '
@@ -1856,6 +2403,18 @@ def draw_gauquelin_unified_grid(
 # =============================================================================
 
 
+def _grid_point_label(point_name: str, celestial_point_language) -> str:
+    """The name a planet grid prints: decoded for the language, then capped.
+
+    One function for both grids and for the stride that spaces their columns —
+    a stride measured on the full name while the row draws the short one leaves
+    a gap nobody asked for, and the reverse overlaps.
+    """
+    return abbreviate_point_name(
+        get_decoded_kerykeion_celestial_point_name(point_name, celestial_point_language)
+    )
+
+
 def draw_main_planet_grid(
     planets_and_houses_grid_title: str,
     subject_name: str,
@@ -1865,6 +2424,7 @@ def draw_main_planet_grid(
     text_color: str = "#000000",
     x_position: int = 645,
     y_position: int = 0,
+    show_out_of_bounds: bool = False,
 ) -> str:
     """
     Draw the planet grid (main subject) and optional title.
@@ -1906,14 +2466,19 @@ def draw_main_planet_grid(
 
     column_thresholds = _select_planet_grid_thresholds(chart_type, len(available_kerykeion_celestial_points))
 
+    # Sized from the names this grid will actually print, so a chart of short
+    # names keeps the stride it always had and one carrying "N. Node (M)" gets
+    # the room that name needs.
+    column_width = planet_grid_column_width(
+        [_grid_point_label(p["name"], celestial_point_language) for p in available_kerykeion_celestial_points],
+        show_out_of_bounds,
+    )
+
     for i, planet in enumerate(available_kerykeion_celestial_points):
-        offset, row_index = _planet_grid_layout_position(i, column_thresholds)
+        offset, row_index = _planet_grid_layout_position(i, column_thresholds, column_width)
         line_height = LINE_START + (row_index * LINE_STEP)
 
-        decoded_name = get_decoded_kerykeion_celestial_point_name(
-            planet["name"],
-            celestial_point_language,
-        )
+        decoded_name = _grid_point_label(planet["name"], celestial_point_language)
 
         # v6: dynamic points without dedicated symbols fall back to shared glyphs.
         planet_glyph = _resolve_point_glyph_id(planet["name"])
@@ -1921,12 +2486,15 @@ def draw_main_planet_grid(
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(decoded_name)}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{planet_glyph}" /></g>'
-            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
-            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
+            f'<text text-anchor="end" x="{_GRID_READING_RIGHT}" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(planet["position"])}</text>'
+            f'<g transform="translate({_GRID_SIGN_X},-8)"><use transform="scale(0.3)" xlink:href="#{planet["sign"]}" /></g>'
         )
 
         if planet["retrograde"]:
-            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+            svg_output += f'<g transform="translate({_GRID_RETROGRADE_X},-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+        if show_out_of_bounds:
+            svg_output += out_of_bounds_badge_svg(planet, text_color)
 
         svg_output += end_of_line
 
@@ -1945,6 +2513,7 @@ def draw_secondary_planet_grid(
     text_color: str = "#000000",
     x_position: int = 910,
     y_position: int = 0,
+    show_out_of_bounds: bool = False,
 ) -> str:
     """
     Draw the planet grid for the secondary subject and its title.
@@ -1995,25 +2564,33 @@ def draw_secondary_planet_grid(
         chart_type, len(second_subject_available_kerykeion_celestial_points)
     )
 
+    # Sized from the names this grid will actually print, so a chart of short
+    # names keeps the stride it always had and one carrying "N. Node (M)" gets
+    # the room that name needs.
+    column_width = planet_grid_column_width(
+        [_grid_point_label(p["name"], celestial_point_language) for p in second_subject_available_kerykeion_celestial_points],
+        show_out_of_bounds,
+    )
+
     for i, t_planet in enumerate(second_subject_available_kerykeion_celestial_points):
-        offset, row_index = _planet_grid_layout_position(i, column_thresholds)
+        offset, row_index = _planet_grid_layout_position(i, column_thresholds, column_width)
         line_height = LINE_START + (row_index * LINE_STEP)
 
-        second_decoded_name = get_decoded_kerykeion_celestial_point_name(
-            t_planet["name"],
-            celestial_point_language,
-        )
+        second_decoded_name = _grid_point_label(t_planet["name"], celestial_point_language)
         t_planet_glyph = _resolve_point_glyph_id(t_planet["name"])
         svg_output += (
             f'<g transform="translate({offset},{BASE_Y + line_height})">'
             f'<text text-anchor="end" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(second_decoded_name)}</text>'
             f'<g transform="translate(5,-8)"><use transform="scale(0.4)" xlink:href="#{t_planet_glyph}" /></g>'
-            f'<text text-anchor="start" x="19" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
-            f'<g transform="translate(60,-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
+            f'<text text-anchor="end" x="{_GRID_READING_RIGHT}" style="fill:{text_color}; font-size: 10px;">{convert_decimal_to_degree_string(t_planet["position"])}</text>'
+            f'<g transform="translate({_GRID_SIGN_X},-8)"><use transform="scale(0.3)" xlink:href="#{t_planet["sign"]}" /></g>'
         )
 
         if t_planet["retrograde"]:
-            svg_output += '<g transform="translate(74,-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+            svg_output += f'<g transform="translate({_GRID_RETROGRADE_X},-6)"><use transform="scale(.5)" xlink:href="#retrograde" /></g>'
+
+        if show_out_of_bounds:
+            svg_output += out_of_bounds_badge_svg(t_planet, text_color)
 
         svg_output += end_of_line
 
@@ -2345,6 +2922,51 @@ def calculate_synastry_element_points(
 # =============================================================================
 
 
+#: The comparison tables put a glyph, a name and one or two house numbers on a
+#: row, and printed their headers at fixed offsets that only ever fitted the
+#: English words: "Progressed Point" inks 79 units at the bold 10px these
+#: headers use, and the next column started at 77, so the two ran together.
+#: Sizing the columns from what is actually printed fixes every language at
+#: once, and keeps the header over the values it names rather than 13 units to
+#: their left, which is where the old constants had it.
+_HOUSE_COMPARISON_NAME_X: float = 15.0
+_HOUSE_COMPARISON_GUTTER: float = 8.0
+
+#: Bold text inks wider than the same string at the same size in book weight.
+#: The estimator measures book weight, so the headers get this on top.
+_BOLD_WIDTH_FACTOR: float = 1.06
+
+
+def _house_comparison_columns(
+    headers: "Sequence[str]",
+    names: "Sequence[str]",
+    minimum_x: "Sequence[float]",
+    font_size: float = 10.0,
+) -> list[float]:
+    """Where each column after the name starts, header and values alike.
+
+    *minimum_x* is what the layout used before, kept as a floor so a table of
+    short English words is drawn exactly where it always was and only the ones
+    that outgrew their offsets move.
+    """
+    widest_name = max((estimate_text_width(n, font_size) for n in names), default=0.0)
+    columns: list[float] = []
+    left = max(
+        _HOUSE_COMPARISON_NAME_X + widest_name,
+        estimate_text_width(headers[0], font_size) * _BOLD_WIDTH_FACTOR,
+    )
+    for index, floor in enumerate(minimum_x):
+        x = max(floor, left + _HOUSE_COMPARISON_GUTTER)
+        columns.append(x)
+        # A house number is at most two figures; the header above it is what
+        # sets the stride to the next column.
+        left = x + max(
+            estimate_text_width(headers[index + 1], font_size) * _BOLD_WIDTH_FACTOR,
+            estimate_text_width("12", font_size),
+        )
+    return columns
+
+
 def draw_house_comparison_grid(
     house_comparison: "HouseComparisonModel",
     celestial_point_language: KerykeionLanguageCelestialPointModel,
@@ -2382,17 +3004,6 @@ def draw_house_comparison_grid(
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{escape_svg_text(house_position_comparison_label)}</text>'
 
-    # Add column headers
-    line_increment = 10
-    svg_output += (
-        f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_label)}</text>'
-        f'<text text-anchor="start" x="132" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(radix_label)}</text>'
-        f"</g>"
-    )
-    line_increment += 15
-
     # Create a dictionary to store all points by name for combined display
     all_points_by_name = {}
 
@@ -2405,6 +3016,26 @@ def draw_house_comparison_grid(
                 "native_house": point.point_owner_house_number,
             }
 
+    # Columns sized from what this table actually prints — headers included.
+    _decoded_names = [
+        get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)
+        for name in all_points_by_name
+    ]
+    _native_x, _secondary_x = _house_comparison_columns(
+        [return_point_label, return_label, radix_label], _decoded_names, (90.0, 140.0)
+    )
+
+    # Add column headers
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
+        f'<text text-anchor="start" x="{_native_x:.1f}" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_label)}</text>'
+        f'<text text-anchor="start" x="{_secondary_x:.1f}" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(radix_label)}</text>'
+        f"</g>"
+    )
+    line_increment += 15
+
     # Display all points organized by name
     for name, point_data in all_points_by_name.items():
         native_house = point_data.get("native_house", "-")
@@ -2415,8 +3046,8 @@ def draw_house_comparison_grid(
             f'<g transform="translate(0,{line_increment})">'
             f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(get_decoded_kerykeion_celestial_point_name(name, celestial_point_language))}</text>'
-            f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
-            f'<text text-anchor="start" x="140" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
+            f'<text text-anchor="start" x="{_native_x:.1f}" style="fill:{text_color}; font-size: 10px;">{native_house}</text>'
+            f'<text text-anchor="start" x="{_secondary_x:.1f}" style="fill:{text_color}; font-size: 10px;">{secondary_house}</text>'
             f"</g>"
         )
         line_increment += 12
@@ -2468,16 +3099,6 @@ def draw_single_house_comparison_grid(
     # Add title
     svg_output += f'<text text-anchor="start" x="0" y="-15" style="fill:{text_color}; font-size: 14px;">{escape_svg_text(house_position_comparison_label)}</text>'
 
-    # Add column headers
-    line_increment = 10
-    svg_output += (
-        f'<g transform="translate(0,{line_increment})">'
-        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
-        f'<text text-anchor="start" x="77" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(natal_house_label)}</text>'
-        f"</g>"
-    )
-    line_increment += 15
-
     # Create a dictionary to store all points by name for combined display
     all_points_by_name = {}
 
@@ -2485,6 +3106,25 @@ def draw_single_house_comparison_grid(
         # Only process points that are active
         if point.point_name in active_points and point.point_name not in all_points_by_name:
             all_points_by_name[point.point_name] = {"name": point.point_name, "house": point.projected_house_number}
+
+    # Columns sized from what this table actually prints — headers included.
+    _decoded_names = [
+        get_decoded_kerykeion_celestial_point_name(name, celestial_point_language)
+        for name in all_points_by_name
+    ]
+    (_house_x,) = _house_comparison_columns(
+        [return_point_label, natal_house_label], _decoded_names, (90.0,)
+    )
+
+    # Add column headers
+    line_increment = 10
+    svg_output += (
+        f'<g transform="translate(0,{line_increment})">'
+        f'<text text-anchor="start" x="0" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(return_point_label)}</text>'
+        f'<text text-anchor="start" x="{_house_x:.1f}" style="fill:{text_color}; font-weight: bold; font-size: 10px;">{escape_svg_text(natal_house_label)}</text>'
+        f"</g>"
+    )
+    line_increment += 15
 
     # Display all points organized by name
     for name, point_data in all_points_by_name.items():
@@ -2495,7 +3135,7 @@ def draw_single_house_comparison_grid(
             f'<g transform="translate(0,{line_increment})">'
             f'<g transform="translate(0,-9)"><use transform="scale(0.4)" xlink:href="#{point_glyph}" /></g>'
             f'<text text-anchor="start" x="15" style="fill:{text_color}; font-size: 10px;">{escape_svg_text(get_decoded_kerykeion_celestial_point_name(name, celestial_point_language))}</text>'
-            f'<text text-anchor="start" x="90" style="fill:{text_color}; font-size: 10px;">{house}</text>'
+            f'<text text-anchor="start" x="{_house_x:.1f}" style="fill:{text_color}; font-size: 10px;">{house}</text>'
             f"</g>"
         )
         line_increment += 12

@@ -8,6 +8,7 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Name              | John & Yoko Composite Chart     |
 | Composite Members | Sample Natal Subject & Yoko Ono |
 | Composite Type    | Midpoint                        |
+| House Anchor      | auto                            |
 +-------------------+---------------------------------+
 
 +Composite Chart — Settings-----------------+
@@ -133,6 +134,13 @@ Sample Natal Subject & Yoko Ono — Composite Report
 | Mutable  | 1.1   | 7%         |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
+
++Angularities---------+----------+
+| Point  | Angle      | Distance |
++--------+------------+----------+
+| Venus  | Descendant | 0.63°    |
+| Saturn | Imum Coeli | 1.02°    |
++--------+------------+----------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |

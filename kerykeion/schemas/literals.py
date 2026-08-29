@@ -39,8 +39,21 @@ SignNumbers: TypeAlias = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 """Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
 
 
-MotionState: TypeAlias = Literal["retrograde", "stationary", "slow", "average", "fast"]
-"""Literal type for a body's motion state relative to its mean daily motion."""
+MotionState: TypeAlias = Literal[
+    "retrograde",
+    "stationary",
+    "stationary_retrograde",
+    "stationary_direct",
+    "slow",
+    "average",
+    "fast",
+]
+"""Literal type for a body's motion state relative to its mean daily motion.
+
+``stationary_retrograde`` and ``stationary_direct`` name the two stations —
+the turn into the retrograde phase and the turn out of it. Plain
+``stationary`` remains for a station whose direction could not be resolved.
+"""
 
 AspectMovementType: TypeAlias = Literal["Applying", "Separating", "Static"]
 """Literal type for Aspect Movement.
@@ -229,6 +242,12 @@ LunarPhaseName: TypeAlias = Literal[
 """Literal type for Lunar Phases Name"""
 
 
+LunarPhaseStage: TypeAlias = Literal["waxing", "waning"]
+"""Literal type for the Moon's stage: waxing while the separation grows from the
+conjunction to the opposition, waning while it returns from the opposition to the
+conjunction."""
+
+
 SiderealMode: TypeAlias = Literal[
     "FAGAN_BRADLEY",
     "LAHIRI",
@@ -396,14 +415,16 @@ Usually the standard is "Apparent Geocentric"
 SignsEmoji: TypeAlias = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
 """Literal type for Zodiac Signs Emoji"""
 
-KerykeionChartTheme: TypeAlias = Literal[
-    "light", "dark", "dark-high-contrast", "classic", "strawberry", "black-and-white"
-]
+KerykeionChartTheme: TypeAlias = Literal["classic", "dark", "black-and-white"]
 """Literal type for Kerykeion Chart Themes"""
 
 
 KerykeionChartStyle: TypeAlias = Literal["classic", "modern"]
 """Literal type for Kerykeion Chart Styles"""
+
+
+KerykeionGlyphSize: TypeAlias = Literal["small", "medium", "large"]
+"""Literal type for the modern wheel's planet-cluster size"""
 
 
 KerykeionChartLanguage: TypeAlias = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
@@ -418,6 +439,55 @@ RelationshipScoreDescription: TypeAlias = Literal[
 
 CompositeChartType: TypeAlias = Literal["Midpoint", "Davison"]
 """Literal type for Composite Chart Types"""
+
+CompositeHouseFrame: TypeAlias = Literal["anchored", "midpoints", "gapped"]
+"""What the composite's twelve cusps actually are, once the ring has been built.
+
+``house_anchor`` records which angle a caller ASKED to hold. It is not always
+possible to hold one: where the two charts' houses admit no common frame — two
+rings running opposite ways, or a parent whose own cusps are not ordered — the
+requested anchor decides nothing, and every position falls back to its own near
+midpoint. With one exception, and it is not a small one: a cusp the parents put
+exactly opposite another is kept opposite it, which is the far midpoint for one
+of the pair. Without that the fourth cusp and the tenth come out on the same
+longitude, because two points half a circle apart are the same unordered pair
+either way round and a symmetric mean cannot tell them apart. A chart that reports only the request describes a construction that did
+not happen, and all three anchors then return the same ring.
+
+- ``"anchored"``: a frame was hung from the requested angle and the twelve cover
+  the circle exactly once. The anchor was held.
+- ``"midpoints"``: no frame spans the two charts, so every position is its own
+  near midpoint — but the twelve are still a house division.
+- ``"gapped"``: as ``"midpoints"``, and the twelve are NOT a house division: they
+  leave gaps, and a longitude falling in one is named for the house whose cusp it
+  last passed. Every house name on such a chart is that reading, not a
+  containment.
+
+``None`` on a Davison chart, which is cast as an ordinary chart and has no frame
+to speak of.
+"""
+
+
+CompositeHouseAnchor: TypeAlias = Literal["auto", "ascendant", "midheaven"]
+"""Which composite cusp keeps its short-arc midpoint when the ring has to be repaired.
+
+Between two cusps there are two midpoints, half a circle apart, and taking the
+nearer one for each of the twelve independently breaks down when the two charts'
+angles are nearly opposed: some cusps take one side and some the other, and the
+twelve stop being a house division at all. The trade the profession settles on is
+to keep one angle fixed and move the rest onto their far midpoint as needed.
+
+- ``auto``: whichever of the Ascendant and the Midheaven has its two base cusps
+  closer together, that being the better determined of the two midpoints. The
+  default here, and in Solar Fire and Astro Gold.
+- ``ascendant``: the Ascendant never moves. Kepler and Sirius call this
+  "Asc Midpoint".
+- ``midheaven``: the Midheaven never moves. Kepler and Sirius call this
+  "MC Midpoint".
+
+None of the three does anything to a chart whose short-arc midpoints already run
+in order, which is most of them.
+"""
 
 AspectName: TypeAlias = Literal[
     "conjunction",
@@ -465,4 +535,48 @@ Values:
       planet with the highest total is the Almuten Figuris.
     - "elemental": Simple elemental and modal balance, by weighted or pure count
       of the chart's points.
+"""
+
+
+SolarPhase: TypeAlias = Literal["cazimi", "combust", "under_the_beams", "free"]
+"""How near the Sun a body is, named as a condition of visibility.
+
+The classical tradition reads nearness to the Sun as a state of the body, not as
+a mere number of degrees, and gives that state four names. They are ordered from
+the closest outwards:
+
+- ``"cazimi"``: in the heart of the Sun. The narrowest of the four (a 17-arcminute
+  half-width is the usual reading of "within 16 minutes of the Sun's centre").
+- ``"combust"``: burnt. Close enough that the body cannot be seen at all.
+- ``"under_the_beams"``: within the Sun's rays. Not yet risen out of the twilight.
+- ``"free"``: far enough from the Sun to be seen in a dark sky.
+
+The three cut-offs that separate them are not a constant of nature and are not
+agreed across schools, so they are parameters:
+:class:`~kerykeion.schemas.models.SolarPhaseThresholdsModel` carries the values a
+given result was computed with, and the caller may replace them.
+
+The quantity compared against the cut-offs is the true angular separation from
+the Sun (the elongation the ephemeris reports, latitude included), NOT the
+difference in ecliptic longitude alone. The two agree only for a body on the
+ecliptic, and the difference is the reason a body may sit at the same longitude
+as the Sun and still be several degrees away from it in the sky.
+"""
+
+
+ApsisKind: TypeAlias = Literal["heliocentric", "geocentric"]
+"""Which body the apsides of an orbit are measured against.
+
+An apsis is the nearest or farthest point of an orbit from the body being
+orbited, and the classical names carry that body inside them: *peri-helion* and
+*ap-helion* say "the Sun". They are right for the planets, which orbit the Sun,
+and wrong for the Moon, which orbits the Earth — its apsides are the perigee and
+the apogee, and the astrological tradition knows the far one by yet another name,
+the Black Moon Lilith.
+
+- ``"heliocentric"``: apsides about the Sun (every planet).
+- ``"geocentric"``: apsides about the Earth (the Moon).
+
+The generic ``periapsis``/``apoapsis`` fields are correct under either reading;
+this field says which one is in force.
 """

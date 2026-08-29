@@ -406,15 +406,14 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.twelfth_house.point_type == self.expected_output["twelfth_house"]["point_type"]
 
     def test_lunar_phase(self):
-        assert self.subject.lunar_phase.model_dump()["degrees_between_s_m"] == approx(
-            self.expected_output["lunar_phase"]["degrees_between_s_m"], abs=1e-2
-        )
-        assert self.subject.lunar_phase.model_dump()["moon_phase"] == self.expected_output["lunar_phase"]["moon_phase"]
-        assert self.subject.lunar_phase.model_dump()["moon_emoji"] == self.expected_output["lunar_phase"]["moon_emoji"]
-        assert (
-            self.subject.lunar_phase.model_dump()["moon_phase_name"]
-            == self.expected_output["lunar_phase"]["moon_phase_name"]
-        )
+        dumped = self.subject.lunar_phase.model_dump()
+        expected = self.expected_output["lunar_phase"]
+        assert dumped["degrees_between_s_m"] == approx(expected["degrees_between_s_m"], abs=1e-2)
+        assert dumped["moon_phase"] == expected["moon_phase"]
+        assert dumped["moon_emoji"] == expected["moon_emoji"]
+        assert dumped["moon_phase_name"] == expected["moon_phase_name"]
+        assert dumped["major_phase"] == expected["major_phase"]
+        assert dumped["stage"] == expected["stage"]
 
 
 def test_nakshatra_pada_exact_boundary_degrees():

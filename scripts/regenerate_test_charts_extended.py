@@ -3,7 +3,7 @@
 Extended SVG Chart Generation Script for Comprehensive Test Coverage
 
 This script generates additional SVG charts beyond the base regenerate_test_charts.py:
-- Strawberry theme for all chart types
+- Themed variants of the temporal subjects (dark, black-and-white)
 - Temporal subjects from test_subjects_matrix.py (25 subjects spanning 2700 years)
 - Geographic subjects from test_subjects_matrix.py (16 locations)
 - Cross-combinations (sidereal modes × themes, house systems × chart types)
@@ -11,11 +11,12 @@ This script generates additional SVG charts beyond the base regenerate_test_char
 Run this after regenerate_test_charts.py to add comprehensive coverage.
 
 Usage:
-    python scripts/regenerate_test_charts_extended.py [--all] [--strawberry] [--temporal] [--geographic] [--combinations]
+    python scripts/regenerate_test_charts_extended.py [--all] [--themes] [--temporal] [--geographic] [--combinations]
 """
 
 import argparse
 import sys
+from typing import get_args
 from pathlib import Path
 
 # Add project root to path for imports
@@ -25,12 +26,19 @@ sys.path.insert(0, str(project_root))
 from functools import partial
 
 from kerykeion import AstrologicalSubjectFactory, CompositeSubjectFactory
+from kerykeion.schemas.literals import KerykeionChartTheme
 from kerykeion import ChartDrawer as _ChartDrawer
 from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 # Import test subject definitions
+from tests.data.golden_places import golden_place
+from tests.data.regeneration_guard import require_library_from_this_checkout, require_the_baseline_backend
+
+require_library_from_this_checkout(__file__)
+require_the_baseline_backend()
 from tests.data.test_subjects_matrix import (
+    HOUSE_SYSTEM_NAMES,
+    SIDEREAL_THEME_COMBOS,
     TEMPORAL_SUBJECTS,
     GEOGRAPHIC_SUBJECTS,
 )
@@ -47,11 +55,15 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR_STR = str(OUTPUT_DIR)
 
 # Common birth data for John Lennon and Paul McCartney (used for synastry/transit)
-JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30, "Liverpool", "GB")
-PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30, "Liverpool", "GB")
+# The place is NOT in the tuple: a bare city name is resolved over the network, so
+# a regeneration bakes one day's coordinates into the baselines while the
+# comparison expects another day's. See tests/data/golden_places.py.
+JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
+PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
+LIVERPOOL = golden_place("Liverpool", "GB")
 
 # Themes to test
-THEMES = ["classic", "dark", "light", "black-and-white", "strawberry", "dark-high-contrast"]
+THEMES = list(get_args(KerykeionChartTheme))
 
 # Key sidereal modes for cross-combination testing
 KEY_SIDEREAL_MODES = ["LAHIRI", "FAGAN_BRADLEY", "KRISHNAMURTI", "RAMAN", "J2000"]
@@ -107,199 +119,12 @@ def create_subject_from_dict(subject_dict: dict, **kwargs):
         )
 
 
-def generate_strawberry_theme_charts():
-    """Generate all chart types with Strawberry theme."""
-    print("\n=== Generating Strawberry Theme Charts ===")
-
-    # Create subjects
-    first = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    second = AstrologicalSubjectFactory.from_birth_data(
-        "Paul McCartney", *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True
-    )
-
-    # Composite subjects
-    angelina = AstrologicalSubjectFactory.from_birth_data(
-        "Angelina Jolie",
-        1975,
-        6,
-        4,
-        9,
-        9,
-        "Los Angeles",
-        "US",
-        lng=-118.15,
-        lat=34.03,
-        tz_str="America/Los_Angeles",
-        suppress_geonames_warning=True,
-    )
-    brad = AstrologicalSubjectFactory.from_birth_data(
-        "Brad Pitt",
-        1963,
-        12,
-        18,
-        6,
-        31,
-        "Shawnee",
-        "US",
-        lng=-96.56,
-        lat=35.20,
-        tz_str="America/Chicago",
-        suppress_geonames_warning=True,
-    )
-
-    charts_generated = 0
-
-    # 1. Natal Chart - Strawberry Theme
-    strawberry_natal_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Strawberry Theme", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    natal_chart_data = ChartDataFactory.create_natal_chart_data(strawberry_natal_subject)
-    ChartDrawer(natal_chart_data, theme="strawberry").save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme - Natal Chart - Classic.svg")
-    charts_generated += 1
-
-    # 2. External Natal Chart - Strawberry Theme
-    strawberry_external_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Strawberry Theme External", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    external_chart_data = ChartDataFactory.create_natal_chart_data(strawberry_external_subject)
-    ChartDrawer(external_chart_data, theme="strawberry", external_view=True).save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme External - Natal Chart - Classic.svg")
-    charts_generated += 1
-
-    # 3. Synastry Chart - Strawberry Theme
-    strawberry_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Strawberry Theme Synastry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    synastry_chart_data = ChartDataFactory.create_synastry_chart_data(strawberry_synastry_subject, second)
-    ChartDrawer(synastry_chart_data, theme="strawberry").save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme Synastry - Synastry Chart - Classic.svg")
-    charts_generated += 1
-
-    # 4. Transit Chart - Strawberry Theme
-    strawberry_transit_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Strawberry Theme Transit", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    transit_chart_data = ChartDataFactory.create_transit_chart_data(strawberry_transit_subject, second)
-    ChartDrawer(transit_chart_data, theme="strawberry").save_svg(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Strawberry Theme Transit - Transit Chart - Classic.svg")
-    charts_generated += 1
-
-    # 5. Wheel Only - Strawberry Theme
-    wheel_strawberry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Wheel Only Strawberry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    wheel_chart_data = ChartDataFactory.create_natal_chart_data(wheel_strawberry_subject)
-    ChartDrawer(wheel_chart_data, theme="strawberry").save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Wheel Only Strawberry - Natal Chart - Classic Wheel Only.svg")
-    charts_generated += 1
-
-    # 6. Aspect Grid Only - Strawberry Theme
-    aspect_strawberry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Aspect Grid Strawberry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    aspect_chart_data = ChartDataFactory.create_natal_chart_data(aspect_strawberry_subject)
-    ChartDrawer(aspect_chart_data, theme="strawberry").save_aspect_grid_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Aspect Grid Strawberry - Natal Chart - Aspect Grid Only.svg")
-    charts_generated += 1
-
-    # 7. Synastry Wheel Only - Strawberry Theme
-    synastry_wheel_strawberry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Wheel Synastry Strawberry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    synastry_wheel_chart_data = ChartDataFactory.create_synastry_chart_data(synastry_wheel_strawberry_subject, second)
-    ChartDrawer(synastry_wheel_chart_data, theme="strawberry").save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Wheel Synastry Strawberry - Synastry Chart - Classic Wheel Only.svg")
-    charts_generated += 1
-
-    # 8. Synastry Aspect Grid Only - Strawberry Theme
-    synastry_aspect_strawberry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Aspect Grid Synastry Strawberry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    synastry_aspect_chart_data = ChartDataFactory.create_synastry_chart_data(synastry_aspect_strawberry_subject, second)
-    ChartDrawer(synastry_aspect_chart_data, theme="strawberry").save_aspect_grid_only_svg_file(
-        output_path=OUTPUT_DIR_STR
-    )
-    print("  Generated: John Lennon - Aspect Grid Synastry Strawberry - Synastry Chart - Aspect Grid Only.svg")
-    charts_generated += 1
-
-    # 9. Transit Wheel Only - Strawberry Theme
-    transit_wheel_strawberry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Wheel Transit Strawberry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    transit_wheel_chart_data = ChartDataFactory.create_transit_chart_data(transit_wheel_strawberry_subject, second)
-    ChartDrawer(transit_wheel_chart_data, theme="strawberry").save_wheel_only_svg_file(output_path=OUTPUT_DIR_STR)
-    print("  Generated: John Lennon - Wheel Transit Strawberry - Transit Chart - Classic Wheel Only.svg")
-    charts_generated += 1
-
-    # 10. Transit Aspect Grid Only - Strawberry Theme
-    transit_aspect_strawberry_subject = AstrologicalSubjectFactory.from_birth_data(
-        "John Lennon - Aspect Grid Transit Strawberry", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
-    )
-    transit_aspect_chart_data = ChartDataFactory.create_transit_chart_data(transit_aspect_strawberry_subject, second)
-    ChartDrawer(transit_aspect_chart_data, theme="strawberry").save_aspect_grid_only_svg_file(
-        output_path=OUTPUT_DIR_STR
-    )
-    print("  Generated: John Lennon - Aspect Grid Transit Strawberry - Transit Chart - Aspect Grid Only.svg")
-    charts_generated += 1
-
-    # 11. Composite Chart - Strawberry Theme
-    composite_factory = CompositeSubjectFactory(angelina, brad)
-    composite_model = composite_factory.get_midpoint_composite_subject_model()
-    composite_chart_data = ChartDataFactory.create_composite_chart_data(composite_model)
-    ChartDrawer(composite_chart_data, theme="strawberry").save_svg(
-        output_path=OUTPUT_DIR_STR,
-        filename="Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Classic",
-    )
-    print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - Strawberry Theme - Composite Chart - Classic.svg")
-    charts_generated += 1
-
-    # 12. Solar Return - Strawberry Theme
-    return_factory = PlanetaryReturnFactory(
-        first,
-        lng=-2.9833,
-        lat=53.4000,
-        tz_str="Europe/London",
-        online=False,
-    )
-    solar_return = return_factory.next_return_from_iso_formatted_time(
-        "2025-01-09T18:30:00+01:00",
-        return_type="Solar",
-    )
-    dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, solar_return)
-    ChartDrawer(dual_return_chart_data, theme="strawberry").save_svg(
-        output_path=OUTPUT_DIR_STR,
-        filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return - Classic",
-    )
-    print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Solar Return - Classic.svg")
-    charts_generated += 1
-
-    # 13. Single Solar Return - Strawberry Theme
-    single_return_chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
-    ChartDrawer(single_return_chart_data, theme="strawberry").save_svg(
-        output_path=OUTPUT_DIR_STR,
-        filename="John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart - Classic",
-    )
-    print("  Generated: John Lennon Solar Return - Strawberry Theme - SingleReturnChart Chart - Classic.svg")
-    charts_generated += 1
-
-    # 14. Lunar Return - Strawberry Theme
-    lunar_return = return_factory.next_return_from_iso_formatted_time(
-        "2025-01-09T18:30:00+01:00",
-        return_type="Lunar",
-    )
-    lunar_dual_return_chart_data = ChartDataFactory.create_return_chart_data(first, lunar_return)
-    ChartDrawer(lunar_dual_return_chart_data, theme="strawberry").save_svg(
-        output_path=OUTPUT_DIR_STR,
-        filename="John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return - Classic",
-    )
-    print("  Generated: John Lennon - Strawberry Theme - DualReturnChart Chart - Lunar Return - Classic.svg")
-    charts_generated += 1
-
-    print(f"\n  Total Strawberry theme charts: {charts_generated}")
-    return charts_generated
+#: Every baseline this run could not draw. A generator that prints its failures
+#: and exits 0 reports success for a set it did not produce: the file stays as it
+#: was, the comparison test reads the stale one, and nothing is red. This branch
+#: has already closed that shape twice — once for baselines that were never
+#: generated, once for a house-system list that asked for ten and made three.
+FAILURES: list[str] = []
 
 
 def generate_temporal_subject_charts():
@@ -327,7 +152,9 @@ def generate_temporal_subject_charts():
             print(f"  Generated: {subject_name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {subject_name}: {e}")
+            failure = f"generating {subject_name}: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Generate selected combinations for key temporal subjects
     # Ancient subjects with Dark theme
@@ -344,23 +171,30 @@ def generate_temporal_subject_charts():
                 print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
-                print(f"  ERROR generating {subject_data['name']} dark theme: {e}")
+                failure = f"generating {subject_data['name']} dark theme: {e}"
+                print(f"  ERROR {failure}")
+                FAILURES.append(failure)
 
-    # Future subjects with Light theme
+    # Future subjects with the Black and White theme. They used to be drawn in a
+    # theme called "light", which this library no longer has, and the case went on
+    # skipping quietly for a release because no baseline was ever written for it
+    # either — a themed case with no file behind it asserts nothing at all.
     future_ids = ["future_2050", "future_2100", "future_2200"]
     for subject_id in future_ids:
         subject_data = next((s for s in TEMPORAL_SUBJECTS if s["id"] == subject_id), None)
         if subject_data:
             try:
                 subject = create_subject_from_dict(subject_data)
-                subject.name = f"{subject_data['name']} - Light Theme"
+                subject.name = f"{subject_data['name']} - Black-And-White Theme"
                 chart_data = ChartDataFactory.create_natal_chart_data(subject)
-                chart = ChartDrawer(chart_data, theme="light")
+                chart = ChartDrawer(chart_data, theme="black-and-white")
                 chart.save_svg(output_path=OUTPUT_DIR_STR)
                 print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
-                print(f"  ERROR generating {subject_data['name']} light theme: {e}")
+                failure = f"generating {subject_data['name']} black-and-white theme: {e}"
+                print(f"  ERROR {failure}")
+                FAILURES.append(failure)
 
     # Modern subjects with Synastry (John + Yoko, Beatles pairs)
     john_data = next((s for s in TEMPORAL_SUBJECTS if s["id"] == "john_lennon_1940"), None)
@@ -380,7 +214,9 @@ def generate_temporal_subject_charts():
             print("  Generated: John and Yoko - Synastry Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating John and Yoko synastry: {e}")
+            failure = f"generating John and Yoko synastry: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     print(f"\n  Total temporal subject charts: {charts_generated}")
     return charts_generated
@@ -404,7 +240,9 @@ def generate_geographic_subject_charts():
             print(f"  Generated: {subject_name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {subject_name}: {e}")
+            failure = f"generating {subject_name}: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Generate Koch house system variants for all geographic subjects
     for subject_data in GEOGRAPHIC_SUBJECTS:
@@ -419,7 +257,9 @@ def generate_geographic_subject_charts():
             print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {subject_name} Koch: {e}")
+            failure = f"generating {subject_name} Koch: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Generate Whole Sign for extreme latitudes
     extreme_lat_ids = [
@@ -444,7 +284,9 @@ def generate_geographic_subject_charts():
                 print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
                 charts_generated += 1
             except Exception as e:
-                print(f"  ERROR generating {subject_data['name']} Whole Sign: {e}")
+                failure = f"generating {subject_data['name']} Whole Sign: {e}"
+                print(f"  ERROR {failure}")
+                FAILURES.append(failure)
 
     print(f"\n  Total geographic subject charts: {charts_generated}")
     return charts_generated
@@ -458,28 +300,21 @@ def generate_cross_combination_charts():
 
     # Create base subjects
     second = AstrologicalSubjectFactory.from_birth_data(
-        "Paul McCartney", *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True
+        "Paul McCartney", *PAUL_MCCARTNEY_BIRTH_DATA, suppress_geonames_warning=True, **LIVERPOOL
     )
 
     # Sidereal × Themes combinations
-    sidereal_theme_combos = [
-        ("LAHIRI", "strawberry"),
-        ("LAHIRI", "black-and-white"),
-        ("FAGAN_BRADLEY", "dark"),
-        ("FAGAN_BRADLEY", "strawberry"),
-        ("KRISHNAMURTI", "light"),
-        ("KRISHNAMURTI", "strawberry"),
-        ("RAMAN", "dark"),
-        ("RAMAN", "strawberry"),
-        ("J2000", "light"),
-        ("J2000", "strawberry"),
-    ]
+    # From the same list the test reads, so the two cannot drift again: three
+    # pairs were produced here against ten asked for there, and the seven without
+    # a file skipped in silence.
+    sidereal_theme_combos = SIDEREAL_THEME_COMBOS
 
     for sidereal_mode, theme in sidereal_theme_combos:
         try:
             subject = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon {sidereal_mode} - {theme.title()} Theme",
                 *JOHN_LENNON_BIRTH_DATA,
+                **LIVERPOOL,
                 zodiac_type="Sidereal",
                 sidereal_mode=sidereal_mode,
                 suppress_geonames_warning=True,
@@ -490,28 +325,26 @@ def generate_cross_combination_charts():
             print(f"  Generated: {subject.name} - Natal Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {sidereal_mode} {theme}: {e}")
+            failure = f"generating {sidereal_mode} {theme}: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
-    # House Systems × Synastry combinations
-    house_system_names = {
-        "K": "Koch",
-        "W": "Whole Sign",
-        "R": "Regiomontanus",
-        "C": "Campanus",
-        "O": "Porphyry",
-    }
-
-    for house_id, house_name in house_system_names.items():
+    # House Systems × Synastry combinations, from the shared matrix the test
+    # reads: a second copy here is how the sidereal list came to ask for ten
+    # combinations and generate three.
+    for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
         try:
             first_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon - {house_name} Synastry",
                 *JOHN_LENNON_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
             second_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"Paul McCartney - {house_name}",
                 *PAUL_MCCARTNEY_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
@@ -524,20 +357,24 @@ def generate_cross_combination_charts():
             print(f"  Generated: John Lennon - {house_name} - Synastry Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {house_name} synastry: {e}")
+            failure = f"generating {house_name} synastry: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # House Systems × Transit combinations
-    for house_id, house_name in house_system_names.items():
+    for house_id, house_name in HOUSE_SYSTEM_NAMES.items():
         try:
             first_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"John Lennon - {house_name} Transit",
                 *JOHN_LENNON_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
             second_hs = AstrologicalSubjectFactory.from_birth_data(
                 f"Paul McCartney - {house_name} Transit",
                 *PAUL_MCCARTNEY_BIRTH_DATA,
+                **LIVERPOOL,
                 houses_system_identifier=house_id,
                 suppress_geonames_warning=True,
             )
@@ -550,7 +387,9 @@ def generate_cross_combination_charts():
             print(f"  Generated: John Lennon - {house_name} - Transit Chart - Classic.svg")
             charts_generated += 1
         except Exception as e:
-            print(f"  ERROR generating {house_name} transit: {e}")
+            failure = f"generating {house_name} transit: {e}"
+            print(f"  ERROR {failure}")
+            FAILURES.append(failure)
 
     # Composite subjects for language tests
     angelina = AstrologicalSubjectFactory.from_birth_data(
@@ -595,12 +434,14 @@ def generate_cross_combination_charts():
         print("  Generated: Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic.svg")
         charts_generated += 1
     except Exception as e:
-        print(f"  ERROR generating French composite: {e}")
+        failure = f"generating French composite: {e}"
+        print(f"  ERROR {failure}")
+        FAILURES.append(failure)
 
     # Hindi Synastry
     try:
         hindi_synastry_subject = AstrologicalSubjectFactory.from_birth_data(
-            "John Lennon - HI", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True
+            "John Lennon - HI", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **LIVERPOOL
         )
         synastry_data = ChartDataFactory.create_synastry_chart_data(hindi_synastry_subject, second)
         chart = ChartDrawer(synastry_data, chart_language="HI")
@@ -608,7 +449,9 @@ def generate_cross_combination_charts():
         print("  Generated: John Lennon - HI - Synastry Chart - Classic.svg")
         charts_generated += 1
     except Exception as e:
-        print(f"  ERROR generating Hindi synastry: {e}")
+        failure = f"generating Hindi synastry: {e}"
+        print(f"  ERROR {failure}")
+        FAILURES.append(failure)
 
     print(f"\n  Total cross-combination charts: {charts_generated}")
     return charts_generated
@@ -617,7 +460,6 @@ def generate_cross_combination_charts():
 def main():
     parser = argparse.ArgumentParser(description="Generate extended SVG charts for comprehensive test coverage")
     parser.add_argument("--all", action="store_true", help="Generate all chart types")
-    parser.add_argument("--strawberry", action="store_true", help="Generate Strawberry theme charts")
     parser.add_argument("--temporal", action="store_true", help="Generate temporal subject charts")
     parser.add_argument("--geographic", action="store_true", help="Generate geographic subject charts")
     parser.add_argument("--combinations", action="store_true", help="Generate cross-combination charts")
@@ -625,7 +467,7 @@ def main():
     args = parser.parse_args()
 
     # If no specific flags, default to --all
-    if not any([args.all, args.strawberry, args.temporal, args.geographic, args.combinations]):
+    if not any([args.all, args.temporal, args.geographic, args.combinations]):
         args.all = True
 
     total_generated = 0
@@ -635,8 +477,6 @@ def main():
     print("=" * 60)
     print(f"Output directory: {OUTPUT_DIR}")
 
-    if args.all or args.strawberry:
-        total_generated += generate_strawberry_theme_charts()
 
     if args.all or args.temporal:
         total_generated += generate_temporal_subject_charts()
@@ -652,6 +492,19 @@ def main():
     print("=" * 60)
     print("\nTo run the corresponding tests:")
     print("  pytest tests/core/test_chart_parametrized.py -v")
+
+    if FAILURES:
+        print(f"\n{len(FAILURES)} baseline(s) could not be drawn:")
+        for failure in FAILURES:
+            print(f"  - {failure}")
+        if any("coverage range" in failure for failure in FAILURES):
+            print(
+                "\nSome of these are the loaded ephemeris not reaching the date, not a "
+                "bug in the drawing: the ancient baselines need a tier that covers "
+                "their century. Regenerating without it would leave those files as they "
+                "are while reporting success, which is why this exits non-zero."
+            )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

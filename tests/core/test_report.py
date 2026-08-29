@@ -2688,3 +2688,193 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.CRITICAL)
     pytest.main(["-vv", __file__])
+
+
+# =============================================================================
+# WHICH HOUSE DIVISION THE READER IS LOOKING AT
+# =============================================================================
+
+
+class TestHouseProvenanceInTheReport:
+    """A report that names only the system actually used describes a division the
+    reader may not have asked for, and a composite that does not record its anchor
+    describes a chart that cannot be reproduced."""
+
+    def test_a_substituted_house_system_is_named(self) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="P",
+        )
+        assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
+
+        row = [
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        ]
+        assert row, "no Houses System row at all"
+        assert "Porphyry" in row[0] and "Placidus" in row[0], row[0]
+
+    def test_an_ordinary_chart_names_one_system(self) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+        )
+        row = [
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        ]
+        assert "substituted" not in row[0], row[0]
+
+    @pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
+    def test_the_composite_names_its_anchor(self, anchor: str) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
+                      online=False, suppress_geonames_warning=True)
+        first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
+        second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
+
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        row = [
+            line for line in ReportGenerator(model).generate_report().splitlines()
+            if "House Anchor" in line
+        ]
+        assert row and anchor in row[0], row
+
+        davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+        assert "House Anchor" not in ReportGenerator(davison).generate_report()
+
+    def test_no_house_degree_is_printed_at_its_own_ceiling(self) -> None:
+        """29.99687 rounds to "30.00°", which is zero degrees of the next sign."""
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20)):
+            subject = AstrologicalSubjectFactory.from_birth_data(
+                "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
+                lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+            )
+            report = ReportGenerator(subject).generate_report()
+            assert "| 30.00°" not in report
+            assert " 30.00° " not in report
+
+
+def test_the_houses_row_reads_this_chart_s_fallback_and_not_the_first_one():
+    """Asking for Gauquelin sectors adds a SECOND fallback record, and it is not
+    about the houses.
+
+    Above the polar circle the 36-sector ring is recomputed at a clamped
+    latitude, which files a record of its own listing "house_cusps" like any
+    other. Taking the first record in the list therefore made a polar whole-sign
+    chart — whose twelve cusps are perfectly well defined and were not touched —
+    report them as "substituted for Gauquelin sectors". The subject has an
+    accessor that matches on the requested identifier; the row uses it.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.report.generator import ReportGenerator
+
+    def houses_row(system):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=system, calculate_gauquelin=True,
+        )
+        assert any(
+            record.requested_house_system_identifier == "G"
+            for record in subject.polar_house_fallbacks
+        ), "the fixture no longer files an ancillary Gauquelin record"
+        return next(
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        )
+
+    # Whole sign is defined at every latitude: nothing was substituted.
+    assert "substituted" not in houses_row("W")
+    # Placidus is not, and that substitution is the one the row exists to report.
+    assert "substituted for Placidus" in houses_row("P")
+
+
+def test_a_star_name_with_padding_reaches_the_ephemeris_stripped():
+    """The slug was stripped and the ephemeris name was not.
+
+    A padded request deduped as the same star — so a caller could not even ask
+    twice to work around it — and then failed to resolve, counting against the
+    unresolved share that decides whether the catalog warning fires.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+
+    def sun_star_names(requested):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            active_fixed_stars=requested,
+        )
+        return sorted(star.name for star in (subject.fixed_stars or []))
+
+    assert sun_star_names([" Regulus"]) == sun_star_names(["Regulus"])
+    assert sun_star_names(["Regulus"]), "the fixture resolves no star at all"
+
+
+def test_the_gauquelin_section_says_which_latitude_it_was_computed_at():
+    """The 36-sector ring is undefined inside the polar circle and is recomputed
+    at a clamped latitude.
+
+    That files a fallback record of its own, separate from any substitution of
+    the houses — and the houses row deliberately ignores it, because it is not
+    about the houses. Nothing else in the report mentioned it either, so the
+    sector values read as if cast where the subject was born. On the chart below
+    they are computed at 66 degrees, not 78.2232.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.report.generator import ReportGenerator
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=78.2232, lng=15.6467,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="P", calculate_gauquelin=True,
+    )
+    clamp = next(
+        record for record in subject.polar_house_fallbacks
+        if record.requested_house_system_identifier == "G"
+    )
+    assert clamp.used_latitude != clamp.latitude, "the fixture no longer clamps"
+
+    report = ReportGenerator(subject).generate_report()
+    assert f"{clamp.used_latitude:.4f}" in report
+    assert "computed at" in report
+
+    # A chart whose Gauquelin ring needed no clamp says nothing extra.
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        calculate_gauquelin=True,
+    )
+    assert "computed at" not in ReportGenerator(ordinary).generate_report()
+
+
+def test_a_southern_clamp_keeps_its_hemisphere():
+    """Both latitudes went through `abs()`, so a chart at 78S was told its ring
+    had been computed at 66 degrees NORTH — and that the real latitude was 78
+    north too. The fields were right; only the sentence lied."""
+    from kerykeion import AstrologicalSubjectFactory
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=-78.0, lng=15.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="W", calculate_gauquelin=True,
+    )
+    record = subject.polar_house_fallbacks[0]
+    assert record.latitude < 0 and record.used_latitude < 0
+    assert f"{record.used_latitude:.4f}" in record.message
+    assert f"{record.latitude:.4f}" in record.message

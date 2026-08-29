@@ -20,9 +20,22 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import math
-from typing import Optional
+from dataclasses import dataclass
+from typing import Optional, Sequence
 
-from kerykeion.charts.utils import escape_svg_text, normalize_degree
+from kerykeion.charts.glyph_metrics import estimate_text_width
+from kerykeion.charts.spreading import spread_around_wheel
+from kerykeion.charts.utils import (
+    CHART_TEXT_FONT_FAMILY,
+    MINIMUM_WEDGE_SPAN_DEGREES,
+    house_spans,
+    label_separation_degrees,
+    separate_collapsed_wedges,
+    _wedges_overlap,
+    STATION_LABELS,
+    escape_svg_text,
+    normalize_degree,
+)
 from kerykeion.charts.glyph_ink_metrics import (
     GLYPH_INK_HALF_HEIGHT,
     GLYPH_INK_HALF_WIDTH,
@@ -31,7 +44,9 @@ from kerykeion.charts.glyph_ink_metrics import (
     TEXT_INK_HALF_HEIGHT,
     TEXT_INK_HALF_WIDTH,
     TEXT_INK_REFERENCE_FONT_SIZE,
+    TEXT_INK_CENTRE_Y,
 )
+from kerykeion.charts.svg_metadata import point_state_attributes
 from kerykeion.utilities.core import wrap_180
 from kerykeion.schemas.models import KerykeionPointModel
 from kerykeion.settings.chart_defaults import resolve_glyph_id
@@ -54,14 +69,17 @@ R_HOUSE_OUTER = 22.0
 
 # Ring 3: Planet band
 R_PLANET_INNER = 22.0
-R_PLANET_OUTER = 43.5
+R_PLANET_OUTER = 44.652
 
 # Ring 2: Graduated ruler
-R_RULER_INNER = 43.5
-R_RULER_OUTER = 44.5
+R_RULER_INNER = 44.652
+R_RULER_OUTER = 45.652
 
 # Ring 1: Cusp/zodiac ring
-R_CUSP_INNER = 44.5
+# Same visual thickness as the zodiac band: that band is 4.0 units deep in the
+# outer frame, and this one lives inside the 0.92 wrapper, so it needs
+# 4.0 / 0.92 = 4.348 of its own to look the same weight.
+R_CUSP_INNER = 45.652
 R_CUSP_OUTER = 50.0
 
 # Ring 0 (optional): Zodiac background ring (outermost, outside cusp ring)
@@ -71,14 +89,47 @@ R_ZODIAC_BG_INNER = 46.0
 R_ZODIAC_BG_OUTER = 50.0
 ZODIAC_BG_SCALE = R_ZODIAC_BG_INNER / R_CUSP_OUTER  # 0.92
 
+# The aspect core is drawn in its own frame: the group is scaled by
+# ASPECT_CORE_SCALE, so a length written inside it lands on the wheel that much
+# smaller — which is why both numbers below read thinner and smaller than they
+# look. A line at 0.32 inks 0.118 wheel units and a glyph at 0.58 spans 2.15.
+#
+# Both went up together, on the drawing: the web is the one part of the wheel
+# read at a glance rather than point by point, and at 0.25 / 0.45 the lines
+# thinned out against the ring around them while the marks that name each aspect
+# were too small to tell a square from a trine without looking twice. Raising
+# only the glyph would have left it sitting on a thread; raising only the line
+# would have made a denser chart look like a scribble.
+ASPECT_CORE_SCALE = 0.37
+ASPECT_LINE_WIDTH = 0.32
+ASPECT_GLYPH_SCALE = 0.58
+
 # House line endpoints
-HOUSE_LINE_OUTER_Y = 6.5  # Just inside the ruler ring outer edge
+HOUSE_LINE_OUTER_Y = 5.348  # Just inside the ruler ring outer edge
 HOUSE_LINE_INNER_Y = 28.0  # At the house ring boundary
 
 # Angular houses (1, 4, 7, 10) use thicker lines
 ANGULAR_HOUSES = {1, 4, 7, 10}
 ANGULAR_STROKE_WIDTH = 0.6
 NORMAL_STROKE_WIDTH = 0.07
+
+# A cusp and a reading can occupy the same place: an angle's cluster sits on its
+# own cusp by construction, and any point within a couple of degrees of one
+# lands there too. Where that happens the line turns to a SOLID dimmed tone for
+# the length of the reading — it passes behind the words rather than through
+# them, so the axis stays whole and the text keeps the contrast of the ring
+# under it. Solid, not translucent: the tone IS the old 0.35-opacity composite
+# of the cusp colour over the ring it crosses, baked per ring and per theme —
+# a stroke-opacity dim vanished on hosts that show through the chart (Studio's
+# glass), because what it composited with was no longer the ring.
+COLOR_CUSP_DIM = "var(--kerykeion-modern-cusp-dim, #c4c4cb)"
+COLOR_CUSP_DIM_OUTER = "var(--kerykeion-modern-cusp-dim-outer, #babac6)"
+# How close a mark must come before the line makes room: a hair past touching,
+# not a clearance. Measured ink, so a wider tolerance dims lines that are still
+# visibly clear of the text.
+CUSP_DIM_TOLERANCE = 0.10
+# Air left at each end of the dimmed stretch.
+CUSP_DIM_MARGIN = 0.45
 
 # Minimum degrees between planet clusters in the natal ring — with
 # content-aware separations, the per-pair ceiling.
@@ -96,20 +147,161 @@ NORMAL_STROKE_WIDTH = 0.07
 # The binding row is the minutes text at y=22.0 — the smallest radius carrying
 # a two-character string, so the least arc per degree. The glyphs, out at
 # y=11.0, clear each other well before it does.
-PLANET_MIN_SEPARATION = 7.25
+PLANET_MIN_SEPARATION = 7.75
 
 # Cusp ring text size (degrees and minutes shown at each house cusp)
-CUSP_FONT_SIZE = 2.0
+CUSP_FONT_SIZE = 1.9
+
+#: How far the degree and minute texts sit either side of the cusp line, which
+#: is what makes a cusp reading a band of ring rather than a point — and
+#: therefore what two neighbouring cusps have to clear. At 4.0° the three parts
+#: read as one reading, with about half a character of air between the glyph and
+#: the digits either side; below 3.5° they start to touch.
+CUSP_TEXT_OFFSET_DEGREES = 4.0
+
+#: Scale of the sign glyph on the cusp line. Sized against the text beside it
+#: rather than by eye: a sign glyph inks 13.45 units of half-height in its native
+#: box against the 5.0-per-10-of-font a line of digits inks, so at 0.12 it stood
+#: 1.61 times taller than the numbers it sits between — and that is the ordinary
+#: case, not the worst, since seven of the twelve signs share that height. This
+#: leaves it a little taller than the digits on purpose: matching the inked
+#: extents exactly makes the glyph look smaller than them, because part of its
+#: ink is a descender the numbers do not have.
+CUSP_GLYPH_SCALE = 0.085
+
+#: How far the ring will shrink once even the staggered lanes have run out.
+#: Below this the text stops being worth reading, so the ring keeps the size
+#: and takes the overlap.
+CUSP_MIN_SCALE = 0.62
+
+#: Distance of a cusp reading from the wheel's rim, in the 100-unit frame:
+#: the middle of the band, so the reading has the same air above and below.
+CUSP_LABEL_Y = (R_CUSP_OUTER - R_CUSP_INNER) / 2
+
+#: Ink the ring has to hold, in wheel units at full scale. Measured extents,
+#: not em boxes: a sign glyph inks about two thirds of its 32-unit box, and
+#: sizing the lanes off the box would cost a third of the ring for nothing.
+_CUSP_SIGN_HALF_HEIGHT = max(SIGN_INK_HALF_HEIGHT.values()) * CUSP_GLYPH_SCALE
+_CUSP_TEXT_HALF_HEIGHT = (
+    max(TEXT_INK_HALF_HEIGHT.values()) / TEXT_INK_REFERENCE_FONT_SIZE * CUSP_FONT_SIZE
+)
+
+#: Clear air between the ring's edge and a reading, and between the two lanes.
+CUSP_RING_MARGIN = 0.15
+CUSP_LANE_GUTTER = 0.3
+
+#: The largest scale at which two lanes are actually two lanes.
+#:
+#: Staggering buys vertical room the ring does not have in unlimited supply:
+#: it is 5.5 units deep, so a reading pushed outward must still stay inside the
+#: rim, and one pushed inward must clear the ink its neighbour left on the
+#: other lane. Both bounds move with the text size — larger text needs a bigger
+#: offset and leaves less room for it — and they meet at exactly one scale.
+#: Above it, staggering either pushes a glyph out of the ring or drops a
+#: reading onto the neighbouring sign, so shrinking to here is the price of
+#: using the lanes at all; below it there is slack, and the offset can stay put.
+#:
+#: The binding pair is a reading's text against the *next* cusp's sign glyph —
+#: taller than a text and only a fraction of the offset away, so it needs more
+#: separation than two texts do.
+CUSP_STAGGER_SCALE = (CUSP_LABEL_Y - CUSP_RING_MARGIN - CUSP_LANE_GUTTER / 2) / (
+    _CUSP_SIGN_HALF_HEIGHT + (_CUSP_SIGN_HALF_HEIGHT + _CUSP_TEXT_HALF_HEIGHT) / 2
+)
+
+#: How far a staggered reading moves off the centre line, either way: as far
+#: as the rim allows at the scale above, which is also exactly as far as the
+#: other lane needs. One value for every scale — a ring whose stagger depth
+#: changed with the crowding would read as two different devices.
+CUSP_LANE_OFFSET = CUSP_LABEL_Y - CUSP_RING_MARGIN - _CUSP_SIGN_HALF_HEIGHT * CUSP_STAGGER_SCALE
+
+
+def _cusp_lanes(angles: Sequence[float], band: float) -> list[Optional[int]]:
+    """Which radial lane each reading takes, or ``None`` to stay on the centre line.
+
+    Only the readings that would actually print through a neighbour move.
+    Staggering a cusp with clear air either side would push it off the line it
+    describes to solve a problem it does not have, and a ring where every
+    reading sits high or low reads as a wobble rather than as a device.
+
+    Two lanes are enough for the ones that do move: a reading only has to clear
+    the one before and the one after it. Crowded runs alternate, and a run ends
+    wherever a gap is wide enough that the two readings clear anyway — which
+    resets the alternation, so one tight pair does not stagger the whole ring.
+    """
+    count = len(angles)
+    if count < 2:
+        return [None] * count
+
+    #: ``tight[i]``: readings *i* and *i+1* are closer than the band they occupy.
+    # How far apart two readings are, not how far one is from the other going
+    # forwards: above the polar circle several systems return their cusps in
+    # decreasing order, and the one-way gap then reads a seven-degree crowd as
+    # three hundred and fifty-two degrees of room. Nothing was ever staggered on
+    # such a chart, and the readings sat on top of each other.
+    tight = [
+        abs(((angles[(index + 1) % count] - angles[index] + 180.0) % 360.0) - 180.0) < band
+        for index in range(count)
+    ]
+    if not any(tight):
+        return [None] * count
+
+    # Walk from where a run starts, so the alternation never has to reconcile
+    # two halves meeting at an arbitrary seam.
+    start = next((index for index in range(count) if not tight[index - 1]), None)
+    if start is None:
+        # Every gap is tight, so there is no such place, and if the readings
+        # are odd in number no walk can alternate all the way round anyway.
+        # Begin just after the widest gap: whatever the seam costs, it costs
+        # least there.
+        start = max(range(count), key=lambda index: (angles[index] - angles[index - 1]) % 360.0)
+
+    lanes: list[Optional[int]] = [None] * count
+    for step in range(count):
+        index = (start + step) % count
+        previous = (index - 1) % count
+        preceding = lanes[previous]
+        if tight[previous] and preceding is not None:
+            lanes[index] = 1 - preceding
+        elif tight[index] or tight[previous]:
+            lanes[index] = 0
+    return lanes
+
+
+def _cusp_cluster_span(scale: float) -> float:
+    """Degrees of ring one cusp reading occupies at *scale*.
+
+    The two texts sit a fixed angular distance either side of the line, so the
+    band is that distance doubled plus the arc the outermost string itself
+    covers — and all three shrink together.
+    """
+    return 2.0 * CUSP_TEXT_OFFSET_DEGREES * scale + label_separation_degrees(
+        estimate_text_width("59'", CUSP_FONT_SIZE * scale), R_CUSP_OUTER - 2.75, gutter_px=0.4
+    )
+
+# Native drawing box of a planet-family symbol, from ``scripts.glyph_catalog``.
+# The glyph is centred on it at the use site; anchoring it on the 28-unit box
+# the set used before the symbols were redrawn left every mark riding two units
+# high and left of its own row, which the eye reads as uneven cluster spacing.
+PLANET_GLYPH_BOX = 24
 
 # Planet cluster element sizes — descending visual hierarchy:
 #   planet glyph (largest) > degrees text > zodiac sign > minutes text > RX text
-# Note: planet glyphs are ~28px native, zodiac signs are ~32px native,
+# Note: planet glyphs are 24 units native, zodiac signs 32,
 # so zodiac sign scale must be proportionally smaller to appear smaller.
-PLANET_SCALE_BASE = 0.135  # Planet glyph: 28 * 0.135 ≈ 3.78 visual units
-DEGREES_FONT_SIZE = 2  # Degrees text font size
-SIGN_SCALE_BASE = 0.078  # Zodiac sign: 32 * 0.078 ≈ 2.50 visual units
-MINUTES_FONT_SIZE = 1.85  # Minutes text font size
-RX_FONT_SIZE = 1.6  # Retrograde indicator font size
+PLANET_SCALE_BASE = 0.18144  # Planet glyph: 24 * 0.18144 ≈ 4.35 visual units
+DEGREES_FONT_SIZE = 2.24  # Degrees text font size
+# The sign glyph carries its size differently from everything around it: a thin
+# outline beside solid figures reads smaller than it measures — at 0.08736 it
+# looked undersized and went up 18%, then at 0.10309 it crowded the numerals
+# either side and the cluster lost its step-down. Giacomo, on the rendered
+# wheel: «non c'è progressività quasi, il glifo del segno è troppo grande —
+# solo un po' di più, che sia visibile». So: down 8%, half the earlier raise —
+# a visible step in the hierarchy without swinging back to undersized. It sits
+# in the middle of the block, so the change spends and returns only the air
+# between the rows, never the tether's room.
+SIGN_SCALE_BASE = 0.09484  # Zodiac sign: 32 * 0.09484 ≈ 3.03 visual units
+MINUTES_FONT_SIZE = 2.072  # Minutes text font size
+RX_FONT_SIZE = 1.792  # Retrograde indicator font size
 
 # =============================================================================
 # SYNASTRY MODE — Flat dual-ring layout constants
@@ -130,34 +322,92 @@ SYN_R_INNER_PLANET_OUTER = 29.5
 
 # Outer planet ring — Subject 2 (synastry partner)
 SYN_R_OUTER_PLANET_INNER = 29.5
-SYN_R_OUTER_PLANET_OUTER = 43.5
+# Flush against the ruler, as the natal planet ring is. It used to be 43.5,
+# which was the ruler's inner edge the day it was written; when the ruler moved
+# out to 44.652 this stayed behind, and a band of bare background 1.152 wide
+# opened between the outer ring and the ticks. Nothing was drawn in it and
+# nothing meant anything by it.
+SYN_R_OUTER_PLANET_OUTER = R_RULER_INNER
 
 # House division line endpoints (Subject 1's cusps drawn in both rings)
-SYN_HOUSE_LINE_OUTER_Y1 = 6.5  # Outer ring: top (near ruler)
+# Outer ring: top AT the ruler's inner edge, the same anchor the natal lines
+# and every tether hang from. It sat at 6.5 — 1.15 units short of the ruler —
+# and the axes of a dual wheel visibly stopped mid-air (Giacomo, on the
+# rendered chart: «assi e cuspidi non arrivano in fondo, solo nelle doppie»).
+SYN_HOUSE_LINE_OUTER_Y1 = HOUSE_LINE_OUTER_Y
 SYN_HOUSE_LINE_OUTER_Y2 = 20.5  # Outer ring: bottom (at boundary)
 SYN_HOUSE_LINE_INNER_Y1 = 20.5  # Inner ring: top (at boundary)
 SYN_HOUSE_LINE_INNER_Y2 = 34.5  # Inner ring: bottom (near house numbers)
 
-# Indicator line geometry (all start at boundary y = 20.5)
-SYN_INDICATOR_START_Y = 20.5
-SYN_INDICATOR_TICK = 0.7
-SYN_INDICATOR_ARC_R_OUTWARD = 30.2  # Arc for outer-ring ticks (just outside boundary, r > 29.5)
-SYN_INDICATOR_ARC_R_INWARD = 28.8  # Arc for inner-ring ticks (just inside boundary, r < 29.5)
+# Indicator line geometry, per ring.
+#
+# An indicator is a tether: it starts at the ruler-side edge of its own ring and
+# runs inward to the cluster, so a reader can see which reading belongs to which
+# degree. The natal wheel states that as start_y = HOUSE_LINE_OUTER_Y, the inner
+# edge of the graduated ruler.
+#
+# Both dual rings used to start at y = 20.5. For the inner ring (r 15.5-29.5)
+# that is its outer edge and correct. For the outer ring (r 29.5-43.5) it is the
+# INNER edge — the far end from its glyph at r 41.62 — so its tether was drawn
+# twelve units away from the planet it belongs to, on the boundary between the
+# rings, pointing outward at nothing. Two symptoms, one cause: the outer ring
+# looked as though it had no indicators at all, and the boundary carried two
+# families of identical brackets back to back, so the inner ring's own tether
+# looked as if it pointed the wrong way.
+#
+# The cluster rows were translated between the rings; these constants had been
+# mirrored instead. A mirror is not a translation.
+#
+# The outer ring is anchored to the ruler rather than to its own edge, which is
+# what the natal ring means by "start_y" anyway. It also spends the 1.152 units
+# of background that opened up between SYN_R_OUTER_PLANET_OUTER and the ruler
+# when the ruler moved, and that is what buys the tether the same clearance the
+# natal one has: it stops 0.30 short of the glyph, against the natal 0.31.
+SYN_INDICATOR_OUTER_START_Y = HOUSE_LINE_OUTER_Y  # inner edge of the ruler
+SYN_INDICATOR_OUTER_TICK = 0.7
+SYN_INDICATOR_OUTER_ARC_R = 43.952  # = r(start) - tick
+
+# The inner ring cannot be re-anchored — it has no ruler beside it, and y = 20.5
+# is already its outer edge — so the only lever is length, and length is bought
+# from the cluster: see SYN_INNER_PLANET_GLYPH_Y, which steps 0.30 further in to
+# pay for this. At 0.7 the tether finished 0.85 INSIDE the glyph; at 0.30 it
+# stops 0.25 short of it, the same clearance the last row has at the other end.
+SYN_INDICATOR_INNER_START_Y = 20.5  # outer edge of the inner ring
+SYN_INDICATOR_INNER_TICK = 0.3
+SYN_INDICATOR_INNER_ARC_R = 29.2  # = r(start) - tick
 
 # Planet cluster Y-positioning within each 14-unit ring
 # Outer ring (Subject 2) - glyphs near outer edge, all elements within 6.5-20.5
-SYN_OUTER_PLANET_GLYPH_Y = 9.0
-SYN_OUTER_DEGREES_Y = 12.0
-SYN_OUTER_SIGN_Y = 14.5
-SYN_OUTER_MINUTES_Y = 16.5
-SYN_OUTER_RX_Y = 18.5
+# Placed from the ink, not spaced by hand: each row's half-height at the size it
+# is drawn, laid out so the air between every pair comes out the same 1.27 and
+# the block sits centred in its ring with 0.55 to spare at either end. Spacing
+# the anchors evenly instead — which is what the round numbers here used to be —
+# left 1.09 between the glyph and the degrees and 0.60 between the sign and the
+# minutes, because a sign glyph inks a thin band in a tall box while a line of
+# digits fills its own.
+SYN_OUTER_PLANET_GLYPH_Y = 8.38
+SYN_OUTER_DEGREES_Y = 11.82
+SYN_OUTER_SIGN_Y = 14.76
+SYN_OUTER_MINUTES_Y = 17.37
+SYN_OUTER_RX_Y = 19.54
 
 # Inner ring (Subject 1) - glyphs near outer edge, all elements within 20.5-34.5
-SYN_INNER_PLANET_GLYPH_Y = 22.5
-SYN_INNER_DEGREES_Y = 25.0
-SYN_INNER_SIGN_Y = 27.5
-SYN_INNER_MINUTES_Y = 29.5
-SYN_INNER_RX_Y = 31.5
+# The same block as the outer ring, moved inward by the 14 units between the two
+# — same sizes mean the same spacing, and a reader comparing the two wheels
+# compares like with like — and then 0.30 further in.
+#
+# That last nudge is for the tether. The inner ring has no ruler beside it, so
+# its indicator has only the ring's own edge to hang from and only the air
+# between that edge and the glyph to live in: 0.547, against the 2.12 the natal
+# wheel has. A tether spends twice its tick, so at any length worth seeing it
+# was landing on the glyph. Moving the block in splits the difference — 0.25
+# clear above the glyph, 0.25 below the last row — and lets the tick go to 0.30,
+# which is a mark a reader can find rather than a dash on the boundary.
+SYN_INNER_PLANET_GLYPH_Y = 22.68
+SYN_INNER_DEGREES_Y = 26.12
+SYN_INNER_SIGN_Y = 29.06
+SYN_INNER_MINUTES_Y = 31.67
+SYN_INNER_RX_Y = 33.84
 
 # Ink-to-ink air left between neighbouring clusters when the separation is
 # derived from their actual content, in wheel units. 0.45 units is ~2.2px in a
@@ -173,37 +423,92 @@ DEFAULT_CLUSTER_CLEARANCE = 0.45
 # separation model so the reserved width can never diverge from the drawn text.
 RETROGRADE_LABEL = "RX"
 
-# The one font stack every modern-chart text renders in — declared on the
-# wheel root here, and on the full-chart Main_Chart group by chart_drawer, so
-# no text node can miss it. Without it the SVG inherits whatever the embedding
-# page uses — the same chart came out serif standalone, sans in one host page,
-# monospace in another — and no spacing model can reserve room for an unknown
-# font. Arial, Helvetica and Liberation Sans are metric-compatible, and
-# Liberation is named explicitly so Linux systems that have it never fall
-# through to generic sans-serif (usually DejaVu Sans, whose digits run
-# ~10-14% wider than the measured ink tables). A system with none of the
-# three still resolves to its own sans and can render wider than reserved —
-# that residual risk is the price of not padding every chart for the rarest
-# platform.
-#
-# Liberation Sans is deliberately unquoted: CSS allows multi-word family
-# names as bare identifiers, and the SVG post-processing rewrites double
-# quotes to single quotes, which nested quotes would corrupt.
-MODERN_TEXT_FONT_FAMILY = "Arial, Helvetica, Liberation Sans, sans-serif"
+# The two stations reuse that same marker row. They can: a body at a station
+# is turning, and the classification treats "about to turn" and "moving
+# backwards" as one question with one answer, so the two markers are mutually
+# exclusive and the row's reserved ink is unchanged. Both labels are two
+# characters wide, like RX, so the measured separation model still holds.
+# Dash pattern for a separating aspect line, in the aspect group's own units
+# (that group carries a 0.37 scale, so these are not wheel units). Sized
+# against the 0.25 stroke so the gaps read as deliberate rather than as a
+# rendering artefact.
+#: Size the house numbers are drawn at, in the wheel's 100-unit frame.
+HOUSE_NUMBER_FONT_SIZE = 1.5
+
+SEPARATING_DASH_ARRAY_SCALED = "1.5 1"
+
+def motion_marker(point: KerykeionPointModel, show_motion_state: bool = False) -> Optional[str]:
+    """Label for *point*'s marker row, or ``None`` when the row stays empty.
+
+    A named station wins over plain retrograde: it is the rarer and more
+    specific event, and the reader who turned the option on turned it on to
+    see exactly this. Both the renderer and the separation model call it, so
+    the reserved width can never disagree with the drawn text.
+    """
+    if show_motion_state:
+        station = STATION_LABELS.get(getattr(point, "motion_state", None) or "")
+        if station is not None:
+            return station
+    return RETROGRADE_LABEL if point.retrograde is True else None
+
+# Kept as the name the modern renderer and its measurement harness use; the
+# stack itself is chart-wide and lives with the other shared chart constants.
+MODERN_TEXT_FONT_FAMILY = CHART_TEXT_FONT_FAMILY
 
 # Below this display offset from the true position, the indicator is drawn as
 # a straight tick instead of a tether arc. Shared with the displacement report
 # so its "straight" column counts the same population the renderer draws.
 STRAIGHT_TETHER_THRESHOLD = 0.5
 
+# The natal tether at medium: the defaults _draw_indicator_line falls back to
+# when a ring passes no indicator_config — which is what the natal medium
+# profile does (indicator=None). Named constants rather than signature
+# literals so the profile derivation reads the SAME numbers the renderer
+# draws with, and _MEASURED_GEOMETRY can pin them: change either and the
+# small/large natal profiles must be re-derived, not just the medium render.
+NATAL_INDICATOR_TICK = 1.075
+NATAL_INDICATOR_ARC_DROP = 1.0  # r(ruler edge) - arc_radius
+
 # Natal cluster row positions (Y in the wheel-local frame; radius = CENTER - y).
 # The single source for the renderer, the content-aware profiles, and the row
 # radii — the dual rings have their own SYN_* equivalents below.
-NATAL_PLANET_GLYPH_Y = 11.0
-NATAL_DEGREES_Y = 14.5
-NATAL_SIGN_Y = 18.0
-NATAL_MINUTES_Y = 22.0
-NATAL_RX_Y = 25.0
+# The glyph row sits nearest the graduated ruler, and two things share that
+# margin with it: the reading below and the indicator's tab, the little tick the
+# displaced-planet tether drops inward from the ruler. At the +20% glyph size
+# it left 0.41 to the tab — under a quarter of any other gap in the cluster, so
+# the two touched on screen — while opening 2.43 down to the degrees, the widest
+# gap of the four when the rows below run 2.03 and 1.99. Moving the row 0.90
+# inward spends the wrong margin on the right one: 1.31 to the tab, 1.53 to the
+# degrees. That leaves the glyph the tightest row of the cluster, which is
+# deliberate and Giacomo's call — it is also the largest mark, and a big shape
+# carries a closer neighbour than a line of digits does.
+#
+# Radius falls with the move, so the glyph covers slightly more degrees of arc
+# than it did further out. It does not bind: at the shipped separations the
+# tight pair is always text against text, and the glyph row still has room.
+# Then 0.65 further in again, and the degrees 0.40 with it. A glyph is drawn
+# upright inside an axis-aligned box while the tether that points at it runs
+# along the cluster's own radius, and a radius that meets that box on the
+# diagonal reaches the corner — 2.66 units out for the widest symbol against the
+# 2.15 the row was placed for. The tether was ending inside the glyph on any
+# cluster sitting near 45 degrees, which is most of them on a crowded wheel.
+#
+# Only these two rows move. The sign, the minutes and the retrograde mark stay:
+# they are nowhere near the ruler, and moving them would spend the balance
+# between the rows for a clearance problem that only exists at the top.
+NATAL_PLANET_GLYPH_Y = 10.22
+# Degrees and sign are nudged off their round numbers to even out the air the
+# reader actually sees. Measured on the rendered ink of nine clusters (the
+# rasterised difference between the wheel and the same wheel without that
+# cluster), the three gaps ran 1.86 / 1.35 / 1.95: the sign sat almost against
+# the degrees while the rows either side had half a unit more. The row centres
+# are evenly spaced, but the ink inside them is not — a sign glyph inks a thin
+# band high in its 32-unit box, a line of digits fills most of its own. Moving
+# the degrees 0.14 out and the sign 0.23 in brings all three to 1.72.
+NATAL_DEGREES_Y = 14.21
+NATAL_SIGN_Y = 17.89
+NATAL_MINUTES_Y = 21.89
+NATAL_RX_Y = 25.25
 
 # Minimum degrees between planet clusters in each dual ring, measured the same
 # way as PLANET_MIN_SEPARATION (and, like it, the per-pair ceiling once
@@ -216,17 +521,34 @@ NATAL_RX_Y = 25.0
 #
 # The binding row is the degrees text in both rings — unlike the natal ring,
 # whose minutes row sits at a tighter radius than its degrees row.
+#
+# Re-measured after the dual rings took the natal treatment: bigger glyph,
+# bigger degrees, one size for both wheels. Ink now touches at 5.25° outside and
+# 8.25° inside, against 5.00° and 6.25° before, so the inner ceiling had to rise
+# from 7.5 — which the enlargement had left below the point where its own
+# degrees text overlaps. The outer one already stood where it needed to.
 SYN_OUTER_MIN_SEPARATION = 5.75
-SYN_INNER_MIN_SEPARATION = 7.5
+SYN_INNER_MIN_SEPARATION = 9.0
 
-# Dual chart element sizes — slightly smaller than natal to fit in narrower rings
-SYN_PLANET_SCALE = 0.115  # Planet glyph (outer ring)
-SYN_PLANET_SCALE_INNER = 0.095  # Planet glyph (inner ring — slightly smaller)
-SYN_DEGREES_FONT_SIZE_INNER = 1.6  # Degrees text (inner ring — slightly smaller)
-SYN_DEGREES_FONT_SIZE = 1.9  # Degrees text
-SYN_SIGN_SCALE = 0.062  # Zodiac sign
-SYN_MINUTES_FONT_SIZE = 1.4  # Minutes text
-SYN_RX_FONT_SIZE = 1.2  # Retrograde indicator
+# Dual chart element sizes — smaller than natal to fit in narrower rings, but
+# not by as much as they used to be. The glyph and the degrees are what a reader
+# goes to first, and at 0.115 / 1.9 they were the two hardest things on the
+# drawing to make out; the minutes and the retrograde mark are what a reader
+# consults after, so they give the room back.
+#
+# One size for both rings. The inner ring used to draw everything smaller again
+# — 0.095 and 1.6 — on the reasoning that its radius is shorter, and the effect
+# was that the same planet looked like two different weights of information
+# depending on whose wheel it was in. Room was never the constraint: with the
+# rows placed by their ink both rings clear 1.27 units between every pair, and
+# the inner ring has the deeper margin of the two.
+SYN_PLANET_SCALE = 0.132  # Planet glyph, both rings
+SYN_PLANET_SCALE_INNER = SYN_PLANET_SCALE
+SYN_DEGREES_FONT_SIZE = 2.12  # Degrees text, both rings
+SYN_DEGREES_FONT_SIZE_INNER = SYN_DEGREES_FONT_SIZE
+SYN_SIGN_SCALE = 0.05704  # Zodiac sign — down 8% with the natal one, same call
+SYN_MINUTES_FONT_SIZE = 1.22  # Minutes text
+SYN_RX_FONT_SIZE = 1.02  # Retrograde indicator
 
 # Colors — use CSS custom properties to inherit from the active theme.
 # Each theme CSS file can define --kerykeion-modern-* overrides.
@@ -236,8 +558,27 @@ COLOR_PLANET_RING = "var(--kerykeion-modern-planet-ring, #e8e8ed)"
 COLOR_OUTER_PLANET_RING = "var(--kerykeion-modern-planet-ring-outer, #d8d9e4)"
 COLOR_HOUSE_RING = "var(--kerykeion-modern-house-ring, #d5d5dd)"
 COLOR_STROKE = "var(--kerykeion-modern-stroke, #b0b0bf)"
+# A house or sector boundary is read, not merely seen: it says where one house
+# ends and the next begins, so WCAG 1.4.11 asks 3:1 of it. The ring outlines
+# that share COLOR_STROKE are decoration and stay as pale as the palette likes.
+# The fallback chain keeps a hand-written theme that only knows the old variable
+# working exactly as before.
+#
+# One known exception, taken deliberately. An angle's cluster sits on its own
+# cusp by construction, so the reading "As 19º ♈ 45'" is always laid across the
+# angular line — and a line at 3:1 from the ring is a mid tone, which caps any
+# ink resting on it at 5.5:1 in the light theme and 4.2:1 in the dark one. No
+# colour clears the 7:1 the rest of the text carries: the ink that wins on the
+# line loses on the ring, since the two grounds pull opposite ways. Measured
+# alternatives (repainting the angles, haloing the text, breaking the line
+# behind it) were rendered and rejected on Giacomo's reading: the axis is to
+# stay exactly as drawn, whole and plainly visible. So the crossing keeps the
+# contrast it has, and this note is the record of the trade rather than a gap
+# nobody noticed.
+COLOR_CUSP = "var(--kerykeion-modern-cusp, var(--kerykeion-modern-stroke, #81818d))"
 COLOR_TEXT = "var(--kerykeion-chart-color-paper-0, #333333)"
 COLOR_RETROGRADE = "var(--kerykeion-modern-retrograde, #c43a5e)"
+COLOR_STATIONARY = "var(--kerykeion-modern-stationary, #c07c1e)"
 COLOR_INDICATOR = "var(--kerykeion-modern-indicator, #8a8a9e)"
 COLOR_WHITE = "var(--kerykeion-chart-color-paper-1, #ffffff)"
 COLOR_ZODIAC_BG_OPACITY = "var(--kerykeion-modern-zodiac-bg-opacity, 0.5)"
@@ -288,6 +629,324 @@ ZODIAC_OUTER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_I
 
 # Zodiac signs in the inner planet ring (smaller base size)
 ZODIAC_INNER_SCALE_MAP = {sign: _ZODIAC_DEFAULT_SCALE for sign in _ZODIAC_SIGN_IDS}
+
+
+# =============================================================================
+# GLYPH-SIZE PROFILES
+# =============================================================================
+
+#: Page scale the full-chart template applies to the 100-unit modern wheel:
+#: chart.xml draws it at 2 * main_radius = 480px, so one wheel unit is 4.8px
+#: at the default page. Named here because classic parity is stated through it:
+#: the large profiles' planet base is written as classic_scale / (0.92 * 4.8).
+MODERN_PAGE_SCALE = 4.8
+
+#: Shortest tab a tether may draw. The tab scales with the cluster's air, and
+#: below a quarter unit it is under 1.2px at the default page — a stray dot,
+#: not a mark a reader can find. When the floor binds, the profile derivation
+#: pins the tab and pays the difference out of the remaining air instead.
+MIN_INDICATOR_TICK = 0.25
+
+
+@dataclass(frozen=True)
+class ClusterProfile:
+    """One planet ring's cluster — sizes, row anchors, spacing — at one glyph size.
+
+    The five sizes and the five rows are the same ten numbers the renderer has
+    always read; the profile only gathers them so the wheel can be asked for at
+    more than one size. The ``medium`` entries REFERENCE the module constants
+    rather than restating them: the default path reads the very floats it read
+    before profiles existed, which is what keeps every existing baseline
+    byte-identical — and what lets ``test_measured_geometry_is_unchanged`` keep
+    guarding the profiles without knowing they exist.
+
+    ``indicator`` is the tether geometry (``start_y`` / ``tick_length`` /
+    ``arc_radius``), or ``None`` for a ring whose call site passes nothing and
+    leaves ``_draw_indicator_line`` on its own defaults — which is what the
+    natal ring has always done, so its medium entry keeps the
+    ``if indicator_config:`` branch falsy exactly as before.
+    """
+
+    planet_scale_base: float
+    degrees_font_size: float
+    sign_scale_base: float
+    minutes_font_size: float
+    rx_font_size: float
+    glyph_y: float
+    degrees_y: float
+    sign_y: float
+    minutes_y: float
+    rx_y: float
+    min_separation: float
+    indicator: Optional[dict] = None
+
+    def scale_config(self) -> dict:
+        """The five element sizes, keyed as ``_draw_planet_ring`` reads them."""
+        return {
+            "planet_scale_base": self.planet_scale_base,
+            "degrees_font_size": self.degrees_font_size,
+            "sign_scale_base": self.sign_scale_base,
+            "minutes_font_size": self.minutes_font_size,
+            "rx_font_size": self.rx_font_size,
+        }
+
+    def planet_y_config(self) -> dict:
+        """The five row anchors, keyed as ``_draw_planet_ring`` reads them."""
+        return {
+            "glyph_y": self.glyph_y,
+            "degrees_y": self.degrees_y,
+            "sign_y": self.sign_y,
+            "minutes_y": self.minutes_y,
+            "rx_y": self.rx_y,
+        }
+
+    def indicator_config(self) -> Optional[dict]:
+        """A fresh copy of the tether geometry, or None for the natal default.
+
+        A copy for the same reason the two methods above build fresh dicts:
+        the profiles are module singletons, and handing the renderer the
+        stored dict itself would let any caller's mutation poison every
+        later render process-wide.
+        """
+        return dict(self.indicator) if self.indicator is not None else None
+
+
+_MEDIUM_NATAL = ClusterProfile(
+    planet_scale_base=PLANET_SCALE_BASE,
+    degrees_font_size=DEGREES_FONT_SIZE,
+    sign_scale_base=SIGN_SCALE_BASE,
+    minutes_font_size=MINUTES_FONT_SIZE,
+    rx_font_size=RX_FONT_SIZE,
+    glyph_y=NATAL_PLANET_GLYPH_Y,
+    degrees_y=NATAL_DEGREES_Y,
+    sign_y=NATAL_SIGN_Y,
+    minutes_y=NATAL_MINUTES_Y,
+    rx_y=NATAL_RX_Y,
+    min_separation=PLANET_MIN_SEPARATION,
+    indicator=None,
+)
+
+_MEDIUM_DUAL_OUTER = ClusterProfile(
+    planet_scale_base=SYN_PLANET_SCALE,
+    degrees_font_size=SYN_DEGREES_FONT_SIZE,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=SYN_OUTER_PLANET_GLYPH_Y,
+    degrees_y=SYN_OUTER_DEGREES_Y,
+    sign_y=SYN_OUTER_SIGN_Y,
+    minutes_y=SYN_OUTER_MINUTES_Y,
+    rx_y=SYN_OUTER_RX_Y,
+    min_separation=SYN_OUTER_MIN_SEPARATION,
+    indicator={
+        "start_y": SYN_INDICATOR_OUTER_START_Y,
+        "tick_length": SYN_INDICATOR_OUTER_TICK,  # inward, toward its own cluster
+        "arc_radius": SYN_INDICATOR_OUTER_ARC_R,
+    },
+)
+
+_MEDIUM_DUAL_INNER = ClusterProfile(
+    planet_scale_base=SYN_PLANET_SCALE_INNER,
+    degrees_font_size=SYN_DEGREES_FONT_SIZE_INNER,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=SYN_INNER_PLANET_GLYPH_Y,
+    degrees_y=SYN_INNER_DEGREES_Y,
+    sign_y=SYN_INNER_SIGN_Y,
+    minutes_y=SYN_INNER_MINUTES_Y,
+    rx_y=SYN_INNER_RX_Y,
+    min_separation=SYN_INNER_MIN_SEPARATION,
+    indicator={
+        "start_y": SYN_INDICATOR_INNER_START_Y,
+        "tick_length": SYN_INDICATOR_INNER_TICK,  # inward, toward its own cluster
+        "arc_radius": SYN_INDICATOR_INNER_ARC_R,
+    },
+)
+
+# The small and large profiles below are OUTPUT, not opinion: they are what
+# ``scripts/derive_modern_cluster_profiles.py`` prints, and a test re-runs the
+# derivation and refuses any hand edit that drifts from it. The one exception
+# is min_separation, which no formula owns: each value below is MEASURED, by
+# ``scripts/measure_modern_separation.py --glyph-size <size>`` under the same
+# policy the medium constants embody — the first separation from which every
+# larger one keeps at least 0.25 wheel units of daylight between adversarial
+# worst-content clusters (the harness's "0.25 units" column). Touch floors per
+# size live in tests/core/test_modern_decluttering.py::_TOUCHING_SEPARATION. The rule, in one
+# line: sizes scale by k, every quantity of air scales by a = min(k, fit), rows
+# are laid top-down from the tether's end, and the tab never drops below
+# MIN_INDICATOR_TICK. Small is k = 0.9 — a pure homothety, the medium cluster
+# at 90%. Large is classic parity, Giacomo's call on both counts: the planet
+# glyph at the classic engine's own size (scale 1.0 single, 0.8 dual, through
+# the 0.92 wrapper and the 4.8 page), written as that expression so the parity
+# is exact and not a rounded decimal. On the dual rings the factors SPLIT at
+# large: parity is the glyph's contract alone (×1.372), while the reading —
+# degrees, sign, minutes, ℞ — stays at the MEDIUM size (k_text = 1.0),
+# Giacomo's pick on a rendered four-way comparison: the dual cluster is
+# text-heavy by construction (reading at 0.67 of its glyph against the natal
+# 0.51) and every larger ramp read oversized in the dual rings' packed
+# context. A large dual wheel grows its glyphs to classic parity and keeps
+# the reading it always had — which also hands the air back: the single ring
+# affords large at a = 0.65, the dual rings at a = 0.78 / 0.72. The bands
+# cannot deepen: below the dual rings there is only the aspect core, and
+# taking depth from it was considered and refused.
+# Every derived cluster also slides 0.3 units OUTWARD, toward its indicator
+# (Giacomo's call: the ℞ row must not sit on the ring's inner edge, and the
+# tether side has the slack) — the END tab shortens with it so the tab-to-
+# glyph distance holds, floored at MIN_INDICATOR_TICK and capped where the
+# floor binds so the tab never reaches the glyph's ink. The VISIBLE dash
+# (start_tick_length: the straight tether's body, and the arc case's mark at
+# the true position) keeps its rule length — a dash cut to the floor read as
+# a stray dot, Giacomo's second call on the rendered wheel. Medium does not
+# move.
+
+_SMALL_NATAL = ClusterProfile(
+    planet_scale_base=0.163296,
+    degrees_font_size=2.016,
+    sign_scale_base=0.085356,
+    minutes_font_size=1.8648,
+    rx_font_size=1.6128,
+    glyph_y=9.4328,
+    degrees_y=13.0238,
+    sign_y=16.3358,
+    minutes_y=19.9358,
+    rx_y=22.9598,
+    min_separation=6.75,
+    indicator={
+        "start_y": HOUSE_LINE_OUTER_Y,
+        "tick_length": 0.6675,
+        "start_tick_length": 1.075,
+        "arc_radius": 43.752,
+    },
+)
+
+_SMALL_DUAL_OUTER = ClusterProfile(
+    planet_scale_base=0.1188,
+    degrees_font_size=1.908,
+    sign_scale_base=0.051336,
+    minutes_font_size=1.098,
+    rx_font_size=0.918,
+    glyph_y=7.7768,
+    degrees_y=10.8728,
+    sign_y=13.5188,
+    minutes_y=15.8678,
+    rx_y=17.8208,
+    min_separation=5.0,
+    indicator={
+        "start_y": SYN_INDICATOR_OUTER_START_Y,
+        "tick_length": 0.33,
+        "start_tick_length": 0.5769,
+        "arc_radius": 44.022,
+    },
+)
+
+_SMALL_DUAL_INNER = ClusterProfile(
+    planet_scale_base=0.1188,
+    degrees_font_size=1.908,
+    sign_scale_base=0.051336,
+    minutes_font_size=1.098,
+    rx_font_size=0.918,
+    glyph_y=22.3441,
+    degrees_y=25.4401,
+    sign_y=28.0861,
+    minutes_y=30.4351,
+    rx_y=32.3881,
+    min_separation=8.0,
+    indicator={
+        "start_y": SYN_INDICATOR_INNER_START_Y,
+        "tick_length": MIN_INDICATOR_TICK,  # the shift is capped here: 0.05 to the glyph ink
+        "arc_radius": 29.23,
+    },
+)
+
+_LARGE_NATAL = ClusterProfile(
+    planet_scale_base=1.0 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
+    degrees_font_size=2.79567,
+    sign_scale_base=0.118367,
+    # Minutes and ℞ stay at the MEDIUM size (referenced, not retyped) — the
+    # same call already made for the whole dual reading: at large the single
+    # wheel's secondary reading was crowding the cluster (Giacomo, on the
+    # rendered wheel), and only degrees and sign ride the ×1.248 ramp.
+    minutes_font_size=MINUTES_FONT_SIZE,
+    rx_font_size=RX_FONT_SIZE,
+    glyph_y=10.0944,
+    degrees_y=14.6234,
+    sign_y=18.5275,
+    minutes_y=22.3769,
+    rx_y=25.3945,
+    min_separation=9.5,
+    indicator={
+        "start_y": HOUSE_LINE_OUTER_Y,
+        "tick_length": 0.5173,
+        "start_tick_length": 1.075,
+        "arc_radius": 43.8918,
+    },
+)
+
+# The large dual reading IS the medium reading — Giacomo's pick on a rendered
+# four-way comparison — so the four text sizes REFERENCE the SYN_* constants,
+# the same referenced-not-retyped virtue the medium profiles carry: only the
+# glyph chases classic parity.
+_LARGE_DUAL_OUTER = ClusterProfile(
+    planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
+    degrees_font_size=SYN_DEGREES_FONT_SIZE,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=8.6069,
+    degrees_y=12.3693,
+    sign_y=15.0567,
+    minutes_y=17.3886,
+    rx_y=19.3356,
+    min_separation=7.5,  # measured — the parity glyph is the binding row now
+    indicator={
+        "start_y": SYN_INDICATOR_OUTER_START_Y,
+        "tick_length": 0.2513,
+        "start_tick_length": 0.4612,
+        "arc_radius": 44.1007,
+    },
+)
+
+_LARGE_DUAL_INNER = ClusterProfile(
+    planet_scale_base=0.8 / (ZODIAC_BG_SCALE * MODERN_PAGE_SCALE),
+    degrees_font_size=SYN_DEGREES_FONT_SIZE_INNER,
+    sign_scale_base=SYN_SIGN_SCALE,
+    minutes_font_size=SYN_MINUTES_FONT_SIZE,
+    rx_font_size=SYN_RX_FONT_SIZE,
+    glyph_y=23.1085,
+    degrees_y=26.8161,
+    sign_y=29.4358,
+    minutes_y=31.6931,
+    rx_y=33.5804,
+    min_separation=11.5,  # measured — the parity glyph is the binding row now
+    indicator={
+        "start_y": SYN_INDICATOR_INNER_START_Y,
+        "tick_length": MIN_INDICATOR_TICK,  # the floor binds; the corner budget gives the dash nothing either
+        "arc_radius": 29.2808,
+    },
+)
+
+#: Every cluster profile the renderer can draw, by glyph size and ring.
+#: Keyed by plain strings on purpose: ``draw_modern`` stays importable without
+#: ``kerykeion.schemas``, and the drawer — the public gate — validates the size
+#: before it ever reaches this dict.
+GLYPH_SIZE_PROFILES: dict[str, dict[str, ClusterProfile]] = {
+    "small": {
+        "natal": _SMALL_NATAL,
+        "dual_outer": _SMALL_DUAL_OUTER,
+        "dual_inner": _SMALL_DUAL_INNER,
+    },
+    "medium": {
+        "natal": _MEDIUM_NATAL,
+        "dual_outer": _MEDIUM_DUAL_OUTER,
+        "dual_inner": _MEDIUM_DUAL_INNER,
+    },
+    "large": {
+        "natal": _LARGE_NATAL,
+        "dual_outer": _LARGE_DUAL_OUTER,
+        "dual_inner": _LARGE_DUAL_INNER,
+    },
+}
 
 
 # =============================================================================
@@ -522,8 +1181,77 @@ def _draw_cusp_ring(
         f'<path d="{_annulus_path(R_CUSP_OUTER, R_CUSP_INNER)}" fill="{COLOR_BACKGROUND}" fill-rule="evenodd"/>\n'
     )
 
-    for house in houses:
-        cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
+    # A cusp's reading is not one string but a spread: minutes at -4.67°, the
+    # sign glyph on the line, degrees at +4.67°, so each one occupies about
+    # thirteen degrees of ring. Two cusps closer together than that interleave —
+    # with Campanus at Liverpool four of the twelve houses are under eight
+    # degrees wide, so their readings printed through each other by construction
+    # rather than by bad luck.
+    #
+    # The ring answers by resizing itself rather than by the readings stepping
+    # aside from their own cusps. Moving them was tried and reads worse: a
+    # number that has slid two degrees off the line it describes is a number
+    # attached to the wrong house, and on a quadrant chart the eye has nothing
+    # else to go on. Smaller text on a crowded chart still says exactly what it
+    # belongs to.
+    #
+    # One factor for all twelve, not per-cusp: a ring of readings at four
+    # different sizes looks like a mistake even when each one is individually
+    # correct.
+    #
+    # Shrinking is the first answer and, past a point, the wrong one — four
+    # degrees of house would take the text below legibility. So it stops at the
+    # scale where a second device takes over: the crowded readings alternate
+    # between two radial lanes, one a little nearer the rim and the next a
+    # little nearer the wheel, and two that cannot be pulled apart sideways
+    # simply pass each other. What each reading then has to clear is not its
+    # neighbour — that one is on the other lane — but the one two cusps along,
+    # which is two gaps away rather than one.
+    #
+    # Hence the three cases below, in the order a chart meets them: room enough
+    # already; not enough, but a modest shrink is all it takes; or crowded past
+    # that, where the ring stops at the largest size two lanes physically fit
+    # and lets the stagger finish the job. Only the last of the three still has
+    # a floor, for skies no arrangement can fix.
+    angles = [_zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses]
+    count = len(angles)
+    # The same correction, and for the twelve it is `house_spans` that knows: it
+    # reads the direction from all of them at once and returns each wedge's real
+    # width, whichever way the ring runs.
+    if count > 1:
+        gaps = house_spans(angles)[0] if count == 12 else [
+            abs(((angles[(i + 1) % count] - angles[i] + 180.0) % 360.0) - 180.0)
+            for i in range(count)
+        ]
+    else:
+        gaps = [360.0]
+    nominal_span = _cusp_cluster_span(1.0)
+    shrink_alone = min(gaps) / nominal_span
+
+    if shrink_alone >= 1.0:
+        fit = 1.0
+    elif shrink_alone >= CUSP_STAGGER_SCALE:
+        fit = shrink_alone
+    else:
+        two_gaps = min(gaps[i] + gaps[(i + 1) % count] for i in range(count))
+        fit = min(CUSP_STAGGER_SCALE, max(CUSP_MIN_SCALE, two_gaps / nominal_span))
+
+    # Rounded, not formatted to a fixed width: at full size these have to come
+    # out as the very strings the nominal constants produce, or every chart with
+    # a cusp ring shows a diff for a number that did not change.
+    font_size = round(CUSP_FONT_SIZE * fit, 4)
+    text_offset = CUSP_TEXT_OFFSET_DEGREES * fit
+    glyph_scale = round(CUSP_GLYPH_SCALE * fit, 4)
+
+    # Which readings stagger is decided at the size they end up drawn, and only
+    # the ones that would otherwise print through a neighbour move: everything
+    # with clear air either side stays on the centre line where it belongs.
+    lanes = _cusp_lanes(angles, _cusp_cluster_span(fit))
+
+    for house, cusp_angle, lane in zip(houses, angles, lanes):
+        label_y = CUSP_LABEL_Y if lane is None else round(
+            CUSP_LABEL_Y + (CUSP_LANE_OFFSET if lane else -CUSP_LANE_OFFSET), 4
+        )
 
         # Determine if a full zodiac sign boundary falls in this house
         # Place sign glyph at the house cusp
@@ -532,9 +1260,6 @@ def _draw_cusp_ring(
         sign_abbrev: str = house.sign
         degrees = int(house.position)
         minutes = int((house.position - degrees) * 60)
-
-        # Cusp data text spacing around the cusp line
-        text_offset = 4.669  # ~4.67° offset for degree/minute text
 
         # Determine layout: upper houses use one orientation, lower the alternate
         is_upper_half = cusp_angle >= 0 and cusp_angle < 180
@@ -553,17 +1278,17 @@ def _draw_cusp_ring(
             # Minutes text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({-text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright + text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright + text_offset:.6f} {CENTER} {label_y})">'
                 f"{minutes}'</text>\n"
             )
 
             # Sign glyph
-            final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+            final_scale = round(glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0), 4)
             parts.append(
-                f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
+                f'    <g transform="translate({CENTER} {label_y}) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
@@ -571,10 +1296,10 @@ def _draw_cusp_ring(
             # Degrees text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright - text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright - text_offset:.6f} {CENTER} {label_y})">'
                 f"{degrees}º</text>\n"
             )
         else:
@@ -582,17 +1307,17 @@ def _draw_cusp_ring(
             # Minutes text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright - text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright - text_offset:.6f} {CENTER} {label_y})">'
                 f"{minutes}'</text>\n"
             )
 
             # Sign glyph
-            final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+            final_scale = round(glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0), 4)
             parts.append(
-                f'    <g transform="translate({CENTER} 2.75) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
+                f'    <g transform="translate({CENTER} {label_y}) rotate({angle_upright:.6f}) scale({final_scale}) translate(-16 -16)">\n'
                 f'      <use xlink:href="#{sign_abbrev}" fill="{COLOR_TEXT}" />\n'
                 f"    </g>\n"
             )
@@ -600,10 +1325,10 @@ def _draw_cusp_ring(
             # Degrees text
             parts.append(
                 f'    <text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="2.75" font-size="{CUSP_FONT_SIZE}" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{label_y}" font-size="{font_size}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate({-text_offset:.6f} {CENTER} {CENTER}) '
-                f'rotate({angle_upright + text_offset:.6f} {CENTER} 2.75)">'
+                f'rotate({angle_upright + text_offset:.6f} {CENTER} {label_y})">'
                 f"{degrees}º</text>\n"
             )
 
@@ -623,7 +1348,7 @@ def _draw_cusp_ring(
                 sign_angle = _zodiac_to_wheel_angle(mid_sign_abs, seventh_house_degree_ut)
                 sign_abbrev = _ZODIAC_SIGN_IDS[sign_num]
                 upright_angle = 90 + sign_angle
-                final_scale = 0.12 * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0)
+                final_scale = round(glyph_scale * ZODIAC_OUTER_SCALE_MAP.get(sign_abbrev, 1.0), 4)
 
                 parts.append(
                     f'<g transform="rotate(-{sign_angle:.6f} {CENTER} {CENTER}) '
@@ -753,13 +1478,14 @@ def _cluster_row_profile(
     sign_scale_base: float = SIGN_SCALE_BASE,
     minutes_font_size: float = MINUTES_FONT_SIZE,
     rx_font_size: float = RX_FONT_SIZE,
+    show_motion_state: bool = False,
 ) -> dict[str, tuple[float, float]]:
     """Ink reach ``(half_width, half_height)`` of each cluster row of *point*.
 
     This is what the content-aware separation works from: a planet at 4º07'
     reserves the ink of ``"4º"`` and ``"7'"``, not of the widest strings the
-    rows could ever hold, and the ``rx`` row exists only when the point is
-    actually retrograde. All values come from the browser-measured tables in
+    rows could ever hold, and the marker row exists only when the point
+    actually carries a marker. All values come from the browser-measured tables in
     :mod:`kerykeion.charts.glyph_ink_metrics`, in wheel units.
 
     Both axes matter: clusters stay upright while the wheel turns, so which
@@ -791,13 +1517,19 @@ def _cluster_row_profile(
         "sign": (sign_half_width * sign_scale, sign_half_height * sign_scale),
         "minutes": _text_ink_reach(_format_minutes_text(point), minutes_font_size),
     }
-    if point.retrograde is True:
-        profile["rx"] = _text_ink_reach(RETROGRADE_LABEL, rx_font_size)
+    marker = motion_marker(point, show_motion_state)
+    if marker is not None:
+        profile["rx"] = _text_ink_reach(marker, rx_font_size)
     return profile
 
 #: Fixed iteration count for the wraparound fallback's 1-D convex search.
 #: Deterministic and precise far beyond the 1e-6 the placement needs.
 _WRAP_SEARCH_ITERATIONS = 200
+
+#: Bisection steps for the clearance an over-subscribed wheel can still afford.
+#: 40 halvings take the interval below a millionth of a wheel unit — far past
+#: anything a renderer can draw, and cheap: each step is one pass over the pairs.
+_CLEARANCE_SEARCH_ITERATIONS = 40
 
 #: Bound on orientation-refinement rounds: a pair's separation depends on
 #: where it sits on the wheel, which depends on the separations. Requirements
@@ -920,7 +1652,9 @@ def _resolve_planet_collisions(
     if not planets_with_angles:
         return planets_with_angles
 
-    def required_separation(first: dict, second: dict, pair_mid_angle: float) -> float:
+    def required_separation(
+        first: dict, second: dict, pair_mid_angle: float, air: Optional[float] = None
+    ) -> float:
         """This pair's separation: content-derived when both carry profiles."""
         first_profile = first.get("row_half_widths")
         second_profile = second.get("row_half_widths")
@@ -931,7 +1665,7 @@ def _resolve_planet_collisions(
             second_profile,
             pair_mid_angle,
             row_radii=row_radii,
-            clearance=clearance,
+            clearance=clearance if air is None else air,
             ceiling=min_separation,
         )
 
@@ -1070,23 +1804,71 @@ def _resolve_planet_collisions(
     # re-evaluation at its own orientations demanded nothing new, so no
     # unvalidated layout can escape the loop.
     mid_angles = pair_mid_angles(unwrapped_positions)
+
+    # ── The air yields before the positions do ──────────────────────────
+    # Every pair asks for its ink plus `clearance` of daylight, and on a full
+    # wheel the sum of those asks can exceed what a circle has. `place` handles
+    # that by scaling every separation down together, which compresses the ink
+    # reservations — so clusters overlap AND land far from their true degrees:
+    # at 52 points the worst was 35 degrees out before any of this.
+    #
+    # But the two things being compressed are not worth the same. The ink
+    # reservation is what keeps a reading legible; the clearance on top of it is
+    # air, and air is the cheaper thing to spend. So when the wheel is
+    # over-subscribed, give up the clearance first — as much of it as it takes,
+    # down to none — and only then let `place` fall back to compressing what is
+    # left. Uncrowded wheels never reach this: the default fourteen points ask
+    # for about a quarter of the budget, and nothing here moves them.
+    #
+    # Solved once, on the true orientations, so the refinement below still has a
+    # fixed clearance to ratchet against and still provably converges.
+    effective_clearance = clearance
+
+    def total_demand(air: float) -> float:
+        pairs = zip(zip(ordered, ordered[1:]), mid_angles)
+        return sum(
+            required_separation(planet, follower, mid, air) for (planet, follower), mid in pairs
+        ) + required_separation(ordered[-1], ordered[0], mid_angles[-1], air)
+
+    if row_radii is not None and total_demand(clearance) > FEASIBLE_TOTAL_DEGREES:
+        # Demand rises monotonically with the air asked for, so the largest
+        # clearance that still fits is a bisection away. Zero is always feasible
+        # to *ask* for; whether the ink itself fits is `place`'s problem.
+        too_much, enough = clearance, 0.0
+        for _ in range(_CLEARANCE_SEARCH_ITERATIONS):
+            trial = (enough + too_much) / 2.0
+            if total_demand(trial) > FEASIBLE_TOTAL_DEGREES:
+                too_much = trial
+            else:
+                enough = trial
+        effective_clearance = enough
+        logger.info(
+            "Modern decluttering: %d points ask for more arc than the wheel has; "
+            "the air between clusters was reduced from %.2f to %.2f wheel units so "
+            "the points could stay nearer their true degrees.",
+            n,
+            clearance,
+            effective_clearance,
+        )
+
     pair_requirements = [
-        required_separation(planet, follower, mid)
+        required_separation(planet, follower, mid, effective_clearance)
         for (planet, follower), mid in zip(zip(ordered, ordered[1:]), mid_angles)
     ]
-    wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1])
+    wrap_requirement = required_separation(ordered[-1], ordered[0], mid_angles[-1], effective_clearance)
     requirements_settled = False
     for _ in range(_ORIENTATION_REFINEMENT_ROUNDS):
         display_positions = place(pair_requirements, wrap_requirement)
         mid_angles = pair_mid_angles(display_positions)
         refined = [
-            max(current, required_separation(planet, follower, mid))
+            max(current, required_separation(planet, follower, mid, effective_clearance))
             for current, (planet, follower), mid in zip(
                 pair_requirements, zip(ordered, ordered[1:]), mid_angles
             )
         ]
         refined_wrap = max(
-            wrap_requirement, required_separation(ordered[-1], ordered[0], mid_angles[-1])
+            wrap_requirement,
+            required_separation(ordered[-1], ordered[0], mid_angles[-1], effective_clearance),
         )
         requirements_settled = refined_wrap <= wrap_requirement + 1e-3 and all(
             new <= old + 1e-3 for new, old in zip(refined, pair_requirements)
@@ -1116,11 +1898,12 @@ def _draw_indicator_line(
     real_angle: float,
     display_angle: float,
     start_y: float = HOUSE_LINE_OUTER_Y,
-    tick_length: float = 1.075,
+    tick_length: float = NATAL_INDICATOR_TICK,
     arc_radius: Optional[float] = None,
     planet_slug: str = "",
     abs_pos: Optional[float] = None,
     horoscope_id: Optional[str] = None,
+    start_tick_length: Optional[float] = None,
 ) -> str:
     """
     Draw a tether/indicator line from a displaced planet to its true position.
@@ -1131,22 +1914,32 @@ def _draw_indicator_line(
     Args:
         real_angle: True zodiacal angle of the planet.
         display_angle: Display angle after collision resolution.
-        start_y: Y coordinate where the indicator line starts (default 6.5).
+        start_y: Y coordinate where the indicator line starts (default: the
+                 ruler's inner edge, HOUSE_LINE_OUTER_Y).
         tick_length: Length and direction of the initial tick. Positive = downward,
-                     negative = upward (default 1.075).
-        arc_radius: Radius for the connecting arc. If None, uses R_PLANET_OUTER - 1.
+                     negative = upward (default NATAL_INDICATOR_TICK).
+        arc_radius: Radius for the connecting arc. If None, uses
+                    R_PLANET_OUTER - NATAL_INDICATOR_ARC_DROP.
         planet_slug: Name of the celestial point (for kr:slug metadata).
         abs_pos: The owning ChartPoint's absolute position. Must be the SAME float
             the ChartPoint tag interpolates so the kr:absoluteposition strings are
             identical (downstream focus code matches them by string equality).
         horoscope_id: Owner subject id ("0"/"1") emitted as kr:horoscope in dual
             charts so the indicator can be tied to the correct ring.
+        start_tick_length: Length of the INITIAL dash — the mark hanging from
+            start_y at the true position (and the straight tether's whole
+            body). None means tick_length, the historical behaviour. The two
+            lengths split on the derived glyph sizes: the outward cluster
+            shift shortens the END segment (whose reach the corner guard
+            owns) while the visible dash keeps its rule length.
 
     Returns:
         SVG group string for the indicator line.
     """
     if arc_radius is None:
-        arc_radius = R_PLANET_OUTER - 1  # 42.5
+        arc_radius = R_PLANET_OUTER - NATAL_INDICATOR_ARC_DROP
+    if start_tick_length is None:
+        start_tick_length = tick_length
 
     slug_attr = f' kr:slug="{escape_svg_text(planet_slug)}"' if planet_slug else ""
     pos_attr = f' kr:absoluteposition="{abs_pos}"' if abs_pos is not None else ""
@@ -1158,13 +1951,24 @@ def _draw_indicator_line(
     if abs(angle_diff) < STRAIGHT_TETHER_THRESHOLD:
         # Simple straight indicator line
         out += (
-            f'  <path d="M {CENTER} {start_y} l 0 {tick_length}" '
+            f'  <path d="M {CENTER} {start_y} l 0 {start_tick_length}" '
             f'fill="transparent" stroke="{COLOR_INDICATOR}" stroke-width="0.1"/>\n'
         )
     else:
         # Line with arc to connect to displaced position
         r_arc = arc_radius
         sweep = 0 if angle_diff > 0 else 1
+
+        # The initial dash must MEET the arc it hands off to: an A-segment
+        # forced through a point off its own circle bends into a visible kink
+        # (the derived sizes lengthened the dash for the straight case, where
+        # there is no arc to meet — at medium all lengths coincided and the
+        # question never arose). Cap the dash at the arc's depth, never below
+        # the end tab's length, the historical minimum; at medium the cap is
+        # exactly tick_length and the emitted bytes do not move.
+        arc_start_tick = round(
+            min(start_tick_length, max((CENTER - r_arc) - start_y, tick_length)), 4
+        )
 
         # Calculate arc endpoint (angle_diff > 0 is CCW, which in SVG with Y-down is -X direction)
         end_rad = _deg_to_rad(angle_diff)
@@ -1178,7 +1982,7 @@ def _draw_indicator_line(
 
         out += (
             f"  <path "
-            f'd="M {CENTER} {start_y} l 0 {tick_length} '
+            f'd="M {CENTER} {start_y} l 0 {arc_start_tick} '
             f"A {r_arc} {r_arc} 0 0 {sweep} {end_x:.10f} {end_y:.10f} "
             f'L {end_x_inner:.10f} {end_y_inner:.10f}" '
             f'fill="transparent" stroke="{COLOR_INDICATOR}" stroke-width="0.1"/>\n'
@@ -1193,11 +1997,15 @@ def _draw_gauquelin_division_lines(
     line_inner_y: float = HOUSE_LINE_INNER_Y,
     gauquelin_cusps: Optional[list[float]] = None,
     seventh_house_degree_ut: float = 0.0,
+    clusters: Sequence[dict] = (),
+    row_radii: Optional[dict[str, float]] = None,
+    dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """Draw 36 Gauquelin sector division lines through the planet ring.
 
     Replaces house division lines when Gauquelin mode is active.
-    Angular sectors (1, 10, 19, 28) get thicker lines.
+    Angular sectors (1, 10, 19, 28) get thicker lines. Like the house cusps,
+    a sector line dims where a reading is written across it.
     """
     out = ""
     for i in range(36):
@@ -1208,13 +2016,8 @@ def _draw_gauquelin_division_lines(
             angle = (360.0 - i * 10.0) % 360.0
         is_angular = i % 9 == 0
         stroke_w = ANGULAR_STROKE_WIDTH if is_angular else NORMAL_STROKE_WIDTH
-
-        out += (
-            f'<line x1="{CENTER}" y1="{line_outer_y}" '
-            f'x2="{CENTER}" y2="{line_inner_y}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
-            f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
-        )
+        out += _cusp_line_svg(angle, stroke_w, line_outer_y, line_inner_y,
+                              clusters, row_radii, dim_stroke)
     return out
 
 
@@ -1236,7 +2039,9 @@ def _draw_planet_ring(
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
     content_aware_separation: bool = True,
+    cusp_dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """
     Draw the planet ring with data clusters and indicator lines.
@@ -1277,12 +2082,6 @@ def _draw_planet_ring(
         f'stroke="{COLOR_STROKE}" stroke-width="0.25"/>\n'
     )
 
-    # Division lines through the planet ring
-    if gauquelin_sectors:
-        out += _draw_gauquelin_division_lines(line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps, seventh_house_degree_ut=seventh_house_degree_ut)
-    else:
-        out += _draw_house_division_lines(houses, seventh_house_degree_ut, line_outer_y, line_inner_y)
-
     # Row positions and element scales, resolved once: the renderer, the
     # content-aware profiles, and the row radii must all read the same values.
     planet_y_config = planet_y_config or {}
@@ -1317,7 +2116,9 @@ def _draw_planet_ring(
             "color": color,
         }
         if content_aware_separation:
-            planet_entry["row_half_widths"] = _cluster_row_profile(point, **element_scales)
+            planet_entry["row_half_widths"] = _cluster_row_profile(
+                point, show_motion_state=show_motion_state, **element_scales
+            )
         planets_with_angles.append(planet_entry)
 
     # Resolve collisions
@@ -1334,13 +2135,29 @@ def _draw_planet_ring(
         row_radii=row_radii if content_aware_separation else None,
     )
 
+    # The cusps are drawn after the clusters are resolved, not before: a line
+    # has to know what is written across it before it can step out of the way.
+    # Nothing about the clusters changes — only the order the two are worked out
+    # in, and the cusps still come first in the markup, under the readings.
+    if gauquelin_sectors:
+        out += _draw_gauquelin_division_lines(
+            line_outer_y, line_inner_y, gauquelin_cusps=gauquelin_cusps,
+            seventh_house_degree_ut=seventh_house_degree_ut,
+            clusters=resolved, row_radii=row_radii, dim_stroke=cusp_dim_stroke)
+    else:
+        out += _draw_house_division_lines(
+            houses, seventh_house_degree_ut, line_outer_y, line_inner_y,
+            clusters=resolved, row_radii=row_radii, dim_stroke=cusp_dim_stroke)
+
+
     # Prepare indicator kwargs
     ind_kwargs = {}
     if indicator_config:
         ind_kwargs = {
             "start_y": indicator_config.get("start_y", HOUSE_LINE_OUTER_Y),
-            "tick_length": indicator_config.get("tick_length", 1.075),
+            "tick_length": indicator_config.get("tick_length", NATAL_INDICATOR_TICK),
             "arc_radius": indicator_config.get("arc_radius", None),
+            "start_tick_length": indicator_config.get("start_tick_length", None),
         }
 
     # Draw planet clusters and indicators
@@ -1362,6 +2179,7 @@ def _draw_planet_ring(
             color=color,
             horoscope_id=horoscope_id,
             show_zodiac_background_ring=show_zodiac_background_ring,
+            show_motion_state=show_motion_state,
             **planet_kwargs,
         )
         out += planet_svg
@@ -1381,6 +2199,28 @@ def _draw_planet_ring(
     return out
 
 
+def _text_ink_offset(text: str, font_size: float) -> float:
+    """How far to slide *text* so its ink lands on the cluster's axis.
+
+    ``dominant-baseline="middle"`` centres the em box, and an em box is not ink:
+    digits have no descenders, so "16º" inks a whole native unit ABOVE where it
+    is anchored — 0.22 wheel units at this size — while a glyph sits on its
+    centre. A column of rows drawn as anchored therefore leans: glyphs on the
+    axis, numbers beside it, which reads as a crooked skewer rather than as a
+    mistake anyone can name.
+
+    The offset is across the row, not along it: a reading is drawn upright while
+    its column runs radially, so what pushes it off the skewer is the baseline
+    and never the advance width. (Measuring the horizontal centre first, and
+    correcting with it, moved every row along its own length and changed nothing
+    at all.)
+
+    Returns 0.0 for a string the tables have never seen, which is the honest
+    answer: better a mark on its anchor than one moved by a guess.
+    """
+    return -TEXT_INK_CENTRE_Y.get(text, 0.0) / TEXT_INK_REFERENCE_FONT_SIZE * font_size
+
+
 def _draw_single_planet_in_ring(
     point: KerykeionPointModel,
     display_angle: float,
@@ -1398,6 +2238,7 @@ def _draw_single_planet_in_ring(
     rx_font_size: float = RX_FONT_SIZE,
     horoscope_id: Optional[str] = None,
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draw a single planet with its data cluster in the planet ring.
@@ -1430,7 +2271,16 @@ def _draw_single_planet_in_ring(
     minutes_text = _format_minutes_text(point)
     sign = point.sign
     is_retro = point.retrograde is True
-    fill_color = COLOR_RETROGRADE if is_retro else color
+    marker = motion_marker(point, show_motion_state)
+    # A station is the rarer event and takes the colour as well as the label:
+    # a reader who asked to see stations should not have to tell one apart
+    # from an ordinary retrograde by reading the two letters.
+    if marker in STATION_LABELS.values():
+        fill_color = COLOR_STATIONARY
+    elif is_retro:
+        fill_color = COLOR_RETROGRADE
+    else:
+        fill_color = color
 
     point_slug = point.name
     planet_id = point_slug if point.point_type == "House" else resolve_glyph_id(point_slug)
@@ -1439,6 +2289,7 @@ def _draw_single_planet_in_ring(
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
     gauq = getattr(point, "gauquelin_sector", None)
     gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
+    state_attrs = point_state_attributes(point)
 
     # kr:cx / kr:cy — glyph center in the WHEEL-LOCAL 100-unit frame (the
     # ModernHoroscope group's own coordinate space, i.e. the viewBox of the
@@ -1472,7 +2323,7 @@ def _draw_single_planet_in_ring(
     out = (
         f'<g kr:node="ChartPoint" kr:house="{point.house}" '
         f'kr:sign="{sign}" kr:absoluteposition="{point.abs_pos}" '
-        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr}{gauq_attr} '
+        f'kr:signposition="{point.position}" kr:slug="{escape_svg_text(point_slug)}"{retro_attr}{horoscope_attr}{gauq_attr}{state_attrs} '
         f'kr:cx="{glyph_cx}" kr:cy="{glyph_cy}" '
         f'transform="rotate(-{display_angle:.6f} {CENTER} {CENTER})">\n'
     )
@@ -1480,7 +2331,7 @@ def _draw_single_planet_in_ring(
     # Planet glyph (outermost, largest — near outer edge of planet ring)
     planet_scale = planet_scale_base * GLYPH_SCALE_MAP.get(planet_id, 1.0)
     out += (
-        f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-14 -14)">\n'
+        f'  <g transform="translate({CENTER} {glyph_y}) rotate({counter_rotation:.6f}) scale({planet_scale}) translate(-{PLANET_GLYPH_BOX / 2:g} -{PLANET_GLYPH_BOX / 2:g})">\n'
         f'    <use xlink:href="#{planet_id}" kr:slug="{escape_svg_text(point_slug)}" kr:node="Glyph" fill="{fill_color}" />\n'
         f"  </g>\n"
     )
@@ -1490,7 +2341,7 @@ def _draw_single_planet_in_ring(
         f'  <text text-anchor="middle" dominant-baseline="middle" '
         f'x="{CENTER}" y="{degrees_y}" font-size="{degrees_font_size}" fill="{fill_color}" '
         f'font-weight="500" '
-        f'transform="rotate({counter_rotation:.6f} {CENTER} {degrees_y})">{degrees_text}</text>\n'
+        f'transform="rotate({counter_rotation:.6f} {CENTER} {degrees_y}) translate(0 {_text_ink_offset(degrees_text, degrees_font_size):.4f})">{degrees_text}</text>\n'
     )
 
     # Sign glyph
@@ -1506,16 +2357,18 @@ def _draw_single_planet_in_ring(
         f'  <text text-anchor="middle" dominant-baseline="middle" '
         f'x="{CENTER}" y="{minutes_y}" font-size="{minutes_font_size}" fill="{fill_color}" '
         f'font-weight="500" '
-        f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y})">{minutes_text}</text>\n'
+        f'transform="rotate({counter_rotation:.6f} {CENTER} {minutes_y}) translate(0 {_text_ink_offset(minutes_text, minutes_font_size):.4f})">{minutes_text}</text>\n'
     )
 
-    # RX text (innermost — near inner edge of planet ring)
-    if is_retro:
+    # Marker text (innermost — near inner edge of planet ring): RX for a plain
+    # retrograde, SR/SD for a named station.
+    if marker is not None:
         out += (
             f'  <text text-anchor="middle" dominant-baseline="middle" '
-            f'x="{CENTER}" y="{rx_y}" font-size="{rx_font_size}" fill="{fill_color}" '
+            f'x="{CENTER}" y="{rx_y}" '
+            f'font-size="{rx_font_size}" fill="{fill_color}" '
             f'font-weight="500" '
-            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y})">{RETROGRADE_LABEL}</text>\n'
+            f'transform="rotate({counter_rotation:.6f} {CENTER} {rx_y}) translate(0 {_text_ink_offset(marker, rx_font_size):.4f})">{marker}</text>\n'
         )
 
     out += "</g>\n"
@@ -1527,11 +2380,107 @@ def _draw_single_planet_in_ring(
 # =============================================================================
 
 
+def _reading_span_on_line(
+    line_angle: float,
+    y_top: float,
+    y_bottom: float,
+    clusters: Sequence[dict],
+    row_radii: dict[str, float],
+) -> Optional[tuple[float, float]]:
+    """The stretch of a cusp line that a cluster's reading lies across.
+
+    A cusp runs radially while the readings stay upright for the reader, so
+    which side of a mark faces the line changes with the angle: on the horizon
+    the line runs the LENGTH of "As 19º ♈ 45'" and only the text's height keeps
+    them apart, at the Midheaven it crosses the words and their width does. The
+    projection ``half_w·|sin θ| + half_h·|cos θ|`` carries both, and every angle
+    between; width alone makes a mark look narrow exactly where it is widest.
+
+    All or nothing per reading: one row touching commits the whole cluster, from
+    its first mark to its last. A stretch dimmed under some rows and solid under
+    the others reads as a defect rather than as a decision.
+
+    Returns ``None`` when no reading touches this segment — which is the common
+    case, and is why an ordinary cusp is drawn in one piece.
+    """
+    spans: list[tuple[float, float]] = []
+    for cluster in clusters:
+        profile = cluster.get("row_half_widths")
+        if not profile:
+            continue
+        angle = cluster["display_angle"]
+        gap = abs((line_angle - angle + 180.0) % 360.0 - 180.0)
+        if gap >= 90.0:  # the far side of the wheel: its sine is small for the
+            continue     # wrong reason, and 180° away is not "close"
+        here = []
+        for row, (half_w, half_h) in profile.items():
+            radius = row_radii.get(row)
+            if radius is None:
+                continue
+            top, bottom = CENTER - radius - half_h, CENTER - radius + half_h
+            if bottom > y_top and top < y_bottom:
+                here.append((top, bottom, half_w, half_h, radius))
+        if not here:
+            continue
+        theta = math.radians(angle)
+        if any(abs(radius * math.sin(math.radians(gap)))
+               <= half_w * abs(math.sin(theta)) + half_h * abs(math.cos(theta)) + CUSP_DIM_TOLERANCE
+               for _, _, half_w, half_h, radius in here):
+            spans.append((min(r[0] for r in here), max(r[1] for r in here)))
+    if not spans:
+        return None
+    return (max(y_top, min(a for a, _ in spans) - CUSP_DIM_MARGIN),
+            min(y_bottom, max(b for _, b in spans) + CUSP_DIM_MARGIN))
+
+
+def _cusp_line_svg(
+    cusp_angle: float,
+    stroke_w: float,
+    line_outer_y: float,
+    line_inner_y: float,
+    clusters: Sequence[dict] = (),
+    row_radii: Optional[dict[str, float]] = None,
+    dim_stroke: str = COLOR_CUSP_DIM,
+) -> str:
+    """One cusp line, dimmed over the stretch a reading is written across it.
+
+    The line is never broken: the dimmed stretch is drawn in *dim_stroke*, the
+    SOLID pre-composited tone of the cusp colour over this ring's fill, so the
+    axis stays continuous and passes behind the words instead of through them
+    — and stays visible on hosts that show through the chart, where a
+    stroke-opacity dim used to vanish. Without clusters to consult — the
+    measurement harness, a ring drawn before its points are resolved — it
+    comes out whole, exactly as before.
+    """
+    y_top, y_bottom = sorted((line_outer_y, line_inner_y))
+    head = f'<line x1="{CENTER}" y1="{{y1}}" x2="{CENTER}" y2="{{y2}}" '
+    tail = (f'stroke="{{stroke}}" stroke-width="{stroke_w}" '
+            f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n')
+
+    span = (_reading_span_on_line(cusp_angle, y_top, y_bottom, clusters, row_radii)
+            if clusters and row_radii else None)
+    if span is None:
+        return (head + tail).format(y1=line_outer_y, y2=line_inner_y, stroke=COLOR_CUSP)
+
+    lo, hi = span
+    pieces = []
+    if lo > y_top + 0.05:
+        pieces.append((y_top, lo, COLOR_CUSP))
+    pieces.append((lo, hi, dim_stroke))
+    if hi < y_bottom - 0.05:
+        pieces.append((hi, y_bottom, COLOR_CUSP))
+    return "".join((head + tail).format(y1=f"{a:.3f}", y2=f"{b:.3f}", stroke=stroke)
+                   for a, b, stroke in pieces)
+
+
 def _draw_house_division_lines(
     houses: list[KerykeionPointModel],
     seventh_house_degree_ut: float,
     line_outer_y: float = HOUSE_LINE_OUTER_Y,
     line_inner_y: float = HOUSE_LINE_INNER_Y,
+    clusters: Sequence[dict] = (),
+    row_radii: Optional[dict[str, float]] = None,
+    dim_stroke: str = COLOR_CUSP_DIM,
 ) -> str:
     """
     Draw house division lines that cross the planet ring.
@@ -1543,6 +2492,9 @@ def _draw_house_division_lines(
         seventh_house_degree_ut: 7th house cusp absolute degree.
         line_outer_y: Y coordinate for the outer end of lines (default 6.5).
         line_inner_y: Y coordinate for the inner end of lines (default 28.0).
+        clusters: Resolved point clusters of this ring, so a line can step out
+            of the way of a reading written across it. Empty draws whole lines.
+        row_radii: Radius of each cluster row, matching *clusters*.
 
     Returns:
         SVG string with house division lines.
@@ -1552,13 +2504,8 @@ def _draw_house_division_lines(
         house_num = i + 1
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
         stroke_w = ANGULAR_STROKE_WIDTH if house_num in ANGULAR_HOUSES else NORMAL_STROKE_WIDTH
-
-        out += (
-            f'<line x1="{CENTER}" y1="{line_outer_y}" '
-            f'x2="{CENTER}" y2="{line_inner_y}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
-            f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n'
-        )
+        out += _cusp_line_svg(cusp_angle, stroke_w, line_outer_y, line_inner_y,
+                              clusters, row_radii, dim_stroke)
 
     return out
 
@@ -1609,7 +2556,7 @@ def _draw_gauquelin_cusp_ring(
         out += (
             f'<line x1="{CENTER}" y1="{CENTER - ring_outer}" '
             f'x2="{CENTER}" y2="{CENTER - ring_inner}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
@@ -1656,7 +2603,7 @@ def _draw_gauquelin_house_ring(
         out += (
             f'<line x1="{CENTER}" y1="{CENTER - R_HOUSE_OUTER}" '
             f'x2="{CENTER}" y2="{CENTER - R_HOUSE_INNER}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
@@ -1677,13 +2624,63 @@ def _draw_house_sectors_modern(
 ) -> str:
     """Draw transparent house sector wedges for interactive highlighting (modern style)."""
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id is not None else ""
-    out = ""
+    # Which way the houses run, read once from all twelve. Several quadrant
+    # systems put them in descending order above the polar circle, and the
+    # horizon system does it on the equator. The Gauquelin variant below is
+    # always descending, by construction, and says so where it draws.
+    wheel_angles = [
+        _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut) for house in houses[:12]
+    ]
+    spans, reversed_wedges = house_spans(wheel_angles)
+    # Kept before the widening below rewrites them: these are the arcs the house
+    # reader measures, and where the wedges overlap it is the reader the paint
+    # order has to agree with.
+    true_spans = list(spans)
+    # A wedge narrower than the minimum is widened so it can be clicked at all,
+    # and a widened wedge necessarily covers longitudes outside its own arc: on a
+    # crossing ring where it is also the narrowest, it is painted on top and
+    # answers for them. Polich/Page at 70.5N has an eleventh house 0.348 degrees
+    # wide, so it answers for up to 0.652 degrees either side that the reader
+    # gives its neighbour.
+    #
+    # Painting the widened ones underneath instead was tried and is worse: the
+    # tenth house crosses the eleventh on that same ring, so the eleventh loses
+    # its own middle and goes back to being unclickable, which is the defect the
+    # widening exists for. No single paint order settles both. The slop is bounded
+    # by the minimum width, and that is the trade.
+    #
+    # A click exactly ON a cusp is outside all of this: an SVG path is closed, so
+    # both wedges that share a boundary contain it, and no linear order of twelve
+    # cyclic wedges can give every cusp to the house it opens. The reader does —
+    # it has an exact-on-cusp rule — so the two differ on a set of measure zero.
+    # And any house too thin to click gets the same minimum the classic engine
+    # gives it. This ring keeps its exact degrees, so nothing quantises two cusps
+    # together here — but Campanus inside the polar circle brings two of them
+    # arbitrarily close on its own: sweeping five latitudes between 67N and 69N at
+    # five-minute steps, the closest pair measured 0.0002 degrees. That is a house
+    # no pointer will ever find.
+    wheel_angles, spans = separate_collapsed_wedges(
+        wheel_angles, spans, reversed_wedges, MINIMUM_WEDGE_SPAN_DEGREES
+    )
+    sectors: list[str] = []
     for i in range(12):
         next_i = (i + 1) % 12
         house_num = i + 1
 
-        a_start = _zodiac_to_wheel_angle(houses[i].abs_pos, seventh_house_degree_ut)
-        a_end = _zodiac_to_wheel_angle(houses[next_i].abs_pos, seventh_house_degree_ut)
+        a_start = wheel_angles[i]
+        a_end = wheel_angles[next_i]
+        span = spans[i]
+
+        # The one case the separation above cannot repair: where the cusps cross
+        # rather than merely run backwards, the twelve do not tile and there is no
+        # width to trade between them. A wedge left at zero puts both ends of its
+        # arc on one point, SVG drops the arc, and a path of no area is left
+        # declaring pointer-events:all — a house that can never be clicked. So it
+        # takes its degree and moves only its own end, overlapping the neighbour
+        # it already overlaps. On a ring that tiles, this never fires.
+        if span < MINIMUM_WEDGE_SPAN_DEGREES:
+            span = MINIMUM_WEDGE_SPAN_DEGREES
+            a_end = a_start + (-span if reversed_wedges[i] else span)
 
         # Convert wheel angles to radians (parent group has rotate(-90), so subtract 90)
         r_start = math.radians(-a_start - 90)
@@ -1699,24 +2696,38 @@ def _draw_house_sectors_modern(
         ix2 = CENTER + inner_r * math.cos(r_end)
         iy2 = CENTER + inner_r * math.sin(r_end)
 
-        # Angular span to determine large-arc flag
-        span = _normalize_angle(houses[next_i].abs_pos - houses[i].abs_pos)
+        # Angular span to determine large-arc flag. Both sweeps flip with the
+        # direction: the endpoints are the same two points either way, and it is
+        # the pair (sweep, large_arc) that says which of the two arcs between them
+        # the wedge is.
         large_arc = 1 if span > 180 else 0
+        outer_sweep, inner_sweep = (1, 0) if reversed_wedges[i] else (0, 1)
 
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},{outer_sweep} {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},{inner_sweep} {ix1:.6f},{iy1:.6f} Z"
         )
 
-        out += (
+        sectors.append(
             f'<g kr:node="HouseSector" kr:house="{house_num}"{horoscope_attr}>'
             f'<path d="{d}" fill="transparent" stroke="none" pointer-events="all"/>'
             f"</g>\n"
         )
 
-    return out
+    # Widest first, so the narrowest is on top — the same rule the house reader
+    # applies, and the one the classic engine now paints by. It matters only where
+    # the wedges overlap, which is where the ring is not a house division: a point
+    # under houses 7, 9 and 12 was answered as the twelfth by the wheel and the
+    # ninth by the model. A ring that tiles is painted in house order, unchanged.
+    if _wedges_overlap(true_spans, reversed_wedges):
+        sectors = [
+            sectors[index]
+            for index in sorted(range(12), key=lambda index: (-true_spans[index], -index))
+        ]
+
+    return "".join(sectors)
 
 
 def _draw_gauquelin_sectors_modern(
@@ -1767,11 +2778,17 @@ def _draw_gauquelin_sectors_modern(
 
         large_arc = 1 if span > 180 else 0
 
+        # Both sweeps flipped, because these cusps descend. Correcting the span
+        # alone leaves the endpoints where they were and moves the arc onto the
+        # mirrored circle SVG puts through any two points at a given radius —
+        # measured on the gallery's Gauquelin charts, the thirty-six wedges sat
+        # on circles up to 92 units from a wheel whose radius is 50. The classic
+        # engine's twin has always used this pair; only this one did not.
         d = (
             f"M {ox1:.6f},{oy1:.6f} "
-            f"A {outer_r},{outer_r} 0 {large_arc},0 {ox2:.6f},{oy2:.6f} "
+            f"A {outer_r},{outer_r} 0 {large_arc},1 {ox2:.6f},{oy2:.6f} "
             f"L {ix2:.6f},{iy2:.6f} "
-            f"A {inner_r},{inner_r} 0 {large_arc},1 {ix1:.6f},{iy1:.6f} Z"
+            f"A {inner_r},{inner_r} 0 {large_arc},0 {ix1:.6f},{iy1:.6f} Z"
         )
 
         out += (
@@ -1815,16 +2832,37 @@ def _draw_house_ring(
 
     out += f'<path d="{_annulus_path(house_outer_r, house_inner_r)}" fill="{COLOR_HOUSE_RING}" fill-rule="evenodd"/>\n'
 
+    # Quadrant house systems make sectors wildly unequal — Campanus does it at
+    # Liverpool, Placidus inside the polar circle — and three or four numbers
+    # then want the same few degrees of a ring only 14 to 21 units across. They
+    # are spread by the least movement that separates them, which keeps a crowd
+    # centred on the houses it belongs to instead of sliding it sideways.
+    label_radius = CENTER - text_y
+    # In the direction the houses run, which above the polar circle is not always
+    # the direction the wheel angles increase in: read forwards, a six-degree
+    # house measures 354 and its number is centred on the far side of the chart.
+    wheel_angles = [
+        _zodiac_to_wheel_angle(sector.abs_pos, seventh_house_degree_ut) for sector in houses[:12]
+    ]
+    ring_spans, ring_reversed = house_spans(wheel_angles)
+    wanted = [
+        _normalize_angle(
+            wheel_angles[index] + (-0.5 if ring_reversed[index] else 0.5) * ring_spans[index]
+        )
+        for index in range(12)
+    ]
+    # The widest label the ring carries, measured at the size it is drawn. The
+    # estimator scales with the font size and carries no unit of its own, so it
+    # answers in the wheel's 100-unit frame here just as it answers in pixels
+    # for the panel.
+    label_width = estimate_text_width("12", HOUSE_NUMBER_FONT_SIZE)
+    placed = spread_around_wheel(wanted, label_separation_degrees(label_width, max(label_radius, 0.1), gutter_px=0.3))
+
     for i, house in enumerate(houses):
         house_num = i + 1
         cusp_angle = _zodiac_to_wheel_angle(house.abs_pos, seventh_house_degree_ut)
-        next_house = houses[(i + 1) % 12]
-        next_angle = _zodiac_to_wheel_angle(next_house.abs_pos, seventh_house_degree_ut)
-
-        # Angular span of this house sector
-        span = _normalize_angle(next_angle - cusp_angle)
-        # Absolute mid-angle of the sector
-        mid_angle_abs = _normalize_angle(cusp_angle + span / 2)
+        # Where the number goes, after spreading (see above).
+        mid_angle_abs = placed[i]
         stroke_w = ANGULAR_STROKE_WIDTH if house_num in ANGULAR_HOUSES else NORMAL_STROKE_WIDTH
 
         # Divider line from house ring outer edge down to line_inner_radius
@@ -1835,7 +2873,7 @@ def _draw_house_ring(
         out += (
             f'<line x1="{CENTER}" y1="{house_line_y1}" '
             f'x2="{CENTER}" y2="{house_line_y2}" '
-            f'stroke="{COLOR_STROKE}" stroke-width="{stroke_w}" '
+            f'stroke="{COLOR_CUSP}" stroke-width="{stroke_w}" '
             f'transform="rotate(-{cusp_angle:.6f} {CENTER} {CENTER})"/>\n'
         )
 
@@ -1846,7 +2884,7 @@ def _draw_house_ring(
             out += (
                 f'<g kr:node="HouseNumber" kr:house="{house_num}"{horoscope_attr}>'
                 f'<text text-anchor="middle" dominant-baseline="middle" '
-                f'x="{CENTER}" y="{text_y}" font-size="1.5" fill="{COLOR_TEXT}" '
+                f'x="{CENTER}" y="{text_y}" font-size="{HOUSE_NUMBER_FONT_SIZE}" fill="{COLOR_TEXT}" '
                 f'font-weight="500" '
                 f'transform="rotate(-{mid_angle_abs:.6f} {CENTER} {CENTER}) '
                 f'rotate({angle_upright:.6f} {CENTER} {text_y})">'
@@ -1885,6 +2923,7 @@ def _draw_aspect_core(
     aspects_settings: list[dict],
     seventh_house_degree_ut: float,
     core_radius: float = R_ASPECT,
+    show_aspect_movement: bool = False,
 ) -> str:
     """
     Draw aspect lines in the central core circle with small glyphs at midpoints.
@@ -1911,7 +2950,7 @@ def _draw_aspect_core(
         color_map[s["name"]] = s.get("color", COLOR_STROKE)
 
     # Scale factor for aspect rendering inside the core
-    aspect_scale = 0.37
+    aspect_scale = ASPECT_CORE_SCALE
 
     # Track rendered icon positions to avoid overlapping icons of the same aspect type
     # Third element is the aspect's degrees: an int from ASPECT_DEGREE_MAP, or
@@ -1976,11 +3015,18 @@ def _draw_aspect_core(
             f'translate(-{CENTER} -{CENTER})">\n'
         )
 
-        # Aspect line (drawn first so glyphs render on top)
+        # Aspect line (drawn first so glyphs render on top). A separating
+        # aspect is dashed only on request: the movement has always been in
+        # the metadata, but drawing it changes how every existing chart looks.
+        dash_attr = (
+            f' stroke-dasharray="{SEPARATING_DASH_ARRAY_SCALED}"'
+            if show_aspect_movement and str(movement).lower() == "separating"
+            else ""
+        )
         out += (
             f'  <line x1="{sx1:.6f}" y1="{sy1:.6f}" '
             f'x2="{sx2:.6f}" y2="{sy2:.6f}" '
-            f'stroke="{color}" stroke-width="0.25"/>\n'
+            f'stroke="{color}" stroke-width="{ASPECT_LINE_WIDTH}"{dash_attr}/>\n'
         )
 
         # Aspect glyph at midpoint — with deduplication
@@ -1996,7 +3042,8 @@ def _draw_aspect_core(
 
             if should_render_icon:
                 out += (
-                    f'  <g transform="translate({mx:.6f} {my:.6f}) rotate(90) scale(0.45) translate(-5 -5)">\n'
+                    f'  <g transform="translate({mx:.6f} {my:.6f}) rotate(90) '
+                    f'scale({ASPECT_GLYPH_SCALE}) translate(-5 -5)">\n'
                     f'    <use xlink:href="#{symbol_id}" fill="{color}"/>\n'
                     f"  </g>\n"
                 )
@@ -2021,8 +3068,11 @@ def draw_modern_horoscope(
     planets_settings: list[dict],
     aspects_settings: list[dict],
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
+    show_aspect_movement: bool = False,
     gauquelin_sectors: bool = False,
     gauquelin_cusps: Optional[list[float]] = None,
+    glyph_size: str = "medium",
 ) -> str:
     """
     Generate the complete modern concentric-rings horoscope SVG content.
@@ -2039,14 +3089,23 @@ def draw_modern_horoscope(
         aspects_settings: Aspect configuration dicts (name, color, degree).
         show_zodiac_background_ring: If True, draws the outer colored zodiac boundaries.
         gauquelin_cusps: 36 zodiacal longitudes for actual Gauquelin sector boundaries.
+        glyph_size: Which cluster profile to draw — "small", "medium" or
+            "large" (see GLYPH_SIZE_PROFILES). The drawer validates the value;
+            an unknown key raises here.
 
     Returns:
         Complete SVG content string for the modern horoscope.
     """
     # Orient the entire wheel so that 0° (Ascendant) is at 9 o'clock (LEFT)
     # The SVG initial orientation puts 0° at TOP. We rotate the whole group by -90°.
+    # Non-default sizes stamp themselves on the root so a consumer holding only
+    # the SVG (hit-area injection downstream, a saved file, a cached render) can
+    # tell which profile drew it. Medium stays unstamped on purpose: the
+    # attribute's absence IS the default, and the default render stays
+    # byte-identical to every chart drawn before sizes existed.
+    size_attr = "" if glyph_size == "medium" else f' kr:glyphsize="{glyph_size}"'
     out = (
-        f'<g kr:node="ModernHoroscope" font-family="{MODERN_TEXT_FONT_FAMILY}" '
+        f'<g kr:node="ModernHoroscope"{size_attr} font-family="{MODERN_TEXT_FONT_FAMILY}" '
         f'transform="rotate(-90 {CENTER} {CENTER})">\n'
     )
 
@@ -2073,20 +3132,30 @@ def draw_modern_horoscope(
     else:
         out += _draw_cusp_ring(houses, seventh_house_degree_ut, show_zodiac_background_ring, horoscope_id="0")
     out += _draw_ruler_ring()
+    profile = GLYPH_SIZE_PROFILES[glyph_size]["natal"]
     out += _draw_planet_ring(
         planets, planets_settings, seventh_house_degree_ut, houses,
+        min_separation=profile.min_separation,
+        planet_y_config=profile.planet_y_config(),
+        indicator_config=profile.indicator_config(),
+        scale_config=profile.scale_config(),
         gauquelin_sectors=gauquelin_sectors, gauquelin_cusps=gauquelin_cusps,
         show_zodiac_background_ring=show_zodiac_background_ring,
+        show_motion_state=show_motion_state,
     )
     if gauquelin_sectors:
         out += _draw_gauquelin_house_ring(seventh_house_degree_ut, gauquelin_cusps=gauquelin_cusps)
     else:
         out += _draw_house_ring(houses, seventh_house_degree_ut, horoscope_id="0")
-    # House sectors are click-only overlays; clip them to the inner edge of
-    # the zodiac background ring when the zodiac is drawn, so a click on a
-    # zodiac sign isn't intercepted by the house sector underneath. Falls
-    # back to R_CUSP_OUTER when no zodiac ring is rendered.
-    house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    # House sectors are click-only overlays and must not reach into the zodiac
+    # background ring, or a click on a sign is intercepted by the house under it.
+    # R_CUSP_OUTER is what does that, in both cases: when the ring is drawn these
+    # overlays are already inside the scale(0.92) wrapper that shrinks the whole
+    # chart to fit, so 50 here renders at 46 — exactly the ring's inner edge.
+    # Passing R_ZODIAC_BG_INNER applied that scale a second time and stopped the
+    # hit areas at a rendered 42.32, leaving 3.68 units of chart with no house
+    # under the pointer at all.
+    house_sector_outer_r = R_CUSP_OUTER
     if gauquelin_sectors:
         # Match the click hit-areas to the visible 36-sector rings above.
         out += _draw_gauquelin_sectors_modern(
@@ -2094,7 +3163,9 @@ def draw_modern_horoscope(
         )
     else:
         out += _draw_house_sectors_modern(houses, seventh_house_degree_ut, outer_r=house_sector_outer_r)
-    out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut)
+    out += _draw_aspect_core(
+        aspects_list, aspects_settings, seventh_house_degree_ut, show_aspect_movement=show_aspect_movement
+    )
 
     if show_zodiac_background_ring:
         out += "</g>\n"  # Close the scale wrapper
@@ -2118,6 +3189,9 @@ def draw_modern_dual_horoscope(
     aspects_settings: list[dict],
     chart_type: str = "Transit",
     show_zodiac_background_ring: bool = True,
+    show_motion_state: bool = False,
+    show_aspect_movement: bool = False,
+    glyph_size: str = "medium",
 ) -> str:
     """
     Generate a dual modern chart with two concentric planet rings.
@@ -2138,6 +3212,9 @@ def draw_modern_dual_horoscope(
         aspects_settings: Aspect config dicts.
         chart_type: "Transit", "Synastry", or "DualReturnChart".
         show_zodiac_background_ring: If True, draw outer zodiac wedges.
+        glyph_size: Which cluster profile both rings draw — "small", "medium"
+            or "large" (see GLYPH_SIZE_PROFILES). The drawer validates the
+            value; an unknown key raises here.
 
     Returns:
         Complete SVG content string for the dual horoscope.
@@ -2145,8 +3222,10 @@ def draw_modern_dual_horoscope(
     # ── FLAT CONCENTRIC DUAL-RING LAYOUT ──────────────────────────────────
     # Both rings exist at the same coordinate level, no nested scale() transforms.
 
+    # See draw_modern_horoscope: non-default sizes are stamped, medium is not.
+    size_attr = "" if glyph_size == "medium" else f' kr:glyphsize="{glyph_size}"'
     out = (
-        f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}" '
+        f'<g kr:node="ModernDualHoroscope" kr:charttype="{chart_type}"{size_attr} '
         f'font-family="{MODERN_TEXT_FONT_FAMILY}" transform="rotate(-90 {CENTER} {CENTER})">\n'
     )
 
@@ -2167,39 +3246,28 @@ def draw_modern_dual_horoscope(
     # ─── RULER RING (Subject 1's houses — shared) ───────────────────
     out += _draw_ruler_ring()
 
+    outer_profile = GLYPH_SIZE_PROFILES[glyph_size]["dual_outer"]
+    inner_profile = GLYPH_SIZE_PROFILES[glyph_size]["dual_inner"]
+
     # ─── OUTER PLANET RING (Subject 2) ──────────────────────────────
     out += _draw_planet_ring(
         planets=planets_2,
         planets_settings=planets_settings,
         seventh_house_degree_ut=seventh_house_degree_ut,
         houses=houses_1,  # Subject 1's houses for divider lines
-        min_separation=SYN_OUTER_MIN_SEPARATION,
+        min_separation=outer_profile.min_separation,
         ring_inner_r=SYN_R_OUTER_PLANET_INNER,
         ring_outer_r=SYN_R_OUTER_PLANET_OUTER,
         ring_fill_color=COLOR_OUTER_PLANET_RING,
         line_outer_y=SYN_HOUSE_LINE_OUTER_Y1,
         line_inner_y=SYN_HOUSE_LINE_OUTER_Y2,
-        planet_y_config={
-            "glyph_y": SYN_OUTER_PLANET_GLYPH_Y,
-            "degrees_y": SYN_OUTER_DEGREES_Y,
-            "sign_y": SYN_OUTER_SIGN_Y,
-            "minutes_y": SYN_OUTER_MINUTES_Y,
-            "rx_y": SYN_OUTER_RX_Y,
-        },
-        indicator_config={
-            "start_y": SYN_INDICATOR_START_Y,
-            "tick_length": -SYN_INDICATOR_TICK,  # tick outward (toward outer edge)
-            "arc_radius": SYN_INDICATOR_ARC_R_OUTWARD,  # arc just outside boundary
-        },
+        cusp_dim_stroke=COLOR_CUSP_DIM_OUTER,
+        planet_y_config=outer_profile.planet_y_config(),
+        indicator_config=outer_profile.indicator_config(),
         horoscope_id="1",
-        scale_config={
-            "planet_scale_base": SYN_PLANET_SCALE,
-            "degrees_font_size": SYN_DEGREES_FONT_SIZE,
-            "sign_scale_base": SYN_SIGN_SCALE,
-            "minutes_font_size": SYN_MINUTES_FONT_SIZE,
-            "rx_font_size": SYN_RX_FONT_SIZE,
-        },
+        scale_config=outer_profile.scale_config(),
         show_zodiac_background_ring=show_zodiac_background_ring,
+        show_motion_state=show_motion_state,
     )
 
     # ─── INNER PLANET RING (Subject 1) ──────────────────────────────
@@ -2208,33 +3276,18 @@ def draw_modern_dual_horoscope(
         planets_settings=planets_settings,
         seventh_house_degree_ut=seventh_house_degree_ut,
         houses=houses_1,  # Subject 1's own houses
-        min_separation=SYN_INNER_MIN_SEPARATION,
+        min_separation=inner_profile.min_separation,
         ring_inner_r=SYN_R_INNER_PLANET_INNER,
         ring_outer_r=SYN_R_INNER_PLANET_OUTER,
         ring_fill_color=COLOR_PLANET_RING,
         line_outer_y=SYN_HOUSE_LINE_INNER_Y1,
         line_inner_y=SYN_HOUSE_LINE_INNER_Y2,
-        planet_y_config={
-            "glyph_y": SYN_INNER_PLANET_GLYPH_Y,
-            "degrees_y": SYN_INNER_DEGREES_Y,
-            "sign_y": SYN_INNER_SIGN_Y,
-            "minutes_y": SYN_INNER_MINUTES_Y,
-            "rx_y": SYN_INNER_RX_Y,
-        },
-        indicator_config={
-            "start_y": SYN_INDICATOR_START_Y,
-            "tick_length": SYN_INDICATOR_TICK,  # tick inward (toward center)
-            "arc_radius": SYN_INDICATOR_ARC_R_INWARD,  # arc just inside boundary
-        },
+        planet_y_config=inner_profile.planet_y_config(),
+        indicator_config=inner_profile.indicator_config(),
         horoscope_id="0",
-        scale_config={
-            "planet_scale_base": SYN_PLANET_SCALE_INNER,
-            "degrees_font_size": SYN_DEGREES_FONT_SIZE_INNER,
-            "sign_scale_base": SYN_SIGN_SCALE,
-            "minutes_font_size": SYN_MINUTES_FONT_SIZE,
-            "rx_font_size": SYN_RX_FONT_SIZE,
-        },
+        scale_config=inner_profile.scale_config(),
         show_zodiac_background_ring=show_zodiac_background_ring,
+        show_motion_state=show_motion_state,
     )
 
     # ─── HOUSE NUMBER RING (Subject 1's houses — shared) ────────────
@@ -2250,9 +3303,10 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── HOUSE SECTORS (transparent, for interactive highlighting) ───
-    # Clip outer radius to the zodiac inner boundary when the zodiac ring is
-    # drawn, so clicks on a zodiac sign aren't swallowed by the house sector.
-    syn_house_sector_outer_r = R_ZODIAC_BG_INNER if show_zodiac_background_ring else R_CUSP_OUTER
+    # R_CUSP_OUTER in both cases: with the zodiac ring drawn these overlays sit
+    # inside the scale(0.92) wrapper, so 50 renders at 46, the ring's inner edge.
+    # See the single-chart path for what applying that scale twice cost.
+    syn_house_sector_outer_r = R_CUSP_OUTER
     out += _draw_house_sectors_modern(
         houses_1,
         seventh_house_degree_ut,
@@ -2262,7 +3316,13 @@ def draw_modern_dual_horoscope(
     )
 
     # ─── ASPECT CORE (cross-chart aspects) ──────────────────────────
-    out += _draw_aspect_core(aspects_list, aspects_settings, seventh_house_degree_ut, core_radius=SYN_R_ASPECT)
+    out += _draw_aspect_core(
+        aspects_list,
+        aspects_settings,
+        seventh_house_degree_ut,
+        core_radius=SYN_R_ASPECT,
+        show_aspect_movement=show_aspect_movement,
+    )
 
     if show_zodiac_background_ring:
         out += "</g>\n"  # Close zodiac bg scale wrapper

@@ -162,14 +162,42 @@ end_jd, points=None, aspects=None, ...)` → `MundaneAspectsCollectionModel`
 ## PlanetaryPhenomenaFactory
 
 Static; observational data (via `pheno_ut`) at ONE instant, not a range.
-`from_subject(subject, planets=None)` (rejects composite subjects —
-`julian_day is None` → `KerykeionException`) and `from_julian_day(julian_day,
-planets=None)` → `PlanetaryPhenomenaCollectionModel` (`iso_datetime` — empty
-string in the JD path, `julian_day`, `phenomena`). `planets` vocabulary:
-Moon..Pluto, nine bodies, no Sun. `PlanetaryPhenomenaModel`: `name`,
-`phase_angle`, `phase` (illuminated fraction 0–1), `elongation` (deg from
-Sun), `apparent_diameter` (deg), `apparent_magnitude`,
-`is_morning_star`/`is_evening_star` (Mercury/Venus only, else `None`).
+`from_subject(subject, planets=None, solar_phase_thresholds=None)` (rejects
+composite subjects — `julian_day is None` → `KerykeionException`) and
+`from_julian_day(julian_day, planets=None, solar_phase_thresholds=None)` →
+`PlanetaryPhenomenaCollectionModel` (`iso_datetime` — empty string in the JD
+path, `julian_day`, `phenomena`, `solar_phase_thresholds`). `planets`
+vocabulary: Moon..Pluto, nine bodies, no Sun. `PlanetaryPhenomenaModel`:
+`name`, `phase_angle`, `phase` (illuminated fraction 0–1), `elongation` (deg
+from Sun), `apparent_diameter` (deg), `apparent_magnitude`,
+`is_morning_star`/`is_evening_star` (Mercury/Venus only, else `None`),
+`solar_phase`.
+
+`solar_phase` (`SolarPhase` literal, from `kerykeion.schemas`) is the body's
+condition relative to the Sun: `"cazimi"`, `"combust"`, `"under_the_beams"`,
+`"free"`. It is read off the same rounded `elongation` the model publishes,
+against the collection's `solar_phase_thresholds`
+(`SolarPhaseThresholdsModel`, also from `kerykeion.schemas`: `cazimi_deg`
+0.2833, `combust_deg` 8.5, `under_beams_deg` 17.0). Those cut-offs are
+conventions, not measurements — pass your school's instance to either
+constructor and the labels move with it; the instance used is echoed on the
+collection, so a consumer never has to guess. The model rejects a set that does
+not widen outwards. Named for every body in the set, the Moon included; what a
+school does with a combust Moon is the school's business.
+
+`is_morning_star`/`is_evening_star` are **purely geometric** — which side of the
+Sun the planet stands on in longitude — and say nothing about visibility. A
+planet one degree from the Sun is still an "evening star" here. Read
+`solar_phase` for whether it can be seen.
+
+```python
+from kerykeion import PlanetaryPhenomenaFactory
+
+coll = PlanetaryPhenomenaFactory.from_julian_day(2460466.0, planets=["Venus"])
+venus = coll.phenomena[0]
+print(venus.solar_phase, round(venus.elongation, 3))   # cazimi 0.077
+print(coll.solar_phase_thresholds.combust_deg)          # 8.5
+```
 
 ## PlanetaryNodesFactory
 
@@ -181,9 +209,30 @@ subject's own zodiac frame; rejects composite subjects.
 raises `KerykeionException`). Vocabulary: Moon..Pluto; requesting `"Sun"`
 raises `KerykeionException` (no geocentric solar nodes/apsides). Returns
 `PlanetaryNodesCollectionModel` (`iso_datetime`, `julian_day`, `method`,
-`nodes`); `PlanetaryNodeModel` has `planet_name` plus four
-`KerykeionPointModel`s: `ascending_node`, `descending_node`, `perihelion`,
-`aphelion`.
+`nodes`); `PlanetaryNodeModel` has `planet_name`, `apsis_kind`, and six
+`KerykeionPointModel`s: `ascending_node`, `descending_node`, `periapsis`,
+`apoapsis`, and the deprecated `perihelion`/`aphelion`.
+
+The apsides carry two names for the same two points. `periapsis`/`apoapsis` are
+generic and always correct. `perihelion`/`aphelion` are **deprecated** — they
+name the Sun, which is right for the eight planets and wrong for the Moon, which
+goes round the Earth. They are still populated (the same object, so the pairs can
+never drift), so nothing that reads them breaks. `apsis_kind` (`ApsisKind`
+literal, from `kerykeion.schemas`) says which reading is in force:
+`"heliocentric"` for every planet, `"geocentric"` for the Moon alone — whose
+apsides are the perigee and the apogee, the far one being to the decimal the
+Black Moon Lilith (`method="mean"` → `mean_lilith`, `"osculating"` →
+`true_lilith`).
+
+```python
+from kerykeion import PlanetaryNodesFactory
+
+nodes = PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Moon", "Mars"])
+for n in nodes.nodes:
+    print(n.planet_name, n.apsis_kind, round(n.apoapsis.abs_pos, 4))
+# Moon geocentric 263.4643
+# Mars heliocentric 192.236
+```
 
 ## HeliacalFactory (instance)
 

@@ -14,6 +14,7 @@ produces a richer, UI-oriented structure that includes:
     - Surrounding major phases (previous/next New, First Quarter, Full, Last Quarter)
     - Next global solar and lunar eclipses (via Swiss Ephemeris)
     - Approximate sunrise, sunset, solar noon and day length for the subject location
+    - Moonrise and moonset for the subject's civil day (absent on the days that have neither)
     - Apparent Sun position (altitude, azimuth, distance)
     - Simple Sun/Moon zodiac signs snapshot
 
@@ -56,14 +57,23 @@ from kerykeion.moon_phase_details.utils import (
     describe_lunar_eclipse_type,
     compute_next_solar_eclipse_jd,
     compute_next_lunar_eclipse_jd,
+    compute_rise_set_ephe,
     compute_sun_rise_set_ephe,
     compute_sun_transit_ephe,
     compute_lunar_phase_jd,
     compute_sun_position,
 )
 from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
-from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName
-from kerykeion.utilities.core import datetime_to_julian, julian_to_datetime, localize_naive
+from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName, LunarPhaseStage
+from kerykeion.utilities.core import (
+    datetime_to_julian,
+    is_ambiguous,
+    is_nonexistent,
+    julian_to_datetime,
+    localize_naive,
+    lunar_major_phase_from_degrees,
+    lunar_stage_from_degrees,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -103,7 +113,7 @@ def _get_utc_datetime(subject: AstrologicalSubjectModel) -> datetime:
     return safe_parse_iso_datetime(iso_utc)
 
 
-def _compute_major_phase_name(degrees_between: float) -> str:
+def _compute_major_phase_name(degrees_between: float) -> LunarPhaseName:
     """
     Compute the nearest major lunar phase name given the Sun–Moon separation.
 
@@ -112,21 +122,13 @@ def _compute_major_phase_name(degrees_between: float) -> str:
         - First Quarter (90°)
         - Full Moon (180°)
         - Last Quarter (270°)
+
+    A thin alias over :func:`kerykeion.utilities.core.lunar_major_phase_from_degrees`,
+    which is the one definition: the subjects' ``LunarPhaseModel.major_phase`` reads
+    the same function, so this endpoint and a chart cast for the same instant cannot
+    disagree.
     """
-    angle = degrees_between % 360.0
-    major_phases = [
-        (0.0, "New Moon"),
-        (90.0, "First Quarter"),
-        (180.0, "Full Moon"),
-        (270.0, "Last Quarter"),
-    ]
-
-    def angular_distance(a: float, b: float) -> float:
-        diff = (a - b) % 360.0
-        return min(diff, 360.0 - diff)
-
-    closest_phase = min(major_phases, key=lambda item: angular_distance(angle, item[0]))
-    return closest_phase[1]
+    return lunar_major_phase_from_degrees(degrees_between)
 
 
 def _create_event_moment(
@@ -224,26 +226,60 @@ def _build_upcoming_phases(
     )
 
 
-def _compute_sun_times(
-    subject: AstrologicalSubjectModel,
-) -> Optional[tuple[Optional[datetime], Optional[datetime], Optional[datetime]]]:
+def _resolve_civil_midnight(naive: datetime, tzinfo: ZoneInfo) -> datetime:
     """
-    Compute sunrise, sunset and solar noon as local datetimes.
+    Resolve a civil midnight to the instant the day actually opens.
 
-    Uses the backend's `rise_trans` (via `compute_sun_rise_set_ephe` and
-    `compute_sun_transit_ephe`) for the subject's local civil day.
+    The two boundaries of the window — this day's midnight and the next one —
+    have to be resolved by the SAME rule, or the day they enclose is not a day:
+    what one boundary excludes the other has to include, and a single shared
+    resolver is the only way to keep that true.
 
-    Returns ``None`` only when the location or timezone cannot be resolved at
-    all. Otherwise a 3-tuple, in which the first two elements are ``None`` on a
-    polar day or night — there is no rise/set pair — while the third can still
-    carry the meridian transit. Callers must test the elements, not the tuple:
-    ``(None, None, None)`` is reachable and truthy.
+    Midnight is not always one instant. A zone that falls back at 00:00
+    (America/Havana 2026-11-01) makes it happen TWICE, and the day opens at the
+    first of the two: the repeated hour belongs to the new civil day, so the
+    larger-offset reading is the boundary. Taking the smaller one instead — as
+    both call sites did — opened the day an hour late AND closed the previous
+    day an hour late, so an event inside that hour was dropped from the day it
+    belongs to and filed under the day before.
 
-    Solar noon is returned from here rather than derived by the caller because
-    it needs `jd_midnight`, which only exists inside this function: deriving it
-    outside meant either re-deriving local midnight — the DST reasoning below is
-    subtle enough that a second copy would drift — or settling for the midpoint
-    of the pair, which is a different quantity (see `compute_sun_transit_ephe`).
+    A zone that springs forward at 00:00 (America/Santiago 2026-09-06,
+    America/Sao_Paulo 2018-11-04, Africa/Cairo 2023-04-28) makes midnight
+    happen NOT AT ALL, and there the smaller-offset reading is the answer it
+    already gave: it lands past the gap, on the first instant of the civil day
+    that exists.
+
+    The two answers are opposite readings of the same wall time, which is why
+    the fold has to be recognised rather than defaulted — ``is_dst`` alone
+    cannot serve both.
+    """
+    # Gap before fold: a nonexistent wall time also reports two different fold
+    # offsets, so testing the fold first would misclassify every gap.
+    if not is_nonexistent(naive, tzinfo) and is_ambiguous(naive, tzinfo):
+        # Fall-back fold: the FIRST occurrence, i.e. the larger UTC offset.
+        return localize_naive(naive, tzinfo, is_dst=True)
+    return localize_naive(naive, tzinfo, is_dst=False)
+
+
+def _local_civil_day_window(
+    subject: AstrologicalSubjectModel,
+) -> Optional[tuple[ZoneInfo, datetime, float]]:
+    """
+    Resolve the subject's civil day: its timezone, its local date and its
+    opening midnight.
+
+    Every rise/set question in this module is asked *of a day* — the subject's
+    local civil day — and the day is the same one for the Sun and the Moon, so
+    it is derived once here. The midnight that *closes* the day is not: only the
+    Moon needs it (see :func:`_next_local_midnight`), and computing it here
+    would have cost the Sun its answer on the last day the calendar can hold.
+
+    Returns:
+        Optional[tuple[ZoneInfo, datetime, float]]: ``(tzinfo, dt_local,
+            jd_midnight)`` — the resolved zone, the subject's local datetime
+            (whose date names the civil day) and the Julian Day in UT of that
+            day's opening midnight — or ``None`` when the coordinates or the
+            timezone cannot be resolved at all.
     """
     lat = subject.lat
     lng = subject.lng
@@ -260,11 +296,11 @@ def _compute_sun_times(
         # Expected error: the subject's tz_str is not a known IANA timezone
         # (ZoneInfoNotFoundError subclasses KeyError) or is a malformed key
         # (ValueError). Neither is a RuntimeError, so they need naming explicitly.
-        logger.debug("Unknown timezone '%s': %s. Cannot compute sunrise/sunset.", tz_str, exc)
+        logger.debug("Unknown timezone '%s': %s. Cannot compute rise/set times.", tz_str, exc)
         return None
     except Exception as exc:  # pragma: no cover - defensive
         logger.error(
-            "Error loading timezone '%s': %s. Cannot compute accurate sunrise/sunset times.",
+            "Error loading timezone '%s': %s. Cannot compute accurate rise/set times.",
             tz_str,
             exc,
         )
@@ -275,21 +311,133 @@ def _compute_sun_times(
     dt_local = dt_utc.astimezone(tzinfo)
 
     # Calculate JD for midnight local time (start of the day)
-    # IMPORTANT: resolve the wall time through localize_naive rather than attaching
-    # the tzinfo directly, so DST edge cases are decided instead of defaulted.
     midnight_naive = datetime(
         year=dt_local.year,
         month=dt_local.month,
         day=dt_local.day,
     )
-    # Civil midnight can be ambiguous (fall-back fold) or nonexistent (spring-forward
-    # gap at 00:00 — America/Sao_Paulo 2018-11-04, Africa/Cairo 2023-04-28). The
-    # smaller-offset reading answers both correctly: inside a fold it is the
-    # post-transition occurrence, and across a gap it is the first instant of the
-    # civil day that actually exists. A bare localize silently took a default here.
-    midnight_local = localize_naive(midnight_naive, tzinfo, is_dst=False)
-    midnight_utc = midnight_local.astimezone(timezone.utc)
+    midnight_utc = _resolve_civil_midnight(midnight_naive, tzinfo).astimezone(timezone.utc)
     jd_midnight = datetime_to_julian(midnight_utc)
+
+    return tzinfo, dt_local, jd_midnight
+
+
+def _next_local_midnight(dt_local: datetime, tzinfo: ZoneInfo) -> float:
+    """
+    Julian Day (UT) of the midnight that closes ``dt_local``'s civil day.
+
+    Only the Moon asks for it: it rises about 50 minutes later each day, so on
+    roughly one day in thirty the next moonrise after local midnight already
+    belongs to tomorrow, and only the closed window can tell the caller that
+    today simply has none. The Sun has no use for it, which is why this is a
+    separate, lazily called step rather than a third element of
+    :func:`_local_civil_day_window`: ``datetime(...) + timedelta(days=1)``
+    raises ``OverflowError`` on 9999-12-31, and computing it eagerly took the
+    sunrise down with the moonrise on the last day the calendar can hold.
+
+    Tomorrow's midnight is resolved through :func:`_resolve_civil_midnight`
+    rather than as ``jd_midnight + 1``: across a DST transition the civil day is
+    23 or 25 hours long, and a fixed 24 would either clip an event out of the
+    day or let tomorrow's in. It is the same resolver the opening boundary uses,
+    which is what makes the two agree about where one day ends and the next
+    begins.
+
+    Raises:
+        OverflowError: on 9999-12-31, whose civil day has no closing midnight
+            ``datetime`` can represent. The caller handles it.
+    """
+    next_naive = datetime(
+        year=dt_local.year,
+        month=dt_local.month,
+        day=dt_local.day,
+    ) + timedelta(days=1)
+    next_midnight_local = _resolve_civil_midnight(next_naive, tzinfo)
+    return datetime_to_julian(next_midnight_local.astimezone(timezone.utc))
+
+
+def _compute_moon_times(
+    subject: AstrologicalSubjectModel,
+) -> tuple[Optional[datetime], Optional[datetime]]:
+    """
+    Compute moonrise and moonset as local datetimes, for the subject's civil day.
+
+    The same `rise_trans` call the Sun uses — same refracted upper limb, same
+    standard atmosphere — pointed at the Moon.
+
+    Unlike the Sun, the Moon does not rise and set once every civil day: it is
+    about 50 minutes later each day, so roughly one day in thirty has no
+    moonrise, and another has no moonset. The backend always answers with the
+    NEXT event, which on those days belongs to tomorrow; anything outside
+    ``[midnight, next midnight)`` is therefore reported as ``None`` rather than
+    passed off as today's.
+
+    Returns:
+        tuple[Optional[datetime], Optional[datetime]]: ``(moonrise, moonset)``
+            as timezone-aware datetimes in the subject's local zone, each
+            ``None`` when the event does not fall inside this civil day (or
+            cannot be computed at all).
+    """
+    window = _local_civil_day_window(subject)
+    if window is None:
+        return None, None
+    tzinfo, dt_local, jd_midnight = window
+    lat = subject.lat
+    lng = subject.lng
+
+    try:
+        # Tomorrow's midnight is the Moon's business alone, so it is resolved
+        # here and not in the shared window: on 9999-12-31 it does not exist,
+        # and OverflowError joins the backend errors below so the last civil day
+        # of the calendar answers None instead of raising — and, above all, so
+        # it stops taking the Sun's answer with it.
+        jd_next_midnight = _next_local_midnight(dt_local, tzinfo)
+        # Serialized session: the helper mutates the global ephemeris path.
+        with ephemeris_session():
+            moonrise_jd, moonset_jd = compute_rise_set_ephe(jd_midnight, lat, lng, body=ephe.MOON)
+    except (*_BACKEND_ERRORS, OverflowError) as exc:
+        # Expected: the ephemeris edge, a polar latitude, missing data, or the
+        # end of the representable calendar.
+        logger.debug("Moonrise/moonset calculation failed (expected): %s", exc)
+        return None, None
+    except (AttributeError, ValueError, TypeError) as exc:  # pragma: no cover - defensive
+        logger.error("Unexpected error calculating moonrise/moonset: %s", exc, exc_info=True)
+        return None, None
+
+    def _inside_the_day(event_jd: Optional[float]) -> Optional[datetime]:
+        if event_jd is None or not (jd_midnight <= event_jd < jd_next_midnight):
+            return None
+        return julian_to_datetime(event_jd).replace(tzinfo=timezone.utc).astimezone(tzinfo)
+
+    return _inside_the_day(moonrise_jd), _inside_the_day(moonset_jd)
+
+
+def _compute_sun_times(
+    subject: AstrologicalSubjectModel,
+) -> Optional[tuple[Optional[datetime], Optional[datetime], Optional[datetime]]]:
+    """
+    Compute sunrise, sunset and solar noon as local datetimes.
+
+    Uses the backend's `rise_trans` (via `compute_sun_rise_set_ephe` and
+    `compute_sun_transit_ephe`) for the subject's local civil day.
+
+    Returns ``None`` only when the location or timezone cannot be resolved at
+    all. Otherwise a 3-tuple, in which the first two elements are ``None`` on a
+    polar day or night — there is no rise/set pair — while the third can still
+    carry the meridian transit. Callers must test the elements, not the tuple:
+    ``(None, None, None)`` is reachable and truthy.
+
+    Solar noon is returned from here rather than derived by the caller because
+    it needs `jd_midnight`: deriving it outside meant either re-deriving local
+    midnight — the DST reasoning in `_local_civil_day_window` is subtle enough
+    that a second copy would drift — or settling for the midpoint of the pair,
+    which is a different quantity (see `compute_sun_transit_ephe`).
+    """
+    window = _local_civil_day_window(subject)
+    if window is None:
+        return None
+    tzinfo, _dt_local, jd_midnight = window
+    lat = subject.lat
+    lng = subject.lng
 
     # Compute sunrise, sunset and the meridian transit inside a serialized
     # session (the helpers mutate the global ephemeris path).
@@ -401,7 +549,18 @@ def _compute_lunar_phase_metrics(
     lunar_phase: LunarPhaseModel,
     base_dt: datetime,
     upcoming_phases: MoonPhaseUpcomingPhasesModel,
-) -> tuple[float, LunarPhaseName, LunarPhaseEmoji, str, str, str, int, float, str, MoonPhaseIlluminationDetailsModel]:
+) -> tuple[
+    float,
+    LunarPhaseName,
+    LunarPhaseEmoji,
+    LunarPhaseStage,
+    LunarPhaseName,
+    str,
+    int,
+    float,
+    str,
+    MoonPhaseIlluminationDetailsModel,
+]:
     """
     Compute lunar phase metrics including phase fraction, illumination, and age.
 
@@ -420,8 +579,9 @@ def _compute_lunar_phase_metrics(
     phase_name = lunar_phase.moon_phase_name
     emoji = lunar_phase.moon_emoji
 
-    # Waxing vs waning stage
-    stage = "waxing" if 0.0 <= degrees_between < 180.0 else "waning"
+    # Waxing vs waning stage — the subjects' LunarPhaseModel.stage reads the
+    # same function, so the two surfaces cannot disagree about the same instant.
+    stage = lunar_stage_from_degrees(degrees_between)
 
     # Nearest major phase
     major_phase = _compute_major_phase_name(degrees_between)
@@ -573,12 +733,23 @@ class MoonPhaseDetailsFactory:
         sun = getattr(subject, "sun", None)
         moon = getattr(subject, "moon", None)
 
+        # Moonrise / moonset for the subject's civil day. Computed outside the
+        # `lunar_phase is not None` branch below on purpose: the horizon
+        # crossings are a fact about the place and the day, and they exist even
+        # for a subject that carries no lunar phase (a heliocentric chart, or
+        # one built without the Sun in active_points).
+        moonrise_local, moonset_local = _compute_moon_times(subject)
+        moonrise_str = moonrise_local.isoformat() if moonrise_local is not None else None
+        moonset_str = moonset_local.isoformat() if moonset_local is not None else None
+        moonrise_ts = int(moonrise_local.timestamp()) if moonrise_local is not None else None
+        moonset_ts = int(moonset_local.timestamp()) if moonset_local is not None else None
+
         # Initialize all fields as None
         phase: Optional[float] = None
         phase_name: Optional[LunarPhaseName] = None
         emoji: Optional[LunarPhaseEmoji] = None
-        stage: Optional[str] = None
-        major_phase: Optional[str] = None
+        stage: Optional[LunarPhaseStage] = None
+        major_phase: Optional[LunarPhaseName] = None
         illumination_str: Optional[str] = None
         age_days: Optional[int] = None
         age_days_precise: Optional[float] = None
@@ -633,6 +804,10 @@ class MoonPhaseDetailsFactory:
             lunar_cycle=lunar_cycle_str,
             emoji=emoji,
             zodiac=zodiac,
+            moonrise=moonrise_str,
+            moonrise_timestamp=moonrise_ts,
+            moonset=moonset_str,
+            moonset_timestamp=moonset_ts,
             next_lunar_eclipse=next_lunar_eclipse,
             detailed=detailed,
         )

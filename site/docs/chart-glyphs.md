@@ -1,12 +1,14 @@
 # Chart Glyphs
 
-Visual reference for the astrological glyphs used in Kerykeion charts: planets, points, lunar nodes, asteroids, Trans-Neptunian and Uranian points, Arabic parts, zodiac signs and aspects.
+Visual reference for the astrological glyphs used in Kerykeion charts: planets, lunar nodes and apsides, centaurs, asteroids, Trans-Neptunian and Uranian points, Arabic parts, angles, zodiac signs and aspects.
+
+Every glyph is geometry — no font is needed to render a chart. The colours shown are the light theme's; each is a CSS variable a theme can override.
 
 ![Kerykeion chart glyphs](assets/chart-glyphs.svg)
 
-## Glyphs by category
+## Glyphs by family
 
-### Luminaries & planets
+### Planets
 
 | Glyph (id) | Name |
 |---|---|
@@ -21,20 +23,6 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 | `Neptune` | Neptune |
 | `Pluto` | Pluto |
 
-### Minor bodies & Lilith
-
-| Glyph (id) | Name |
-|---|---|
-| `Chiron` | Chiron |
-| `Earth` | Earth |
-| `Mean_Lilith` | Mean Lilith |
-| `True_Lilith` | True Lilith |
-| `Ceres` | Ceres |
-| `Pallas` | Pallas |
-| `Juno` | Juno |
-| `Vesta` | Vesta |
-| `Pholus` | Pholus |
-
 ### Lunar nodes
 
 | Glyph (id) | Name |
@@ -43,6 +31,34 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 | `True_North_Lunar_Node` | True North Node |
 | `Mean_South_Lunar_Node` | Mean South Node |
 | `True_South_Lunar_Node` | True South Node |
+
+### Lunar apsides
+
+| Glyph (id) | Name |
+|---|---|
+| `Mean_Lilith` | Mean Lilith |
+| `True_Lilith` | True Lilith |
+| `Interpolated_Lilith` | Interpolated Lilith |
+| `Mean_Priapus` | Mean Priapus |
+| `True_Priapus` | True Priapus |
+| `Interpolated_Perigee` | Interpolated Perigee |
+| `White_Moon` | White Moon |
+
+### Centaurs
+
+| Glyph (id) | Name |
+|---|---|
+| `Chiron` | Chiron |
+| `Pholus` | Pholus |
+
+### Asteroids
+
+| Glyph (id) | Name |
+|---|---|
+| `Ceres` | Ceres |
+| `Pallas` | Pallas |
+| `Juno` | Juno |
+| `Vesta` | Vesta |
 
 ### Trans-Neptunian objects
 
@@ -69,7 +85,7 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 | `Vulkanus` | Vulkanus |
 | `Poseidon` | Poseidon |
 
-### Arabic parts (Lots)
+### Arabic parts
 
 | Glyph (id) | Name |
 |---|---|
@@ -78,7 +94,7 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 | `Pars_Amoris` | Pars Amoris |
 | `Pars_Fidei` | Pars Fidei |
 
-### Angles & special points
+### Angles
 
 | Glyph (id) | Name |
 |---|---|
@@ -86,13 +102,19 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 | `Medium_Coeli` | Medium Coeli |
 | `Descendant` | Descendant |
 | `Imum_Coeli` | Imum Coeli |
+
+### Axes and other points
+
+| Glyph (id) | Name |
+|---|---|
 | `Vertex` | Vertex |
 | `Anti_Vertex` | Anti-Vertex |
 | `East_Point` | East Point |
+| `Earth` | Earth |
 | `FixedStar` | Fixed Star |
 | `Midpoint` | Midpoint |
 
-### Zodiac signs
+### Signs
 
 | Glyph (id) | Name |
 |---|---|
@@ -125,7 +147,7 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 | `orb150` | Quincunx 150° |
 | `orb180` | Opposition 180° |
 
-### Other
+### Retrograde
 
 | Glyph (id) | Name |
 |---|---|

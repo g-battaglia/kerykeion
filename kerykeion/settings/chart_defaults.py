@@ -232,7 +232,7 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
     {
         "id": 20,
         "name": "True_Lilith",
-        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "color": "var(--kerykeion-chart-color-true-lilith)",
         "element_points": 0,
         "label": "True_Lilith",
     },
@@ -374,7 +374,7 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
     {
         "id": 63,
         "name": "Interpolated_Lilith",
-        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "color": "var(--kerykeion-chart-color-interpolated-lilith)",
         "element_points": 0,
         "label": "Interp_Lilith",
     },
@@ -388,7 +388,7 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
     {
         "id": 65,
         "name": "True_Priapus",
-        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "color": "var(--kerykeion-chart-color-true-lilith)",
         "element_points": 0,
         "label": "True_Priapus",
     },
@@ -396,14 +396,14 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
     {
         "id": 74,
         "name": "Interpolated_Perigee",
-        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "color": "var(--kerykeion-chart-color-interpolated-lilith)",
         "element_points": 0,
         "label": "Interp_Perigee",
     },
     {
         "id": 75,
         "name": "White_Moon",
-        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "color": "var(--kerykeion-chart-color-white-moon)",
         "element_points": 0,
         "label": "White_Moon",
     },

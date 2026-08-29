@@ -27,12 +27,13 @@ from kerykeion.schemas import (
 from kerykeion.schemas.literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
+    LunarPhaseStage,
     PointType,
     AstrologicalPoint,
     Houses,
 )
 from kerykeion.settings.config_constants import POINT_NUMBER_MAP as _POINT_NUMBER_MAP_IMPORT
-from typing import Any, Union, Optional, get_args, cast
+from typing import Any, Optional, Sequence, Union, cast, get_args
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig, getLogger
 import math
 import re
@@ -326,6 +327,247 @@ def is_point_between(
     return distance_from_start < span
 
 
+def normalize_degree(angle: Union[int, float]) -> float:
+    """Normalize an angle to the range [0, 360).
+
+    Args:
+        angle (int | float): The input angle in degrees.
+
+    Returns:
+        float: The normalized angle in the range [0, 360), or NaN unchanged when
+            the input is NaN - see the note below on why it is not turned into 0.
+    """
+    # The guard is on the *result*, not on `% 360 != 0`. For a tiny negative
+    # input Python's float modulo returns exactly 360.0 (-1e-15 % 360 == 360.0),
+    # which the old test read as "non-zero, therefore fine" and passed straight
+    # through — breaking the [0, 360) contract this function exists to hold.
+    # It matters downstream: draw_modern computes a house sector's span as
+    # normalize_degree(next_cusp - cusp), so two cusps coinciding to within
+    # float noise in the negative direction painted a 360° sector over the
+    # whole chart instead of a degenerate one.
+    result = angle % 360.0
+    # `result < 360.0` is False for NaN as well as for 360.0, so a bare else
+    # would quietly turn a NaN angle into 0° Aries — a plausible-looking wrong
+    # position where the old expression let the NaN through to a visible `nan`
+    # coordinate. Inf likewise: `inf % 360` is NaN. Propagate instead.
+    if math.isnan(result):
+        return result
+    return result if result < 360.0 else 0.0
+
+
+#: How far the twelve widths may miss a full circle and still count as covering
+#: it once. Windings are 360 degrees apart, so anything short of a degree is
+#: float noise rather than another turn.
+_HOUSE_WINDING_TOLERANCE_DEGREES = 1e-4
+
+
+#: Two longitudes closer than this are the same point: a thousandth of a
+#: milliarcsecond, far below anything an ephemeris resolves or a wheel can draw.
+#: It is the tolerance behind three separate questions that are really one — is
+#: this point ON that cusp, are these two cusps the same cusp, is this angle its
+#: own cusp — and they had three copies of the number between them.
+ON_CUSP_TOLERANCE_DEGREES = 1e-9
+
+#: Which cusp each angle IS, zero-based, in the systems that put it on one.
+#:
+#: Not a convention and not a lookup table of house-system identifiers kept
+#: somewhere and left to rot: it is which cusp a chart's own numbers put the
+#: angle on, and it is used only where that chart actually did. Quadrant systems
+#: say yes for all four; equal houses say yes for the Ascendant and Descendant
+#: only; whole sign, Morinus and meridian say no for one or both pairs, and there
+#: the angle is a point of its own that can legitimately fall in a neighbouring
+#: house.
+ANGLE_CUSP_INDEX: dict[str, int] = {
+    "ascendant": 0,
+    "imum_coeli": 3,
+    "descendant": 6,
+    "medium_coeli": 9,
+}
+
+
+def house_spans(cusps: Sequence[float]) -> tuple[list[float], list[bool]]:
+    """The twelve house widths, and which of them run against their own frame.
+
+    Above roughly 67 degrees a Campanus, Regiomontanus, Sunshine, Polich/Page or
+    APC chart puts its cusps in *descending* order, and a horizon chart does it
+    on the equator: the houses genuinely run backwards through the signs. Read
+    forwards, each house then measures some 354 degrees instead of 6, the twelve
+    of them wind round the wheel eleven times instead of once, and everything
+    that draws or centres on that span lands on the far side of the chart from
+    the house it names.
+
+    The direction belongs to the whole set and cannot be decided pair by pair.
+    Reading each pair's shorter arc would answer a different question - one about
+    two cusps rather than about twelve - and would have no way to tell a house
+    that is genuinely wide from one that is being read backwards. Twelve widths
+    cover the circle exactly once in whichever direction the houses run, so the
+    total is what tells the two apart: 360 one way, 3960 the other.
+
+    (Houses close on 180 degrees but do not pass it: the widest found by sweeping
+    every system to 89.9 degrees of latitude is 179.995, under APC at 86N. The
+    sibling reader get_planet_house relies on that, and this is the measurement
+    behind it.)
+
+    A third case has neither total. Polich/Page inside the polar circle returns
+    cusps that are not ordered at all: at 70N the first runs backwards while the
+    next five run forwards, so houses 1 and 2 overlap and no direction can make
+    twelve wedges tile a circle. The chart is degenerate rather than reversed,
+    and the least bad reading is to hold each wedge to its shorter arc: they
+    still overlap, because the cusps do, but no single one swallows the wheel.
+
+    Counted over 32,844 charts — all 23 systems, half a degree of latitude at a
+    time, four times of day — six systems reverse outright (Campanus, horizon,
+    Sunshine, Regiomontanus, Polich/Page, APC) and two go degenerate: Polich/Page
+    again, and Sunshine/alt, which never reverses at all.
+
+    Args:
+        cusps: The twelve cusp positions, in house order, in any angular frame.
+
+    Returns:
+        The twelve widths, and for each the flag saying it was measured against
+        the direction of the frame it was given.
+    """
+    forward = [normalize_degree(cusps[(index + 1) % 12] - cusps[index]) for index in range(12)]
+    if abs(sum(forward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        return forward, [False] * 12
+
+    backward = [normalize_degree(cusps[index] - cusps[(index + 1) % 12]) for index in range(12)]
+    if abs(sum(backward) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        return backward, [True] * 12
+
+    # strict: all three are twelve long by construction, and a silent truncation
+    # here would return a ring with fewer houses than it was given.
+    shorter = [ahead <= behind for ahead, behind in zip(forward, backward, strict=True)]
+    return (
+        [
+            ahead if pick else behind
+            for ahead, behind, pick in zip(forward, backward, shorter, strict=True)
+        ],
+        [not pick for pick in shorter],
+    )
+
+
+def angular_separation(first_degree: float, second_degree: float) -> float:
+    """How far apart two longitudes are, the short way round, in [0, 180]."""
+    return abs((first_degree - second_degree + 180.0) % 360.0 - 180.0)
+
+
+def angle_is_its_cusp(angle_degree: float, cusps: Sequence[float], cusp_index: int) -> bool:
+    """Does this chart put this angle exactly on the cusp it shares a number with?
+
+    Asked of the chart's own numbers rather than of a list of house-system
+    identifiers: a system either lands the angle on that cusp or it does not, and
+    the two longitudes say which without anyone having to maintain a table.
+
+    ``cusp_index`` is the cusp's own index, zero-based — 0 for the Ascendant, 3
+    for the Imum Coeli, 6 for the Descendant, 9 for the Midheaven, exactly as
+    :data:`ANGLE_CUSP_INDEX` gives them.
+    """
+    return angular_separation(angle_degree, cusps[cusp_index]) < ON_CUSP_TOLERANCE_DEGREES
+
+
+def angle_house_identities(
+    cusps: Sequence[float], ascendant: float, medium_coeli: float
+) -> dict[str, Houses]:
+    """Which house each angle opens, for the angles this chart puts on a cusp.
+
+    An angle that IS a cusp opens that house, and the chart knows which cusp each
+    angle is at the moment the cusps are computed — so it says so, instead of
+    handing the longitude back to a reader that has to find it again. The reader
+    cannot always succeed: above the polar circle several systems crowd cusps onto
+    one longitude, and Sunshine at 74.25 degrees north puts the second through the
+    sixth on 316.971024. The Imum Coeli IS the fourth cusp there, bit for bit, and
+    scanning twelve identical numbers answers with the earliest of them — the
+    third house, in the report and in the context both.
+
+    Nothing here invents an identity that the chart does not have. Whole sign,
+    equal, Morinus and meridian charts put one or both pairs of angles off their
+    numbered cusps, and for those this returns nothing and the shared reader
+    answers, which is what those systems mean.
+
+    The Descendant and the Imum Coeli are derived as the antipodes of the
+    Ascendant and the Midheaven, the same way every factory derives them, so the
+    identity is decided on the value the chart will actually carry.
+
+    Args:
+        cusps: The twelve cusp positions, in house order.
+        ascendant: The Ascendant's longitude, as the ephemeris returned it.
+        medium_coeli: The Midheaven's longitude, as the ephemeris returned it.
+
+    Returns:
+        A mapping from angle field name to the house it opens, holding only the
+        angles this chart places on their own cusp. Empty for a chart that places
+        none of them.
+    """
+    angles = {
+        "ascendant": ascendant % 360.0,
+        "descendant": (ascendant + 180.0) % 360.0,
+        "medium_coeli": medium_coeli % 360.0,
+        "imum_coeli": (medium_coeli + 180.0) % 360.0,
+    }
+    identities: dict[str, Houses] = {}
+    for angle_name, cusp_index in ANGLE_CUSP_INDEX.items():
+        if angle_is_its_cusp(angles[angle_name], cusps, cusp_index):
+            identities[angle_name] = _HOUSE_NAMES_TUPLE[cusp_index]
+    return identities
+
+
+def cusps_are_a_house_division(cusps: Sequence[float]) -> bool:
+    """Do these twelve arcs divide the circle into twelve houses?
+
+    Asked of :func:`house_spans`, which is the library's answer to which way the
+    ring runs, rather than counted here a second time.
+
+    Covering the circle is necessary and not sufficient: a house of zero width
+    adds nothing to the total, so twelve arcs can sum to 360 with two of the cusps
+    on the same longitude. That is not a division into twelve houses — no point
+    can ever be in a house that has no width — and it is the shape behind every
+    angle filed in the wrong house.
+    """
+    spans, reversed_wedges = house_spans(cusps)
+    if (
+        len(set(reversed_wedges)) != 1
+        or abs(sum(spans) - 360.0) > _HOUSE_WINDING_TOLERANCE_DEGREES
+    ):
+        return False
+    return all(span > ON_CUSP_TOLERANCE_DEGREES for span in spans)
+
+
+def coincident_cusp_groups(cusps: Sequence[float]) -> list[list[int]]:
+    """The sets of house numbers whose cusps stand on the same longitude.
+
+    House numbers are one-based, as a reader of a chart counts them. A chart whose
+    twelve cusps are twelve distinct longitudes — every ordinary chart — returns an
+    empty list, which is what makes this safe to carry on every subject.
+
+    Grouping is by single linkage: a cusp joins a group when it coincides with any
+    member. At a tolerance of a thousandth of a milliarcsecond the distinction from
+    strict equivalence is theoretical, and the question being asked — which houses
+    have no width — is answered the same way either round.
+    """
+    count = len(cusps)
+    group_of: list[int] = list(range(count))
+
+    def resolve(index: int) -> int:
+        while group_of[index] != index:
+            group_of[index] = group_of[group_of[index]]
+            index = group_of[index]
+        return index
+
+    for first in range(count):
+        for second in range(first + 1, count):
+            if angular_separation(cusps[first], cusps[second]) < ON_CUSP_TOLERANCE_DEGREES:
+                group_of[resolve(second)] = resolve(first)
+
+    grouped: dict[int, list[int]] = {}
+    for index in range(count):
+        grouped.setdefault(resolve(index), []).append(index + 1)
+    return sorted(
+        (sorted(members) for members in grouped.values() if len(members) > 1),
+        key=lambda members: members[0],
+    )
+
+
 def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: list) -> Houses:
     """
     Determine which house contains a planet based on its degree position.
@@ -350,9 +592,46 @@ def get_planet_house(planet_degree: Union[int, float], houses_degree_ut_list: li
     # a point belongs to the house whose cusp→next-cusp arc contains it via the
     # SHORTEST path (the real house span is always < 180°); a point exactly on a
     # cusp belongs to the house that cusp opens.
-    for i in range(n):
-        if abs((planet_degree - houses_degree_ut_list[i] + 180.0) % 360.0 - 180.0) < 1e-9:
-            return _HOUSE_NAMES_TUPLE[i]
+    # The NEAREST cusp within the tolerance, not the first one found. Above the
+    # polar circle several systems crowd three cusps into a few hundredths of a
+    # nanodegree: Sunshine at 89S puts the eighth, ninth and tenth within 6.6e-11
+    # of each other, and the Midheaven is the tenth exactly. Scanning upwards and
+    # taking the first match filed it in the eighth.
+    #
+    # Nearest is as far as twelve numbers can take it. Where several cusps are
+    # bit-identical — Sunshine at 74.25 degrees north puts the second through the
+    # sixth on one longitude — they are all equally near, and no rule written over
+    # this list can say which of them a point standing there opens. The answer is
+    # not in the list: it is in what the point IS, which the ephemeris knows when
+    # it returns the cusps and the angles together. So the four angles do not come
+    # through here any more; they are given their house by angle_house_identities
+    # where the cusps are made. What still arrives here is an ordinary point
+    # standing on a crowd of cusps, for which no answer is more right than
+    # another, and it gets the lowest-numbered one.
+    on_cusp = [(angular_separation(planet_degree, houses_degree_ut_list[i]), i) for i in range(n)]
+    closest, index = min(on_cusp)
+    if closest < ON_CUSP_TOLERANCE_DEGREES:
+        return _HOUSE_NAMES_TUPLE[index]
+
+    # Where the twelve ARE a house division, ask the one function that decides
+    # that — the same one the wheel is drawn from. Choosing the shorter arc for
+    # each pair independently is the right rule only on a ring that is not a
+    # division: on one that is, it can contradict the division itself. Twelve
+    # cusps at 0, 200, 210 … 300 run forwards and total 360, with a first house
+    # 200 degrees wide; read pair by pair, that house becomes the opposite 160
+    # degrees and longitude 100 — inside it, and drawn inside it — belongs to no
+    # house at all. No real chart reaches this (the widest arc measured across 23
+    # systems and nine latitudes is 179.2388 degrees) but the two functions
+    # disagreeing about the same ring is worth closing, not documenting.
+    spans, reversed_wedges = house_spans(houses_degree_ut_list)
+    if len(set(reversed_wedges)) == 1 and abs(sum(spans) - 360.0) <= _HOUSE_WINDING_TOLERANCE_DEGREES:
+        for i in range(n):
+            if spans[i] <= 0.0:
+                continue
+            start = houses_degree_ut_list[i]
+            offset = (start - planet_degree) % 360.0 if reversed_wedges[i] else (planet_degree - start) % 360.0
+            if offset < spans[i]:
+                return _HOUSE_NAMES_TUPLE[i]
 
     best_index = None
     best_span = 360.0 + 1.0
@@ -487,6 +766,126 @@ def find_common_active_points(
 # =============================================================================
 
 
+# The name windows are CENTRED on the event they name, and each is exactly as
+# wide as the name it replaces already was under the 28-bin scheme — only its
+# position moved.
+#
+# The 1-28 lunation day is a bin index: bin 1 is [0°, 12.857°), so the old
+# name lookup gave "New Moon" to the twelve and a half degrees that FOLLOW the
+# conjunction and nothing before it, "Full Moon" to bin 14 = [167.143°, 180°)
+# which ENDS at the opposition, and three bins each to the quarters, likewise
+# offset. The measured cost: on the 365 historically-verified syzygies of
+# tests/core/test_moon_phase_historical_verification.py, 95 instants carried
+# the wrong name — a minute after the exact full moon the chart read "Waning
+# Gibbous" beside an illumination of 100%.
+#
+# Half of one bin either side of the syzygies (12.857° in total, bin 1's width)
+# and one and a half bins either side of the quarters (38.571° in total, the
+# width of bins 7-9), so no window grew or shrank: 14.29% of the circle answers
+# with a different name than it did, and the four events sit at the centre of
+# the window that names them.
+_LUNAR_BIN_WIDTH = 360.0 / 28.0
+#: Half-width of the New/Full Moon windows — half a bin, i.e. bin 1's width shared.
+_SYZYGY_HALF_WIDTH = _LUNAR_BIN_WIDTH / 2.0
+#: Half-width of the quarter windows — one and a half bins, i.e. the three bins
+#: the quarters already spanned, shared around 90° and 270°.
+_QUARTER_HALF_WIDTH = 3.0 * _LUNAR_BIN_WIDTH / 2.0
+
+#: Upper bound (exclusive) of each name's window, in the order of
+#: :data:`_LUNAR_PHASE_NAMES`. The last window ends at 360° - half a bin; past it
+#: the separation has wrapped back into the New Moon window that straddles 0°.
+_LUNAR_PHASE_WINDOW_UPPER_BOUNDS: tuple[float, ...] = (
+    _SYZYGY_HALF_WIDTH,  # New Moon      [353.571, 6.429)
+    90.0 - _QUARTER_HALF_WIDTH,  # Waxing Crescent  [6.429, 70.714)
+    90.0 + _QUARTER_HALF_WIDTH,  # First Quarter    [70.714, 109.286)
+    180.0 - _SYZYGY_HALF_WIDTH,  # Waxing Gibbous   [109.286, 173.571)
+    180.0 + _SYZYGY_HALF_WIDTH,  # Full Moon        [173.571, 186.429)
+    270.0 - _QUARTER_HALF_WIDTH,  # Waning Gibbous   [186.429, 250.714)
+    270.0 + _QUARTER_HALF_WIDTH,  # Last Quarter     [250.714, 289.286)
+    360.0 - _SYZYGY_HALF_WIDTH,  # Waning Crescent  [289.286, 353.571)
+)
+
+#: The four major phases and the separation each happens at. Order matters: an
+#: exactly equidistant separation (45°, 135°, 225°, 315°) resolves to the first
+#: of the two it ties between, which is the behaviour the moon-phase overview
+#: has always had.
+_LUNAR_MAJOR_PHASES: tuple[tuple[float, LunarPhaseName], ...] = (
+    (0.0, "New Moon"),
+    (90.0, "First Quarter"),
+    (180.0, "Full Moon"),
+    (270.0, "Last Quarter"),
+)
+
+
+def lunar_phase_name_from_degrees(degrees: float) -> tuple[LunarPhaseName, LunarPhaseEmoji]:
+    """
+    Name and emoji of the lunar phase for a Sun-Moon separation.
+
+    The eight windows are centred on the events they name: a separation within
+    half a bin of 0° or 180° is a New or Full Moon, one within one and a half
+    bins of 90° or 270° is a quarter, and the four intermediate names hold the
+    rest. So a minute either side of an exact syzygy reads the same, which is
+    what an ephemeris, an almanac and the illumination percentage all say.
+
+    This is the source the name comes from. The 1-28 lunation day
+    (:func:`get_moon_phase_name_from_phase_int`) is a coarser, offset partition
+    of the same circle and is kept only for callers that have the integer and
+    not the degrees.
+
+    Args:
+        degrees: Anti-clockwise separation Moon - Sun, in degrees. Any real
+            number: it is reduced modulo 360 first.
+
+    Returns:
+        A ``(name, emoji)`` pair.
+    """
+    angle = degrees % 360.0
+    for index, upper_bound in enumerate(_LUNAR_PHASE_WINDOW_UPPER_BOUNDS):
+        if angle < upper_bound:
+            return _LUNAR_PHASE_NAMES[index], _LUNAR_PHASE_EMOJIS[index]
+
+    # Past the last bound the angle is in [353.571, 360) — the upper half of the
+    # New Moon window, which straddles 0°.
+    return _LUNAR_PHASE_NAMES[0], _LUNAR_PHASE_EMOJIS[0]
+
+
+def lunar_major_phase_from_degrees(degrees: float) -> LunarPhaseName:
+    """
+    The nearest of the four major phases to a Sun-Moon separation.
+
+    Unlike :func:`lunar_phase_name_from_degrees`, which can answer with any of
+    the eight names, this always answers New Moon, First Quarter, Full Moon or
+    Last Quarter — the quarter of the cycle the moment belongs to.
+
+    Args:
+        degrees: Anti-clockwise separation Moon - Sun, in degrees.
+
+    Returns:
+        One of the four major phase names.
+    """
+    angle = degrees % 360.0
+
+    def angular_distance(a: float, b: float) -> float:
+        diff = (a - b) % 360.0
+        return min(diff, 360.0 - diff)
+
+    return min(_LUNAR_MAJOR_PHASES, key=lambda item: angular_distance(angle, item[0]))[1]
+
+
+def lunar_stage_from_degrees(degrees: float) -> LunarPhaseStage:
+    """
+    Whether the Moon is waxing or waning at a given Sun-Moon separation.
+
+    Args:
+        degrees: Anti-clockwise separation Moon - Sun, in degrees.
+
+    Returns:
+        ``"waxing"`` on [0°, 180°) — the light is growing — and ``"waning"``
+        on [180°, 360°).
+    """
+    return "waxing" if 0.0 <= degrees % 360.0 < 180.0 else "waning"
+
+
 def _get_lunar_phase_index(phase: int) -> int:
     """
     Get the index for lunar phase lookup based on phase number.
@@ -527,13 +926,20 @@ def _get_lunar_phase_index(phase: int) -> int:
 
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     """
-    Get the emoji representation of a lunar phase.
+    Get the emoji representation of a lunation day.
+
+    APPROXIMATE, and kept only for callers that hold the 1-28 integer and not
+    the separation in degrees. The bins are offset from the events: bin 1 begins
+    at the conjunction instead of straddling it and bin 14 ends at the
+    opposition, so a full moon can land one bin past 🌕. Anything that has the
+    degrees must call :func:`lunar_phase_name_from_degrees`, which is what
+    :func:`calculate_moon_phase` does.
 
     Args:
-        phase: The lunar phase number (1-28)
+        phase: The lunation day (1-28)
 
     Returns:
-        The corresponding emoji for the lunar phase
+        The emoji for that lunation day, to a resolution of 12.857°
 
     Raises:
         KerykeionException: If phase is outside valid range
@@ -544,13 +950,18 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
 
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     """
-    Get the name of a lunar phase from its numerical value.
+    Get the name of a lunar phase from its lunation day.
+
+    APPROXIMATE, and kept only for callers that hold the 1-28 integer and not
+    the separation in degrees — see :func:`get_moon_emoji_from_phase_int` for
+    why the two disagree near an event. Anything that has the degrees must call
+    :func:`lunar_phase_name_from_degrees`.
 
     Args:
-        phase: The lunar phase number (1-28)
+        phase: The lunation day (1-28)
 
     Returns:
-        The corresponding name for the lunar phase
+        The name for that lunation day, to a resolution of 12.857°
 
     Raises:
         KerykeionException: If phase is outside valid range
@@ -1435,6 +1846,18 @@ def extract_year_from_iso(iso_datetime_string: str) -> int:
     return datetime.fromisoformat(iso_datetime_string).year
 
 
+def format_absolute_degrees(value: float, decimals: int = 2) -> str:
+    """Format a longitude so the number never contradicts the sign beside it.
+
+    ``format_degrees_below_bound(value, 360.0)`` only guards the wrap at the end
+    of the circle. The boundary that matters for a longitude printed next to a
+    sign label is its own sign's ceiling: 149.99687 rounds to ``"150.00"``, which
+    is zero degrees of Virgo, on a row that says Leo.
+    """
+    sign_ceiling = 30.0 * (int(value // 30.0) + 1)
+    return format_degrees_below_bound(value, min(sign_ceiling, 360.0), decimals)
+
+
 def format_degrees_below_bound(value: float, upper_bound: float, decimals: int = 2) -> str:
     """Format a degree value, guaranteeing the rounded string stays *below* ``upper_bound``.
 
@@ -1810,6 +2233,11 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     """
     Calculate lunar phase information from Sun and Moon positions.
 
+    The lunation day (1-28) is the bin index and keeps its historical meaning.
+    The name, the emoji, the major phase and the stage all come from the
+    separation itself, through the windows centred on the events — the bin index
+    is NOT their source, because its boundaries do not sit where the events do.
+
     Args:
         moon_abs_pos: Absolute position of the Moon in degrees
         sun_abs_pos: Absolute position of the Sun in degrees
@@ -1820,13 +2248,16 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     # Calculate the anti-clockwise degrees between the sun and moon
     degrees_between = (moon_abs_pos - sun_abs_pos) % 360
 
-    # Calculate the moon phase (1-28) based on the degrees between the sun and moon
-    step = 360.0 / 28.0
-    moon_phase = int(degrees_between // step) + 1
+    # Calculate the lunation day (1-28) based on the degrees between the sun and moon
+    moon_phase = int(degrees_between // _LUNAR_BIN_WIDTH) + 1
+
+    phase_name, phase_emoji = lunar_phase_name_from_degrees(degrees_between)
 
     return LunarPhaseModel(
         degrees_between_s_m=degrees_between,
         moon_phase=moon_phase,
-        moon_emoji=get_moon_emoji_from_phase_int(moon_phase),
-        moon_phase_name=get_moon_phase_name_from_phase_int(moon_phase),
+        moon_emoji=phase_emoji,
+        moon_phase_name=phase_name,
+        major_phase=lunar_major_phase_from_degrees(degrees_between),
+        stage=lunar_stage_from_degrees(degrees_between),
     )

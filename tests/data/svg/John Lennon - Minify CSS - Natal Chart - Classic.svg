@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
-<svg style="background-color:#ffffff" preserveAspectRatio="xMidYMid" viewBox="0 -15 890 580" xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" xmlns:xlink="http://www.w3.org/1999/xlink">
- <title>John Lennon - Minify CSS - Birth Chart</title>
+<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Noto Sans (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
+<svg font-family="Arial, Helvetica, Liberation Sans, sans-serif" style="background-color:#ffffff" aria-labelledby="kerykeion-chart-title kerykeion-chart-desc" preserveAspectRatio="xMidYMid" role="img" viewBox="0 -15 890 580" xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <title id="kerykeion-chart-title">John Lennon - Minify CSS - Birth Chart</title>
+ <desc id="kerykeion-chart-desc">John Lennon - Minify CSS - Birth Chart. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 20 aspects.</desc>
  <!-- Colors -->
  <!---
     Main Chart -->
@@ -18,28 +19,28 @@
   <!-- Elements -->
   <g transform="translate(0)" font-size="10px" kr:node="Elements_Percentages">
    <text x="20" y="138" fill="#000000" kr:node="Elements_Text">Elements:</text>
-   <text x="20" y="152" fill="#ff6600" kr:node="Fire_Text">Fire 19%</text>
+   <text x="20" y="152" fill="#943b00" kr:node="Fire_Text">Fire 19%</text>
    <text x="20" y="164" fill="#6a2d04" kr:node="Earth_Text">Earth 36%</text>
-   <text x="20" y="176" fill="#6f76d1" kr:node="Air_Text">Air 36%</text>
+   <text x="20" y="176" fill="#414ac2" kr:node="Air_Text">Air 36%</text>
    <text x="20" y="188" fill="#630e73" kr:node="Water_Text">Water 9%</text>
   </g>
   <!-- Qualities -->
   <g transform="translate(0)" font-size="10px" kr:node="Qualities_Percentages">
    <text x="20" y="208" fill="#000000" kr:node="Qualities_Text">Qualities:</text>
-   <text x="20" y="222" fill="#ff6600" kr:node="Cardinal_Text">Cardinal 45%</text>
+   <text x="20" y="222" fill="#943b00" kr:node="Cardinal_Text">Cardinal 45%</text>
    <text x="20" y="234" fill="#6a2d04" kr:node="Fixed_Text">Fixed 43%</text>
    <text x="20" y="246" fill="#630e73" kr:node="Mutable_Text">Mutable 12%</text>
   </g>
-  <g transform="translate(0)" fill="#000000" font-size="10px" kr:node="Bottom_Left_Text">
-   <text x="20" y="452" kr:node="Bottom_Left_Text_0">Zodiac: Tropical</text>
-   <text x="20" y="466" kr:node="Bottom_Left_Text_1">Domification: Placidus</text>
-   <text x="20" y="480" kr:node="Bottom_Left_Text_2">Lunation Day: 9</text>
-   <text x="20" y="494" kr:node="Bottom_Left_Text_3">Lunar phase: First Quarter</text>
-   <text x="20" y="508" kr:node="Bottom_Left_Text_4">Perspective: Apparent Geocentric</text>
-   <text x="20" y="522" kr:node="Bottom_Left_Text_5">Diurnality: Nocturnal</text>
+  <g transform="translate(0,7)" fill="#000000" font-size="10px" kr:node="Bottom_Left_Text">
+   <text x="20" y="452" kr:node="Bottom_Left_Text_0"/>
+   <text x="20" y="466" kr:node="Bottom_Left_Text_1">Lunar phase: First Quarter</text>
+   <text x="20" y="480" kr:node="Bottom_Left_Text_2">Zodiac: Tropical</text>
+   <text x="20" y="494" kr:node="Bottom_Left_Text_3">Diurnality: Nocturnal</text>
+   <text x="20" y="508" kr:node="Bottom_Left_Text_4">Domification: Placidus</text>
+   <text x="20" y="522" kr:node="Bottom_Left_Text_5">Perspective: Apparent Geocentric</text>
   </g>
   <!-- Lunar Phase -->
-  <g transform="translate(10,532)" kr:node="Lunar_Phase">
+  <g transform="translate(10,438)" kr:node="Lunar_Phase">
    <g transform="rotate(0 20 10)">
     <defs>
      <clipPath id="moonPhaseCutOffCircle">
@@ -225,175 +226,175 @@
    <!-- House Sectors (transparent, for interactive highlighting) -->
    <g kr:node="House_Sectors">
     <g kr:house="1" kr:node="HouseSector">
-     <path d="m0 240a240 240 0 0 0 55.592 153.6l92.204-76.801a120 120 0 0 1-27.796-76.801z" fill="transparent" pointer-events="all"/>
+     <path d="m0 240a240 240 0 0 0 56.149 154.27l91.925-77.135a120 120 0 0 1-28.075-77.135z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="2" kr:node="HouseSector">
-     <path d="m55.592 393.6a240 240 0 0 0 66.198 55.267l59.105-104.43a120 120 0 0 1-33.099-27.633z" fill="transparent" pointer-events="all"/>
+     <path d="m56.149 394.27a240 240 0 0 0 67.496 55.64l58.177-104.95a120 120 0 0 1-33.748-27.82z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="3" kr:node="HouseSector">
-     <path d="m121.79 448.87a240 240 0 0 0 65.546 25.281l26.332-117.08a120 120 0 0 1-32.773-12.641z" fill="transparent" pointer-events="all"/>
+     <path d="m123.65 449.91a240 240 0 0 0 66.456 24.847l24.949-117.38a120 120 0 0 1-33.228-12.423z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="4" kr:node="HouseSector">
-     <path d="m187.34 474.15a240 240 0 0 0 75.946 4.7175l-11.641-119.43a120 120 0 0 1-37.973-2.3587z" fill="transparent" pointer-events="all"/>
+     <path d="m190.1 474.76a240 240 0 0 0 74.986 3.9298l-12.543-119.34a120 120 0 0 1-37.493-1.9649z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="5" kr:node="HouseSector">
-     <path d="m263.28 478.87a240 240 0 0 0 105.17-36.137l-64.226-101.37a120 120 0 0 1-52.585 18.068z" fill="transparent" pointer-events="all"/>
+     <path d="m265.09 478.69a240 240 0 0 0 105.63-37.404l-65.357-100.64a120 120 0 0 1-52.813 18.702z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="6" kr:node="HouseSector">
-     <path d="m368.45 442.73a240 240 0 0 0 111.55-202.73h-120a120 120 0 0 1-55.774 101.37z" fill="transparent" pointer-events="all"/>
+     <path d="m370.71 441.28a240 240 0 0 0 109.29-201.28h-120a120 120 0 0 1-54.643 100.64z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="7" kr:node="HouseSector">
-     <path d="m480 240a240 240 0 0 0-55.592-153.6l-92.204 76.801a120 120 0 0 1 27.796 76.801z" fill="transparent" pointer-events="all"/>
+     <path d="m480 240a240 240 0 0 0-56.149-154.27l-91.925 77.135a120 120 0 0 1 28.075 77.135z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="8" kr:node="HouseSector">
-     <path d="m424.41 86.398a240 240 0 0 0-66.198-55.267l-59.105 104.43a120 120 0 0 1 33.099 27.633z" fill="transparent" pointer-events="all"/>
+     <path d="m423.85 85.731a240 240 0 0 0-67.496-55.64l-58.177 104.95a120 120 0 0 1 33.748 27.82z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="9" kr:node="HouseSector">
-     <path d="m358.21 31.131a240 240 0 0 0-65.546-25.281l-26.332 117.08a120 120 0 0 1 32.773 12.641z" fill="transparent" pointer-events="all"/>
+     <path d="m356.35 30.091a240 240 0 0 0-66.456-24.847l-24.949 117.38a120 120 0 0 1 33.228 12.423z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="10" kr:node="HouseSector">
-     <path d="m292.66 5.8494a240 240 0 0 0-75.946-4.7175l11.641 119.43a120 120 0 0 1 37.973 2.3587z" fill="transparent" pointer-events="all"/>
+     <path d="m289.9 5.2446a240 240 0 0 0-74.986-3.9298l12.543 119.34a120 120 0 0 1 37.493 1.9649z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="11" kr:node="HouseSector">
-     <path d="m216.72 1.132a240 240 0 0 0-105.17 36.137l64.226 101.37a120 120 0 0 1 52.585-18.068z" fill="transparent" pointer-events="all"/>
+     <path d="m214.91 1.3147a240 240 0 0 0-105.63 37.404l65.357 100.64a120 120 0 0 1 52.813-18.702z" fill="transparent" pointer-events="all"/>
     </g>
     <g kr:house="12" kr:node="HouseSector">
-     <path d="m111.55 37.269a240 240 0 0 0-111.55 202.73l120-3e-14a120 120 0 0 1 55.774-101.37z" fill="transparent" pointer-events="all"/>
+     <path d="m109.29 38.719a240 240 0 0 0-109.29 201.28l120-3e-14a120 120 0 0 1 54.643-100.64z" fill="transparent" pointer-events="all"/>
     </g>
    </g>
    <!-- Houses -->
    <g kr:node="Houses_Wheel">
     <g kr:absoluteposition="19.74676719464139" kr:horoscope="0" kr:node="Cusp" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="First_House">
-     <line x1="120" y1="240" y2="240" stroke="#ff7e00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+     <line x1="120" y1="240" y2="240" stroke="#7f3f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="1" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="55.46043348493119" y="305.50908565577413">1</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="56.57901680910558" y="308.6678675185284">1</tspan></text>
     </g>
     <g kr:absoluteposition="59.539355319478915" kr:horoscope="0" kr:node="Cusp" kr:sign="Tau" kr:signposition="29.539355319478915" kr:slug="Second_House">
      <line x1="148.07" x2="56.149" y1="317.13" y2="394.27" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="2" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="113.58477894018444" y="390.08053307884376">2</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="114.87298170666935" y="391.15192001044227">2</tspan></text>
     </g>
     <g kr:absoluteposition="80.23902557714422" kr:horoscope="0" kr:node="Cusp" kr:sign="Gem" kr:signposition="20.23902557714422" kr:slug="Third_House">
      <line x1="181.82" x2="123.65" y1="344.95" y2="449.91" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="3" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="168.19335368730236" y="422.24744188746274">3</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="169.76018279818223" y="422.8410603356923">3</tspan></text>
     </g>
     <g kr:absoluteposition="97.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="7.070979233059859" kr:slug="Fourth_House">
      <line x1="215.05" x2="190.1" y1="357.38" y2="474.76" stroke="#000" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="4" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="226.95149640135483" y="434.7368706728781">4</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="226.9514964013547" y="434.7368706728781">4</tspan></text>
     </g>
     <g kr:absoluteposition="115.31371115556101" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="25.31371115556101" kr:slug="Fifth_House">
      <line x1="252.54" x2="265.09" y1="359.34" y2="478.69" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="5" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="299.5090856557741" y="424.5395665150688">5</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="301.090916972884" y="423.9871662896983">5</tspan></text>
     </g>
     <g kr:absoluteposition="142.10542080689618" kr:horoscope="0" kr:node="Cusp" kr:sign="Leo" kr:signposition="22.105420806896177" kr:slug="Sixth_House">
      <line x1="305.36" x2="370.71" y1="340.64" y2="441.28" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="6" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="404.92698377076397" y="336.0834470872967">6</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="405.73288563109736" y="334.61448196984486">6</tspan></text>
     </g>
     <g kr:absoluteposition="199.7467671946414" kr:horoscope="0" kr:node="Cusp" kr:sign="Lib" kr:signposition="19.746767194641393" kr:slug="Seventh_House">
      <line x1="360" x2="480" y1="240" y2="240" stroke="#00f" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="7" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="418.5395665150688" y="180.49091434422593">7</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="417.4209831908944" y="177.3321324814716">7</tspan></text>
     </g>
     <g kr:absoluteposition="239.53935531947891" kr:horoscope="0" kr:node="Cusp" kr:sign="Sco" kr:signposition="29.539355319478915" kr:slug="Eighth_House">
      <line x1="331.93" x2="423.85" y1="162.87" y2="85.731" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="8" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="360.4152210598155" y="95.91946692115621">8</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="359.1270182933307" y="94.84807998955776">8</tspan></text>
     </g>
     <g kr:absoluteposition="260.2390255771442" kr:horoscope="0" kr:node="Cusp" kr:sign="Sag" kr:signposition="20.23902557714422" kr:slug="Ninth_House">
      <line x1="298.18" x2="356.35" y1="135.05" y2="30.091" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="9" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="305.8066463126977" y="63.752558112537265">9</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="304.23981720181774" y="63.15893966430767">9</tspan></text>
     </g>
     <g kr:absoluteposition="277.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Tenth_House">
-     <line x1="264.95" x2="289.9" y1="122.62" y2="5.2446" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+     <line x1="264.95" x2="289.9" y1="122.62" y2="5.2446" stroke="#a80000" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="10" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="247.04850359864525" y="51.263129327121824">10</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="247.04850359864525" y="51.263129327121824">10</tspan></text>
     </g>
     <g kr:absoluteposition="295.313711155561" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="25.31371115556101" kr:slug="Eleventh_House">
      <line x1="227.46" x2="214.91" y1="120.66" y2="1.3147" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="11" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="174.49091434422596" y="61.460433484931166">11</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="172.90908302711597" y="62.01283371030176">11</tspan></text>
     </g>
     <g kr:absoluteposition="322.1054208068962" kr:horoscope="0" kr:node="Cusp" kr:sign="Aqu" kr:signposition="22.105420806896177" kr:slug="Twelfth_House">
      <line x1="174.64" x2="109.29" y1="139.36" y2="38.719" stroke="#f00" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
     </g>
     <g kr:horoscope="0" kr:house="12" kr:node="HouseNumber">
-     <text fill="#f00" fill-opacity=".6" font-size="14px"><tspan x="69.07301622923602" y="149.91655291270325">12</tspan></text>
+     <text fill="#990000" fill-opacity=".6" font-size="14px"><tspan x="68.26711436890267" y="151.38551803015514">12</tspan></text>
     </g>
    </g>
    <!-- Gauquelin Sectors Overlay -->
    <!-- Planets -->
    <g kr:node="Planets_Wheel">
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.74676719464139" kr:cx="140.0" kr:cy="290.00000000000006" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="Ascendant">
-     <use x="40.0" y="240.00000000000006" xlink:href="#Ascendant"/>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.74676719464139" kr:cx="194.0" kr:cy="290.0" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="Ascendant" kr:speed="886.832442">
+     <use x="94.0" y="240.00000000000003" xlink:href="#Ascendant"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.21501423317537" kr:cx="186.08748014191332" kr:cy="352.1846945070414" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.215014233175367" kr:slug="Saturn">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.21501423317537" kr:cx="186.08748014191332" kr:cy="352.1846945070414" kr:declination="13.2969" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.215014233175367" kr:slug="Saturn" kr:speed="-0.066938">
      <use x="86.0874801419133" y="302.1846945070414" xlink:href="#Saturn"/>
      <g transform="translate(108.09 320.18) scale(.55)">
       <use xlink:href="#retrograde"/>
      </g>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.69186967968114" kr:cx="208.77606924032162" kr:cy="354.0021874312053" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.69186967968114" kr:slug="Jupiter">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.69186967968114" kr:cx="208.77606924032162" kr:cy="354.0021874312053" kr:declination="14.6101" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.69186967968114" kr:slug="Jupiter" kr:speed="-0.10691">
      <use x="108.77606924032162" y="304.0021874312053" xlink:href="#Jupiter"/>
      <g transform="translate(130.78 322) scale(.55)">
       <use xlink:href="#retrograde"/>
      </g>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="55.55201631118552" kr:cx="205.70317893375875" kr:cy="387.57235188055057" kr:house="First_House" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="25.55201631118552" kr:slug="Uranus">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="55.55201631118552" kr:cx="205.70317893375875" kr:cy="387.57235188055057" kr:declination="18.8846" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="25.55201631118552" kr:slug="Uranus" kr:speed="-0.029366">
      <use x="105.70317893375875" y="337.57235188055057" xlink:href="#Uranus"/>
      <g transform="translate(127.7 355.57) scale(.55)">
       <use xlink:href="#retrograde"/>
      </g>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="120.56821722799918" kr:cx="367.85811332497553" kr:cy="433.3175687833589" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="0.5682172279991846" kr:slug="Chiron">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="120.56821722799918" kr:cx="367.85811332497553" kr:cy="433.3175687833589" kr:declination="13.4146" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="0.5682172279991846" kr:slug="Chiron" kr:speed="0.05292">
      <use x="267.85811332497553" y="383.3175687833589" xlink:href="#Chiron"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="124.18808813451612" kr:cx="382.9639614870184" kr:cy="450.3436871639853" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="4.188088134516121" kr:slug="Pluto">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="124.18808813451612" kr:cx="382.9639614870184" kr:cy="450.3436871639853" kr:declination="23.1195" kr:house="Fifth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="4.188088134516121" kr:slug="Pluto" kr:speed="0.011365">
      <use x="282.9639614870184" y="400.3436871639853" xlink:href="#Pluto"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="153.21541744281757" kr:cx="441.4201220870136" kr:cy="395.02361084944306" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="3.215417442817568" kr:slug="Venus">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="153.21541744281757" kr:cx="441.4201220870136" kr:cy="395.02361084944306" kr:declination="10.5716" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="3.215417442817568" kr:slug="Venus" kr:speed="1.133712" kr:stellium="6">
      <use x="341.4201220870136" y="345.02361084944306" xlink:href="#Venus"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="176.03011967681334" kr:cx="492.8038056731051" kr:cy="354.86136732921943" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="26.030119676813342" kr:slug="Neptune">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="176.03011967681334" kr:cx="492.8038056731051" kr:cy="354.86136732921943" kr:declination="2.6814" kr:house="Sixth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="26.030119676813342" kr:slug="Neptune" kr:speed="0.035317">
      <use x="392.8038056731051" y="304.86136732921943" xlink:href="#Neptune"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="182.66253120510896" kr:cx="479.6204943706032" kr:cy="332.68626888951957" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="2.6625312051089622" kr:slug="Mars">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="182.66253120510896" kr:cx="479.6204943706032" kr:cy="332.68626888951957" kr:declination="-0.1807" kr:house="Sixth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="2.6625312051089622" kr:slug="Mars" kr:speed="0.644941" kr:stellium="6">
      <use x="379.6204943706032" y="282.68626888951957" xlink:href="#Mars"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="191.024247807456" kr:cx="504.3844994111007" kr:cy="313.10273475937083" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="11.024247807455993" kr:slug="True_North_Lunar_Node">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="191.024247807456" kr:cx="504.3844994111007" kr:cy="313.10273475937083" kr:declination="-4.3633" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="11.024247807455993" kr:slug="True_North_Lunar_Node" kr:speed="0.005933">
      <use x="404.3844994111007" y="263.10273475937083" xlink:href="#True_North_Lunar_Node"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:angularity="Descendant:3.4789" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:declination="-6.3989" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun" kr:speed="0.988482" kr:stellium="6">
      <use x="385.79991207416776" y="247.64104961146978" xlink:href="#Sun"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.55823263691192" kr:cx="496.9560835494866" kr:cy="235.955686360112" kr:house="Seventh_House" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232636911924" kr:slug="Mercury">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.55823263691192" kr:cx="496.9560835494866" kr:cy="235.955686360112" kr:declination="-16.233" kr:house="Seventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232636911924" kr:slug="Mercury" kr:speed="1.319465">
      <use x="396.9560835494866" y="185.955686360112" xlink:href="#Mercury"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.07097923305986" kr:cx="381.58233816355187" kr:cy="94.37047985323889" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Medium_Coeli">
-     <use x="281.58233816355187" y="44.37047985323888" xlink:href="#Medium_Coeli"/>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.07097923305986" kr:cx="370.3551068593929" kr:cy="147.1904502928644" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Medium_Coeli" kr:speed="332.128397">
+     <use x="270.3551068593929" y="97.19045029286438" xlink:href="#Medium_Coeli"/>
     </g>
-    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="303.5466251977386" kr:cx="299.84096533045516" kr:cy="128.93090943818459" kr:house="Eleventh_House" kr:node="ChartPoint" kr:sign="Aqu" kr:signposition="3.5466251977385923" kr:slug="Moon">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="303.5466251977386" kr:cx="299.84096533045516" kr:cy="128.93090943818459" kr:declination="-14.5969" kr:house="Eleventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Aqu" kr:signposition="3.5466251977385923" kr:slug="Moon" kr:speed="12.529073">
      <use x="199.84096533045516" y="78.93090943818459" xlink:href="#Moon"/>
     </g>
     <g kr:absoluteposition="196.2678943501122" kr:node="Indicator" kr:slug="Sun">
-     <line class="planet-degree-line" x1="483.55" x2="475.57" y1="254.81" y2="254.32" stroke="#984b00" stroke-opacity=".8" stroke-width="1px"/>
+     <line class="planet-degree-line" x1="483.55" x2="475.57" y1="254.81" y2="254.32" stroke="#7e3e00" stroke-opacity=".8" stroke-width="1px"/>
      <g transform="translate(489.54 255.17)">
-      <text dominant-baseline="middle" fill="#984b00" font-size="10px" text-anchor="middle">16°</text>
+      <text dominant-baseline="middle" fill="#7e3e00" font-size="10px" text-anchor="middle">16°</text>
      </g>
     </g>
     <g kr:absoluteposition="303.5466251977386" kr:node="Indicator" kr:slug="Moon">
@@ -457,21 +458,21 @@
      </g>
     </g>
     <g kr:absoluteposition="120.56821722799918" kr:node="Indicator" kr:slug="Chiron">
-     <line class="planet-degree-line" x1="285.81" x2="284.31" y1="479.66" y2="471.8" stroke="#666f06" stroke-opacity=".8" stroke-width="1px"/>
+     <line class="planet-degree-line" x1="285.81" x2="284.31" y1="479.66" y2="471.8" stroke="#505705" stroke-opacity=".8" stroke-width="1px"/>
      <g transform="translate(286.94 485.55)">
-      <text dominant-baseline="middle" fill="#666f06" font-size="10px" text-anchor="middle">0°</text>
+      <text dominant-baseline="middle" fill="#505705" font-size="10px" text-anchor="middle">0°</text>
      </g>
     </g>
     <g kr:absoluteposition="19.74676719464139" kr:node="Indicator" kr:slug="Ascendant">
-     <line class="planet-degree-line" x1="-4" x2="4" y1="240" y2="240" stroke="#ff7e00" stroke-opacity=".8" stroke-width="1px"/>
+     <line class="planet-degree-line" x1="-4" x2="4" y1="240" y2="240" stroke="#7f3f00" stroke-opacity=".8" stroke-width="1px"/>
      <g transform="translate(-10 240)">
-      <text dominant-baseline="middle" fill="#ff7e00" font-size="10px" text-anchor="middle">19°</text>
+      <text dominant-baseline="middle" fill="#7f3f00" font-size="10px" text-anchor="middle">19°</text>
      </g>
     </g>
     <g kr:absoluteposition="277.07097923305986" kr:node="Indicator" kr:slug="Medium_Coeli">
-     <line class="planet-degree-line" x1="293.54" x2="291.79" y1="1.9469" y2="9.7519" stroke="#f00" stroke-opacity=".8" stroke-width="1px"/>
+     <line class="planet-degree-line" x1="293.54" x2="291.79" y1="1.9469" y2="9.7519" stroke="#a80000" stroke-opacity=".8" stroke-width="1px"/>
      <g transform="translate(294.86 -3.9068)">
-      <text dominant-baseline="middle" fill="#ff0000" font-size="10px" text-anchor="middle">7°</text>
+      <text dominant-baseline="middle" fill="#a80000" font-size="10px" text-anchor="middle">7°</text>
      </g>
     </g>
    </g>
@@ -490,14 +491,14 @@
      <use x="276.215800799979" y="156.2481671560108" xlink:href="#orb90"/>
     </g>
     <g kr:aspectdegrees="120" kr:aspectmovement="Separating" kr:aspectname="trine" kr:from="Mars" kr:fromoriginaldegrees="182.66253120510896" kr:node="Aspect" kr:orb="0.8840939926296301" kr:planetsdiff="120.88409399262963" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
-     <line class="aspect" x1="210.97" x2="354.76" y1="123.56" y2="275.08" stroke="#36d100" stroke-opacity=".9"/>
+     <line class="aspect" x1="210.97" x2="354.76" y1="123.56" y2="275.08" stroke="#2ba800" stroke-opacity=".9"/>
      <use x="276.8629716218021" y="193.32455870680442" xlink:href="#orb120"/>
     </g>
     <g kr:aspectdegrees="180" kr:aspectmovement="Applying" kr:aspectname="opposition" kr:from="Pluto" kr:fromoriginaldegrees="124.18808813451612" kr:node="Aspect" kr:orb="0.6414629367775433" kr:planetsdiff="179.35853706322246" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
      <line class="aspect" x1="210.97" x2="271.06" y1="123.56" y2="355.91" stroke="#510060" stroke-opacity=".9"/>
     </g>
     <g kr:aspectdegrees="120" kr:aspectmovement="Applying" kr:aspectname="trine" kr:from="True_North_Lunar_Node" kr:fromoriginaldegrees="191.024247807456" kr:node="Aspect" kr:orb="7.4776226097174" kr:planetsdiff="112.5223773902826" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
-     <line class="aspect" x1="210.97" x2="358.83" y1="123.56" y2="256.7" stroke="#36d100" stroke-opacity=".9"/>
+     <line class="aspect" x1="210.97" x2="358.83" y1="123.56" y2="256.7" stroke="#2ba800" stroke-opacity=".9"/>
     </g>
     <g kr:aspectdegrees="180" kr:aspectmovement="Separating" kr:aspectname="opposition" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="2.9784079697394077" kr:planetsdiff="177.0215920302606" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
      <line class="aspect" x1="210.97" x2="262.9" y1="123.56" y2="357.8" stroke="#510060" stroke-opacity=".9"/>
@@ -513,19 +514,19 @@
      <use x="306.26025724211024" y="272.42146030991466" xlink:href="#orb90"/>
     </g>
     <g kr:aspectdegrees="60" kr:aspectmovement="Applying" kr:aspectname="sextile" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="1.487253403852037" kr:planetsdiff="58.51274659614796" kr:to="Mercury" kr:tooriginaldegrees="218.55823263691192">
-     <line class="aspect" x1="353.46" x2="264.95" y1="200.93" y2="122.62" stroke="#d59e28" stroke-opacity=".9"/>
+     <line class="aspect" x1="353.46" x2="264.95" y1="200.93" y2="122.62" stroke="#bb8b23" stroke-opacity=".9"/>
      <use x="303.20581598502457" y="155.77705468854225" xlink:href="#orb60"/>
     </g>
     <g kr:aspectdegrees="120" kr:aspectmovement="Separating" kr:aspectname="trine" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="3.855561790242291" kr:planetsdiff="123.85556179024229" kr:to="Venus" kr:tooriginaldegrees="153.21541744281757">
-     <line class="aspect" x1="323.36" x2="264.95" y1="326.32" y2="122.62" stroke="#36d100" stroke-opacity=".9"/>
+     <line class="aspect" x1="323.36" x2="264.95" y1="326.32" y2="122.62" stroke="#2ba800" stroke-opacity=".9"/>
      <use x="288.1542036766054" y="218.47153197629072" xlink:href="#orb120"/>
     </g>
     <g kr:aspectdegrees="60" kr:aspectmovement="Applying" kr:aspectname="sextile" kr:from="Pluto" kr:fromoriginaldegrees="124.18808813451612" kr:node="Aspect" kr:orb="1.5255569294071591" kr:planetsdiff="58.47444307059284" kr:to="Mars" kr:tooriginaldegrees="182.66253120510896">
-     <line class="aspect" x1="354.76" x2="271.06" y1="275.08" y2="355.91" stroke="#d59e28" stroke-opacity=".9"/>
+     <line class="aspect" x1="354.76" x2="271.06" y1="275.08" y2="355.91" stroke="#bb8b23" stroke-opacity=".9"/>
      <use x="306.90742806393337" y="309.4978518607083" xlink:href="#orb60"/>
     </g>
     <g kr:aspectdegrees="60" kr:aspectmovement="Separating" kr:aspectname="sextile" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="2.0943139771097776" kr:planetsdiff="62.09431397710978" kr:to="Mars" kr:tooriginaldegrees="182.66253120510896">
-     <line class="aspect" x1="354.76" x2="262.9" y1="275.08" y2="357.8" stroke="#d59e28" stroke-opacity=".9"/>
+     <line class="aspect" x1="354.76" x2="262.9" y1="275.08" y2="357.8" stroke="#bb8b23" stroke-opacity=".9"/>
     </g>
     <g kr:aspectdegrees="90" kr:aspectmovement="Separating" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="4.408448027950897" kr:planetsdiff="94.4084480279509" kr:to="Mars" kr:tooriginaldegrees="182.66253120510896">
      <line class="aspect" x1="354.76" x2="264.95" y1="275.08" y2="122.62" stroke="#dc0000" stroke-opacity=".9"/>
@@ -536,11 +537,11 @@
      <use x="121.12305463719754" y="285.3302562390147" xlink:href="#orb0"/>
     </g>
     <g kr:aspectdegrees="120" kr:aspectmovement="Separating" kr:aspectname="trine" kr:from="Neptune" kr:fromoriginaldegrees="176.03011967681334" kr:node="Aspect" kr:orb="0.47810336562781686" kr:planetsdiff="120.47810336562782" kr:to="Uranus" kr:tooriginaldegrees="55.55201631118552">
-     <line class="aspect" x1="142.92" x2="350.46" y1="310.53" y2="286.89" stroke="#36d100" stroke-opacity=".9"/>
+     <line class="aspect" x1="142.92" x2="350.46" y1="310.53" y2="286.89" stroke="#2ba800" stroke-opacity=".9"/>
      <use x="240.68927154464959" y="292.7109828469048" xlink:href="#orb120"/>
     </g>
     <g kr:aspectdegrees="60" kr:aspectmovement="Separating" kr:aspectname="sextile" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="4.538097551185842" kr:planetsdiff="55.46190244881416" kr:to="Neptune" kr:tooriginaldegrees="176.03011967681334">
-     <line class="aspect" x1="350.46" x2="262.9" y1="286.89" y2="357.8" stroke="#d59e28" stroke-opacity=".9"/>
+     <line class="aspect" x1="350.46" x2="262.9" y1="286.89" y2="357.8" stroke="#bb8b23" stroke-opacity=".9"/>
     </g>
     <g kr:aspectdegrees="0" kr:aspectmovement="Applying" kr:aspectname="conjunction" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="3.6198709065169368" kr:planetsdiff="3.6198709065169368" kr:to="Pluto" kr:tooriginaldegrees="124.18808813451612">
      <line class="aspect" x1="271.06" x2="262.9" y1="355.91" y2="357.8" stroke="#5757e2" stroke-opacity=".9"/>
@@ -561,8 +562,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Sun"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">16°16'04"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">16°16'04"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Lib"/>
       </g>
      </g>
@@ -571,8 +572,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Moon"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">3°32'47"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">3°32'47"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Aqu"/>
       </g>
      </g>
@@ -581,8 +582,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Mercury"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">8°33'29"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">8°33'29"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Sco"/>
       </g>
      </g>
@@ -591,8 +592,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Venus"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">3°12'55"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">3°12'55"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Vir"/>
       </g>
      </g>
@@ -601,8 +602,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Mars"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">2°39'45"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">2°39'45"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Lib"/>
       </g>
      </g>
@@ -611,8 +612,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Jupiter"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">13°41'30"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">13°41'30"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Tau"/>
       </g>
       <g transform="translate(74,-6)">
@@ -624,8 +625,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Saturn"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">13°12'54"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">13°12'54"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Tau"/>
       </g>
       <g transform="translate(74,-6)">
@@ -637,8 +638,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Uranus"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">25°33'07"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">25°33'07"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Tau"/>
       </g>
       <g transform="translate(74,-6)">
@@ -650,8 +651,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Neptune"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">26°01'48"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">26°01'48"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Vir"/>
       </g>
      </g>
@@ -660,8 +661,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Pluto"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">4°11'17"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">4°11'17"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Leo"/>
       </g>
      </g>
@@ -670,8 +671,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#True_North_Lunar_Node"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">11°01'27"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">11°01'27"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Lib"/>
       </g>
      </g>
@@ -680,8 +681,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Chiron"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">0°34'05"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">0°34'05"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Leo"/>
       </g>
      </g>
@@ -690,8 +691,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Ascendant"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">19°44'48"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">19°44'48"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Ari"/>
       </g>
      </g>
@@ -700,8 +701,8 @@
       <g transform="translate(5,-8)">
        <use transform="scale(.4)" xlink:href="#Medium_Coeli"/>
       </g>
-      <text x="19" fill="#000000" font-size="10px">7°04'15"</text>
-      <g transform="translate(60,-8)">
+      <text x="61" fill="#000000" font-size="10px" text-anchor="end">7°04'15"</text>
+      <g transform="translate(63,-8)">
        <use transform="scale(.3)" xlink:href="#Cap"/>
       </g>
      </g>
@@ -947,8 +948,8 @@
   <!-- GLYPHS:BEGIN (generated by scripts/build_chart_glyphs.py — do not edit by hand) -->
   <!-- Planets -->
   <symbol id="Sun">
-   <circle cx="12" cy="12" r="9" fill="none" stroke="#984b00" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <circle cx="12" cy="12" r="1.9" fill="#984b00"/>
+   <circle cx="12" cy="12" r="9" fill="none" stroke="#7e3e00" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="12" cy="12" r="1.9" fill="#7e3e00"/>
   </symbol>
   <symbol id="Moon">
    <g transform="translate(3.745 1.92) scale(.01276 -.01276) translate(-123 -1530)">
@@ -971,9 +972,8 @@
    </g>
   </symbol>
   <symbol id="Jupiter">
-   <g transform="translate(3.481 1.92) scale(.01191 -.01191) translate(-70 -1492)">
-    <path d="m1500-200h-125v383h-1180v125h363q147 0 256 123 106 119 106 268 0 170-96 274-99 108-267 108-165 0-262-89-100-91-100-254v-63h-125v62q0 215 137 344 133 125 350 125 220 0 356-144 132-141 132-363 0-229-177-391h507v1184h125z" fill="#47133d"/>
-   </g>
+   <path d="m5.1 7.6c0-3.4 5.93-4.4 7.33-0.7 1.1 2.9-1.9 5.5-8.19 10.84h15.51" fill="none" stroke="#47133d" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m15.72 2.667v18.666" fill="none" stroke="#47133d" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
   <symbol id="Saturn">
    <g transform="translate(5.768 1.92) scale(.01117 -.01117) translate(-50 -1492)">
@@ -981,15 +981,11 @@
    </g>
   </symbol>
   <symbol id="Uranus">
-   <line x1="6.5" x2="6.5" y1="3" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="17.5" x2="17.5" y1="3" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="4.6" x2="8.4" y1="3" y2="3" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="15.6" x2="19.4" y1="3" y2="3" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="4.6" x2="8.4" y1="13.5" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="15.6" x2="19.4" y1="13.5" y2="13.5" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="6.5" x2="17.5" y1="8.25" y2="8.25" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <line x1="12" x2="12" y1="8.25" y2="18" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-   <circle cx="12" cy="20" r="2.1" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/>
+   <path d="m3.4 2.667a7.428 7.428 0 0 1 0 14.233" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m20.6 2.667a7.428 7.428 0 0 0 0 14.233" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="8.7" x2="15.3" y1="9.784" y2="9.784" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="12" x2="12" y1="2.667" y2="16.533" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="12" cy="18.933" r="2.4" fill="none" stroke="#6f0766" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
   <symbol id="Neptune">
    <g transform="translate(1.92 2.746) scale(.01094 -.01094) translate(-50 -1492)">
@@ -997,33 +993,46 @@
    </g>
   </symbol>
   <symbol id="Pluto">
-   <circle cx="12" cy="6.8" r="3.8" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-   <path d="m5.6 8a6.4 6.4 0 0 0 12.8 0" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-   <line x1="12" x2="12" y1="14.4" y2="21.5" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-   <line x1="8.4" x2="15.6" y1="18" y2="18" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+   <circle cx="12" cy="7.3" r="3.8" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m5.6 8a6.4 6.4 0 0 0 12.8 0" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="12" x2="12" y1="14.4" y2="21.5" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="8.4" x2="15.6" y1="18" y2="18" fill="none" stroke="#713f04" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
   </symbol>
-  <symbol id="Chiron">
-   <g transform="translate(7.319 1.92) scale(.01104 -.01104) translate(-83 -1420)">
-    <path d="m931-117q0-141-148-222-123-67-276-67-151 0-275 68-149 82-149 221 0 125 119 204 99 65 242 81v1252h125v-279l250 236 86-91-275-259 275-260-86-91-250 237v-745q142-16 242-82 120-79 120-203zm-125 0q0 78-115 126-91 38-184 38-95 0-184-37-115-47-115-127 0-78 115-126 91-38 184-38 95 0 184 37 115 47 115 127z" fill="#666f06"/>
-   </g>
-  </symbol>
+  <!-- Lunar nodes -->
   <symbol id="True_North_Lunar_Node">
-   <g transform="translate(1.92 4.634) scale(.01119 -.01119) translate(-56 -1286)">
-    <path d="m1857 322q0-147-102.5-249.5t-249.5-102.5-249.5 102.5-102.5 249.5q0 141 97.5 243t238.5 109q-32 227-166 376-148 166-366 166t-366-166q-134-149-166-376 141-7 238.5-109t97.5-243q0-147-102.5-249.5t-249.5-102.5-250 102.5-103 249.5q0 130 84 229t213 119q31 259 185 430 168 186 419 186t419-186q154-171 185-430 128-20 212-119t84-229zm-100 0q0 106-73 179t-179 73q-105 0-179-73.5t-74-178.5q0-106 73.5-179t179.5-73q105 0 178.5 73.5t73.5 178.5zm-1096 0q0 105-73.5 178.5t-178.5 73.5q-106 0-179-73t-73-179q0-105 73.5-178.5t178.5-73.5q106 0 179 73t73 179z" fill="#4c1541"/>
-   </g>
+   <path d="m6.7574 15.321a6.4 6.4 0 1 1 10.485 0" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="4.9553" cy="16.583" r="2.2" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="19.045" cy="16.583" r="2.2" fill="none" stroke="#4c1541" stroke-linecap="round" stroke-width="1.494"/>
   </symbol>
+  <!-- Lunar apsides -->
+  <!-- Centaurs -->
+  <symbol id="Chiron">
+   <circle cx="10.5" cy="17.533" r="3.8" fill="none" stroke="#505705" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m10.5 2.667v11.066" fill="none" stroke="#505705" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m16.9 3.1-6.4 3.9 6.8 4.3" fill="none" stroke="#505705" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+  </symbol>
+  <!-- Asteroids -->
+  <!-- Trans-Neptunian objects -->
+  <!-- Uranian points -->
+  <!-- Arabic parts -->
   <!-- Angles -->
   <symbol id="Ascendant">
-   <text y="20" fill="#ff7e00" font-size="22px">As</text>
+   <g transform="translate(.458 19.605) scale(.02151 -.02151)" fill="#7f3f00">
+    <path d="m545 0-86 221h-283l-85-221h-91l279 717h81l278-717zm-193 517q-3 8-10 29t-13.5 43.5-10.5 34.5q-7-31-16-60.5t-15-46.5l-81-216h226z"/>
+    <path transform="translate(639)" d="m434 148q0-78-58-118t-156-40q-56 0-96.5 9t-71.5 25v80q32-16 77.5-29.5t92.5-13.5q67 0 97 21.5t30 57.5q0 20-11 36t-39.5 32-81.5 36q-52 20-89 40t-57 48-20 72q0 68 55.5 105t145.5 37q49 0 91.5-9.5t79.5-26.5l-30-70q-34 14-71 24t-76 10q-54 0-82.5-17.5t-28.5-47.5q0-22 13-37.5t43.5-30 81.5-34.5q51-19 87-39t55-48.5 19-71.5z"/>
+   </g>
   </symbol>
   <symbol id="Medium_Coeli">
-   <text y="20" fill="#ff0000" font-size="20px">Mc</text>
+   <g transform="translate(-1.852 18.721) scale(.01909 -.01909)" fill="#a80000">
+    <path d="m412 0-235 626h-4q3-31 5-83.5t2-109.5v-433h-83v714h133l220-585h4l224 585h132v-714h-89v439q0 52 2.5 103t4.5 83h-4l-238-625z"/>
+    <path transform="translate(907)" d="m300-10q-71 0-126.5 29t-87 90-31.5 156q0 99 33 161t89.5 91 128.5 29q41 0 79-8.5t62-20.5l-27-73q-24 9-56 17t-60 8q-158 0-158-203 0-97 38.5-148.5t114.5-51.5q44 0 77.5 9t61.5 22v-78q-27-14-59.5-21.5t-78.5-7.5z"/>
+   </g>
   </symbol>
-  <!-- Points -->
+  <!-- Axes and other points -->
   <!-- Signs -->
   <symbol id="Ari">
    <g transform="translate(2.56 3.291) scale(.01329 -.01329) translate(-173 -1518)">
-    <path d="m2196 1110q0-172-107-370h-151q110 196 110 360 0 115-46 195-56 99-162 99-200 0-373-445-95-245-154-616-54-344-54-635v-93h-148v99q0 276-52 608-56 356-144 592-179 478-386 478-105 0-161-97-47-80-47-193 0-170 110-352h-150q-108 196-108 367 0 168 94 285 100 126 264 126 311 0 490-489 117-322 151-741h25q28 411 151 742 180 488 491 488 164 0 264-125 93-115 93-283z" fill="#ff7200"/>
+    <path d="m2196 1110q0-172-107-370h-151q110 196 110 360 0 115-46 195-56 99-162 99-200 0-373-445-95-245-154-616-54-344-54-635v-93h-148v99q0 276-52 608-56 356-144 592-179 478-386 478-105 0-161-97-47-80-47-193 0-170 110-352h-150q-108 196-108 367 0 168 94 285 100 126 264 126 311 0 490-489 117-322 151-741h25q28 411 151 742 180 488 491 488 164 0 264-125 93-115 93-283z" fill="#b25000"/>
    </g>
   </symbol>
   <symbol id="Tau">
@@ -1033,7 +1042,7 @@
   </symbol>
   <symbol id="Gem">
    <g transform="translate(2.898 2.56) scale(.01609 -.01609) translate(-173 -1572)">
-    <path d="m1802-99q-378 99-815 99t-814-99v123q206 55 382 76v1275q-190 18-382 73v124q332-92 814-92 483 0 815 92v-124q-192-55-383-73v-1275q176-21 383-76zm-531 208v1256q-114-8-284-8t-284 8v-1256q127 14 284 14t284-14z" fill="#69acf1"/>
+    <path d="m1802-99q-378 99-815 99t-814-99v123q206 55 382 76v1275q-190 18-382 73v124q332-92 814-92 483 0 815 92v-124q-192-55-383-73v-1275q176-21 383-76zm-531 208v1256q-114-8-284-8t-284 8v-1256q127 14 284 14t284-14z" fill="#1473d6"/>
    </g>
   </symbol>
   <symbol id="Can">
@@ -1043,7 +1052,7 @@
   </symbol>
   <symbol id="Leo">
    <g transform="translate(5.49 2.56) scale(.01329 -.01329) translate(-173 -1604)">
-    <path d="m1755-260q-173-159-332-159-136 0-230.5 90.5t-94.5 226.5q0 178 188 578l96 204q111 236 111 384 0 186-106 299-109 117-293 117-168 0-273-100.5t-105-267.5q0-152 98-356l39-81q97-201 97-296 0-156-115.5-267.5t-272.5-111.5q-163 0-276 114t-113 277q0 158 111 272t268 114q56 0 124-21-108 207-108 366 0 216 157 352 149 130 368 130 247 0 396-142 152-145 152-390 0-132-41-254-21-64-102-240l-69-150q-184-400-184-515 0-83 50.5-140t132.5-57q105 0 240 119zm-928 648q0 117-78 197.5t-195 80.5q-114 0-192-81t-78-195q0-117 78-198t194-81q115 0 193 81t78 196z" fill="#ff7200"/>
+    <path d="m1755-260q-173-159-332-159-136 0-230.5 90.5t-94.5 226.5q0 178 188 578l96 204q111 236 111 384 0 186-106 299-109 117-293 117-168 0-273-100.5t-105-267.5q0-152 98-356l39-81q97-201 97-296 0-156-115.5-267.5t-272.5-111.5q-163 0-276 114t-113 277q0 158 111 272t268 114q56 0 124-21-108 207-108 366 0 216 157 352 149 130 368 130 247 0 396-142 152-145 152-390 0-132-41-254-21-64-102-240l-69-150q-184-400-184-515 0-83 50.5-140t132.5-57q105 0 240 119zm-928 648q0 117-78 197.5t-195 80.5q-114 0-192-81t-78-195q0-117 78-198t194-81q115 0 193 81t78 196z" fill="#b25000"/>
    </g>
   </symbol>
   <symbol id="Vir">
@@ -1053,7 +1062,7 @@
   </symbol>
   <symbol id="Lib">
    <g transform="translate(2.56 4.748) scale(.0169 -.0169) translate(-173 -1480)">
-    <path d="m1764 592h-629v138q161 104 161 279 0 134-96.5 228.5t-230.5 94.5-230.5-94.5-96.5-228.5q0-175 160-279v-138h-629v148h441q-120 123-120 276 0 193 141 328.5t334 135.5q194 0 334.5-135.5t140.5-328.5q0-153-120-276h440zm0-444h-1591v148h1591z" fill="#69acf1"/>
+    <path d="m1764 592h-629v138q161 104 161 279 0 134-96.5 228.5t-230.5 94.5-230.5-94.5-96.5-228.5q0-175 160-279v-138h-629v148h441q-120 123-120 276 0 193 141 328.5t334 135.5q194 0 334.5-135.5t140.5-328.5q0-153-120-276h440zm0-444h-1591v148h1591z" fill="#1473d6"/>
    </g>
   </symbol>
   <symbol id="Sco">
@@ -1063,7 +1072,7 @@
   </symbol>
   <symbol id="Sag">
    <g transform="translate(2.56 2.577) scale(.01728 -.01728) translate(-173 -1517)">
-    <path d="m1729 686-146-23-75 531-667-668 314-314-105-104-314 314-461-459-102 102 461 459-314 314 104 105 314-314 668 667-531 75 23 146 729-102z" fill="#ff7200"/>
+    <path d="m1729 686-146-23-75 531-667-668 314-314-105-104-314 314-461-459-102 102 461 459-314 314 104 105 314-314 668 667-531 75 23 146 729-102z" fill="#b25000"/>
    </g>
   </symbol>
   <symbol id="Cap">
@@ -1073,7 +1082,7 @@
   </symbol>
   <symbol id="Aqu">
    <g transform="translate(2.56 6.967) scale(.01464 -.01464) translate(-173 -1357)">
-    <path d="m2009 939-115-51-119 284-433-284-120 284-428-284-120 284-432-284-68 102 555 367 122-284 430 284 120-284 430 284zm-1-765-115-51-119 284-432-284-120 284-428-284-121 284-432-284-68 102 555 367 122-284 430 284 120-284 430 284z" fill="#69acf1"/>
+    <path d="m2009 939-115-51-119 284-433-284-120 284-428-284-120 284-432-284-68 102 555 367 122-284 430 284 120-284 430 284zm-1-765-115-51-119 284-432-284-120 284-428-284-121 284-432-284-68 102 555 367 122-284 430 284 120-284 430 284z" fill="#1473d6"/>
    </g>
   </symbol>
   <symbol id="Pis">
@@ -1083,22 +1092,22 @@
   </symbol>
   <!-- Aspects -->
   <symbol id="orb0">
-   <circle cx="4" cy="6" r="2.6" fill="none" stroke="#5757e2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
-   <line x1="5.9" x2="9" y1="4.1" y2="1.2" fill="none" stroke="#5757e2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+   <circle cx="4" cy="6" r="2.6" fill="none" stroke="#5757e2" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+   <line x1="5.9" x2="9" y1="4.1" y2="1.2" fill="none" stroke="#5757e2" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
   </symbol>
   <symbol id="orb60">
-   <path d="m1.3 1.3 7.4 7.4m-7.4 0 7.4-7.4m-7.7 3.7h8" fill="none" stroke="#d59e28" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+   <path d="m1.3 1.3 7.4 7.4m-7.4 0 7.4-7.4m-7.7 3.7h8" fill="none" stroke="#bb8b23" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
   </symbol>
   <symbol id="orb90">
-   <rect x="1.3" y="1.3" width="7.4" height="7.4" fill="none" stroke="#dc0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+   <rect x="1.3" y="1.3" width="7.4" height="7.4" fill="none" stroke="#dc0000" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
   </symbol>
   <symbol id="orb120">
-   <path d="m5 1.2 4 7.8h-8z" fill="none" stroke="#36d100" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+   <path d="m5 1.2 4 7.8h-8z" fill="none" stroke="#2ba800" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
   </symbol>
   <symbol id="orb180">
-   <circle cx="3" cy="3" r="1.9" fill="none" stroke="#510060" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1"/>
-   <circle cx="7" cy="7" r="1.9" fill="none" stroke="#510060" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1"/>
-   <line x1="4.35" x2="5.65" y1="4.35" y2="5.65" fill="none" stroke="#510060" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1"/>
+   <circle cx="3" cy="3" r="1.9" fill="none" stroke="#510060" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+   <circle cx="7" cy="7" r="1.9" fill="none" stroke="#510060" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+   <line x1="4.35" x2="5.65" y1="4.35" y2="5.65" fill="none" stroke="#510060" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
   </symbol>
   <!-- Retrograde -->
   <symbol id="retrograde">

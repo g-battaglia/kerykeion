@@ -1,5 +1,5 @@
 ===================================================
-Sample Natal Subject — Solar Return Comparison 1990
+Sample Natal Subject — Solar Return Comparison 1991
 ===================================================
 
 +Natal Subject — Birth Data----------------------+
@@ -38,8 +38,8 @@ Sample Natal Subject — Solar Return Comparison 1990
 | Latitude           | 53.4084°                          |
 | Longitude          | -2.9916°                          |
 | Timezone           | Europe/London                     |
-| Day of Week        | Saturday                          |
-| ISO Local Datetime | 1990-07-21T14:44:59+01:00         |
+| Day of Week        | Sunday                            |
+| ISO Local Datetime | 1991-07-21T20:33:06+01:00         |
 | Diurnality         | Diurnal                           |
 +--------------------+-----------------------------------+
 
@@ -49,7 +49,7 @@ Sample Natal Subject — Solar Return Comparison 1990
 | Zodiac Type         | Tropical            |
 | Houses System       | Placidus            |
 | Perspective Type    | Apparent Geocentric |
-| Julian Day          | 2448094.072905      |
+| Julian Day          | 2448459.314653      |
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
@@ -75,20 +75,20 @@ Sample Natal Subject — Solar Return Comparison 1990
 +Return Subject Celestial Points-+----------+--------------+------------+---------+-----+------+---------------+
 | Point                 | Sign   | Position | Speed        | Motion     | Decl.   | OOB | Ret. | House         |
 +-----------------------+--------+----------+--------------+------------+---------+-----+------+---------------+
-| Ascendant             | Sco ♏ | 5.82°    | +245.7250°/d | -          | N/A     | -   | -    | First House   |
-| Medium Coeli          | Leo ♌ | 19.91°   | +367.6364°/d | -          | N/A     | -   | -    | Tenth House   |
-| Sun                   | Can ♋ | 28.54°   | +0.9551°/d   | Average    | +20.45° | -   | -    | Ninth House   |
-| Moon                  | Can ♋ | 21.21°   | +14.4024°/d  | Average    | +23.21° | -   | -    | Ninth House   |
-| Mercury               | Leo ♌ | 17.61°   | +1.6910°/d   | Fast       | +16.88° | -   | -    | Ninth House   |
-| Venus                 | Can ♋ | 1.71°    | +1.2038°/d   | Average    | +22.74° | -   | -    | Eighth House  |
-| Mars                  | Tau ♉ | 5.97°    | +0.6554°/d   | Fast       | +11.57° | -   | -    | Seventh House |
-| Jupiter               | Can ♋ | 23.91°   | +0.2240°/d   | Fast       | +21.56° | -   | -    | Ninth House   |
-| Saturn                | Cap ♑ | 21.52°   | -0.0732°/d   | Retrograde | -21.66° | -   | R    | Third House   |
-| Uranus                | Cap ♑ | 6.74°    | -0.0366°/d   | Retrograde | -23.60° | Y   | R    | Second House  |
-| Neptune               | Cap ♑ | 12.76°   | -0.0257°/d   | Retrograde | -21.96° | -   | R    | Third House   |
-| Pluto                 | Sco ♏ | 14.97°   | -0.0025°/d   | Retrograde | -1.42°  | -   | R    | First House   |
-| True North Lunar Node | Aqu ♒ | 7.26°    | -0.0080°/d   | -          | -18.46° | -   | R    | Third House   |
-| Chiron                | Can ♋ | 19.88°   | +0.1071°/d   | -          | +15.79° | -   | -    | Ninth House   |
+| Ascendant             | Cap ♑ | 13.82°   | +409.8309°/d | -          | N/A     | -   | -    | First House   |
+| Medium Coeli          | Sco ♏ | 21.77°   | +355.0355°/d | -          | N/A     | -   | -    | Tenth House   |
+| Sun                   | Can ♋ | 28.54°   | +0.9545°/d   | Average    | +20.45° | -   | -    | Seventh House |
+| Moon                  | Sag ♐ | 4.63°    | +11.9554°/d  | Average    | -24.70° | Y   | -    | Tenth House   |
+| Mercury               | Leo ♌ | 25.32°   | +1.1015°/d   | Slow       | +12.70° | -   | -    | Seventh House |
+| Venus                 | Vir ♍ | 5.30°    | +0.3635°/d   | Slow       | +7.49°  | -   | -    | Seventh House |
+| Mars                  | Vir ♍ | 3.87°    | +0.6178°/d   | Average    | +11.07° | -   | -    | Seventh House |
+| Jupiter               | Leo ♌ | 18.64°   | +0.2120°/d   | Fast       | +15.95° | -   | -    | Seventh House |
+| Saturn                | Aqu ♒ | 3.89°    | -0.0738°/d   | Retrograde | -19.74° | -   | R    | First House   |
+| Uranus                | Cap ♑ | 11.13°   | -0.0379°/d   | Retrograde | -23.35° | -   | R    | Twelfth House |
+| Neptune               | Cap ♑ | 15.01°   | -0.0261°/d   | Retrograde | -21.79° | -   | R    | First House   |
+| Pluto                 | Sco ♏ | 17.58°   | -0.0040°/d   | Retrograde | -2.43°  | -   | R    | Ninth House   |
+| True North Lunar Node | Cap ♑ | 18.94°   | +0.0160°/d   | -          | -22.10° | -   | -    | First House   |
+| Chiron                | Leo ♌ | 0.02°    | +0.1160°/d   | -          | +13.98° | -   | -    | Seventh House |
 +-----------------------+--------+----------+--------------+------------+---------+-----+------+---------------+
 
 +Natal Subject Houses (Placidus)-----+-------------------+
@@ -111,18 +111,18 @@ Sample Natal Subject — Solar Return Comparison 1990
 +Return Subject Houses (Placidus)----+-------------------+
 | House          | Sign   | Position | Absolute Position |
 +----------------+--------+----------+-------------------+
-| First House    | Sco ♏ | 5.82°    | 215.82°           |
-| Second House   | Sag ♐ | 3.70°    | 243.70°           |
-| Third House    | Cap ♑ | 9.78°    | 279.78°           |
-| Fourth House   | Aqu ♒ | 19.91°   | 319.91°           |
-| Fifth House    | Pis ♓ | 23.00°   | 353.00°           |
-| Sixth House    | Ari ♈ | 17.47°   | 17.47°            |
-| Seventh House  | Tau ♉ | 5.82°    | 35.82°            |
-| Eighth House   | Gem ♊ | 3.70°    | 63.70°            |
-| Ninth House    | Can ♋ | 9.78°    | 99.78°            |
-| Tenth House    | Leo ♌ | 19.91°   | 139.91°           |
-| Eleventh House | Vir ♍ | 23.00°   | 173.00°           |
-| Twelfth House  | Lib ♎ | 17.47°   | 197.47°           |
+| First House    | Cap ♑ | 13.82°   | 283.82°           |
+| Second House   | Pis ♓ | 11.22°   | 341.22°           |
+| Third House    | Ari ♈ | 25.80°   | 25.80°            |
+| Fourth House   | Tau ♉ | 21.77°   | 51.77°            |
+| Fifth House    | Gem ♊ | 10.03°   | 70.03°            |
+| Sixth House    | Gem ♊ | 25.97°   | 85.97°            |
+| Seventh House  | Can ♋ | 13.82°   | 103.82°           |
+| Eighth House   | Vir ♍ | 11.22°   | 161.22°           |
+| Ninth House    | Lib ♎ | 25.80°   | 205.80°           |
+| Tenth House    | Sco ♏ | 21.77°   | 231.77°           |
+| Eleventh House | Sag ♐ | 10.03°   | 250.03°           |
+| Twelfth House  | Sag ♐ | 25.97°   | 265.97°           |
 +----------------+--------+----------+-------------------+
 
 +Lunar Phase--------------+--------------------+
@@ -165,90 +165,83 @@ Sample Natal Subject — Solar Return Comparison 1990
 | 9     | 4     | Sun, Moon, Mercury, Jupiter |
 +-------+-------+-----------------------------+
 
-+Return Subject Angularities--------+
-| Point   | Angle        | Distance |
-+---------+--------------+----------+
-| Mars    | Descendant   | 0.15°    |
-| Mercury | Medium Coeli | 2.30°    |
-+---------+--------------+----------+
++Return Subject Stelliums----------------------------+
+| House | Count | Points                             |
++-------+-------+------------------------------------+
+| 7     | 5     | Sun, Mercury, Venus, Mars, Jupiter |
++-------+-------+------------------------------------+
 
-+Return Subject Stelliums---------------------+
-| House | Count | Points                      |
-+-------+-------+-----------------------------+
-| 9     | 4     | Sun, Moon, Mercury, Jupiter |
-+-------+-------+-----------------------------+
++Sample Natal Subject points in Sample Natal Subject Solar Return houses----------------+------+--------+
+| Point                                        | Owner House       | Projected House    | Sign | Degree |
++----------------------------------------------+-------------------+--------------------+------+--------+
+| Sample Natal Subject – Sun                   | 9 (Ninth House)   | 7 (Seventh House)  | Can  | 28.54° |
+| Sample Natal Subject – Moon                  | 9 (Ninth House)   | 7 (Seventh House)  | Can  | 21.21° |
+| Sample Natal Subject – Mercury               | 9 (Ninth House)   | 7 (Seventh House)  | Leo  | 17.61° |
+| Sample Natal Subject – Venus                 | 8 (Eighth House)  | 6 (Sixth House)    | Can  | 1.71°  |
+| Sample Natal Subject – Mars                  | 7 (Seventh House) | 3 (Third House)    | Tau  | 5.97°  |
+| Sample Natal Subject – Jupiter               | 9 (Ninth House)   | 7 (Seventh House)  | Can  | 23.91° |
+| Sample Natal Subject – Saturn                | 3 (Third House)   | 1 (First House)    | Cap  | 21.52° |
+| Sample Natal Subject – Uranus                | 2 (Second House)  | 12 (Twelfth House) | Cap  | 6.74°  |
+| Sample Natal Subject – Neptune               | 3 (Third House)   | 12 (Twelfth House) | Cap  | 12.76° |
+| Sample Natal Subject – Pluto                 | 1 (First House)   | 9 (Ninth House)    | Sco  | 14.97° |
+| Sample Natal Subject – True North Lunar Node | 3 (Third House)   | 1 (First House)    | Aqu  | 7.26°  |
+| Sample Natal Subject – Chiron                | 9 (Ninth House)   | 7 (Seventh House)  | Can  | 19.88° |
+| Sample Natal Subject – Ascendant             | 1 (First House)   | 9 (Ninth House)    | Sco  | 5.82°  |
+| Sample Natal Subject – Medium Coeli          | 10 (Tenth House)  | 7 (Seventh House)  | Leo  | 19.91° |
++----------------------------------------------+-------------------+--------------------+------+--------+
 
-+Sample Natal Subject points in Sample Natal Subject Solar Return houses---------------+------+--------+
-| Point                                        | Owner House       | Projected House   | Sign | Degree |
-+----------------------------------------------+-------------------+-------------------+------+--------+
-| Sample Natal Subject – Sun                   | 9 (Ninth House)   | 9 (Ninth House)   | Can  | 28.54° |
-| Sample Natal Subject – Moon                  | 9 (Ninth House)   | 9 (Ninth House)   | Can  | 21.21° |
-| Sample Natal Subject – Mercury               | 9 (Ninth House)   | 9 (Ninth House)   | Leo  | 17.61° |
-| Sample Natal Subject – Venus                 | 8 (Eighth House)  | 8 (Eighth House)  | Can  | 1.71°  |
-| Sample Natal Subject – Mars                  | 7 (Seventh House) | 7 (Seventh House) | Tau  | 5.97°  |
-| Sample Natal Subject – Jupiter               | 9 (Ninth House)   | 9 (Ninth House)   | Can  | 23.91° |
-| Sample Natal Subject – Saturn                | 3 (Third House)   | 3 (Third House)   | Cap  | 21.52° |
-| Sample Natal Subject – Uranus                | 2 (Second House)  | 2 (Second House)  | Cap  | 6.74°  |
-| Sample Natal Subject – Neptune               | 3 (Third House)   | 3 (Third House)   | Cap  | 12.76° |
-| Sample Natal Subject – Pluto                 | 1 (First House)   | 1 (First House)   | Sco  | 14.97° |
-| Sample Natal Subject – True North Lunar Node | 3 (Third House)   | 3 (Third House)   | Aqu  | 7.26°  |
-| Sample Natal Subject – Chiron                | 9 (Ninth House)   | 9 (Ninth House)   | Can  | 19.88° |
-| Sample Natal Subject – Ascendant             | 1 (First House)   | 1 (First House)   | Sco  | 5.82°  |
-| Sample Natal Subject – Medium Coeli          | 10 (Tenth House)  | 10 (Tenth House)  | Leo  | 19.91° |
-+----------------------------------------------+-------------------+-------------------+------+--------+
++Sample Natal Subject Solar Return points in Sample Natal Subject houses---------+------------------+------+--------+
+| Point                                                     | Owner House        | Projected House  | Sign | Degree |
++-----------------------------------------------------------+--------------------+------------------+------+--------+
+| Sample Natal Subject Solar Return – Sun                   | 7 (Seventh House)  | 9 (Ninth House)  | Can  | 28.54° |
+| Sample Natal Subject Solar Return – Moon                  | 10 (Tenth House)   | 2 (Second House) | Sag  | 4.63°  |
+| Sample Natal Subject Solar Return – Mercury               | 7 (Seventh House)  | 10 (Tenth House) | Leo  | 25.32° |
+| Sample Natal Subject Solar Return – Venus                 | 7 (Seventh House)  | 10 (Tenth House) | Vir  | 5.30°  |
+| Sample Natal Subject Solar Return – Mars                  | 7 (Seventh House)  | 10 (Tenth House) | Vir  | 3.87°  |
+| Sample Natal Subject Solar Return – Jupiter               | 7 (Seventh House)  | 9 (Ninth House)  | Leo  | 18.64° |
+| Sample Natal Subject Solar Return – Saturn                | 1 (First House)    | 3 (Third House)  | Aqu  | 3.89°  |
+| Sample Natal Subject Solar Return – Uranus                | 12 (Twelfth House) | 3 (Third House)  | Cap  | 11.13° |
+| Sample Natal Subject Solar Return – Neptune               | 1 (First House)    | 3 (Third House)  | Cap  | 15.01° |
+| Sample Natal Subject Solar Return – Pluto                 | 9 (Ninth House)    | 1 (First House)  | Sco  | 17.58° |
+| Sample Natal Subject Solar Return – True North Lunar Node | 1 (First House)    | 3 (Third House)  | Cap  | 18.94° |
+| Sample Natal Subject Solar Return – Chiron                | 7 (Seventh House)  | 9 (Ninth House)  | Leo  | 0.02°  |
+| Sample Natal Subject Solar Return – Ascendant             | 1 (First House)    | 3 (Third House)  | Cap  | 13.82° |
+| Sample Natal Subject Solar Return – Medium Coeli          | 10 (Tenth House)   | 1 (First House)  | Sco  | 21.77° |
++-----------------------------------------------------------+--------------------+------------------+------+--------+
 
-+Sample Natal Subject Solar Return points in Sample Natal Subject houses--------+--------------------+------+--------+
-| Point                                                     | Owner House       | Projected House    | Sign | Degree |
-+-----------------------------------------------------------+-------------------+--------------------+------+--------+
-| Sample Natal Subject Solar Return – Sun                   | 9 (Ninth House)   | 9 (Ninth House)    | Can  | 28.54° |
-| Sample Natal Subject Solar Return – Moon                  | 9 (Ninth House)   | 9 (Ninth House)    | Can  | 21.21° |
-| Sample Natal Subject Solar Return – Mercury               | 9 (Ninth House)   | 9 (Ninth House)    | Leo  | 17.61° |
-| Sample Natal Subject Solar Return – Venus                 | 8 (Eighth House)  | 8 (Eighth House)   | Can  | 1.71°  |
-| Sample Natal Subject Solar Return – Mars                  | 7 (Seventh House) | 7 (Seventh House)  | Tau  | 5.97°  |
-| Sample Natal Subject Solar Return – Jupiter               | 9 (Ninth House)   | 9 (Ninth House)    | Can  | 23.91° |
-| Sample Natal Subject Solar Return – Saturn                | 3 (Third House)   | 3 (Third House)    | Cap  | 21.52° |
-| Sample Natal Subject Solar Return – Uranus                | 2 (Second House)  | 2 (Second House)   | Cap  | 6.74°  |
-| Sample Natal Subject Solar Return – Neptune               | 3 (Third House)   | 3 (Third House)    | Cap  | 12.76° |
-| Sample Natal Subject Solar Return – Pluto                 | 1 (First House)   | 1 (First House)    | Sco  | 14.97° |
-| Sample Natal Subject Solar Return – True North Lunar Node | 3 (Third House)   | 3 (Third House)    | Aqu  | 7.26°  |
-| Sample Natal Subject Solar Return – Chiron                | 9 (Ninth House)   | 9 (Ninth House)    | Can  | 19.88° |
-| Sample Natal Subject Solar Return – Ascendant             | 1 (First House)   | 12 (Twelfth House) | Sco  | 5.82°  |
-| Sample Natal Subject Solar Return – Medium Coeli          | 10 (Tenth House)  | 9 (Ninth House)    | Leo  | 19.91° |
-+-----------------------------------------------------------+-------------------+--------------------+------+--------+
++Sample Natal Subject cusps in Sample Natal Subject Solar Return houses------+
+| Point                                 | Projected House    | Sign | Degree |
++---------------------------------------+--------------------+------+--------+
+| Sample Natal Subject – First House    | 9 (Ninth House)    | Sco  | 5.82°  |
+| Sample Natal Subject – Second House   | 10 (Tenth House)   | Sag  | 3.71°  |
+| Sample Natal Subject – Third House    | 12 (Twelfth House) | Cap  | 9.79°  |
+| Sample Natal Subject – Fourth House   | 1 (First House)    | Aqu  | 19.91° |
+| Sample Natal Subject – Fifth House    | 2 (Second House)   | Pis  | 23.00° |
+| Sample Natal Subject – Sixth House    | 2 (Second House)   | Ari  | 17.47° |
+| Sample Natal Subject – Seventh House  | 3 (Third House)    | Tau  | 5.82°  |
+| Sample Natal Subject – Eighth House   | 4 (Fourth House)   | Gem  | 3.71°  |
+| Sample Natal Subject – Ninth House    | 6 (Sixth House)    | Can  | 9.79°  |
+| Sample Natal Subject – Tenth House    | 7 (Seventh House)  | Leo  | 19.91° |
+| Sample Natal Subject – Eleventh House | 8 (Eighth House)   | Vir  | 23.00° |
+| Sample Natal Subject – Twelfth House  | 8 (Eighth House)   | Lib  | 17.47° |
++---------------------------------------+--------------------+------+--------+
 
-+Sample Natal Subject cusps in Sample Natal Subject Solar Return houses-------+
-| Point                                 | Projected House     | Sign | Degree |
-+---------------------------------------+---------------------+------+--------+
-| Sample Natal Subject – First House    | 1 (First House)     | Sco  | 5.82°  |
-| Sample Natal Subject – Second House   | 2 (Second House)    | Sag  | 3.71°  |
-| Sample Natal Subject – Third House    | 3 (Third House)     | Cap  | 9.79°  |
-| Sample Natal Subject – Fourth House   | 4 (Fourth House)    | Aqu  | 19.91° |
-| Sample Natal Subject – Fifth House    | 5 (Fifth House)     | Pis  | 23.00° |
-| Sample Natal Subject – Sixth House    | 6 (Sixth House)     | Ari  | 17.47° |
-| Sample Natal Subject – Seventh House  | 7 (Seventh House)   | Tau  | 5.82°  |
-| Sample Natal Subject – Eighth House   | 8 (Eighth House)    | Gem  | 3.71°  |
-| Sample Natal Subject – Ninth House    | 9 (Ninth House)     | Can  | 9.79°  |
-| Sample Natal Subject – Tenth House    | 10 (Tenth House)    | Leo  | 19.91° |
-| Sample Natal Subject – Eleventh House | 11 (Eleventh House) | Vir  | 23.00° |
-| Sample Natal Subject – Twelfth House  | 12 (Twelfth House)  | Lib  | 17.47° |
-+---------------------------------------+---------------------+------+--------+
-
-+Sample Natal Subject Solar Return cusps in Sample Natal Subject houses----+------+--------+
-| Point                                              | Projected House     | Sign | Degree |
-+----------------------------------------------------+---------------------+------+--------+
-| Sample Natal Subject Solar Return – First House    | 12 (Twelfth House)  | Sco  | 5.82°  |
-| Sample Natal Subject Solar Return – Second House   | 1 (First House)     | Sag  | 3.70°  |
-| Sample Natal Subject Solar Return – Third House    | 2 (Second House)    | Cap  | 9.78°  |
-| Sample Natal Subject Solar Return – Fourth House   | 3 (Third House)     | Aqu  | 19.91° |
-| Sample Natal Subject Solar Return – Fifth House    | 4 (Fourth House)    | Pis  | 23.00° |
-| Sample Natal Subject Solar Return – Sixth House    | 5 (Fifth House)     | Ari  | 17.47° |
-| Sample Natal Subject Solar Return – Seventh House  | 6 (Sixth House)     | Tau  | 5.82°  |
-| Sample Natal Subject Solar Return – Eighth House   | 7 (Seventh House)   | Gem  | 3.70°  |
-| Sample Natal Subject Solar Return – Ninth House    | 8 (Eighth House)    | Can  | 9.78°  |
-| Sample Natal Subject Solar Return – Tenth House    | 9 (Ninth House)     | Leo  | 19.91° |
-| Sample Natal Subject Solar Return – Eleventh House | 10 (Tenth House)    | Vir  | 23.00° |
-| Sample Natal Subject Solar Return – Twelfth House  | 11 (Eleventh House) | Lib  | 17.47° |
-+----------------------------------------------------+---------------------+------+--------+
++Sample Natal Subject Solar Return cusps in Sample Natal Subject houses---+------+--------+
+| Point                                              | Projected House    | Sign | Degree |
++----------------------------------------------------+--------------------+------+--------+
+| Sample Natal Subject Solar Return – First House    | 3 (Third House)    | Cap  | 13.82° |
+| Sample Natal Subject Solar Return – Second House   | 4 (Fourth House)   | Pis  | 11.22° |
+| Sample Natal Subject Solar Return – Third House    | 6 (Sixth House)    | Ari  | 25.80° |
+| Sample Natal Subject Solar Return – Fourth House   | 7 (Seventh House)  | Tau  | 21.77° |
+| Sample Natal Subject Solar Return – Fifth House    | 8 (Eighth House)   | Gem  | 10.03° |
+| Sample Natal Subject Solar Return – Sixth House    | 8 (Eighth House)   | Gem  | 25.97° |
+| Sample Natal Subject Solar Return – Seventh House  | 9 (Ninth House)    | Can  | 13.82° |
+| Sample Natal Subject Solar Return – Eighth House   | 10 (Tenth House)   | Vir  | 11.22° |
+| Sample Natal Subject Solar Return – Ninth House    | 12 (Twelfth House) | Lib  | 25.80° |
+| Sample Natal Subject Solar Return – Tenth House    | 1 (First House)    | Sco  | 21.77° |
+| Sample Natal Subject Solar Return – Eleventh House | 2 (Second House)   | Sag  | 10.03° |
+| Sample Natal Subject Solar Return – Twelfth House  | 2 (Second House)   | Sag  | 25.97° |
++----------------------------------------------------+--------------------+------+--------+
 
 +Active Celestial Points-----+
 | #  | Active Point          |
@@ -283,43 +276,34 @@ Sample Natal Subject — Solar Return Comparison 1990
 | Point 1               | Owner 1              | Aspect        | Point 2               | Owner 2                           | Orb   | Movement     |
 +-----------------------+----------------------+---------------+-----------------------+-----------------------------------+-------+--------------+
 | Sun                   | Sample Natal Subject | conjunction ☌ | Sun                   | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Moon                  | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Moon                  | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 2.70° | Separating ← |
-| Moon                  | Sample Natal Subject | opposition ☍  | Saturn                | Sample Natal Subject Solar Return | 0.31° | Applying →   |
-| Moon                  | Sample Natal Subject | conjunction ☌ | Chiron                | Sample Natal Subject Solar Return | 1.33° | Applying →   |
-| Mercury               | Sample Natal Subject | conjunction ☌ | Mercury               | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Mercury               | Sample Natal Subject | square □      | Pluto                 | Sample Natal Subject Solar Return | 2.63° | Separating ← |
-| Mercury               | Sample Natal Subject | conjunction ☌ | Medium Coeli          | Sample Natal Subject Solar Return | 2.30° | Separating ← |
-| Venus                 | Sample Natal Subject | conjunction ☌ | Venus                 | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Mars                  | Sample Natal Subject | conjunction ☌ | Mars                  | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Mars                  | Sample Natal Subject | trine △       | Uranus                | Sample Natal Subject Solar Return | 0.77° | Applying →   |
-| Mars                  | Sample Natal Subject | square □      | True North Lunar Node | Sample Natal Subject Solar Return | 1.30° | Applying →   |
-| Mars                  | Sample Natal Subject | opposition ☍  | Ascendant             | Sample Natal Subject Solar Return | 0.15° | Applying →   |
-| Jupiter               | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 2.70° | Applying →   |
-| Jupiter               | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Jupiter               | Sample Natal Subject | opposition ☍  | Saturn                | Sample Natal Subject Solar Return | 2.40° | Separating ← |
-| Saturn                | Sample Natal Subject | opposition ☍  | Moon                  | Sample Natal Subject Solar Return | 0.31° | Applying →   |
-| Saturn                | Sample Natal Subject | opposition ☍  | Jupiter               | Sample Natal Subject Solar Return | 2.40° | Separating ← |
-| Saturn                | Sample Natal Subject | conjunction ☌ | Saturn                | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| Saturn                | Sample Natal Subject | opposition ☍  | Chiron                | Sample Natal Subject Solar Return | 1.64° | Applying →   |
-| Uranus                | Sample Natal Subject | trine △       | Mars                  | Sample Natal Subject Solar Return | 0.77° | Applying →   |
-| Uranus                | Sample Natal Subject | conjunction ☌ | Uranus                | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| Uranus                | Sample Natal Subject | sextile ⚹     | Ascendant             | Sample Natal Subject Solar Return | 0.92° | Applying →   |
-| Neptune               | Sample Natal Subject | conjunction ☌ | Neptune               | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| Neptune               | Sample Natal Subject | sextile ⚹     | Pluto                 | Sample Natal Subject Solar Return | 2.21° | Applying →   |
-| Pluto                 | Sample Natal Subject | square □      | Mercury               | Sample Natal Subject Solar Return | 2.63° | Separating ← |
-| Pluto                 | Sample Natal Subject | sextile ⚹     | Neptune               | Sample Natal Subject Solar Return | 2.21° | Separating ← |
-| Pluto                 | Sample Natal Subject | conjunction ☌ | Pluto                 | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| True North Lunar Node | Sample Natal Subject | square □      | Mars                  | Sample Natal Subject Solar Return | 1.30° | Applying →   |
-| True North Lunar Node | Sample Natal Subject | conjunction ☌ | True North Lunar Node | Sample Natal Subject Solar Return | 0.00° | Separating ← |
-| True North Lunar Node | Sample Natal Subject | square □      | Ascendant             | Sample Natal Subject Solar Return | 1.45° | Applying →   |
-| Chiron                | Sample Natal Subject | conjunction ☌ | Moon                  | Sample Natal Subject Solar Return | 1.33° | Separating ← |
-| Chiron                | Sample Natal Subject | opposition ☍  | Saturn                | Sample Natal Subject Solar Return | 1.64° | Applying →   |
-| Chiron                | Sample Natal Subject | conjunction ☌ | Chiron                | Sample Natal Subject Solar Return | 0.00° | Applying →   |
-| Ascendant             | Sample Natal Subject | opposition ☍  | Mars                  | Sample Natal Subject Solar Return | 0.15° | Separating ← |
-| Ascendant             | Sample Natal Subject | sextile ⚹     | Uranus                | Sample Natal Subject Solar Return | 0.92° | Applying →   |
-| Ascendant             | Sample Natal Subject | square □      | True North Lunar Node | Sample Natal Subject Solar Return | 1.44° | Applying →   |
-| Ascendant             | Sample Natal Subject | conjunction ☌ | Ascendant             | Sample Natal Subject Solar Return | 0.00° | Static =     |
-| Medium Coeli          | Sample Natal Subject | conjunction ☌ | Mercury               | Sample Natal Subject Solar Return | 2.31° | Applying →   |
-| Medium Coeli          | Sample Natal Subject | conjunction ☌ | Medium Coeli          | Sample Natal Subject Solar Return | 0.00° | Static =     |
+| Sun                   | Sample Natal Subject | conjunction ☌ | Chiron                | Sample Natal Subject Solar Return | 1.47° | Separating ← |
+| Moon                  | Sample Natal Subject | opposition ☍  | True North Lunar Node | Sample Natal Subject Solar Return | 2.27° | Applying →   |
+| Moon                  | Sample Natal Subject | trine △       | Medium Coeli          | Sample Natal Subject Solar Return | 0.56° | Separating ← |
+| Mercury               | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 1.03° | Separating ← |
+| Mercury               | Sample Natal Subject | square □      | Pluto                 | Sample Natal Subject Solar Return | 0.03° | Separating ← |
+| Venus                 | Sample Natal Subject | sextile ⚹     | Mars                  | Sample Natal Subject Solar Return | 2.17° | Separating ← |
+| Mars                  | Sample Natal Subject | trine △       | Venus                 | Sample Natal Subject Solar Return | 0.66° | Applying →   |
+| Mars                  | Sample Natal Subject | trine △       | Mars                  | Sample Natal Subject Solar Return | 2.09° | Applying →   |
+| Mars                  | Sample Natal Subject | square □      | Saturn                | Sample Natal Subject Solar Return | 2.07° | Separating ← |
+| Jupiter               | Sample Natal Subject | trine △       | Medium Coeli          | Sample Natal Subject Solar Return | 2.14° | Applying →   |
+| Saturn                | Sample Natal Subject | conjunction ☌ | True North Lunar Node | Sample Natal Subject Solar Return | 2.57° | Applying →   |
+| Saturn                | Sample Natal Subject | sextile ⚹     | Medium Coeli          | Sample Natal Subject Solar Return | 0.26° | Separating ← |
+| Uranus                | Sample Natal Subject | trine △       | Venus                 | Sample Natal Subject Solar Return | 1.43° | Applying →   |
+| Uranus                | Sample Natal Subject | trine △       | Mars                  | Sample Natal Subject Solar Return | 2.86° | Applying →   |
+| Neptune               | Sample Natal Subject | conjunction ☌ | Uranus                | Sample Natal Subject Solar Return | 1.63° | Separating ← |
+| Neptune               | Sample Natal Subject | conjunction ☌ | Neptune               | Sample Natal Subject Solar Return | 2.25° | Applying →   |
+| Neptune               | Sample Natal Subject | conjunction ☌ | Ascendant             | Sample Natal Subject Solar Return | 1.06° | Separating ← |
+| Pluto                 | Sample Natal Subject | sextile ⚹     | Neptune               | Sample Natal Subject Solar Return | 0.04° | Applying →   |
+| Pluto                 | Sample Natal Subject | conjunction ☌ | Pluto                 | Sample Natal Subject Solar Return | 2.60° | Applying →   |
+| Pluto                 | Sample Natal Subject | sextile ⚹     | Ascendant             | Sample Natal Subject Solar Return | 1.15° | Applying →   |
+| True North Lunar Node | Sample Natal Subject | sextile ⚹     | Moon                  | Sample Natal Subject Solar Return | 2.63° | Applying →   |
+| Chiron                | Sample Natal Subject | trine △       | Pluto                 | Sample Natal Subject Solar Return | 2.30° | Separating ← |
+| Chiron                | Sample Natal Subject | opposition ☍  | True North Lunar Node | Sample Natal Subject Solar Return | 0.94° | Applying →   |
+| Chiron                | Sample Natal Subject | trine △       | Medium Coeli          | Sample Natal Subject Solar Return | 1.89° | Separating ← |
+| Ascendant             | Sample Natal Subject | sextile ⚹     | Venus                 | Sample Natal Subject Solar Return | 0.52° | Applying →   |
+| Ascendant             | Sample Natal Subject | sextile ⚹     | Mars                  | Sample Natal Subject Solar Return | 1.95° | Applying →   |
+| Ascendant             | Sample Natal Subject | square □      | Saturn                | Sample Natal Subject Solar Return | 1.93° | Separating ← |
+| Medium Coeli          | Sample Natal Subject | conjunction ☌ | Jupiter               | Sample Natal Subject Solar Return | 1.28° | Applying →   |
+| Medium Coeli          | Sample Natal Subject | square □      | Pluto                 | Sample Natal Subject Solar Return | 2.34° | Separating ← |
+| Medium Coeli          | Sample Natal Subject | square □      | Medium Coeli          | Sample Natal Subject Solar Return | 1.86° | Static =     |
 +-----------------------+----------------------+---------------+-----------------------+-----------------------------------+-------+--------------+

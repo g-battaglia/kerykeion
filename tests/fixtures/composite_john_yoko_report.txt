@@ -8,6 +8,7 @@ John Lennon & Yoko Ono — Composite Report
 | Name              | John Lennon and Yoko Ono Composite Chart |
 | Composite Members | John Lennon & Yoko Ono                   |
 | Composite Type    | Midpoint                                 |
+| House Anchor      | auto                                     |
 +-------------------+------------------------------------------+
 
 +Composite Chart — Settings-----------------+
@@ -75,19 +76,19 @@ John Lennon & Yoko Ono — Composite Report
 | Point                 | Sign   | Position | Speed | Decl. | Ret. | House          |
 +-----------------------+--------+----------+-------+-------+------+----------------+
 | Ascendant             | Can ♋ | 14.06°   | N/A   | N/A   | -    | First House    |
-| Medium Coeli          | Lib ♎ | 8.18°    | N/A   | N/A   | -    | Tenth House    |
-| Sun                   | Sag ♐ | 22.82°   | N/A   | N/A   | -    | Third House    |
-| Moon                  | Cap ♑ | 7.34°    | N/A   | N/A   | -    | Third House    |
-| Mercury               | Cap ♑ | 8.22°    | N/A   | N/A   | -    | Third House    |
-| Venus                 | Sco ♏ | 23.50°   | N/A   | N/A   | -    | Eleventh House |
-| Mars                  | Vir ♍ | 23.89°   | N/A   | N/A   | -    | Ninth House    |
+| Medium Coeli          | Ari ♈ | 8.18°    | N/A   | N/A   | -    | Tenth House    |
+| Sun                   | Sag ♐ | 22.82°   | N/A   | N/A   | -    | Sixth House    |
+| Moon                  | Cap ♑ | 7.34°    | N/A   | N/A   | -    | Sixth House    |
+| Mercury               | Cap ♑ | 8.22°    | N/A   | N/A   | -    | Sixth House    |
+| Venus                 | Sco ♏ | 23.50°   | N/A   | N/A   | -    | Fifth House    |
+| Mars                  | Vir ♍ | 23.89°   | N/A   | N/A   | -    | Third House    |
 | Jupiter               | Can ♋ | 17.19°   | N/A   | N/A   | -    | First House    |
 | Saturn                | Pis ♓ | 26.48°   | N/A   | N/A   | -    | Ninth House    |
-| Uranus                | Tau ♉ | 8.05°    | N/A   | N/A   | -    | Fifth House    |
-| Neptune               | Vir ♍ | 17.55°   | N/A   | N/A   | -    | Ninth House    |
+| Uranus                | Tau ♉ | 8.05°    | N/A   | N/A   | -    | Eleventh House |
+| Neptune               | Vir ♍ | 17.55°   | N/A   | N/A   | -    | Third House    |
 | Pluto                 | Can ♋ | 27.91°   | N/A   | N/A   | -    | First House    |
-| True North Lunar Node | Sag ♐ | 24.41°   | N/A   | N/A   | -    | Third House    |
-| Chiron                | Gem ♊ | 27.15°   | N/A   | N/A   | -    | Ninth House    |
+| True North Lunar Node | Sag ♐ | 24.41°   | N/A   | N/A   | -    | Sixth House    |
+| Chiron                | Gem ♊ | 27.15°   | N/A   | N/A   | -    | Twelfth House  |
 +-----------------------+--------+----------+-------+-------+------+----------------+
 
 +Composite Chart Houses (Placidus)---+-------------------+
@@ -96,15 +97,15 @@ John Lennon & Yoko Ono — Composite Report
 | First House    | Can ♋ | 14.06°   | 104.06°           |
 | Second House   | Leo ♌ | 17.68°   | 137.68°           |
 | Third House    | Vir ♍ | 13.38°   | 163.38°           |
-| Fourth House   | Ari ♈ | 8.18°    | 8.18°             |
-| Fifth House    | Tau ♉ | 3.62°    | 33.62°            |
-| Sixth House    | Gem ♊ | 2.10°    | 62.10°            |
+| Fourth House   | Lib ♎ | 8.18°    | 188.18°           |
+| Fifth House    | Sco ♏ | 3.62°    | 213.62°           |
+| Sixth House    | Sag ♐ | 2.10°    | 242.10°           |
 | Seventh House  | Cap ♑ | 14.06°   | 284.06°           |
 | Eighth House   | Aqu ♒ | 17.68°   | 317.68°           |
 | Ninth House    | Pis ♓ | 13.38°   | 343.38°           |
-| Tenth House    | Lib ♎ | 8.18°    | 188.18°           |
-| Eleventh House | Sco ♏ | 3.62°    | 213.62°           |
-| Twelfth House  | Sag ♐ | 2.10°    | 242.10°           |
+| Tenth House    | Ari ♈ | 8.18°    | 8.18°             |
+| Eleventh House | Tau ♉ | 3.62°    | 33.62°            |
+| Twelfth House  | Gem ♊ | 2.10°    | 62.10°            |
 +----------------+--------+----------+-------------------+
 
 +Lunar Phase--------------+--------------------+
@@ -118,9 +119,9 @@ John Lennon & Yoko Ono — Composite Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.5   | 15%        |
+| Fire 🔥  | 4.0   | 24%        |
 | Earth 🌍 | 6.0   | 36%        |
-| Air 💨   | 2.1   | 13%        |
+| Air 💨   | 0.6   | 4%         |
 | Water 💧 | 6.0   | 36%        |
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
@@ -134,16 +135,18 @@ John Lennon & Yoko Ono — Composite Report
 | Total    | 16.6  | 100%       |
 +----------+-------+------------+
 
-+Angularities---------+----------+
-| Point   | Angle     | Distance |
-+---------+-----------+----------+
-| Jupiter | Ascendant | 3.13°    |
-+---------+-----------+----------+
++Angularities----------+----------+
+| Point   | Angle      | Distance |
++---------+------------+----------+
+| Jupiter | Ascendant  | 3.13°    |
+| Mercury | Descendant | 5.84°    |
+| Moon    | Descendant | 6.72°    |
++---------+------------+----------+
 
 +Stelliums------+--------------------+
 | House | Count | Points             |
 +-------+-------+--------------------+
-| 3     | 3     | Sun, Moon, Mercury |
+| 6     | 3     | Sun, Moon, Mercury |
 +-------+-------+--------------------+
 
 +Active Celestial Points-----+

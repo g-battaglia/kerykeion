@@ -72,6 +72,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `custom_ayanamsa_ayan_t0` | `Optional[float]`        | `None`          | Ayanamsa offset in degrees at the reference epoch. Required with USER.              |
 | `calculate_dignities`      | `bool`                   | `False`         | Compute essential dignity scores for each planet.                                    |
 | `calculate_nakshatra`      | `bool`                   | `False`         | Compute Vedic nakshatra, pada, and dasha lord for each point.                       |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | `"LAHIRI"`      | Ayanamsa used to place the nakshatras on a non-sidereal chart. Ignored when the chart is Sidereal. `None` restores the pre-v6 uncorrected values. |
 | `calculate_gauquelin`      | `bool`                   | `False`         | Compute Gauquelin sector (1-36) for each point.                                     |
 | `calculate_nutation`       | `bool`                   | `False`         | Compute nutation in longitude and obliquity.                                        |
 | `calculate_local_space`    | `bool`                   | `False`         | Compute azimuth and altitude for each point.                                        |
@@ -114,6 +115,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `geonames_username`        | `str`                    | `DEFAULT_GEONAMES_USERNAME` | GeoNames API username.                                              |
 | `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
 | `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord.                             |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | `"LAHIRI"`              | Ayanamsa for the nakshatras on a non-sidereal chart; `None` = pre-v6 behaviour. |
 | `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
 | `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
 | `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
@@ -155,6 +157,7 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 | `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Fixed-star catalog names to compute into `subject.fixed_stars`.         |
 | `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
 | `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord data.                        |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | `"LAHIRI"`              | Ayanamsa for the nakshatras on a non-sidereal chart; `None` = pre-v6 behaviour. |
 | `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
 | `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
 | `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
@@ -221,17 +224,32 @@ print(subject.sun.essential_dignity)  # e.g. "Domicile"
 
 ### Vedic Nakshatras (`calculate_nakshatra=True`)
 
-Adds `nakshatra`, `nakshatra_pada`, and `nakshatra_lord` fields. Best used with `zodiac_type="Sidereal"`.
+Adds `nakshatra`, `nakshatra_number`, `nakshatra_pada`, and `nakshatra_lord` fields to every point.
+
+The nakshatras divide the **sidereal** zodiac. A sidereal chart supplies those longitudes itself. Any other chart does not, so its longitudes are rotated by `nakshatra_ayanamsa` (default `"LAHIRI"` — the ayanamsa Jyotish uses, not the `FAGAN_BRADLEY` default of `sidereal_mode`) for the 27-fold division only: the chart stays tropical, and its nakshatras match the sidereal chart cast in the same mode exactly.
+
+The subject records what was used, in `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Both are `None` on a sidereal chart — where the parameter is ignored and `sidereal_mode` / `ayanamsa_value` are the answer — and on a chart that computed no nakshatras.
+
+`nakshatra_ayanamsa=None` restores the pre-v6 behaviour: tropical longitudes fed straight to the sidereal division, every value about two nakshatras off, and one warning per subject. It exists only to reproduce values computed by earlier versions.
 
 ```python
-subject = AstrologicalSubjectFactory.from_birth_data(
+tropical = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_nakshatra=True
+)
+sidereal = AstrologicalSubjectFactory.from_birth_data(
     "Alice", 1990, 6, 15, 12, 0,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
     zodiac_type="Sidereal", sidereal_mode="LAHIRI",
     calculate_nakshatra=True
 )
-print(f"{subject.moon.nakshatra}, pada {subject.moon.nakshatra_pada}")
+print(f"{tropical.moon.nakshatra}, pada {tropical.moon.nakshatra_pada}")
+print(tropical.nakshatra_ayanamsa, round(tropical.nakshatra_ayanamsa_value, 4))
+print(tropical.moon.nakshatra == sidereal.moon.nakshatra)   # True
 ```
+
+Derived charts inherit the setting: `PlanetaryReturnFactory` (which also accepts `nakshatra_ayanamsa` of its own — an explicit value outranks the natal, `None` included) and `SecondaryProgressionFactory` copy the natal's `nakshatra_ayanamsa`, and a Davison composite adopts it only when both parents agree — otherwise it warns and falls back to the default. For `"USER"`, agreeing means agreeing on the definition (`custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0`), which the composite carries over with the mode: the name alone is not an ayanamsa. What is inherited is a mode that was actually used: a natal that computed no nakshatras also records `None`, and that `None` is not the legacy opt-out. `PlanetaryReturnFactory(..., calculate_nakshatra=True)` on such a natal therefore starts from the `"LAHIRI"` default, exactly as casting the same instant directly would.
 
 ### Gauquelin Sectors (`calculate_gauquelin=True`)
 
@@ -247,7 +265,30 @@ Adds `azimuth` and `altitude_above_horizon` fields for each point. Useful for as
 
 ### Motion State
 
-Always computed for the ten planets (Sun through Pluto) in Earth-centred perspectives. Access via `subject.sun.motion_state`. Returns a `MotionState` literal: `"retrograde"`, `"stationary"` (< 5% of mean motion), `"slow"` (< 80%), `"average"` (80-120%), or `"fast"` (> 120%). `None` for nodes, asteroids, fixed stars, and non-geocentric perspectives.
+Always computed for the ten planets (Sun through Pluto) in Earth-centred perspectives. Access via `subject.sun.motion_state`. Returns a `MotionState` literal: `"stationary_retrograde"`, `"stationary_direct"` or `"stationary"` (inside the band of < 5% of mean motion, either direction), `"retrograde"` (backward, outside that band), `"slow"` (< 80%), `"average"` (80-120%), or `"fast"` (> 120%). `None` for nodes, asteroids, fixed stars, and non-geocentric perspectives.
+
+The stationary band brackets zero speed and is tested before the sign, so a
+planet edging backwards at a hundredth of its mean motion is reported as a
+station instead of a plain retrograde. Which station it is comes from the trend
+rather than the sign: the factory samples the speed again a day later, and a
+speed falling through the band opens the retrograde phase
+(`"stationary_retrograde"`) while a speed rising through it closes the phase
+(`"stationary_direct"`). The extra sample is only ever spent on a body already
+inside the band; where it is unavailable the generic `"stationary"` stands.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+print(subject.mercury.motion_state)  # stationary_retrograde
+print(subject.mercury.speed)         # 0.0123... — still forward, already turning
+```
+
+For the instants of the stations themselves rather than the state of one chart, see [Retrograde Stations](/content/docs/retrograde_station_factory), which reports the same two events as `SR` and `SD`.
 
 ### Declination & Out-of-Bounds
 
@@ -281,7 +322,7 @@ These `@dataclass` structures are used internally but are exposed for reference.
 #### `ChartConfiguration`
 
 Dataclass holding chart calculation settings.
-Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`, `calculate_dignities`, `calculate_nakshatra`, `calculate_gauquelin`, `calculate_nutation`, `calculate_local_space`, `active_fixed_stars`.
+Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`, `calculate_dignities`, `calculate_nakshatra`, `nakshatra_ayanamsa`, `calculate_gauquelin`, `calculate_nutation`, `calculate_local_space`, `active_fixed_stars`.
 
 #### `LocationData`
 

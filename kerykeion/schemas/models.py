@@ -28,10 +28,10 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
 from datetime import datetime, timedelta
-from typing import Union, Optional, Literal
+from typing import Any, Literal, Optional, Union
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, field_validator, model_validator
-from kerykeion.schemas.literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
+from kerykeion.schemas.literals import AspectName, ClassicalPlanet, SolarPhase, VocAspectName, VocTargetPlanet
 
 # Import directly from literals (NOT from the kerykeion.schemas package
 # __init__): importing from the package while the package is importing this
@@ -41,6 +41,7 @@ from kerykeion.schemas.literals import AspectName, ClassicalPlanet, VocAspectNam
 from kerykeion.schemas.literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
+    LunarPhaseStage,
     AstrologicalPoint,
     MotionState,
     Houses,
@@ -57,7 +58,13 @@ from kerykeion.schemas.literals import (
     PerspectiveType,
     AspectMovementType,
 )
-from kerykeion.schemas.literals import ReturnType, DominantMethod
+from kerykeion.schemas.literals import (
+    ReturnType,
+    DominantMethod,
+    CompositeChartType,
+    CompositeHouseAnchor,
+    CompositeHouseFrame,
+)
 
 # Type alias for any astrological subject model (birth chart, composite, or return)
 AnySubjectModel = Union["AstrologicalSubjectModel", "CompositeSubjectModel", "PlanetReturnModel"]
@@ -89,17 +96,57 @@ class LunarPhaseModel(SubscriptableBaseModel):
     """
     Model representing lunar phase information.
 
+    Every field but ``moon_phase`` is derived from ``degrees_between_s_m`` alone,
+    and by a single set of rules — see
+    :func:`kerykeion.utilities.core.lunar_phase_name_from_degrees`,
+    :func:`kerykeion.utilities.core.lunar_major_phase_from_degrees` and
+    :func:`kerykeion.utilities.core.lunar_stage_from_degrees`, which the moon-phase
+    overview also reads, so a subject and the moon-phase endpoint cannot disagree
+    about the same instant.
+
     Attributes:
         degrees_between_s_m: Angular separation between Sun and Moon in degrees.
-        moon_phase: Numerical phase identifier for the Moon.
+        moon_phase: Lunation day, 1-28: the index of the 1/28th bin the separation
+            falls in. A calendar-style counter, NOT the name's source.
         moon_emoji: Emoji representation of the lunar phase.
-        moon_phase_name: Text name of the lunar phase.
+        moon_phase_name: Text name of the lunar phase, from a window centred on
+            the event it names.
+        major_phase: The nearest of the four major phases (New Moon, First Quarter,
+            Full Moon, Last Quarter) — always one of those four, whatever the name.
+        stage: ``"waxing"`` before the opposition, ``"waning"`` after it.
     """
 
     degrees_between_s_m: Union[float, int]
     moon_phase: int
     moon_emoji: LunarPhaseEmoji
     moon_phase_name: LunarPhaseName
+    major_phase: LunarPhaseName
+    stage: LunarPhaseStage
+
+    @model_validator(mode="before")
+    @classmethod
+    def _derive_major_phase_and_stage(cls, data: Any) -> Any:
+        """Fill ``major_phase`` and ``stage`` from the separation when absent.
+
+        Both fields arrived in 6.0.0a91. A subject serialised before then — a
+        chart_data payload a client stored and sends back, a cached dump — has
+        the separation but not the two names, and must keep validating: they are
+        pure functions of ``degrees_between_s_m``, so deriving them here is the
+        same answer the factory would have given, never a guess.
+        """
+        if not isinstance(data, dict):
+            return data
+        if "major_phase" in data and "stage" in data:
+            return data
+        degrees = data.get("degrees_between_s_m")
+        if not isinstance(degrees, (int, float)) or isinstance(degrees, bool):
+            return data
+        from kerykeion.utilities.core import lunar_major_phase_from_degrees, lunar_stage_from_degrees
+
+        data = dict(data)
+        data.setdefault("major_phase", lunar_major_phase_from_degrees(float(degrees)))
+        data.setdefault("stage", lunar_stage_from_degrees(float(degrees)))
+        return data
 
 
 class MoonPhaseSunPositionModel(SubscriptableBaseModel):
@@ -336,12 +383,25 @@ class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
 
     This model mirrors the structure used by web APIs for moon phase
     information and is designed to be populated by MoonPhaseDetailsFactory.
+
+    Note on the rise/set types, which are deliberately asymmetric with the Sun's:
+    ``moonrise`` / ``moonset`` are ``str`` (a pre-formatted local ISO-8601
+    timestamp), while :class:`MoonPhaseSunInfoModel`'s ``sunrise`` / ``sunset``
+    are ``datetime``. This model mirrors the shape of the web APIs it was built
+    against, where every one of its fields is a string or a number; the Sun's
+    block is a native model and keeps native types. In ``model_dump()`` the two
+    come out as different types; in ``model_dump(mode="json")`` they agree in every
+    zone but UTC, where the ``datetime`` serialises with a trailing ``Z`` and
+    the string keeps the ``+00:00`` it was formatted with. Read
+    ``moonrise_timestamp`` / ``moonset_timestamp`` (Unix seconds) when an
+    instant, rather than a rendering, is what is wanted. Changing the field type
+    would break every consumer already parsing the string, so it stays as it is.
     """
 
     phase: Optional[float] = None
     phase_name: Optional[LunarPhaseName] = None
-    major_phase: Optional[str] = None
-    stage: Optional[str] = None
+    major_phase: Optional[LunarPhaseName] = None
+    stage: Optional[LunarPhaseStage] = None
     illumination: Optional[str] = None
     age_days: Optional[int] = None
     age_days_precise: Optional[float] = Field(
@@ -351,10 +411,30 @@ class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
     lunar_cycle: Optional[str] = None
     emoji: Optional[LunarPhaseEmoji] = None
     zodiac: Optional[MoonPhaseZodiacModel] = None
-    moonrise: Optional[str] = None
-    moonrise_timestamp: Optional[int] = None
-    moonset: Optional[str] = None
-    moonset_timestamp: Optional[int] = None
+    moonrise: Optional[str] = Field(
+        default=None,
+        description=(
+            "Moonrise for the subject's civil day: an ISO-8601 timestamp in the subject's LOCAL "
+            "timezone, matching MoonPhaseSunInfoModel.sunrise's zone. None on the days that have "
+            "no moonrise at all — the Moon rises ~50 minutes later each day, so about one day in "
+            "thirty has none (and another has no moonset)."
+        ),
+    )
+    moonrise_timestamp: Optional[int] = Field(
+        default=None,
+        description="Unix timestamp (seconds UTC) of the same instant as `moonrise`. None when it is.",
+    )
+    moonset: Optional[str] = Field(
+        default=None,
+        description=(
+            "Moonset for the subject's civil day, in the same ISO-8601 local form as `moonrise`. "
+            "None on a day with no moonset."
+        ),
+    )
+    moonset_timestamp: Optional[int] = Field(
+        default=None,
+        description="Unix timestamp (seconds UTC) of the same instant as `moonset`. None when it is.",
+    )
     next_lunar_eclipse: Optional[MoonPhaseEclipseModel] = None
     detailed: Optional[MoonPhaseMoonDetailedModel] = None
     events: Optional[MoonPhaseEventsModel] = None
@@ -661,8 +741,12 @@ class KerykeionPointModel(SubscriptableBaseModel):
         default=None,
         description=(
             "Classification of the speed against the body's mean daily motion "
-            "(retrograde/stationary/slow/average/fast). Populated for the ten "
-            "planets in Earth-centred perspectives; None elsewhere."
+            "(retrograde/stationary/stationary_retrograde/stationary_direct/"
+            "slow/average/fast). A station is named for the turn it makes — "
+            "stationary_retrograde opens the retrograde phase, "
+            "stationary_direct closes it — falling back to plain stationary "
+            "when the direction of the turn cannot be resolved. Populated for "
+            "the ten planets in Earth-centred perspectives; None elsewhere."
         ),
     )
     declination: Optional[float] = Field(
@@ -886,6 +970,14 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             charts. This is the angular difference between tropical 0 Aries and
             sidereal 0 Aries at the chart's date/time, as determined by the
             selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
+        nakshatra_ayanamsa: The ayanamsa used to place the nakshatras when the
+            chart itself is NOT sidereal. ``None`` on a sidereal chart (its own
+            ``sidereal_mode`` / ``ayanamsa_value`` already apply), when the
+            nakshatras were not computed, and when the legacy uncorrected
+            behaviour was requested explicitly. Added in v6.
+        nakshatra_ayanamsa_value: The offset in degrees actually subtracted from
+            each point's longitude before deriving its nakshatra. ``None``
+            exactly when ``nakshatra_ayanamsa`` is. Added in v6.
         active_points: List of celestial points included in calculations.
 
     Celestial & house fields:
@@ -938,11 +1030,37 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     )
     custom_ayanamsa_t0: Optional[float] = Field(
         default=None,
-        description="Reference epoch (Julian Day) for USER sidereal mode. None unless sidereal_mode is USER.",
+        description=(
+            "Reference epoch (Julian Day) of the USER ayanamsa definition. Set whenever that "
+            "definition was actually cast: when sidereal_mode is USER, and also when a "
+            "non-sidereal chart placed its nakshatras with nakshatra_ayanamsa='USER'. None "
+            "otherwise."
+        ),
     )
     custom_ayanamsa_ayan_t0: Optional[float] = Field(
         default=None,
-        description="Ayanamsa value in degrees at the reference epoch for USER sidereal mode. None unless sidereal_mode is USER.",
+        description=(
+            "Ayanamsa value in degrees at the reference epoch of the USER definition. Set "
+            "whenever that definition was actually cast: when sidereal_mode is USER, and also "
+            "when a non-sidereal chart placed its nakshatras with nakshatra_ayanamsa='USER'. "
+            "None otherwise."
+        ),
+    )
+    nakshatra_ayanamsa: Optional[SiderealMode] = Field(
+        default=None,
+        description=(
+            "Ayanamsa used to rotate this chart's longitudes into the sidereal frame before "
+            "deriving the nakshatras. Set only on a NON-sidereal chart that computed them: on a "
+            "sidereal chart the chart's own sidereal_mode/ayanamsa_value are the answer, and the "
+            "legacy uncorrected behaviour records None."
+        ),
+    )
+    nakshatra_ayanamsa_value: Optional[float] = Field(
+        default=None,
+        description=(
+            "Offset in degrees actually subtracted from each point's longitude before deriving "
+            "its nakshatra. None exactly when nakshatra_ayanamsa is None."
+        ),
     )
 
     @model_validator(mode="after")
@@ -1093,6 +1211,19 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="House systems substituted because the requested one is undefined at this "
         "latitude. Empty for every chart cast outside the polar circle.",
     )
+    coincident_house_cusps: list[list[int]] = Field(
+        default_factory=list,
+        description=(
+            "Groups of house numbers whose cusps stand on the same longitude, so the "
+            "houses between them have no width and no point can ever be in them. "
+            "Empty for every chart whose twelve cusps are twelve distinct points, "
+            "which is every ordinary chart. Some systems crowd cusps together at "
+            "extreme latitudes — Sunshine at 74.25 degrees north puts the second "
+            "through the sixth on one longitude — and the reference ephemeris "
+            "returns the same ring, so the cusps are reported as computed rather "
+            "than repaired; this says when that has happened. Added in v6.0."
+        ),
+    )
 
     # Common lunar phase data (optional)
     lunar_phase: Optional[LunarPhaseModel] = Field(default=None, description="Lunar phase model")
@@ -1111,6 +1242,51 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
         description="Nutation and obliquity parameters for the chart moment. "
         "Populated when calculate_nutation=True. Added in v6.0.",
     )
+
+    @field_validator("coincident_house_cusps")
+    @classmethod
+    def _each_group_is_a_real_crowd(cls, groups: list[list[int]]) -> list[list[int]]:
+        """A group names at least two existing houses, ascending, and no house twice."""
+        seen: set[int] = set()
+        for group in groups:
+            if len(group) < 2:
+                raise ValueError(f"a group of coincident cusps names at least two houses, not {group}")
+            if group != sorted(group):
+                raise ValueError(f"a group of coincident cusps is listed ascending, not {group}")
+            for house in group:
+                if not 1 <= house <= 12:
+                    raise ValueError(f"house {house} does not exist: houses are numbered 1 to 12")
+                if house in seen:
+                    raise ValueError(f"house {house} cannot be in two groups of coincident cusps")
+                seen.add(house)
+        return groups
+
+    @model_validator(mode="before")
+    @classmethod
+    def _read_coincident_cusps_off_a_pre_a88_payload(cls, data: Any) -> Any:
+        """A payload from before 6.0.0a88 carries its twelve cusps but not this field.
+
+        The field promises to be empty only when the twelve cusps are distinct, and a
+        default of ``[]`` would break that promise for an old payload of a crowded
+        chart. The cusps are right there, so the groups are read off them instead.
+        A payload that names the field, even as ``[]``, is taken at its word.
+        """
+        if not isinstance(data, dict) or data.get("coincident_house_cusps") is not None:
+            return data
+        data = {key: value for key, value in data.items() if key != "coincident_house_cusps"}
+        from kerykeion.utilities.core import HOUSE_FIELD_NAMES, coincident_cusp_groups
+
+        cusps: list[float] = []
+        for field_name in HOUSE_FIELD_NAMES:
+            house = data.get(field_name)
+            degree = house.get("abs_pos") if isinstance(house, dict) else getattr(house, "abs_pos", None)
+            if degree is None:
+                return data  # not a chart with twelve cusps; nothing to read
+            try:
+                cusps.append(float(degree))  # a JSON producer may have written "264.04"
+            except (TypeError, ValueError):
+                return data  # not a chart with twelve cusps; nothing to read
+        return {**data, "coincident_house_cusps": coincident_cusp_groups(cusps)}
 
     def find_fixed_star(self, name: str) -> Optional[KerykeionPointModel]:
         """Case-insensitive lookup in ``fixed_stars`` by IAU name or slug.
@@ -1235,7 +1411,53 @@ class CompositeSubjectModel(AstrologicalBaseModel):
     # Specific composite data
     first_subject: AstrologicalSubjectModel
     second_subject: AstrologicalSubjectModel
-    composite_chart_type: str
+    composite_chart_type: CompositeChartType
+    #: Which angle kept its near midpoint when the cusp ring had to be repaired.
+    #: Recorded because the choice can turn the whole house frame by half a turn,
+    #: so a chart that carries no note of it cannot be reproduced. None on a
+    #: Davison chart, which is cast as an ordinary chart and never needs one.
+    house_anchor: Optional[CompositeHouseAnchor] = None
+
+    #: What the twelve cusps turned out to be — whether the requested anchor was
+    #: actually held, and whether the ring is a house division at all. Recorded
+    #: because ``house_anchor`` alone is a request: where the two charts admit no
+    #: common frame it decides nothing, and all three anchors return the same
+    #: chart. See :data:`~kerykeion.schemas.literals.CompositeHouseFrame`.
+    house_frame: Optional[CompositeHouseFrame] = None
+
+    @model_validator(mode="after")
+    def _davison_charts_carry_no_house_frame(self) -> "CompositeSubjectModel":
+        """A Davison chart is cast as an ordinary chart, so it has no frame at all.
+
+        Both provenance fields describe a construction only the midpoint method
+        performs. Left unconstrained, a payload could claim a Davison chart was
+        anchored on its Midheaven, and the report and the context would repeat
+        it — the report even printing a House Anchor row for a chart that has no
+        anchor to print.
+
+        The converse is deliberately NOT required. An a86 midpoint payload
+        carries neither field, and this release promises those still validate; a
+        midpoint chart without provenance is an old chart, not an impossible one.
+        """
+        if self.composite_chart_type == "Davison":
+            if self.house_anchor is not None or self.house_frame is not None:
+                raise ValueError(
+                    "A Davison composite has no house frame to record: it is cast as an "
+                    f"ordinary chart. Got house_anchor={self.house_anchor!r}, "
+                    f"house_frame={self.house_frame!r}."
+                )
+        elif (self.house_anchor is None) != (self.house_frame is None):
+            # Both or neither. One alone says nothing anything downstream can act
+            # on: an anchor with no frame is a request nobody can tell was granted,
+            # and a frame with no anchor is an answer to a question the chart does
+            # not record. The factory never produces either, and the report and the
+            # context each describe half of it.
+            raise ValueError(
+                "A midpoint composite records both its house anchor and what became of "
+                "it, or neither — an a86 payload carries neither and still validates. "
+                f"Got house_anchor={self.house_anchor!r}, house_frame={self.house_frame!r}."
+            )
+        return self
 
     # Sect (diurnal/nocturnal) — meaningful for Davison charts, which
     # represent a real moment; None when not applicable (the midpoint method
@@ -1813,6 +2035,59 @@ ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
 # =============================================================================
 
 
+class SolarPhaseThresholdsModel(SubscriptableBaseModel):
+    """The three elongation cut-offs that name a body's condition near the Sun.
+
+    Each value is a half-width in degrees, measured from the Sun's centre as a
+    true angular separation (latitude included, not longitude alone). A body is
+    ``"cazimi"`` below ``cazimi_deg``, ``"combust"`` below ``combust_deg``,
+    ``"under_the_beams"`` below ``under_beams_deg``, and ``"free"`` at or beyond
+    it. Every comparison is strict, so a body sitting exactly on a cut-off takes
+    the outer name.
+
+    The defaults are the values most often quoted in the classical literature —
+    17 arcminutes (0.2833°) for cazimi, 8°30' for combustion, 17° for the beams —
+    but they are conventions, not measurements, and the schools disagree about
+    all three (some read the beams at 15°, some scale combustion by planet). They
+    are therefore parameters: pass a different instance to the phenomena factory
+    and the labels move with it. The instance actually used is echoed on
+    :class:`PlanetaryPhenomenaCollectionModel` so a consumer never has to guess
+    which convention produced a label.
+
+    Attributes:
+        cazimi_deg: Below this separation the body is in the heart of the Sun.
+        combust_deg: Below this separation the body is burnt (invisible).
+        under_beams_deg: Below this separation the body is still in the Sun's rays.
+    """
+
+    cazimi_deg: float = Field(
+        default=0.2833, gt=0, description="Half-width of cazimi in degrees (default 17 arcminutes)"
+    )
+    combust_deg: float = Field(
+        default=8.5, gt=0, description="Half-width of combustion in degrees (default 8°30')"
+    )
+    under_beams_deg: float = Field(
+        default=17.0, gt=0, description="Half-width of the Sun's beams in degrees (default 17°)"
+    )
+
+    @model_validator(mode="after")
+    def _thresholds_must_widen_outwards(self) -> "SolarPhaseThresholdsModel":
+        """Reject an out-of-order set instead of silently starving a label.
+
+        The classification walks the three cut-offs from the inside out, so a set
+        that does not widen (``combust_deg <= cazimi_deg``, say) makes one of the
+        four names unreachable — a configuration error that would otherwise show
+        up only as phases that never appear.
+        """
+        if not (self.cazimi_deg < self.combust_deg < self.under_beams_deg):
+            raise ValueError(
+                "Solar-phase thresholds must widen outwards: "
+                f"cazimi_deg ({self.cazimi_deg}) < combust_deg ({self.combust_deg}) "
+                f"< under_beams_deg ({self.under_beams_deg})."
+            )
+        return self
+
+
 class PlanetaryPhenomenaModel(SubscriptableBaseModel):
     """Observational phenomena for a single planet at a specific moment.
 
@@ -1826,10 +2101,27 @@ class PlanetaryPhenomenaModel(SubscriptableBaseModel):
     apparent_diameter: float = Field(description="Angular size as seen from Earth in degrees")
     apparent_magnitude: float = Field(description="Visual brightness (lower = brighter)")
     is_morning_star: Optional[bool] = Field(
-        default=None, description="True if planet rises before the Sun (Mercury/Venus only)"
+        default=None,
+        description=(
+            "Purely geometric: True when the planet is west of the Sun in longitude "
+            "and so rises before it (Mercury/Venus only). Says nothing about whether "
+            "the planet can be seen — read `solar_phase` for that"
+        ),
     )
     is_evening_star: Optional[bool] = Field(
-        default=None, description="True if planet sets after the Sun (Mercury/Venus only)"
+        default=None,
+        description=(
+            "Purely geometric: True when the planet is east of the Sun in longitude "
+            "and so sets after it (Mercury/Venus only). Says nothing about whether "
+            "the planet can be seen — read `solar_phase` for that"
+        ),
+    )
+    solar_phase: Optional[SolarPhase] = Field(
+        default=None,
+        description=(
+            "Condition relative to the Sun — cazimi / combust / under_the_beams / free — "
+            "from `elongation` and the collection's `solar_phase_thresholds`"
+        ),
     )
 
 
@@ -1839,6 +2131,10 @@ class PlanetaryPhenomenaCollectionModel(SubscriptableBaseModel):
     iso_datetime: str = Field(description="ISO 8601 formatted datetime")
     julian_day: float = Field(description="Julian Day number")
     phenomena: list[PlanetaryPhenomenaModel] = Field(description="Phenomena for each planet")
+    solar_phase_thresholds: SolarPhaseThresholdsModel = Field(
+        default_factory=SolarPhaseThresholdsModel,
+        description="The cut-offs every `solar_phase` in this collection was labelled with",
+    )
 
 
 # =============================================================================

@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a85"
+version = "6.0.0a91"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -111,9 +111,13 @@ build-backend = "hatchling.build"
 packages = ["kerykeion"]
 
 # Ship the third-party notices with the wheel: the templates embed glyph outlines
-# derived from Noto Sans Symbols 2 (SIL OFL 1.1), whose license must accompany them.
+# derived from Noto Sans Symbols 2 and from Noto Sans (both SIL OFL 1.1), whose
+# licenses must accompany them. Every file the NOTICE points at has to be here:
+# the sdist gets them from its own "/licenses" include, so a repo checkout hides
+# a missing entry and only a pip-installed tree shows the dangling reference.
 [tool.hatch.build.targets.wheel.force-include]
 "NOTICE" = "kerykeion/NOTICE"
+"licenses/NotoSans-OFL.txt" = "kerykeion/licenses/NotoSans-OFL.txt"
 "licenses/NotoSansSymbols2-OFL.txt" = "kerykeion/licenses/NotoSansSymbols2-OFL.txt"
 
 [tool.hatch.build.targets.sdist]
@@ -149,6 +153,7 @@ markers = [
     "medium: DE440 tier (1550-2650, cumulative)",
     "extended: DE441 tier (full range, cumulative)",
     "cli: command-line interface tests (requires the kerykeion[cli] extra)",
+    "reference_backend_only: golden comparison the two ephemerides genuinely disagree on (deep antiquity); skipped off the baseline backend with a reason",
 ]
 
 # Coverage Configuration
@@ -283,9 +288,16 @@ help = "Check module paths, patch targets and logger names outside kerykeion/"
 cmd = "python scripts/check_import_graph.py --fresh-imports"
 help = "Import every module in a cold interpreter (catches leaf-first cycles)"
 
+[tool.poe.tasks."test:gates:extended"]
+cmd = "pytest tests/core/test_every_baseline_has_a_reader.py tests/core/test_golden_charts_are_hermetic.py tests/core/test_baseline_freshness.py -p no:randomly"
+help = "The baseline gates on the full-range kernel: on the default tier the reader gate cannot see a lost reader for the extended-tier subjects' baselines"
+
+[tool.poe.tasks."test:gates:extended".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "cli:smoke", "skill:cli:smoke"]
-help = "Run all quality checks (lint, analyze, typecheck, test:core, cli:smoke, skill:cli:smoke)"
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended", "cli:smoke"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel, cli:smoke)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
 # int return, so a `script` task exits 0 even when the checks fail — the gate
@@ -327,10 +339,18 @@ help = "Re-measure modern wheel symbol ink extents in a browser and rewrite glyp
 cmd = "python scripts/measure_modern_separation.py --mode dump-ink"
 
 [tool.poe.tasks."regenerate:svg"]
-sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern"]
+sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern", "regenerate:svg:test-owned"]
 help = "Regenerate all SVG chart baselines (tests/data/svg/)"
 
 [tool.poe.tasks."regenerate:svg".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:svg:test-owned"]
+cmd = "pytest tests/core/test_chart_drawer.py::TestProgressionChart tests/core/test_chart_drawer.py::TestNatalChart::test_minified_transit_chart tests/core/test_chart_drawer.py::TestNatalChart::test_minified_synastry_chart tests/core/test_bce_dates.py::TestBCEChartSVG::test_progression_chart_baseline tests/core/test_bce_dates.py::TestBCEChartSVG::test_synastry_chart_baseline tests/core/test_bce_dates.py::TestBCEChartSVG::test_transit_chart_baseline tests/core/test_bce_dates.py::TestBCEPairWithAModernPartner -p no:randomly -q"
+help = "The eleven baselines no script casts — progressions, the minified pair, the BCE pairs — rewritten by the tests that own them"
+
+[tool.poe.tasks."regenerate:svg:test-owned".env]
+KERYKEION_REGEN_BASELINES = "1"
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:svg:base"]
@@ -341,6 +361,48 @@ cmd = "python scripts/regenerate_test_charts_extended.py"
 
 [tool.poe.tasks."regenerate:svg:modern"]
 cmd = "python scripts/generate_modern_baselines.py"
+
+# The three below produce committed SVGs too, and each had no task at all. That
+# is why they went stale: `regenerate:all` did not reach them, so a template
+# change refreshed tests/data/svg and left the README's own showcase images
+# drawing a glyph set the library no longer had.
+[tool.poe.tasks."regenerate:docs-charts"]
+cmd = "python scripts/regenerate_docs_charts.py"
+help = "Regenerate the documentation charts (docs/charts/) — the README's showcase images"
+
+[tool.poe.tasks."regenerate:docs-charts".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:gallery-v6"]
+cmd = "python scripts/generate_v6_test_gallery.py"
+help = "Regenerate the v6 feature gallery (tests/data/v6_gallery/)"
+
+[tool.poe.tasks."regenerate:gallery-v6".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:glyph-gallery"]
+cmd = "python scripts/generate_glyph_gallery.py"
+help = "Regenerate the published glyph poster and page (site/docs/chart-glyphs.md)"
+
+[tool.poe.tasks.gallery]
+cmd = "python scripts/generate_svg_validation_gallery.py"
+help = "Render the whole SVG surface into svg_validation_gallery/ for visual review"
+
+[tool.poe.tasks.gallery.env]
+# Charts before ~1600 fall outside the default ephemeris tier and would be
+# drawn as failure cards; the sweep deliberately includes them.
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks.playground]
+cmd = "python scripts/generate_glyph_playground.py"
+help = "Rebuild scripts/glyph_playground.html — the modern-cluster tuning page"
+
+[tool.poe.tasks.playground.env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."gallery:index"]
+cmd = "python scripts/generate_svg_validation_gallery.py --index-only"
+help = "Rewrite the gallery page from cards.json, without re-rendering the charts"
 
 [tool.poe.tasks."regenerate:reports"]
 sequence = ["regenerate:reports:snapshots", "regenerate:reports:output"]
@@ -383,7 +445,7 @@ help = "Regenerate all configuration-specific fixtures (house-systems, sidereal-
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
+sequence = ["regenerate:svg", "regenerate:docs-charts", "regenerate:gallery-v6", "regenerate:glyph-gallery", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
 help = "Regenerate all golden standards"
 # Baselines must regenerate at the extended (DE441) tier so ancient/BCE subjects
 # (year 100 AD, etc.) resolve on-disk instead of falling back, and so the long-range

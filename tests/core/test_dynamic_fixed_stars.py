@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Tests for dynamic fixed stars and FixedStarDiscoveryFactory."""
 
+import logging
+
 import pytest
 from kerykeion import AstrologicalSubjectFactory, FixedStarDiscoveryFactory
 from kerykeion.ephemeris_backend import BACKEND_NAME
@@ -608,3 +610,65 @@ class TestFixedStarProvenance:
         for line in star_lines:
             assert "source=" in line
             assert "precision_class=" in line
+
+
+# =============================================================================
+# THE UNRESOLVED-STAR WARNING IS ADVICE, AND ADVICE IS SAID ONCE
+# =============================================================================
+#
+# On the swisseph backend most catalog names are Bayer abbreviations the backend
+# cannot address, so a partial result is the ordinary outcome rather than a
+# fault. The advice that goes with it — install sefstars.txt, or switch backend —
+# is the same on every request, and a server drawing charts from a fixed star
+# list was repeating six lines of it per chart. FixedStarDiscoveryFactory already
+# said it once per process; the subject factory did not, and the two halves of
+# one fix disagreed.
+
+
+@pytest.fixture
+def _forget_the_star_warning(monkeypatch):
+    """The flag is module state and does not reset itself between tests."""
+    import kerykeion.astrological_subject.factory as factory
+
+    monkeypatch.setattr(factory, "_swisseph_star_warning_emitted", False)
+    monkeypatch.setattr(factory, "BACKEND_NAME", "swisseph")
+    return factory
+
+
+def _subject_asking_for(stars):
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Star Warning", 1940, 10, 9, 18, 30, city="Liverpool", nation="GB",
+        lng=-2.97, lat=53.41, tz_str="Europe/London",
+        online=False, suppress_geonames_warning=True,
+        active_fixed_stars=list(stars),
+    )
+
+
+def _warnings_about_stars(caplog):
+    return [r for r in caplog.records if "requested fixed stars" in r.getMessage()]
+
+
+def test_a_partial_result_says_so_once_per_process(_forget_the_star_warning, caplog):
+    """Two charts, one warning: the second has nothing new to tell anyone."""
+    with caplog.at_level(logging.WARNING):
+        _subject_asking_for(["Regulus", "Definitely_Not_A_Star"])
+        first = len(_warnings_about_stars(caplog))
+        _subject_asking_for(["Regulus", "Definitely_Not_A_Star"])
+        second = len(_warnings_about_stars(caplog))
+
+    assert first == 1, "the first partial result has to be reported"
+    assert second == 1, "the second repeated advice nobody needed twice"
+
+
+def test_resolving_nothing_at_all_keeps_repeating(_forget_the_star_warning, caplog):
+    """That one is a broken install, not a catalog quirk, and it is worth saying.
+
+    The sibling in fixed_stars/factory.py draws the same line: a partial answer is
+    routine and speaks once, an empty one is a configuration fault and speaks
+    every time until it is fixed.
+    """
+    with caplog.at_level(logging.WARNING):
+        _subject_asking_for(["Definitely_Not_A_Star"])
+        _subject_asking_for(["Also_Not_A_Star"])
+
+    assert len(_warnings_about_stars(caplog)) == 2

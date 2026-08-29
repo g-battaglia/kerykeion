@@ -35,15 +35,15 @@ from kerykeion.ephemeris_backend.backend import (
     EPHE_DATA_PATH,
     BACKEND_NAME,
     ephemeris_session,
-    houses_ex2_with_polar_fallback,
     houses_ex2_with_polar_fallback_ex,
+    houses_ring_with_polar_fallback,
 )
 import logging
 import math
 from datetime import datetime, timezone, timedelta
 from os import getenv
 from pathlib import Path
-from typing import Optional, List, Dict, Any, cast, get_args
+from typing import Callable, Iterator, Optional, List, Dict, Any, cast, get_args
 from dataclasses import dataclass, field
 from contextlib import contextmanager
 from functools import partial
@@ -77,11 +77,23 @@ from kerykeion.utilities.core import (
 )
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,
+    DEFAULT_NAKSHATRA_AYANAMSA,
     DEFAULT_SIDEREAL_MODE,
     STANDARD_PLANETS as _STANDARD_PLANETS_CANONICAL,
 )
 
 logger = logging.getLogger(__name__)
+
+# Said once per process, not once per subject. A server drawing charts from a
+# fixed active_fixed_stars list repeats the same six-line advice on every single
+# request otherwise — and the advice ("install sefstars.txt, or switch backend")
+# does not change between requests, so repeating it buries the case that is
+# genuinely new. FixedStarDiscoveryFactory holds the same flag for the same
+# reason; see kerykeion/fixed_stars/factory.py.
+#
+# The empty result keeps repeating: nothing resolved at all is the broken-install
+# case, and that one is worth saying every time it happens.
+_swisseph_star_warning_emitted = False
 
 # Default configuration values
 DEFAULT_GEONAMES_USERNAME = "century.boy"
@@ -407,6 +419,102 @@ def _get_geonames_username() -> str:
 
 
 @contextmanager
+def ephemeris_trace() -> Iterator[Optional[Any]]:
+    """Scope backend source tracing to the block, resetting the token always.
+
+    ``start_tracing`` sets a ContextVar and hands back a restore token. Losing
+    that token does not merely skip a log line: the ContextVar stays set, so
+    every later un-scoped ``calc_ut`` in the process keeps appending to an
+    orphan trace dict that nothing will ever read or clear. One exception on
+    the calculation path was enough to leak it, which is why the reset lives in
+    a ``finally`` rather than on the success path.
+
+    The map is still readable inside the block -- provenance logging runs there
+    and needs it -- and only goes out of scope on exit. Yields the token, or
+    ``None`` on a backend without the channel.
+
+    Mirrors ``kerykeion.fixed_stars.factory._star_source_trace``, which scopes
+    the same mechanism to a single star.
+    """
+    token = None
+    if BACKEND_NAME == "libephemeris":
+        try:
+            token = ephe.start_tracing()
+        except AttributeError:
+            token = None  # libephemeris version without tracing support
+    try:
+        yield token
+    finally:
+        if token is not None:
+            try:
+                token.var.reset(token)
+            except Exception:
+                # Broad on purpose: this runs in a finally, so anything raised
+                # here REPLACES the exception on its way out and the caller sees
+                # a token-plumbing error instead of the real ephemeris failure.
+                pass
+
+
+def _ayanamsa_at(
+    julian_day: float,
+    sidereal_mode: SiderealMode,
+    custom_ayanamsa_t0: Optional[float] = None,
+    custom_ayanamsa_ayan_t0: Optional[float] = None,
+) -> float:
+    """Ayanamsa of ``sidereal_mode``, in degrees, at ``julian_day``.
+
+    This is the SAME quantity a sidereal chart stores in ``ayanamsa_value``,
+    obtained the same way (``get_ayanamsa_ex_ut`` with the sidereal flag, after
+    selecting the mode) — so a tropical chart rotated by it lands on the sidereal
+    chart's longitudes to within a microarcsecond (measured worst case: 2.9e-10°,
+    the residue of the round trip through binary). ``get_ayanamsa_ut`` is a
+    different variant (the mean ayanamsa: no nutation) and would leave a ~2
+    arcsecond discrepancy.
+
+    Only ``FLG_SWIEPH | FLG_SIDEREAL`` is passed: the ayanamsa is a rotation of
+    the ecliptic frame, not an observer-dependent place, so the session's
+    topocentric/heliocentric bits have no business in it.
+
+    Must be called INSIDE an open :func:`ephemeris_session` — it selects the
+    process-global sidereal mode, which that session serializes with its lock
+    and resets on exit. Selecting a mode does NOT change any ordinary
+    ``calc_ut`` result: the ayanamsa is applied only to calls that carry
+    ``FLG_SIDEREAL``, which a non-sidereal session's iflag never does.
+
+    Args:
+        julian_day: Julian Day (UT) of the moment.
+        sidereal_mode: Named ayanamsa, or ``"USER"``.
+        custom_ayanamsa_t0: Reference epoch (JD), required for ``"USER"``.
+        custom_ayanamsa_ayan_t0: Ayanamsa (degrees) at ``t0``, required for ``"USER"``.
+
+    Returns:
+        float: The ayanamsa in degrees.
+
+    Raises:
+        KerykeionException: If the mode is unknown to the backend, or ``"USER"``
+            is requested without its two parameters.
+    """
+    if sidereal_mode == "USER":
+        if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
+            raise KerykeionException(
+                "Sidereal mode 'USER' requires both custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0."
+            )
+        ephe.set_sid_mode(ephe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
+    else:
+        sidm_name = f"SIDM_{sidereal_mode}"
+        try:
+            sidm_const = getattr(ephe, sidm_name)
+        except AttributeError:
+            raise KerykeionException(
+                f"Unknown sidereal mode {sidereal_mode!r}: the ephemeris backend has no "
+                f"ayanamsa constant {sidm_name!r}."
+            ) from None
+        ephe.set_sid_mode(sidm_const)
+
+    return float(ephe.get_ayanamsa_ex_ut(julian_day, ephe.FLG_SWIEPH | ephe.FLG_SIDEREAL)[1])
+
+
+@contextmanager
 def ephemeris_context(
     ephe_path: str,
     config: "ChartConfiguration",
@@ -486,6 +594,12 @@ class ChartConfiguration:
             ayanamsa. Only used when sidereal_mode is 'USER'. Defaults to None.
         custom_ayanamsa_ayan_t0 (Optional[float]): Ayanamsa value (degrees) at the
             reference epoch t0. Only used when sidereal_mode is 'USER'. Defaults to None.
+        nakshatra_ayanamsa (Optional[SiderealMode]): Ayanamsa used to place the
+            nakshatras when ``calculate_nakshatra`` is on and the chart is NOT
+            sidereal. Ignored on a sidereal chart, whose longitudes already are
+            sidereal. ``None`` opts into the legacy behaviour (tropical
+            longitudes fed to the sidereal division, ~24 deg off). Defaults to
+            'LAHIRI'.
 
     Raises:
         KerykeionException: When invalid configuration combinations are detected,
@@ -509,6 +623,7 @@ class ChartConfiguration:
     custom_ayanamsa_ayan_t0: Optional[float] = None
     calculate_dignities: bool = False
     calculate_nakshatra: bool = False
+    nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA
     calculate_gauquelin: bool = False
     calculate_nutation: bool = False
     calculate_local_space: bool = False
@@ -550,7 +665,7 @@ class ChartConfiguration:
         if self.zodiac_type == "Sidereal":
             if not self.sidereal_mode:
                 self.sidereal_mode = DEFAULT_SIDEREAL_MODE
-                logging.info("No sidereal mode set, using default FAGAN_BRADLEY")
+                logger.info("No sidereal mode set, using default FAGAN_BRADLEY")
             elif self.sidereal_mode not in get_args(SiderealMode):
                 raise KerykeionException(
                     f"'{self.sidereal_mode}' is not a valid sidereal mode! Available modes are: {get_args(SiderealMode)}"
@@ -563,6 +678,33 @@ class ChartConfiguration:
                         "Sidereal mode 'USER' requires both custom_ayanamsa_t0 (reference epoch as Julian Day) "
                         "and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."
                     )
+
+        # Validate the nakshatra ayanamsa. It is a mode name in its own right,
+        # independent of `sidereal_mode`: it may be set on a Tropical chart
+        # (that is its whole purpose) and it is NOT rejected there the way
+        # `sidereal_mode` is.
+        if self.nakshatra_ayanamsa is not None:
+            if self.nakshatra_ayanamsa not in get_args(SiderealMode):
+                raise KerykeionException(
+                    f"'{self.nakshatra_ayanamsa}' is not a valid nakshatra ayanamsa! "
+                    f"Available modes are: {get_args(SiderealMode)}"
+                )
+            if (
+                self.calculate_nakshatra
+                and self.nakshatra_ayanamsa == "USER"
+                and self.zodiac_type != "Sidereal"
+                and (self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None)
+            ):
+                # Only the chart that would actually CAST it needs the definition,
+                # and two things keep a chart from casting it: a sidereal zodiac,
+                # which supplies the rotation itself, and `calculate_nakshatra=False`,
+                # which never asks for one. The same pair gates the persistence of
+                # the definition further down, so a configuration accepted here is
+                # exactly the one recorded there.
+                raise KerykeionException(
+                    "nakshatra_ayanamsa='USER' requires both custom_ayanamsa_t0 (reference epoch as "
+                    "Julian Day) and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."
+                )
 
         # Validate houses system
         if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
@@ -650,7 +792,7 @@ class LocationData:
             The method validates that all required fields (countryCode, timezonestr,
             lat, lng) are present in the API response before updating instance attributes.
         """
-        logging.info(f"Fetching timezone/coordinates for {self.city}, {self.nation} from geonames")
+        logger.info(f"Fetching timezone/coordinates for {self.city}, {self.nation} from geonames")
 
         with FetchGeonames(
             self.city, self.nation, username=username, cache_expire_after_days=cache_expire_after_days
@@ -701,7 +843,7 @@ class LocationData:
 
             The real latitude is PRESERVED here (no polar clamping). Polar-only
             house systems (Placidus/Koch) are handled locally at the houses call
-            via ``houses_ex2_with_polar_fallback``, so topocentric positions, the
+            via ``houses_ring_with_polar_fallback``, so topocentric positions, the
             persisted latitude, and every latitude-agnostic house system keep the
             real observer latitude.
         """
@@ -810,6 +952,7 @@ class AstrologicalSubjectFactory:
         custom_ayanamsa_ayan_t0: Optional[float] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -906,11 +1049,20 @@ class AstrologicalSubjectFactory:
                 Defaults to False.
             calculate_nakshatra (bool, optional): If True, computes Vedic nakshatra,
                 pada, and dasha lord for each point. Nakshatras are defined on the
-                SIDEREAL zodiac: with a Tropical (or any non-sidereal) chart the
-                values are derived from tropical longitudes, which are offset from
-                the sidereal ones by the ayanamsa (~24 degrees, about two
-                nakshatras), and a warning is logged. Use zodiac_type='Sidereal'
-                for astronomically meaningful nakshatras. Defaults to False.
+                SIDEREAL zodiac; on a Tropical (or any non-sidereal) chart they are
+                derived from longitudes rotated by ``nakshatra_ayanamsa``, so a
+                tropical chart names the same nakshatras as the sidereal one.
+                Defaults to False.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to
+                place the nakshatras when ``calculate_nakshatra=True`` and the chart
+                is NOT sidereal: the chart's longitudes are rotated by it for the
+                27-fold division only, so the chart stays tropical while its
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
+                a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
+                the nakshatras belong to -- uses by default. Added in v6.
             calculate_gauquelin (bool, optional): If True, computes Gauquelin sector
                 (1-36) for each point. Defaults to False.
             calculate_nutation (bool, optional): If True, computes nutation in
@@ -1023,7 +1175,7 @@ class AstrologicalSubjectFactory:
                 # points (downstream KeyError).
                 _star_names = [p for p in active_points_list if p in _LEGACY_ACTIVE_POINT_STAR_NAMES]
             if _star_names:
-                logging.warning(
+                logger.warning(
                     "active_points no longer accepts fixed star names %s; "
                     "redirecting them to active_fixed_stars. Pass stars via "
                     "the active_fixed_stars parameter instead.",
@@ -1074,7 +1226,7 @@ class AstrologicalSubjectFactory:
         if _center_names:
             _dropped = [p for p in active_points_list if p in _center_names]
             if _dropped:
-                logging.warning(
+                logger.warning(
                     "Excluding %s from active_points: it is the center body of "
                     "the %r perspective and has no position as seen from itself.",
                     _dropped,
@@ -1100,7 +1252,7 @@ class AstrologicalSubjectFactory:
         if perspective_type not in _GEO_TOPO_PERSPECTIVES:
             _geo_only_dropped = [p for p in active_points_list if p in _GEOCENTRIC_ONLY_POINT_NAMES]
             if _geo_only_dropped:
-                logging.warning(
+                logger.warning(
                     "Excluding %s from active_points: geocentric-only points "
                     "(lunar nodes, Lilith/apogee variants) have no meaning in "
                     "the %r perspective.",
@@ -1128,6 +1280,7 @@ class AstrologicalSubjectFactory:
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
+            nakshatra_ayanamsa=nakshatra_ayanamsa,
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
@@ -1139,7 +1292,13 @@ class AstrologicalSubjectFactory:
         calc_data["sidereal_mode"] = config.sidereal_mode
         calc_data["houses_system_identifier"] = config.houses_system_identifier
         calc_data["perspective_type"] = config.perspective_type
-        if config.sidereal_mode == "USER":
+        # The USER definition is persisted whenever it was actually cast — by the
+        # chart's own sidereal mode, or (on a non-sidereal chart) by the nakshatra
+        # ayanamsa, which is the second thing that can consult it. Dropping it in
+        # the latter case left a subject whose nakshatras nothing could reproduce.
+        if config.sidereal_mode == "USER" or (
+            config.calculate_nakshatra and config.zodiac_type != "Sidereal" and config.nakshatra_ayanamsa == "USER"
+        ):
             calc_data["custom_ayanamsa_t0"] = config.custom_ayanamsa_t0
             calc_data["custom_ayanamsa_ayan_t0"] = config.custom_ayanamsa_ayan_t0
 
@@ -1147,7 +1306,7 @@ class AstrologicalSubjectFactory:
         if geonames_username is None and online and (lat is None or lng is None or not tz_str):
             geonames_username = _get_geonames_username()
             if geonames_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                logger.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
         # Initialize location data
         location = LocationData(
@@ -1280,7 +1439,7 @@ class AstrologicalSubjectFactory:
                     ayan_result = ephe.get_ayanamsa_ex_ut(calc_data["julian_day"], iflag)
                     calc_data["ayanamsa_value"] = ayan_result[1]
                 except Exception as e:
-                    logging.warning(f"Could not calculate ayanamsa value: {e}")
+                    logger.warning(f"Could not calculate ayanamsa value: {e}")
                     calc_data["ayanamsa_value"] = None
             else:
                 calc_data["ayanamsa_value"] = None
@@ -1361,27 +1520,65 @@ class AstrologicalSubjectFactory:
                         point_updates[pk].update(dignity_data)
 
             # Calculate Nakshatras (optional)
+            #
+            # The nakshatras divide the SIDEREAL zodiac. A sidereal chart's
+            # longitudes already live there and are used as they are. Any other
+            # chart's do not: feeding them straight in shifted every result by
+            # the ayanamsa (~24 deg — about two nakshatras), which is the whole
+            # of what `nakshatra_ayanamsa` fixes. The chart itself is untouched:
+            # only the number handed to the 27-fold division is rotated, so a
+            # tropical chart keeps its tropical positions and still names the
+            # nakshatra a Jyotish chart would name.
+            calc_data["nakshatra_ayanamsa"] = None
+            calc_data["nakshatra_ayanamsa_value"] = None
             if config.calculate_nakshatra:
                 from kerykeion.vedic import calculate_nakshatra as calc_nak
 
-                if config.zodiac_type != "Sidereal":
-                    # Nakshatras are defined on the sidereal zodiac. Feeding
-                    # tropical longitudes shifts every result by the ayanamsa
-                    # (~24 deg, about two nakshatras). Values are still
-                    # computed as-is for backward compatibility; warn once per
-                    # subject construction.
+                nakshatra_offset = 0.0
+                if config.zodiac_type == "Sidereal":
+                    # Already sidereal: `nakshatra_ayanamsa` has nothing to
+                    # correct and is deliberately ignored — the chart's own
+                    # sidereal_mode/ayanamsa_value are the answer, and recording
+                    # a second mode here would invite the reader to believe two
+                    # different ayanamsas were in play.
+                    logger.debug(
+                        "Nakshatras read straight off the sidereal longitudes (%s ayanamsa); "
+                        "nakshatra_ayanamsa is not consulted on a sidereal chart.",
+                        config.sidereal_mode,
+                    )
+                elif config.nakshatra_ayanamsa is None:
+                    # Explicit opt-in to the pre-v6 behaviour. Kept reachable
+                    # because it is the only way to reproduce values computed by
+                    # earlier versions — but it is wrong astronomically, and
+                    # saying so once per subject is the point of the warning.
                     logger.warning(
-                        "calculate_nakshatra=True with zodiac_type=%r: nakshatras are "
-                        "defined on the sidereal zodiac, but this chart's longitudes are "
-                        "not sidereal, so nakshatra/pada/lord values will be offset by "
-                        "the ayanamsa (~24 deg, about two nakshatras). Use "
-                        "zodiac_type='Sidereal' for astronomically meaningful nakshatras.",
+                        "calculate_nakshatra=True with zodiac_type=%r and nakshatra_ayanamsa=None: "
+                        "the nakshatras are being read off longitudes that are not sidereal, so "
+                        "every nakshatra/pada/lord is offset by the ayanamsa (~24 deg, about two "
+                        "nakshatras). This is the legacy behaviour, kept only for reproducibility; "
+                        "pass nakshatra_ayanamsa='LAHIRI' (the default) for correct values.",
                         config.zodiac_type,
+                    )
+                else:
+                    nakshatra_offset = _ayanamsa_at(
+                        calc_data["julian_day"],
+                        config.nakshatra_ayanamsa,
+                        config.custom_ayanamsa_t0,
+                        config.custom_ayanamsa_ayan_t0,
+                    )
+                    calc_data["nakshatra_ayanamsa"] = config.nakshatra_ayanamsa
+                    calc_data["nakshatra_ayanamsa_value"] = nakshatra_offset
+                    logger.info(
+                        "Nakshatras computed on %s-sidereal longitudes: this %s chart's positions "
+                        "were rotated by %.6f deg for the 27-fold division only.",
+                        config.nakshatra_ayanamsa,
+                        config.zodiac_type,
+                        nakshatra_offset,
                     )
 
                 for pk in enrichable_keys:
                     point = _enrich_point(pk)
-                    nak_data = calc_nak(point.abs_pos)
+                    nak_data = calc_nak((point.abs_pos - nakshatra_offset) % 360.0)
                     point_updates[pk].update(nak_data)
 
             # Calculate Gauquelin sectors (optional) — for ALL celestial points.
@@ -1438,7 +1635,33 @@ class AstrologicalSubjectFactory:
                         polar_strategy="clamp_latitude",
                     )
                     if cusps_g[4] is not None:
-                        gauquelin_fallback = cusps_g[4]
+                        # Rescoped before it is filed. The backend describes what
+                        # ITS call produced — cusps and angles — but only the
+                        # 36-sector ring is kept from this one: the chart's own
+                        # cusps and its four angles come from the houses call and
+                        # are bit-identical with Gauquelin switched off. A record
+                        # saying "angles" here has a reader believing the horizon
+                        # moved when nothing did.
+                        # Message as well as scope. The backend writes about the
+                        # call it made — "the cusps and the angles derived from
+                        # this call are approximate" — and that sentence survives
+                        # into `model_dump_json()` and anywhere else the record is
+                        # read raw, still saying the horizon moved.
+                        _clamped = cusps_g[4]
+                        gauquelin_fallback = _clamped.model_copy(
+                            update={
+                                "affects": ["gauquelin_sector_cusps", "gauquelin_sectors"],
+                                "message": (
+                                    f"The Gauquelin 36-sector ring has no equivalent at every "
+                                    f"latitude, so it was computed at "
+                                    f"{_clamped.used_latitude:.4f}\u00b0, just inside the polar "
+                                    f"limit, instead of {_clamped.latitude:.4f}\u00b0. The sector "
+                                    f"ring and the per-body sector numbers are approximate; this "
+                                    f"chart's house cusps, its angles, the planetary positions and "
+                                    f"the persisted latitude all keep the real value."
+                                ),
+                            }
+                        )
                         calc_data.setdefault("polar_house_fallbacks", []).append(gauquelin_fallback)
                         # The cusp ring and the per-body sector numbers must
                         # describe the SAME observer. A polar G call is retried
@@ -1486,7 +1709,7 @@ class AstrologicalSubjectFactory:
                     if sector is None:
                         sector = _gauquelin_sector_from_cusps(point.abs_pos, gauquelin_cusps)
                     if sector is None:
-                        logging.debug(
+                        logger.debug(
                             "Gauquelin sector for %r via uniform ecliptic approximation "
                             "(no body id and no cusps); not the true diurnal sector.",
                             point.name,
@@ -1558,7 +1781,7 @@ class AstrologicalSubjectFactory:
                     nut_data = ephe.calc_ut(calc_data["julian_day"], ephe.ECL_NUT, ephe.FLG_SWIEPH)[0]
                     true_obliquity = nut_data[0]
                 except Exception as e:
-                    logging.warning(f"Could not compute obliquity for OOB detection: {e}")
+                    logger.warning(f"Could not compute obliquity for OOB detection: {e}")
 
                 if true_obliquity is not None:
                     for pk in enrichable_keys:
@@ -1573,9 +1796,31 @@ class AstrologicalSubjectFactory:
             if calc_data.get("perspective_type") in _GEOCENTRIC_OOB_PERSPECTIVES:
                 from kerykeion.motion.state import classify_motion_state
 
+                station_julian_day = calc_data["julian_day"]
+                station_iflag = calc_data["_iflag"]
+
+                def _make_speed_sampler(planet_id: int) -> Callable[[float], Optional[float]]:
+                    """Speed of ``planet_id`` a given number of days from the chart.
+
+                    Only ever called for a body already inside the stationary
+                    band, which is why the second ephemeris call can be spent
+                    freely: it buys the difference between the two stations.
+                    """
+
+                    def _sample(delta_days: float) -> Optional[float]:
+                        try:
+                            return ephe.calc_ut(station_julian_day + delta_days, planet_id, station_iflag)[0][3]
+                        except Exception as e:
+                            logger.debug("Could not sample station trend for body %s: %s", planet_id, e)
+                            return None
+
+                    return _sample
+
                 for pk in point_keys:
                     point = calc_data[pk]
-                    motion_state = classify_motion_state(str(point.name), point.speed)
+                    planet_id = STANDARD_PLANETS.get(point.name)
+                    sampler = _make_speed_sampler(planet_id) if planet_id is not None else None
+                    motion_state = classify_motion_state(str(point.name), point.speed, speed_sampler=sampler)
                     if motion_state is not None:
                         point_updates[pk]["motion_state"] = motion_state
 
@@ -1610,7 +1855,7 @@ class AstrologicalSubjectFactory:
                         nutation_obliquity=nut_raw[3],
                     )
                 except Exception as e:
-                    logging.warning(f"Could not compute nutation parameters: {e}")
+                    logger.warning(f"Could not compute nutation parameters: {e}")
                     calc_data["nutation"] = None
 
         # Create and return the AstrologicalSubjectModel
@@ -1644,6 +1889,7 @@ class AstrologicalSubjectFactory:
         active_fixed_stars: Optional[List[str]] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -1708,6 +1954,16 @@ class AstrologicalSubjectFactory:
                 Defaults to False.
             calculate_nakshatra (bool, optional): Compute Vedic nakshatras.
                 Defaults to False.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to
+                place the nakshatras when ``calculate_nakshatra=True`` and the chart
+                is NOT sidereal: the chart's longitudes are rotated by it for the
+                27-fold division only, so the chart stays tropical while its
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
+                a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
+                the nakshatras belong to -- uses by default. Added in v6.
             calculate_gauquelin (bool, optional): Compute Gauquelin sectors.
                 Defaults to False.
             calculate_nutation (bool, optional): Compute nutation. Defaults to False.
@@ -1780,7 +2036,7 @@ class AstrologicalSubjectFactory:
                 geonames_username if geonames_username != DEFAULT_GEONAMES_USERNAME else _get_geonames_username()
             )
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                logger.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
 
             with FetchGeonames(
                 city or "Greenwich",
@@ -1887,6 +2143,7 @@ class AstrologicalSubjectFactory:
             active_fixed_stars=active_fixed_stars,
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
+            nakshatra_ayanamsa=nakshatra_ayanamsa,
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
@@ -1935,6 +2192,7 @@ class AstrologicalSubjectFactory:
         active_fixed_stars: Optional[List[str]] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -1989,6 +2247,16 @@ class AstrologicalSubjectFactory:
             custom_ayanamsa_ayan_t0 (float, optional): Ayanamsa offset in degrees at
                 epoch ``t0`` for the USER sidereal mode. Required when
                 ``sidereal_mode="USER"``. Defaults to None.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to
+                place the nakshatras when ``calculate_nakshatra=True`` and the chart
+                is NOT sidereal: the chart's longitudes are rotated by it for the
+                27-fold division only, so the chart stays tropical while its
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
+                a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
+                the nakshatras belong to -- uses by default. Added in v6.
 
         Returns:
             AstrologicalSubjectModel: Astrological subject representing current
@@ -2039,7 +2307,7 @@ class AstrologicalSubjectFactory:
             # avoids a second lookup.
             resolved_username = geonames_username or _get_geonames_username()
             if resolved_username == DEFAULT_GEONAMES_USERNAME and not suppress_geonames_warning:
-                logging.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
+                logger.warning(GEONAMES_DEFAULT_USERNAME_WARNING)
             with FetchGeonames(city or "Greenwich", nation or "GB", username=resolved_username) as _geonames:
                 if lat is not None and lng is not None and not city:
                     # Match from_birth_data: precise coordinates with no city
@@ -2126,6 +2394,7 @@ class AstrologicalSubjectFactory:
             active_fixed_stars=active_fixed_stars,
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
+            nakshatra_ayanamsa=nakshatra_ayanamsa,
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
@@ -2472,7 +2741,7 @@ class AstrologicalSubjectFactory:
         # variant additionally returns a descriptor of any such degradation:
         # keep it on the subject so the chart declares that its houses are not
         # the requested system instead of only whispering it to the log.
-        cusps, ascmc, cusps_speed, ascmc_speed, polar_fallback = houses_ex2_with_polar_fallback_ex(
+        ring = houses_ring_with_polar_fallback(
             data["julian_day"],
             data["lat"],
             data["lng"],
@@ -2480,6 +2749,8 @@ class AstrologicalSubjectFactory:
             data["_iflag"],
             context=data.get("name", ""),
         )
+        cusps, ascmc, cusps_speed, ascmc_speed = ring.cusps, ring.ascmc, ring.cusps_speed, ring.ascmc_speed
+        polar_fallback = ring.polar_fallback
         if polar_fallback is not None:
             data.setdefault("polar_house_fallbacks", []).append(polar_fallback)
             # `houses_system_identifier` deliberately keeps the REQUEST. It is
@@ -2496,6 +2767,15 @@ class AstrologicalSubjectFactory:
 
         # Store house degrees
         data["_houses_degree_ut"] = cusps
+
+        # Which house each angle opens, decided where the cusps and the angles came
+        # out of the same call and nowhere else. _calculate_opposite_points reads it
+        # for the Descendant and the Imum Coeli, which it derives rather than asks
+        # for; see angle_house_identities for why twelve numbers cannot answer this
+        # on their own.
+        data["_angle_house_identities"] = ring.angle_houses
+        # Empty for every chart whose twelve cusps are twelve distinct longitudes.
+        data["coincident_house_cusps"] = ring.coincident_cusps
 
         # House configuration: (attribute_name, house_name)
         HOUSE_CONFIG: list[tuple[str, Houses]] = [
@@ -2547,7 +2827,9 @@ class AstrologicalSubjectFactory:
             point_type=point_type,
             speed=ascmc_speed[0],
         )
-        data["ascendant"].house = get_planet_house(data["ascendant"].abs_pos, data["_houses_degree_ut"])
+        data["ascendant"].house = ring.angle_houses.get("ascendant") or get_planet_house(
+            data["ascendant"].abs_pos, data["_houses_degree_ut"]
+        )
         data["ascendant"].retrograde = False
         if should_calculate("Ascendant"):
             calculated_axial_cusps.append("Ascendant")
@@ -2558,7 +2840,9 @@ class AstrologicalSubjectFactory:
             point_type=point_type,
             speed=ascmc_speed[1],
         )
-        data["medium_coeli"].house = get_planet_house(data["medium_coeli"].abs_pos, data["_houses_degree_ut"])
+        data["medium_coeli"].house = ring.angle_houses.get("medium_coeli") or get_planet_house(
+            data["medium_coeli"].abs_pos, data["_houses_degree_ut"]
+        )
         data["medium_coeli"].retrograde = False
         if should_calculate("Medium_Coeli"):
             calculated_axial_cusps.append("Medium_Coeli")
@@ -2766,7 +3050,7 @@ class AstrologicalSubjectFactory:
                     f"Cannot calculate {planet_name} for JD {julian_day}: {e}. "
                     "The date is likely outside the range covered by the loaded ephemeris data."
                 ) from e
-            logging.error(f"Error calculating {planet_name}: {e}")
+            logger.error(f"Error calculating {planet_name}: {e}")
             AstrologicalSubjectFactory._append_ephemeris_warning(
                 data,
                 planet_name,
@@ -2857,7 +3141,14 @@ class AstrologicalSubjectFactory:
                 declination=dec,
                 ecliptic_latitude=ecl_lat,
             )
-            point.house = get_planet_house(deg, houses_degree_ut)
+            # The Descendant and the Imum Coeli are derived here, so this is where
+            # they collect the identity recorded when the cusps were made: an angle
+            # that IS a cusp opens that house, and on a ring with several cusps on
+            # one longitude the shared reader cannot tell which. Every other derived
+            # point — the south nodes, Priapus, the Anti-Vertex — is a point of its
+            # own and goes through the reader as before.
+            identity = data.get("_angle_house_identities", {}).get(derived_name.lower())
+            point.house = identity or get_planet_house(deg, houses_degree_ut)
             point.retrograde = primary.retrograde if primary.retrograde is not None else False
 
             data[derived_name.lower()] = point
@@ -2893,29 +3184,21 @@ class AstrologicalSubjectFactory:
         if point_key in data:
             return  # Already calculated
 
-        # Handle Ascendant specially (from houses calculation)
         if point == "Ascendant":
-            # Mirror the main houses call: preserve the real latitude and
-            # substitute only a house system undefined inside the polar circle.
-            _, ascmc, _, ascmc_speed = houses_ex2_with_polar_fallback(
-                data["julian_day"],
-                data["lat"],
-                data["lng"],
-                str.encode(data["houses_system_identifier"]),
-                iflag,
-                context=data.get("name", ""),
+            # Unreachable by construction: _calculate_houses runs unconditionally
+            # before any point is calculated and always stores the Ascendant, so
+            # the early return above has already fired. Until a88 a copy of the
+            # houses call lived here "for the Arabic Parts"; nothing could ever
+            # reach it, and a second place that files the Ascendant is a second
+            # place to get it wrong.
+            raise KerykeionException(
+                "The Ascendant is calculated with the houses, before any point can ask for it"
             )
-            data["ascendant"] = get_kerykeion_point_from_degree(
-                ascmc[0], "Ascendant", point_type=point_type, speed=ascmc_speed[0]
-            )
-            data["ascendant"].house = get_planet_house(ascmc[0], houses_degree_ut)
-            data["ascendant"].retrograde = False
-            return
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
             if point in _center_body_names(data.get("perspective_type")):
-                logging.warning(
+                logger.warning(
                     "Cannot auto-activate %s as an Arabic Part prerequisite: it "
                     "is the center body of the %r perspective. The dependent "
                     "part will be skipped.",
@@ -2946,7 +3229,7 @@ class AstrologicalSubjectFactory:
                         f"Cannot calculate {point} for JD {julian_day}: {e}. "
                         "The date is likely outside the range covered by the loaded ephemeris data."
                     ) from e
-                logging.error(f"Error calculating {point}: {e}")
+                logger.error(f"Error calculating {point}: {e}")
                 AstrologicalSubjectFactory._append_ephemeris_warning(
                     data,
                     point,
@@ -3008,7 +3291,7 @@ class AstrologicalSubjectFactory:
             return azalt[1] >= 0
 
         except Exception as e:
-            logging.warning(
+            logger.warning(
                 f"Could not compute Sun altitude for sect classification: {e}. Defaulting to diurnal (day chart)."
             )
             return True
@@ -3049,7 +3332,7 @@ class AstrologicalSubjectFactory:
         # Auto-activate and calculate missing required points
         missing_points = [p for p in required_points if p not in active_points]
         if missing_points:
-            logging.info(f"Automatically adding required points for {part_name}: {missing_points}")
+            logger.info(f"Automatically adding required points for {part_name}: {missing_points}")
             active_points.extend(missing_points)
 
         # Ensure all required points are calculated
@@ -3222,54 +3505,28 @@ class AstrologicalSubjectFactory:
         # model; Kerykeion must not pre-empt that decision from inventory alone.
         data.setdefault("ephemeris_warnings", [])
 
-        # Start ephemeris backend tracing (libephemeris only)
-        _trace_token = None
-        if BACKEND_NAME == "libephemeris":
-            try:
-                _trace_token = ephe.start_tracing()
-            except AttributeError:
-                pass  # libephemeris version without tracing support
-
-        # =============================================================================
-        # STANDARD PLANETS (using centralized mapping)
-        # =============================================================================
-        # All standard planets (Sun through Poseidon, plus Interpolated_Lilith and
-        # Interpolated_Perigee via SE_INTP_APOG/SE_INTP_PERG) use the same
-        # calculation pattern via ephe.calc_ut().
-        # South lunar nodes, Priapus, Descendant, IC, and Anti-Vertex are handled
-        # declaratively by _calculate_opposite_points() via OPPOSITE_PAIRS.
-        for planet_name, planet_id in STANDARD_PLANETS.items():
-            # The center body is skipped inside _calculate_single_planet (the
-            # single chokepoint for storing a planetary position), so no guard
-            # is needed here.
-            if should_calculate(planet_name):
-                AstrologicalSubjectFactory._calculate_single_planet(
-                    data,
-                    planet_name,
-                    planet_id,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
-                    calculated_planets,
-                    active_points,
-                    center_body_id=center_body_id,
-                    degenerate_center_id=degenerate_center_id,
-                    exclude_geocentric_only=exclude_geocentric_only,
-                )
-
-        # =============================================================================
-        # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
-        # =============================================================================
-        # TNOs require AST_OFFSET and may fail for dates outside ephemeris range
-        for tno_name, asteroid_num in TNO_PLANETS.items():
-            tno_body_id = ephe.AST_OFFSET + asteroid_num
-            if should_calculate(tno_name):
-                try:
+        # Backend source tracing (libephemeris only). The scope covers the
+        # whole calculation *and* the provenance logging below, so the trace
+        # map is still readable where it is needed and the token is released
+        # on every exit path, exception included.
+        with ephemeris_trace() as _trace_token:
+            # =============================================================================
+            # STANDARD PLANETS (using centralized mapping)
+            # =============================================================================
+            # All standard planets (Sun through Poseidon, plus Interpolated_Lilith and
+            # Interpolated_Perigee via SE_INTP_APOG/SE_INTP_PERG) use the same
+            # calculation pattern via ephe.calc_ut().
+            # South lunar nodes, Priapus, Descendant, IC, and Anti-Vertex are handled
+            # declaratively by _calculate_opposite_points() via OPPOSITE_PAIRS.
+            for planet_name, planet_id in STANDARD_PLANETS.items():
+                # The center body is skipped inside _calculate_single_planet (the
+                # single chokepoint for storing a planetary position), so no guard
+                # is needed here.
+                if should_calculate(planet_name):
                     AstrologicalSubjectFactory._calculate_single_planet(
                         data,
-                        tno_name,
-                        tno_body_id,
+                        planet_name,
+                        planet_id,
                         julian_day,
                         iflag,
                         houses_degree_ut,
@@ -3280,377 +3537,416 @@ class AstrologicalSubjectFactory:
                         degenerate_center_id=degenerate_center_id,
                         exclude_geocentric_only=exclude_geocentric_only,
                     )
-                except Exception as e:
-                    logging.warning(f"Could not calculate {tno_name} position: {e}")
-                    if tno_name in active_points:
-                        active_points.remove(tno_name)
 
-        # =============================================================================
-        # FIXED STARS (v6: unified channel via active_fixed_stars)
-        # =============================================================================
-        # All fixed stars are populated from config.active_fixed_stars (forwarded
-        # here as data["_active_fixed_stars"]). Result lives in subject.fixed_stars.
-        # active_points is NOT a channel for stars anymore.
-        fixed_stars_list: list = []
-
-        def _calc_fixed_star(star_name: str, swe_name: str) -> "KerykeionPointModel | None":
-            # Stars are addressed by catalog name, not by body id, so the outer
-            # per-body trace map cannot attribute them: a star's rows would be
-            # indistinguishable from a planet's. Wrap this star's calls in their
-            # OWN tracing scope instead — start_tracing() nests (it sets a
-            # ContextVar and hands back a restore token), so everything the map
-            # holds on exit belongs to this star and this star alone. Same guard
-            # as the planetary scope above: only libephemeris exposes the channel.
-            _star_trace_token = None
-            if BACKEND_NAME == "libephemeris" and hasattr(ephe, "start_tracing"):
-                try:
-                    _star_trace_token = ephe.start_tracing()
-                except AttributeError:
-                    pass  # libephemeris version without tracing support
-            try:
-                pos_ecl = ephe.fixstar_ut(swe_name, julian_day, iflag)[0]
-                star_deg = pos_ecl[0]
-                # Many bright stars sit far off the ecliptic (e.g. Algol ~+22.4°);
-                # carry their true ecliptic latitude so the public field is
-                # populated and local-space azimuth/altitude is accurate, the
-                # same way planets and derived antipodes already do.
-                star_ecl_lat = pos_ecl[1] if len(pos_ecl) > 1 else None
-                star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
-                pos_eq = ephe.fixstar_ut(swe_name, julian_day, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
-                star_dec = pos_eq[1] if len(pos_eq) > 1 else None
-                try:
-                    star_mag = ephe.fixstar2_mag(swe_name)[0]
-                except Exception:
-                    star_mag = None
-                # Last backend call for this star is done: harvest the scope.
-                star_source: Optional[str] = None
-                if _star_trace_token is not None:
+            # =============================================================================
+            # TRANS-NEPTUNIAN OBJECTS (using centralized mapping)
+            # =============================================================================
+            # TNOs require AST_OFFSET and may fail for dates outside ephemeris range
+            for tno_name, asteroid_num in TNO_PLANETS.items():
+                tno_body_id = ephe.AST_OFFSET + asteroid_num
+                if should_calculate(tno_name):
                     try:
-                        star_labels = {str(label) for label in ephe.get_trace_results().values()}
+                        AstrologicalSubjectFactory._calculate_single_planet(
+                            data,
+                            tno_name,
+                            tno_body_id,
+                            julian_day,
+                            iflag,
+                            houses_degree_ut,
+                            point_type,
+                            calculated_planets,
+                            active_points,
+                            center_body_id=center_body_id,
+                            degenerate_center_id=degenerate_center_id,
+                            exclude_geocentric_only=exclude_geocentric_only,
+                        )
+                    except Exception as e:
+                        logger.warning(f"Could not calculate {tno_name} position: {e}")
+                        if tno_name in active_points:
+                            active_points.remove(tno_name)
+
+            # =============================================================================
+            # FIXED STARS (v6: unified channel via active_fixed_stars)
+            # =============================================================================
+            # All fixed stars are populated from config.active_fixed_stars (forwarded
+            # here as data["_active_fixed_stars"]). Result lives in subject.fixed_stars.
+            # active_points is NOT a channel for stars anymore.
+            fixed_stars_list: list = []
+
+            def _calc_fixed_star(star_name: str, swe_name: str) -> "KerykeionPointModel | None":
+                # Stars are addressed by catalog name, not by body id, so the outer
+                # per-body trace map cannot attribute them: a star's rows would be
+                # indistinguishable from a planet's. Wrap this star's calls in their
+                # OWN tracing scope instead — start_tracing() nests (it sets a
+                # ContextVar and hands back a restore token), so everything the map
+                # holds on exit belongs to this star and this star alone. Same guard
+                # as the planetary scope above: only libephemeris exposes the channel.
+                _star_trace_token = None
+                if BACKEND_NAME == "libephemeris" and hasattr(ephe, "start_tracing"):
+                    try:
+                        _star_trace_token = ephe.start_tracing()
                     except AttributeError:
-                        star_labels = set()
-                    # One label means one producer answered for this star. Zero
-                    # (untraced path) or several (no single label describes the
-                    # result) stay unannotated rather than assert a provenance
-                    # we cannot back.
-                    if len(star_labels) == 1:
-                        star_source = star_labels.pop()
-                point = get_kerykeion_point_from_degree(
-                    star_deg,
-                    # Requested star names are an open set; the model accepts them at runtime.
-                    cast(AstrologicalPoint, star_name),
-                    point_type=point_type,
-                    speed=star_speed,
-                    declination=star_dec,
-                    ecliptic_latitude=star_ecl_lat,
-                    magnitude=star_mag,
-                )
-                point.house = get_planet_house(star_deg, houses_degree_ut)
-                point.retrograde = False
-                if star_source is not None:
-                    point.source = star_source
-                    point.precision_class = _precision_class_for_source(star_source)
-                    # source_reviewed and the coverage window stay None on
-                    # purpose: the backend's coverage inventory is keyed by body
-                    # id and has no entry for a catalog star, so there is no
-                    # window to quote and nothing to declare reviewed.
-                return point
-            except Exception as e:
-                logging.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
-                return None
-            finally:
-                if _star_trace_token is not None:
-                    # Restore the enclosing (planetary) scope even on failure, or
-                    # every later body would be traced into this star's map.
+                        pass  # libephemeris version without tracing support
+                try:
+                    pos_ecl = ephe.fixstar_ut(swe_name, julian_day, iflag)[0]
+                    star_deg = pos_ecl[0]
+                    # Many bright stars sit far off the ecliptic (e.g. Algol ~+22.4°);
+                    # carry their true ecliptic latitude so the public field is
+                    # populated and local-space azimuth/altitude is accurate, the
+                    # same way planets and derived antipodes already do.
+                    star_ecl_lat = pos_ecl[1] if len(pos_ecl) > 1 else None
+                    star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
+                    pos_eq = ephe.fixstar_ut(swe_name, julian_day, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
+                    star_dec = pos_eq[1] if len(pos_eq) > 1 else None
                     try:
-                        _star_trace_token.var.reset(_star_trace_token)
+                        star_mag = ephe.fixstar2_mag(swe_name)[0]
                     except Exception:
-                        pass
+                        star_mag = None
+                    # Last backend call for this star is done: harvest the scope.
+                    star_source: Optional[str] = None
+                    if _star_trace_token is not None:
+                        try:
+                            star_labels = {str(label) for label in ephe.get_trace_results().values()}
+                        except AttributeError:
+                            star_labels = set()
+                        # One label means one producer answered for this star. Zero
+                        # (untraced path) or several (no single label describes the
+                        # result) stay unannotated rather than assert a provenance
+                        # we cannot back.
+                        if len(star_labels) == 1:
+                            star_source = star_labels.pop()
+                    point = get_kerykeion_point_from_degree(
+                        star_deg,
+                        # Requested star names are an open set; the model accepts them at runtime.
+                        cast(AstrologicalPoint, star_name),
+                        point_type=point_type,
+                        speed=star_speed,
+                        declination=star_dec,
+                        ecliptic_latitude=star_ecl_lat,
+                        magnitude=star_mag,
+                    )
+                    point.house = get_planet_house(star_deg, houses_degree_ut)
+                    point.retrograde = False
+                    if star_source is not None:
+                        point.source = star_source
+                        point.precision_class = _precision_class_for_source(star_source)
+                        # source_reviewed and the coverage window stay None on
+                        # purpose: the backend's coverage inventory is keyed by body
+                        # id and has no entry for a catalog star, so there is no
+                        # window to quote and nothing to declare reviewed.
+                    return point
+                except Exception as e:
+                    logger.warning(f"Could not calculate {star_name} ({swe_name}) position: {e}")
+                    return None
+                finally:
+                    if _star_trace_token is not None:
+                        # Restore the enclosing (planetary) scope even on failure, or
+                        # every later body would be traced into this star's map.
+                        try:
+                            _star_trace_token.var.reset(_star_trace_token)
+                        except Exception:
+                            pass
 
-        requested_fixed_stars = data.get("_active_fixed_stars") or []
-        seen_star_slugs: set[str] = set()
-        for star_name in requested_fixed_stars:
-            slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
-            if not slug or slug in seen_star_slugs:
-                continue
-            seen_star_slugs.add(slug)
-            swe_name = star_name.replace("_", " ")
-            point = _calc_fixed_star(star_name, swe_name)
-            if point is not None:
-                fixed_stars_list.append(point)
+            requested_fixed_stars = data.get("_active_fixed_stars") or []
+            seen_star_slugs: set[str] = set()
+            for star_name in requested_fixed_stars:
+                # Stripped once, here: the slug was stripped and the ephemeris
+                # name was not, so " Regulus" deduped as Regulus and then failed
+                # to resolve, counting against the unresolved share.
+                star_name = star_name.strip()
+                slug = star_name.lower().replace(" ", "_").replace("-", "_")
+                if not slug or slug in seen_star_slugs:
+                    continue
+                seen_star_slugs.add(slug)
+                swe_name = star_name.replace("_", " ")
+                point = _calc_fixed_star(star_name, swe_name)
+                if point is not None:
+                    fixed_stars_list.append(point)
 
-        # v6: emit a single actionable warning when nothing could be calculated
-        # on the swisseph backend — almost always caused by a missing
-        # ``sefstars.txt`` in KERYKEION_EPHE_PATH. The fix is documented in
-        # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").
-        if requested_fixed_stars and not fixed_stars_list and BACKEND_NAME == "swisseph":
-            logging.warning(
-                "No fixed stars could be calculated with the swisseph backend. "
-                "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
-                "is not bundled with kerykeion due to licensing. Download it "
-                "from https://github.com/aloistr/swisseph/tree/master/ephe "
-                "and place it in KERYKEION_EPHE_PATH (currently: %s). "
-                "Alternatively, use the libephemeris backend "
-                "(KERYKEION_BACKEND=libephemeris) which ships its own "
-                "catalog. See site/docs/swisseph_configuration.md for details.",
-                EPHE_DATA_PATH or "<unset>",
-            )
+            # v6: warn on the swisseph backend when any requested star could not
+            # be calculated — almost always a missing ``sefstars.txt`` in
+            # KERYKEION_EPHE_PATH, but just as often a Bayer abbreviation the
+            # backend cannot address. The fix is documented in
+            # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").
+            #
+            # Against `seen_star_slugs`, not the raw request list: the loop above
+            # skips repeats and blanks, so asking for Regulus twice and getting it
+            # once is a complete answer, not a missing star. And a partial result
+            # has to say so — the message used to claim nothing was calculated,
+            # which was true only of the case the gate used to cover.
+            attempted = len(seen_star_slugs)
+            calculated = len(fixed_stars_list)
+            if attempted and calculated < attempted and BACKEND_NAME == "swisseph":
+                global _swisseph_star_warning_emitted
+                if calculated == 0 or not _swisseph_star_warning_emitted:
+                    _swisseph_star_warning_emitted = True
+                    logger.warning(
+                        "Only %d of %d requested fixed stars could be calculated with "
+                        "the swisseph backend; the rest are missing from the result. "
+                        "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
+                        "is not bundled with kerykeion due to licensing, and many "
+                        "catalog names are Bayer abbreviations swisseph cannot address. "
+                        "Download it "
+                        "from https://github.com/aloistr/swisseph/tree/master/ephe "
+                        "and place it in KERYKEION_EPHE_PATH (currently: %s). "
+                        "Alternatively, use the libephemeris backend "
+                        "(KERYKEION_BACKEND=libephemeris) which ships its own "
+                        "catalog. See site/docs/swisseph_configuration.md for details.",
+                        calculated,
+                        attempted,
+                        EPHE_DATA_PATH or "<unset>",
+                    )
 
-        data["fixed_stars"] = fixed_stars_list
+            data["fixed_stars"] = fixed_stars_list
 
-        # =============================================================================
-        # ARABIC PARTS / LOTS (using centralized configuration)
-        # =============================================================================
-        # This loop replaces ~260 lines of repetitive Arabic Parts calculations.
-        # Each part is configured in ARABIC_PARTS_CONFIG with its formula and requirements.
-        #
-        # Lots are a GEOCENTRIC technique: their formula mixes the (always
-        # geocentric) Ascendant with luminary/planet longitudes, so under a
-        # heliocentric/planetocentric perspective they would blend frames and
-        # emit a wrong-frame phantom. Skip them entirely for non-geocentric
-        # perspectives (Sun-dependent lots already skip in heliocentric because
-        # the Sun is excluded; this also covers the planetocentric case where
-        # none of the required points is the center body).
-        _lots_meaningful = data.get("perspective_type") in _GEO_TOPO_PERSPECTIVES
-        for part_name, part_config in ARABIC_PARTS_CONFIG.items():
-            if _lots_meaningful and should_calculate(part_name):
-                AstrologicalSubjectFactory._calculate_arabic_part(
-                    part_name,
-                    part_config,
-                    data,
-                    julian_day,
-                    iflag,
-                    houses_degree_ut,
-                    point_type,
-                    active_points_filter,
-                    calculated_planets,
-                )
+            # =============================================================================
+            # ARABIC PARTS / LOTS (using centralized configuration)
+            # =============================================================================
+            # This loop replaces ~260 lines of repetitive Arabic Parts calculations.
+            # Each part is configured in ARABIC_PARTS_CONFIG with its formula and requirements.
+            #
+            # Lots are a GEOCENTRIC technique: their formula mixes the (always
+            # geocentric) Ascendant with luminary/planet longitudes, so under a
+            # heliocentric/planetocentric perspective they would blend frames and
+            # emit a wrong-frame phantom. Skip them entirely for non-geocentric
+            # perspectives (Sun-dependent lots already skip in heliocentric because
+            # the Sun is excluded; this also covers the planetocentric case where
+            # none of the required points is the center body).
+            _lots_meaningful = data.get("perspective_type") in _GEO_TOPO_PERSPECTIVES
+            for part_name, part_config in ARABIC_PARTS_CONFIG.items():
+                if _lots_meaningful and should_calculate(part_name):
+                    AstrologicalSubjectFactory._calculate_arabic_part(
+                        part_name,
+                        part_config,
+                        data,
+                        julian_day,
+                        iflag,
+                        houses_degree_ut,
+                        point_type,
+                        active_points_filter,
+                        calculated_planets,
+                    )
 
-        # =============================================================================
-        # VERTEX (ephemeris-derived, Anti-Vertex handled by OPPOSITE_PAIRS)
-        # =============================================================================
-        if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
-            try:
-                # Vertex is at ascmc[3] in Swiss Ephemeris
-                _, ascmc = ephe.houses_ex(
-                    tjdut=data["julian_day"],
-                    lat=data["lat"],
-                    lon=data["lng"],
-                    hsys=str.encode("V"),  # Vertex works best with Vehlow system
-                    flags=iflag,
-                )
+            # =============================================================================
+            # VERTEX (ephemeris-derived, Anti-Vertex handled by OPPOSITE_PAIRS)
+            # =============================================================================
+            if should_calculate("Vertex") or should_calculate("Anti_Vertex"):
+                try:
+                    # Vertex is at ascmc[3] in Swiss Ephemeris
+                    _, ascmc = ephe.houses_ex(
+                        tjdut=data["julian_day"],
+                        lat=data["lat"],
+                        lon=data["lng"],
+                        hsys=str.encode("V"),  # Vertex works best with Vehlow system
+                        flags=iflag,
+                    )
 
-                vertex_deg = ascmc[3]
+                    vertex_deg = ascmc[3]
 
-                # Always store Vertex when computed (needed by Anti_Vertex via OPPOSITE_PAIRS)
-                data["vertex"] = get_kerykeion_point_from_degree(
-                    vertex_deg,
-                    "Vertex",
-                    point_type=point_type,
-                )
-                data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
-                data["vertex"].retrograde = False
-                if should_calculate("Vertex"):
-                    calculated_planets.append("Vertex")
+                    # Always store Vertex when computed (needed by Anti_Vertex via OPPOSITE_PAIRS)
+                    data["vertex"] = get_kerykeion_point_from_degree(
+                        vertex_deg,
+                        "Vertex",
+                        point_type=point_type,
+                    )
+                    data["vertex"].house = get_planet_house(vertex_deg, houses_degree_ut)
+                    data["vertex"].retrograde = False
+                    if should_calculate("Vertex"):
+                        calculated_planets.append("Vertex")
 
-            except Exception as e:
-                logging.warning("Could not calculate Vertex position, error: %s", e)
-                if "Vertex" in active_points:
-                    active_points.remove("Vertex")
-                if "Anti_Vertex" in active_points:
-                    active_points.remove("Anti_Vertex")
+                except Exception as e:
+                    logger.warning("Could not calculate Vertex position, error: %s", e)
+                    if "Vertex" in active_points:
+                        active_points.remove("Vertex")
+                    if "Anti_Vertex" in active_points:
+                        active_points.remove("Anti_Vertex")
 
-        # =============================================================================
-        # WHITE MOON / SELENA (SE_WHITE_MOON = 56)
-        # =============================================================================
-        # White Moon is natively supported by libephemeris (body ID 56). Backends
-        # without native support skip this point rather than fabricating Priapus
-        # (Mean Lilith + 180°) as Selena.
-        if should_calculate("White_Moon"):
-            # Attempt native backend calculation (body ID 56)
-            AstrologicalSubjectFactory._calculate_single_planet(
-                data,
-                "White_Moon",
-                56,
-                julian_day,
-                iflag,
-                houses_degree_ut,
-                point_type,
-                calculated_planets,
-                active_points,
-                center_body_id=center_body_id,
-                degenerate_center_id=degenerate_center_id,
-                exclude_geocentric_only=exclude_geocentric_only,
-            )
-            # If the backend does not natively support White Moon / Selena (body ID
-            # 56), do NOT fabricate a value: Mean Lilith + 180° is the Priapus point
-            # (the lunar-apogee antipode), NOT Selena, so emitting it would be an
-            # astronomically incorrect value silently mislabelled as White_Moon.
-            # _calculate_single_planet already drops the point from active_points when
-            # the native calc fails; just ensure it is removed and warn.
-            if "white_moon" not in data:
-                logging.warning(
-                    "White_Moon/Selena (body ID 56) is not supported by this ephemeris "
-                    "backend; skipping it instead of substituting an incorrect value "
-                    "(Mean Lilith + 180° is Priapus, not Selena)."
-                )
-                AstrologicalSubjectFactory._append_ephemeris_warning(
+            # =============================================================================
+            # WHITE MOON / SELENA (SE_WHITE_MOON = 56)
+            # =============================================================================
+            # White Moon is natively supported by libephemeris (body ID 56). Backends
+            # without native support skip this point rather than fabricating Priapus
+            # (Mean Lilith + 180°) as Selena.
+            if should_calculate("White_Moon"):
+                # Attempt native backend calculation (body ID 56)
+                AstrologicalSubjectFactory._calculate_single_planet(
                     data,
                     "White_Moon",
                     56,
                     julian_day,
-                    code="unsupported_by_backend",
+                    iflag,
+                    houses_degree_ut,
+                    point_type,
+                    calculated_planets,
+                    active_points,
+                    center_body_id=center_body_id,
+                    degenerate_center_id=degenerate_center_id,
+                    exclude_geocentric_only=exclude_geocentric_only,
                 )
-                if "White_Moon" in active_points:
-                    active_points.remove("White_Moon")
+                # If the backend does not natively support White Moon / Selena (body ID
+                # 56), do NOT fabricate a value: Mean Lilith + 180° is the Priapus point
+                # (the lunar-apogee antipode), NOT Selena, so emitting it would be an
+                # astronomically incorrect value silently mislabelled as White_Moon.
+                # _calculate_single_planet already drops the point from active_points when
+                # the native calc fails; just ensure it is removed and warn.
+                if "white_moon" not in data:
+                    logger.warning(
+                        "White_Moon/Selena (body ID 56) is not supported by this ephemeris "
+                        "backend; skipping it instead of substituting an incorrect value "
+                        "(Mean Lilith + 180° is Priapus, not Selena)."
+                    )
+                    AstrologicalSubjectFactory._append_ephemeris_warning(
+                        data,
+                        "White_Moon",
+                        56,
+                        julian_day,
+                        code="unsupported_by_backend",
+                    )
+                    if "White_Moon" in active_points:
+                        active_points.remove("White_Moon")
 
-        # =============================================================================
-        # OPPOSITE / DERIVED POINTS (declarative, via OPPOSITE_PAIRS)
-        # =============================================================================
-        # All geometrically opposite points (DSC, IC, Anti-Vertex, South Nodes,
-        # Priapus) are calculated here from their primary point + 180 degrees.
-        AstrologicalSubjectFactory._calculate_opposite_points(
-            data,
-            houses_degree_ut,
-            point_type,
-            active_points_filter,
-            calculated_planets,
-        )
+            # =============================================================================
+            # OPPOSITE / DERIVED POINTS (declarative, via OPPOSITE_PAIRS)
+            # =============================================================================
+            # All geometrically opposite points (DSC, IC, Anti-Vertex, South Nodes,
+            # Priapus) are calculated here from their primary point + 180 degrees.
+            AstrologicalSubjectFactory._calculate_opposite_points(
+                data,
+                houses_degree_ut,
+                point_type,
+                active_points_filter,
+                calculated_planets,
+            )
 
-        # Store only the planets that were actually calculated
-        all_calculated_points = calculated_planets.copy()
-        if calculated_axial_cusps:
-            all_calculated_points.extend(calculated_axial_cusps)
-        data["active_points"] = all_calculated_points
+            # Store only the planets that were actually calculated
+            all_calculated_points = calculated_planets.copy()
+            if calculated_axial_cusps:
+                all_calculated_points.extend(calculated_axial_cusps)
+            data["active_points"] = all_calculated_points
 
-        # ---------------------------------------------------------------------
-        # Log ephemeris backend tracing at DEBUG level
-        # ---------------------------------------------------------------------
-        if BACKEND_NAME == "libephemeris" and _trace_token is not None:
-            try:
-                trace_map = ephe.get_trace_results()  # {body_id: "LEB", ...}
-            except AttributeError:
-                trace_map = {}
-            # Reset the tracing token
-            try:
-                _trace_token.var.reset(_trace_token)
-            except Exception:
-                pass
-            if trace_map:
-                # Build reverse map: body_id -> planet_name. Source metadata is
-                # part of the public point model; DEBUG logging is only a view
-                # over the same data and no longer controls whether it survives.
-                _id_to_name: Dict[int, str] = {v: k for k, v in STANDARD_PLANETS.items()}
-                for tname, tnum in TNO_PLANETS.items():
-                    _id_to_name[ephe.AST_OFFSET + tnum] = tname
-                _id_to_name[56] = "White_Moon"
+            # ---------------------------------------------------------------------
+            # Log ephemeris backend tracing at DEBUG level
+            # ---------------------------------------------------------------------
+            if BACKEND_NAME == "libephemeris" and _trace_token is not None:
+                try:
+                    trace_map = ephe.get_trace_results()  # {body_id: "LEB", ...}
+                except AttributeError:
+                    trace_map = {}
+                if trace_map:
+                    # Build reverse map: body_id -> planet_name. Source metadata is
+                    # part of the public point model; DEBUG logging is only a view
+                    # over the same data and no longer controls whether it survives.
+                    _id_to_name: Dict[int, str] = {v: k for k, v in STANDARD_PLANETS.items()}
+                    for tname, tnum in TNO_PLANETS.items():
+                        _id_to_name[ephe.AST_OFFSET + tnum] = tname
+                    _id_to_name[56] = "White_Moon"
 
-                trace_order: Dict[str, int] = {}
-                for order_idx, point_name in enumerate(
-                    list(STANDARD_PLANETS.keys()) + ["White_Moon"] + list(TNO_PLANETS.keys())
-                ):
-                    trace_order[point_name] = order_idx
+                    trace_order: Dict[str, int] = {}
+                    for order_idx, point_name in enumerate(
+                        list(STANDARD_PLANETS.keys()) + ["White_Moon"] + list(TNO_PLANETS.keys())
+                    ):
+                        trace_order[point_name] = order_idx
 
-                trace_rows: List[tuple[int, float, str, str]] = []
-                for body_id, backend in trace_map.items():
-                    name = _id_to_name.get(body_id, f"body_{body_id}")
-                    point = data.get(name.lower())
-                    if point is not None and hasattr(point, "abs_pos"):
-                        point.source = backend
-                        point.precision_class = _precision_class_for_source(backend)
+                    trace_rows: List[tuple[int, float, str, str]] = []
+                    for body_id, backend in trace_map.items():
+                        name = _id_to_name.get(body_id, f"body_{body_id}")
+                        point = data.get(name.lower())
+                        if point is not None and hasattr(point, "abs_pos"):
+                            point.source = backend
+                            point.precision_class = _precision_class_for_source(backend)
 
-                        if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
-                            # rc14 date-aware coverage API: body_id + requested JD.
-                            body_coverage = ephe.get_body_coverage(body_id, julian_day)
-                            if body_coverage is not None:
-                                point.precision_class = body_coverage.precision_class
-                                point.ephemeris_coverage_start_jd = body_coverage.jd_start
-                                point.ephemeris_coverage_end_jd = body_coverage.jd_end
-                                point.source_reviewed = body_coverage.reviewed
+                            if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
+                                # rc14 date-aware coverage API: body_id + requested JD.
+                                body_coverage = ephe.get_body_coverage(body_id, julian_day)
+                                if body_coverage is not None:
+                                    point.precision_class = body_coverage.precision_class
+                                    point.ephemeris_coverage_start_jd = body_coverage.jd_start
+                                    point.ephemeris_coverage_end_jd = body_coverage.jd_end
+                                    point.source_reviewed = body_coverage.reviewed
 
-                        order_idx = trace_order.get(name, len(trace_order))
-                        trace_rows.append((order_idx, float(point.abs_pos), name, backend))
+                            order_idx = trace_order.get(name, len(trace_order))
+                            trace_rows.append((order_idx, float(point.abs_pos), name, backend))
 
-                if trace_rows and logger.isEnabledFor(logging.DEBUG):
-                    trace_rows.sort(key=lambda row: (row[0], row[1]))
-                    logger.debug("Ephemeris trace [%s]", data.get("name", "unknown"))
-                    logger.debug("  %-24s %8s  %s", "point", "deg", "backend")
-                    for _, abs_pos, name, backend in trace_rows:
-                        logger.debug("  %-24s %8.2f  %s", name, abs_pos, backend)
+                    if trace_rows and logger.isEnabledFor(logging.DEBUG):
+                        trace_rows.sort(key=lambda row: (row[0], row[1]))
+                        logger.debug("Ephemeris trace [%s]", data.get("name", "unknown"))
+                        logger.debug("  %-24s %8s  %s", "point", "deg", "backend")
+                        for _, abs_pos, name, backend in trace_rows:
+                            logger.debug("  %-24s %8.2f  %s", name, abs_pos, backend)
 
-            # -----------------------------------------------------------------
-            # Provenance for geometrically derived points.
-            #
-            # Surface covered by provenance metadata (source / precision_class
-            # / coverage window / reviewed flag):
-            #   1. Traced ephemeris bodies (loop above): planets, nodes,
-            #      Lilith variants, Chiron, asteroids, TNOs, White Moon.
-            #   2. OPPOSITE_PAIRS antipodes (first loop below): each inherits
-            #      from its single primary.
-            #   3. Arabic Parts / Lots (second loop below): each inherits from
-            #      the ephemeris-backed primaries in its formula.
-            #   4. Fixed stars (annotated at their own call site, from a nested
-            #      per-star trace scope): source and precision_class only — the
-            #      coverage inventory is keyed by body id and holds no entry for
-            #      a catalog star, so the window and reviewed flag stay None.
-            # NOT annotated (source stays None): Ascendant, Medium Coeli, Vertex
-            # and house cusps — direct outputs of the backend house geometry,
-            # with no per-body coverage inventory. Their honesty channel is
-            # ``polar_house_fallbacks`` instead, which declares when the polar
-            # circle forced a different house system than the one requested.
-            # No blanket "every calculated point" guarantee is intended.
-            # -----------------------------------------------------------------
+                # -----------------------------------------------------------------
+                # Provenance for geometrically derived points.
+                #
+                # Surface covered by provenance metadata (source / precision_class
+                # / coverage window / reviewed flag):
+                #   1. Traced ephemeris bodies (loop above): planets, nodes,
+                #      Lilith variants, Chiron, asteroids, TNOs, White Moon.
+                #   2. OPPOSITE_PAIRS antipodes (first loop below): each inherits
+                #      from its single primary.
+                #   3. Arabic Parts / Lots (second loop below): each inherits from
+                #      the ephemeris-backed primaries in its formula.
+                #   4. Fixed stars (annotated at their own call site, from a nested
+                #      per-star trace scope): source and precision_class only — the
+                #      coverage inventory is keyed by body id and holds no entry for
+                #      a catalog star, so the window and reviewed flag stay None.
+                # NOT annotated (source stays None): Ascendant, Medium Coeli, Vertex
+                # and house cusps — direct outputs of the backend house geometry,
+                # with no per-body coverage inventory. Their honesty channel is
+                # ``polar_house_fallbacks`` instead, which declares when the polar
+                # circle forced a different house system than the one requested.
+                # No blanket "every calculated point" guarantee is intended.
+                # -----------------------------------------------------------------
 
-            # Geometric antipodes inherit the precision contract of their
-            # primary while declaring that their coordinate was derived. This
-            # public metadata must not depend on whether tracing returned rows.
-            for derived_name, pair_config in OPPOSITE_PAIRS.items():
-                derived = data.get(derived_name.lower())
-                primary = data.get(pair_config["primary"].lower())
-                if derived is None or primary is None:
-                    continue
-                derived.source = "Derived"
-                derived.precision_class = primary.precision_class
-                derived.ephemeris_coverage_start_jd = primary.ephemeris_coverage_start_jd
-                derived.ephemeris_coverage_end_jd = primary.ephemeris_coverage_end_jd
-                derived.source_reviewed = primary.source_reviewed
+                # Geometric antipodes inherit the precision contract of their
+                # primary while declaring that their coordinate was derived. This
+                # public metadata must not depend on whether tracing returned rows.
+                for derived_name, pair_config in OPPOSITE_PAIRS.items():
+                    derived = data.get(derived_name.lower())
+                    primary = data.get(pair_config["primary"].lower())
+                    if derived is None or primary is None:
+                        continue
+                    derived.source = "Derived"
+                    derived.precision_class = primary.precision_class
+                    derived.ephemeris_coverage_start_jd = primary.ephemeris_coverage_start_jd
+                    derived.ephemeris_coverage_end_jd = primary.ephemeris_coverage_end_jd
+                    derived.source_reviewed = primary.source_reviewed
 
-            # Arabic Parts are pure arithmetic on their primaries (Ascendant
-            # plus planetary longitudes), so they are Derived as well. The
-            # Ascendant carries no per-body coverage metadata (house geometry,
-            # see the surface note above) and therefore never dilutes the
-            # inherited contract. When the reporting primaries disagree on
-            # precision the part is honestly labelled "mixed"; the coverage
-            # window is the intersection of the reported windows and the
-            # reviewed flag is true only when every reporting primary is.
-            for part_name, part_config in ARABIC_PARTS_CONFIG.items():
-                part = data.get(part_name.lower())
-                if part is None:
-                    continue
-                part_primaries = [
-                    point
-                    for point in (data.get(req.lower()) for req in part_config["required"])
-                    if point is not None
-                ]
-                part.source = "Derived"
-                primary_classes = {p.precision_class for p in part_primaries if p.precision_class is not None}
-                if len(primary_classes) == 1:
-                    part.precision_class = next(iter(primary_classes))
-                elif primary_classes:
-                    part.precision_class = "mixed"
-                coverage_starts = [
-                    p.ephemeris_coverage_start_jd for p in part_primaries if p.ephemeris_coverage_start_jd is not None
-                ]
-                coverage_ends = [
-                    p.ephemeris_coverage_end_jd for p in part_primaries if p.ephemeris_coverage_end_jd is not None
-                ]
-                if coverage_starts:
-                    part.ephemeris_coverage_start_jd = max(coverage_starts)
-                if coverage_ends:
-                    part.ephemeris_coverage_end_jd = min(coverage_ends)
-                reviewed_flags = [p.source_reviewed for p in part_primaries if p.source_reviewed is not None]
-                if reviewed_flags:
-                    part.source_reviewed = all(reviewed_flags)
+                # Arabic Parts are pure arithmetic on their primaries (Ascendant
+                # plus planetary longitudes), so they are Derived as well. The
+                # Ascendant carries no per-body coverage metadata (house geometry,
+                # see the surface note above) and therefore never dilutes the
+                # inherited contract. When the reporting primaries disagree on
+                # precision the part is honestly labelled "mixed"; the coverage
+                # window is the intersection of the reported windows and the
+                # reviewed flag is true only when every reporting primary is.
+                for part_name, part_config in ARABIC_PARTS_CONFIG.items():
+                    part = data.get(part_name.lower())
+                    if part is None:
+                        continue
+                    part_primaries = [
+                        point
+                        for point in (data.get(req.lower()) for req in part_config["required"])
+                        if point is not None
+                    ]
+                    part.source = "Derived"
+                    primary_classes = {p.precision_class for p in part_primaries if p.precision_class is not None}
+                    if len(primary_classes) == 1:
+                        part.precision_class = next(iter(primary_classes))
+                    elif primary_classes:
+                        part.precision_class = "mixed"
+                    coverage_starts = [
+                        p.ephemeris_coverage_start_jd for p in part_primaries if p.ephemeris_coverage_start_jd is not None
+                    ]
+                    coverage_ends = [
+                        p.ephemeris_coverage_end_jd for p in part_primaries if p.ephemeris_coverage_end_jd is not None
+                    ]
+                    if coverage_starts:
+                        part.ephemeris_coverage_start_jd = max(coverage_starts)
+                    if coverage_ends:
+                        part.ephemeris_coverage_end_jd = min(coverage_ends)
+                    reviewed_flags = [p.source_reviewed for p in part_primaries if p.source_reviewed is not None]
+                    if reviewed_flags:
+                        part.source_reviewed = all(reviewed_flags)
 
     @staticmethod
     def _calculate_day_of_week(data: Dict[str, Any]) -> None:

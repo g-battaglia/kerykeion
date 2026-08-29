@@ -277,6 +277,233 @@ class TestAllFailedGuard:
             PlanetaryPhenomenaFactory.from_julian_day(2451545.0, planets=["Venus", "Mars"])
 
 
+def _elongation(julian_day: float, planet: str = "Mercury") -> float:
+    """Elongation of one planet, through the public factory."""
+    return PlanetaryPhenomenaFactory.from_julian_day(
+        julian_day, planets=[planet]
+    ).phenomena[0].elongation
+
+
+def _extreme_elongation(jd_low: float, jd_high: float, seek: str, planet: str = "Mercury") -> float:
+    """Julian Day of the elongation extremum inside a window, by ternary search.
+
+    The window is chosen to hold exactly one extremum, so elongation is unimodal
+    on it and a ternary search converges. Forty rounds shrink two days to well
+    under a second of time — far finer than the phenomenon needs, and cheap.
+
+    Searching instead of hardcoding an instant is the point: a conjunction is
+    what it is regardless of which minute the ephemeris puts it in, so the test
+    pins the astronomy rather than a number an engine bump could move.
+    """
+    better = (lambda a, b: a < b) if seek == "min" else (lambda a, b: a > b)
+    lo, hi = jd_low, jd_high
+    for _ in range(40):
+        m1 = lo + (hi - lo) / 3
+        m2 = hi - (hi - lo) / 3
+        if better(_elongation(m1, planet), _elongation(m2, planet)):
+            hi = m2
+        else:
+            lo = m1
+    return (lo + hi) / 2
+
+
+class TestSolarPhase:
+    """The condition relative to the Sun: cazimi / combust / under the beams / free.
+
+    The regression this class guards: before ``solar_phase`` existed, the only
+    thing the library said about a planet's nearness to the Sun was
+    ``is_evening_star``, which is a pure question of geometry and answers True
+    for a Mercury one degree from the Sun — a planet nobody can see.
+    """
+
+    # 2026-08-28 04:47 UTC: Mercury 1.80 deg from the Sun, and an "evening star".
+    MERCURY_COMBUST_JD = ephe.julday(2026, 8, 28, 4 + 47 / 60)
+
+    def test_mercury_at_two_degrees_is_combust(self):
+        result = PlanetaryPhenomenaFactory.from_julian_day(
+            self.MERCURY_COMBUST_JD, planets=["Mercury"]
+        )
+        mercury = result.phenomena[0]
+        assert mercury.elongation == pytest.approx(1.80, abs=0.02)
+        assert mercury.solar_phase == "combust"
+
+    def test_the_geometric_flags_are_untouched_by_the_new_field(self):
+        """is_morning_star/is_evening_star keep meaning exactly what they meant.
+
+        They are the side of the Sun the planet stands on, nothing more. The
+        combust Mercury above is still, geometrically, an evening star — and the
+        library must go on saying so, because that is a true statement about
+        where it is. What changed is that there is now a second field saying it
+        cannot be seen.
+        """
+        mercury = PlanetaryPhenomenaFactory.from_julian_day(
+            self.MERCURY_COMBUST_JD, planets=["Mercury"]
+        ).phenomena[0]
+        assert mercury.is_evening_star is True
+        assert mercury.is_morning_star is False
+        assert mercury.solar_phase == "combust"
+
+    def test_venus_at_thirteen_degrees_is_under_the_beams(self):
+        jd = ephe.julday(2026, 11, 1, 0.0)
+        venus = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Venus"]).phenomena[0]
+        assert venus.elongation == pytest.approx(13.24, abs=0.02)
+        assert venus.solar_phase == "under_the_beams"
+
+    def test_mercury_at_its_conjunction_is_cazimi(self):
+        """Mercury's May 2026 conjunction passes within 9' of the Sun's centre,
+        comfortably inside the 17' (0.2833 deg) cazimi window.
+
+        Cazimi by TRUE separation is rare — most conjunctions leave the planet
+        degrees away in latitude even while sharing the Sun's longitude — so the
+        instant is found by search rather than assumed.
+        """
+        jd = _extreme_elongation(
+            ephe.julday(2026, 5, 13, 12.0), ephe.julday(2026, 5, 15, 12.0), "min"
+        )
+        mercury = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Mercury"]).phenomena[0]
+        assert mercury.elongation < 0.2833, f"expected a cazimi separation, got {mercury.elongation}"
+        assert mercury.solar_phase == "cazimi"
+
+    def test_mercury_at_its_greatest_elongation_is_free(self):
+        """The other end of the same orbit: ~28 deg out, and plainly visible."""
+        jd = _extreme_elongation(
+            ephe.julday(2026, 4, 1, 0.0), ephe.julday(2026, 4, 7, 0.0), "max"
+        )
+        mercury = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Mercury"]).phenomena[0]
+        assert mercury.elongation > 17.0
+        assert mercury.solar_phase == "free"
+
+    def test_every_planet_in_the_set_is_labelled(self, subject):
+        result = PlanetaryPhenomenaFactory.from_subject(subject)
+        assert len(result.phenomena) >= 7
+        for p in result.phenomena:
+            assert p.solar_phase is not None, f"{p.name} has no solar_phase"
+            assert p.solar_phase in ("cazimi", "combust", "under_the_beams", "free")
+
+    def test_the_moon_is_labelled_like_any_other_body(self):
+        """Documented decision: the Moon gets a phase, it is not left None.
+
+        Its elongation is the same astronomical quantity as everyone else's, and
+        the names still describe what they describe — the dark of the Moon IS the
+        interval under the beams. At the 2026-08-12 solar eclipse the Moon is
+        under a degree from the Sun and comes out combust. What a school makes of
+        a combust Moon is the school's business; the datum is neutral.
+        """
+        jd = _extreme_elongation(
+            ephe.julday(2026, 8, 12, 0.0), ephe.julday(2026, 8, 13, 0.0), "min", "Moon"
+        )
+        moon = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Moon"]).phenomena[0]
+        assert moon.elongation < 1.0
+        assert moon.solar_phase == "combust"
+
+    @pytest.mark.parametrize(
+        "year, month, day, expected_elongation, expected_phase",
+        [
+            (2026, 8, 12, 0.891865, "combust"),
+            (2027, 8, 2, 0.144957, "cazimi"),
+        ],
+        ids=["total-eclipse-is-combust", "total-eclipse-is-cazimi"],
+    )
+    def test_a_central_eclipse_does_not_decide_the_moons_phase(
+        self, year: int, month: int, day: int, expected_elongation: float, expected_phase: str
+    ):
+        """Two total solar eclipses, two different labels — and both are right.
+
+        `pheno_ut` reports the GEOCENTRIC elongation; an eclipse is a TOPOCENTRIC
+        alignment, seen by the observer under the shadow, and lunar parallax
+        between the two frames reaches about a degree. So a central eclipse is no
+        promise of cazimi: on 2026-08-12 the Moon bottoms out three times the
+        cazimi half-width away and reads `combust`, while on 2027-08-02 it comes
+        inside and reads `cazimi`.
+
+        The instant is found by search (the eclipse is where it is, whatever
+        minute the ephemeris puts it in) but the ELONGATION is pinned to six
+        decimals: a drift here means the frame changed, and the whole point is
+        that the published frame is the geocentric one.
+        """
+        jd = _extreme_elongation(
+            ephe.julday(year, month, day, 0.0), ephe.julday(year, month, day + 1, 0.0), "min", "Moon"
+        )
+        moon = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Moon"]).phenomena[0]
+
+        assert moon.elongation == pytest.approx(expected_elongation, abs=1e-6)
+        assert moon.solar_phase == expected_phase
+
+    def test_the_thresholds_used_are_echoed_on_the_collection(self, subject):
+        """A label is meaningless without the convention that produced it."""
+        result = PlanetaryPhenomenaFactory.from_subject(subject)
+        assert result.solar_phase_thresholds.cazimi_deg == pytest.approx(0.2833)
+        assert result.solar_phase_thresholds.combust_deg == pytest.approx(8.5)
+        assert result.solar_phase_thresholds.under_beams_deg == pytest.approx(17.0)
+
+    def test_custom_thresholds_move_the_label(self):
+        """Same instant, same elongation, different school: a different name."""
+        from kerykeion.schemas import SolarPhaseThresholdsModel
+
+        jd = ephe.julday(2026, 11, 1, 0.0)  # Venus at 13.24 deg
+
+        default = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Venus"])
+        assert default.phenomena[0].solar_phase == "under_the_beams"
+
+        narrow = PlanetaryPhenomenaFactory.from_julian_day(
+            jd,
+            planets=["Venus"],
+            solar_phase_thresholds=SolarPhaseThresholdsModel(under_beams_deg=10.0),
+        )
+        assert narrow.phenomena[0].solar_phase == "free"
+        assert narrow.solar_phase_thresholds.under_beams_deg == 10.0
+
+        wide = PlanetaryPhenomenaFactory.from_julian_day(
+            jd,
+            planets=["Venus"],
+            solar_phase_thresholds=SolarPhaseThresholdsModel(combust_deg=14.0),
+        )
+        assert wide.phenomena[0].solar_phase == "combust"
+
+        # The elongation itself never moves — only the name put on it.
+        assert (
+            default.phenomena[0].elongation
+            == narrow.phenomena[0].elongation
+            == wide.phenomena[0].elongation
+        )
+
+    def test_custom_thresholds_reach_through_from_subject(self, subject):
+        from kerykeion.schemas import SolarPhaseThresholdsModel
+
+        result = PlanetaryPhenomenaFactory.from_subject(
+            subject,
+            planets=["Venus"],
+            solar_phase_thresholds=SolarPhaseThresholdsModel(under_beams_deg=180.0),
+        )
+        assert result.solar_phase_thresholds.under_beams_deg == 180.0
+        assert result.phenomena[0].solar_phase != "free"
+
+    def test_thresholds_that_do_not_widen_outwards_are_rejected(self):
+        """An out-of-order set starves a label; say so instead of shipping it."""
+        import pydantic
+
+        from kerykeion.schemas import SolarPhaseThresholdsModel
+
+        with pytest.raises(pydantic.ValidationError, match="widen outwards"):
+            SolarPhaseThresholdsModel(cazimi_deg=9.0, combust_deg=8.5)
+        with pytest.raises(pydantic.ValidationError, match="widen outwards"):
+            SolarPhaseThresholdsModel(combust_deg=20.0)
+        with pytest.raises(pydantic.ValidationError):
+            SolarPhaseThresholdsModel(cazimi_deg=-1.0)
+
+    def test_boundaries_are_strict_so_the_outer_name_wins(self):
+        """A body exactly on a cut-off is not inside it."""
+        from kerykeion.planetary_phenomena.factory import classify_solar_phase
+        from kerykeion.schemas import SolarPhaseThresholdsModel
+
+        t = SolarPhaseThresholdsModel()
+        assert classify_solar_phase(0.0, t) == "cazimi"
+        assert classify_solar_phase(t.cazimi_deg, t) == "combust"
+        assert classify_solar_phase(t.combust_deg, t) == "under_the_beams"
+        assert classify_solar_phase(t.under_beams_deg, t) == "free"
+        assert classify_solar_phase(180.0, t) == "free"
+
+
 @pytest.mark.parametrize("julian_day", [float("nan"), float("inf"), float("-inf")])
 def test_non_finite_julian_day_rejected_for_empty_selection(julian_day):
     with pytest.raises(ValueError, match="finite"):

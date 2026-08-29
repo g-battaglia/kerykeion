@@ -40,6 +40,17 @@ Single source of truth for the sidereal default, shared by the subject factory
 and the ephemeris backend so the displayed ayanamsa always matches the one used
 to compute positions."""
 
+DEFAULT_NAKSHATRA_AYANAMSA: SiderealMode = "LAHIRI"
+"""Default ayanamsa used to place the nakshatras on a NON-sidereal chart.
+
+The nakshatras divide the *sidereal* zodiac, so on a tropical (or otherwise
+non-sidereal) chart the tropical longitude has to be rotated into the sidereal
+frame before the 27-fold division is applied. Lahiri is the ayanamsa Jyotish
+uses by default, which is the tradition the nakshatras belong to; it is not
+``DEFAULT_SIDEREAL_MODE`` (Fagan-Bradley), which serves western sidereal
+charts. Pass ``nakshatra_ayanamsa=None`` to opt back into the legacy,
+uncorrected behaviour."""
+
 
 # =============================================================================
 # PERSPECTIVE TYPE CONSTANTS
@@ -542,7 +553,7 @@ BEHENIAN_FIXED_STARS: list[str] = [
     "Alphecca",
     "Antares",
     "Vega",
-    "Deneb Algedi",
+    "Deneb_Algedi",
     "Fomalhaut",
 ]
 """The 15 Behenian stars of the medieval/Hermetic magical tradition."""
@@ -569,7 +580,7 @@ DEFAULT_FIXED_STARS: list[str] = [
     "Alcyone",
     "Alphecca",
     "Algorab",
-    "Deneb Algedi",
+    "Deneb_Algedi",
     "Alkaid",
 ]
 """The 23 default fixed stars (same set as Kerykeion v5.12)."""
@@ -774,6 +785,40 @@ AXIAL_POINTS: list[AstrologicalPoint] = [
     "Imum_Coeli",
 ]
 """The four axial cusps (angles) of the horoscope."""
+
+#: The axes and lunar nodes, in the order a document should present them.
+AXES_AND_NODES_IN_READING_ORDER: list[AstrologicalPoint] = [
+    "Ascendant",
+    "Descendant",
+    "Medium_Coeli",
+    "Imum_Coeli",
+    "Vertex",
+    "Anti_Vertex",
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node",
+    "True_South_Lunar_Node",
+]
+
+#: Points that are the 180-degree opposite of another, and of which.
+#:
+#: None of these five is in ``DEFAULT_ACTIVE_POINTS``, because a caller who asks
+#: for the Ascendant has asked for the Descendant whether they said so or not.
+#: A document that drives its point list off ``active_points`` therefore drops
+#: them from every default chart — which is why a report could name the Imum
+#: Coeli in one table and give its degree in none, and why under whole sign or
+#: equal houses, where the fourth cusp is NOT the Imum Coeli, the reader had no
+#: way to learn where it was.
+#:
+#: They are added when their counterpart is active, and only then: a traditional
+#: point set that leaves the Ascendant out has left the Descendant out with it.
+OPPOSITE_POINTS: dict[AstrologicalPoint, AstrologicalPoint] = {
+    "Descendant": "Ascendant",
+    "Imum_Coeli": "Medium_Coeli",
+    "Anti_Vertex": "Vertex",
+    "Mean_South_Lunar_Node": "Mean_North_Lunar_Node",
+    "True_South_Lunar_Node": "True_North_Lunar_Node",
+}
 
 # Default target of `python -m kerykeion.swisseph_setup` and the directory the
 # swisseph backend auto-detects when KERYKEION_EPHE_PATH is unset. Lives here

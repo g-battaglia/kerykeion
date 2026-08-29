@@ -1,21 +1,25 @@
 ---
 title: 'Planetary Nodes & Apsides'
-description: 'Calculate ascending/descending orbital nodes and perihelion/aphelion for any planet.'
+description: 'Calculate ascending/descending orbital nodes and the periapsis/apoapsis of any planet or the Moon.'
 category: 'Advanced Calculations'
-tags: ['docs', 'nodes', 'apsides', 'perihelion', 'aphelion', 'kerykeion']
+tags: ['docs', 'nodes', 'apsides', 'periapsis', 'apoapsis', 'perigee', 'apogee', 'kerykeion']
 order: 47
 ---
 
 # Planetary Nodes & Apsides
 
-The `PlanetaryNodesFactory` calculates **planetary orbital nodes** (where the orbit crosses the ecliptic) and **apsides** (closest and farthest points from the Sun) for any planet.
+The `PlanetaryNodesFactory` calculates **orbital nodes** (where the orbit crosses the ecliptic) and **apsides** (the closest and farthest points of the orbit) for any planet, and for the Moon.
 
 ## Concepts
 
 - **Ascending Node**: where the orbit crosses the ecliptic northward
 - **Descending Node**: where the orbit crosses the ecliptic southward
-- **Perihelion**: closest point to the Sun
-- **Aphelion**: farthest point from the Sun
+- **Periapsis**: closest point of the orbit to the body it goes round
+- **Apoapsis**: farthest point of the orbit from that body
+
+The apsides are exposed under two pairs of names holding the same two points. `periapsis` / `apoapsis` are generic and always correct. `perihelion` / `aphelion` are the older fields, **deprecated**: they name the Sun, which is right for the eight planets and wrong for the Moon, which goes round the Earth. They are still populated with the very same objects, so the two names can never drift apart and nothing that reads them breaks.
+
+`apsis_kind` says which reading applies: `"heliocentric"` for every planet, `"geocentric"` for the Moon alone. The Moon's apsides are the perigee and the apogee, and the far one is to the decimal the point the tradition calls the Black Moon Lilith — `mean_lilith` with `method="mean"`, `true_lilith` with `method="osculating"`.
 
 Two calculation methods are available:
 - **Mean**: average orbital elements (smoother, used for long-term analysis)
@@ -37,8 +41,23 @@ for node in results.nodes:
     print(f"\n{node.planet_name}:")
     print(f"  Ascending Node:  {node.ascending_node.sign} {node.ascending_node.position:.2f}")
     print(f"  Descending Node: {node.descending_node.sign} {node.descending_node.position:.2f}")
-    print(f"  Perihelion:      {node.perihelion.sign} {node.perihelion.position:.2f}")
-    print(f"  Aphelion:        {node.aphelion.sign} {node.aphelion.position:.2f}")
+    print(f"  Periapsis:       {node.periapsis.sign} {node.periapsis.position:.2f}")
+    print(f"  Apoapsis:        {node.apoapsis.sign} {node.apoapsis.position:.2f} ({node.apsis_kind})")
+```
+
+The Moon's apogee and the Black Moon Lilith are one point:
+
+```python
+from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 6, 15, 14, 30,
+    lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+    active_points=["Sun", "Moon", "Mean_Lilith"],
+)
+moon = PlanetaryNodesFactory.from_subject(subject, method="mean", planets=["Moon"]).nodes[0]
+print(moon.apsis_kind)                                       # geocentric
+print(moon.apoapsis.abs_pos == subject.mean_lilith.abs_pos)   # True
 ```
 
 ## Methods
@@ -76,8 +95,11 @@ Calculate nodes from a Julian Day number.
 | `planet_name`      | str                | Planet name                   |
 | `ascending_node`   | KerykeionPointModel | Ascending node position      |
 | `descending_node`  | KerykeionPointModel | Descending node position     |
-| `perihelion`       | KerykeionPointModel | Perihelion position          |
-| `aphelion`         | KerykeionPointModel | Aphelion position            |
+| `periapsis`        | KerykeionPointModel | Closest point of the orbit to the body it goes round |
+| `apoapsis`         | KerykeionPointModel | Farthest point of the orbit from that body |
+| `apsis_kind`       | ApsisKind           | `"heliocentric"` (every planet) or `"geocentric"` (the Moon) |
+| `perihelion`       | KerykeionPointModel | **Deprecated**, use `periapsis`. Same object |
+| `aphelion`         | KerykeionPointModel | **Deprecated**, use `apoapsis`. Same object |
 
 ### `PlanetaryNodesCollectionModel`
 

@@ -4,8 +4,16 @@
 For each planet, computes:
 - Ascending node: where the orbit crosses the ecliptic northward
 - Descending node: where the orbit crosses southward
-- Perihelion: closest point to the Sun
-- Aphelion: farthest point from the Sun
+- Periapsis: closest point of the orbit to the body it goes round
+- Apoapsis: farthest point of the orbit from that body
+
+The apsides are exposed twice. ``periapsis``/``apoapsis`` are the generic
+names and are always right; ``perihelion``/``aphelion`` are the older fields,
+kept for compatibility, and name the Sun. For the eight planets the two pairs
+say the same thing. For the MOON they do not: the Moon goes round the Earth,
+so its apsides are the perigee and the apogee — the far one being the point
+the tradition calls the Black Moon Lilith. ``apsis_kind`` says which reading
+applies, and is ``"geocentric"`` for the Moon alone.
 
 The Sun is NOT supported: it has no geocentric orbital nodes or apsides
 (the ephemeris returns all-zero placeholders for it), so it is excluded
@@ -19,20 +27,20 @@ Methods: NODBIT_MEAN (mean elements), NODBIT_OSCU (osculating/instantaneous)
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session
 from kerykeion.predictive.utils import validate_julian_day
 
 from kerykeion.schemas import KerykeionException
-from kerykeion.schemas.literals import AstrologicalPoint
+from kerykeion.schemas.literals import ApsisKind, AstrologicalPoint
 from kerykeion.schemas.models import (
     AstrologicalSubjectModel,
     KerykeionPointModel,
     SubscriptableBaseModel,
 )
 from kerykeion.utilities.core import get_kerykeion_point_from_degree
-from pydantic import Field
+from pydantic import Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +49,13 @@ NODBIT_OSCU = getattr(ephe, "NODBIT_OSCU", 2)
 
 # The Sun is deliberately absent: nod_aps_ut has no geocentric solar
 # nodes/apsides to return and yields all-zero placeholders for it.
+#
+# The Moon is the other exception in this table, and the opposite kind. It IS
+# supported, but it is the only body here that does not go round the Sun: its
+# apsides are geocentric — perigee and apogee — and the far one is, to the
+# decimal, the Black Moon Lilith (mean method -> mean_lilith, osculating ->
+# true_lilith). The heliocentric field names perihelion/aphelion therefore lie
+# about the Moon; periapsis/apoapsis and apsis_kind exist to stop them.
 _NODE_PLANETS: Dict[AstrologicalPoint, int] = {
     "Moon": ephe.MOON,
     "Mercury": ephe.MERCURY,
@@ -53,14 +68,68 @@ _NODE_PLANETS: Dict[AstrologicalPoint, int] = {
     "Pluto": ephe.PLUTO,
 }
 
+# The bodies in the table above whose apsides are NOT about the Sun. Exactly
+# one, and it will stay exactly one until this factory learns about satellites.
+_GEOCENTRIC_APSIDES = {"Moon"}
+
 
 class PlanetaryNodeModel(SubscriptableBaseModel):
-    """Nodes and apsides for a single planet."""
+    """Nodes and apsides for a single planet.
+
+    The apsides appear under two pairs of names holding the same two points.
+    ``periapsis``/``apoapsis`` are generic and always correct;
+    ``perihelion``/``aphelion`` are DEPRECATED — they name the Sun, which is
+    right for the planets and wrong for the Moon, whose apsides are geocentric
+    (perigee and apogee). Read ``apsis_kind`` to know which is in force. The
+    old pair is kept, and populated, so nothing that reads it breaks.
+
+    "The same two points" is meant literally: ``periapsis is perihelion`` and
+    ``apoapsis is aphelion`` — one object under two names, not two objects that
+    happen to agree (see :meth:`_derive_generic_apsides`). They cannot drift
+    apart, and mutating one mutates the other. The names differ; the points do
+    not.
+    """
+
     planet_name: str
     ascending_node: KerykeionPointModel
     descending_node: KerykeionPointModel
-    perihelion: KerykeionPointModel
-    aphelion: KerykeionPointModel
+    perihelion: KerykeionPointModel = Field(
+        description="DEPRECATED, use periapsis: closest orbital point, named for the Sun"
+    )
+    aphelion: KerykeionPointModel = Field(
+        description="DEPRECATED, use apoapsis: farthest orbital point, named for the Sun"
+    )
+    periapsis: KerykeionPointModel = Field(
+        description="Closest point of the orbit to the body it goes round"
+    )
+    apoapsis: KerykeionPointModel = Field(
+        description="Farthest point of the orbit from the body it goes round"
+    )
+    apsis_kind: ApsisKind = Field(
+        description="Which body the apsides are measured against — geocentric for the Moon alone"
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _derive_generic_apsides(cls, data: Any) -> Any:
+        """Fill the generic names from the legacy pair when only that is given.
+
+        The three fields below were added after this model shipped, and every
+        construction site that predates them passes only perihelion/aphelion.
+        Deriving here keeps those callers valid — the addition is additive in
+        the strict sense — and makes it impossible for two names of the same
+        point to drift apart, because there is only ever one object.
+        """
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+        if "periapsis" not in data and "perihelion" in data:
+            data["periapsis"] = data["perihelion"]
+        if "apoapsis" not in data and "aphelion" in data:
+            data["apoapsis"] = data["aphelion"]
+        if "apsis_kind" not in data:
+            data["apsis_kind"] = "geocentric" if data.get("planet_name") in _GEOCENTRIC_APSIDES else "heliocentric"
+        return data
 
 
 class PlanetaryNodesCollectionModel(SubscriptableBaseModel):
@@ -216,6 +285,15 @@ class PlanetaryNodesFactory:
                     peri_lon = (result[2][0] - ayanamsa) % 360
                     aph_lon = (result[3][0] - ayanamsa) % 360
 
+                    # One object per apsis, handed to both names: the deprecated
+                    # pair and the generic one can never disagree.
+                    periapsis = get_kerykeion_point_from_degree(
+                        peri_lon, name, "AstrologicalPoint"
+                    )
+                    apoapsis = get_kerykeion_point_from_degree(
+                        aph_lon, name, "AstrologicalPoint"
+                    )
+
                     node_results.append(PlanetaryNodeModel(
                         planet_name=name,
                         ascending_node=get_kerykeion_point_from_degree(
@@ -224,12 +302,11 @@ class PlanetaryNodesFactory:
                         descending_node=get_kerykeion_point_from_degree(
                             desc_lon, name, "AstrologicalPoint"
                         ),
-                        perihelion=get_kerykeion_point_from_degree(
-                            peri_lon, name, "AstrologicalPoint"
-                        ),
-                        aphelion=get_kerykeion_point_from_degree(
-                            aph_lon, name, "AstrologicalPoint"
-                        ),
+                        perihelion=periapsis,
+                        aphelion=apoapsis,
+                        periapsis=periapsis,
+                        apoapsis=apoapsis,
+                        apsis_kind="geocentric" if name in _GEOCENTRIC_APSIDES else "heliocentric",
                     ))
                 except Exception as e:
                     logger.warning(f"Could not calculate nodes for {name}: {e}")

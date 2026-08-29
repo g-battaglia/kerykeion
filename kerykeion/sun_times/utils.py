@@ -267,8 +267,21 @@ def local_midnight_julian_day(year: int, month: int, day: int, tz: ZoneInfo) -> 
 
 
 def julian_day_to_utc(jd: float) -> datetime:
-    """Convert a Julian Day (UT) to a timezone-aware UTC ``datetime``."""
-    return julian_to_datetime(jd).replace(tzinfo=timezone.utc)
+    """Convert a Julian Day (UT) to a timezone-aware UTC ``datetime``.
+
+    Raises:
+        KerykeionException: When the instant lies outside civil years 1 to 9999,
+            which ``datetime`` cannot represent. A Moon scan that walks past
+            9999-12-31 on the full-range ephemeris used to surface this as a raw
+            ``ValueError`` from a public factory.
+    """
+    try:
+        return julian_to_datetime(jd).replace(tzinfo=timezone.utc)
+    except (ValueError, OverflowError) as exc:
+        raise KerykeionException(
+            f"Julian Day {jd} lies outside the civil range this library represents "
+            f"(years 1 to 9999): {exc}"
+        ) from exc
 
 
 def _civil_day_bounds(year: int, month: int, day: int, tz: ZoneInfo) -> tuple[float, float]:

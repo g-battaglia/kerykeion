@@ -16,12 +16,14 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from kerykeion.charts.utils import (
     DOUBLE_CHART_TYPES,
+    STATION_LABELS,
     degree_difference,
     escape_svg_text,
     wheel_x,
     wheel_y,
     convert_decimal_to_degree_string,
 )
+from kerykeion.charts.svg_metadata import point_state_attributes
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
 from kerykeion.schemas.literals import Houses
 from kerykeion.settings.chart_defaults import resolve_glyph_id
@@ -38,16 +40,8 @@ logger = logging.getLogger(__name__)
 PLANET_GROUPING_THRESHOLD = 3.4  # Distance to consider planets as grouped
 INDICATOR_GROUPING_THRESHOLD = 2.5  # Distance for indicator overlap detection
 
-# Chart angle indices (ASC, MC, DSC, IC are between these indices)
-# The four chart angles are classified by NAME: the historical index window
-# (22 < idx < 27, inherited from the fixed OpenAstro point ordering) pointed at
-# Ceres/Pallas/Juno/Vesta in the v6 catalog and shifted with any active-points
-# filtering.
-CHART_ANGLE_NAMES: tuple[str, ...] = ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli")
-
 # Radius offsets for different chart elements
 NATAL_INDICATOR_OFFSET = 72  # Offset for inner chart degree indicators
-DUAL_CHART_ANGLE_RADIUS = 76  # Radius for chart angles in dual charts
 DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
@@ -77,6 +71,7 @@ def draw_planets(
     first_circle_radius: Union[int, float, None] = None,
     second_circle_radius: Union[int, float, None] = None,
     show_degree_indicators: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draws celestial points on an astrological chart.
@@ -213,6 +208,7 @@ def draw_planets(
             available_planets_setting[point_idx]["name"],
             horoscope_id=h_id,
             glyph_id=glyph_id,
+            show_motion_state=show_motion_state,
         )
 
     # -------------------------------------------------------------------------
@@ -259,6 +255,7 @@ def draw_planets(
                 transit_ring_exclude_points,
                 second_subject_available_kerykeion_celestial_points,
                 show_degree_indicators=show_degree_indicators,
+                show_motion_state=show_motion_state,
             )
         # Primary/inner points (natal planets): pure degree indicators, so the
         # flag gates the whole call (their glyphs are drawn in section 5).
@@ -535,11 +532,24 @@ def _determine_point_radius(
     """
     Determine the radial distance for placing a celestial point.
 
-    Different radii are used to create visual separation between points
-    and to distinguish between chart angles and regular planets.
+    Two radii alternate down the sorted list of points, which is what keeps two
+    neighbours from printing on top of each other: consecutive points sit on
+    different lanes, so a crowd spreads across two rings instead of one.
+
+    An angle is drawn on those same lanes. It used to get a third radius of its
+    own, further out than either — but the code that recognised one did it by
+    the point's index in a fixed list, and the v6 catalog moved the angles off
+    those indices, so for years the outer lane went to Ceres, Pallas, Juno and
+    Vesta while the angles alternated with everything else. That is the chart
+    people know, and when the classification was repaired the angles jumped
+    outward into the zodiac ring. Giacomo's call is that they belong with the
+    points, so the dedicated radius is gone rather than restored: an angle is a
+    point, and there is no fourth lane for anyone to land on by accident.
 
     Args:
-        point_name: Name of the celestial point (angles get a dedicated radius).
+        point_name: Name of the celestial point. Unused by the geometry now, and
+            kept because the signature is part of how callers read this: the
+            radius is a property of the point, not of its position in a loop.
         chart_type: Type of the chart.
         is_alternate_position: Whether to use alternate positioning for visual separation.
         external_view: Whether external view mode is enabled.
@@ -547,24 +557,18 @@ def _determine_point_radius(
     Returns:
         Radius value for the point placement.
     """
-    is_chart_angle = point_name in CHART_ANGLE_NAMES
-
     # Dual charts (Transit, Synastry, Return)
     if chart_type in DUAL_CHART_TYPES:
-        if is_chart_angle:
-            return DUAL_CHART_ANGLE_RADIUS
         return DUAL_CHART_PLANET_RADIUS_A if is_alternate_position else DUAL_CHART_PLANET_RADIUS_B
 
     # Natal chart with external view
     # In external view, all points are placed on outer ring with small offset variations
-    # Original calculations: amin = 74-10=64, bmin = 94-10=84, cmin = 40-10=30
-    # Result: 74 - 64 = 10, 94 - 84 = 10, 40 - 30 = 10
+    # Original calculations: amin = 74-10=64, bmin = 94-10=84
+    # Result: 74 - 64 = 10, 94 - 84 = 10
     if external_view:
         return 10
 
     # Standard natal chart
-    if is_chart_angle:
-        return 40
     return 74 if is_alternate_position else 94
 
 
@@ -841,13 +845,16 @@ def _generate_point_svg(
     point_name: str,
     horoscope_id: Union[str, None] = None,
     glyph_id: Union[str, None] = None,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Generate SVG markup for a celestial point.
 
     Creates a group element containing the point symbol with proper
     positioning, scaling, and metadata attributes. If the point is
-    retrograde, a small retrograde symbol (℞) is rendered next to the glyph.
+    retrograde, a small retrograde symbol (℞) is rendered next to the glyph;
+    with ``show_motion_state`` a body at a station takes that same spot with
+    an "SR" or "SD" mark instead, naming the turn it is making.
 
     Args:
         point_details: Model containing point data.
@@ -864,6 +871,7 @@ def _generate_point_svg(
     horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
     gauq = getattr(point_details, "gauquelin_sector", None)
     gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
+    state_attrs = point_state_attributes(point_details)
 
     # kr:cx / kr:cy — the rendered glyph center, emitted so frontend hit-
     # detection can use an exact center without having to measure the symbol's
@@ -880,19 +888,28 @@ def _generate_point_svg(
     parts: list[str] = [
         f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
         f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
-        f'kr:signposition="{point_details["position"]}" kr:slug="{escape_svg_text(point_details["name"])}"{retro_attr}{horoscope_attr}{gauq_attr} ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{escape_svg_text(point_details["name"])}"{retro_attr}{horoscope_attr}{gauq_attr}{state_attrs} ',
         f'kr:cx="{x}" kr:cy="{y}" ',
         f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
         f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_ref}" />',
     ]
 
-    if is_retrograde:
-        # Position the retrograde symbol at the bottom-right foot of the planet glyph.
-        # Planet glyphs occupy ~24x24 units; x=+22 sits just past the right edge,
-        # y=+18 aligns the symbol with the glyph's baseline (foot).
-        retro_x = x * (1 / scale) + 22
-        retro_y = y * (1 / scale) + 18
-        parts.append(f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">')
+    # Both marks share the bottom-right foot of the planet glyph. Planet glyphs
+    # occupy ~24x24 units; x=+22 sits just past the right edge, y=+18 aligns
+    # with the glyph's baseline (foot).
+    marker_x = x * (1 / scale) + 22
+    marker_y = y * (1 / scale) + 18
+    station = STATION_LABELS.get(getattr(point_details, "motion_state", None) or "") if show_motion_state else None
+    if station is not None:
+        # A station wins the spot: it is the rarer and more specific event, and
+        # the reader who turned the option on turned it on to see exactly this.
+        parts.append(
+            f'<text x="{marker_x}" y="{marker_y + 6}" '
+            f'style="fill: var(--kerykeion-color-warning); font-size: 11px; font-weight: bold;"'
+            f">{station}</text>"
+        )
+    elif is_retrograde:
+        parts.append(f'<g transform="translate({marker_x},{marker_y}) scale(0.55)">')
         parts.append('<use xlink:href="#retrograde" />')
         parts.append("</g>")
 
@@ -1125,6 +1142,7 @@ def _draw_secondary_points(
     exclude_points: list[str],
     celestial_points: Union[list[KerykeionPointModel], None] = None,
     show_degree_indicators: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draw secondary celestial points for transit/synastry charts.
@@ -1180,11 +1198,10 @@ def _draw_secondary_points(
         if chart_type == "Transit" and points_settings[point_idx]["name"] in exclude_points:
             continue
 
-        # Determine point radius (alternating for visual separation)
-        is_chart_angle = points_settings[point_idx]["name"] in CHART_ANGLE_NAMES
-        if is_chart_angle:
-            point_radius = 9
-        elif alternate_position:
+        # Determine point radius (alternating for visual separation). Angles
+        # alternate with everything else here too — see _determine_point_radius
+        # for why the lane they used to have is gone.
+        if alternate_position:
             point_radius = 18
             alternate_position = False
         else:
@@ -1199,11 +1216,15 @@ def _draw_secondary_points(
         # Draw point symbol
         point_x = wheel_x(0, radius - point_radius, point_offset) + point_radius
         point_y = wheel_y(0, radius - point_radius, point_offset) + point_radius
-        is_retrograde = (
-            celestial_points is not None
-            and point_idx < len(celestial_points)
-            and celestial_points[point_idx].retrograde is True
+        # Bound once per iteration rather than inside the glyph branch below:
+        # a point that carries its own glyph_id would otherwise leave the name
+        # pointing at the previous iteration's model.
+        point_details = (
+            celestial_points[point_idx]
+            if celestial_points is not None and point_idx < len(celestial_points)
+            else None
         )
+        is_retrograde = point_details is not None and point_details.retrograde is True
         retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
         point_color = points_settings[point_idx]["color"]
 
@@ -1212,20 +1233,16 @@ def _draw_secondary_points(
         # v6: dynamic points fall back to their shared generic symbols.
         point_glyph = points_settings[point_idx].get("glyph_id")
         if not point_glyph:
-            point_details = (
-                celestial_points[point_idx]
-                if celestial_points is not None and point_idx < len(celestial_points)
-                else None
-            )
             point_glyph = (
                 point_name
                 if point_details is not None and point_details.point_type == "House"
                 else resolve_glyph_id(point_name)
             )
         kr_attrs = f'kr:node="ChartPoint" kr:slug="{escape_svg_text(point_name)}" kr:horoscope="1"'
-        if celestial_points is not None and point_idx < len(celestial_points):
-            cp = celestial_points[point_idx]
+        if point_details is not None:
+            cp = point_details
             kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
+            kr_attrs += point_state_attributes(cp)
         # kr:cx / kr:cy — glyph center in the FULL_WHEEL-LOCAL frame, matching
         # _generate_point_svg. The outer translate(-6,-6) plus inner scale(0.5)
         # and pre-doubled use x/y place the symbol center exactly at
@@ -1236,13 +1253,24 @@ def _draw_secondary_points(
             f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
             f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_glyph}" />'
         )
-        if is_retrograde:
-            # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.
-            # Inner coordinate space is 2x due to scale(0.5) wrapper.
-            retro_x = point_x * 2 + 22
-            retro_y = point_y * 2 + 18
+        # Same offset logic as _generate_point_svg: bottom-right foot of the
+        # glyph. Inner coordinate space is 2x due to the scale(0.5) wrapper.
+        marker_x = point_x * 2 + 22
+        marker_y = point_y * 2 + 18
+        station = (
+            STATION_LABELS.get(getattr(point_details, "motion_state", None) or "")
+            if show_motion_state and point_details is not None
+            else None
+        )
+        if station is not None:
             point_svg += (
-                f'<g transform="translate({retro_x},{retro_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
+                f'<text x="{marker_x}" y="{marker_y + 6}" '
+                f'style="fill: var(--kerykeion-color-warning); font-size: 11px; font-weight: bold;"'
+                f">{station}</text>"
+            )
+        elif is_retrograde:
+            point_svg += (
+                f'<g transform="translate({marker_x},{marker_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
             )
         point_svg += "</g></g>"
 

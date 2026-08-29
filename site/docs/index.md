@@ -118,8 +118,8 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Advanced Calculations
 
 -   **[Eclipse Factory](/content/docs/eclipse_factory)**: Solar and lunar eclipse search (global or location-specific).
--   **[Planetary Phenomena](/content/docs/planetary_phenomena_factory)**: Elongation, phase, magnitude, morning/evening star status.
--   **[Planetary Nodes & Apsides](/content/docs/planetary_nodes_factory)**: Ascending/descending nodes and perihelion/aphelion.
+-   **[Planetary Phenomena](/content/docs/planetary_phenomena_factory)**: Elongation, phase, magnitude, morning/evening star status, and the solar phase (cazimi / combust / under the beams / free).
+-   **[Planetary Nodes & Apsides](/content/docs/planetary_nodes_factory)**: Ascending/descending nodes and the orbit's periapsis/apoapsis.
 -   **[Heliacal Risings & Settings](/content/docs/heliacal_factory)**: First/last visibility of planets relative to the Sun.
 -   **[Occultation Factory](/content/docs/occultation_factory)**: Lunar occultation search (global or location-specific).
 -   **[Relocated Charts](/content/docs/relocated_chart_factory)**: Chart relocation preserving planetary positions.
