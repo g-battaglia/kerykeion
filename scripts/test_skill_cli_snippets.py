@@ -72,6 +72,10 @@ def run_block(code: str, *, workdir: Path, timeout: float) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, f"timed out after {timeout:g}s"
     if completed.returncode == 0:
+        # ``jq -r .missing`` prints a bare ``null`` and exits 0: an example that
+        # names a field the payload does not have would pass on exit code alone.
+        if any(line.strip() == "null" for line in completed.stdout.splitlines()):
+            return False, "prints a bare `null`: a jq path names a field the payload does not have"
         return True, ""
     tail = (completed.stderr or completed.stdout or "").strip().splitlines()
     detail = "\n      ".join(tail[-6:]) if tail else "(no output)"

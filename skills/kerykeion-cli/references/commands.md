@@ -45,7 +45,7 @@ kerykeion aspects -s ada -f json | jq '.aspects | length'
 kerykeion aspects -s ada -S bob -f json | jq '.aspects | length'
 kerykeion aspects -s ada --declinations --orb 1.0 -f json | jq 'length'
 kerykeion dominants -s ada --method almuten_figuris -f json | jq 'keys | length'
-kerykeion moon -s ada -f json | jq -r '.moon_phase.moon_phase_name'
+kerykeion moon -s ada -f json | jq -r '.moon.phase_name'
 kerykeion relationship-score -s ada -S bob -f json | jq -r '.score_description'
 ```
 
@@ -60,7 +60,7 @@ Declination aspects use a single `--orb` instead and refuse `--aspects` and
 `solar-arc`, `fixed-stars`.
 
 ```bash
-kerykeion technique profections -s ada -f json | jq -r '.profected_year_house'
+kerykeion technique profections -s ada -f json | jq -r '.current.house'
 kerykeion technique zr -s ada --lot fortune --levels 2 -f json | jq 'keys | length'
 kerykeion technique solar-arc -s ada --target-year 2026 -f json | jq 'keys | length'
 kerykeion technique fixed-stars -s ada --orb 1.5 -f json | jq 'length'

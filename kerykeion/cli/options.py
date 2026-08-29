@@ -315,7 +315,10 @@ EnvelopeFlag = Annotated[
 # A knob the library defaults to True is declared in the paired --x/--no-x form,
 # otherwise "not given" could never mean False and the negative would be unreachable.
 ThemeOpt = Annotated[
-    Str, chart("--theme", help="Chart theme: light, dark, dark-high-contrast, classic, strawberry, black-and-white.")
+    Str,
+    chart(
+        "--theme", help="Chart theme: classic, dark, black-and-white (`kerykeion info methods` lists the current set)."
+    ),
 ]
 ChartLanguageOpt = Annotated[
     Str, chart("--chart-language", help="Language of the chart labels: EN, FR, PT, IT, CN, ES, RU, TR, DE, HI.")

@@ -101,7 +101,7 @@ the snapshot does not.
 ## Checking a profile still builds
 
 ```bash
-kerykeion subject verify ada -f json | jq '{ok, sun: .sun_sign, snapshot}'
+kerykeion subject verify ada -f json | jq '{ok, sun, snapshot}'
 ```
 
 `verify` is the cheap pre-flight for a batch: it surfaces a malformed recipe, a

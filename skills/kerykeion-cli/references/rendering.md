@@ -13,7 +13,7 @@ kerykeion subject save ada --name Ada --date 1815-12-10 --time 18:00 \
 
 | Flag | Values / effect |
 |---|---|
-| `--theme` | `light`, `dark`, `dark-high-contrast`, `classic`, `strawberry`, `black-and-white` |
+| `--theme` | `classic`, `dark`, `black-and-white` (`kerykeion info methods` lists the current set) |
 | `--chart-language` | `EN FR PT IT CN ES RU TR DE HI` |
 | `--style` | `classic` or `modern` (default) |
 | `--custom-title` | replaces the title line |

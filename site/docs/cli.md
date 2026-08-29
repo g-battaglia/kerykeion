@@ -98,7 +98,7 @@ listing the valid set.
 
 | Flag | Values |
 |------|--------|
-| `--theme` | `light`, `dark`, `dark-high-contrast`, `classic`, `strawberry`, `black-and-white` |
+| `--theme` | `classic`, `dark`, `black-and-white` (`kerykeion info methods` lists the current set) |
 | `--chart-language` | `EN FR PT IT CN ES RU TR DE HI` |
 | `--style` | `classic`, `modern` (default) |
 | `--svg-variant` | `full` (default), `wheel`, `aspect-grid` |
