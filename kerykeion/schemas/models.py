@@ -896,6 +896,14 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
             charts. This is the angular difference between tropical 0 Aries and
             sidereal 0 Aries at the chart's date/time, as determined by the
             selected sidereal mode. ``None`` for tropical charts. Added in v5.12.
+        nakshatra_ayanamsa: The ayanamsa used to place the nakshatras when the
+            chart itself is NOT sidereal. ``None`` on a sidereal chart (its own
+            ``sidereal_mode`` / ``ayanamsa_value`` already apply), when the
+            nakshatras were not computed, and when the legacy uncorrected
+            behaviour was requested explicitly. Added in v6.
+        nakshatra_ayanamsa_value: The offset in degrees actually subtracted from
+            each point's longitude before deriving its nakshatra. ``None``
+            exactly when ``nakshatra_ayanamsa`` is. Added in v6.
         active_points: List of celestial points included in calculations.
 
     Celestial & house fields:
@@ -953,6 +961,22 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     custom_ayanamsa_ayan_t0: Optional[float] = Field(
         default=None,
         description="Ayanamsa value in degrees at the reference epoch for USER sidereal mode. None unless sidereal_mode is USER.",
+    )
+    nakshatra_ayanamsa: Optional[SiderealMode] = Field(
+        default=None,
+        description=(
+            "Ayanamsa used to rotate this chart's longitudes into the sidereal frame before "
+            "deriving the nakshatras. Set only on a NON-sidereal chart that computed them: on a "
+            "sidereal chart the chart's own sidereal_mode/ayanamsa_value are the answer, and the "
+            "legacy uncorrected behaviour records None."
+        ),
+    )
+    nakshatra_ayanamsa_value: Optional[float] = Field(
+        default=None,
+        description=(
+            "Offset in degrees actually subtracted from each point's longitude before deriving "
+            "its nakshatra. None exactly when nakshatra_ayanamsa is None."
+        ),
     )
 
     @model_validator(mode="after")

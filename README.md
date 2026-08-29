@@ -2026,6 +2026,12 @@ print(f"Sun dignity: {subject.sun.essential_dignity}")
 
 Lunar mansions with pada and Vimsottari Dasha lord.
 
+The nakshatras divide the *sidereal* zodiac. A sidereal chart supplies those
+longitudes itself; on a tropical chart they are rotated by `nakshatra_ayanamsa`
+(default `"LAHIRI"`) for the 27-fold division only, so the chart stays tropical
+and still names the nakshatra a Jyotish chart would name. Pass
+`nakshatra_ayanamsa=None` to get back the pre-v6 uncorrected values.
+
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1985, 4, 15, 8, 30,

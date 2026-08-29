@@ -6,9 +6,13 @@ The absolute sidereal longitude (0-360) is used to determine which
 nakshatra a point falls in, along with the pada (quarter 1-4) and
 the Vimsottari Dasha lord.
 
-Note: For accurate Nakshatra calculation, the input position should be
-a sidereal longitude. When used with tropical charts, the result is
-approximate (the position is treated as-is without ayanamsa correction).
+This function takes the longitude it is given and divides the circle: it
+applies no ayanamsa of its own, so the caller must hand it a SIDEREAL
+longitude. ``AstrologicalSubjectFactory`` does exactly that — a sidereal
+chart's own longitudes, or a non-sidereal chart's rotated by its
+``nakshatra_ayanamsa`` — and a caller working from raw tropical positions
+must subtract the ayanamsa itself, or every result lands about two
+nakshatras away.
 """
 
 from __future__ import annotations
@@ -20,8 +24,9 @@ def calculate_nakshatra(abs_pos: float) -> dict:
     """Calculate Nakshatra data for a given absolute zodiacal position.
 
     Args:
-        abs_pos: Absolute position in the zodiac (0-360 degrees).
-            For best results, use sidereal longitude.
+        abs_pos: Absolute SIDEREAL longitude (0-360 degrees). No ayanamsa is
+            applied here: a tropical longitude passed in is divided as if it
+            were sidereal, which lands about two nakshatras off.
 
     Returns:
         Dict with keys:

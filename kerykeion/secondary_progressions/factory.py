@@ -421,6 +421,11 @@ class SecondaryProgressionFactory:
             calculate_gauquelin=natal_subject.gauquelin_sector_cusps is not None,
             calculate_dignities=_any_point_has("essential_dignity"),
             calculate_nakshatra=_any_point_has("nakshatra"),
+            # The ayanamsa the natal placed its nakshatras with is a stored field,
+            # so it is carried over rather than inferred — otherwise a natal cast
+            # in a non-default mode (or opted into the legacy uncorrected values)
+            # got a progression whose nakshatras disagreed with its own.
+            nakshatra_ayanamsa=natal_subject.nakshatra_ayanamsa,
             calculate_local_space=_any_point_has("azimuth"),
         )
 
