@@ -335,3 +335,36 @@ def test_lunation_day_stays_in_range_all_around_the_circle() -> None:
         assert day >= previous, f"{angle:.2f}° went backwards: {previous} → {day}"
         previous = day
         angle += 0.01
+
+
+class TestPreA91PayloadsStillValidate:
+    """A LunarPhaseModel dumped before 6.0.0a91 has no major_phase/stage: it must load."""
+
+    def test_missing_fields_are_derived_from_the_separation(self):
+        from kerykeion.schemas.models import LunarPhaseModel
+
+        legacy = {
+            "degrees_between_s_m": 180.2334,
+            "moon_phase": 15,
+            "moon_emoji": "🌖",
+            "moon_phase_name": "Waning Gibbous",
+        }
+        model = LunarPhaseModel.model_validate(legacy)
+        assert model.major_phase == "Full Moon"
+        assert model.stage == "waning"
+
+    def test_explicit_fields_are_kept(self):
+        from kerykeion.schemas.models import LunarPhaseModel
+
+        model = LunarPhaseModel.model_validate(
+            {
+                "degrees_between_s_m": 45.0,
+                "moon_phase": 4,
+                "moon_emoji": "🌒",
+                "moon_phase_name": "Waxing Crescent",
+                "major_phase": "First Quarter",
+                "stage": "waxing",
+            }
+        )
+        assert model.major_phase == "First Quarter"
+        assert model.stage == "waxing"
