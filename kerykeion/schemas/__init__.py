@@ -50,6 +50,7 @@ from .literals import (
     AspectName,
     ReturnType,
     DominantMethod,
+    SolarPhase,
 )
 from .models import (
     SubscriptableBaseModel,
@@ -101,6 +102,7 @@ from .models import (
     VoidOfCourseWindowModel,
     VoidOfCourseWindowsCollectionModel,
     # Planetary phenomena
+    SolarPhaseThresholdsModel,
     PlanetaryPhenomenaModel,
     PlanetaryPhenomenaCollectionModel,
     # Zodiacal releasing
@@ -320,6 +322,8 @@ __all__ = [
     "VoidOfCourseWindowModel",
     "VoidOfCourseWindowsCollectionModel",
     # Planetary phenomena (from models)
+    "SolarPhase",
+    "SolarPhaseThresholdsModel",
     "PlanetaryPhenomenaModel",
     "PlanetaryPhenomenaCollectionModel",
     # Zodiacal releasing (from models)
