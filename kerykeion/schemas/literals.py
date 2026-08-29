@@ -530,3 +530,29 @@ Values:
     - "elemental": Simple elemental and modal balance, by weighted or pure count
       of the chart's points.
 """
+
+
+SolarPhase: TypeAlias = Literal["cazimi", "combust", "under_the_beams", "free"]
+"""How near the Sun a body is, named as a condition of visibility.
+
+The classical tradition reads nearness to the Sun as a state of the body, not as
+a mere number of degrees, and gives that state four names. They are ordered from
+the closest outwards:
+
+- ``"cazimi"``: in the heart of the Sun. The narrowest of the four (a 17-arcminute
+  half-width is the usual reading of "within 16 minutes of the Sun's centre").
+- ``"combust"``: burnt. Close enough that the body cannot be seen at all.
+- ``"under_the_beams"``: within the Sun's rays. Not yet risen out of the twilight.
+- ``"free"``: far enough from the Sun to be seen in a dark sky.
+
+The three cut-offs that separate them are not a constant of nature and are not
+agreed across schools, so they are parameters:
+:class:`~kerykeion.schemas.models.SolarPhaseThresholdsModel` carries the values a
+given result was computed with, and the caller may replace them.
+
+The quantity compared against the cut-offs is the true angular separation from
+the Sun (the elongation the ephemeris reports, latitude included), NOT the
+difference in ecliptic longitude alone. The two agree only for a body on the
+ecliptic, and the difference is the reason a body may sit at the same longitude
+as the Sun and still be several degrees away from it in the sky.
+"""

@@ -31,7 +31,7 @@ from datetime import datetime, timedelta
 from typing import Any, Literal, Optional, Union
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field, field_validator, model_validator
-from kerykeion.schemas.literals import AspectName, ClassicalPlanet, VocAspectName, VocTargetPlanet
+from kerykeion.schemas.literals import AspectName, ClassicalPlanet, SolarPhase, VocAspectName, VocTargetPlanet
 
 # Import directly from literals (NOT from the kerykeion.schemas package
 # __init__): importing from the package while the package is importing this
@@ -1971,6 +1971,59 @@ ChartDataModel = Union[SingleChartDataModel, DualChartDataModel]
 # =============================================================================
 
 
+class SolarPhaseThresholdsModel(SubscriptableBaseModel):
+    """The three elongation cut-offs that name a body's condition near the Sun.
+
+    Each value is a half-width in degrees, measured from the Sun's centre as a
+    true angular separation (latitude included, not longitude alone). A body is
+    ``"cazimi"`` below ``cazimi_deg``, ``"combust"`` below ``combust_deg``,
+    ``"under_the_beams"`` below ``under_beams_deg``, and ``"free"`` at or beyond
+    it. Every comparison is strict, so a body sitting exactly on a cut-off takes
+    the outer name.
+
+    The defaults are the values most often quoted in the classical literature —
+    16 arcminutes (0.2833°) for cazimi, 8°30' for combustion, 17° for the beams —
+    but they are conventions, not measurements, and the schools disagree about
+    all three (some read the beams at 15°, some scale combustion by planet). They
+    are therefore parameters: pass a different instance to the phenomena factory
+    and the labels move with it. The instance actually used is echoed on
+    :class:`PlanetaryPhenomenaCollectionModel` so a consumer never has to guess
+    which convention produced a label.
+
+    Attributes:
+        cazimi_deg: Below this separation the body is in the heart of the Sun.
+        combust_deg: Below this separation the body is burnt (invisible).
+        under_beams_deg: Below this separation the body is still in the Sun's rays.
+    """
+
+    cazimi_deg: float = Field(
+        default=0.2833, gt=0, description="Half-width of cazimi in degrees (default 16 arcminutes)"
+    )
+    combust_deg: float = Field(
+        default=8.5, gt=0, description="Half-width of combustion in degrees (default 8°30')"
+    )
+    under_beams_deg: float = Field(
+        default=17.0, gt=0, description="Half-width of the Sun's beams in degrees (default 17°)"
+    )
+
+    @model_validator(mode="after")
+    def _thresholds_must_widen_outwards(self) -> "SolarPhaseThresholdsModel":
+        """Reject an out-of-order set instead of silently starving a label.
+
+        The classification walks the three cut-offs from the inside out, so a set
+        that does not widen (``combust_deg <= cazimi_deg``, say) makes one of the
+        four names unreachable — a configuration error that would otherwise show
+        up only as phases that never appear.
+        """
+        if not (self.cazimi_deg < self.combust_deg < self.under_beams_deg):
+            raise ValueError(
+                "Solar-phase thresholds must widen outwards: "
+                f"cazimi_deg ({self.cazimi_deg}) < combust_deg ({self.combust_deg}) "
+                f"< under_beams_deg ({self.under_beams_deg})."
+            )
+        return self
+
+
 class PlanetaryPhenomenaModel(SubscriptableBaseModel):
     """Observational phenomena for a single planet at a specific moment.
 
@@ -1984,10 +2037,27 @@ class PlanetaryPhenomenaModel(SubscriptableBaseModel):
     apparent_diameter: float = Field(description="Angular size as seen from Earth in degrees")
     apparent_magnitude: float = Field(description="Visual brightness (lower = brighter)")
     is_morning_star: Optional[bool] = Field(
-        default=None, description="True if planet rises before the Sun (Mercury/Venus only)"
+        default=None,
+        description=(
+            "Purely geometric: True when the planet is west of the Sun in longitude "
+            "and so rises before it (Mercury/Venus only). Says nothing about whether "
+            "the planet can be seen — read `solar_phase` for that"
+        ),
     )
     is_evening_star: Optional[bool] = Field(
-        default=None, description="True if planet sets after the Sun (Mercury/Venus only)"
+        default=None,
+        description=(
+            "Purely geometric: True when the planet is east of the Sun in longitude "
+            "and so sets after it (Mercury/Venus only). Says nothing about whether "
+            "the planet can be seen — read `solar_phase` for that"
+        ),
+    )
+    solar_phase: Optional[SolarPhase] = Field(
+        default=None,
+        description=(
+            "Condition relative to the Sun — cazimi / combust / under_the_beams / free — "
+            "from `elongation` and the collection's `solar_phase_thresholds`"
+        ),
     )
 
 
@@ -1997,6 +2067,10 @@ class PlanetaryPhenomenaCollectionModel(SubscriptableBaseModel):
     iso_datetime: str = Field(description="ISO 8601 formatted datetime")
     julian_day: float = Field(description="Julian Day number")
     phenomena: list[PlanetaryPhenomenaModel] = Field(description="Phenomena for each planet")
+    solar_phase_thresholds: SolarPhaseThresholdsModel = Field(
+        default_factory=SolarPhaseThresholdsModel,
+        description="The cut-offs every `solar_phase` in this collection was labelled with",
+    )
 
 
 # =============================================================================
