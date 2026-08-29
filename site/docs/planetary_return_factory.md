@@ -157,6 +157,7 @@ Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_no
 | `active_fixed_stars`       | `List[str] \| None`     | `None`      | Fixed-star catalog names to compute on the return chart.           |
 | `calculate_dignities`      | `bool`                   | `False`     | Populate essential dignity data.                                   |
 | `calculate_nakshatra`      | `bool`                   | `False`     | Populate Vedic nakshatra data.                                     |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | *inherited* | Ayanamsa used to place the nakshatras on a non-sidereal return chart. Passed explicitly it wins — `None` included, which is the pre-v6 uncorrected division. Left out, the return inherits the mode the natal actually placed its nakshatras with, and falls back to `"LAHIRI"` when the natal placed none. |
 | `calculate_gauquelin`      | `bool`                   | `False`     | Populate Gauquelin sectors.                                        |
 | `calculate_nutation`       | `bool`                   | `False`     | Populate the nutation model.                                       |
 | `calculate_local_space`    | `bool`                   | `False`     | Populate local-space azimuth/altitude.                             |

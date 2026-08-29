@@ -35,6 +35,7 @@ from .literals import (
     PointType,
     LunarPhaseEmoji,
     LunarPhaseName,
+    LunarPhaseStage,
     SiderealMode,
     HousesSystemIdentifier,
     PerspectiveType,
@@ -50,6 +51,8 @@ from .literals import (
     AspectName,
     ReturnType,
     DominantMethod,
+    SolarPhase,
+    ApsisKind,
 )
 from .models import (
     SubscriptableBaseModel,
@@ -101,6 +104,7 @@ from .models import (
     VoidOfCourseWindowModel,
     VoidOfCourseWindowsCollectionModel,
     # Planetary phenomena
+    SolarPhaseThresholdsModel,
     PlanetaryPhenomenaModel,
     PlanetaryPhenomenaCollectionModel,
     # Zodiacal releasing
@@ -255,6 +259,7 @@ __all__ = [
     "PointType",
     "LunarPhaseEmoji",
     "LunarPhaseName",
+    "LunarPhaseStage",
     "SiderealMode",
     "HousesSystemIdentifier",
     "PerspectiveType",
@@ -320,6 +325,9 @@ __all__ = [
     "VoidOfCourseWindowModel",
     "VoidOfCourseWindowsCollectionModel",
     # Planetary phenomena (from models)
+    "SolarPhase",
+    "SolarPhaseThresholdsModel",
+    "ApsisKind",
     "PlanetaryPhenomenaModel",
     "PlanetaryPhenomenaCollectionModel",
     # Zodiacal releasing (from models)

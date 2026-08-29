@@ -24,7 +24,7 @@ zodiacal_releasing,horary,primary_directions,receptions}/factory.py`, plus
 
 ## Frame prerequisites and refusals
 
-Each factory validates its own prerequisites and raises `KerykeionException`. Verified in 6.0.0a90:
+Each factory validates its own prerequisites and raises `KerykeionException`. Verified in 6.0.0a91:
 
 | Factory | Heliocentric / barycentric / selenocentric / planetocentric subject | Midpoint composite subject |
 |---|---|---|
@@ -263,15 +263,18 @@ stores the five keys on each `KerykeionPointModel` (see
 
 - `calculate_nakshatra(abs_pos: float) -> dict` — keys `nakshatra` (name),
   `nakshatra_number` (1–27), `nakshatra_pada` (1–4), `nakshatra_lord`
-  (Vimsottari Dasha lord). Expects a **sidereal** longitude; a tropical value
-  is used as-is with no ayanamsa correction (approximate).
+  (Vimsottari Dasha lord). It divides the circle and applies no ayanamsa of its
+  own, so it expects a **sidereal** longitude; a tropical one passed in lands
+  about two nakshatras off.
 - `get_dasha_lord(nakshatra_index: int) -> str` — 0-based index into the
   repeating 9-lord Vimsottari sequence (Ketu, Venus, Sun, Moon, Mars, Rahu,
   Jupiter, Saturn, Mercury).
 
 Building a subject with `calculate_nakshatra=True` stores the four keys on
-every point; with `zodiac_type="Tropical"` it computes them anyway and only
-logs a warning — use `"Sidereal"` for meaningful nakshatras.
+every point, and the factory supplies the sidereal longitude either way: a
+sidereal chart's own, or a non-sidereal chart's rotated by `nakshatra_ayanamsa`
+(default `"LAHIRI"`) for the division only. Call the helper directly and the
+rotation is yours to do. See `references/zodiac-houses-perspectives.md`.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory

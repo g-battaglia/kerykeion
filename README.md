@@ -1790,7 +1790,7 @@ print(johnny.model_dump_json(indent=2))
 
 ## Moon Phase Details
 
-The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use the ephemeris backend for ~1 second precision.
+The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, moonrise/moonset, and apparent solar position. All timings use the ephemeris backend for ~1 second precision. `moonrise` and `moonset` are ISO-8601 strings in the subject's local zone, with the same instants as Unix timestamps beside them; either is `None` on the roughly one civil day in thirty that has no such event.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
@@ -1888,6 +1888,10 @@ print(overview.model_dump_json(exclude_none=True, indent=2))
     "stage": "waxing",
     "illumination": "12%",
     "emoji": "🌒",
+    "moonrise": "2025-04-01T06:29:49.367603+00:00",
+    "moonrise_timestamp": 1743488989,
+    "moonset": "2025-04-01T23:37:11.433132+00:00",
+    "moonset_timestamp": 1743550631,
     "next_lunar_eclipse": { "type": "Total Lunar Eclipse", "...": "..." },
     "detailed": { "upcoming_phases": { "...": "..." }, "illumination_details": { "...": "..." } }
   },
@@ -2026,14 +2030,20 @@ print(f"Sun dignity: {subject.sun.essential_dignity}")
 
 Lunar mansions with pada and Vimsottari Dasha lord.
 
+The nakshatras divide the *sidereal* zodiac. A sidereal chart supplies those
+longitudes itself; on a tropical chart they are rotated by `nakshatra_ayanamsa`
+(default `"LAHIRI"`) for the 27-fold division only, so the chart stays tropical
+and still names the nakshatra a Jyotish chart would name. Pass
+`nakshatra_ayanamsa=None` to get back the pre-v6 uncorrected values.
+
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1985, 4, 15, 8, 30,
     lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
-    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
     calculate_nakshatra=True,
 )
 print(f"Moon nakshatra: {subject.moon.nakshatra}, pada: {subject.moon.nakshatra_pada}")
+print(f"Rotated by {subject.nakshatra_ayanamsa}: {subject.nakshatra_ayanamsa_value:.4f} deg")
 ```
 
 ### Eclipse Search
@@ -2054,7 +2064,15 @@ for ecl in result.lunar_eclipses:
 
 ### Planetary Phenomena
 
-Phase angle, elongation, apparent magnitude, and morning/evening star status.
+Phase angle, elongation, apparent magnitude, morning/evening star status, and the
+solar phase.
+
+`solar_phase` names the classical condition near the Sun — `"cazimi"`,
+`"combust"`, `"under_the_beams"` or `"free"` — read off the elongation against
+the collection's `solar_phase_thresholds` (0.2833° / 8.5° / 17° by default, and
+replaceable, since the schools disagree). `is_morning_star` / `is_evening_star`
+are a different question and purely geometric: which side of the Sun the planet
+stands on, with no visibility threshold at all.
 
 ```python
 from kerykeion import PlanetaryPhenomenaFactory, AstrologicalSubjectFactory
@@ -2066,13 +2084,20 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 phenom = PlanetaryPhenomenaFactory.from_subject(subject)
 venus = next(p for p in phenom.phenomena if p.name == "Venus")
 print(f"Venus elongation: {venus.elongation:.2f}, magnitude: {venus.apparent_magnitude:.2f}")
+print(f"Solar phase: {venus.solar_phase}")
 ```
 
 **📖 Full documentation: [Planetary Phenomena Factory](https://www.kerykeion.net/content/docs/planetary_phenomena_factory)**
 
 ### Planetary Nodes & Apsides
 
-Ascending/descending node and perihelion/aphelion positions.
+Ascending/descending node and the orbit's periapsis/apoapsis.
+
+The apsides carry two names for the same two points. `periapsis`/`apoapsis` are
+generic and always correct; `perihelion`/`aphelion` are deprecated — they name
+the Sun, which is right for the planets and wrong for the Moon, which goes round
+the Earth. `apsis_kind` says which reading applies (`"geocentric"` for the Moon
+alone, whose apoapsis is to the decimal the Black Moon Lilith).
 
 ```python
 from kerykeion import PlanetaryNodesFactory
@@ -2080,6 +2105,7 @@ from kerykeion import PlanetaryNodesFactory
 nodes = PlanetaryNodesFactory.from_julian_day(2451545.0, planets=["Mars", "Jupiter"])
 for entry in nodes.nodes:
     print(f"{entry.planet_name}: ascending node {entry.ascending_node.abs_pos:.2f}")
+    print(f"  apoapsis {entry.apoapsis.abs_pos:.2f} ({entry.apsis_kind})")
 ```
 
 **📖 Full documentation: [Planetary Nodes & Apsides](https://www.kerykeion.net/content/docs/planetary_nodes_factory)**

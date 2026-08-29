@@ -112,9 +112,22 @@ print(localize_naive(gap, tz, is_dst=True).utcoffset())  # 2:00:00
 
 | Name | Signature | Purpose |
 |---|---|---|
-| `calculate_moon_phase` | `(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseModel` | 28-step phase from two longitudes (degrees between, phase int, emoji, name) |
+| `calculate_moon_phase` | `(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseModel` | Full `LunarPhaseModel` from two longitudes: `degrees_between_s_m`, `moon_phase` (1–28), `moon_emoji`, `moon_phase_name`, `major_phase`, `stage` |
 | `get_moon_emoji_from_phase_int` | `(phase: int) -> LunarPhaseEmoji` | Phase 1–28 → emoji; out of range raises `KerykeionException` |
 | `get_moon_phase_name_from_phase_int` | `(phase: int) -> LunarPhaseName` | Phase 1–28 → name (e.g. `"Full Moon"`) |
+
+`moon_phase_name` and `moon_emoji` come from windows **centred on the syzygies**:
+New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and
+the four crescent/gibbous names fill the rest. The name therefore tracks the
+event — "Full Moon" means near the opposition, not merely inside bin 15. The
+`moon_phase` index (1–28) is unchanged. `major_phase` is the nearest of the four
+syzygy/quadrature events and `stage` is `"waxing"` or `"waning"`.
+
+The two `*_from_phase_int` helpers take only the 1–28 index, so they cannot use
+those windows: they are the older 28-bin approximation, kept for callers that
+have an index and nothing else, and they disagree with the model's own
+`moon_phase_name` near a boundary. Read the fields off `LunarPhaseModel` when
+you have it.
 
 ## Formatting and misc
 
@@ -138,6 +151,50 @@ fixed stars, cusps) or unknown speed. Also exported: `MEAN_DAILY_MOTION_DEGREES`
 (dict of mean motions), thresholds `STATIONARY_FRACTION` (0.05), `SLOW_FRACTION`
 (0.8), `FAST_FRACTION` (1.2), and the `MotionState` alias. Subjects already
 carry `point.motion_state` when computed; call this only for raw speeds.
+
+## Solar-phase classifier (`kerykeion.planetary_phenomena.factory`)
+
+**Module import** (not in the subpackage's `__all__`): `from
+kerykeion.planetary_phenomena.factory import classify_solar_phase`.
+
+`classify_solar_phase(elongation: float, thresholds: SolarPhaseThresholdsModel)
+-> SolarPhase` — names a body's condition near the Sun: `"cazimi"`, `"combust"`,
+`"under_the_beams"`, `"free"`. The cut-offs are walked from the inside out and
+every comparison is strict, so a body exactly on one takes the outer name.
+`elongation` is the TRUE angular separation the ephemeris reports (latitude
+included), not the difference in ecliptic longitude. `SolarPhaseThresholdsModel`
+and the `SolarPhase` literal come from `kerykeion.schemas`; the defaults are
+0.2833° / 8.5° / 17°, and the model rejects a set that does not widen outwards.
+`PlanetaryPhenomenaFactory` already fills `solar_phase` per body — call this
+only for a raw elongation.
+
+```python
+from kerykeion.planetary_phenomena.factory import classify_solar_phase
+from kerykeion.schemas import SolarPhaseThresholdsModel
+
+t = SolarPhaseThresholdsModel()
+print(classify_solar_phase(0.1, t), classify_solar_phase(20.0, t))
+# cazimi free
+```
+
+## Rise and set (`kerykeion.moon_phase_details.utils`)
+
+**Module import** (not in the subpackage's `__all__`, but in the module's):
+`from kerykeion.moon_phase_details.utils import compute_rise_set_ephe`.
+
+`compute_rise_set_ephe(jd_midnight: float, latitude: float, longitude: float,
+body: Optional[int] = None) -> tuple[Optional[float], Optional[float]]` —
+`(rise_jd, set_jd)` from the backend's `rise_trans`: refracted upper limb,
+standard atmosphere, topocentric parallax for the Moon. `body` defaults to
+`ephe.SUN`, resolved at call time; pass `ephe.MOON` for moonrise/moonset. The
+Julian Day is local midnight expressed in UT, and each result is the NEXT event
+after it — for the Moon that routinely falls on the following civil day, so the
+caller must window it itself. `None` where the backend finds no event (polar
+day/night). `compute_sun_rise_set_ephe(jd_midnight, latitude, longitude)` is the
+unchanged Sun-only alias, kept for existing callers and patch targets. Call
+inside an open `ephemeris_session()` — the helper mutates the global ephemeris
+path. `MoonPhaseDetailsFactory` already does all of this; see
+`references/calendars-hours-moon.md`.
 
 Cross-references: provenance/backends in `references/backends-and-provenance.md`;
 polar-house behavior in `references/zodiac-houses-perspectives.md`; the moon-phase

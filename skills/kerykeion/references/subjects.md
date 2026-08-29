@@ -105,9 +105,9 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 - **Houses are always present**: `first_house` … `twelfth_house` are required fields, plus `houses_names_list` (ordered `Houses` literal names `"First_House"` … `"Twelfth_House"`, which are also the values point `house` fields hold).
 - **Every celestial point field is `Optional`** — a real field whose point was not computed reads as `None` (`subject.eris` on a default subject gives `None`, not an error). A misspelled or non-existent name instead raises `AttributeError` on both attribute and subscript access; only `.get("name", default)` returns a default. Membership in `subject.active_points` and field population are NOT the same set: the four axes are always populated, and Arabic-part formulas auto-populate their primaries (e.g. `active_points=["Pars_Amoris"]` also fills `sun` and `venus`) without adding them to `subject.active_points`.
 - **Sun/Moon fail loudly**: a calculation failure on a luminary (typically a date outside loaded ephemeris coverage) raises `KerykeionException`; optional bodies degrade gracefully — dropped from `active_points` and recorded in `subject.ephemeris_warnings` (`EphemerisWarningModel`: `code`, `point_name`, `body_id`, `requested_jd`, `message`, optional `coverage_start_jd`/`coverage_end_jd`).
-- Metadata: `name`, `city`, `nation`, `lng`, `lat`, `altitude`, `tz_str`, `year/month/day/hour/minute`, `iso_formatted_local_datetime`, `iso_formatted_utc_datetime`, `julian_day`, `day_of_week`, `is_diurnal` (sect), `zodiac_type`, `sidereal_mode`, `ayanamsa_value` (sidereal only), `houses_system_identifier` (the REQUEST), `houses_system_name`, `perspective_type`, `active_points`.
+- Metadata: `name`, `city`, `nation`, `lng`, `lat`, `altitude`, `tz_str`, `year/month/day/hour/minute`, `iso_formatted_local_datetime`, `iso_formatted_utc_datetime`, `julian_day`, `day_of_week`, `is_diurnal` (sect), `zodiac_type`, `sidereal_mode`, `ayanamsa_value` (sidereal only), `nakshatra_ayanamsa` / `nakshatra_ayanamsa_value` (non-sidereal charts that computed nakshatras; `None` otherwise — and `None` on the legacy opt-out too, where `calculate_nakshatra=True` with `nakshatra_ayanamsa=None` DOES compute the nakshatras but records neither field, because no ayanamsa was applied), `houses_system_identifier` (the REQUEST), `houses_system_name`, `perspective_type`, `active_points`.
 - Polar charts: `polar_house_fallbacks` records house-system substitutions; properties `effective_houses_system_identifier` / `effective_houses_system_name` give the system actually used (display those, not the request). `coincident_house_cusps` (`list[list[int]]`, 1-based house numbers) lists groups of cusps that stand on one longitude, so the houses between them have no width; empty for every ordinary chart. An angle that IS such a cusp is filed in the house that cusp opens (`imum_coeli.house == "Fourth_House"` when the IC is the fourth cusp), even where several cusps coincide.
-- Extras: `lunar_phase` (`LunarPhaseModel`: `degrees_between_s_m`, `moon_phase`, `moon_emoji`, `moon_phase_name` — or `None`), `fixed_stars` (list), `active_midpoints` (list, populated via `MidpointFactory`), `gauquelin_sector_cusps`, `nutation`.
+- Extras: `lunar_phase` (`LunarPhaseModel`: `degrees_between_s_m`, `moon_phase` (1–28), `moon_emoji`, `moon_phase_name`, `major_phase` (nearest of the four syzygy/quadrature events), `stage` (`"waxing"`/`"waning"`) — or `None`), `fixed_stars` (list), `active_midpoints` (list, populated via `MidpointFactory`), `gauquelin_sector_cusps`, `nutation`.
 - `is_out_of_bounds` is computed by default (no flag) for bodies with a declination; it stays `None` on the axes/cusps.
 - `subject.find_fixed_star(name)` → `Optional[KerykeionPointModel]`: case-insensitive lookup in `fixed_stars`; spaces/dashes/underscores interchangeable (`"deneb algedi"` == `"Deneb_Algedi"`). Returns `None` when the star was not requested.
 
@@ -124,7 +124,7 @@ Each populated point/house/star is a `KerykeionPointModel` (also a `Subscriptabl
 | Star-only | `magnitude` | `None` for non-stars |
 | Discovery-only | `near_point`, `orb`, `aspect`, `longitude`, `latitude`, `degree` | populated by `FixedStarDiscoveryFactory` results only |
 | Dignities (flag) | `decan_number`, `decan_ruler`, `term_ruler`, `essential_dignity`, `dignity_score` (−9..+11) | `calculate_dignities=True` |
-| Nakshatra (flag) | `nakshatra`, `nakshatra_number` (1–27), `nakshatra_pada` (1–4), `nakshatra_lord` | `calculate_nakshatra=True` |
+| Nakshatra (flag) | `nakshatra`, `nakshatra_number` (1–27), `nakshatra_pada` (1–4), `nakshatra_lord` | `calculate_nakshatra=True`; on a non-sidereal chart the longitudes are rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) first |
 | Gauquelin (flag) | `gauquelin_sector` (1–36, fractional) | `calculate_gauquelin=True` |
 | Local space (flag) | `azimuth`, `altitude_above_horizon` | `calculate_local_space=True` |
 | Provenance | `source`, `precision_class`, `ephemeris_coverage_start_jd`, `ephemeris_coverage_end_jd`, `source_reviewed` | libephemeris backend only — semantics in `references/backends-and-provenance.md` |
@@ -227,11 +227,32 @@ All default `False` except `calculate_lunar_phase` (default `True`); available o
 | Flag | Populates | Trap |
 |---|---|---|
 | `calculate_dignities` | `decan_number/ruler`, `term_ruler`, `essential_dignity`, `dignity_score` on points | never on fixed stars (rulership undefined) |
-| `calculate_nakshatra` | `nakshatra*` fields on points and stars | defined on the SIDEREAL zodiac — with Tropical charts values are ayanamsa-shifted (~24°) and a warning is logged |
+| `calculate_nakshatra` | `nakshatra*` fields on points and stars | defined on the SIDEREAL zodiac — a non-sidereal chart's longitudes are rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) for the division only; `nakshatra_ayanamsa=None` restores the legacy uncorrected values (~24° off) and logs a warning |
 | `calculate_gauquelin` | `gauquelin_sector` per point + `subject.gauquelin_sector_cusps` (36 longitudes) | true latitude-dependent sectors, not uniform 10° |
 | `calculate_nutation` | `subject.nutation` (`NutationObliquityModel`: true/mean obliquity, nutation in longitude/obliquity) | |
 | `calculate_local_space` | `azimuth`, `altitude_above_horizon` per point | Swiss convention: azimuth 0=South, 90=West |
 | `calculate_lunar_phase` | `subject.lunar_phase` | requires Sun and Moon active AND a geo/topocentric perspective; otherwise silently `None` |
+
+`nakshatra_ayanamsa` (`Optional[SiderealMode]`, default `"LAHIRI"`) rides with
+`calculate_nakshatra` on all three constructors. It is a mode name in its own
+right, unrelated to `sidereal_mode`, and is validated even on a Tropical chart
+(`"USER"` still needs the two custom-ayanamsa kwargs — but only on a chart that
+would actually cast it, so `calculate_nakshatra=False` never demands them). It is
+IGNORED on a sidereal chart — those longitudes are already sidereal — and the
+subject then records `nakshatra_ayanamsa=None`. Derived charts inherit it:
+returns and secondary progressions copy the natal's value, and a Davison
+composite adopts it only when both parents agree (otherwise it warns and falls
+back to the default). For `"USER"` agreeing means agreeing on the DEFINITION —
+`custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` — which the composite then
+carries over with the mode.
+Only a mode actually used is inherited — a natal that computed no nakshatras
+records `None` too, and that `None` is not the legacy opt-out, so
+`PlanetaryReturnFactory(..., calculate_nakshatra=True)` on such a natal starts
+from the `"LAHIRI"` default. `PlanetaryReturnFactory` also TAKES the kwarg
+(right after `calculate_nakshatra`), and an explicit value outranks the natal —
+`None` included, which is why its default is a sentinel rather than `None`.
+Secondary progressions and the Davison composite take no such override; they
+read the natal.
 
 ## Composite subjects
 

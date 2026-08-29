@@ -64,13 +64,13 @@ New Moon - Test — Natal Chart Report
 | Twelfth House  | Leo ♌ | 26.23°   | 146.23°           |
 +----------------+--------+----------+-------------------+
 
-+Lunar Phase--------------+--------------------+
-| Lunar Phase Information | Value              |
-+-------------------------+--------------------+
-| Phase Name              | Waning Crescent 🌘 |
-| Sun-Moon Angle          | 359.99°            |
-| Lunation Day            | 28                 |
-+-------------------------+--------------------+
++Lunar Phase--------------+-------------+
+| Lunar Phase Information | Value       |
++-------------------------+-------------+
+| Phase Name              | New Moon 🌑 |
+| Sun-Moon Angle          | 359.99°     |
+| Lunation Day            | 28          |
++-------------------------+-------------+
 
 +Element Distribution-----------+
 | Element  | Count | Percentage |

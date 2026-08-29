@@ -77,6 +77,7 @@ from kerykeion.utilities.core import (
 )
 from kerykeion.settings.config_constants import (
     DEFAULT_ACTIVE_POINTS,
+    DEFAULT_NAKSHATRA_AYANAMSA,
     DEFAULT_SIDEREAL_MODE,
     STANDARD_PLANETS as _STANDARD_PLANETS_CANONICAL,
 )
@@ -454,6 +455,65 @@ def ephemeris_trace() -> Iterator[Optional[Any]]:
                 pass
 
 
+def _ayanamsa_at(
+    julian_day: float,
+    sidereal_mode: SiderealMode,
+    custom_ayanamsa_t0: Optional[float] = None,
+    custom_ayanamsa_ayan_t0: Optional[float] = None,
+) -> float:
+    """Ayanamsa of ``sidereal_mode``, in degrees, at ``julian_day``.
+
+    This is the SAME quantity a sidereal chart stores in ``ayanamsa_value``,
+    obtained the same way (``get_ayanamsa_ex_ut`` with the sidereal flag, after
+    selecting the mode) — so a tropical chart rotated by it lands on the sidereal
+    chart's longitudes to within a microarcsecond (measured worst case: 2.9e-10°,
+    the residue of the round trip through binary). ``get_ayanamsa_ut`` is a
+    different variant (the mean ayanamsa: no nutation) and would leave a ~2
+    arcsecond discrepancy.
+
+    Only ``FLG_SWIEPH | FLG_SIDEREAL`` is passed: the ayanamsa is a rotation of
+    the ecliptic frame, not an observer-dependent place, so the session's
+    topocentric/heliocentric bits have no business in it.
+
+    Must be called INSIDE an open :func:`ephemeris_session` — it selects the
+    process-global sidereal mode, which that session serializes with its lock
+    and resets on exit. Selecting a mode does NOT change any ordinary
+    ``calc_ut`` result: the ayanamsa is applied only to calls that carry
+    ``FLG_SIDEREAL``, which a non-sidereal session's iflag never does.
+
+    Args:
+        julian_day: Julian Day (UT) of the moment.
+        sidereal_mode: Named ayanamsa, or ``"USER"``.
+        custom_ayanamsa_t0: Reference epoch (JD), required for ``"USER"``.
+        custom_ayanamsa_ayan_t0: Ayanamsa (degrees) at ``t0``, required for ``"USER"``.
+
+    Returns:
+        float: The ayanamsa in degrees.
+
+    Raises:
+        KerykeionException: If the mode is unknown to the backend, or ``"USER"``
+            is requested without its two parameters.
+    """
+    if sidereal_mode == "USER":
+        if custom_ayanamsa_t0 is None or custom_ayanamsa_ayan_t0 is None:
+            raise KerykeionException(
+                "Sidereal mode 'USER' requires both custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0."
+            )
+        ephe.set_sid_mode(ephe.SIDM_USER, custom_ayanamsa_t0, custom_ayanamsa_ayan_t0)
+    else:
+        sidm_name = f"SIDM_{sidereal_mode}"
+        try:
+            sidm_const = getattr(ephe, sidm_name)
+        except AttributeError:
+            raise KerykeionException(
+                f"Unknown sidereal mode {sidereal_mode!r}: the ephemeris backend has no "
+                f"ayanamsa constant {sidm_name!r}."
+            ) from None
+        ephe.set_sid_mode(sidm_const)
+
+    return float(ephe.get_ayanamsa_ex_ut(julian_day, ephe.FLG_SWIEPH | ephe.FLG_SIDEREAL)[1])
+
+
 @contextmanager
 def ephemeris_context(
     ephe_path: str,
@@ -534,6 +594,12 @@ class ChartConfiguration:
             ayanamsa. Only used when sidereal_mode is 'USER'. Defaults to None.
         custom_ayanamsa_ayan_t0 (Optional[float]): Ayanamsa value (degrees) at the
             reference epoch t0. Only used when sidereal_mode is 'USER'. Defaults to None.
+        nakshatra_ayanamsa (Optional[SiderealMode]): Ayanamsa used to place the
+            nakshatras when ``calculate_nakshatra`` is on and the chart is NOT
+            sidereal. Ignored on a sidereal chart, whose longitudes already are
+            sidereal. ``None`` opts into the legacy behaviour (tropical
+            longitudes fed to the sidereal division, ~24 deg off). Defaults to
+            'LAHIRI'.
 
     Raises:
         KerykeionException: When invalid configuration combinations are detected,
@@ -557,6 +623,7 @@ class ChartConfiguration:
     custom_ayanamsa_ayan_t0: Optional[float] = None
     calculate_dignities: bool = False
     calculate_nakshatra: bool = False
+    nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA
     calculate_gauquelin: bool = False
     calculate_nutation: bool = False
     calculate_local_space: bool = False
@@ -611,6 +678,33 @@ class ChartConfiguration:
                         "Sidereal mode 'USER' requires both custom_ayanamsa_t0 (reference epoch as Julian Day) "
                         "and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."
                     )
+
+        # Validate the nakshatra ayanamsa. It is a mode name in its own right,
+        # independent of `sidereal_mode`: it may be set on a Tropical chart
+        # (that is its whole purpose) and it is NOT rejected there the way
+        # `sidereal_mode` is.
+        if self.nakshatra_ayanamsa is not None:
+            if self.nakshatra_ayanamsa not in get_args(SiderealMode):
+                raise KerykeionException(
+                    f"'{self.nakshatra_ayanamsa}' is not a valid nakshatra ayanamsa! "
+                    f"Available modes are: {get_args(SiderealMode)}"
+                )
+            if (
+                self.calculate_nakshatra
+                and self.nakshatra_ayanamsa == "USER"
+                and self.zodiac_type != "Sidereal"
+                and (self.custom_ayanamsa_t0 is None or self.custom_ayanamsa_ayan_t0 is None)
+            ):
+                # Only the chart that would actually CAST it needs the definition,
+                # and two things keep a chart from casting it: a sidereal zodiac,
+                # which supplies the rotation itself, and `calculate_nakshatra=False`,
+                # which never asks for one. The same pair gates the persistence of
+                # the definition further down, so a configuration accepted here is
+                # exactly the one recorded there.
+                raise KerykeionException(
+                    "nakshatra_ayanamsa='USER' requires both custom_ayanamsa_t0 (reference epoch as "
+                    "Julian Day) and custom_ayanamsa_ayan_t0 (ayanamsa value in degrees at t0) to be set."
+                )
 
         # Validate houses system
         if self.houses_system_identifier not in get_args(HousesSystemIdentifier):
@@ -858,6 +952,7 @@ class AstrologicalSubjectFactory:
         custom_ayanamsa_ayan_t0: Optional[float] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -954,11 +1049,20 @@ class AstrologicalSubjectFactory:
                 Defaults to False.
             calculate_nakshatra (bool, optional): If True, computes Vedic nakshatra,
                 pada, and dasha lord for each point. Nakshatras are defined on the
-                SIDEREAL zodiac: with a Tropical (or any non-sidereal) chart the
-                values are derived from tropical longitudes, which are offset from
-                the sidereal ones by the ayanamsa (~24 degrees, about two
-                nakshatras), and a warning is logged. Use zodiac_type='Sidereal'
-                for astronomically meaningful nakshatras. Defaults to False.
+                SIDEREAL zodiac; on a Tropical (or any non-sidereal) chart they are
+                derived from longitudes rotated by ``nakshatra_ayanamsa``, so a
+                tropical chart names the same nakshatras as the sidereal one.
+                Defaults to False.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to
+                place the nakshatras when ``calculate_nakshatra=True`` and the chart
+                is NOT sidereal: the chart's longitudes are rotated by it for the
+                27-fold division only, so the chart stays tropical while its
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
+                a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
+                the nakshatras belong to -- uses by default. Added in v6.
             calculate_gauquelin (bool, optional): If True, computes Gauquelin sector
                 (1-36) for each point. Defaults to False.
             calculate_nutation (bool, optional): If True, computes nutation in
@@ -1176,6 +1280,7 @@ class AstrologicalSubjectFactory:
             custom_ayanamsa_ayan_t0=custom_ayanamsa_ayan_t0,
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
+            nakshatra_ayanamsa=nakshatra_ayanamsa,
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
@@ -1187,7 +1292,13 @@ class AstrologicalSubjectFactory:
         calc_data["sidereal_mode"] = config.sidereal_mode
         calc_data["houses_system_identifier"] = config.houses_system_identifier
         calc_data["perspective_type"] = config.perspective_type
-        if config.sidereal_mode == "USER":
+        # The USER definition is persisted whenever it was actually cast — by the
+        # chart's own sidereal mode, or (on a non-sidereal chart) by the nakshatra
+        # ayanamsa, which is the second thing that can consult it. Dropping it in
+        # the latter case left a subject whose nakshatras nothing could reproduce.
+        if config.sidereal_mode == "USER" or (
+            config.calculate_nakshatra and config.zodiac_type != "Sidereal" and config.nakshatra_ayanamsa == "USER"
+        ):
             calc_data["custom_ayanamsa_t0"] = config.custom_ayanamsa_t0
             calc_data["custom_ayanamsa_ayan_t0"] = config.custom_ayanamsa_ayan_t0
 
@@ -1409,27 +1520,65 @@ class AstrologicalSubjectFactory:
                         point_updates[pk].update(dignity_data)
 
             # Calculate Nakshatras (optional)
+            #
+            # The nakshatras divide the SIDEREAL zodiac. A sidereal chart's
+            # longitudes already live there and are used as they are. Any other
+            # chart's do not: feeding them straight in shifted every result by
+            # the ayanamsa (~24 deg — about two nakshatras), which is the whole
+            # of what `nakshatra_ayanamsa` fixes. The chart itself is untouched:
+            # only the number handed to the 27-fold division is rotated, so a
+            # tropical chart keeps its tropical positions and still names the
+            # nakshatra a Jyotish chart would name.
+            calc_data["nakshatra_ayanamsa"] = None
+            calc_data["nakshatra_ayanamsa_value"] = None
             if config.calculate_nakshatra:
                 from kerykeion.vedic import calculate_nakshatra as calc_nak
 
-                if config.zodiac_type != "Sidereal":
-                    # Nakshatras are defined on the sidereal zodiac. Feeding
-                    # tropical longitudes shifts every result by the ayanamsa
-                    # (~24 deg, about two nakshatras). Values are still
-                    # computed as-is for backward compatibility; warn once per
-                    # subject construction.
+                nakshatra_offset = 0.0
+                if config.zodiac_type == "Sidereal":
+                    # Already sidereal: `nakshatra_ayanamsa` has nothing to
+                    # correct and is deliberately ignored — the chart's own
+                    # sidereal_mode/ayanamsa_value are the answer, and recording
+                    # a second mode here would invite the reader to believe two
+                    # different ayanamsas were in play.
+                    logger.debug(
+                        "Nakshatras read straight off the sidereal longitudes (%s ayanamsa); "
+                        "nakshatra_ayanamsa is not consulted on a sidereal chart.",
+                        config.sidereal_mode,
+                    )
+                elif config.nakshatra_ayanamsa is None:
+                    # Explicit opt-in to the pre-v6 behaviour. Kept reachable
+                    # because it is the only way to reproduce values computed by
+                    # earlier versions — but it is wrong astronomically, and
+                    # saying so once per subject is the point of the warning.
                     logger.warning(
-                        "calculate_nakshatra=True with zodiac_type=%r: nakshatras are "
-                        "defined on the sidereal zodiac, but this chart's longitudes are "
-                        "not sidereal, so nakshatra/pada/lord values will be offset by "
-                        "the ayanamsa (~24 deg, about two nakshatras). Use "
-                        "zodiac_type='Sidereal' for astronomically meaningful nakshatras.",
+                        "calculate_nakshatra=True with zodiac_type=%r and nakshatra_ayanamsa=None: "
+                        "the nakshatras are being read off longitudes that are not sidereal, so "
+                        "every nakshatra/pada/lord is offset by the ayanamsa (~24 deg, about two "
+                        "nakshatras). This is the legacy behaviour, kept only for reproducibility; "
+                        "pass nakshatra_ayanamsa='LAHIRI' (the default) for correct values.",
                         config.zodiac_type,
+                    )
+                else:
+                    nakshatra_offset = _ayanamsa_at(
+                        calc_data["julian_day"],
+                        config.nakshatra_ayanamsa,
+                        config.custom_ayanamsa_t0,
+                        config.custom_ayanamsa_ayan_t0,
+                    )
+                    calc_data["nakshatra_ayanamsa"] = config.nakshatra_ayanamsa
+                    calc_data["nakshatra_ayanamsa_value"] = nakshatra_offset
+                    logger.info(
+                        "Nakshatras computed on %s-sidereal longitudes: this %s chart's positions "
+                        "were rotated by %.6f deg for the 27-fold division only.",
+                        config.nakshatra_ayanamsa,
+                        config.zodiac_type,
+                        nakshatra_offset,
                     )
 
                 for pk in enrichable_keys:
                     point = _enrich_point(pk)
-                    nak_data = calc_nak(point.abs_pos)
+                    nak_data = calc_nak((point.abs_pos - nakshatra_offset) % 360.0)
                     point_updates[pk].update(nak_data)
 
             # Calculate Gauquelin sectors (optional) — for ALL celestial points.
@@ -1740,6 +1889,7 @@ class AstrologicalSubjectFactory:
         active_fixed_stars: Optional[List[str]] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -1804,6 +1954,16 @@ class AstrologicalSubjectFactory:
                 Defaults to False.
             calculate_nakshatra (bool, optional): Compute Vedic nakshatras.
                 Defaults to False.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to
+                place the nakshatras when ``calculate_nakshatra=True`` and the chart
+                is NOT sidereal: the chart's longitudes are rotated by it for the
+                27-fold division only, so the chart stays tropical while its
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
+                a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
+                the nakshatras belong to -- uses by default. Added in v6.
             calculate_gauquelin (bool, optional): Compute Gauquelin sectors.
                 Defaults to False.
             calculate_nutation (bool, optional): Compute nutation. Defaults to False.
@@ -1983,6 +2143,7 @@ class AstrologicalSubjectFactory:
             active_fixed_stars=active_fixed_stars,
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
+            nakshatra_ayanamsa=nakshatra_ayanamsa,
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,
@@ -2031,6 +2192,7 @@ class AstrologicalSubjectFactory:
         active_fixed_stars: Optional[List[str]] = None,
         calculate_dignities: bool = False,
         calculate_nakshatra: bool = False,
+        nakshatra_ayanamsa: Optional[SiderealMode] = DEFAULT_NAKSHATRA_AYANAMSA,
         calculate_gauquelin: bool = False,
         calculate_nutation: bool = False,
         calculate_local_space: bool = False,
@@ -2085,6 +2247,16 @@ class AstrologicalSubjectFactory:
             custom_ayanamsa_ayan_t0 (float, optional): Ayanamsa offset in degrees at
                 epoch ``t0`` for the USER sidereal mode. Required when
                 ``sidereal_mode="USER"``. Defaults to None.
+            nakshatra_ayanamsa (Optional[SiderealMode], optional): Ayanamsa used to
+                place the nakshatras when ``calculate_nakshatra=True`` and the chart
+                is NOT sidereal: the chart's longitudes are rotated by it for the
+                27-fold division only, so the chart stays tropical while its
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
+                a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
+                the nakshatras belong to -- uses by default. Added in v6.
 
         Returns:
             AstrologicalSubjectModel: Astrological subject representing current
@@ -2222,6 +2394,7 @@ class AstrologicalSubjectFactory:
             active_fixed_stars=active_fixed_stars,
             calculate_dignities=calculate_dignities,
             calculate_nakshatra=calculate_nakshatra,
+            nakshatra_ayanamsa=nakshatra_ayanamsa,
             calculate_gauquelin=calculate_gauquelin,
             calculate_nutation=calculate_nutation,
             calculate_local_space=calculate_local_space,

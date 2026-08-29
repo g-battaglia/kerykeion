@@ -56,6 +56,8 @@ Represents a person or event to be analyzed.
 | `zodiac_type`          | `ZodiacType`   | "Tropical" or "Sidereal"              |
 | `sidereal_mode`        | `SiderealMode \| None` | Specific Ayanamsa if Sidereal         |
 | `ayanamsa_value`       | `float \| None`| Ayanamsa offset in degrees (sidereal only) |
+| `nakshatra_ayanamsa`   | `SiderealMode \| None` | Ayanamsa used to place the nakshatras on a non-sidereal chart. `None` on a sidereal chart, on a chart with no nakshatras, and when the legacy uncorrected behaviour was requested |
+| `nakshatra_ayanamsa_value` | `float \| None` | Degrees actually subtracted before the 27-fold division. `None` exactly when `nakshatra_ayanamsa` is |
 | `is_diurnal`           | `bool`         | Whether the chart is diurnal (Sun above horizon) |
 
 ### KerykeionPointModel
@@ -80,7 +82,7 @@ Detailed information about a celestial body or house cusp.
 | `magnitude`  | `float \| None`                   | Apparent visual magnitude (fixed stars only) |
 | `is_out_of_bounds` | `bool \| None`             | True if declination exceeds the Sun's maximum (~23.44°) |
 | `essential_dignity` | `str \| None`              | Ptolemaic dignity (Domicile, Exaltation, etc.). Requires `calculate_dignities=True` |
-| `nakshatra`  | `str \| None`                     | Vedic lunar mansion name. Requires `calculate_nakshatra=True` |
+| `nakshatra`  | `str \| None`                     | Vedic lunar mansion name. Requires `calculate_nakshatra=True`; on a non-sidereal chart the longitude is rotated by `nakshatra_ayanamsa` first |
 | `nakshatra_pada` | `int \| None`                 | Nakshatra pada/quarter (1-4). Requires `calculate_nakshatra=True` |
 | `nakshatra_lord` | `str \| None`                 | Vimsottari Dasha lord planet. Requires `calculate_nakshatra=True` |
 | `gauquelin_sector` | `float \| None`             | Gauquelin 36-sector position. Requires `calculate_gauquelin=True` |
@@ -209,6 +211,8 @@ substitute.
 
 New in v5.12: `ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
 
+New in v6: `nakshatra_ayanamsa` (`SiderealMode | None`) and `nakshatra_ayanamsa_value` (`float | None`) -- the ayanamsa a **non-sidereal** chart rotated its longitudes by to derive the nakshatras, and the offset in degrees it actually subtracted. Both are `None` on a sidereal chart (its own `sidereal_mode`/`ayanamsa_value` apply), on a chart that computed no nakshatras, and when `nakshatra_ayanamsa=None` selected the legacy uncorrected behaviour.
+
 ### EphemerisDictModel
 
 Snapshot of planetary positions for a specific date.
@@ -229,9 +233,13 @@ Compact lunar phase information attached to every `AstrologicalSubjectModel` (vi
 | Field                 | Type              | Description                                              |
 | :-------------------- | :---------------- | :------------------------------------------------------- |
 | `degrees_between_s_m` | `float \| int`    | Angular separation between the Sun and Moon in degrees.  |
-| `moon_phase`          | `int`             | Lunation day (1-28), derived from the Sun-Moon angle.    |
+| `moon_phase`          | `int`             | Lunation day (1-28), the 1/28th bin the angle falls in. A counter, not the name's source. |
 | `moon_emoji`          | `LunarPhaseEmoji` | Emoji representation of the phase (e.g. `"🌕"`).        |
-| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`).    |
+| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`), from a window centred on the event it names. |
+| `major_phase`         | `LunarPhaseName`  | Nearest of the four major phases: `"New Moon"`, `"First Quarter"`, `"Full Moon"`, `"Last Quarter"`. |
+| `stage`               | `LunarPhaseStage` | `"waxing"` before the opposition, `"waning"` after it.   |
+
+The name comes from the separation, through eight windows centred on the events: New and Full Moon span 12.857° each (±6.4286° around 0° and 180°), the two quarters 38.571° each (±19.2857° around 90° and 270°), and the four intermediate names fill the rest. So a minute either side of an exact syzygy reads the same, and agrees with the illumination percentage. The lunation day is a different partition of the same circle — its bins begin at the conjunction rather than straddling it — and it is deliberately unchanged.
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -241,6 +249,8 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 print(subject.lunar_phase.moon_phase_name)   # e.g. "Waxing Gibbous"
 print(subject.lunar_phase.moon_emoji)         # e.g. "🌔"
 print(subject.lunar_phase.degrees_between_s_m)  # e.g. 135.7
+print(subject.lunar_phase.major_phase)        # e.g. "First Quarter"
+print(subject.lunar_phase.stage)              # e.g. "waxing"
 ```
 
 ### MoonPhaseOverviewModel
@@ -252,7 +262,7 @@ Top-level model returned by `MoonPhaseDetailsFactory`. Groups timestamp, Sun sum
 | `timestamp` | `int`                             | Unix timestamp of the observation moment.                  |
 | `datestamp`  | `str`                             | ISO 8601 formatted date string.                            |
 | `sun`       | `MoonPhaseSunInfoModel \| None`   | Sun rise/set times, position, next solar eclipse info.     |
-| `moon`      | `MoonPhaseMoonSummaryModel`       | Phase name, illumination, zodiac signs, moonrise/set, etc. |
+| `moon`      | `MoonPhaseMoonSummaryModel`       | Phase name, illumination, zodiac signs, moonrise/moonset, etc. |
 | `location`  | `MoonPhaseLocationModel \| None`  | Latitude, longitude, and precision metadata.               |
 
 **Nested models** (all fields optional unless noted):
@@ -261,7 +271,7 @@ Top-level model returned by `MoonPhaseDetailsFactory`. Groups timestamp, Sun sum
 | :--------------------------------- | :------------------------------------------------------------------------------ |
 | `MoonPhaseSunInfoModel`            | `sunrise`, `sunset`, `solar_noon`, `day_length`, `position`, `next_solar_eclipse` |
 | `MoonPhaseSunPositionModel`        | `altitude`, `azimuth`, `distance`                                               |
-| `MoonPhaseMoonSummaryModel`        | `phase`, `phase_name`, `major_phase`, `stage`, `illumination`, `age_days`, `emoji`, `zodiac`, `moonrise`, `moonset`, `detailed`, `events` |
+| `MoonPhaseMoonSummaryModel`        | `phase`, `phase_name`, `major_phase`, `stage`, `illumination`, `age_days`, `emoji`, `zodiac`, `moonrise`, `moonrise_timestamp`, `moonset`, `moonset_timestamp`, `detailed`, `events` |
 | `MoonPhaseMoonPositionModel`       | `altitude`, `azimuth`, `distance`, `parallactic_angle`, `phase_angle`           |
 | `MoonPhaseMoonDetailedModel`       | `position`, `visibility`, `upcoming_phases`, `illumination_details`             |
 | `MoonPhaseUpcomingPhasesModel`     | `new_moon`, `first_quarter`, `full_moon`, `last_quarter` (each a `MoonPhaseMajorPhaseWindowModel`) |
@@ -456,9 +466,10 @@ These models are returned by the v6 advanced calculation factories. Each factory
 | `SolarEclipseModel` | `EclipseFactory` | A single solar eclipse event |
 | `LunarEclipseModel` | `EclipseFactory` | A single lunar eclipse event |
 | `PlanetaryPhenomenaCollectionModel` | [`PlanetaryPhenomenaFactory`](/content/docs/planetary_phenomena_factory) | Collection of planetary phenomena |
-| `PlanetaryPhenomenaModel` | `PlanetaryPhenomenaFactory` | Phenomena for a single planet |
+| `PlanetaryPhenomenaModel` | `PlanetaryPhenomenaFactory` | Phenomena for a single planet, including `solar_phase` |
+| `SolarPhaseThresholdsModel` | `PlanetaryPhenomenaFactory` | The three elongation cut-offs a collection's `solar_phase` labels were read against |
 | `PlanetaryNodesCollectionModel` | [`PlanetaryNodesFactory`](/content/docs/planetary_nodes_factory) | Collection of orbital nodes/apsides |
-| `PlanetaryNodeModel` | `PlanetaryNodesFactory` | Nodes and apsides for one planet |
+| `PlanetaryNodeModel` | `PlanetaryNodesFactory` | Nodes and apsides for one planet (`periapsis`/`apoapsis`/`apsis_kind`; `perihelion`/`aphelion` deprecated) |
 | `HeliacalEventModel` | [`HeliacalFactory`](/content/docs/heliacal_factory) | A single heliacal visibility event |
 | `OccultationModel` | [`OccultationFactory`](/content/docs/occultation_factory) | A single lunar occultation event |
 | `ACGLineModel` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
@@ -849,6 +860,34 @@ Emojis corresponding to the lunar phases.
 | `"🌖"` | 5           | Waning Gibbous  |
 | `"🌗"` | 6           | Last Quarter    |
 | `"🌘"` | 7           | Waning Crescent |
+
+---
+
+### `SolarPhase`
+
+How near the Sun a body is, named as a condition of visibility. Set on every `PlanetaryPhenomenaModel`.
+
+| Value               | Meaning                                                  |
+| :------------------ | :------------------------------------------------------- |
+| `"cazimi"`          | In the heart of the Sun; the narrowest of the four.       |
+| `"combust"`         | Burnt — close enough that the body cannot be seen at all. |
+| `"under_the_beams"` | Within the Sun's rays; not yet out of the twilight.       |
+| `"free"`            | Far enough from the Sun to be seen in a dark sky.         |
+
+The three cut-offs that separate them are conventions, not constants of nature, and the schools disagree on all three. They live in `SolarPhaseThresholdsModel` (`cazimi_deg` 0.2833, `combust_deg` 8.5, `under_beams_deg` 17.0), which every phenomena collection echoes back and any caller may replace. The quantity compared is the true angular separation from the Sun (latitude included), not the difference in ecliptic longitude.
+
+---
+
+### `ApsisKind`
+
+Which body the apsides of an orbit are measured against. Set on every `PlanetaryNodeModel`.
+
+| Value             | Meaning                                        |
+| :---------------- | :--------------------------------------------- |
+| `"heliocentric"`  | Apsides about the Sun — every planet.           |
+| `"geocentric"`    | Apsides about the Earth — the Moon alone.       |
+
+The generic `periapsis`/`apoapsis` fields are correct under either reading; this literal says which one is in force. The older `perihelion`/`aphelion` name the Sun and are deprecated for that reason.
 
 ---
 

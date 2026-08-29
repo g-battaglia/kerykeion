@@ -254,7 +254,7 @@
 
         <g kr:node='Bottom_Left_Text' transform='translate(0,7)'>
             <text kr:node='Bottom_Left_Text_0' x='20' y='452' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'></text>
-            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>चंद्र चरण: अमावस्या</text>
+            <text kr:node='Bottom_Left_Text_1' x='20' y='466' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>चंद्र चरण: शुक्ल पक्ष प्रथमा</text>
             <text kr:node='Bottom_Left_Text_2' x='20' y='480' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>राशि: ट्रॉपिकल</text>
             <text kr:node='Bottom_Left_Text_3' x='20' y='494' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>दिवा/रात्रि: रात्रि</text>
             <text kr:node='Bottom_Left_Text_4' x='20' y='508' style='fill: var(--kerykeion-chart-color-paper-0); font-size: 10px'>गृह: प्लासिडस</text>

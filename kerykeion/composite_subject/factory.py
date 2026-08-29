@@ -1347,6 +1347,51 @@ class CompositeSubjectFactory:
         )
         extra_kwargs["calculate_dignities"] = _point_has(s1, "essential_dignity") and _point_has(s2, "essential_dignity")
         extra_kwargs["calculate_nakshatra"] = _point_has(s1, "nakshatra") and _point_has(s2, "nakshatra")
+        if extra_kwargs["calculate_nakshatra"]:
+            # The ayanamsa follows the same both-parents rule as the flag itself:
+            # the Davison can inherit only an ayanamsa the two charts agree on
+            # (None included — that is how two sidereal, or two legacy, parents
+            # agree). Disagreeing parents leave it to the factory default, because
+            # picking one parent's mode over the other is a judgement the composite
+            # has no basis for — and it is said out loud rather than absorbed.
+            #
+            # "USER" is the one mode that does not name an ayanamsa by itself:
+            # custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0 ARE the mode, and the
+            # recast rejects the name arriving without them. So two USER parents
+            # agree only when their DEFINITIONS agree, and the definition travels
+            # with the name.
+            def _ayanamsa_label(subject) -> str:
+                if subject.nakshatra_ayanamsa != "USER":
+                    return repr(subject.nakshatra_ayanamsa)
+                return (
+                    f"USER(t0={subject.custom_ayanamsa_t0!r}, "
+                    f"ayan_t0={subject.custom_ayanamsa_ayan_t0!r})"
+                )
+
+            _same_user_definition = (
+                s1.custom_ayanamsa_t0 is not None
+                and s1.custom_ayanamsa_ayan_t0 is not None
+                and s1.custom_ayanamsa_t0 == s2.custom_ayanamsa_t0
+                and s1.custom_ayanamsa_ayan_t0 == s2.custom_ayanamsa_ayan_t0
+            )
+            if s1.nakshatra_ayanamsa == s2.nakshatra_ayanamsa and (
+                s1.nakshatra_ayanamsa != "USER" or _same_user_definition
+            ):
+                extra_kwargs["nakshatra_ayanamsa"] = s1.nakshatra_ayanamsa
+                if s1.nakshatra_ayanamsa == "USER":
+                    # setdefault, not assignment: an explicit argument to
+                    # get_davison_composite_subject_model was chosen for this
+                    # recast and stays in charge; the parents' definition only
+                    # fills a gap the caller left.
+                    extra_kwargs.setdefault("custom_ayanamsa_t0", s1.custom_ayanamsa_t0)
+                    extra_kwargs.setdefault("custom_ayanamsa_ayan_t0", s1.custom_ayanamsa_ayan_t0)
+            else:
+                logger.warning(
+                    "The two subjects placed their nakshatras with different ayanamsas (%s and %s); "
+                    "the Davison chart falls back to the default rather than choosing between them.",
+                    _ayanamsa_label(s1),
+                    _ayanamsa_label(s2),
+                )
         extra_kwargs["calculate_local_space"] = _point_has(s1, "azimuth") and _point_has(s2, "azimuth")
         extra_kwargs["calculate_gauquelin"] = (
             s1.gauquelin_sector_cusps is not None and s2.gauquelin_sector_cusps is not None

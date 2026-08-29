@@ -358,7 +358,13 @@ class TestCircularSort:
 
 
 class TestMoonPhaseHelpers:
-    """Tests for get_moon_emoji_from_phase_int and get_moon_phase_name_from_phase_int."""
+    """Tests for get_moon_emoji_from_phase_int and get_moon_phase_name_from_phase_int.
+
+    These two read the 1-28 lunation day, whose bins are offset from the events
+    they are named after — they are kept for callers that hold the integer and
+    nothing else, and no longer name a chart's phase. The windows that do are in
+    tests/core/test_lunar_phase_windows.py.
+    """
 
     def test_emoji_from_phase_1(self):
         emoji = get_moon_emoji_from_phase_int(1)
@@ -486,17 +492,36 @@ class TestCalculateMoonPhase:
         assert hasattr(phase, "moon_phase")
         assert hasattr(phase, "moon_emoji")
         assert hasattr(phase, "moon_phase_name")
+        assert hasattr(phase, "major_phase")
+        assert hasattr(phase, "stage")
 
     def test_new_moon_near_zero_apart(self):
         phase = calculate_moon_phase(0, 0)
         assert phase.moon_phase == 1
-        assert phase.moon_phase_name
+        assert phase.moon_phase_name == "New Moon"
+        assert phase.moon_emoji == "🌑"
+        assert phase.major_phase == "New Moon"
+        assert phase.stage == "waxing"
 
     def test_full_moon_near_180_apart(self):
+        # No "or phase == 14" escape hatch: at the opposition the name IS
+        # Full Moon, and it was the disjunction that let the name be wrong.
         phase = calculate_moon_phase(180, 0)
-        # degrees_between should be ~180
-        assert 170 <= phase.degrees_between_s_m <= 190
-        assert "Full" in phase.moon_phase_name or phase.moon_phase == 14
+        assert phase.degrees_between_s_m == pytest.approx(180.0)
+        assert phase.moon_phase_name == "Full Moon"
+        assert phase.moon_emoji == "🌕"
+        assert phase.major_phase == "Full Moon"
+
+    def test_name_holds_a_degree_past_the_opposition(self):
+        """One degree past the exact opposition is still a full moon.
+
+        The 28-bin lookup ended "Full Moon" AT 180°, so this returned "Waning
+        Gibbous" while the illumination formula still read 100%.
+        """
+        phase = calculate_moon_phase(181, 0)
+        assert phase.moon_phase_name == "Full Moon"
+        assert phase.moon_emoji == "🌕"
+        assert phase.stage == "waning"
 
 
 # =============================================================================
