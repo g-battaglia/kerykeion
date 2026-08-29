@@ -86,6 +86,7 @@ from kerykeion.astrological_subject.factory import (
     DEFAULT_GEONAMES_USERNAME,
 )
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
+from kerykeion.settings.config_constants import DEFAULT_NAKSHATRA_AYANAMSA
 from kerykeion.schemas.literals import AstrologicalPoint
 from kerykeion.schemas.models import PlanetReturnModel, AstrologicalSubjectModel
 
@@ -503,6 +504,16 @@ class PlanetaryReturnFactory:
                 for the return chart location. Forwarded to the return chart's subject, where
                 a Topocentric perspective feeds it to the observer position (sub-arcsecond
                 effect on positions). Ignored by geocentric perspectives. Defaults to None.
+            active_fixed_stars, calculate_dignities, calculate_nakshatra,
+                calculate_gauquelin, calculate_nutation, calculate_local_space: the v6
+                enrichment flags for the return chart. Each is additive over what the
+                natal already carries: the flag is on when it is passed here OR when the
+                natal subject shows the enrichment populated, so a return never computes
+                less than its own natal. There is no ``nakshatra_ayanamsa`` parameter —
+                the return inherits the mode the natal actually placed its nakshatras
+                with, and falls back to ``DEFAULT_NAKSHATRA_AYANAMSA`` when the natal
+                placed none (a natal without nakshatras carries ``None``, which is the
+                legacy opt-out, not a mode).
 
         Raises:
             KerykeionException: If city is not provided when online=True.
@@ -591,12 +602,23 @@ class PlanetaryReturnFactory:
             else ([s.name for s in (subject.fixed_stars or [])] or None)
         )
         self.calculate_dignities = calculate_dignities or _any_point_has("essential_dignity")
-        self.calculate_nakshatra = calculate_nakshatra or _any_point_has("nakshatra")
+        natal_has_nakshatra = _any_point_has("nakshatra")
+        self.calculate_nakshatra = calculate_nakshatra or natal_has_nakshatra
         # The ayanamsa the natal chart placed its nakshatras with travels with the
-        # flag. Without it the return silently fell back to the LAHIRI default —
-        # so a natal cast in RAMAN, or one that opted into the legacy uncorrected
-        # values, got a return whose nakshatras disagreed with its own.
-        self.nakshatra_ayanamsa = subject.nakshatra_ayanamsa
+        # flag — but ONLY when the natal really placed them. `nakshatra_ayanamsa`
+        # is None in three distinct situations and the field alone cannot tell
+        # them apart: the natal opted into the legacy uncorrected values, the
+        # natal is sidereal (where its own sidereal_mode is the answer and the
+        # field is deliberately left unset), or the natal never computed
+        # nakshatras at all. Copying it unconditionally read the third case as
+        # the first, so a caller who asked THIS factory for nakshatras on a natal
+        # that had none silently got the legacy values — about two nakshatras off
+        # from the same instant cast directly. `natal_has_nakshatra` is the
+        # discriminator: inherit only a mode that was actually used, and
+        # otherwise start from the same default the subject factory would.
+        self.nakshatra_ayanamsa = (
+            subject.nakshatra_ayanamsa if natal_has_nakshatra else DEFAULT_NAKSHATRA_AYANAMSA
+        )
         self.calculate_gauquelin = calculate_gauquelin or (subject.gauquelin_sector_cusps is not None)
         self.calculate_nutation = calculate_nutation or (subject.nutation is not None)
         self.calculate_local_space = calculate_local_space or _any_point_has("azimuth")

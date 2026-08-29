@@ -566,3 +566,110 @@ class TestNakshatraAyanamsaTravelsToDerivedCharts:
 
         assert davison.nakshatra_ayanamsa == "LAHIRI"  # the factory default, not RAMAN
         assert [r for r in caplog.records if "different ayanamsas" in r.getMessage()]
+
+
+class TestANatalWithoutNakshatrasIsNotAnOptOut:
+    """``nakshatra_ayanamsa=None`` means three different things, and a derived
+    chart must not read the wrong one.
+
+    The field is None when the natal opted into the legacy uncorrected values,
+    when the natal is sidereal (its own ``sidereal_mode`` is the answer), and
+    when the natal never computed nakshatras at all. Only the first is an
+    opt-out. A derived chart that copies the field blind turns the third into
+    the first: a caller who asks the derived factory for nakshatras the natal
+    never had gets the legacy values — about two nakshatras off — with no way
+    to see it happen.
+    """
+
+    _BIRTH = dict(
+        year=1990, month=6, day=15, hour=12, minute=0,
+        lng=12.5, lat=41.9, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False,
+        suppress_geonames_warning=True,
+    )
+
+    _LOCATION = dict(
+        city="Rome", nation="IT", lng=12.5, lat=41.9,
+        tz_str="Europe/Rome", online=False,
+    )
+
+    @pytest.fixture(scope="class")
+    def bare_natal(self):
+        """A tropical natal that never computed a nakshatra. Its
+        ``nakshatra_ayanamsa`` is None because nothing was ever placed."""
+        natal = AstrologicalSubjectFactory.from_birth_data("Natal bare", **self._BIRTH)
+        assert natal.sun.nakshatra is None
+        assert natal.nakshatra_ayanamsa is None
+        return natal
+
+    def test_the_return_asked_for_them_gets_the_default_not_the_legacy_values(self, bare_natal):
+        """The factory flag turns nakshatras ON for a return whose natal has
+        none. They must be the same nakshatras the very same instant gives when
+        cast directly — the comparison is against a chart, not a memorised
+        name, so an engine bump moves both together."""
+        from kerykeion.planetary_returns import PlanetaryReturnFactory
+        from kerykeion.settings.config_constants import DEFAULT_NAKSHATRA_AYANAMSA
+
+        factory = PlanetaryReturnFactory(bare_natal, calculate_nakshatra=True, **self._LOCATION)
+        solar_return = factory.next_return_from_date(2020, 6, 1, return_type="Solar")
+
+        assert solar_return.nakshatra_ayanamsa == DEFAULT_NAKSHATRA_AYANAMSA
+        assert solar_return.sun.nakshatra is not None
+
+        same_instant = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Same instant",
+            solar_return.iso_formatted_utc_datetime,
+            calculate_nakshatra=True,
+            **self._LOCATION,
+        )
+        assert solar_return.sun.nakshatra == same_instant.sun.nakshatra
+        assert solar_return.moon.nakshatra == same_instant.moon.nakshatra
+
+        legacy = AstrologicalSubjectFactory.from_iso_utc_time(
+            "Legacy",
+            solar_return.iso_formatted_utc_datetime,
+            calculate_nakshatra=True,
+            nakshatra_ayanamsa=None,
+            **self._LOCATION,
+        )
+        assert solar_return.sun.nakshatra != legacy.sun.nakshatra
+
+    def test_a_return_that_was_never_asked_still_has_none(self, bare_natal):
+        """The flag is what turns them on. Nothing here should conjure a
+        nakshatra onto a chart neither the caller nor the natal asked for."""
+        from kerykeion.planetary_returns import PlanetaryReturnFactory
+
+        factory = PlanetaryReturnFactory(bare_natal, **self._LOCATION)
+        solar_return = factory.next_return_from_date(2020, 6, 1, return_type="Solar")
+
+        assert solar_return.sun.nakshatra is None
+        assert solar_return.nakshatra_ayanamsa is None
+
+    def test_the_progression_is_not_affected(self, bare_natal):
+        """Pinned, not assumed: `SecondaryProgressionFactory` copies the natal's
+        ``nakshatra_ayanamsa`` unconditionally, but derives the flag from the
+        natal too and takes no override — so a natal without nakshatras yields a
+        progression without them, and the copied None is never consulted."""
+        from kerykeion.secondary_progressions import SecondaryProgressionFactory
+
+        progressed = SecondaryProgressionFactory.compute(bare_natal, target_year=2020)
+
+        assert progressed.sun.nakshatra is None
+        assert progressed.nakshatra_ayanamsa is None
+
+    def test_the_davison_is_not_affected(self, bare_natal):
+        """Pinned, not assumed: the composite reads the ayanamsa only inside
+        ``if calculate_nakshatra``, and the flag needs BOTH parents — so a
+        parent without nakshatras closes the door before None can be read as an
+        opt-out."""
+        from kerykeion.composite_subject import CompositeSubjectFactory
+
+        with_nakshatras = AstrologicalSubjectFactory.from_birth_data(
+            "Second LAHIRI",
+            calculate_nakshatra=True,
+            **{**self._BIRTH, "year": 1992, "month": 3, "day": 4},
+        )
+        davison = CompositeSubjectFactory(bare_natal, with_nakshatras).get_davison_composite_subject_model()
+
+        assert davison.sun.nakshatra is None
+        assert davison.nakshatra_ayanamsa is None

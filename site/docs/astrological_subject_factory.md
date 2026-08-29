@@ -249,7 +249,7 @@ print(tropical.nakshatra_ayanamsa, round(tropical.nakshatra_ayanamsa_value, 4))
 print(tropical.moon.nakshatra == sidereal.moon.nakshatra)   # True
 ```
 
-Derived charts inherit the setting: `PlanetaryReturnFactory` and `SecondaryProgressionFactory` copy the natal's `nakshatra_ayanamsa`, and a Davison composite adopts it only when both parents agree — otherwise it warns and falls back to the default.
+Derived charts inherit the setting: `PlanetaryReturnFactory` and `SecondaryProgressionFactory` copy the natal's `nakshatra_ayanamsa`, and a Davison composite adopts it only when both parents agree — otherwise it warns and falls back to the default. What is inherited is a mode that was actually used: a natal that computed no nakshatras also records `None`, and that `None` is not the legacy opt-out. `PlanetaryReturnFactory(..., calculate_nakshatra=True)` on such a natal therefore starts from the `"LAHIRI"` default, exactly as casting the same instant directly would.
 
 ### Gauquelin Sectors (`calculate_gauquelin=True`)
 
