@@ -123,6 +123,31 @@ class LunarPhaseModel(SubscriptableBaseModel):
     major_phase: LunarPhaseName
     stage: LunarPhaseStage
 
+    @model_validator(mode="before")
+    @classmethod
+    def _derive_major_phase_and_stage(cls, data: Any) -> Any:
+        """Fill ``major_phase`` and ``stage`` from the separation when absent.
+
+        Both fields arrived in 6.0.0a91. A subject serialised before then — a
+        chart_data payload a client stored and sends back, a cached dump — has
+        the separation but not the two names, and must keep validating: they are
+        pure functions of ``degrees_between_s_m``, so deriving them here is the
+        same answer the factory would have given, never a guess.
+        """
+        if not isinstance(data, dict):
+            return data
+        if "major_phase" in data and "stage" in data:
+            return data
+        degrees = data.get("degrees_between_s_m")
+        if not isinstance(degrees, (int, float)) or isinstance(degrees, bool):
+            return data
+        from kerykeion.utilities.core import lunar_major_phase_from_degrees, lunar_stage_from_degrees
+
+        data = dict(data)
+        data.setdefault("major_phase", lunar_major_phase_from_degrees(float(degrees)))
+        data.setdefault("stage", lunar_stage_from_degrees(float(degrees)))
+        return data
+
 
 class MoonPhaseSunPositionModel(SubscriptableBaseModel):
     """
