@@ -19,7 +19,7 @@ from __future__ import annotations
 from typing import Optional
 
 from kerykeion.cli import subject_resolver, warnings
-from kerykeion.cli.commands._shared import _emit, _subject_from, with_render_flags
+from kerykeion.cli.commands._shared import _emit, _stored_subject, _subject_from, with_render_flags
 from kerykeion.cli.options import (
     DayOpt,
     FixedStarsFlag,
@@ -161,14 +161,10 @@ def synastry(
     opts: object = None,
 ) -> None:
     """Synastry (dual wheel) between two stored subjects."""
-    if not profile:
-        raise ValueError("synastry needs -s <profile> for the first subject")
-    if not subject2:
-        raise ValueError("synastry needs -S <profile> for the second subject")
     from kerykeion import ChartDataFactory
 
-    first = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-    second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
+    first = _stored_subject(profile, "synastry")
+    second = _stored_subject(subject2, "synastry", "-S")
     chart = ChartDataFactory.create_synastry_chart_data(first, second)
     _emit(chart, fmt, output, opts)
 
@@ -199,8 +195,6 @@ def transit(
     geocode. For a specific moment, pass ``--to-date`` and ``--to-time``
     together; omit both for the current moment.
     """
-    if not profile:
-        raise ValueError("transit needs -s <profile> for the natal subject")
     if to_time is not None and to_date is None:
         raise ValueError("--to-time requires --to-date (omit both to transit the current moment).")
     if to_date is not None and to_time is None:
@@ -233,7 +227,7 @@ def transit(
     _inherit_geo = city is None
     from kerykeion import ChartDataFactory
 
-    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(online=online, offline=offline), profile)
+    natal = _stored_subject(profile, "transit", online=online, offline=offline)
     # The transit moment is a minimal subject: just a place and a moment, but it
     # MUST share the natal frame (zodiac, sidereal mode, houses, perspective) —
     # ``create_transit_chart_data`` passes both subjects verbatim to
@@ -280,14 +274,10 @@ def composite(
     opts: object = None,
 ) -> None:
     """Composite chart (midpoint) of two stored subjects."""
-    if not profile:
-        raise ValueError("composite needs -s <profile> for the first subject")
-    if not subject2:
-        raise ValueError("composite needs -S <profile> for the second subject")
     from kerykeion import ChartDataFactory, CompositeSubjectFactory
 
-    first = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-    second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
+    first = _stored_subject(profile, "composite")
+    second = _stored_subject(subject2, "composite", "-S")
     composite_subject = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
     chart = ChartDataFactory.create_composite_chart_data(composite_subject)
     _emit(chart, fmt, output, opts)
@@ -319,8 +309,6 @@ def return_chart(
     with ``--city --nation`` (geocoded; never mix the two — exit 4, one command
     one place).
     """
-    if not profile:
-        raise ValueError("return needs -s <profile> for the natal subject")
     if year is None:
         raise ValueError("return needs --year")
     # Case-insensitive like every other enum-style flag (`--lot`, `--rate`,
@@ -340,7 +328,7 @@ def return_chart(
         )
     from kerykeion import ChartDataFactory, PlanetaryReturnFactory
 
-    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(online=online, offline=offline), profile)
+    natal = _stored_subject(profile, "return", online=online, offline=offline)
     # PlanetaryReturnFactory does its own geocoding (unlike the other chart
     # factories): it needs a return-chart location. Default to the natal
     # birthplace (offline); explicit flags relocate the return.
@@ -403,13 +391,11 @@ def progression(
     Progressed angles follow the Q2 / daily-houses convention (MC ~360 deg/year),
     not astro.com's solar-arc default.
     """
-    if not profile:
-        raise ValueError("progression needs -s <profile> for the natal subject")
     if target_year is None:
         raise ValueError("progression needs --target-year")
     from kerykeion import ChartDataFactory, SecondaryProgressionFactory
 
-    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
+    natal = _stored_subject(profile, "progression")
     progressed = SecondaryProgressionFactory.compute(natal, target_year=target_year)
     chart = ChartDataFactory.create_progression_chart_data(natal, progressed)
     _emit(chart, fmt, output, opts)

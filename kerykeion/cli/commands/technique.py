@@ -10,9 +10,8 @@ library defaults — we pass ``None`` through only when the user gave a value.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
-from kerykeion.cli import subject_resolver
 from kerykeion.cli.commands._shared import (
     _aspect_names,
     _choose,
@@ -20,6 +19,7 @@ from kerykeion.cli.commands._shared import (
     _given,
     _parse_aspects,
     _split_csv,
+    _stored_subject,
     with_render_flags,
 )
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
@@ -65,12 +65,6 @@ technique_app = KerykeionTyper(
 )
 
 
-def _need_subject(profile: Optional[str], cmd: str) -> object:
-    if not profile:
-        raise ValueError(f"{cmd} needs -s <profile>")
-    return subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-
-
 @technique_app.command("profections")
 def profections(
     profile: SubjectProfile = None,
@@ -83,7 +77,7 @@ def profections(
     """Annual profections: the profected year and surrounding years."""
     from kerykeion import ProfectionsFactory
 
-    subject = _need_subject(profile, "profections")
+    subject = _stored_subject(profile, "profections")
     kwargs = _given(target_date=target_date, years_before=years_before, years_after=years_after)
     _emit(ProfectionsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
@@ -99,7 +93,7 @@ def firdaria(
     """Firdaria (medieval time-lords) for the subject."""
     from kerykeion import FirdariaFactory
 
-    subject = _need_subject(profile, "firdaria")
+    subject = _stored_subject(profile, "firdaria")
     kwargs = _given(target_date=target_date, life_cap_years=life_cap_years)
     _emit(FirdariaFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
@@ -117,7 +111,7 @@ def zr(
     """Zodiacal releasing from the Lot of Fortune (or Spirit)."""
     from kerykeion import ZodiacalReleasingFactory
 
-    subject = _need_subject(profile, "zr")
+    subject = _stored_subject(profile, "zr")
     if levels is not None and not 1 <= levels <= 4:
         raise ValueError("--levels must be between 1 and 4")
     kwargs = _given(
@@ -138,7 +132,7 @@ def receptions(
     """Mutual receptions by domicile and exaltation."""
     from kerykeion import MutualReceptionsFactory
 
-    subject = _need_subject(profile, "receptions")
+    subject = _stored_subject(profile, "receptions")
     _emit(MutualReceptionsFactory.from_subject(subject), fmt, output)  # type: ignore[arg-type]
 
 
@@ -152,7 +146,7 @@ def horary(
     """Horary chart indicators and considerations before judgement."""
     from kerykeion import HoraryIndicatorsFactory
 
-    subject = _need_subject(profile, "horary")
+    subject = _stored_subject(profile, "horary")
     kwargs = _given(is_moon_void=is_moon_void)
     _emit(HoraryIndicatorsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
@@ -168,7 +162,7 @@ def midpoints(
     """Midpoints and midpoint aspects."""
     from kerykeion import MidpointFactory
 
-    subject = _need_subject(profile, "midpoints")
+    subject = _stored_subject(profile, "midpoints")
     kwargs = _given(active_points=_split_csv(planets), aspect_orb=orb)
     _emit(MidpointFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
@@ -185,7 +179,7 @@ def directions(
     """Primary directions under the Ptolemy or Naibod rate."""
     from kerykeion import PrimaryDirectionsFactory
 
-    subject = _need_subject(profile, "directions")
+    subject = _stored_subject(profile, "directions")
     # ``aspects`` here is the set of aspect ANGLES (conjunction, sextile, …),
     # not planets: PrimaryDirectionsFactory.compute validates it against
     # ASPECT_ANGLES and has no planet filter. Binding ``--planets`` to it (as the
@@ -219,7 +213,7 @@ def acg(
     """Astro-cartography: where each planet rises, sets, culminates."""
     from kerykeion import AstroCartographyFactory
 
-    subject = _need_subject(profile, "acg")
+    subject = _stored_subject(profile, "acg")
     band = None
     if lat_range is not None:
         try:
@@ -242,7 +236,7 @@ def stars(
     """Heliacal risings/settings of the visible planets at the birthplace."""
     from kerykeion import HeliacalFactory
 
-    subject = _need_subject(profile, "stars")
+    subject = _stored_subject(profile, "stars")
     julian_day = getattr(subject, "julian_day", None)
     if julian_day is None:
         raise ValueError("the subject has no julian_day to search heliacal events from")
@@ -278,7 +272,7 @@ def relocate(
     """Recast houses/angles for the same birth moment at a new location."""
     from kerykeion import RelocatedChartFactory
 
-    subject = _need_subject(profile, "relocate")
+    subject = _stored_subject(profile, "relocate")
     if new_lat is None or new_lng is None:
         raise ValueError("relocate needs --new-lat and --new-lng")
     relocated = RelocatedChartFactory.relocate(
@@ -305,7 +299,7 @@ def nodes(
     """Planetary nodes (ascending/descending, perihelion/aphelion)."""
     from kerykeion import PlanetaryNodesFactory
 
-    subject = _need_subject(profile, "nodes")
+    subject = _stored_subject(profile, "nodes")
     kwargs = _given(
         method=_choose(method, ("mean", "osculating"), "method"),
         planets=_split_csv(planets),
@@ -324,12 +318,8 @@ def house_comparison(
     """Where each of one subject's points falls in the other's houses."""
     from kerykeion import HouseComparisonFactory
 
-    if not profile:
-        raise ValueError("house-comparison needs -s <profile> for the first subject")
-    if not subject2:
-        raise ValueError("house-comparison needs -S <profile> for the second subject")
-    first = _need_subject(profile, "house-comparison")
-    second = _need_subject(subject2, "house-comparison")
+    first = _stored_subject(profile, "house-comparison")
+    second = _stored_subject(subject2, "house-comparison", "-S")
     kwargs = _given(active_points=_split_csv(planets))
     factory = HouseComparisonFactory(first, second, **kwargs)  # type: ignore[arg-type]
     _emit(factory.get_house_comparison(), fmt, output)
@@ -354,7 +344,7 @@ def solar_arc(
     """
     from kerykeion import SolarArcFactory
 
-    subject = _need_subject(profile, "solar-arc")
+    subject = _stored_subject(profile, "solar-arc")
     if target_year is None and target_iso is None:
         raise ValueError("solar-arc needs --target-year or --target-iso")
     kwargs = _given(
@@ -380,12 +370,9 @@ def fixed_stars(
     """Fixed stars conjunct the subject's points, within an orb."""
     from kerykeion import FixedStarDiscoveryFactory
 
-    subject = _need_subject(profile, "fixed-stars")
-    kwargs: dict[str, Any] = {}
-    if orb is not None:
-        kwargs["orb"] = orb
+    subject = _stored_subject(profile, "fixed-stars")
     _emit(
-        FixedStarDiscoveryFactory.find_prominent_stars(subject, **kwargs),  # type: ignore[arg-type]
+        FixedStarDiscoveryFactory.find_prominent_stars(subject, **_given(orb=orb)),  # type: ignore[arg-type]
         fmt,
         output,
     )

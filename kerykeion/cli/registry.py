@@ -210,3 +210,34 @@ def resolve_target(spec: str) -> ResolvedTarget:
         init_params=init_params,
         method_params={k: v for k, v in _params_of(fn).items() if k not in ("self", "cls")},
     )
+
+
+def list_targets() -> list[dict[str, object]]:
+    """Every dispatchable target, as ``{owner, kind, members}`` records.
+
+    Lives here, next to :func:`resolve_target`, because it answers the same
+    question — what may be called — and the two must not drift: a member listed
+    but not resolvable would advertise a target ``call`` then refuses.
+    """
+    targets: list[dict[str, object]] = []
+    for owner_name, owner in sorted(public_names().items()):
+        if isinstance(owner, type):
+            # Pydantic models stay in public_names() so ``--explain`` can
+            # describe them, but they are not dispatchable (resolve_target
+            # refuses them). Listing model_validate/model_dump here would
+            # advertise targets the command cannot deliver.
+            if _is_pydantic_model(owner):
+                continue
+            members: list[dict[str, object]] = []
+            for name in dir(owner):
+                if name.startswith("_"):
+                    continue
+                try:
+                    kind, _fn = _classify_member(owner, name)
+                except (ValueError, AttributeError):
+                    continue
+                members.append({"name": name, "kind": kind})
+            targets.append({"owner": owner_name, "kind": "class", "members": members})
+        elif callable(owner):
+            targets.append({"owner": owner_name, "kind": "function", "members": []})
+    return targets

@@ -16,7 +16,7 @@ The functions are decorator-free; :mod:`kerykeion.cli.app` registers the group.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Literal, Optional, overload
 
 from kerykeion.cli import subject_resolver
 from kerykeion.cli.commands._shared import (
@@ -72,6 +72,24 @@ def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[
     if sidereal_mode is not None:
         kwargs["sidereal_mode"] = sidereal_mode
     return kwargs
+
+
+@overload
+def _location(
+    profile: Optional[str], lat: Optional[float], lng: Optional[float], tz: Optional[str], cmd: str
+) -> tuple[float, float, str]: ...
+
+
+@overload
+def _location(
+    profile: Optional[str],
+    lat: Optional[float],
+    lng: Optional[float],
+    tz: Optional[str],
+    cmd: str,
+    *,
+    require_tz: Literal[False],
+) -> tuple[float, float, Optional[str]]: ...
 
 
 def _location(

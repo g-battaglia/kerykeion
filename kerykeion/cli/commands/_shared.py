@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Small helpers shared across the command modules.
+"""Helpers shared across the command modules.
 
-These are the trivial compositions every command would otherwise duplicate
-verbatim: resolving the output format and routing the payload through the
-warnings funnel (:func:`_emit`), flattening a repeatable/CSV option
-(:func:`_split_csv`), and parsing an ISO date/datetime (:func:`_parse_dt`).
-Kept here so a behaviour change (e.g. a newly accepted datetime form) lands in
-exactly one place rather than five.
+Everything a command would otherwise duplicate verbatim lives here: loading the
+stored subject ``-s`` names (:func:`_stored_subject`), keeping only the flags
+actually given (:func:`_given`), resolving the output format and routing the
+payload through the warnings funnel (:func:`_emit`), flattening a repeatable/CSV
+option (:func:`_split_csv`), parsing an ISO date/datetime (:func:`_parse_dt`) and
+the ``--aspects`` syntax (:func:`_parse_aspects`), and the two signature helpers
+that keep the subject and render flags declared once (:func:`_subject_from`,
+:func:`with_render_flags`). A behaviour change lands in exactly one place.
 
-This module is a leaf: it imports only the CLI ``warnings``/``formats`` helpers
-and the stdlib, never another command module, so importing it can never cycle.
+This module is a leaf: it imports only the CLI ``options``/``warnings``/
+``formats`` helpers and the stdlib, never another command module, so importing
+it can never cycle.
 """
 
 from __future__ import annotations
@@ -44,6 +47,19 @@ def _given(**flags: Any) -> dict[str, Any]:
     :func:`kerykeion.cli.subject_resolver._kwargs_for`.
     """
     return {name: value for name, value in flags.items() if value is not None}
+
+
+def _stored_subject(spec: Optional[str], cmd: str, flag: str = "-s", **flags: Any):
+    """The stored subject a command names with ``-s`` (or ``-S``), or a usable error.
+
+    *flags* are the few inline overrides a stored subject still honours
+    (``transit``/``return`` pass ``online``/``offline`` through).
+    """
+    if not spec:
+        raise ValueError(f"{cmd} needs {flag} <profile>")
+    from kerykeion.cli import subject_resolver
+
+    return subject_resolver.resolve_subject(subject_resolver.SubjectFlags(**flags), spec)
 
 
 def _split_csv(values: Optional[list[str]]) -> Optional[list[str]]:

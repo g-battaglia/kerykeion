@@ -40,34 +40,6 @@ from kerykeion.cli.options import (
 from kerykeion.cli.rendering import formats
 
 
-def _list_targets() -> list[dict[str, object]]:
-    """Build the list of {owner, kind, members} for ``--list``."""
-    targets: list[dict[str, object]] = []
-    for owner_name, owner in sorted(registry.public_names().items()):
-        if isinstance(owner, type):
-            # Pydantic models are kept in public_names() so ``--explain`` can
-            # describe them, but they are not dispatchable (resolve_target
-            # refuses them). Listing model_validate/model_dump here would
-            # advertise targets the command cannot deliver.
-            if registry._is_pydantic_model(owner):  # type: ignore[attr-defined]
-                continue
-            members = []
-            for name in dir(owner):
-                if name.startswith("_"):
-                    continue
-                try:
-                    kind, _fn = registry._classify_member(owner, name)  # type: ignore[attr-defined]
-                except ValueError:
-                    continue
-                except AttributeError:
-                    continue
-                members.append({"name": name, "kind": kind})
-            targets.append({"owner": owner_name, "kind": "class", "members": members})
-        elif callable(owner):
-            targets.append({"owner": owner_name, "kind": "function", "members": []})
-    return targets
-
-
 def _annotation_for(target: registry.ResolvedTarget, key: str) -> Any:
     """Look up a parameter's annotation across init + method params."""
     if key in target.method_params:
@@ -112,7 +84,7 @@ def call(
     """Dispatch to any public kerykeion factory method or function."""
     if list_flag:
         resolved = formats.resolve_format("json" if json_flag else fmt, output)
-        _emit(_list_targets(), resolved, output)
+        _emit(registry.list_targets(), resolved, output)
         return
 
     if target_arg is None:

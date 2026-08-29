@@ -13,7 +13,7 @@ The functions are decorator-free; :mod:`kerykeion.cli.app` registers them.
 from __future__ import annotations
 
 import json
-from typing import Any, Optional
+from typing import Any
 
 from kerykeion.cli.commands._shared import (
     _active_aspects,
@@ -21,6 +21,7 @@ from kerykeion.cli.commands._shared import (
     _given,
     _parse_aspects,
     _split_csv,
+    _stored_subject,
 )
 from kerykeion.cli.options import (
     AccidentalDignitiesFlag,
@@ -41,14 +42,6 @@ from kerykeion.cli.options import (
     SubjectProfile,
     UsingDefaultLocationFlag,
 )
-
-
-def _subject(profile: Optional[str], cmd: str) -> object:
-    from kerykeion.cli import subject_resolver
-
-    if not profile:
-        raise ValueError(f"{cmd} needs -s <profile>")
-    return subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
 
 
 def aspects(
@@ -74,8 +67,8 @@ def aspects(
     """
     from kerykeion import AspectsFactory
 
-    first = _subject(profile, "aspects")
-    second = _subject(subject2, "aspects") if subject2 else None
+    first = _stored_subject(profile, "aspects")
+    second = _stored_subject(subject2, "aspects", "-S") if subject2 else None
     kwargs: dict[str, Any] = _given(active_points=_split_csv(planets))
 
     model: object
@@ -134,7 +127,7 @@ def dominants(
     """Dominant signs, elements, qualities and planets for a subject."""
     from kerykeion import DominantsFactory
 
-    subject = _subject(profile, "dominants")
+    subject = _stored_subject(profile, "dominants")
     kwargs: dict[str, Any] = {}
     if method is not None:
         # Validated against what the library reports, not a copied list, so a
@@ -176,7 +169,7 @@ def moon(
     """Moon phase details for the subject's moment and place."""
     from kerykeion import MoonPhaseDetailsFactory
 
-    subject = _subject(profile, "moon")
+    subject = _stored_subject(profile, "moon")
     kwargs = _given(
         using_default_location=using_default_location,
         location_precision=location_precision,
@@ -195,12 +188,8 @@ def relationship_score(
     """Ciro Discepolo's relationship score between two stored subjects."""
     from kerykeion import RelationshipScoreFactory
 
-    if not profile:
-        raise ValueError("relationship-score needs -s <profile> for the first subject")
-    if not subject2:
-        raise ValueError("relationship-score needs -S <profile> for the second subject")
-    first = _subject(profile, "relationship-score")
-    second = _subject(subject2, "relationship-score")
+    first = _stored_subject(profile, "relationship-score")
+    second = _stored_subject(subject2, "relationship-score", "-S")
     kwargs = _given(
         use_only_major_aspects=None if all_aspects is None else not all_aspects,
         axis_orb_limit=axis_orb_limit,

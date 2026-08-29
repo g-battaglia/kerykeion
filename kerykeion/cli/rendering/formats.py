@@ -3,7 +3,7 @@
 
 Precedence (highest wins): an explicit ``-f/--format`` flag → the file suffix of
 ``-o/--output`` → ``$KERYKEION_CLI_FORMAT`` → TTY detection (text on a terminal,
-JSON when piped). The TTY check goes through :func:`kerykeion.cli.io.stdout_is_a_tty`
+JSON when piped). The TTY check goes through :func:`kerykeion.cli.io.stdout_is_tty`
 so tests can pin it from one place.
 """
 
