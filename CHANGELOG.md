@@ -72,6 +72,10 @@ drawing changed except the words of the lunar phase.
 - `moon_phase_name` on existing charts can change for separations within
   6.43° of a syzygy or quadrature boundary — that is the fix. `major_phase`
   is the field to key display logic on.
+- A `LunarPhaseModel` payload produced by a90 or earlier — without
+  `major_phase` and `stage` — still validates: the two fields are derived from
+  `degrees_between_s_m` when absent, so stored charts and cached JSON load
+  unchanged.
 
 ## [6.0.0a90] - 2026-08-26
 
