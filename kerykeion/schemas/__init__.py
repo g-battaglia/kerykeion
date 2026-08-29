@@ -51,6 +51,7 @@ from .literals import (
     ReturnType,
     DominantMethod,
     SolarPhase,
+    ApsisKind,
 )
 from .models import (
     SubscriptableBaseModel,
@@ -324,6 +325,7 @@ __all__ = [
     # Planetary phenomena (from models)
     "SolarPhase",
     "SolarPhaseThresholdsModel",
+    "ApsisKind",
     "PlanetaryPhenomenaModel",
     "PlanetaryPhenomenaCollectionModel",
     # Zodiacal releasing (from models)
