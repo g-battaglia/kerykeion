@@ -339,7 +339,7 @@ A sidereal chart is unaffected: `nakshatra_ayanamsa` is ignored there, and `subj
 
 `moon_phase_name` and `moon_emoji` used to come from 28 equal bins, which put the label a little ahead of or behind the event it names. They now come from windows centred on the syzygies: New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and the four crescent/gibbous names fill the rest. A moment near a boundary can therefore report a different name than it did in v5 — a closer one.
 
-The `moon_phase` index (1-28) is unchanged, and so are `get_moon_phase_name_from_phase_int` / `get_moon_emoji_from_phase_int`, which only ever see that index: they remain the 28-bin approximation and can disagree with the model near a boundary. `LunarPhaseModel` also gained `major_phase` (the nearest of the four syzygies) and `stage` (`"waxing"` / `"waning"`).
+The `moon_phase` index (1-28) is unchanged, and so are `get_moon_phase_name_from_phase_int` / `get_moon_emoji_from_phase_int`, which only ever see that index: they remain the 28-bin approximation and can disagree with the model near a boundary. `LunarPhaseModel` also gained `major_phase` (the nearest of the four syzygy/quadrature events) and `stage` (`"waxing"` / `"waning"`).
 
 ### `perihelion` / `aphelion` are deprecated
 

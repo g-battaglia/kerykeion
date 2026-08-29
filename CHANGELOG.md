@@ -33,7 +33,9 @@ drawing changed except the words of the lunar phase.
   records `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Sidereal charts
   are untouched. `nakshatra_ayanamsa=None` restores the uncorrected values,
   still with the warning. Returns, progressions and Davison composites inherit
-  the setting.
+  the setting — and for `"USER"` the definition (`custom_ayanamsa_t0` /
+  `custom_ayanamsa_ayan_t0`) travels with the name, which alone is not an
+  ayanamsa. A chart that asks for no nakshatras is never asked for one either.
 
 - **`moonrise` / `moonset` are populated.** The four fields on
   `MoonPhaseMoonSummaryModel` existed, the XML serialiser printed them, and
@@ -42,7 +44,11 @@ drawing changed except the words of the lunar phase.
   Unix instant), `None` on the roughly one day in thirty when the Moon does
   not rise, or does not set. `compute_rise_set_ephe(body=…)` generalises the
   Sun-only routine; `compute_sun_rise_set_ephe` stays as an alias and is
-  pinned byte-identical.
+  pinned byte-identical. The day's opening and closing midnights are resolved
+  by one shared rule, so a zone that changes its offset at 00:00 gets a 25- or
+  23-hour day that encloses exactly its own hours: a fall-back fold opens the
+  day at the FIRST occurrence of midnight, a spring-forward gap at the first
+  instant past it.
 
 - **A planet one degree from the Sun is no longer just "an evening star".**
   `is_morning_star` / `is_evening_star` were, and remain, pure geometry

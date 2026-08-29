@@ -153,9 +153,9 @@ if subject.lunar_phase:
 `moon_phase_name` and `moon_emoji` come from windows centred on the syzygies
 (New/Full ±6.4286°, the quarters ±19.2857°), so the name tracks the event rather
 than a bin boundary. `moon_phase` stays a 1-28 index; `major_phase` is the
-nearest of the four syzygies and `stage` is `"waxing"` or `"waning"`. The two
-`get_moon_*_from_phase_int` helpers see only the index and remain the older
-28-bin approximation.
+nearest of the four syzygy/quadrature events and `stage` is `"waxing"` or
+`"waning"`. The two `get_moon_*_from_phase_int` helpers see only the index and
+remain the older 28-bin approximation.
 
 ## 4. Chart Data Factory
 
