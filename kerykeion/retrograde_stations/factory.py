@@ -51,6 +51,9 @@ _STATION_PLANETS: List[tuple[str, int]] = [
 ]
 
 _PLANET_IDS = {name: pid for name, pid in _STATION_PLANETS}
+# Chiron stations too; opt-in (``planets=[..., "Chiron"]``) so the default
+# output — and its baselines — stay the seven classical/modern planets.
+_PLANET_IDS["Chiron"] = POINT_NUMBER_MAP["Chiron"]
 
 # Sampling step (days). Stations of the same planet are ≥ ~3 weeks apart (even
 # Mercury), so a week-long step still never brackets two stations — the speed
@@ -62,6 +65,15 @@ _BISECTION_ITERS = 30
 # Backstop on samples per scan (~38,000 years at the 7-day step). Ranges that
 # would exceed it are rejected explicitly rather than silently truncated.
 _MAX_SAMPLES = 2_000_000
+# A station within the solver's own resolution of a range bound IS that bound:
+# at the start it decides the initial motion state deterministically (instead
+# of the sign of a speed that is numerically ~0 there), at the end it closes
+# the span unclipped. A twentieth of a second is far coarser than the
+# bisection's error (a 7-day bracket halved 30 times: well under a
+# millisecond) and twenty times finer than the second the ISO output
+# resolves — it absorbs the solver's error and nothing else: a station half
+# a second inside the range is a real station and stays one.
+_EDGE_TOL_DAYS = 0.05 / 86400.0
 
 
 def _to_utc_naive(dt: datetime) -> datetime:
@@ -161,6 +173,117 @@ class RetrogradeStationsCollectionModel(SubscriptableBaseModel):
     start_jd: float
     end_jd: float
     stations: List[StationModel]
+
+
+class RetrogradePeriodModel(SubscriptableBaseModel):
+    """One span of retrograde motion, clipped to the requested range.
+
+    ``start`` is a retrograde station (or the range start, flagged), ``end`` a
+    direct station (or the range end, flagged). Periods carry no sign: station
+    instants are zodiac-independent.
+    """
+
+    planet: str = Field(description="Planet name (kerykeion AstrologicalPoint vocabulary)")
+    start_jd: float = Field(description="Julian Day (UT) the retrograde motion begins (clipped to the range start)")
+    end_jd: float = Field(description="Julian Day (UT) the retrograde motion ends (clipped to the range end)")
+    start: str = Field(description="ISO 8601 UTC of start_jd")
+    end: str = Field(description="ISO 8601 UTC of end_jd")
+    start_clipped: bool = Field(description="True when the planet was already retrograde at the range start")
+    end_clipped: bool = Field(description="True when the planet is still retrograde at the range end")
+
+
+class RetrogradePeriodsCollectionModel(SubscriptableBaseModel):
+    """Retrograde spans of every requested planet across a Julian Day range."""
+
+    start_jd: float
+    end_jd: float
+    periods: List[RetrogradePeriodModel]
+
+
+def _scan_edges(
+    name: str, body: int, start_jd: float, end_jd: float, iflag: int, found: List[StationModel]
+) -> List[StationModel]:
+    """Stations within ``_EDGE_TOL_DAYS`` just outside either bound — an
+    instant this very factory reported, which bisection may leave a hair to
+    either side of the true zero — so the fold can treat them as sitting on
+    the bound. Scanned apart from the range so the in-range brackets, hence
+    the in-range instants, stay exactly those of :meth:`from_julian_day`. At
+    the very edge of the ephemeris that sliver does not exist and the bound
+    stands. A station the range scan already holds is not reported twice."""
+    edges: List[StationModel] = []
+    before, after = start_jd - _EDGE_TOL_DAYS, end_jd + _EDGE_TOL_DAYS
+    for a, b, probe in ((before, start_jd, before), (end_jd, after, after)):
+        try:
+            _speed(probe, body)
+        except KerykeionException:
+            continue
+        for station in RetrogradeStationFactory._scan_planet(name, body, a, b, iflag):
+            if all(abs(station.julian_day - known.julian_day) > _EDGE_TOL_DAYS for known in found):
+                edges.append(station)
+    return edges
+
+
+def _fold_retrograde_periods(
+    name: str, retro_at_start: bool, stations: List[StationModel], start_jd: float, end_jd: float
+) -> List[RetrogradePeriodModel]:
+    """Turn the motion state at the range start plus the scanned stations into
+    retrograde spans: SR opens, SD closes, the edges clip — unless a station
+    sits on the edge, which then opens or closes the span unclipped. Only an
+    empty span is dropped; a span is as short as the range makes it."""
+
+    def period(a: float, b: float, a_clipped: bool, b_clipped: bool) -> RetrogradePeriodModel:
+        return RetrogradePeriodModel(
+            planet=name,
+            start_jd=a,
+            end_jd=b,
+            start=_jd_to_iso(a),
+            end=_jd_to_iso(b),
+            start_clipped=a_clipped,
+            end_clipped=b_clipped,
+        )
+
+    ordered = sorted(stations, key=lambda s: s.julian_day)
+    # A station within the solver's resolution of the range start overrides
+    # the speed snapshot: the motion BEFORE an SR is direct, before an SD it is
+    # retrograde. Such a station is the range start itself (the scan may place
+    # it a hair to either side).
+    # Likewise a station within the solver's resolution of the range end is
+    # the range end itself: an SD there closes the open span unclipped, an SR
+    # there opens nothing that this range can see. A station within reach of
+    # BOTH bounds (a range shorter than the tolerance, straddling it) goes to
+    # the bound that keeps the motion the range does contain: an SR opens at
+    # the start, an SD closes at the end.
+    on_start = 0
+    if ordered and abs(ordered[0].julian_day - start_jd) <= _EDGE_TOL_DAYS:
+        near_end_too = len(ordered) == 1 and abs(ordered[0].julian_day - end_jd) <= _EDGE_TOL_DAYS
+        if not (near_end_too and ordered[0].station_type == "SD"):
+            retro_at_start = ordered[0].station_type == "SD"
+            ordered[0] = ordered[0].model_copy(update={"julian_day": start_jd})
+            on_start = 1
+    if len(ordered) > on_start and abs(ordered[-1].julian_day - end_jd) <= _EDGE_TOL_DAYS:
+        ordered[-1] = ordered[-1].model_copy(update={"julian_day": end_jd})
+
+    out: List[RetrogradePeriodModel] = []
+    open_jd: Optional[float] = start_jd if retro_at_start else None
+    open_clipped = retro_at_start
+    for station in ordered:
+        if station.station_type == "SR":
+            if open_jd is not None:
+                raise KerykeionException(
+                    f"{name}: retrograde station at JD {station.julian_day:.5f} while already retrograde."
+                )
+            open_jd, open_clipped = station.julian_day, False
+        else:
+            if open_jd is None:
+                raise KerykeionException(
+                    f"{name}: direct station at JD {station.julian_day:.5f} while not retrograde."
+                )
+            if station.julian_day > open_jd:
+                out.append(period(open_jd, station.julian_day, open_clipped, False))
+            open_jd = None
+    if open_jd is not None and end_jd > open_jd:
+        out.append(period(open_jd, end_jd, open_clipped, True))
+    return out
 
 
 # =============================================================================
@@ -283,6 +406,92 @@ class RetrogradeStationFactory:
             end_jd=end_jd,
             stations=stations,
         )
+
+    @staticmethod
+    def retrograde_periods_from_iso_range(
+        start_date: str,
+        end_date: str,
+        planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
+    ) -> RetrogradePeriodsCollectionModel:
+        """Retrograde spans between two ISO date(time) strings (treated as UTC).
+
+        Same arguments as :meth:`from_iso_range`; ``"Chiron"`` is accepted on
+        request.
+        """
+        try:
+            start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
+            end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
+        except (ValueError, TypeError) as exc:
+            raise KerykeionException(
+                f"Invalid ISO date/datetime for station range "
+                f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
+            ) from exc
+        if is_iso_date_only(end_date):
+            end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+        return RetrogradeStationFactory.retrograde_periods_from_julian_day(
+            datetime_to_julian(start_dt), datetime_to_julian(end_dt), planets, zodiac_type, sidereal_mode
+        )
+
+    @staticmethod
+    def retrograde_periods_from_julian_day(
+        start_jd: float,
+        end_jd: float,
+        planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
+    ) -> RetrogradePeriodsCollectionModel:
+        """Retrograde spans of each planet across ``[start_jd, end_jd]``, clipped to it.
+
+        The motion state at the range start is read from the longitudinal speed
+        there; the in-range stations open (SR) and close (SD) the spans; spans
+        touching an edge are clipped and flagged — unless a station sits on
+        that edge (say, an instant this factory reported), which then opens or
+        closes the span there unclipped. "On the edge" means within the
+        solver's own resolution (a twentieth of a second, ten times the
+        bisection's error): a station half a second inside the range is a
+        real station. The in-range instants are exactly those
+        :meth:`from_julian_day` reports for the same range. Beyond that sliver
+        past either bound, nothing is searched outside the range, so a span
+        open at the edge does not tell where its real station is. An empty or
+        inverted range yields none; a span is as short as the range makes it.
+
+        Raises:
+            KerykeionException: as :meth:`from_julian_day`, and when the
+                stations do not alternate (SR while retrograde, SD while direct).
+            ValueError: as :meth:`from_julian_day`.
+        """
+        validate_julian_bounds(start_jd, end_jd)
+        if planets is not None:
+            invalid = sorted(set(planets) - set(_PLANET_IDS))
+            if invalid:
+                raise ValueError(
+                    f"Unknown or non-stationing planets: {', '.join(invalid)}. "
+                    f"Valid: {', '.join(_PLANET_IDS)}"
+                )
+            bodies = [(name, _PLANET_IDS[name]) for name in dict.fromkeys(planets)]
+        else:
+            bodies = list(_STATION_PLANETS)
+        _validate_zodiac(zodiac_type, sidereal_mode)
+
+        periods: List[RetrogradePeriodModel] = []
+        if end_jd > start_jd and bodies:
+            _ensure_scannable(start_jd, end_jd)
+            with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
+                for name, body in bodies:
+                    retro_at_start = _speed(start_jd, body) < 0.0
+                    # The range scan, then a solver's resolution beyond either
+                    # bound: a station sitting on the range start is bracketed
+                    # and found, and the fold's edge rule decides the initial
+                    # state from it rather than from a speed that is
+                    # numerically ~0 there; one on the range end closes its
+                    # span unclipped.
+                    stations = RetrogradeStationFactory._scan_planet(name, body, start_jd, end_jd, iflag)
+                    stations += _scan_edges(name, body, start_jd, end_jd, iflag, stations)
+                    periods.extend(_fold_retrograde_periods(name, retro_at_start, stations, start_jd, end_jd))
+
+        return RetrogradePeriodsCollectionModel(start_jd=start_jd, end_jd=end_jd, periods=periods)
 
     @staticmethod
     def _scan_planet(
