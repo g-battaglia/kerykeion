@@ -268,7 +268,7 @@ Three classical names for how near the Sun a body stands, read as a condition of
 
 | Term | Meaning | Default cut-off |
 |:-----|:--------|:----------------|
-| **Cazimi** | In the heart of the Sun | within 0.2833° (16 arcminutes) |
+| **Cazimi** | In the heart of the Sun | within 0.2833° (17 arcminutes) |
 | **Combust** | Burnt; invisible in the glare | within 8.5° |
 | **Under the Beams** | Still inside the Sun's rays | within 17° |
 | **Free** | Far enough to be seen in a dark sky | 17° or more |

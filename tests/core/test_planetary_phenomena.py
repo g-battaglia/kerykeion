@@ -350,7 +350,8 @@ class TestSolarPhase:
         assert venus.solar_phase == "under_the_beams"
 
     def test_mercury_at_its_conjunction_is_cazimi(self):
-        """Mercury's May 2026 conjunction passes within 16' of the Sun's centre.
+        """Mercury's May 2026 conjunction passes within 9' of the Sun's centre,
+        comfortably inside the 17' (0.2833 deg) cazimi window.
 
         Cazimi by TRUE separation is rare — most conjunctions leave the planet
         degrees away in latitude even while sharing the Sun's longitude — so the
@@ -394,6 +395,39 @@ class TestSolarPhase:
         moon = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Moon"]).phenomena[0]
         assert moon.elongation < 1.0
         assert moon.solar_phase == "combust"
+
+    @pytest.mark.parametrize(
+        "year, month, day, expected_elongation, expected_phase",
+        [
+            (2026, 8, 12, 0.891865, "combust"),
+            (2027, 8, 2, 0.144957, "cazimi"),
+        ],
+        ids=["total-eclipse-is-combust", "total-eclipse-is-cazimi"],
+    )
+    def test_a_central_eclipse_does_not_decide_the_moons_phase(
+        self, year: int, month: int, day: int, expected_elongation: float, expected_phase: str
+    ):
+        """Two total solar eclipses, two different labels — and both are right.
+
+        `pheno_ut` reports the GEOCENTRIC elongation; an eclipse is a TOPOCENTRIC
+        alignment, seen by the observer under the shadow, and lunar parallax
+        between the two frames reaches about a degree. So a central eclipse is no
+        promise of cazimi: on 2026-08-12 the Moon bottoms out three times the
+        cazimi half-width away and reads `combust`, while on 2027-08-02 it comes
+        inside and reads `cazimi`.
+
+        The instant is found by search (the eclipse is where it is, whatever
+        minute the ephemeris puts it in) but the ELONGATION is pinned to six
+        decimals: a drift here means the frame changed, and the whole point is
+        that the published frame is the geocentric one.
+        """
+        jd = _extreme_elongation(
+            ephe.julday(year, month, day, 0.0), ephe.julday(year, month, day + 1, 0.0), "min", "Moon"
+        )
+        moon = PlanetaryPhenomenaFactory.from_julian_day(jd, planets=["Moon"]).phenomena[0]
+
+        assert moon.elongation == pytest.approx(expected_elongation, abs=1e-6)
+        assert moon.solar_phase == expected_phase
 
     def test_the_thresholds_used_are_echoed_on_the_collection(self, subject):
         """A label is meaningless without the convention that produced it."""

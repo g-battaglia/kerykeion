@@ -201,11 +201,22 @@ class PlanetaryPhenomenaFactory:
                     # elongation is the same astronomical quantity (angular
                     # distance from the Sun) and the names still describe what
                     # they always describe — the dark of the Moon is exactly the
-                    # interval in which it is under the beams, and a central
-                    # solar eclipse is the one moment it is cazimi. What a given
-                    # school then DOES with a combust Moon is the school's
-                    # business, not this factory's; withholding the datum would
-                    # be a judgement, and the library does not make those.
+                    # interval in which it is under the beams.
+                    #
+                    # A central solar eclipse is NOT a promise of cazimi, and
+                    # the reason is the frame: `pheno_ut` reports the GEOCENTRIC
+                    # elongation, while an eclipse is a TOPOCENTRIC alignment,
+                    # and lunar parallax between the two reaches about a degree.
+                    # Cazimi at the moment of totality is what the observer
+                    # standing under the shadow sees; the published number is
+                    # what the Earth's centre sees. The 2026-08-12 totality
+                    # bottoms out at a geocentric 0.891865° — `combust` — while
+                    # 2027-08-02 reaches 0.144957° and does read `cazimi`.
+                    #
+                    # What a given school then DOES with a combust Moon is the
+                    # school's business, not this factory's; withholding the
+                    # datum would be a judgement, and the library does not make
+                    # those.
                     solar_phase = classify_solar_phase(rounded_elongation, thresholds)
 
                     # Morning/evening star for Mercury and Venus. Geometry only:

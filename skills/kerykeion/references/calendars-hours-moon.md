@@ -34,8 +34,11 @@ that instant:
   days_ago/days_ahead), plus `moonrise`/`moonset` and their
   `moonrise_timestamp`/`moonset_timestamp`.
 - `moonrise`/`moonset` are ISO-8601 strings in the subject's **local** zone (the
-  same zone `sun.sunrise` uses); the two `*_timestamp` fields are the same
-  instants as Unix seconds (UTC). They are the refracted upper limb with
+  same zone `sun.sunrise` uses — but `str` here against `sun.sunrise`'s
+  `datetime`: the moon block mirrors a web-API shape and keeps everything a
+  string, and the type is not going to change); the two `*_timestamp` fields are
+  the same instants as Unix seconds (UTC), and are what to read when an instant
+  rather than a rendering is wanted. They are the refracted upper limb with
   topocentric parallax — the almanac convention — computed for the subject's
   civil day, DST-correct at both midnights. Each is `None` when that day has no
   such event: the Moon rises ~50 min later each day, so roughly one day in

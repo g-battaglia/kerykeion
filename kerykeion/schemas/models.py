@@ -383,6 +383,19 @@ class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
 
     This model mirrors the structure used by web APIs for moon phase
     information and is designed to be populated by MoonPhaseDetailsFactory.
+
+    Note on the rise/set types, which are deliberately asymmetric with the Sun's:
+    ``moonrise`` / ``moonset`` are ``str`` (a pre-formatted local ISO-8601
+    timestamp), while :class:`MoonPhaseSunInfoModel`'s ``sunrise`` / ``sunset``
+    are ``datetime``. This model mirrors the shape of the web APIs it was built
+    against, where every one of its fields is a string or a number; the Sun's
+    block is a native model and keeps native types. In ``model_dump()`` the two
+    come out as different types; in ``model_dump(mode="json")`` they agree in every
+    zone but UTC, where the ``datetime`` serialises with a trailing ``Z`` and
+    the string keeps the ``+00:00`` it was formatted with. Read
+    ``moonrise_timestamp`` / ``moonset_timestamp`` (Unix seconds) when an
+    instant, rather than a rendering, is what is wanted. Changing the field type
+    would break every consumer already parsing the string, so it stays as it is.
     """
 
     phase: Optional[float] = None
@@ -1017,11 +1030,21 @@ class AstrologicalBaseModel(SubscriptableBaseModel):
     )
     custom_ayanamsa_t0: Optional[float] = Field(
         default=None,
-        description="Reference epoch (Julian Day) for USER sidereal mode. None unless sidereal_mode is USER.",
+        description=(
+            "Reference epoch (Julian Day) of the USER ayanamsa definition. Set whenever that "
+            "definition was actually cast: when sidereal_mode is USER, and also when a "
+            "non-sidereal chart placed its nakshatras with nakshatra_ayanamsa='USER'. None "
+            "otherwise."
+        ),
     )
     custom_ayanamsa_ayan_t0: Optional[float] = Field(
         default=None,
-        description="Ayanamsa value in degrees at the reference epoch for USER sidereal mode. None unless sidereal_mode is USER.",
+        description=(
+            "Ayanamsa value in degrees at the reference epoch of the USER definition. Set "
+            "whenever that definition was actually cast: when sidereal_mode is USER, and also "
+            "when a non-sidereal chart placed its nakshatras with nakshatra_ayanamsa='USER'. "
+            "None otherwise."
+        ),
     )
     nakshatra_ayanamsa: Optional[SiderealMode] = Field(
         default=None,
@@ -2023,7 +2046,7 @@ class SolarPhaseThresholdsModel(SubscriptableBaseModel):
     the outer name.
 
     The defaults are the values most often quoted in the classical literature —
-    16 arcminutes (0.2833°) for cazimi, 8°30' for combustion, 17° for the beams —
+    17 arcminutes (0.2833°) for cazimi, 8°30' for combustion, 17° for the beams —
     but they are conventions, not measurements, and the schools disagree about
     all three (some read the beams at 15°, some scale combustion by planet). They
     are therefore parameters: pass a different instance to the phenomena factory
@@ -2038,7 +2061,7 @@ class SolarPhaseThresholdsModel(SubscriptableBaseModel):
     """
 
     cazimi_deg: float = Field(
-        default=0.2833, gt=0, description="Half-width of cazimi in degrees (default 16 arcminutes)"
+        default=0.2833, gt=0, description="Half-width of cazimi in degrees (default 17 arcminutes)"
     )
     combust_deg: float = Field(
         default=8.5, gt=0, description="Half-width of combustion in degrees (default 8°30')"
