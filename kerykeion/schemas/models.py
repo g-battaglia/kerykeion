@@ -41,6 +41,7 @@ from kerykeion.schemas.literals import AspectName, ClassicalPlanet, SolarPhase, 
 from kerykeion.schemas.literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
+    LunarPhaseStage,
     AstrologicalPoint,
     MotionState,
     Houses,
@@ -95,17 +96,32 @@ class LunarPhaseModel(SubscriptableBaseModel):
     """
     Model representing lunar phase information.
 
+    Every field but ``moon_phase`` is derived from ``degrees_between_s_m`` alone,
+    and by a single set of rules — see
+    :func:`kerykeion.utilities.core.lunar_phase_name_from_degrees`,
+    :func:`kerykeion.utilities.core.lunar_major_phase_from_degrees` and
+    :func:`kerykeion.utilities.core.lunar_stage_from_degrees`, which the moon-phase
+    overview also reads, so a subject and the moon-phase endpoint cannot disagree
+    about the same instant.
+
     Attributes:
         degrees_between_s_m: Angular separation between Sun and Moon in degrees.
-        moon_phase: Numerical phase identifier for the Moon.
+        moon_phase: Lunation day, 1-28: the index of the 1/28th bin the separation
+            falls in. A calendar-style counter, NOT the name's source.
         moon_emoji: Emoji representation of the lunar phase.
-        moon_phase_name: Text name of the lunar phase.
+        moon_phase_name: Text name of the lunar phase, from a window centred on
+            the event it names.
+        major_phase: The nearest of the four major phases (New Moon, First Quarter,
+            Full Moon, Last Quarter) — always one of those four, whatever the name.
+        stage: ``"waxing"`` before the opposition, ``"waning"`` after it.
     """
 
     degrees_between_s_m: Union[float, int]
     moon_phase: int
     moon_emoji: LunarPhaseEmoji
     moon_phase_name: LunarPhaseName
+    major_phase: LunarPhaseName
+    stage: LunarPhaseStage
 
 
 class MoonPhaseSunPositionModel(SubscriptableBaseModel):
@@ -346,8 +362,8 @@ class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
 
     phase: Optional[float] = None
     phase_name: Optional[LunarPhaseName] = None
-    major_phase: Optional[str] = None
-    stage: Optional[str] = None
+    major_phase: Optional[LunarPhaseName] = None
+    stage: Optional[LunarPhaseStage] = None
     illumination: Optional[str] = None
     age_days: Optional[int] = None
     age_days_precise: Optional[float] = Field(

@@ -233,13 +233,13 @@ Compact lunar phase information attached to every `AstrologicalSubjectModel` (vi
 | Field                 | Type              | Description                                              |
 | :-------------------- | :---------------- | :------------------------------------------------------- |
 | `degrees_between_s_m` | `float \| int`    | Angular separation between the Sun and Moon in degrees.  |
-| `moon_phase`          | `int`             | Lunation day (1-28), derived from the Sun-Moon angle.    |
+| `moon_phase`          | `int`             | Lunation day (1-28), the 1/28th bin the angle falls in. A counter, not the name's source. |
 | `moon_emoji`          | `LunarPhaseEmoji` | Emoji representation of the phase (e.g. `"🌕"`).        |
-| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`).    |
-| `major_phase`         | `str`             | Nearest of the four syzygies (New Moon, First Quarter, Full Moon, Last Quarter). |
-| `stage`               | `str`             | `"waxing"` or `"waning"`.                                |
+| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`), from a window centred on the event it names. |
+| `major_phase`         | `LunarPhaseName`  | Nearest of the four major phases: `"New Moon"`, `"First Quarter"`, `"Full Moon"`, `"Last Quarter"`. |
+| `stage`               | `LunarPhaseStage` | `"waxing"` before the opposition, `"waning"` after it.   |
 
-`moon_phase_name` and `moon_emoji` come from windows **centred on the syzygies**: New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and the four crescent/gibbous names fill the rest. The name therefore tracks the event rather than a bin boundary. The `moon_phase` index (1-28) is unchanged.
+The name comes from the separation, through eight windows centred on the events: New and Full Moon span 12.857° each (±6.4286° around 0° and 180°), the two quarters 38.571° each (±19.2857° around 90° and 270°), and the four intermediate names fill the rest. So a minute either side of an exact syzygy reads the same, and agrees with the illumination percentage. The lunation day is a different partition of the same circle — its bins begin at the conjunction rather than straddling it — and it is deliberately unchanged.
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -249,6 +249,8 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 print(subject.lunar_phase.moon_phase_name)   # e.g. "Waxing Gibbous"
 print(subject.lunar_phase.moon_emoji)         # e.g. "🌔"
 print(subject.lunar_phase.degrees_between_s_m)  # e.g. 135.7
+print(subject.lunar_phase.major_phase)        # e.g. "First Quarter"
+print(subject.lunar_phase.stage)              # e.g. "waxing"
 ```
 
 ### MoonPhaseOverviewModel

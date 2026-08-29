@@ -64,8 +64,14 @@ from kerykeion.moon_phase_details.utils import (
     compute_sun_position,
 )
 from kerykeion.ephemeris_backend.backend import ephemeris_session, ephe
-from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName
-from kerykeion.utilities.core import datetime_to_julian, julian_to_datetime, localize_naive
+from kerykeion.schemas.literals import LunarPhaseEmoji, LunarPhaseName, LunarPhaseStage
+from kerykeion.utilities.core import (
+    datetime_to_julian,
+    julian_to_datetime,
+    localize_naive,
+    lunar_major_phase_from_degrees,
+    lunar_stage_from_degrees,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -105,7 +111,7 @@ def _get_utc_datetime(subject: AstrologicalSubjectModel) -> datetime:
     return safe_parse_iso_datetime(iso_utc)
 
 
-def _compute_major_phase_name(degrees_between: float) -> str:
+def _compute_major_phase_name(degrees_between: float) -> LunarPhaseName:
     """
     Compute the nearest major lunar phase name given the Sun–Moon separation.
 
@@ -114,21 +120,13 @@ def _compute_major_phase_name(degrees_between: float) -> str:
         - First Quarter (90°)
         - Full Moon (180°)
         - Last Quarter (270°)
+
+    A thin alias over :func:`kerykeion.utilities.core.lunar_major_phase_from_degrees`,
+    which is the one definition: the subjects' ``LunarPhaseModel.major_phase`` reads
+    the same function, so this endpoint and a chart cast for the same instant cannot
+    disagree.
     """
-    angle = degrees_between % 360.0
-    major_phases = [
-        (0.0, "New Moon"),
-        (90.0, "First Quarter"),
-        (180.0, "Full Moon"),
-        (270.0, "Last Quarter"),
-    ]
-
-    def angular_distance(a: float, b: float) -> float:
-        diff = (a - b) % 360.0
-        return min(diff, 360.0 - diff)
-
-    closest_phase = min(major_phases, key=lambda item: angular_distance(angle, item[0]))
-    return closest_phase[1]
+    return lunar_major_phase_from_degrees(degrees_between)
 
 
 def _create_event_moment(
@@ -492,7 +490,18 @@ def _compute_lunar_phase_metrics(
     lunar_phase: LunarPhaseModel,
     base_dt: datetime,
     upcoming_phases: MoonPhaseUpcomingPhasesModel,
-) -> tuple[float, LunarPhaseName, LunarPhaseEmoji, str, str, str, int, float, str, MoonPhaseIlluminationDetailsModel]:
+) -> tuple[
+    float,
+    LunarPhaseName,
+    LunarPhaseEmoji,
+    LunarPhaseStage,
+    LunarPhaseName,
+    str,
+    int,
+    float,
+    str,
+    MoonPhaseIlluminationDetailsModel,
+]:
     """
     Compute lunar phase metrics including phase fraction, illumination, and age.
 
@@ -511,8 +520,9 @@ def _compute_lunar_phase_metrics(
     phase_name = lunar_phase.moon_phase_name
     emoji = lunar_phase.moon_emoji
 
-    # Waxing vs waning stage
-    stage = "waxing" if 0.0 <= degrees_between < 180.0 else "waning"
+    # Waxing vs waning stage — the subjects' LunarPhaseModel.stage reads the
+    # same function, so the two surfaces cannot disagree about the same instant.
+    stage = lunar_stage_from_degrees(degrees_between)
 
     # Nearest major phase
     major_phase = _compute_major_phase_name(degrees_between)
@@ -679,8 +689,8 @@ class MoonPhaseDetailsFactory:
         phase: Optional[float] = None
         phase_name: Optional[LunarPhaseName] = None
         emoji: Optional[LunarPhaseEmoji] = None
-        stage: Optional[str] = None
-        major_phase: Optional[str] = None
+        stage: Optional[LunarPhaseStage] = None
+        major_phase: Optional[LunarPhaseName] = None
         illumination_str: Optional[str] = None
         age_days: Optional[int] = None
         age_days_precise: Optional[float] = None

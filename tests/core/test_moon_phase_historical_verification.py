@@ -54,20 +54,25 @@ _EXPECTED_ANGLE = {"NM": 0.0, "FQ": 90.0, "FM": 180.0, "LQ": 270.0}
 # Expected illumination percentage (from cosine formula)
 _EXPECTED_ILLUM = {"NM": 0.0, "FQ": 50.0, "FM": 100.0, "LQ": 50.0}
 
-# At the exact boundary of a major phase, the 28-phase name may be the
-# adjacent name. These are the acceptable names for each phase type.
-_VALID_NAMES: dict[str, set[str]] = {
-    "NM": {"New Moon", "Waning Crescent"},  # phase 1 vs 28 at 0°/360°
-    "FQ": {"First Quarter"},  # phases 7-9 all map to FQ
-    "FM": {"Full Moon", "Waning Gibbous"},  # phase 14 vs 15 at 180°
-    "LQ": {"Last Quarter"},  # phases 20-22 all map to LQ
+# One name per phase type, and no alternative. This table used to admit the
+# adjacent name too — "Waning Crescent" for a new moon, "Waning Gibbous" for a
+# full one — because the 28-bin lookup put bin 1 AFTER the conjunction and ended
+# bin 14 AT the opposition, so 95 of the 365 syzygies below (52 new moons of 90,
+# 43 full moons of 92) carried the neighbour's name and the test blessed it. The
+# name now comes from a window centred on the event, so every one of the 365 is
+# named for the event it is: this table is the non-regression guard.
+_VALID_NAMES: dict[str, str] = {
+    "NM": "New Moon",
+    "FQ": "First Quarter",
+    "FM": "Full Moon",
+    "LQ": "Last Quarter",
 }
 
-_VALID_EMOJIS: dict[str, set[str]] = {
-    "NM": {"🌑", "🌘"},
-    "FQ": {"🌓"},
-    "FM": {"🌕", "🌖"},
-    "LQ": {"🌗"},
+_VALID_EMOJIS: dict[str, str] = {
+    "NM": "🌑",
+    "FQ": "🌓",
+    "FM": "🌕",
+    "LQ": "🌗",
 }
 
 # Synodic month length bounds (days)
@@ -597,14 +602,15 @@ def test_angle_at_known_phase_moment(y, m, d, h, mi, pt):
     ids=[_phase_id(p) for p in KNOWN_PHASES],
 )
 def test_phase_name_at_known_moment(y, m, d, h, mi, pt):
-    """Phase name must be the expected name (or the adjacent boundary name)."""
+    """Phase name must be the name of the event, with no neighbour admitted."""
     subject = _make_subject(y, m, d, h, mi)
     lp = subject.lunar_phase
     assert lp is not None
 
-    valid = _VALID_NAMES[pt]
-    assert lp.moon_phase_name in valid, (
-        f"{pt} {y}-{m:02d}-{d:02d}: name '{lp.moon_phase_name}' not in {valid} (angle={lp.degrees_between_s_m:.4f}°)"
+    expected = _VALID_NAMES[pt]
+    assert lp.moon_phase_name == expected, (
+        f"{pt} {y}-{m:02d}-{d:02d}: name '{lp.moon_phase_name}', expected '{expected}' "
+        f"(angle={lp.degrees_between_s_m:.4f}°)"
     )
 
 
@@ -619,14 +625,15 @@ def test_phase_name_at_known_moment(y, m, d, h, mi, pt):
     ids=[_phase_id(p) for p in KNOWN_PHASES],
 )
 def test_emoji_at_known_moment(y, m, d, h, mi, pt):
-    """Emoji must match the phase type (or adjacent boundary)."""
+    """Emoji must be the event's emoji, with no neighbour admitted."""
     subject = _make_subject(y, m, d, h, mi)
     lp = subject.lunar_phase
     assert lp is not None
 
-    valid = _VALID_EMOJIS[pt]
-    assert lp.moon_emoji in valid, (
-        f"{pt} {y}-{m:02d}-{d:02d}: emoji '{lp.moon_emoji}' not in {valid} (angle={lp.degrees_between_s_m:.4f}°)"
+    expected = _VALID_EMOJIS[pt]
+    assert lp.moon_emoji == expected, (
+        f"{pt} {y}-{m:02d}-{d:02d}: emoji '{lp.moon_emoji}', expected '{expected}' "
+        f"(angle={lp.degrees_between_s_m:.4f}°)"
     )
 
 

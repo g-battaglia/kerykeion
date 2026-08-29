@@ -83,7 +83,7 @@ Helper function to calculate accurate lunar phases.
 
 | Function                                  | Description                                                        |
 | :---------------------------------------- | :----------------------------------------------------------------- |
-| `calculate_moon_phase(moon_deg, sun_deg)` | Returns `LunarPhaseModel`: the Sun-Moon angle, phase number (1-28), phase name, emoji, `major_phase` and `stage`. |
+| `calculate_moon_phase(moon_deg, sun_deg)` | Returns `LunarPhaseModel` with the Sun-Moon angle, the lunation day (1-28), the phase name and emoji, the nearest major phase, and the waxing/waning stage. |
 
 ```python
 from kerykeion.utilities import calculate_moon_phase
@@ -111,10 +111,21 @@ General purpose tools for list management, logging, and SVG optimization.
 
 Additional moon phase formatting utilities.
 
-| Function                                    | Description                        |
-| :------------------------------------------ | :--------------------------------- |
-| `get_moon_emoji_from_phase_int(phase)`      | Returns emoji for a lunation day (1-28). |
-| `get_moon_phase_name_from_phase_int(phase)` | Returns name for a lunation day (1-28).  |
+| Function                                     | Description                        |
+| :------------------------------------------- | :--------------------------------- |
+| `lunar_phase_name_from_degrees(degrees)`     | Returns `(name, emoji)` for a Sun-Moon separation. This is where a chart's phase name comes from. |
+| `lunar_major_phase_from_degrees(degrees)`    | Returns the nearest of the four major phases. |
+| `lunar_stage_from_degrees(degrees)`          | Returns `"waxing"` or `"waning"`.  |
+| `get_moon_emoji_from_phase_int(phase)`       | Returns emoji for a lunation day (1-28). Approximate — see below. |
+| `get_moon_phase_name_from_phase_int(phase)`  | Returns name for a lunation day (1-28). Approximate — see below.  |
+
+The name windows are centred on the events they name: half a bin either side of the two syzygies, one and a half bins either side of the quarters. The two `*_from_phase_int` helpers read the 1-28 lunation day instead, whose bins are offset from the events — bin 1 begins at the conjunction rather than straddling it — so near an event they can answer with the neighbouring name. They are kept for callers that hold the integer and nothing else; anything holding the degrees should call `lunar_phase_name_from_degrees`.
+
+```python
+from kerykeion.utilities import lunar_phase_name_from_degrees
+
+print(lunar_phase_name_from_degrees(180.5))  # ('Full Moon', '🌕')
+```
 
 Both take only the 1-28 index, so they cannot use the centred windows described above: they are the older 28-bin approximation, kept for callers that hold an index and nothing else, and they disagree with `LunarPhaseModel.moon_phase_name` near a boundary. Read the fields off the model when you have it.
 

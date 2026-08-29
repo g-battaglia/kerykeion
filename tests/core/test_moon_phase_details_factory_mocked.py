@@ -59,6 +59,7 @@ from kerykeion.schemas.models import (
     MoonPhaseMajorPhaseWindowModel,
     MoonPhaseEventMomentModel,
 )
+from kerykeion.utilities import calculate_moon_phase
 
 
 # ---------------------------------------------------------------------------
@@ -729,12 +730,14 @@ class TestComputeLunarPhaseMetrics:
 
     @staticmethod
     def _make_lunar_phase(degrees: float = 290.65) -> LunarPhaseModel:
-        return LunarPhaseModel(
-            degrees_between_s_m=degrees,
-            moon_phase=23,
-            moon_emoji="\U0001f318",
-            moon_phase_name="Waning Crescent",
-        )
+        """The lunar phase a subject carries at a given Sun-Moon separation.
+
+        Built from the separation rather than hand-written: this used to pin
+        "Waning Crescent" / 🌘 / lunation day 23 whatever ``degrees`` was, so the
+        90° and 180° probes below were handed a model whose own name contradicted
+        the angle the metrics then read.
+        """
+        return calculate_moon_phase(degrees, 0.0)
 
     @staticmethod
     def _make_upcoming_phases() -> MoonPhaseUpcomingPhasesModel:
