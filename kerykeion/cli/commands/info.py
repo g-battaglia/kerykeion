@@ -1,27 +1,16 @@
 # -*- coding: utf-8 -*-
 """``kerykeion info <sub>`` and ``kerykeion doctor`` — describe and check the install.
 
-The CLI validates ``--houses``, ``--zodiac``, ``--sidereal-mode``, ``--points``
-and friends against the library's own literals: 23 house systems, 48 ayanamsas,
-11 perspectives, 76 points. Until now it could reject a value without ever being
-able to *list* the valid ones, which left reading the source as the only way to
-find them. ``info`` closes that, and with ``-f json`` it is the machine-readable
-source an agent (or a script) can consult instead of hard-coding tables that
-drift.
-
-Everything here is **derived at runtime** from the library — the literal aliases
-via :func:`typing.get_args`, the point/star presets from the resolver's own
-tables, the dominant strategies from ``DominantsFactory.available_methods()``.
-Nothing is transcribed, so ``info`` cannot fall out of step with what the flags
-actually accept.
-
-``doctor`` is the counterpart for the environment: ``status`` reports, ``doctor``
-judges — it runs the same probes plus a real calculation and exits non-zero when
+``info`` lists what the flags accept, derived at runtime from the library (the
+literal aliases, the point/star presets, the dominant strategies), so it cannot
+drift from what the flags validate against. ``doctor`` is ``status`` with a
+verdict: the same probes plus a real calculation, and a non-zero exit when
 something is actually broken.
 """
 
 from __future__ import annotations
 
+import difflib
 import typing
 from typing import Any, Optional
 
@@ -40,14 +29,12 @@ info_app = KerykeionTyper(
 
 
 def _literal_tables() -> dict[str, list[str]]:
-    """Every public ``Literal`` alias in ``kerykeion.schemas.literals``, by name."""
-    from kerykeion.schemas import literals
+    """Every public string ``Literal`` alias in ``kerykeion.schemas.literals``, by name."""
+    from kerykeion.schemas import literals as module
 
-    tables: dict[str, list[str]] = {}
-    for name in dir(literals):
-        if name.startswith("_"):
-            continue
-        args = typing.get_args(getattr(literals, name))
+    tables = {}
+    for name in dir(module):
+        args = typing.get_args(getattr(module, name)) if not name.startswith("_") else ()
         if args and all(isinstance(arg, str) for arg in args):
             tables[name] = list(args)
     return dict(sorted(tables.items()))
@@ -64,11 +51,8 @@ def literals(
     if name is None:
         _emit(tables, fmt, output)
         return
-    # Case-insensitive, like the flags themselves.
     match = {key.lower(): key for key in tables}.get(name.strip().lower())
     if match is None:
-        import difflib
-
         close = difflib.get_close_matches(name, list(tables), n=1)
         hint = f" (did you mean {close[0]!r}?)" if close else ""
         raise ValueError(f"no literal named {name!r}{hint}. Run `kerykeion info literals` for the list.")
@@ -76,10 +60,7 @@ def literals(
 
 
 @info_app.command("points")
-def points(
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
-) -> None:
+def points(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """The preset names ``--points`` accepts, and what each one contains."""
     from kerykeion.cli import subject_resolver
 
@@ -87,10 +68,7 @@ def points(
 
 
 @info_app.command("stars")
-def stars(
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
-) -> None:
+def stars(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """The preset names ``--fixed-stars`` accepts, and what each one contains."""
     from kerykeion.cli import subject_resolver
 
@@ -98,32 +76,16 @@ def stars(
 
 
 @info_app.command("houses")
-def houses(
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
-) -> None:
-    """What ``--houses`` accepts: the system letters, and the names that map to them.
-
-    Case matters for the letters: ``i`` (Sunshine/alt.) and ``I`` (Sunshine) are
-    different systems, so both appear.
-    """
+def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
+    """What ``--houses`` accepts: the system letters (case matters: ``i`` and ``I`` differ) and the names that map to them."""
     from kerykeion.cli import subject_resolver
 
-    _emit(
-        {
-            "letters": sorted(subject_resolver.literal_values("HousesSystemIdentifier")),
-            "names": dict(sorted(subject_resolver._HOUSES_BY_NAME.items())),
-        },
-        fmt,
-        output,
-    )
+    letters = sorted(subject_resolver.literal_values("HousesSystemIdentifier"))
+    _emit({"letters": letters, "names": dict(sorted(subject_resolver._HOUSES_BY_NAME.items()))}, fmt, output)
 
 
 @info_app.command("methods")
-def methods(
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
-) -> None:
+def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """Strategy/method names the technique flags accept, as the library reports them."""
     from kerykeion import DominantsFactory
     from kerykeion.cli.rendering.options import SVG_VARIANTS, chart_choices
@@ -144,11 +106,8 @@ def methods(
     )
 
 
-# ── doctor ───────────────────────────────────────────────────────────────────
-
-
 def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
-    """Run the environment assertions; each is (name, status, detail)."""
+    """The environment assertions: ``ok`` True passes, False fails, None is a warning."""
     out: list[dict[str, str]] = []
 
     def add(name: str, ok: bool | None, detail: str) -> None:
@@ -157,29 +116,26 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
     backend = state.get("backend")
     add("backend", bool(backend) and backend != "unknown", f"active backend: {backend}")
 
-    ephemeris = state.get("ephemeris") or {}
-    if "error" in ephemeris:
-        add("ephemeris data", False, f"inventory error: {ephemeris['error']}")
+    eph = state.get("ephemeris") or {}
+    if "error" in eph:
+        add("ephemeris data", False, f"inventory error: {eph['error']}")
     elif backend == "libephemeris":
-        ready = ephemeris.get("ready")
-        add(
-            "ephemeris data",
-            bool(ready),
-            f"{ephemeris.get('file_count', 0)} file(s) in {ephemeris.get('data_dir')}"
+        ready = eph.get("ready")
+        detail = (
+            f"{eph.get('file_count', 0)} file(s) in {eph.get('data_dir')}"
             if ready
-            else f"reader not ready in {ephemeris.get('data_dir')}",
+            else f"reader not ready in {eph.get('data_dir')}"
         )
+        add("ephemeris data", bool(ready), detail)
     else:
-        count = ephemeris.get("se1_count", 0)
+        count = eph.get("se1_count", 0)
         add(
             "ephemeris data",
-            None if not count else True,
-            f"{count} .se1 file(s) at {ephemeris.get('data_path') or 'built-in Moshier'}",
+            True if count else None,
+            f"{count} .se1 file(s) at {eph.get('data_path') or 'built-in Moshier'}",
         )
 
-    # The store holds birth data; a widened mode is worth flagging even though
-    # nothing is broken.
-    try:
+    try:  # the store holds birth data: a widened mode is worth a warning
         from kerykeion.cli import config
 
         store = config.profiles_dir()
@@ -192,76 +148,46 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
             )
         else:
             add("profile store permissions", None, f"{store} does not exist yet")
-    except Exception as exc:  # pragma: no cover - defensive
+    except Exception as exc:  # pragma: no cover
         add("profile store permissions", None, f"could not stat the store: {exc}")
 
-    # The .env trap: libephemeris loads ./.env at import, so a stray file in the
-    # working directory can silently repoint the data dir or the calc mode.
-    if (state.get("env") or {}).get("_cwd_env_present"):
+    if (state.get("env") or {}).get("_cwd_env_present"):  # libephemeris loads ./.env at import
         add(
             "working-directory .env",
             None,
             "a .env in the current directory is loaded at import and may repoint LIBEPHEMERIS_* settings",
         )
 
-    # The one check that exercises the whole stack rather than inspecting it.
-    try:
+    try:  # the one check that exercises the whole stack
         from kerykeion import AstrologicalSubjectFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="doctor",
-            year=2000,
-            month=1,
-            day=1,
-            hour=12,
-            minute=0,
-            lat=51.5,
-            lng=-0.12,
-            tz_str="Europe/London",
-            online=False,
-            suppress_geonames_warning=True,
-        )
+            name="doctor", year=2000, month=1, day=1, hour=12, minute=0, lat=51.5, lng=-0.12, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True,
+        )  # fmt: skip
         sun = getattr(subject, "sun", None)
         add(
             "sample calculation",
-            sun is not None and getattr(sun, "sign", None) is not None,
+            getattr(sun, "sign", None) is not None,
             f"2000-01-01 natal: Sun in {getattr(sun, 'sign', '?')}",
         )
     except Exception as exc:
         add("sample calculation", False, f"{type(exc).__name__}: {exc}")
-
     return out
 
 
-def doctor(
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
-) -> None:
-    """Check the install and exit non-zero if something is actually broken.
-
-    ``status`` reports the environment; ``doctor`` judges it — same probes, plus a
-    real chart calculation, plus a verdict. Warnings (a widened store mode, a
-    stray ``.env``) do not fail the run; a dead backend or a calculation that
-    raises does.
-    """
+def doctor(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
+    """Check the install and exit non-zero if something is actually broken (warnings do not fail the run)."""
     from kerykeion.cli import diagnostics, errors
     from kerykeion.cli.rendering import formats
 
     state = diagnostics.gather_status()
     checks = _checks(state)
     failed = [c for c in checks if c["status"] == "fail"]
-    body = {
-        "ok": not failed,
-        "kerykeion_version": state.get("kerykeion_version"),
-        "backend": state.get("backend"),
-        "checks": checks,
-    }
     if formats.resolve_format(fmt, output) == "text":
-        # A diagnostic read on a terminal, not a JSON dump. The text renderer
-        # prints a list of strings one per line, so hand it lines.
         marks = {"pass": "ok  ", "warn": "warn", "fail": "FAIL"}
         lines = [
-            f"kerykeion {body['kerykeion_version']} — backend: {body['backend']}",
+            f"kerykeion {state.get('kerykeion_version')} — backend: {state.get('backend')}",
             "",
             *(f"  [{marks[c['status']]}] {c['check']}: {c['detail']}" for c in checks),
             "",
@@ -269,6 +195,12 @@ def doctor(
         ]
         _emit(lines, fmt, output)
     else:
+        body = {
+            "ok": not failed,
+            "kerykeion_version": state.get("kerykeion_version"),
+            "backend": state.get("backend"),
+            "checks": checks,
+        }
         _emit(body, fmt, output)
     if failed:
         raise SystemExit(int(errors.ExitCode.EPHEMERIS))

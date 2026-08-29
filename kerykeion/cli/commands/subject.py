@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """``kerykeion subject`` — create, inspect and verify stored subject profiles.
 
-A profile is the editable "recipe" (JSON, 0600) that rebuilds an
-:class:`AstrologicalSubjectModel`. This group persists recipes (``save``),
-shows them (``show``/``list``/``path``) and round-trips a recipe through the
-factory to confirm it materialises (``verify``). The chart commands (``natal``,
-``synastry``, …) take a ``-s`` profile name and reuse the same resolver.
+A profile is the editable recipe (JSON, 0600) that rebuilds a subject: ``save``
+persists it, ``show``/``list``/``path`` read it, ``verify`` round-trips it
+through the factory. The chart commands take it as ``-s <name>``.
 """
 
 from __future__ import annotations
@@ -44,7 +42,6 @@ from kerykeion.cli.options import (
     ZodiacTypeOpt,
 )
 from kerykeion.cli.rendering import formats
-
 from kerykeion.cli.typer_app import KerykeionTyper
 
 subject_app = KerykeionTyper(
@@ -83,38 +80,22 @@ def save(
     snapshot: SnapshotFlag = None,
 ) -> None:
     """Build a recipe from the flags and persist it as a profile (0600)."""
-    if store_name.endswith(".json"):
-        # The store appends its own .json (this would become foo.json.json) while
-        # -s treats any .json spec as a file path — so the name `subject list`
-        # shows could never be loaded back. Refuse it where it is typed.
+    if store_name.endswith(".json"):  # the store adds .json, and -s reads a .json spec as a file path
         raise ValueError(
-            "profile names cannot end in '.json': -s resolves a .json spec as a "
-            "file path, so the stored profile would never load back. Drop the "
-            "suffix (the store adds its own)."
+            "profile names cannot end in '.json': -s resolves a .json spec as a file path, so the stored profile "
+            "would never load back. Drop the suffix (the store adds its own)."
         )
     flags = _subject_from(locals())
-    # The display name falls back to the store name when --name is absent.
-    if not flags.name:
-        flags.name = store_name
-
+    flags.name = flags.name or store_name
     recipe = subject_resolver.merge_inputs(flags)
-    stored_snapshot = None
-    if snapshot:
-        # Materialise now so a broken recipe fails at `save` — where the user can
-        # fix it — instead of at the first read. The dump is JSON-mode so the
-        # profile stays a plain, diffable JSON document.
-        stored_snapshot = subject_resolver.materialize(recipe).model_dump(mode="json")
+    # With --snapshot the recipe is materialised now, so a broken one fails at `save`, not at the first read.
+    stored = subject_resolver.materialize(recipe).model_dump(mode="json") if snapshot else None
     profile = profiles.Profile(
-        name=flags.name,
-        input=profiles.ProfileInput(**recipe),
-        snapshot=stored_snapshot,
-        meta=profiles.make_meta(),
+        name=flags.name, input=profiles.ProfileInput(**recipe), snapshot=stored, meta=profiles.make_meta()
     )
     path = config.profile_path(store_name)
     profiles.save(path, profile)
-    # The path goes to stdout (scriptable: ``$(kerykeion subject save ada …)``);
-    # the human line goes to stderr so it never pollutes a pipeline.
-    typer.echo(str(path))
+    typer.echo(str(path))  # stdout is scriptable; the human line goes to stderr
     typer.echo(f"Saved profile {store_name!r} ({path}).", err=True)
 
 
@@ -125,27 +106,17 @@ def show(
     output: OutputOpt = None,
 ) -> None:
     """Print a stored profile (recipe + provenance)."""
-    path = profiles.resolve_path(profile_spec)
-    profile = profiles.load(path)
-    # Route through the warnings funnel for parity with the compute commands
-    # (a recipe carries no ephemeris warnings, so this is a no-op for warnings,
-    # but it keeps --warnings-as-errors uniformly honoured across subcommands).
-    _emit(profile, fmt, output)
+    _emit(profiles.load(profiles.resolve_path(profile_spec)), fmt, output)
 
 
 @subject_app.command("list")
-def list_cmd(
-    fmt: FormatOpt = None,
-) -> None:
+def list_cmd(fmt: FormatOpt = None) -> None:
     """List profile names in the store (text: one per line; pipe: JSON array)."""
-    names = profiles.list_profiles()
-    _emit(names, fmt, None)
+    _emit(profiles.list_profiles(), fmt, None)
 
 
 @subject_app.command("path")
-def path_cmd(
-    profile_spec: str = typer.Argument(..., help="Profile name or file path."),
-) -> None:
+def path_cmd(profile_spec: str = typer.Argument(..., help="Profile name or file path.")) -> None:
     """Print the resolved on-disk path of a profile."""
     typer.echo(str(profiles.resolve_path(profile_spec)))
 
@@ -158,64 +129,30 @@ def verify(
 ) -> None:
     """Materialise the recipe into a subject and print a compact summary.
 
-    Round-trips the recipe through the factory (so a malformed recipe, a bad
-    timezone, or an ephemeris gap surface here, not in the middle of a chart).
+    Always recomputes (a snapshot reading back fine is not what ``verify``
+    claims) and reports how the stored snapshot compares: ``absent``, ``stale``
+    (other version/backend), ``matches``, or ``drifted`` (re-save it).
     """
-    # Deliberately NOT resolve_subject(): that would hand back the stored
-    # snapshot, and "the snapshot reads back fine" is not what verify claims —
-    # it claims the *recipe* still rebuilds. Always recompute here.
     model = subject_resolver.materialize(subject_resolver.merge_inputs(subject_resolver.SubjectFlags(), profile_spec))
-    summary = _subject_summary(model)
-    summary["snapshot"] = _snapshot_state(profile_spec, model)
-    resolved = formats.resolve_format(fmt, output)
-    # The compact summary carries no warnings, but the materialised subject it
-    # was built from may (an ephemeris gap, a polar-house fallback). Collect from
-    # the subject so --warnings-as-errors engages here too, like the charts.
-    warnings.output_with_warnings(summary, resolved, output, warning_source=model)
-
-
-def _snapshot_state(profile_spec: str, recomputed: object) -> str:
-    """How the stored snapshot compares to a fresh computation.
-
-    ``verify`` exists to catch a recipe that no longer rebuilds; with snapshots
-    it must also catch a *snapshot* that no longer matches, because that is the
-    copy every other command reads. The states are deliberately distinct:
-
-    * ``absent``  — nothing stored (``subject save --snapshot`` never run);
-    * ``stale``   — written by another kerykeion version or backend, so it is
-      already being ignored at read time;
-    * ``matches`` — byte-identical to what this installation computes now;
-    * ``drifted`` — present, current provenance, and yet different. That is the
-      interesting one: the recipe and the cache disagree, so re-save it.
-    """
-    try:
-        profile = profiles.load(profiles.resolve_path(profile_spec))
-    except Exception:  # pragma: no cover - verify already loaded it once
-        return "absent"
-    if not profile.snapshot:
-        return "absent"
-    if subject_resolver.snapshot_is_usable(profile.meta) is not None:
-        return "stale"
-    fresh = recomputed.model_dump(mode="json")  # type: ignore[attr-defined]
-    return "matches" if fresh == profile.snapshot else "drifted"
-
-
-def _subject_summary(model: object) -> dict[str, object]:
-    """A compact, robust summary of a materialised subject.
-
-    Every field is read defensively: ``verify`` must never crash on a model
-    shape it does not expect, only report what it can find.
-    """
 
     def sign(attr: str) -> Optional[str]:
-        point = getattr(model, attr, None)
-        return getattr(point, "sign", None) if point is not None else None
+        return getattr(getattr(model, attr, None), "sign", None)
 
-    return {
+    profile = profiles.load(profiles.resolve_path(profile_spec))
+    if not profile.snapshot:
+        state = "absent"
+    elif subject_resolver.snapshot_is_usable(profile.meta) is not None:
+        state = "stale"
+    else:
+        state = "matches" if model.model_dump(mode="json") == profile.snapshot else "drifted"
+    summary = {
         "ok": True,
         "name": getattr(model, "name", None),
         "zodiac_type": getattr(model, "zodiac_type", None),
         "sun": sign("sun"),
         "moon": sign("moon"),
         "ascendant": sign("first_house") or sign("ascendant"),
+        "snapshot": state,
     }
+    # The summary carries no warnings; the subject it came from may — collect from that one.
+    warnings.output_with_warnings(summary, formats.resolve_format(fmt, output), output, warning_source=model)

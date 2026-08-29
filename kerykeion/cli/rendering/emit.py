@@ -1,28 +1,20 @@
 # -*- coding: utf-8 -*-
-"""Dispatch an object to the right renderer, and write rendered output.
+"""Dispatch an object to the right renderer, and write the rendered output.
 
-:func:`render` turns an object into a string for a format; :func:`write_output`
-puts that string on stdout or into ``-o``'s file. Commands never call the
-per-format renderers directly — routing everything through this pair is what
-keeps ``-o`` handling and the warnings funnel in one place (a helper that wrote
-straight to ``sys.stdout`` would silently bypass both).
-
-``xml`` and ``svg`` are wired lazily so their (heavier) modules only load when
-asked for: ``svg_out`` imports the ~5,700-line ``ChartDrawer``.
+Commands never call the per-format renderers directly: routing everything
+through this pair keeps ``-o`` handling and the warnings funnel in one place.
+``svg`` loads lazily — it imports the ~5,700-line ``ChartDrawer``.
 """
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 from typing import Any
 
 
 def render(obj: Any, fmt: str, opts: Any = None) -> str:
-    """Render *obj* for *fmt* and return the string (no trailing newline).
-
-    *opts* is an optional :class:`~kerykeion.cli.rendering.options.RenderOptions`
-    carrying the report/chart knobs. It defaults to ``None`` — "no options given"
-    — so every caller that does not care keeps working unchanged.
-    """
+    """Render *obj* for *fmt* (no trailing newline); *opts* carries the report/chart knobs."""
     if fmt == "json":
         from kerykeion.cli.rendering.json_out import render_json
 
@@ -43,26 +35,11 @@ def render(obj: Any, fmt: str, opts: Any = None) -> str:
 
 
 def write_output(content: str, output_path: str | None = None) -> None:
-    """Write *content* to stdout, or to *output_path* if given.
-
-    A single trailing newline is ensured. Files are written UTF-8. This is the
-    only place a command should touch stdout for a payload, keeping the
-    "never print payloads through Rich" invariant localised.
-    """
-    import sys
-    from pathlib import Path
-
+    """Write *content* (one trailing newline ensured) to stdout, or UTF-8 to *output_path*, creating its directory."""
     data = content if content.endswith("\n") else content + "\n"
-    if output_path:
-        target = Path(output_path)
-        # Create the parent directory so `-o path/in/a/new/dir/out.json` works,
-        # mirroring ``profiles.save()`` (which mkdirs its parent). Without this a
-        # missing directory raised FileNotFoundError → exit 4 "invalid input",
-        # a confusing label for a normal create-on-write expectation.
-        target.parent.mkdir(parents=True, exist_ok=True)
-        # ``newline=""`` disables the platform default translation: on Windows
-        # the default would turn every "\n" into "\r\n", corrupting byte-exact
-        # JSON/SVG that pipelines, ``jq`` and hash-pinned checks compare against.
-        target.write_text(data, encoding="utf-8", newline="")
-    else:
+    if not output_path:
         sys.stdout.write(data)
+        return
+    target = Path(output_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(data, encoding="utf-8", newline="")  # no CRLF translation: byte-exact JSON/SVG

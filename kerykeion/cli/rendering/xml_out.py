@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""XML output via :func:`kerykeion.to_context`.
-
-``to_context`` accepts a different (and non-containing) model set than
-``ReportGenerator``. On an unsupported model it raises ``TypeError``; we let it
-propagate so the command layer can surface it as a real error (exit 4 with the
-list of supported types) rather than silently switching formats — a surprise
-format change would break pipelines.
-"""
+"""XML output via ``kerykeion.to_context``; an unsupported model raises ``TypeError`` (exit 4) rather than switching format."""
 
 from __future__ import annotations
 
@@ -14,7 +7,6 @@ from typing import Any
 
 
 def render_xml(obj: Any) -> str:
-    """Serialise *obj* to the ``to_context`` XML string (raises TypeError)."""
     from kerykeion import to_context
 
     return to_context(obj)

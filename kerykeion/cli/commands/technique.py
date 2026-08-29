@@ -2,10 +2,8 @@
 """``kerykeion technique <sub>`` — analytical techniques on a stored subject.
 
 Every subcommand takes ``-s <profile>`` and emits the technique's model in the
-chosen format. The functions are decorator-free (registered by
-:mod:`kerykeion.cli.app`) so they remain directly callable from tests. Only the
-parameters the CLI actually wants to expose are wired; the rest ride the
-library defaults — we pass ``None`` through only when the user gave a value.
+chosen format. Only the flags actually given reach the factory; the rest ride
+the library defaults.
 """
 
 from __future__ import annotations
@@ -124,11 +122,7 @@ def zr(
 
 
 @technique_app.command("receptions")
-def receptions(
-    profile: SubjectProfile = None,
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
-) -> None:
+def receptions(profile: SubjectProfile = None, fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """Mutual receptions by domicile and exaltation."""
     from kerykeion import MutualReceptionsFactory
 
@@ -147,8 +141,7 @@ def horary(
     from kerykeion import HoraryIndicatorsFactory
 
     subject = _stored_subject(profile, "horary")
-    kwargs = _given(is_moon_void=is_moon_void)
-    _emit(HoraryIndicatorsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
+    _emit(HoraryIndicatorsFactory.from_subject(subject, **_given(is_moon_void=is_moon_void)), fmt, output)  # type: ignore[arg-type]
 
 
 @technique_app.command("midpoints")
@@ -180,24 +173,15 @@ def directions(
     from kerykeion import PrimaryDirectionsFactory
 
     subject = _stored_subject(profile, "directions")
-    # ``aspects`` here is the set of aspect ANGLES (conjunction, sextile, …),
-    # not planets: PrimaryDirectionsFactory.compute validates it against
-    # ASPECT_ANGLES and has no planet filter. Binding ``--planets`` to it (as the
-    # sibling techniques do for their real planet filters) made the documented
-    # flag always crash; the flag is now named for what it actually controls.
-    # Shared --aspects syntax; primary directions have no per-aspect orb, so a
-    # ':orb' suffix is refused by name rather than silently dropped.
-    chosen_aspects = _aspect_names(_parse_aspects(aspects), "primary directions")
-    if chosen_aspects is not None:
+    # ``aspects`` are the aspect ANGLES the factory validates against ASPECT_ANGLES
+    # (it has no planet filter); no per-aspect orb, so ':orb' is refused by name.
+    chosen = _aspect_names(_parse_aspects(aspects), "primary directions")
+    if chosen is not None:
         valid = set(PrimaryDirectionsFactory.ASPECT_ANGLES)
-        invalid = [a for a in chosen_aspects if a not in valid]
+        invalid = [a for a in chosen if a not in valid]
         if invalid:
             raise ValueError(f"--aspects must be one of {', '.join(sorted(valid))}; got {invalid}.")
-    kwargs = _given(
-        max_years=max_years,
-        rate_key=_choose(rate, ("ptolemy", "naibod"), "rate"),
-        aspects=chosen_aspects,
-    )
+    kwargs = _given(max_years=max_years, rate_key=_choose(rate, ("ptolemy", "naibod"), "rate"), aspects=chosen)
     _emit(PrimaryDirectionsFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -237,22 +221,18 @@ def stars(
     from kerykeion import HeliacalFactory
 
     subject = _stored_subject(profile, "stars")
-    julian_day = getattr(subject, "julian_day", None)
+    julian_day, lat, lng = (getattr(subject, name, None) for name in ("julian_day", "lat", "lng"))
     if julian_day is None:
         raise ValueError("the subject has no julian_day to search heliacal events from")
-    lat = getattr(subject, "lat", None)
-    lng = getattr(subject, "lng", None)
-    altitude = getattr(subject, "altitude", 0.0) or 0.0
     if lat is None or lng is None:
         raise ValueError("heliacal search needs the subject's lat/lng")
     kwargs: dict[str, Any] = {
         "lat": lat,
         "lng": lng,
-        "altitude": altitude,
+        "altitude": getattr(subject, "altitude", 0.0) or 0.0,
         **_given(count=count, planets=_split_csv(planets)),
     }
-    factory = HeliacalFactory()
-    _emit(factory.search_events(julian_day, **kwargs), fmt, output)  # type: ignore[arg-type]
+    _emit(HeliacalFactory().search_events(julian_day, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
 @technique_app.command("relocate")
@@ -283,9 +263,7 @@ def relocate(
         new_nation=new_nation or "",
         new_tz_str=new_tz,
     )
-    # A relocated chart is a subject; emit it like `natal` (subject for text/json,
-    # natal chart wrapper for svg).
-    _emit_subject_or_chart(relocated, fmt, output, opts)
+    _emit_subject_or_chart(relocated, fmt, output, opts)  # a relocated chart is a subject: emitted like `natal`
 
 
 @technique_app.command("nodes")
@@ -300,10 +278,7 @@ def nodes(
     from kerykeion import PlanetaryNodesFactory
 
     subject = _stored_subject(profile, "nodes")
-    kwargs = _given(
-        method=_choose(method, ("mean", "osculating"), "method"),
-        planets=_split_csv(planets),
-    )
+    kwargs = _given(method=_choose(method, ("mean", "osculating"), "method"), planets=_split_csv(planets))
     _emit(PlanetaryNodesFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -320,8 +295,7 @@ def house_comparison(
 
     first = _stored_subject(profile, "house-comparison")
     second = _stored_subject(subject2, "house-comparison", "-S")
-    kwargs = _given(active_points=_split_csv(planets))
-    factory = HouseComparisonFactory(first, second, **kwargs)  # type: ignore[arg-type]
+    factory = HouseComparisonFactory(first, second, **_given(active_points=_split_csv(planets)))  # type: ignore[arg-type]
     _emit(factory.get_house_comparison(), fmt, output)
 
 
@@ -337,11 +311,7 @@ def solar_arc(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Solar-arc directions to a target year or moment.
-
-    The sibling of ``progression``: both move a natal chart forward, one by the
-    Sun's arc and one by the secondary-progression day-for-a-year rule.
-    """
+    """Solar-arc directions to a target year or moment (the sibling of ``progression``)."""
     from kerykeion import SolarArcFactory
 
     subject = _stored_subject(profile, "solar-arc")
@@ -353,26 +323,17 @@ def solar_arc(
         active_points=_split_csv(planets),
         compute_aspects=compute_aspects,
         aspect_orb=aspect_orb,
-        # Solar arc takes one orb for all aspects (--aspect-orb), so a per-aspect
-        # ':orb' has nowhere to go and is refused rather than dropped.
-        aspects=_aspect_names(_parse_aspects(aspects), "solar arc"),
+        aspects=_aspect_names(_parse_aspects(aspects), "solar arc"),  # one orb for all (--aspect-orb): no ':orb'
     )
     _emit(SolarArcFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
 @technique_app.command("fixed-stars")
 def fixed_stars(
-    profile: SubjectProfile = None,
-    orb: StarOrbOpt = None,
-    fmt: FormatOpt = None,
-    output: OutputOpt = None,
+    profile: SubjectProfile = None, orb: StarOrbOpt = None, fmt: FormatOpt = None, output: OutputOpt = None
 ) -> None:
     """Fixed stars conjunct the subject's points, within an orb."""
     from kerykeion import FixedStarDiscoveryFactory
 
     subject = _stored_subject(profile, "fixed-stars")
-    _emit(
-        FixedStarDiscoveryFactory.find_prominent_stars(subject, **_given(orb=orb)),  # type: ignore[arg-type]
-        fmt,
-        output,
-    )
+    _emit(FixedStarDiscoveryFactory.find_prominent_stars(subject, **_given(orb=orb)), fmt, output)  # type: ignore[arg-type]
