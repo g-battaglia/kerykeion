@@ -241,6 +241,10 @@ sidereal chart — those longitudes are already sidereal — and the subject the
 records `nakshatra_ayanamsa=None`. Derived charts inherit it: returns and
 secondary progressions copy the natal's value, and a Davison composite adopts it
 only when both parents agree (otherwise it warns and falls back to the default).
+Only a mode actually used is inherited — a natal that computed no nakshatras
+records `None` too, and that `None` is not the legacy opt-out, so
+`PlanetaryReturnFactory(..., calculate_nakshatra=True)` on such a natal starts
+from the `"LAHIRI"` default.
 
 ## Composite subjects
 
