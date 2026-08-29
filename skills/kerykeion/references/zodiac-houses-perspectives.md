@@ -70,14 +70,46 @@ From `kerykeion/schemas/literals.py` (47 named + `USER`):
 | Astronomical | `ALDEBARAN_15TAU`, `VALENS_MOON` |
 | User-defined | `USER` (requires the two custom ayanamsa kwargs) |
 
-### Nakshatra caveat
+### Nakshatras on a non-sidereal chart
 
 `calculate_nakshatra=True` fills `nakshatra`, `nakshatra_number` (1–27),
 `nakshatra_pada` (1–4), `nakshatra_lord` (Vimsottari Dasha lord) on each point.
-Nakshatras are defined on the **sidereal** zodiac: with a Tropical chart the
-values are still computed from the tropical longitudes — offset by the
-ayanamsa (~24°, roughly two nakshatras) — and a WARNING is logged. Use
-`zodiac_type="Sidereal"` for astronomically meaningful nakshatras.
+Nakshatras divide the **sidereal** zodiac. A sidereal chart supplies those
+longitudes itself. Any other chart does not, so its longitudes are rotated by
+`nakshatra_ayanamsa` (`Optional[SiderealMode]`, default `"LAHIRI"` — the
+ayanamsa Jyotish uses, not the `FAGAN_BRADLEY` default of `sidereal_mode`) for
+the 27-fold division only: the chart stays tropical, and its nakshatras match
+the sidereal chart cast in the same mode exactly.
+
+The subject records what was used: `nakshatra_ayanamsa` (the mode) and
+`nakshatra_ayanamsa_value` (the degrees subtracted). Both are `None` on a
+sidereal chart — where the field is ignored and `sidereal_mode` /
+`ayanamsa_value` are the answer — and on a chart that computed no nakshatras.
+
+`nakshatra_ayanamsa=None` restores the pre-v6 behaviour: tropical longitudes
+fed straight to the sidereal division, every value about two nakshatras off, one
+WARNING per subject. It exists only to reproduce values computed by earlier
+versions.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+tropical = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    calculate_nakshatra=True,
+)
+sidereal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    calculate_nakshatra=True,
+)
+print(tropical.nakshatra_ayanamsa, round(tropical.nakshatra_ayanamsa_value, 4))
+# LAHIRI 23.7273
+print(tropical.moon.nakshatra == sidereal.moon.nakshatra)   # True
+print(tropical.moon.sign, sidereal.moon.sign)               # Pis Aqu — the chart is untouched
+```
 
 ## House systems
 
