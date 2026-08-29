@@ -38,7 +38,7 @@ Every phenomenon carries `solar_phase`: the classical reading of how near the Su
 
 | Value               | Meaning                                                  | Default cut-off |
 | :------------------ | :------------------------------------------------------- | :-------------- |
-| `"cazimi"`          | In the heart of the Sun                                   | below 0.2833° (16 arcminutes) |
+| `"cazimi"`          | In the heart of the Sun                                   | below 0.2833° (17 arcminutes) |
 | `"combust"`         | Burnt — close enough that the body cannot be seen at all  | below 8.5°      |
 | `"under_the_beams"` | Within the Sun's rays; not yet out of the twilight        | below 17°       |
 | `"free"`            | Far enough from the Sun to be seen in a dark sky          | 17° or more     |
@@ -64,7 +64,9 @@ print(strict.phenomena[0].solar_phase)          # combust
 print(strict.solar_phase_thresholds.cazimi_deg)  # 0.05
 ```
 
-The phase is named for every supported body, the Moon included: its elongation is the same astronomical quantity, and the names still describe what they always describe — the dark of the Moon is exactly the interval in which it is under the beams, and a central solar eclipse is the one moment it is cazimi. What a given school does with a combust Moon is the school's business, not the library's.
+The phase is named for every supported body, the Moon included: its elongation is the same astronomical quantity, and the names still describe what they always describe — the dark of the Moon is exactly the interval in which it is under the beams. What a given school does with a combust Moon is the school's business, not the library's.
+
+A central solar eclipse is **not** a promise of `"cazimi"`, and the reason is the frame. The published `elongation` is **geocentric**; an eclipse is a **topocentric** alignment, seen by an observer standing under the shadow, and lunar parallax between the two reaches about a degree. The 2026-08-12 total eclipse bottoms out at a geocentric `0.891865°` — `"combust"` — while the 2027-08-02 totality reaches `0.144957°` and does read `"cazimi"`. Cazimi at the moment of totality is what the observer under the shadow sees; the number this factory publishes is what the Earth's centre sees.
 
 `is_morning_star` and `is_evening_star` are a different question, and are **purely geometric**: which side of the Sun the planet stands on in longitude, with no visibility threshold of any kind. A planet one degree from the Sun is still an "evening star" there — invisible, but east of it. Read `solar_phase` for whether it can be seen.
 

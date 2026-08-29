@@ -82,6 +82,12 @@ class PlanetaryNodeModel(SubscriptableBaseModel):
     right for the planets and wrong for the Moon, whose apsides are geocentric
     (perigee and apogee). Read ``apsis_kind`` to know which is in force. The
     old pair is kept, and populated, so nothing that reads it breaks.
+
+    "The same two points" is meant literally: ``periapsis is perihelion`` and
+    ``apoapsis is aphelion`` — one object under two names, not two objects that
+    happen to agree (see :meth:`_derive_generic_apsides`). They cannot drift
+    apart, and mutating one mutates the other. The names differ; the points do
+    not.
     """
 
     planet_name: str

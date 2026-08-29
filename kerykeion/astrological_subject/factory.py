@@ -465,8 +465,9 @@ def _ayanamsa_at(
 
     This is the SAME quantity a sidereal chart stores in ``ayanamsa_value``,
     obtained the same way (``get_ayanamsa_ex_ut`` with the sidereal flag, after
-    selecting the mode) — so a tropical chart rotated by it lands exactly on the
-    sidereal chart's longitudes, to the last bit. ``get_ayanamsa_ut`` is a
+    selecting the mode) — so a tropical chart rotated by it lands on the sidereal
+    chart's longitudes to within a microarcsecond (measured worst case: 2.9e-10°,
+    the residue of the round trip through binary). ``get_ayanamsa_ut`` is a
     different variant (the mean ayanamsa: no nutation) and would leave a ~2
     arcsecond discrepancy.
 
@@ -1051,9 +1052,10 @@ class AstrologicalSubjectFactory:
                 place the nakshatras when ``calculate_nakshatra=True`` and the chart
                 is NOT sidereal: the chart's longitudes are rotated by it for the
                 27-fold division only, so the chart stays tropical while its
-                nakshatras agree, to the last bit, with the sidereal chart cast in
-                the same mode. Ignored on a sidereal chart. ``None`` opts into the
-                legacy uncorrected behaviour (values offset by ~24 degrees) and logs
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
                 a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
                 the nakshatras belong to -- uses by default. Added in v6.
             calculate_gauquelin (bool, optional): If True, computes Gauquelin sector
@@ -1951,9 +1953,10 @@ class AstrologicalSubjectFactory:
                 place the nakshatras when ``calculate_nakshatra=True`` and the chart
                 is NOT sidereal: the chart's longitudes are rotated by it for the
                 27-fold division only, so the chart stays tropical while its
-                nakshatras agree, to the last bit, with the sidereal chart cast in
-                the same mode. Ignored on a sidereal chart. ``None`` opts into the
-                legacy uncorrected behaviour (values offset by ~24 degrees) and logs
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
                 a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
                 the nakshatras belong to -- uses by default. Added in v6.
             calculate_gauquelin (bool, optional): Compute Gauquelin sectors.
@@ -2243,9 +2246,10 @@ class AstrologicalSubjectFactory:
                 place the nakshatras when ``calculate_nakshatra=True`` and the chart
                 is NOT sidereal: the chart's longitudes are rotated by it for the
                 27-fold division only, so the chart stays tropical while its
-                nakshatras agree, to the last bit, with the sidereal chart cast in
-                the same mode. Ignored on a sidereal chart. ``None`` opts into the
-                legacy uncorrected behaviour (values offset by ~24 degrees) and logs
+                nakshatras agree with the sidereal chart cast in the same mode (the
+                rotated longitudes land within a microarcsecond of the sidereal
+                ones). Ignored on a sidereal chart. ``None`` opts into the legacy
+                uncorrected behaviour (values offset by ~24 degrees) and logs
                 a warning. Defaults to 'LAHIRI', the ayanamsa Jyotish -- the tradition
                 the nakshatras belong to -- uses by default. Added in v6.
 

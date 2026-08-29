@@ -165,6 +165,7 @@ This produces a formatted ASCII table report with sections for Moon Summary, Ill
 - **Eclipse search**: Uses `ephe.sol_eclipse_when_glob` and `ephe.lun_eclipse_when` for the next global eclipse of each type.
 - **Sunrise/sunset**: Computed via `ephe.rise_trans` with standard atmospheric refraction corrections.
 - **Moonrise/moonset**: The same `rise_trans` call pointed at the Moon — same refracted upper limb, same standard atmosphere, plus the topocentric horizontal parallax the backend adds for it, which is what makes the answer the one an almanac prints. The civil day's two midnights are each resolved in the subject's zone rather than by adding 24 hours, so a DST transition neither clips an event out of the day nor lets tomorrow's in. Both fields are timestamps in the subject's **local** zone, matching `sun.sunrise`.
+- **`moonrise` is a `str`, `sunrise` is a `datetime`**: deliberate, and not going to change. The moon block mirrors the shape of the web APIs it was modelled on, where every field is a string or a number; the sun block is a native model and keeps native types. In `model_dump(mode="json")` the two agree in every zone but UTC, where the `datetime` serialises with a trailing `Z` and the string keeps the `+00:00` it was formatted with. Read `moonrise_timestamp` / `moonset_timestamp` (Unix seconds, UTC) when an instant rather than a rendering is what is wanted. Changing the field type would break every consumer already parsing the string.
 
 ## Edge Cases
 

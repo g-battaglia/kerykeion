@@ -49,7 +49,7 @@ drawing changed except the words of the lunar phase.
   (which side of the Sun), with no visibility threshold. Every
   `PlanetaryPhenomenaModel` now also carries `solar_phase` — `"cazimi"`,
   `"combust"`, `"under_the_beams"`, `"free"` — read from the published
-  `elongation` against `SolarPhaseThresholdsModel` (defaults 16′ / 8°30′ /
+  `elongation` against `SolarPhaseThresholdsModel` (defaults 17′ / 8°30′ /
   17°, parametric, echoed on the collection). `classify_solar_phase` is
   public.
 
