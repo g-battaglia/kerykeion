@@ -456,6 +456,25 @@ class TestNakshatraAyanamsaOnNonSiderealCharts:
                 "User no params", calculate_nakshatra=True, nakshatra_ayanamsa="USER", **self._BIRTH
             )
 
+    def test_a_chart_that_asks_for_no_nakshatras_needs_no_definition(self):
+        """Only the chart that would actually CAST the ayanamsa has to define
+        it. With `calculate_nakshatra=False` the value is never read, so the
+        demand for t0/ayan_t0 was rejecting a chart on the strength of a
+        parameter nothing consults — the same reasoning the sidereal case
+        already used, and the same pair of conditions that gates the
+        persistence of the definition."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "User unused",
+            calculate_nakshatra=False,
+            nakshatra_ayanamsa="USER",
+            **self._BIRTH,
+        )
+        assert subject.sun.nakshatra is None
+        assert subject.nakshatra_ayanamsa is None
+        assert subject.nakshatra_ayanamsa_value is None
+        assert subject.custom_ayanamsa_t0 is None
+        assert subject.custom_ayanamsa_ayan_t0 is None
+
     def test_user_ayanamsa_is_cast_and_persisted(self):
         """A USER ayanamsa on a tropical chart is cast, and its definition is
         stored: without that the nakshatras would not be reproducible."""
@@ -566,6 +585,62 @@ class TestNakshatraAyanamsaTravelsToDerivedCharts:
 
         assert davison.nakshatra_ayanamsa == "LAHIRI"  # the factory default, not RAMAN
         assert [r for r in caplog.records if "different ayanamsas" in r.getMessage()]
+
+    def test_davison_carries_the_user_definition_with_the_mode(self):
+        """``"USER"`` is the one mode that names no ayanamsa by itself: t0 and
+        ayan_t0 ARE the mode. Forwarding the name alone handed the recast a
+        configuration it rejects, so the definition travels with it."""
+        from kerykeion.composite_subject import CompositeSubjectFactory
+
+        user = dict(
+            calculate_nakshatra=True,
+            nakshatra_ayanamsa="USER",
+            custom_ayanamsa_t0=2451545.0,   # J2000.0
+            custom_ayanamsa_ayan_t0=23.85,  # degrees at t0
+        )
+        first = AstrologicalSubjectFactory.from_birth_data("First USER", **user, **self._BIRTH)
+        second = AstrologicalSubjectFactory.from_birth_data(
+            "Second USER", **user, **{**self._BIRTH, "year": 1992, "month": 3, "day": 4},
+        )
+
+        davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+
+        assert davison.nakshatra_ayanamsa == "USER"
+        assert davison.nakshatra_ayanamsa == first.nakshatra_ayanamsa == second.nakshatra_ayanamsa
+        assert davison.custom_ayanamsa_t0 == 2451545.0
+        assert davison.custom_ayanamsa_ayan_t0 == 23.85
+        assert davison.sun.nakshatra is not None
+
+    def test_davison_falls_back_when_two_user_definitions_differ(self, caplog):
+        """Both parents say ``"USER"`` and mean different things. Agreeing on
+        the NAME is not agreeing, so this is the same disagreement as two
+        different modes, and it is treated as one — and the warning names the
+        definitions, since the two names are identical and would say nothing."""
+        import logging
+
+        from kerykeion.composite_subject import CompositeSubjectFactory
+
+        first = AstrologicalSubjectFactory.from_birth_data(
+            "First USER", calculate_nakshatra=True, nakshatra_ayanamsa="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.85,
+            **self._BIRTH,
+        )
+        second = AstrologicalSubjectFactory.from_birth_data(
+            "Second USER", calculate_nakshatra=True, nakshatra_ayanamsa="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=22.50,
+            **{**self._BIRTH, "year": 1992, "month": 3, "day": 4},
+        )
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.composite_subject.factory"):
+            davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+
+        from kerykeion.settings.config_constants import DEFAULT_NAKSHATRA_AYANAMSA
+
+        assert davison.nakshatra_ayanamsa == DEFAULT_NAKSHATRA_AYANAMSA
+        assert davison.sun.nakshatra is not None
+        messages = [r.getMessage() for r in caplog.records if "different ayanamsas" in r.getMessage()]
+        assert messages, "the fallback must say so"
+        assert "23.85" in messages[0] and "22.5" in messages[0]
 
 
 class TestANatalWithoutNakshatrasIsNotAnOptOut:
