@@ -1347,6 +1347,22 @@ class CompositeSubjectFactory:
         )
         extra_kwargs["calculate_dignities"] = _point_has(s1, "essential_dignity") and _point_has(s2, "essential_dignity")
         extra_kwargs["calculate_nakshatra"] = _point_has(s1, "nakshatra") and _point_has(s2, "nakshatra")
+        if extra_kwargs["calculate_nakshatra"]:
+            # The ayanamsa follows the same both-parents rule as the flag itself:
+            # the Davison can inherit only an ayanamsa the two charts agree on
+            # (None included — that is how two sidereal, or two legacy, parents
+            # agree). Disagreeing parents leave it to the factory default, because
+            # picking one parent's mode over the other is a judgement the composite
+            # has no basis for — and it is said out loud rather than absorbed.
+            if s1.nakshatra_ayanamsa == s2.nakshatra_ayanamsa:
+                extra_kwargs["nakshatra_ayanamsa"] = s1.nakshatra_ayanamsa
+            else:
+                logger.warning(
+                    "The two subjects placed their nakshatras with different ayanamsas (%r and %r); "
+                    "the Davison chart falls back to the default rather than choosing between them.",
+                    s1.nakshatra_ayanamsa,
+                    s2.nakshatra_ayanamsa,
+                )
         extra_kwargs["calculate_local_space"] = _point_has(s1, "azimuth") and _point_has(s2, "azimuth")
         extra_kwargs["calculate_gauquelin"] = (
             s1.gauquelin_sector_cusps is not None and s2.gauquelin_sector_cusps is not None

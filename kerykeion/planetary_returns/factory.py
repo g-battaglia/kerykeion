@@ -592,6 +592,11 @@ class PlanetaryReturnFactory:
         )
         self.calculate_dignities = calculate_dignities or _any_point_has("essential_dignity")
         self.calculate_nakshatra = calculate_nakshatra or _any_point_has("nakshatra")
+        # The ayanamsa the natal chart placed its nakshatras with travels with the
+        # flag. Without it the return silently fell back to the LAHIRI default —
+        # so a natal cast in RAMAN, or one that opted into the legacy uncorrected
+        # values, got a return whose nakshatras disagreed with its own.
+        self.nakshatra_ayanamsa = subject.nakshatra_ayanamsa
         self.calculate_gauquelin = calculate_gauquelin or (subject.gauquelin_sector_cusps is not None)
         self.calculate_nutation = calculate_nutation or (subject.nutation is not None)
         self.calculate_local_space = calculate_local_space or _any_point_has("azimuth")
@@ -970,6 +975,7 @@ class PlanetaryReturnFactory:
             active_fixed_stars=self.active_fixed_stars,
             calculate_dignities=self.calculate_dignities,
             calculate_nakshatra=self.calculate_nakshatra,
+            nakshatra_ayanamsa=self.nakshatra_ayanamsa,
             calculate_gauquelin=self.calculate_gauquelin,
             calculate_nutation=self.calculate_nutation,
             calculate_local_space=self.calculate_local_space,
@@ -1573,6 +1579,7 @@ class PlanetaryReturnFactory:
             active_fixed_stars=self.active_fixed_stars,
             calculate_dignities=self.calculate_dignities,
             calculate_nakshatra=self.calculate_nakshatra,
+            nakshatra_ayanamsa=self.nakshatra_ayanamsa,
             calculate_gauquelin=self.calculate_gauquelin,
             calculate_nutation=self.calculate_nutation,
             calculate_local_space=self.calculate_local_space,

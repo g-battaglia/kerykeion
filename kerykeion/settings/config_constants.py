@@ -40,6 +40,17 @@ Single source of truth for the sidereal default, shared by the subject factory
 and the ephemeris backend so the displayed ayanamsa always matches the one used
 to compute positions."""
 
+DEFAULT_NAKSHATRA_AYANAMSA: SiderealMode = "LAHIRI"
+"""Default ayanamsa used to place the nakshatras on a NON-sidereal chart.
+
+The nakshatras divide the *sidereal* zodiac, so on a tropical (or otherwise
+non-sidereal) chart the tropical longitude has to be rotated into the sidereal
+frame before the 27-fold division is applied. Lahiri is the ayanamsa Jyotish
+uses by default, which is the tradition the nakshatras belong to; it is not
+``DEFAULT_SIDEREAL_MODE`` (Fagan-Bradley), which serves western sidereal
+charts. Pass ``nakshatra_ayanamsa=None`` to opt back into the legacy,
+uncorrected behaviour."""
+
 
 # =============================================================================
 # PERSPECTIVE TYPE CONSTANTS
