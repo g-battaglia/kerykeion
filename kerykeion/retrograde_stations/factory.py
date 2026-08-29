@@ -195,6 +195,17 @@ class RetrogradePeriodsCollectionModel(SubscriptableBaseModel):
     periods: List[RetrogradePeriodModel]
 
 
+def _probe_start(start_jd: float, body: int) -> float:
+    """``start_jd`` minus the one-second boundary probe, or ``start_jd`` itself
+    when that second lies before the ephemeris begins."""
+    probe = start_jd - _EDGE_TOL_DAYS
+    try:
+        _speed(probe, body)
+    except KerykeionException:
+        return start_jd
+    return probe
+
+
 def _fold_retrograde_periods(
     name: str, retro_at_start: bool, stations: List[StationModel], start_jd: float, end_jd: float
 ) -> List[RetrogradePeriodModel]:
@@ -403,9 +414,10 @@ class RetrogradeStationFactory:
 
         The motion state at the range start is read from the longitudinal speed
         there; the in-range stations open (SR) and close (SD) the spans; spans
-        touching an edge are clipped and flagged. Nothing is searched outside
-        the range, so a span open at the edge does not tell where its real
-        station is. An empty or inverted range yields none.
+        touching an edge are clipped and flagged. Beyond a one-second probe
+        before the range start (to catch a station sitting on it), nothing is
+        searched outside the range, so a span open at the edge does not tell
+        where its real station is. An empty or inverted range yields none.
 
         Raises:
             KerykeionException: as :meth:`from_julian_day`, and when the
@@ -434,9 +446,11 @@ class RetrogradeStationFactory:
                     # Start the scan one second early: a station sitting on the
                     # range start is then bracketed and found, and the fold's
                     # edge rule decides the initial state from it rather than
-                    # from a speed that is numerically ~0 there.
+                    # from a speed that is numerically ~0 there. At the very
+                    # edge of the ephemeris that second does not exist: then
+                    # the scan starts on the range and the snapshot decides.
                     stations = RetrogradeStationFactory._scan_planet(
-                        name, body, start_jd - _EDGE_TOL_DAYS, end_jd, iflag
+                        name, body, _probe_start(start_jd, body), end_jd, iflag
                     )
                     periods.extend(_fold_retrograde_periods(name, retro_at_start, stations, start_jd, end_jd))
 

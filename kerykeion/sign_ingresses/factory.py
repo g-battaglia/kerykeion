@@ -297,12 +297,32 @@ class SignPeriodsCollectionModel(SubscriptableBaseModel):
     periods: List[SignPeriodModel]
 
 
+_EDGE_TOL_DAYS = 1.0 / 86400.0
+
+
+def _entered_at_start(start_jd: float, body: int, iflag: int, sign0: int) -> bool:
+    """True when the sign read at ``start_jd`` was entered on that very
+    instant — the range starts on an ingress — so the first stay is not a
+    clipped one. Probes one second before the range; at the very edge of the
+    ephemeris that second does not exist and the stay counts as clipped."""
+    try:
+        return int(_lon(start_jd - _EDGE_TOL_DAYS, body, iflag) // 30) != sign0
+    except KerykeionException:
+        return False
+
+
 def _fold_sign_periods(
-    name: str, sign0: int, ingresses: List[IngressModel], start_jd: float, end_jd: float
+    name: str,
+    sign0: int,
+    ingresses: List[IngressModel],
+    start_jd: float,
+    end_jd: float,
+    entered_at_start: bool = False,
 ) -> List[SignPeriodModel]:
     """Turn the sign at the range start plus the in-range ingresses into
-    contiguous stays: open at ``start_jd`` (clipped), hand over at each
-    ingress, close the last at ``end_jd`` (clipped)."""
+    contiguous stays: open at ``start_jd`` (clipped, unless the range starts
+    on the ingress itself), hand over at each ingress, close the last at
+    ``end_jd`` (clipped)."""
 
     def period(sign_num: int, a: float, b: float, a_clipped: bool, b_clipped: bool) -> SignPeriodModel:
         return SignPeriodModel(
@@ -318,12 +338,13 @@ def _fold_sign_periods(
         )
 
     out: List[SignPeriodModel] = []
-    cur_sign, cur_start, cur_clipped = sign0, start_jd, True
+    cur_sign, cur_start, cur_clipped = sign0, start_jd, not entered_at_start
     for ingress in sorted(ingresses, key=lambda i: i.julian_day):
         if ingress.julian_day <= cur_start:
             # An ingress on the very first sample: the snapshot already reads
-            # the entered sign, so the stay it would close is empty.
-            cur_sign = ingress.sign_num
+            # the entered sign, so the stay it would close is empty — and the
+            # stay that starts here was entered on the range start, not before.
+            cur_sign, cur_clipped = ingress.sign_num, False
             continue
         out.append(period(cur_sign, cur_start, ingress.julian_day, cur_clipped, False))
         cur_sign, cur_start, cur_clipped = ingress.sign_num, ingress.julian_day, False
@@ -470,7 +491,16 @@ class SignIngressFactory:
                 for name, body in bodies:
                     sign0 = int(_lon(start_jd, body, iflag) // 30)
                     ingresses = SignIngressFactory._scan_planet(name, body, start_jd, end_jd, iflag, tropical)
-                    periods.extend(_fold_sign_periods(name, sign0, ingresses, start_jd, end_jd))
+                    periods.extend(
+                        _fold_sign_periods(
+                            name,
+                            sign0,
+                            ingresses,
+                            start_jd,
+                            end_jd,
+                            entered_at_start=_entered_at_start(start_jd, body, iflag, sign0),
+                        )
+                    )
 
         return SignPeriodsCollectionModel(start_jd=start_jd, end_jd=end_jd, periods=periods)
 

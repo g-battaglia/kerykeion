@@ -12,8 +12,8 @@ from .factory import (
 
 __all__ = [
     "IngressModel",
-    "SignIngressesCollectionModel",
     "SignIngressFactory",
+    "SignIngressesCollectionModel",
     "SignPeriodModel",
     "SignPeriodsCollectionModel",
 ]

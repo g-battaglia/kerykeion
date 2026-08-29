@@ -95,3 +95,22 @@ class TestFrameAndEdges:
             stays = [p for p in res.periods if p.planet == planet]
             assert stays[0].start_clipped and stays[-1].end_clipped
             assert all(a.end_jd == b.start_jd for a, b in zip(stays, stays[1:]))
+
+
+class TestRangeStartingOnAnIngress:
+    """A range that begins on the ingress instant opens the entered sign unclipped."""
+
+    def test_first_stay_is_not_clipped_when_the_range_starts_on_the_ingress(self):
+        aries = next(
+            x for x in SignIngressFactory.from_iso_range("2026-01-01", "2026-12-31", ["Sun"]).ingresses if x.sign == "Ari"
+        )
+        res = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day, aries.julian_day + 10, ["Sun"])
+        assert [p.sign for p in res.periods] == ["Ari"]
+        first = res.periods[0]
+        assert first.start_jd == aries.julian_day
+        assert not first.start_clipped
+        assert first.end_clipped
+
+    def test_first_stay_is_clipped_when_the_range_starts_mid_sign(self):
+        res = SignIngressFactory.sign_periods_from_iso_range("2026-03-01", "2026-03-10", ["Sun"])
+        assert res.periods[0].start_clipped

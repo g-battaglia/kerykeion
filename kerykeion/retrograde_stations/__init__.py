@@ -11,9 +11,9 @@ from .factory import (
 )
 
 __all__ = [
+    "RetrogradePeriodModel",
+    "RetrogradePeriodsCollectionModel",
     "RetrogradeStationFactory",
     "RetrogradeStationsCollectionModel",
     "StationModel",
-    "RetrogradePeriodModel",
-    "RetrogradePeriodsCollectionModel",
 ]

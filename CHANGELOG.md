@@ -16,7 +16,10 @@
   each clipped bound (`start_clipped` / `end_clipped`), so a stay that began
   before the range or a retrograde that outlives it is reported honestly
   instead of being invisible — the state at the range start is read in the
-  same ephemeris session (same zodiac frame) as the scan that follows it.
+  same ephemeris session (same zodiac frame) as the scan that follows it,
+  with a one-second probe before the range so a boundary sitting exactly on
+  the start is recognised (a stay entered on the start is not clipped; a
+  station on the start decides the motion state).
   See `release_notes/v6.0.0a92.md`.
 - **Chiron stations, opt-in.** `RetrogradeStationFactory` accepts `"Chiron"`
   in `planets`; the default set (and its baselines) is unchanged.
