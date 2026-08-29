@@ -51,15 +51,15 @@ def _subject(profile: Optional[str], cmd: str) -> object:
 
 
 def aspects(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    subject2: Subject2Profile = None,  # type: ignore[assignment]
-    declinations: DeclinationsFlag = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    aspect_list: AspectsOpt = None,  # type: ignore[assignment]
-    axis_orb_limit: AxisOrbLimitOpt = None,  # type: ignore[assignment]
-    orb: DeclinationOrbOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    subject2: Subject2Profile = None,
+    declinations: DeclinationsFlag = None,
+    planets: PlanetsOpt = None,
+    aspect_list: AspectsOpt = None,
+    axis_orb_limit: AxisOrbLimitOpt = None,
+    orb: DeclinationOrbOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Aspects within one chart, or between two (-S) — ecliptic or declination.
 
@@ -102,8 +102,7 @@ def aspects(
     else:
         if orb is not None:
             raise ValueError(
-                "--orb applies to --declinations; for ecliptic aspects give the orb "
-                "per aspect, e.g. --aspects trine:6."
+                "--orb applies to --declinations; for ecliptic aspects give the orb per aspect, e.g. --aspects trine:6."
             )
         chosen = _active_aspects(_parse_aspects(aspect_list))
         if chosen is not None:
@@ -125,15 +124,15 @@ def aspects(
 
 
 def dominants(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    method: DominantMethodOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    distribution_method: DistributionMethodOpt = None,  # type: ignore[assignment]
-    custom_weights: CustomWeightsOpt = None,  # type: ignore[assignment]
-    accidental_dignities: AccidentalDignitiesFlag = None,  # type: ignore[assignment]
-    score_breakdown: ScoreBreakdownFlag = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    method: DominantMethodOpt = None,
+    planets: PlanetsOpt = None,
+    distribution_method: DistributionMethodOpt = None,
+    custom_weights: CustomWeightsOpt = None,
+    accidental_dignities: AccidentalDignitiesFlag = None,
+    score_breakdown: ScoreBreakdownFlag = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Dominant signs, elements, qualities and planets for a subject."""
     from kerykeion import DominantsFactory
@@ -147,9 +146,7 @@ def dominants(
         canonical = {name.lower(): name for name in available}
         chosen = canonical.get(method.strip().lower())
         if chosen is None:
-            raise ValueError(
-                f"--method must be one of {', '.join(available)}, got {method!r}"
-            )
+            raise ValueError(f"--method must be one of {', '.join(available)}, got {method!r}")
         kwargs["strategy"] = chosen
     active = _split_csv(planets)
     if active is not None:
@@ -161,11 +158,10 @@ def dominants(
             weights = json.loads(custom_weights)
         except json.JSONDecodeError as exc:
             raise ValueError(
-                f"--custom-weights is not valid JSON ({exc.msg}); expected an object "
-                'like \'{"Sun": 1.5}\'.'
+                f"--custom-weights is not valid JSON ({exc.msg}); expected an object like '{{\"Sun\": 1.5}}'."
             ) from None
         if not isinstance(weights, dict):
-            raise ValueError('--custom-weights must be a JSON object, e.g. \'{"Sun": 1.5}\'.')
+            raise ValueError("--custom-weights must be a JSON object, e.g. '{\"Sun\": 1.5}'.")
         kwargs["custom_weights"] = weights
     if accidental_dignities is not None:
         kwargs["include_accidental_dignities"] = accidental_dignities
@@ -175,11 +171,11 @@ def dominants(
 
 
 def moon(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    using_default_location: UsingDefaultLocationFlag = None,  # type: ignore[assignment]
-    location_precision: LocationPrecisionOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    using_default_location: UsingDefaultLocationFlag = None,
+    location_precision: LocationPrecisionOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Moon phase details for the subject's moment and place."""
     from kerykeion import MoonPhaseDetailsFactory
@@ -194,12 +190,12 @@ def moon(
 
 
 def relationship_score(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    subject2: Subject2Profile = None,  # type: ignore[assignment]
-    all_aspects: MajorAspectsOnlyFlag = None,  # type: ignore[assignment]
-    axis_orb_limit: AxisOrbLimitOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    subject2: Subject2Profile = None,
+    all_aspects: MajorAspectsOnlyFlag = None,
+    axis_orb_limit: AxisOrbLimitOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Ciro Discepolo's relationship score between two stored subjects."""
     from kerykeion import RelationshipScoreFactory

@@ -152,9 +152,7 @@ def resolve_target(spec: str) -> ResolvedTarget:
         raise ValueError(f"invalid call target {spec!r}")
     parts = spec.split(".")
     if len(parts) > 2:
-        raise ValueError(
-            f"call target {spec!r} has more than one '.'; expected 'Factory.method' or 'function'"
-        )
+        raise ValueError(f"call target {spec!r} has more than one '.'; expected 'Factory.method' or 'function'")
 
     names = public_names()
     owner_name = parts[0]
@@ -169,14 +167,18 @@ def resolve_target(spec: str) -> ResolvedTarget:
     # Bare function target (no member).
     if len(parts) == 1:
         if isinstance(owner, type):
-            raise ValueError(
-                f"{owner_name} is a class — call a method: `kerykeion call {owner_name}.<method>`."
-            )
+            raise ValueError(f"{owner_name} is a class — call a method: `kerykeion call {owner_name}.<method>`.")
         if not callable(owner):
             raise ValueError(f"{owner_name} is not callable.")
         return ResolvedTarget(
-            spec=spec, owner_name=owner_name, member_name=None, kind=FUNCTION,
-            callable_fn=owner, needs_instance=False, init_params={}, method_params=_params_of(owner),
+            spec=spec,
+            owner_name=owner_name,
+            member_name=None,
+            kind=FUNCTION,
+            callable_fn=owner,
+            needs_instance=False,
+            init_params={},
+            method_params=_params_of(owner),
         )
 
     member = parts[1]
@@ -185,9 +187,7 @@ def resolve_target(spec: str) -> ResolvedTarget:
     if not isinstance(owner, type):
         raise ValueError(f"{owner_name} is not a class, so .{member} is not a method.")
     if _is_pydantic_model(owner):
-        raise ValueError(
-            f"{owner_name} is a data model, not a factory; it has no callable methods to dispatch."
-        )
+        raise ValueError(f"{owner_name} is a data model, not a factory; it has no callable methods to dispatch.")
 
     kind, fn = _classify_member(owner, member)
     init_params: dict[str, inspect.Parameter] = {}
@@ -196,14 +196,17 @@ def resolve_target(spec: str) -> ResolvedTarget:
         init_sig = getattr(owner, "__init__", None)
         if init_sig is not None:
             init_params = {
-                k: v for k, v in _params_of(init_sig).items() if k != "self" and v.kind not in (
-                    inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD
-                )
+                k: v
+                for k, v in _params_of(init_sig).items()
+                if k != "self" and v.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
             }
     return ResolvedTarget(
-        spec=spec, owner_name=owner_name, member_name=member, kind=kind,
-        callable_fn=fn, needs_instance=needs_instance, init_params=init_params,
-        method_params={
-            k: v for k, v in _params_of(fn).items() if k not in ("self", "cls")
-        },
+        spec=spec,
+        owner_name=owner_name,
+        member_name=member,
+        kind=kind,
+        callable_fn=fn,
+        needs_instance=needs_instance,
+        init_params=init_params,
+        method_params={k: v for k, v in _params_of(fn).items() if k not in ("self", "cls")},
     )

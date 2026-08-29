@@ -34,9 +34,7 @@ def resolve_format(explicit: str | None, output_path: str | None) -> str:
     """Pick the output format for this invocation (see module docstring)."""
     if explicit:
         if explicit not in VALID_FORMATS:
-            raise ValueError(
-                f"unknown format {explicit!r}; choose from {', '.join(VALID_FORMATS)}"
-            )
+            raise ValueError(f"unknown format {explicit!r}; choose from {', '.join(VALID_FORMATS)}")
         return explicit
     if output_path:
         inferred = suffix_format(output_path)

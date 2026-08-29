@@ -47,26 +47,26 @@ def _resolve_range(from_: Optional[str], to: Optional[str], cmd: str) -> tuple[d
 
 
 def ephemeris(
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    step_type: StepTypeOpt = None,  # type: ignore[assignment]
-    step: SeriesStepOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacTypeOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealModeOpt = None,  # type: ignore[assignment]
-    houses: HousesSystemOpt = None,  # type: ignore[assignment]
-    no_limit: NoLimitFlag = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    step_type: StepTypeOpt = None,
+    step: SeriesStepOpt = None,
+    zodiac: ZodiacTypeOpt = None,
+    sidereal_mode: SiderealModeOpt = None,
+    houses: HousesSystemOpt = None,
+    no_limit: NoLimitFlag = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """A time series of planet positions and house cusps."""
     from kerykeion import EphemerisDataFactory
     from kerykeion.cli.subject_resolver import resolve_house_system
 
     start, end = _resolve_range(from_, to, "ephemeris")
-    stype: StepType = (step_type or "days")  # type: ignore[assignment]
+    stype: StepType = step_type or "days"  # type: ignore[assignment]
     if stype not in _STEP_TYPES:
         raise ValueError(f"--step-type must be {' or '.join(_STEP_TYPES)}, got {stype!r}")
     # `step or 1` would silently rewrite `--step 0` to 1 (falsy-zero); use
@@ -81,9 +81,11 @@ def ephemeris(
     if not no_limit:
         check_ephemeris_sampling(start, end, stype, step_n, tz_str=tz)
 
-    kwargs: dict[str, Any] = dict(
-        step_type=stype, step=step_n, max_days=None, max_hours=None, max_minutes=None
-    ) if no_limit else dict(step_type=stype, step=step_n)
+    kwargs: dict[str, Any] = (
+        dict(step_type=stype, step=step_n, max_days=None, max_hours=None, max_minutes=None)
+        if no_limit
+        else dict(step_type=stype, step=step_n)
+    )
     if lat is not None:
         kwargs["lat"] = lat
     if lng is not None:
@@ -104,16 +106,16 @@ def ephemeris(
 
 
 def transits(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    step_type: StepTypeOpt = None,  # type: ignore[assignment]
-    step: SeriesStepOpt = None,  # type: ignore[assignment]
-    no_limit: NoLimitFlag = None,  # type: ignore[assignment]
-    events: EventsFlag = None,  # type: ignore[assignment]
-    refine: RefineFlag = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    step_type: StepTypeOpt = None,
+    step: SeriesStepOpt = None,
+    no_limit: NoLimitFlag = None,
+    events: EventsFlag = None,
+    refine: RefineFlag = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Natal chart vs a time series of transits: per-sample aspects or events.
 
@@ -134,7 +136,7 @@ def transits(
     if refine and not events:
         raise ValueError("--refine sharpens exact moments and requires --events.")
     start, end = _resolve_range(from_, to, "transits")
-    stype: StepType = (step_type or "days")  # type: ignore[assignment]
+    stype: StepType = step_type or "days"  # type: ignore[assignment]
     if stype not in _STEP_TYPES:
         raise ValueError(f"--step-type must be {' or '.join(_STEP_TYPES)}, got {stype!r}")
     step_n = step if step is not None else 1
@@ -160,8 +162,11 @@ def transits(
     if no_limit:
         eph_kwargs.update(max_days=None, max_hours=None, max_minutes=None)
     for src, dst in (
-        ("lat", "lat"), ("lng", "lng"), ("tz_str", "tz_str"),
-        ("zodiac_type", "zodiac_type"), ("sidereal_mode", "sidereal_mode"),
+        ("lat", "lat"),
+        ("lng", "lng"),
+        ("tz_str", "tz_str"),
+        ("zodiac_type", "zodiac_type"),
+        ("sidereal_mode", "sidereal_mode"),
         ("houses_system_identifier", "houses_system_identifier"),
         ("perspective_type", "perspective_type"),
         ("custom_ayanamsa_t0", "custom_ayanamsa_t0"),

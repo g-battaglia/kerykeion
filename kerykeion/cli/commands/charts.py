@@ -19,38 +19,21 @@ from __future__ import annotations
 from typing import Optional
 
 from kerykeion.cli import subject_resolver, warnings
-from kerykeion.cli.commands._shared import _emit, _render_from
+from kerykeion.cli.commands._shared import _emit, _subject_from, with_render_flags
 from kerykeion.cli.options import (
-    AspectGridTypeOpt,
-    AspectIconsFlag,
-    AutoSizeFlag,
-    ChartLanguageOpt,
-    ChartSettingsOpt,
-    ChartStyleOpt,
-    CuspComparisonFlag,
-    CustomTitleOpt,
     DayOpt,
-    DegreeIndicatorsFlag,
-    DiurnalityFlag,
-    EnvelopeFlag,
-    ExternalViewFlag,
     FixedStarsFlag,
     FormatOpt,
-    HousePositionComparisonFlag,
     HousesSystemOpt,
-    MaxAspectsOpt,
     MonthOpt,
-    NoAspectsFlag,
     OfflineFlag,
     OnlineFlag,
     OutputOpt,
-    PaddingOpt,
     PerspectiveOpt,
     PointsFlag,
     ReturnTypeOpt,
     SetFlags,
     SiderealModeOpt,
-    SvgVariantOpt,
     Subject2Profile,
     SubjectAltitude,
     SubjectCity,
@@ -65,14 +48,11 @@ from kerykeion.cli.options import (
     SubjectTime,
     SubjectTz,
     TargetYearOpt,
-    ThemeOpt,
     ToDateOpt,
     ToTimeOpt,
-    TransparentBackgroundFlag,
     WithFlags,
     WithoutFlags,
     YearOpt,
-    ZodiacRingFlag,
     ZodiacTypeOpt,
 )
 from kerykeion.cli.rendering import formats
@@ -88,9 +68,7 @@ def _natal_chart(subject: object) -> object:
     return ChartDataFactory.create_natal_chart_data(subject)  # type: ignore[arg-type]
 
 
-def _emit_subject_or_chart(
-    subject: object, fmt: Optional[str], output: Optional[str], opts: object = None
-) -> None:
+def _emit_subject_or_chart(subject: object, fmt: Optional[str], output: Optional[str], opts: object = None) -> None:
     """Subject for text/json/xml; a natal chart-data wrapper for SVG."""
     resolved = formats.resolve_format(fmt, output)
     if resolved == "svg":
@@ -99,145 +77,88 @@ def _emit_subject_or_chart(
         warnings.output_with_warnings(subject, resolved, output, opts=opts)
 
 
+@with_render_flags
 def natal(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    name: SubjectName = None,  # type: ignore[assignment]
-    date: SubjectDate = None,  # type: ignore[assignment]
-    time: SubjectTime = None,  # type: ignore[assignment]
-    seconds: SubjectSeconds = None,  # type: ignore[assignment]
-    iso_utc: SubjectIsoUtc = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    city: SubjectCity = None,  # type: ignore[assignment]
-    nation: SubjectNation = None,  # type: ignore[assignment]
-    online: OnlineFlag = None,  # type: ignore[assignment]
-    offline: OfflineFlag = None,  # type: ignore[assignment]
-    altitude: SubjectAltitude = None,  # type: ignore[assignment]
-    zodiac: ZodiacTypeOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealModeOpt = None,  # type: ignore[assignment]
-    houses: HousesSystemOpt = None,  # type: ignore[assignment]
-    perspective: PerspectiveOpt = None,  # type: ignore[assignment]
-    points: PointsFlag = None,  # type: ignore[assignment]
-    fixed_stars: FixedStarsFlag = None,  # type: ignore[assignment]
-    with_flags: WithFlags = None,  # type: ignore[assignment]
-    without_flags: WithoutFlags = None,  # type: ignore[assignment]
-    set_flags: SetFlags = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    name: SubjectName = None,
+    date: SubjectDate = None,
+    time: SubjectTime = None,
+    seconds: SubjectSeconds = None,
+    iso_utc: SubjectIsoUtc = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    city: SubjectCity = None,
+    nation: SubjectNation = None,
+    online: OnlineFlag = None,
+    offline: OfflineFlag = None,
+    altitude: SubjectAltitude = None,
+    zodiac: ZodiacTypeOpt = None,
+    sidereal_mode: SiderealModeOpt = None,
+    houses: HousesSystemOpt = None,
+    perspective: PerspectiveOpt = None,
+    points: PointsFlag = None,
+    fixed_stars: FixedStarsFlag = None,
+    with_flags: WithFlags = None,
+    without_flags: WithoutFlags = None,
+    set_flags: SetFlags = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Natal chart for a subject: report (text), JSON, XML or SVG."""
-    flags = subject_resolver.build_flags(
-        name=name, date=date, time=time, seconds=seconds, iso_utc=iso_utc, lat=lat,
-        lng=lng, tz=tz, city=city, nation=nation, online=online, offline=offline,
-        altitude=altitude, zodiac=zodiac, sidereal_mode=sidereal_mode, houses=houses,
-        perspective=perspective, points=points, fixed_stars=fixed_stars,
-        with_flags=with_flags, without_flags=without_flags, set_flags=set_flags,
-    )
+    flags = _subject_from(locals())
     model = subject_resolver.resolve_subject(flags, profile)
-    _emit_subject_or_chart(model, fmt, output, _render_from(locals()))
+    _emit_subject_or_chart(model, fmt, output, opts)
 
 
+@with_render_flags
 def now(
-    name: SubjectName = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    city: SubjectCity = None,  # type: ignore[assignment]
-    nation: SubjectNation = None,  # type: ignore[assignment]
-    online: OnlineFlag = None,  # type: ignore[assignment]
-    offline: OfflineFlag = None,  # type: ignore[assignment]
-    altitude: SubjectAltitude = None,  # type: ignore[assignment]
-    zodiac: ZodiacTypeOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealModeOpt = None,  # type: ignore[assignment]
-    houses: HousesSystemOpt = None,  # type: ignore[assignment]
-    perspective: PerspectiveOpt = None,  # type: ignore[assignment]
-    points: PointsFlag = None,  # type: ignore[assignment]
-    fixed_stars: FixedStarsFlag = None,  # type: ignore[assignment]
-    with_flags: WithFlags = None,  # type: ignore[assignment]
-    without_flags: WithoutFlags = None,  # type: ignore[assignment]
-    set_flags: SetFlags = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    name: SubjectName = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    city: SubjectCity = None,
+    nation: SubjectNation = None,
+    online: OnlineFlag = None,
+    offline: OfflineFlag = None,
+    altitude: SubjectAltitude = None,
+    zodiac: ZodiacTypeOpt = None,
+    sidereal_mode: SiderealModeOpt = None,
+    houses: HousesSystemOpt = None,
+    perspective: PerspectiveOpt = None,
+    points: PointsFlag = None,
+    fixed_stars: FixedStarsFlag = None,
+    with_flags: WithFlags = None,
+    without_flags: WithoutFlags = None,
+    set_flags: SetFlags = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Subject for the current moment (transit-style snapshot)."""
-    flags = subject_resolver.build_flags(
-        name=name, date=None, time=None, seconds=None, iso_utc=None, lat=lat, lng=lng,
-        tz=tz, city=city, nation=nation, online=online, offline=offline,
-        altitude=altitude, zodiac=zodiac, sidereal_mode=sidereal_mode, houses=houses,
-        perspective=perspective, points=points, fixed_stars=fixed_stars,
-        with_flags=with_flags, without_flags=without_flags, set_flags=set_flags,
+    flags = _subject_from(
+        locals(),
+        date=None,
+        time=None,
+        seconds=None,
+        iso_utc=None,
         mode_override="current",
     )
     model = subject_resolver.resolve_subject(flags, None)
-    _emit_subject_or_chart(model, fmt, output, _render_from(locals()))
+    _emit_subject_or_chart(model, fmt, output, opts)
 
 
+@with_render_flags
 def synastry(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    subject2: Subject2Profile = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    subject2: Subject2Profile = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Synastry (dual wheel) between two stored subjects."""
     if not profile:
@@ -249,43 +170,26 @@ def synastry(
     first = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
     chart = ChartDataFactory.create_synastry_chart_data(first, second)
-    _emit(chart, fmt, output, _render_from(locals()))
+    _emit(chart, fmt, output, opts)
 
 
+@with_render_flags
 def transit(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    city: SubjectCity = None,  # type: ignore[assignment]
-    nation: SubjectNation = None,  # type: ignore[assignment]
-    online: OnlineFlag = None,  # type: ignore[assignment]
-    offline: OfflineFlag = None,  # type: ignore[assignment]
-    altitude: SubjectAltitude = None,  # type: ignore[assignment]
-    to_date: ToDateOpt = None,  # type: ignore[assignment]
-    to_time: ToTimeOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    city: SubjectCity = None,
+    nation: SubjectNation = None,
+    online: OnlineFlag = None,
+    offline: OfflineFlag = None,
+    altitude: SubjectAltitude = None,
+    to_date: ToDateOpt = None,
+    to_time: ToTimeOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Transit dual wheel: natal (inner) vs a transit moment (outer).
 
@@ -298,13 +202,9 @@ def transit(
     if not profile:
         raise ValueError("transit needs -s <profile> for the natal subject")
     if to_time is not None and to_date is None:
-        raise ValueError(
-            "--to-time requires --to-date (omit both to transit the current moment)."
-        )
+        raise ValueError("--to-time requires --to-date (omit both to transit the current moment).")
     if to_date is not None and to_time is None:
-        raise ValueError(
-            "--to-date also requires --to-time (omit both to transit the current moment)."
-        )
+        raise ValueError("--to-date also requires --to-time (omit both to transit the current moment).")
     # A relocated transit needs matching coordinates AND timezone. Letting the
     # natal tz_str stand in when only --lat/--lng are overridden would localise
     # the transit moment in the natal zone (e.g. Rome) at the new coordinates
@@ -333,9 +233,7 @@ def transit(
     _inherit_geo = city is None
     from kerykeion import ChartDataFactory
 
-    natal = subject_resolver.resolve_subject(
-        subject_resolver.SubjectFlags(online=online, offline=offline), profile
-    )
+    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(online=online, offline=offline), profile)
     # The transit moment is a minimal subject: just a place and a moment, but it
     # MUST share the natal frame (zodiac, sidereal mode, houses, perspective) —
     # ``create_transit_chart_data`` passes both subjects verbatim to
@@ -369,34 +267,17 @@ def transit(
     )
     transit_subject = subject_resolver.resolve_subject(transit_flags, None)
     chart = ChartDataFactory.create_transit_chart_data(natal, transit_subject)
-    _emit(chart, fmt, output, _render_from(locals()))
+    _emit(chart, fmt, output, opts)
 
 
+@with_render_flags
 def composite(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    subject2: Subject2Profile = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    subject2: Subject2Profile = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Composite chart (midpoint) of two stored subjects."""
     if not profile:
@@ -409,44 +290,27 @@ def composite(
     second = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
     composite_subject = CompositeSubjectFactory(first, second).get_midpoint_composite_subject_model()
     chart = ChartDataFactory.create_composite_chart_data(composite_subject)
-    _emit(chart, fmt, output, _render_from(locals()))
+    _emit(chart, fmt, output, opts)
 
 
+@with_render_flags
 def return_chart(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    return_type: ReturnTypeOpt = None,  # type: ignore[assignment]
-    year: YearOpt = None,  # type: ignore[assignment]
-    month: MonthOpt = 1,  # type: ignore[assignment]
-    day: DayOpt = 1,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    city: SubjectCity = None,  # type: ignore[assignment]
-    nation: SubjectNation = None,  # type: ignore[assignment]
-    online: OnlineFlag = None,  # type: ignore[assignment]
-    offline: OfflineFlag = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    return_type: ReturnTypeOpt = None,
+    year: YearOpt = None,
+    month: MonthOpt = 1,
+    day: DayOpt = 1,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    city: SubjectCity = None,
+    nation: SubjectNation = None,
+    online: OnlineFlag = None,
+    offline: OfflineFlag = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Planetary return (Solar/Lunar) as a dual wheel: natal + return chart.
 
@@ -476,9 +340,7 @@ def return_chart(
         )
     from kerykeion import ChartDataFactory, PlanetaryReturnFactory
 
-    natal = subject_resolver.resolve_subject(
-        subject_resolver.SubjectFlags(online=online, offline=offline), profile
-    )
+    natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(online=online, offline=offline), profile)
     # PlanetaryReturnFactory does its own geocoding (unlike the other chart
     # factories): it needs a return-chart location. Default to the natal
     # birthplace (offline); explicit flags relocate the return.
@@ -518,37 +380,23 @@ def return_chart(
             "(or -s a profile with coordinates), or --city (geocoded)."
         )
     return_subject = factory.next_return_from_date(
-        year, month, day, return_type=rtype  # type: ignore[arg-type]  # validated above
+        year,
+        month,
+        day,
+        return_type=rtype,  # type: ignore[arg-type]  # validated above
     )
     chart = ChartDataFactory.create_return_chart_data(natal, return_subject)
-    _emit(chart, fmt, output, _render_from(locals()))
+    _emit(chart, fmt, output, opts)
 
 
+@with_render_flags
 def progression(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    target_year: TargetYearOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    target_year: TargetYearOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Secondary progression dual wheel for a target year.
 
@@ -564,4 +412,4 @@ def progression(
     natal = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
     progressed = SecondaryProgressionFactory.compute(natal, target_year=target_year)
     chart = ChartDataFactory.create_progression_chart_data(natal, progressed)
-    _emit(chart, fmt, output, _render_from(locals()))
+    _emit(chart, fmt, output, opts)

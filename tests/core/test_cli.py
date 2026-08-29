@@ -19,6 +19,7 @@ Design rules (see DEVELOPMENT.md / TEST.md):
 
 from __future__ import annotations
 
+import inspect
 import json
 import os
 import subprocess
@@ -1436,13 +1437,31 @@ class TestRenderOptions:
         assert result.exit_code == 4
         assert needle in result.output
 
-    # _render_from() reads the flags out of the caller's frame; the guard turns a
-    # renamed/dropped parameter into a loud failure instead of a silent no-op.
-    def test_render_from_rejects_a_missing_flag(self):
-        from kerykeion.cli.commands._shared import _render_from
+    # @with_render_flags injects the shared knobs into the signature typer reads,
+    # so every chart command must actually offer all of them. A knob added to the
+    # table but not reaching the commands is the silent no-op this guards.
+    @pytest.mark.parametrize(
+        "command",
+        ["natal", "now", "synastry", "transit", "composite", "return", "progression",
+         "technique relocate"],
+    )
+    def test_every_chart_command_exposes_the_render_flags(self, runner, app, command):
+        from kerykeion.cli.commands._shared import _RENDER_FLAGS
 
-        with pytest.raises(AssertionError, match="absent from the command signature"):
-            _render_from({"theme": "dark"})
+        result = runner.invoke(app, [*command.split(), "--help"])
+        assert result.exit_code == 0
+        rendered = " ".join(result.output.split())
+        for flag in _RENDER_FLAGS:
+            assert f"--{flag.replace('_', '-')}" in rendered, f"{command} is missing --{flag}"
+
+    # The decorated command receives the assembled RenderOptions as `opts`; the
+    # flags themselves never reach its body.
+    def test_render_flags_reach_the_command_as_options(self):
+        from kerykeion.cli.commands import charts
+
+        parameters = inspect.signature(charts.natal).parameters
+        assert "opts" not in parameters, "opts is supplied by the decorator, not by typer"
+        assert "theme" in parameters, "the render flags must be visible to typer"
 
 
 class TestCuratedCommands:

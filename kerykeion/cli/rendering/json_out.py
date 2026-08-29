@@ -20,11 +20,6 @@ def render_json(obj: Any) -> str:
     if isinstance(obj, pydantic.BaseModel):
         return obj.model_dump_json(indent=2)
     if isinstance(obj, (list, tuple)):
-        items = [
-            item.model_dump(mode="json") if isinstance(item, pydantic.BaseModel) else item
-            for item in obj
-        ]
+        items = [item.model_dump(mode="json") if isinstance(item, pydantic.BaseModel) else item for item in obj]
         return json.dumps(items, indent=2, default=str)
     return json.dumps(obj, indent=2, default=str)
-
-

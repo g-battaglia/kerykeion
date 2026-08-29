@@ -15,7 +15,7 @@ from typing import Optional
 import typer
 
 from kerykeion.cli import config, profiles, subject_resolver, warnings
-from kerykeion.cli.commands._shared import _emit
+from kerykeion.cli.commands._shared import _emit, _subject_from
 from kerykeion.cli.options import (
     FixedStarsFlag,
     FormatOpt,
@@ -58,29 +58,29 @@ subject_app = KerykeionTyper(
 @subject_app.command("save")
 def save(
     store_name: str = typer.Argument(..., help="Name under which the profile is stored."),
-    name: SubjectName = None,  # type: ignore[assignment]
-    date: SubjectDate = None,  # type: ignore[assignment]
-    time: SubjectTime = None,  # type: ignore[assignment]
-    seconds: SubjectSeconds = None,  # type: ignore[assignment]
-    iso_utc: SubjectIsoUtc = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    city: SubjectCity = None,  # type: ignore[assignment]
-    nation: SubjectNation = None,  # type: ignore[assignment]
-    online: OnlineFlag = None,  # type: ignore[assignment]
-    offline: OfflineFlag = None,  # type: ignore[assignment]
-    altitude: SubjectAltitude = None,  # type: ignore[assignment]
-    zodiac: ZodiacTypeOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealModeOpt = None,  # type: ignore[assignment]
-    houses: HousesSystemOpt = None,  # type: ignore[assignment]
-    perspective: PerspectiveOpt = None,  # type: ignore[assignment]
-    points: PointsFlag = None,  # type: ignore[assignment]
-    fixed_stars: FixedStarsFlag = None,  # type: ignore[assignment]
-    with_flags: WithFlags = None,  # type: ignore[assignment]
-    without_flags: WithoutFlags = None,  # type: ignore[assignment]
-    set_flags: SetFlags = None,  # type: ignore[assignment]
-    snapshot: SnapshotFlag = None,  # type: ignore[assignment]
+    name: SubjectName = None,
+    date: SubjectDate = None,
+    time: SubjectTime = None,
+    seconds: SubjectSeconds = None,
+    iso_utc: SubjectIsoUtc = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    city: SubjectCity = None,
+    nation: SubjectNation = None,
+    online: OnlineFlag = None,
+    offline: OfflineFlag = None,
+    altitude: SubjectAltitude = None,
+    zodiac: ZodiacTypeOpt = None,
+    sidereal_mode: SiderealModeOpt = None,
+    houses: HousesSystemOpt = None,
+    perspective: PerspectiveOpt = None,
+    points: PointsFlag = None,
+    fixed_stars: FixedStarsFlag = None,
+    with_flags: WithFlags = None,
+    without_flags: WithoutFlags = None,
+    set_flags: SetFlags = None,
+    snapshot: SnapshotFlag = None,
 ) -> None:
     """Build a recipe from the flags and persist it as a profile (0600)."""
     if store_name.endswith(".json"):
@@ -92,13 +92,7 @@ def save(
             "file path, so the stored profile would never load back. Drop the "
             "suffix (the store adds its own)."
         )
-    flags = subject_resolver.build_flags(
-        name=name, date=date, time=time, seconds=seconds, iso_utc=iso_utc, lat=lat,
-        lng=lng, tz=tz, city=city, nation=nation, online=online, offline=offline,
-        altitude=altitude, zodiac=zodiac, sidereal_mode=sidereal_mode, houses=houses,
-        perspective=perspective, points=points, fixed_stars=fixed_stars,
-        with_flags=with_flags, without_flags=without_flags, set_flags=set_flags,
-    )
+    flags = _subject_from(locals())
     # The display name falls back to the store name when --name is absent.
     if not flags.name:
         flags.name = store_name
@@ -127,8 +121,8 @@ def save(
 @subject_app.command("show")
 def show(
     profile_spec: str = typer.Argument(..., help="Profile name or file path."),
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Print a stored profile (recipe + provenance)."""
     path = profiles.resolve_path(profile_spec)
@@ -141,7 +135,7 @@ def show(
 
 @subject_app.command("list")
 def list_cmd(
-    fmt: FormatOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
 ) -> None:
     """List profile names in the store (text: one per line; pipe: JSON array)."""
     names = profiles.list_profiles()
@@ -159,8 +153,8 @@ def path_cmd(
 @subject_app.command("verify")
 def verify(
     profile_spec: str = typer.Argument(..., help="Profile name or file path."),
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Materialise the recipe into a subject and print a compact summary.
 
@@ -170,9 +164,7 @@ def verify(
     # Deliberately NOT resolve_subject(): that would hand back the stored
     # snapshot, and "the snapshot reads back fine" is not what verify claims —
     # it claims the *recipe* still rebuilds. Always recompute here.
-    model = subject_resolver.materialize(
-        subject_resolver.merge_inputs(subject_resolver.SubjectFlags(), profile_spec)
-    )
+    model = subject_resolver.materialize(subject_resolver.merge_inputs(subject_resolver.SubjectFlags(), profile_spec))
     summary = _subject_summary(model)
     summary["snapshot"] = _snapshot_state(profile_spec, model)
     resolved = formats.resolve_format(fmt, output)

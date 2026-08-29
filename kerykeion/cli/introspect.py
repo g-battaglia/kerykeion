@@ -135,9 +135,7 @@ def coerce_value(annotation: Any, raw: str) -> Any:
                 return coerce_value(arg, raw)
             except (ValueError, TypeError) as exc:
                 last_error = exc
-        raise ValueError(
-            f"{raw!r} matches none of {[_annotation_name(a) for a in args]}"
-        ) from last_error
+        raise ValueError(f"{raw!r} matches none of {[_annotation_name(a) for a in args]}") from last_error
     if origin is Literal:
         choices = [a for a in get_args(annotation) if not isinstance(a, type)]
         if raw in choices:
@@ -284,9 +282,7 @@ def _classify(annotation: Any) -> str:
         return CLI
     if _is_union(annotation):
         args = [a for a in get_args(annotation) if a is not type(None)]
-        if all(
-            a in (bool, int, float, str, datetime, date) or get_origin(a) is Literal for a in args
-        ):
+        if all(a in (bool, int, float, str, datetime, date) or get_origin(a) is Literal for a in args):
             return CLI
         return JSON_ONLY
     if annotation in (bool, int, float, str, datetime, date):
@@ -304,9 +300,7 @@ def explain(target) -> list[ParamInfo]:  # type: ignore[no-untyped-def]
     seen: set[str] = set()
 
     def _add(name: str, param: inspect.Parameter) -> None:
-        if name in seen or param.kind in (
-            inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD
-        ):
+        if name in seen or param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
             return
         seen.add(name)
         annotation = param.annotation

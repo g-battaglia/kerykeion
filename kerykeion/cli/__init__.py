@@ -125,8 +125,7 @@ def _stdlib_dispatch(args: list[str]) -> int:
         unknown = [a for a in rest if a != "--json"]
         if unknown:
             sys.stderr.write(
-                f"kerykeion: error: unknown option for 'status': {unknown[0]!r}\n"
-                "Hint: 'status' accepts only --json.\n"
+                f"kerykeion: error: unknown option for 'status': {unknown[0]!r}\nHint: 'status' accepts only --json.\n"
             )
             return 4
         from kerykeion.cli import diagnostics

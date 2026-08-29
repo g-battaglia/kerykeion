@@ -91,27 +91,23 @@ def _bind_subjects(
     if subject is not None:
         if not subject_params:
             raise ValueError(f"{target.spec} has no subject parameter; -s is not used here.")
-        kwargs[subject_params[0]] = subject_resolver.resolve_subject(
-            subject_resolver.SubjectFlags(), subject
-        )
+        kwargs[subject_params[0]] = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject)
     if subject2 is not None:
         if len(subject_params) < 2:
             raise ValueError(f"{target.spec} has fewer than two subject parameters; -S is not used here.")
-        kwargs[subject_params[1]] = subject_resolver.resolve_subject(
-            subject_resolver.SubjectFlags(), subject2
-        )
+        kwargs[subject_params[1]] = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), subject2)
 
 
 def call(
     target_arg: str = typer.Argument(None, help="Call target: Factory.method or a bare function."),
-    list_flag: ListFlag = None,  # type: ignore[assignment]
-    json_flag: JsonListFlag = None,  # type: ignore[assignment]
-    explain_flag: ExplainFlag = None,  # type: ignore[assignment]
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    subject2: CallSubject2Opt = None,  # type: ignore[assignment]
-    param: ParamOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    list_flag: ListFlag = None,
+    json_flag: JsonListFlag = None,
+    explain_flag: ExplainFlag = None,
+    profile: SubjectProfile = None,
+    subject2: CallSubject2Opt = None,
+    param: ParamOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Dispatch to any public kerykeion factory method or function."""
     if list_flag:
@@ -149,8 +145,7 @@ def call(
     unknown = [k for k in kwargs if k not in known]
     if unknown:
         raise ValueError(
-            f"--param {unknown[0]!r} is not a parameter of {target.spec} "
-            f"(known: {', '.join(sorted(known))})"
+            f"--param {unknown[0]!r} is not a parameter of {target.spec} (known: {', '.join(sorted(known))})"
         )
 
     if target.needs_instance:

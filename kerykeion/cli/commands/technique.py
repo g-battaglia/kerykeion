@@ -18,42 +18,26 @@ from kerykeion.cli.commands._shared import (
     _choose,
     _emit,
     _parse_aspects,
-    _render_from,
+    with_render_flags,
     _split_csv,
 )
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
 from kerykeion.cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
-    AspectGridTypeOpt,
-    AspectIconsFlag,
     AspectOrbOpt,
     AspectsOpt,
-    AutoSizeFlag,
     ComputeAspectsFlag,
-    ChartLanguageOpt,
-    ChartSettingsOpt,
-    ChartStyleOpt,
     CountOpt,
-    CuspComparisonFlag,
-    CustomTitleOpt,
-    DegreeIndicatorsFlag,
-    DiurnalityFlag,
-    EnvelopeFlag,
-    ExternalViewFlag,
     FormatOpt,
-    HousePositionComparisonFlag,
     IsMoonVoidOpt,
     LifeCapOpt,
     LotLevelsOpt,
     LotOpt,
-    MaxAspectsOpt,
     MaxYearsOpt,
     MethodOpt,
     MidpointOrbOpt,
-    NoAspectsFlag,
     OutputOpt,
-    PaddingOpt,
     PlanetsOpt,
     RateKeyOpt,
     RelocateCityOpt,
@@ -64,15 +48,11 @@ from kerykeion.cli.options import (
     StarOrbOpt,
     Subject2Profile,
     SubjectProfile,
-    SvgVariantOpt,
     TargetDateOpt,
     TargetIsoOpt,
     TargetYearOpt,
-    ThemeOpt,
-    TransparentBackgroundFlag,
     YearsAfterOpt,
     YearsBeforeOpt,
-    ZodiacRingFlag,
 )
 from kerykeion.cli.typer_app import KerykeionTyper
 
@@ -92,12 +72,12 @@ def _need_subject(profile: Optional[str], cmd: str) -> object:
 
 @technique_app.command("profections")
 def profections(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    target_date: TargetDateOpt = None,  # type: ignore[assignment]
-    years_before: YearsBeforeOpt = None,  # type: ignore[assignment]
-    years_after: YearsAfterOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    target_date: TargetDateOpt = None,
+    years_before: YearsBeforeOpt = None,
+    years_after: YearsAfterOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Annual profections: the profected year and surrounding years."""
     from kerykeion import ProfectionsFactory
@@ -115,11 +95,11 @@ def profections(
 
 @technique_app.command("firdaria")
 def firdaria(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    target_date: TargetDateOpt = None,  # type: ignore[assignment]
-    life_cap_years: LifeCapOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    target_date: TargetDateOpt = None,
+    life_cap_years: LifeCapOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Firdaria (medieval time-lords) for the subject."""
     from kerykeion import FirdariaFactory
@@ -135,13 +115,13 @@ def firdaria(
 
 @technique_app.command("zr")
 def zr(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    lot: LotOpt = None,  # type: ignore[assignment]
-    levels: LotLevelsOpt = None,  # type: ignore[assignment]
-    target_date: TargetDateOpt = None,  # type: ignore[assignment]
-    life_cap_years: LifeCapOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    lot: LotOpt = None,
+    levels: LotLevelsOpt = None,
+    target_date: TargetDateOpt = None,
+    life_cap_years: LifeCapOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Zodiacal releasing from the Lot of Fortune (or Spirit)."""
     from kerykeion import ZodiacalReleasingFactory
@@ -164,9 +144,9 @@ def zr(
 
 @technique_app.command("receptions")
 def receptions(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Mutual receptions by domicile and exaltation."""
     from kerykeion import MutualReceptionsFactory
@@ -177,10 +157,10 @@ def receptions(
 
 @technique_app.command("horary")
 def horary(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    is_moon_void: IsMoonVoidOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    is_moon_void: IsMoonVoidOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Horary chart indicators and considerations before judgement."""
     from kerykeion import HoraryIndicatorsFactory
@@ -194,11 +174,11 @@ def horary(
 
 @technique_app.command("midpoints")
 def midpoints(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    orb: MidpointOrbOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    planets: PlanetsOpt = None,
+    orb: MidpointOrbOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Midpoints and midpoint aspects."""
     from kerykeion import MidpointFactory
@@ -215,12 +195,12 @@ def midpoints(
 
 @technique_app.command("directions")
 def directions(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    max_years: MaxYearsOpt = None,  # type: ignore[assignment]
-    rate: RateKeyOpt = None,  # type: ignore[assignment]
-    aspects: AspectsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    max_years: MaxYearsOpt = None,
+    rate: RateKeyOpt = None,
+    aspects: AspectsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Primary directions under the Ptolemy or Naibod rate."""
     from kerykeion import PrimaryDirectionsFactory
@@ -244,21 +224,19 @@ def directions(
         valid = set(PrimaryDirectionsFactory.ASPECT_ANGLES)
         invalid = [a for a in chosen_aspects if a not in valid]
         if invalid:
-            raise ValueError(
-                f"--aspects must be one of {', '.join(sorted(valid))}; got {invalid}."
-            )
+            raise ValueError(f"--aspects must be one of {', '.join(sorted(valid))}; got {invalid}.")
         kwargs["aspects"] = chosen_aspects
     _emit(PrimaryDirectionsFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
 @technique_app.command("acg")
 def acg(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    step: AcgStepOpt = None,  # type: ignore[assignment]
-    lat_range: AcgLatRangeOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    step: AcgStepOpt = None,
+    lat_range: AcgLatRangeOpt = None,
+    planets: PlanetsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Astro-cartography: where each planet rises, sets, culminates."""
     from kerykeion import AstroCartographyFactory
@@ -281,11 +259,11 @@ def acg(
 
 @technique_app.command("stars")
 def stars(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    count: CountOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    count: CountOpt = None,
+    planets: PlanetsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Heliacal risings/settings of the visible planets at the birthplace."""
     from kerykeion import HeliacalFactory
@@ -310,35 +288,18 @@ def stars(
 
 
 @technique_app.command("relocate")
+@with_render_flags
 def relocate(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    new_lat: RelocateLatOpt = None,  # type: ignore[assignment]
-    new_lng: RelocateLngOpt = None,  # type: ignore[assignment]
-    new_city: RelocateCityOpt = None,  # type: ignore[assignment]
-    new_nation: RelocateNationOpt = None,  # type: ignore[assignment]
-    new_tz: RelocateTzOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
-    no_aspects: NoAspectsFlag = None,  # type: ignore[assignment]
-    max_aspects: MaxAspectsOpt = None,  # type: ignore[assignment]
-    envelope: EnvelopeFlag = None,  # type: ignore[assignment]
-    theme: ThemeOpt = None,  # type: ignore[assignment]
-    chart_language: ChartLanguageOpt = None,  # type: ignore[assignment]
-    style: ChartStyleOpt = None,  # type: ignore[assignment]
-    custom_title: CustomTitleOpt = None,  # type: ignore[assignment]
-    padding: PaddingOpt = None,  # type: ignore[assignment]
-    external_view: ExternalViewFlag = None,  # type: ignore[assignment]
-    transparent_background: TransparentBackgroundFlag = None,  # type: ignore[assignment]
-    cusp_position_comparison: CuspComparisonFlag = None,  # type: ignore[assignment]
-    auto_size: AutoSizeFlag = None,  # type: ignore[assignment]
-    degree_indicators: DegreeIndicatorsFlag = None,  # type: ignore[assignment]
-    aspect_icons: AspectIconsFlag = None,  # type: ignore[assignment]
-    zodiac_ring: ZodiacRingFlag = None,  # type: ignore[assignment]
-    diurnality: DiurnalityFlag = None,  # type: ignore[assignment]
-    house_position_comparison: HousePositionComparisonFlag = None,  # type: ignore[assignment]
-    aspect_grid_type: AspectGridTypeOpt = None,  # type: ignore[assignment]
-    svg_variant: SvgVariantOpt = None,  # type: ignore[assignment]
-    chart_settings: ChartSettingsOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    new_lat: RelocateLatOpt = None,
+    new_lng: RelocateLngOpt = None,
+    new_city: RelocateCityOpt = None,
+    new_nation: RelocateNationOpt = None,
+    new_tz: RelocateTzOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
+    *,
+    opts: object = None,
 ) -> None:
     """Recast houses/angles for the same birth moment at a new location."""
     from kerykeion import RelocatedChartFactory
@@ -356,16 +317,16 @@ def relocate(
     )
     # A relocated chart is a subject; emit it like `natal` (subject for text/json,
     # natal chart wrapper for svg).
-    _emit_subject_or_chart(relocated, fmt, output, _render_from(locals()))
+    _emit_subject_or_chart(relocated, fmt, output, opts)
 
 
 @technique_app.command("nodes")
 def nodes(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    method: MethodOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    method: MethodOpt = None,
+    planets: PlanetsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Planetary nodes (ascending/descending, perihelion/aphelion)."""
     from kerykeion import PlanetaryNodesFactory
@@ -383,11 +344,11 @@ def nodes(
 
 @technique_app.command("house-comparison")
 def house_comparison(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    subject2: Subject2Profile = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    subject2: Subject2Profile = None,
+    planets: PlanetsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Where each of one subject's points falls in the other's houses."""
     from kerykeion import HouseComparisonFactory
@@ -408,15 +369,15 @@ def house_comparison(
 
 @technique_app.command("solar-arc")
 def solar_arc(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    target_year: TargetYearOpt = None,  # type: ignore[assignment]
-    target_iso: TargetIsoOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    compute_aspects: ComputeAspectsFlag = None,  # type: ignore[assignment]
-    aspect_orb: AspectOrbOpt = None,  # type: ignore[assignment]
-    aspects: AspectsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    target_year: TargetYearOpt = None,
+    target_iso: TargetIsoOpt = None,
+    planets: PlanetsOpt = None,
+    compute_aspects: ComputeAspectsFlag = None,
+    aspect_orb: AspectOrbOpt = None,
+    aspects: AspectsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Solar-arc directions to a target year or moment.
 
@@ -450,10 +411,10 @@ def solar_arc(
 
 @technique_app.command("fixed-stars")
 def fixed_stars(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    orb: StarOrbOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    orb: StarOrbOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Fixed stars conjunct the subject's points, within an orb."""
     from kerykeion import FixedStarDiscoveryFactory

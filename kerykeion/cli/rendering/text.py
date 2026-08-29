@@ -47,9 +47,7 @@ def render_text(obj: Any, opts: Any = None) -> str:
         report = _try_report(obj, opts)
         if report is not None:
             return report
-    if isinstance(obj, (list, tuple)) and obj and all(
-        isinstance(item, pydantic.BaseModel) for item in obj
-    ):
+    if isinstance(obj, (list, tuple)) and obj and all(isinstance(item, pydantic.BaseModel) for item in obj):
         # One blank-line-separated block per item — readable in a terminal yet
         # greppable. The first line of each item is the model class for context.
         blocks = []
@@ -65,5 +63,3 @@ def render_text(obj: Any, opts: Any = None) -> str:
         # A plain list of names (e.g. ``subject list``) reads best one per line.
         return "\n".join(obj)
     return render_json(obj)
-
-

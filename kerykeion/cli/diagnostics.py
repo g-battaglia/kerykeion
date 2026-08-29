@@ -285,9 +285,7 @@ def _render_libephemeris(out: list[str], eph: dict[str, Any]) -> None:
     for f in files[:8]:
         name = str(f.get("name") or "?")
         cov = f.get("coverage") or ""
-        out.append(
-            f"    - {name:<26} {_human_bytes(f.get('size_bytes', 0)):>10}   {cov}"
-        )
+        out.append(f"    - {name:<26} {_human_bytes(f.get('size_bytes', 0)):>10}   {cov}")
     if len(files) > 8:
         out.append(f"    ... {len(files) - 8} more")
 

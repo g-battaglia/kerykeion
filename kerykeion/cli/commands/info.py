@@ -55,11 +55,9 @@ def _literal_tables() -> dict[str, list[str]]:
 
 @info_app.command("literals")
 def literals(
-    name: Optional[str] = typer.Argument(
-        None, help="One alias to show (e.g. HousesSystemIdentifier). Omit for all."
-    ),
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    name: Optional[str] = typer.Argument(None, help="One alias to show (e.g. HousesSystemIdentifier). Omit for all."),
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """The accepted values of every literal the flags validate against."""
     tables = _literal_tables()
@@ -73,16 +71,14 @@ def literals(
 
         close = difflib.get_close_matches(name, list(tables), n=1)
         hint = f" (did you mean {close[0]!r}?)" if close else ""
-        raise ValueError(
-            f"no literal named {name!r}{hint}. Run `kerykeion info literals` for the list."
-        )
+        raise ValueError(f"no literal named {name!r}{hint}. Run `kerykeion info literals` for the list.")
     _emit({match: tables[match]}, fmt, output)
 
 
 @info_app.command("points")
 def points(
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """The preset names ``--points`` accepts, and what each one contains."""
     from kerykeion.cli import subject_resolver
@@ -92,8 +88,8 @@ def points(
 
 @info_app.command("stars")
 def stars(
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """The preset names ``--fixed-stars`` accepts, and what each one contains."""
     from kerykeion.cli import subject_resolver
@@ -103,8 +99,8 @@ def stars(
 
 @info_app.command("houses")
 def houses(
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """What ``--houses`` accepts: the system letters, and the names that map to them.
 
@@ -125,8 +121,8 @@ def houses(
 
 @info_app.command("methods")
 def methods(
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Strategy/method names the technique flags accept, as the library reports them."""
     from kerykeion import DominantsFactory
@@ -156,10 +152,7 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
     out: list[dict[str, str]] = []
 
     def add(name: str, ok: bool | None, detail: str) -> None:
-        out.append(
-            {"check": name, "status": "pass" if ok else ("warn" if ok is None else "fail"),
-             "detail": detail}
-        )
+        out.append({"check": name, "status": "pass" if ok else ("warn" if ok is None else "fail"), "detail": detail})
 
     backend = state.get("backend")
     add("backend", bool(backend) and backend != "unknown", f"active backend: {backend}")
@@ -208,8 +201,7 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
         add(
             "working-directory .env",
             None,
-            "a .env in the current directory is loaded at import and may repoint "
-            "LIBEPHEMERIS_* settings",
+            "a .env in the current directory is loaded at import and may repoint LIBEPHEMERIS_* settings",
         )
 
     # The one check that exercises the whole stack rather than inspecting it.
@@ -217,8 +209,16 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
         from kerykeion import AstrologicalSubjectFactory
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            name="doctor", year=2000, month=1, day=1, hour=12, minute=0,
-            lat=51.5, lng=-0.12, tz_str="Europe/London", online=False,
+            name="doctor",
+            year=2000,
+            month=1,
+            day=1,
+            hour=12,
+            minute=0,
+            lat=51.5,
+            lng=-0.12,
+            tz_str="Europe/London",
+            online=False,
             suppress_geonames_warning=True,
         )
         sun = getattr(subject, "sun", None)
@@ -234,8 +234,8 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
 
 
 def doctor(
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Check the install and exit non-zero if something is actually broken.
 

@@ -132,9 +132,7 @@ def save(path: Path, profile: Profile) -> None:
     data = profile.model_dump_json(indent=2)
     # Same directory as the target, so os.replace stays within one filesystem
     # (a cross-device rename is not atomic and would raise).
-    fd, tmp_name = tempfile.mkstemp(
-        prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent)
-    )
+    fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent))
     tmp_path = Path(tmp_name)
     try:
         try:
@@ -200,5 +198,3 @@ def resolve_path(spec: str) -> Path:
         return in_store
     suggestions = difflib.get_close_matches(spec, list_profiles(), n=5, cutoff=0.4)
     raise ProfileNotFound(spec, suggestions)
-
-

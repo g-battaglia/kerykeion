@@ -296,8 +296,8 @@ help = "The baseline gates on the full-range kernel: on the default tier the rea
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended", "cli:smoke"]
-help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel, cli:smoke)"
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended", "cli:smoke", "skill:cli:smoke"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel, cli:smoke, skill:cli:smoke)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
 # int return, so a `script` task exits 0 even when the checks fail — the gate

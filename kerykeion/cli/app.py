@@ -95,7 +95,14 @@ def _register_commands(app: typer.Typer) -> None:
     actually runs, keeping the import-graph cold-import gate green.
     """
     from kerykeion.cli.commands import (
-        analysis, call, charts, info, series, sky, status as status_cmd, subject,
+        analysis,
+        call,
+        charts,
+        info,
+        series,
+        sky,
+        status as status_cmd,
+        subject,
         technique,
     )
 

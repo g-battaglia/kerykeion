@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import functools
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import Any, Optional
 
 # ── Parsing helpers ──────────────────────────────────────────────────────────
@@ -145,8 +145,7 @@ def resolve_sidereal_mode(value: Optional[str]) -> Optional[str]:
     close = difflib.get_close_matches(up, modes, n=3, cutoff=0.5)
     hint = f" Did you mean: {', '.join(close)}?" if close else ""
     raise ValueError(
-        f"unknown sidereal mode {value!r} (see `kerykeion info literals "
-        f"SiderealMode` for the valid names).{hint}"
+        f"unknown sidereal mode {value!r} (see `kerykeion info literals SiderealMode` for the valid names).{hint}"
     )
 
 
@@ -342,64 +341,24 @@ class SubjectFlags:
     mode_override: Optional[str] = None
 
 
-def build_flags(
-    *,
-    name: Optional[str],
-    date: Optional[str],
-    time: Optional[str],
-    seconds: Optional[int],
-    iso_utc: Optional[str],
-    lat: Optional[float],
-    lng: Optional[float],
-    tz: Optional[str],
-    city: Optional[str],
-    nation: Optional[str],
-    online: Optional[bool],
-    offline: Optional[bool],
-    altitude: Optional[float],
-    zodiac: Optional[str],
-    sidereal_mode: Optional[str],
-    houses: Optional[str],
-    perspective: Optional[str],
-    points: Optional[str],
-    fixed_stars: Optional[str],
-    with_flags: Optional[list[str]],
-    without_flags: Optional[list[str]],
-    set_flags: Optional[list[str]],
-    mode_override: Optional[str] = None,
-) -> SubjectFlags:
-    """Gather the per-command subject parameters into a :class:`SubjectFlags`.
+def build_flags(**given: Any) -> SubjectFlags:
+    """Gather a command's subject parameters into a :class:`SubjectFlags`.
 
     Every subject-building command (``subject save``, ``natal``, ``synastry`` …)
-    spells the same flags in its signature; this is the single place that knows
-    how the keyword names map onto :class:`SubjectFlags` fields, so the mapping
-    cannot drift between commands.
+    spells the same flags in its signature and passes them here by keyword. The
+    field names are the flag names, so the mapping is the identity — but it is
+    checked, not assumed: an unknown keyword raises here rather than being
+    silently dropped, which is how a flag ends up quietly doing nothing.
     """
-    return SubjectFlags(
-        name=name,
-        date=date,
-        time=time,
-        seconds=seconds,
-        iso_utc=iso_utc,
-        lat=lat,
-        lng=lng,
-        tz=tz,
-        city=city,
-        nation=nation,
-        online=online,
-        offline=offline,
-        altitude=altitude,
-        zodiac=zodiac,
-        sidereal_mode=sidereal_mode,
-        houses=houses,
-        perspective=perspective,
-        points=points,
-        fixed_stars=fixed_stars,
-        with_flags=with_flags or [],
-        without_flags=without_flags or [],
-        set_flags=set_flags or [],
-        mode_override=mode_override,
-    )
+    known = {f.name for f in fields(SubjectFlags)}
+    unknown = sorted(set(given) - known)
+    if unknown:
+        raise AssertionError(f"build_flags got unknown subject flags: {', '.join(unknown)}")
+    # The three repeatable options arrive as None when not given; the dataclass
+    # wants a list.
+    for name in ("with_flags", "without_flags", "set_flags"):
+        given[name] = given.get(name) or []
+    return SubjectFlags(**given)
 
 
 def _profile_input_dict(profile_spec: Optional[str]) -> dict[str, Any]:
@@ -416,9 +375,7 @@ def _profile_input_dict(profile_spec: Optional[str]) -> dict[str, Any]:
     return {**base, **extra}
 
 
-def _apply_calc_toggles(
-    merged: dict[str, Any], flags: SubjectFlags
-) -> None:
+def _apply_calc_toggles(merged: dict[str, Any], flags: SubjectFlags) -> None:
     """Fold ``--with`` / ``--without`` onto the calculate_* parameters."""
     current = {param: merged.get(param) for param in _CALC_KEYS.values()}
     for feature in flags.with_flags:
@@ -436,8 +393,7 @@ def _calc_param_for(feature: str) -> str:
     key = feature.strip().lower().removeprefix("calculate_")
     if key not in _CALC_KEYS:
         raise ValueError(
-            f"unknown feature {feature!r} for --with/--without; choose from "
-            f"{', '.join(sorted(_CALC_KEYS))}."
+            f"unknown feature {feature!r} for --with/--without; choose from {', '.join(sorted(_CALC_KEYS))}."
         )
     return _CALC_KEYS[key]
 
@@ -465,16 +421,11 @@ def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
         if key.startswith("_"):
             raise ValueError(f"--set refuses private parameter {key!r}")
         if key not in allowed:
-            raise ValueError(
-                f"--set {key!r} is not a profile field "
-                f"(known: {', '.join(sorted(allowed))})"
-            )
+            raise ValueError(f"--set {key!r} is not a profile field (known: {', '.join(sorted(allowed))})")
         merged[key] = _coerce_set_value_typed(ProfileInput.model_fields[key].annotation, raw_value)
 
 
-def merge_inputs(
-    flags: SubjectFlags, profile_spec: Optional[str] = None
-) -> dict[str, Any]:
+def merge_inputs(flags: SubjectFlags, profile_spec: Optional[str] = None) -> dict[str, Any]:
     """Return the merged recipe dict (in ``ProfileInput`` field names).
 
     Every layer applied here, none in ``materialize``: profile base → inline flags
@@ -566,9 +517,7 @@ def merge_inputs(
         merged["online"] = False
     elif "online" not in merged:
         coords_complete = (
-            merged.get("lat") is not None
-            and merged.get("lng") is not None
-            and merged.get("tz_str") is not None
+            merged.get("lat") is not None and merged.get("lng") is not None and merged.get("tz_str") is not None
         )
         merged["online"] = not coords_complete
 
@@ -578,9 +527,7 @@ def merge_inputs(
     # command that goes through this merge (natal, now, transit's transiting
     # subject, `subject save`); `return` enforces the same rule locally because
     # its location goes straight to the factory.
-    if merged.get("city") is not None and any(
-        merged.get(key) is not None for key in ("lat", "lng", "tz_str")
-    ):
+    if merged.get("city") is not None and any(merged.get(key) is not None for key in ("lat", "lng", "tz_str")):
         raise ValueError(
             "pass either --city or --lat/--lng/--tz, not both: mixing them "
             "silently picks one place and drops the other."
@@ -646,9 +593,7 @@ def materialize(merged: dict[str, Any]):
             factory_kwargs.pop(k, None)
         factory_kwargs.pop("name", None)
         factory_kwargs.pop("mode", None)
-        return AstrologicalSubjectFactory.from_current_time(
-            name=name, **_kwargs_for(factory_kwargs, "current")
-        )
+        return AstrologicalSubjectFactory.from_current_time(name=name, **_kwargs_for(factory_kwargs, "current"))
 
     date_str = factory_kwargs.pop("date", None)
     time_str = factory_kwargs.pop("time", None)
@@ -754,9 +699,7 @@ def _note(message: str) -> None:
     sys.stderr.write(f"kerykeion: note: {message}\n")
 
 
-def resolve_subject(
-    flags: SubjectFlags, profile_spec: Optional[str] = None
-):
+def resolve_subject(flags: SubjectFlags, profile_spec: Optional[str] = None):
     """Build an ``AstrologicalSubjectModel`` from a profile plus inline flags.
 
     Uses a stored ``--snapshot`` when one is present and trustworthy; see

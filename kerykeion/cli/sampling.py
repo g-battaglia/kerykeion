@@ -38,9 +38,7 @@ def _ceiling_for(step_type: StepType) -> int | None:
     """The library's own sample ceiling for *step_type*, read off the signature."""
     from kerykeion import EphemerisDataFactory
 
-    default = inspect.signature(EphemerisDataFactory.__init__).parameters[
-        _STEP_TO_PARAM[step_type]
-    ].default
+    default = inspect.signature(EphemerisDataFactory.__init__).parameters[_STEP_TO_PARAM[step_type]].default
     return default if isinstance(default, int) else None
 
 
@@ -58,9 +56,7 @@ def _zone(tz_str: str):
         return None
 
 
-def _utc_bounds(
-    start: datetime, end: datetime, tz_str: str | None
-) -> tuple[datetime, datetime]:
+def _utc_bounds(start: datetime, end: datetime, tz_str: str | None) -> tuple[datetime, datetime]:
     """Return bounds as aware-UTC datetimes for true elapsed-time math.
 
     The library counts hours and minutes in UTC, so across a DST fall-back a

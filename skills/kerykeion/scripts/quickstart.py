@@ -40,7 +40,7 @@ from kerykeion import (
 
 try:
     # The backend owns the valid-mode list (single source of truth since
-    # 6.0.0a85). The literal is only a fallback for version-skewed installs —
+    # a85). The literal is only a fallback for version-skewed installs —
     # this skill newer than the installed package — and cannot drift, because
     # every kerykeion that defines the constant imports it right here.
     from kerykeion.ephemeris_backend.backend import VALID_LEB_MODES

@@ -39,9 +39,5 @@ def render_svg(obj: Any, opts: Any = None) -> str:
     variant = (getattr(opts, "svg_variant", None) or "full") if opts is not None else "full"
     method = SVG_VARIANTS.get(variant)
     if method is None:
-        raise ValueError(
-            f"--svg-variant must be one of {', '.join(sorted(SVG_VARIANTS))}, got {variant!r}"
-        )
+        raise ValueError(f"--svg-variant must be one of {', '.join(sorted(SVG_VARIANTS))}, got {variant!r}")
     return getattr(ChartDrawer(obj, **kwargs), method)()
-
-

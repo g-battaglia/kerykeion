@@ -104,7 +104,9 @@ def _fmt_ephemeris(w: Any) -> str:
     code = _get(w, "code")
     point = _get(w, "point_name")
     message = _get(w, "message")
-    parts = [p for p in ([f"[{code}]"] if code else []) + ([point] if point else []) + ([message] if message else []) if p]
+    parts = [
+        p for p in ([f"[{code}]"] if code else []) + ([point] if point else []) + ([message] if message else []) if p
+    ]
     return " ".join(parts) if parts else str(w)
 
 
@@ -147,9 +149,7 @@ def _wrap_envelope(obj: Any, eph: list, polar: list) -> dict:
 
     from kerykeion.cli.rendering.json_out import render_json
 
-    meta: dict[str, Any] = {
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds")
-    }
+    meta: dict[str, Any] = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
     try:
         from kerykeion import BACKEND_NAME, __version__
 
@@ -164,9 +164,7 @@ def _wrap_envelope(obj: Any, eph: list, polar: list) -> dict:
     }
 
 
-def output_with_warnings(
-    obj: Any, fmt: str, output: str | None, warning_source: Any = None, opts: Any = None
-) -> None:
+def output_with_warnings(obj: Any, fmt: str, output: str | None, warning_source: Any = None, opts: Any = None) -> None:
     """Emit the payload, then warnings; exit 9 if ``--warnings-as-errors``.
 
     The payload is written first so it is never lost when a warning escalates.

@@ -94,9 +94,7 @@ class RenderOptions:
     def chart_kwargs(self) -> dict[str, Any]:
         """ChartDrawer kwargs for the options actually given (others omitted)."""
         kwargs: dict[str, Any] = {
-            name: getattr(self, name)
-            for name in _CHART_FIELDS
-            if getattr(self, name) is not None
+            name: getattr(self, name) for name in _CHART_FIELDS if getattr(self, name) is not None
         }
         if self.chart_settings:
             # Already whitelisted against CHART_SETTINGS_KEYS when the file was
@@ -158,9 +156,7 @@ def _validate_choice(value: Optional[str], param: str, flag: str) -> Optional[st
     canonical = {choice.lower(): choice for choice in chart_choices(param)}
     match = canonical.get(str(value).strip().lower())
     if match is None:
-        raise ValueError(
-            f"{flag} must be one of {', '.join(sorted(canonical.values()))}, got {value!r}"
-        )
+        raise ValueError(f"{flag} must be one of {', '.join(sorted(canonical.values()))}, got {value!r}")
     return match
 
 
@@ -178,16 +174,14 @@ def read_chart_settings(path: Optional[str]) -> Optional[dict[str, Any]]:
         raise ValueError(f"--chart-settings: {path!r} is not valid JSON ({exc.msg})") from None
     if not isinstance(data, dict):
         raise ValueError(
-            f"--chart-settings: {path!r} must hold a JSON object with any of: "
-            f"{', '.join(CHART_SETTINGS_KEYS)}"
+            f"--chart-settings: {path!r} must hold a JSON object with any of: {', '.join(CHART_SETTINGS_KEYS)}"
         )
     unknown = [k for k in data if k not in CHART_SETTINGS_KEYS]
     if unknown:
         # Named, not ignored: a typoed section that silently does nothing is the
         # failure mode this whitelist exists to prevent.
         raise ValueError(
-            f"--chart-settings: unknown key {unknown[0]!r}; valid keys are "
-            f"{', '.join(CHART_SETTINGS_KEYS)}"
+            f"--chart-settings: unknown key {unknown[0]!r}; valid keys are {', '.join(CHART_SETTINGS_KEYS)}"
         )
     return _merge_over_defaults(data)
 
@@ -230,14 +224,10 @@ def build(**flags: Any) -> Optional[RenderOptions]:
     settings = read_chart_settings(flags.pop("chart_settings", None))
     variant = flags.pop("svg_variant", None)
     if variant is not None and variant not in SVG_VARIANTS:
-        raise ValueError(
-            f"--svg-variant must be one of {', '.join(sorted(SVG_VARIANTS))}, got {variant!r}"
-        )
+        raise ValueError(f"--svg-variant must be one of {', '.join(sorted(SVG_VARIANTS))}, got {variant!r}")
     resolved = {
         "theme": _validate_choice(flags.pop("theme", None), "theme", "--theme"),
-        "chart_language": _validate_choice(
-            flags.pop("chart_language", None), "chart_language", "--chart-language"
-        ),
+        "chart_language": _validate_choice(flags.pop("chart_language", None), "chart_language", "--chart-language"),
         "style": _validate_choice(flags.pop("style", None), "style", "--style"),
         "double_chart_aspect_grid_type": _validate_choice(
             flags.pop("double_chart_aspect_grid_type", None),

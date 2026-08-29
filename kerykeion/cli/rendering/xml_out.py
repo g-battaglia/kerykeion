@@ -18,5 +18,3 @@ def render_xml(obj: Any) -> str:
     from kerykeion import to_context
 
     return to_context(obj)
-
-

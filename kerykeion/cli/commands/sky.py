@@ -99,9 +99,7 @@ def _location(
     return lat, lng, tz
 
 
-def _latlng(
-    profile: Optional[str], lat: Optional[float], lng: Optional[float], cmd: str
-) -> tuple[float, float]:
+def _latlng(profile: Optional[str], lat: Optional[float], lng: Optional[float], cmd: str) -> tuple[float, float]:
     """Resolve (lat, lng) only — for commands that take no timezone (eclipses).
 
     Inline flags take precedence over the profile (see :func:`_location`).
@@ -184,34 +182,32 @@ def _moment(value: Optional[str], cmd: str, tz_str: Optional[str] = None) -> dat
 
 @sky_app.command("sun-times")
 def sun_times(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    from_: FromOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    from_: FromOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Sunrise, sunset, noon and twilight bands for a date and place."""
     from kerykeion import SunTimesFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "sun-times")
     moment = _moment(from_, "sun-times", tz_str)
-    model = SunTimesFactory.from_date(
-        moment.year, moment.month, moment.day, latitude=la, longitude=lo, tz_str=tz_str
-    )
+    model = SunTimesFactory.from_date(moment.year, moment.month, moment.day, latitude=la, longitude=lo, tz_str=tz_str)
     _emit(model, fmt, output)
 
 
 @sky_app.command("hours")
 def hours(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    from_: FromOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    tz: SubjectTz = None,
+    from_: FromOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Planetary hours and the day/hour rulers for a moment."""
     from kerykeion import PlanetaryHoursFactory
@@ -219,22 +215,28 @@ def hours(
     la, lo, tz_str = _location(profile, lat, lng, tz, "hours")
     moment = _moment(from_, "hours", tz_str)
     model = PlanetaryHoursFactory.from_datetime(
-        moment.year, moment.month, moment.day, moment.hour, moment.minute,
-        latitude=la, longitude=lo, tz_str=tz_str,
+        moment.year,
+        moment.month,
+        moment.day,
+        moment.hour,
+        moment.minute,
+        latitude=la,
+        longitude=lo,
+        tz_str=tz_str,
     )
     _emit(model, fmt, output)
 
 
 @sky_app.command("voc")
 def voc(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    tz: SubjectTz = None,  # type: ignore[assignment]
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    tz: SubjectTz = None,
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    zodiac: ZodiacSkyOpt = None,
+    sidereal_mode: SiderealSkyOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Void-of-Course Moon: the status at a moment, or the windows in a range.
 
@@ -267,23 +269,28 @@ def voc(
             raise ValueError("voc at a moment needs --tz (or -s a profile with a timezone)")
         moment = _moment(from_, "voc", tz_str)
         model = VoidOfCourseMoonFactory.from_datetime(
-            moment.year, moment.month, moment.day, moment.hour, moment.minute,
-            tz_str=tz_str, **extra,
+            moment.year,
+            moment.month,
+            moment.day,
+            moment.hour,
+            moment.minute,
+            tz_str=tz_str,
+            **extra,
         )
     _emit(model, fmt, output)
 
 
 @sky_app.command("eclipses")
 def eclipses(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    start_year: StartYearOpt = None,  # type: ignore[assignment]
-    count: CountOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    start_year: StartYearOpt = None,
+    count: CountOpt = None,
+    zodiac: ZodiacSkyOpt = None,
+    sidereal_mode: SiderealSkyOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Solar and lunar eclipses. Located (with -s/--lat/--lng) or global."""
     from kerykeion import EclipseFactory
@@ -292,9 +299,7 @@ def eclipses(
     # A partially-supplied location (only one of --lat/--lng) is almost certainly
     # a typo; don't silently fall back to a global search that ignores the coord.
     if (lat is None) != (lng is None):
-        raise ValueError(
-            "eclipses needs both --lat and --lng (or neither, for a global search)."
-        )
+        raise ValueError("eclipses needs both --lat and --lng (or neither, for a global search).")
     has_loc = (lat is not None and lng is not None) or profile is not None
     if has_loc:
         la, lo = _latlng(profile, lat, lng, "eclipses")
@@ -323,13 +328,13 @@ def _range_factory_call(from_: Optional[str], to: Optional[str], cmd: str):
 
 @sky_app.command("lunations")
 def lunations(
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    phase: PhaseOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    phase: PhaseOpt = None,
+    zodiac: ZodiacSkyOpt = None,
+    sidereal_mode: SiderealSkyOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """New and quarter moons in a range (filterable with --phase)."""
     from kerykeion import LunationFinderFactory
@@ -344,13 +349,13 @@ def lunations(
 
 @sky_app.command("ingresses")
 def ingresses(
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    planets: PlanetsOpt = None,
+    zodiac: ZodiacSkyOpt = None,
+    sidereal_mode: SiderealSkyOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Sign ingresses of the planets in a range."""
     from kerykeion import SignIngressFactory
@@ -365,13 +370,13 @@ def ingresses(
 
 @sky_app.command("stations")
 def stations(
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    planets: PlanetsOpt = None,
+    zodiac: ZodiacSkyOpt = None,
+    sidereal_mode: SiderealSkyOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Retrograde/direct stations of the planets in a range."""
     from kerykeion import RetrogradeStationFactory
@@ -386,14 +391,14 @@ def stations(
 
 @sky_app.command("mundane")
 def mundane(
-    from_: FromOpt = None,  # type: ignore[assignment]
-    to: ToOpt = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    aspects: AspectsOpt = None,  # type: ignore[assignment]
-    zodiac: ZodiacSkyOpt = None,  # type: ignore[assignment]
-    sidereal_mode: SiderealSkyOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    from_: FromOpt = None,
+    to: ToOpt = None,
+    planets: PlanetsOpt = None,
+    aspects: AspectsOpt = None,
+    zodiac: ZodiacSkyOpt = None,
+    sidereal_mode: SiderealSkyOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Mundane (planet-to-planet) aspects exact within a range."""
     from kerykeion import MundaneAspectFactory
@@ -412,10 +417,10 @@ def mundane(
 
 @sky_app.command("phenomena")
 def phenomena(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    planets: PlanetsOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    planets: PlanetsOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Planetary phenomena (phase, elongation, magnitude, diameter) for a moment."""
     from kerykeion import PlanetaryPhenomenaFactory
@@ -433,13 +438,13 @@ def phenomena(
 
 @sky_app.command("occultations")
 def occultations(
-    profile: SubjectProfile = None,  # type: ignore[assignment]
-    lat: SubjectLat = None,  # type: ignore[assignment]
-    lng: SubjectLng = None,  # type: ignore[assignment]
-    planet: PlanetIdOpt = None,  # type: ignore[assignment]
-    count: CountOpt = None,  # type: ignore[assignment]
-    fmt: FormatOpt = None,  # type: ignore[assignment]
-    output: OutputOpt = None,  # type: ignore[assignment]
+    profile: SubjectProfile = None,
+    lat: SubjectLat = None,
+    lng: SubjectLng = None,
+    planet: PlanetIdOpt = None,
+    count: CountOpt = None,
+    fmt: FormatOpt = None,
+    output: OutputOpt = None,
 ) -> None:
     """Lunar occultations of a body, globally or as seen from a place.
 
@@ -465,8 +470,7 @@ def occultations(
         # body, so there is no "obvious" one to pick. A wrong name gets the
         # library's own message, which lists every occultable body.
         raise ValueError(
-            "occultations needs --planet: the body being occulted by the Moon "
-            "(e.g. Venus, Mars, Aldebaran)."
+            "occultations needs --planet: the body being occulted by the Moon (e.g. Venus, Mars, Aldebaran)."
         )
     kwargs: dict[str, Any] = {"planet_id": planet}
     if count is not None:
