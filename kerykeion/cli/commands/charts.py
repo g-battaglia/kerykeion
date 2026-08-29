@@ -10,7 +10,7 @@ home directory and prints to stdout).
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 from kerykeion.cli import subject_resolver
 from kerykeion.cli.commands._shared import _emit, _stored_subject, _subject_from, with_render_flags
@@ -222,12 +222,12 @@ def transit(
 
     natal = _stored_subject(profile, "transit", online=online, offline=offline)
     # A city geocodes its own place; otherwise the natal birthplace stands unless relocated.
+    place: dict[str, Any] = {}
     if relocated:
         place = {"lat": lat, "lng": lng, "tz": tz}
-    elif city is not None:
-        place = {}
-    else:
+    elif city is None:
         place = {"lat": natal.lat, "lng": natal.lng, "tz": natal.tz_str}
+    frame: dict[str, Any] = {flag: getattr(natal, attr, None) for flag, attr in _FRAME.items()}
     # ``create_transit_chart_data`` passes both subjects verbatim, so the transit
     # moment must share the natal frame or the two rings would disagree.
     transit_flags = subject_resolver.SubjectFlags(
@@ -241,7 +241,7 @@ def transit(
         altitude=altitude,
         mode_override=None if to_date else "current",
         **place,
-        **{flag: getattr(natal, attr, None) for flag, attr in _FRAME.items()},
+        **frame,
     )
     transit_subject = subject_resolver.resolve_subject(transit_flags, None)
     _emit(ChartDataFactory.create_transit_chart_data(natal, transit_subject), fmt, output, opts)

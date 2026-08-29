@@ -54,6 +54,7 @@ def aspects(
     first = _stored_subject(profile, "aspects")
     second = _stored_subject(subject2, "aspects", "-S") if subject2 else None
     kwargs: dict[str, Any] = _given(active_points=_split_csv(planets))
+    model: object
     if declinations:
         rejected = [f for f, v in (("--aspects", aspect_list), ("--axis-orb-limit", axis_orb_limit)) if v is not None]
         if rejected:

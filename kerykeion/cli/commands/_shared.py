@@ -141,7 +141,7 @@ def _subject_from(scope: dict, **overrides: object):
     missing = [name for name in _SUBJECT_FLAGS if name not in scope and name not in overrides]
     if missing:
         raise AssertionError(f"subject flags absent from the command signature: {', '.join(missing)}")
-    given = {**{name: scope.get(name) for name in _SUBJECT_FLAGS}, **overrides}
+    given: dict[str, Any] = {**{name: scope.get(name) for name in _SUBJECT_FLAGS}, **overrides}
     for name in ("with_flags", "without_flags", "set_flags"):  # repeatable options arrive as None
         given[name] = given[name] or []
     return subject_resolver.SubjectFlags(**given)

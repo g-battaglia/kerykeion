@@ -374,11 +374,11 @@ def _factory_params(mode: str) -> frozenset[str]:
 
     from kerykeion import AstrologicalSubjectFactory
 
-    method = {
+    methods: dict[str, Any] = {
         "birth": AstrologicalSubjectFactory.from_birth_data,
         "current": AstrologicalSubjectFactory.from_current_time,
-    }.get(mode, AstrologicalSubjectFactory.from_iso_utc_time)
-    return frozenset(inspect.signature(method).parameters)
+    }
+    return frozenset(inspect.signature(methods.get(mode, AstrologicalSubjectFactory.from_iso_utc_time)).parameters)
 
 
 def _kwargs_for(merged: dict[str, Any], mode: str) -> dict[str, Any]:

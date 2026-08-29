@@ -129,7 +129,7 @@ def resolve_target(spec: str) -> ResolvedTarget:
     if kind == INSTANCE:
         init_params = {
             k: v
-            for k, v in _params_of(owner.__init__).items()
+            for k, v in _params_of(getattr(owner, "__init__")).items()
             if k != "self" and v.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
         }
     method_params = {k: v for k, v in _params_of(fn).items() if k not in ("self", "cls")}
