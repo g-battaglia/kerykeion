@@ -33,7 +33,7 @@ Mocking strategy:
 from __future__ import annotations
 
 import math
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from types import SimpleNamespace
 from typing import Optional
 from unittest.mock import MagicMock, patch
@@ -993,6 +993,102 @@ class TestRiseSetRealValues:
         assert moon.moonset is not None and moon.moonset.startswith("2026-08-28T05:15:2")
         assert moon.moonrise_timestamp == int(datetime.fromisoformat(moon.moonrise).timestamp())
         assert moon.moonset_timestamp == int(datetime.fromisoformat(moon.moonset).timestamp())
+
+
+class TestTheLastCivilDayOfTheCalendar:
+    """9999-12-31 has no tomorrow that `datetime` can name.
+
+    The midnight that CLOSES the civil day belongs to the Moon alone — it is how
+    a day with no moonrise is told apart from one whose moonrise the backend
+    borrowed from tomorrow. Computing it in the shared window made it the first
+    thing BOTH paths did, so on `date.max` a bare
+    `datetime(...) + timedelta(days=1)` raised `OverflowError` and took the Sun's
+    answer down with a question the Sun had never asked. It is lazy now, and the
+    lunar path names the exception it can meet.
+    """
+
+    _LAT = 51.4779
+    _LNG = 0.0
+
+    @pytest.fixture(autouse=True)
+    def _no_real_backend_calls(self):
+        """Shadow the module blindfold: the real backend answers here."""
+        yield
+
+    @staticmethod
+    def _greenwich(name: str):
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 2026, 8, 28, 12, 0,
+            lng=TestTheLastCivilDayOfTheCalendar._LNG,
+            lat=TestTheLastCivilDayOfTheCalendar._LAT,
+            tz_str="Etc/UTC", city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+
+    @pytest.fixture
+    def last_day(self):
+        """A real subject re-dated to `date.max`.
+
+        No ephemeris covers the year 9999, so a chart cannot be cast there at
+        all; the day is reached the only way it can be, by moving a valid
+        subject's timestamps onto it. Both functions under test read exactly
+        those two fields (through `_get_utc_datetime`) plus the coordinates.
+        """
+        return self._greenwich("Greenwich").model_copy(
+            update={
+                "iso_formatted_utc_datetime": f"{date.max.isoformat()}T12:00:00+00:00",
+                "iso_formatted_local_datetime": f"{date.max.isoformat()}T12:00:00+00:00",
+            }
+        )
+
+    def test_the_window_opens_but_tomorrow_does_not_exist(self, last_day) -> None:
+        """The split, stated: the day resolves, its successor cannot — which is
+        precisely why the successor is computed lazily and only for the Moon."""
+        from kerykeion.moon_phase_details.factory import (
+            _local_civil_day_window,
+            _next_local_midnight,
+        )
+
+        window = _local_civil_day_window(last_day)
+        assert window is not None
+        tzinfo, dt_local, jd_midnight = window
+        assert dt_local.date() == date.max
+        assert isinstance(jd_midnight, float)
+
+        with pytest.raises(OverflowError):
+            _next_local_midnight(dt_local, tzinfo)
+
+    def test_the_sun_still_answers(self, last_day) -> None:
+        """No exception, and the same shape as any other day: a 3-tuple whose
+        elements the caller tests. Whether the backend can reach the year 9999
+        is its own business — raising was not."""
+        from kerykeion.moon_phase_details.factory import _compute_sun_times
+
+        result = _compute_sun_times(last_day)
+
+        assert result is not None
+        assert len(result) == 3
+
+    def test_the_moon_answers_none(self, last_day) -> None:
+        """A day whose window cannot be closed has no event that can be proved
+        to fall inside it, so both are None — reported, not raised."""
+        from kerykeion.moon_phase_details.factory import _compute_moon_times
+
+        assert _compute_moon_times(last_day) == (None, None)
+
+    def test_the_sun_never_asks_for_tomorrows_midnight(self, monkeypatch) -> None:
+        """The structural guard on an ordinary day: if the Sun ever reaches for
+        the closing midnight again, this fails long before `date.max` does."""
+        from kerykeion.moon_phase_details.factory import _compute_sun_times
+
+        def _boom(*_args, **_kwargs):
+            raise AssertionError("the Sun asked for tomorrow's midnight")
+
+        monkeypatch.setattr(f"{_FACTORY}._next_local_midnight", _boom)
+
+        sunrise, sunset, solar_noon = _compute_sun_times(self._greenwich("Greenwich Sun"))
+
+        assert sunrise is not None and sunset is not None and solar_noon is not None
 
 
 class TestFactoryFromSubjectRangeEdge:

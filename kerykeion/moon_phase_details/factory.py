@@ -226,21 +226,23 @@ def _build_upcoming_phases(
 
 def _local_civil_day_window(
     subject: AstrologicalSubjectModel,
-) -> Optional[tuple[ZoneInfo, float, float]]:
+) -> Optional[tuple[ZoneInfo, datetime, float]]:
     """
-    Resolve the subject's civil day: its timezone and its two midnights.
+    Resolve the subject's civil day: its timezone, its local date and its
+    opening midnight.
 
     Every rise/set question in this module is asked *of a day* — the subject's
     local civil day — and the day is the same one for the Sun and the Moon, so
-    it is derived once here. The second midnight matters for the Moon: it rises
-    about 50 minutes later each day, so on roughly one day in thirty the next
-    moonrise after local midnight already belongs to tomorrow, and only the
-    window can tell the caller that today simply has none.
+    it is derived once here. The midnight that *closes* the day is not: only the
+    Moon needs it (see :func:`_next_local_midnight`), and computing it here
+    would have cost the Sun its answer on the last day the calendar can hold.
 
     Returns:
-        Optional[tuple[ZoneInfo, float, float]]: ``(tzinfo, jd_midnight,
-            jd_next_midnight)`` with both Julian Days in UT, or ``None`` when
-            the coordinates or the timezone cannot be resolved at all.
+        Optional[tuple[ZoneInfo, datetime, float]]: ``(tzinfo, dt_local,
+            jd_midnight)`` — the resolved zone, the subject's local datetime
+            (whose date names the civil day) and the Julian Day in UT of that
+            day's opening midnight — or ``None`` when the coordinates or the
+            timezone cannot be resolved at all.
     """
     lat = subject.lat
     lng = subject.lng
@@ -288,19 +290,38 @@ def _local_civil_day_window(
     midnight_utc = midnight_local.astimezone(timezone.utc)
     jd_midnight = datetime_to_julian(midnight_utc)
 
-    # Tomorrow's midnight is resolved the same way rather than as
-    # ``jd_midnight + 1``: across a DST transition the civil day is 23 or 25
-    # hours long, and a fixed 24 would either clip an event out of the day or
-    # let tomorrow's in.
+    return tzinfo, dt_local, jd_midnight
+
+
+def _next_local_midnight(dt_local: datetime, tzinfo: ZoneInfo) -> float:
+    """
+    Julian Day (UT) of the midnight that closes ``dt_local``'s civil day.
+
+    Only the Moon asks for it: it rises about 50 minutes later each day, so on
+    roughly one day in thirty the next moonrise after local midnight already
+    belongs to tomorrow, and only the closed window can tell the caller that
+    today simply has none. The Sun has no use for it, which is why this is a
+    separate, lazily called step rather than a third element of
+    :func:`_local_civil_day_window`: ``datetime(...) + timedelta(days=1)``
+    raises ``OverflowError`` on 9999-12-31, and computing it eagerly took the
+    sunrise down with the moonrise on the last day the calendar can hold.
+
+    Tomorrow's midnight is resolved through ``localize_naive`` rather than as
+    ``jd_midnight + 1``: across a DST transition the civil day is 23 or 25 hours
+    long, and a fixed 24 would either clip an event out of the day or let
+    tomorrow's in.
+
+    Raises:
+        OverflowError: on 9999-12-31, whose civil day has no closing midnight
+            ``datetime`` can represent. The caller handles it.
+    """
     next_naive = datetime(
         year=dt_local.year,
         month=dt_local.month,
         day=dt_local.day,
     ) + timedelta(days=1)
     next_midnight_local = localize_naive(next_naive, tzinfo, is_dst=False)
-    jd_next_midnight = datetime_to_julian(next_midnight_local.astimezone(timezone.utc))
-
-    return tzinfo, jd_midnight, jd_next_midnight
+    return datetime_to_julian(next_midnight_local.astimezone(timezone.utc))
 
 
 def _compute_moon_times(
@@ -328,16 +349,23 @@ def _compute_moon_times(
     window = _local_civil_day_window(subject)
     if window is None:
         return None, None
-    tzinfo, jd_midnight, jd_next_midnight = window
+    tzinfo, dt_local, jd_midnight = window
     lat = subject.lat
     lng = subject.lng
 
     try:
+        # Tomorrow's midnight is the Moon's business alone, so it is resolved
+        # here and not in the shared window: on 9999-12-31 it does not exist,
+        # and OverflowError joins the backend errors below so the last civil day
+        # of the calendar answers None instead of raising — and, above all, so
+        # it stops taking the Sun's answer with it.
+        jd_next_midnight = _next_local_midnight(dt_local, tzinfo)
         # Serialized session: the helper mutates the global ephemeris path.
         with ephemeris_session():
             moonrise_jd, moonset_jd = compute_rise_set_ephe(jd_midnight, lat, lng, body=ephe.MOON)
-    except _BACKEND_ERRORS as exc:
-        # Expected: the ephemeris edge, a polar latitude, missing data.
+    except (*_BACKEND_ERRORS, OverflowError) as exc:
+        # Expected: the ephemeris edge, a polar latitude, missing data, or the
+        # end of the representable calendar.
         logger.debug("Moonrise/moonset calculation failed (expected): %s", exc)
         return None, None
     except (AttributeError, ValueError, TypeError) as exc:  # pragma: no cover - defensive
@@ -376,7 +404,7 @@ def _compute_sun_times(
     window = _local_civil_day_window(subject)
     if window is None:
         return None
-    tzinfo, jd_midnight, _jd_next_midnight = window
+    tzinfo, _dt_local, jd_midnight = window
     lat = subject.lat
     lng = subject.lng
 
