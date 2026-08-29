@@ -278,7 +278,7 @@ The cut-offs are conventions, not measurements, and the schools disagree on all 
 > **In Kerykeion:** every `PlanetaryPhenomenaModel` carries `solar_phase` (`"cazimi"` / `"combust"` / `"under_the_beams"` / `"free"`), read against the collection's `solar_phase_thresholds`, which you may replace. Note that `is_morning_star` / `is_evening_star` are purely geometric — which side of the Sun the planet stands on — and say nothing about visibility.
 
 ### Major Phase (Moon)
-The nearest of the Moon's four syzygies — New Moon, First Quarter, Full Moon, Last Quarter — to a given moment. The eight-name phase (`Waxing Crescent`, `Waning Gibbous`, …) says where in the cycle the Moon is; the major phase says which of the four turning points it is closest to, and `stage` says whether it is `"waxing"` or `"waning"`.
+The nearest of the Moon's four syzygy/quadrature events — New Moon, First Quarter, Full Moon, Last Quarter — to a given moment. The eight-name phase (`Waxing Crescent`, `Waning Gibbous`, …) says where in the cycle the Moon is; the major phase says which of the four turning points it is closest to, and `stage` says whether it is `"waxing"` or `"waning"`.
 
 > **In Kerykeion:** `subject.lunar_phase.major_phase` / `.stage`, and the same two fields on `MoonPhaseDetailsFactory`'s `overview.moon`.
 

@@ -2040,10 +2040,10 @@ and still names the nakshatra a Jyotish chart would name. Pass
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1985, 4, 15, 8, 30,
     lng=11.25, lat=43.77, tz_str="Europe/Rome", online=False,
-    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
     calculate_nakshatra=True,
 )
 print(f"Moon nakshatra: {subject.moon.nakshatra}, pada: {subject.moon.nakshatra_pada}")
+print(f"Rotated by {subject.nakshatra_ayanamsa}: {subject.nakshatra_ayanamsa_value:.4f} deg")
 ```
 
 ### Eclipse Search

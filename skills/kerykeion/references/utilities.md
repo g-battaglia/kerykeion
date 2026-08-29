@@ -121,7 +121,7 @@ New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, 
 the four crescent/gibbous names fill the rest. The name therefore tracks the
 event — "Full Moon" means near the opposition, not merely inside bin 15. The
 `moon_phase` index (1–28) is unchanged. `major_phase` is the nearest of the four
-syzygies and `stage` is `"waxing"` or `"waning"`.
+syzygy/quadrature events and `stage` is `"waxing"` or `"waning"`.
 
 The two `*_from_phase_int` helpers take only the 1–28 index, so they cannot use
 those windows: they are the older 28-bin approximation, kept for callers that
