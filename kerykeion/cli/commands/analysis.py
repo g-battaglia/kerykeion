@@ -18,6 +18,7 @@ from typing import Any, Optional
 from kerykeion.cli.commands._shared import (
     _active_aspects,
     _emit,
+    _given,
     _parse_aspects,
     _split_csv,
 )
@@ -75,10 +76,7 @@ def aspects(
 
     first = _subject(profile, "aspects")
     second = _subject(subject2, "aspects") if subject2 else None
-    active = _split_csv(planets)
-    kwargs: dict[str, Any] = {}
-    if active is not None:
-        kwargs["active_points"] = active
+    kwargs: dict[str, Any] = _given(active_points=_split_csv(planets))
 
     model: object
     if declinations:
@@ -92,8 +90,7 @@ def aspects(
                 f"{rejected[0]} does not apply to declination aspects; they use a "
                 "single --orb and have no per-aspect table."
             )
-        if orb is not None:
-            kwargs["orb"] = orb
+        kwargs.update(_given(orb=orb))
         model = (
             AspectsFactory.dual_chart_declination_aspects(first, second, **kwargs)  # type: ignore[arg-type]
             if second is not None
@@ -104,17 +101,17 @@ def aspects(
             raise ValueError(
                 "--orb applies to --declinations; for ecliptic aspects give the orb per aspect, e.g. --aspects trine:6."
             )
-        chosen = _active_aspects(_parse_aspects(aspect_list))
-        if chosen is not None:
-            kwargs["active_aspects"] = chosen
-        if axis_orb_limit is not None:
-            # Reject it here (exit 4, invalid input) rather than letting the
-            # factory raise a kerykeion-level error (exit 5): a bad flag value
-            # is not a library failure, and pipeline branching relies on that
-            # distinction.
-            if axis_orb_limit <= 0:
-                raise ValueError("--axis-orb-limit must be a positive number.")
-            kwargs["axis_orb_limit"] = axis_orb_limit
+        # A bad flag value is rejected here (exit 4, invalid input) rather than
+        # inside the factory, which would raise a kerykeion-level error (exit 5):
+        # pipeline branching relies on telling those two apart.
+        if axis_orb_limit is not None and axis_orb_limit <= 0:
+            raise ValueError("--axis-orb-limit must be a positive number.")
+        kwargs.update(
+            _given(
+                active_aspects=_active_aspects(_parse_aspects(aspect_list)),
+                axis_orb_limit=axis_orb_limit,
+            )
+        )
         model = (
             AspectsFactory.dual_chart_aspects(first, second, **kwargs)  # type: ignore[arg-type]
             if second is not None
@@ -148,11 +145,14 @@ def dominants(
         if chosen is None:
             raise ValueError(f"--method must be one of {', '.join(available)}, got {method!r}")
         kwargs["strategy"] = chosen
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["active_points"] = active
-    if distribution_method is not None:
-        kwargs["distribution_method"] = distribution_method
+    kwargs.update(
+        _given(
+            active_points=_split_csv(planets),
+            distribution_method=distribution_method,
+            include_accidental_dignities=accidental_dignities,
+            include_score_breakdown=score_breakdown,
+        )
+    )
     if custom_weights is not None:
         try:
             weights = json.loads(custom_weights)
@@ -163,10 +163,6 @@ def dominants(
         if not isinstance(weights, dict):
             raise ValueError("--custom-weights must be a JSON object, e.g. '{\"Sun\": 1.5}'.")
         kwargs["custom_weights"] = weights
-    if accidental_dignities is not None:
-        kwargs["include_accidental_dignities"] = accidental_dignities
-    if score_breakdown is not None:
-        kwargs["include_score_breakdown"] = score_breakdown
     _emit(DominantsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -181,11 +177,10 @@ def moon(
     from kerykeion import MoonPhaseDetailsFactory
 
     subject = _subject(profile, "moon")
-    kwargs: dict[str, Any] = {}
-    if using_default_location is not None:
-        kwargs["using_default_location"] = using_default_location
-    if location_precision is not None:
-        kwargs["location_precision"] = location_precision
+    kwargs = _given(
+        using_default_location=using_default_location,
+        location_precision=location_precision,
+    )
     _emit(MoonPhaseDetailsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -206,10 +201,9 @@ def relationship_score(
         raise ValueError("relationship-score needs -S <profile> for the second subject")
     first = _subject(profile, "relationship-score")
     second = _subject(subject2, "relationship-score")
-    kwargs: dict[str, Any] = {}
-    if all_aspects is not None:
-        kwargs["use_only_major_aspects"] = not all_aspects
-    if axis_orb_limit is not None:
-        kwargs["axis_orb_limit"] = axis_orb_limit
+    kwargs = _given(
+        use_only_major_aspects=None if all_aspects is None else not all_aspects,
+        axis_orb_limit=axis_orb_limit,
+    )
     factory = RelationshipScoreFactory(first, second, **kwargs)  # type: ignore[arg-type]
     _emit(factory.get_relationship_score(), fmt, output)

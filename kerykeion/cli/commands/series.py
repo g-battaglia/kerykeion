@@ -11,10 +11,10 @@ unless ``--no-limit`` disables both the pre-check and the library's own guard.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional, get_args
+from typing import Any, Optional, cast, get_args
 
 from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import _emit, _parse_dt
+from kerykeion.cli.commands._shared import _emit, _given, _parse_dt
 from kerykeion.cli.options import (
     EventsFlag,
     FormatOpt,
@@ -41,9 +41,25 @@ _STEP_TYPES: tuple[StepType, ...] = get_args(StepType)
 def _resolve_range(from_: Optional[str], to: Optional[str], cmd: str) -> tuple[datetime, datetime]:
     if from_ is None or to is None:
         raise ValueError(f"{cmd} needs --from and --to")
-    start = _parse_dt(from_)
-    end = _parse_dt(to)
-    return start, end
+    return _parse_dt(from_), _parse_dt(to)
+
+
+def _resolve_sampling(step_type: Optional[str], step: Optional[int]) -> tuple[StepType, int]:
+    """Validate ``--step-type``/``--step`` into the pair the factory wants."""
+    stype = step_type or "days"
+    if stype not in _STEP_TYPES:
+        raise ValueError(f"--step-type must be {' or '.join(_STEP_TYPES)}, got {stype!r}")
+    # `step or 1` would silently rewrite `--step 0` to 1 (falsy-zero); use
+    # `is None` and reject non-positive explicitly so 0 is an error, not step 1.
+    count = step if step is not None else 1
+    if count <= 0:
+        raise ValueError("--step must be a positive integer.")
+    return cast(StepType, stype), count
+
+
+def _ceiling_off() -> dict[str, None]:
+    """The ``--no-limit`` overrides: the library's own guard, disabled too."""
+    return {"max_days": None, "max_hours": None, "max_minutes": None}
 
 
 def ephemeris(
@@ -66,14 +82,7 @@ def ephemeris(
     from kerykeion.cli.subject_resolver import resolve_house_system
 
     start, end = _resolve_range(from_, to, "ephemeris")
-    stype: StepType = step_type or "days"  # type: ignore[assignment]
-    if stype not in _STEP_TYPES:
-        raise ValueError(f"--step-type must be {' or '.join(_STEP_TYPES)}, got {stype!r}")
-    # `step or 1` would silently rewrite `--step 0` to 1 (falsy-zero); use
-    # `is None` and reject non-positive explicitly so 0 is an error, not step 1.
-    step_n = step if step is not None else 1
-    if step_n <= 0:
-        raise ValueError("--step must be a positive integer.")
+    stype, step_n = _resolve_sampling(step_type, step)
     # Range validation runs unconditionally: --no-limit bypasses the sample
     # ceiling, not an inverted or mixed-awareness range, which would otherwise
     # surface as the library's generic 'No dates found' error.
@@ -81,25 +90,19 @@ def ephemeris(
     if not no_limit:
         check_ephemeris_sampling(start, end, stype, step_n, tz_str=tz)
 
-    kwargs: dict[str, Any] = (
-        dict(step_type=stype, step=step_n, max_days=None, max_hours=None, max_minutes=None)
-        if no_limit
-        else dict(step_type=stype, step=step_n)
-    )
-    if lat is not None:
-        kwargs["lat"] = lat
-    if lng is not None:
-        kwargs["lng"] = lng
-    if tz is not None:
-        kwargs["tz_str"] = tz
-    if zodiac is not None:
-        kwargs["zodiac_type"] = zodiac
-    if sidereal_mode is not None:
-        kwargs["sidereal_mode"] = sidereal_mode
-    resolved_houses = resolve_house_system(houses) if houses else None
-    if resolved_houses is not None:
-        kwargs["houses_system_identifier"] = resolved_houses
-
+    kwargs: dict[str, Any] = {
+        "step_type": stype,
+        "step": step_n,
+        **(_ceiling_off() if no_limit else {}),
+        **_given(
+            lat=lat,
+            lng=lng,
+            tz_str=tz,
+            zodiac_type=zodiac,
+            sidereal_mode=sidereal_mode,
+            houses_system_identifier=resolve_house_system(houses) if houses else None,
+        ),
+    }
     factory = EphemerisDataFactory(start, end, **kwargs)
     data = factory.get_ephemeris_data(as_model=True)
     _emit(data, fmt, output)
@@ -136,12 +139,7 @@ def transits(
     if refine and not events:
         raise ValueError("--refine sharpens exact moments and requires --events.")
     start, end = _resolve_range(from_, to, "transits")
-    stype: StepType = step_type or "days"  # type: ignore[assignment]
-    if stype not in _STEP_TYPES:
-        raise ValueError(f"--step-type must be {' or '.join(_STEP_TYPES)}, got {stype!r}")
-    step_n = step if step is not None else 1
-    if step_n <= 0:
-        raise ValueError("--step must be a positive integer.")
+    stype, step_n = _resolve_sampling(step_type, step)
     # Range validation runs unconditionally even with --no-limit (see ephemeris).
     validate_range(start, end)
     # Materialise the natal before the pre-flight so its *resolved* timezone
@@ -158,23 +156,23 @@ def transits(
     # The custom-ayanamsa pair is part of that frame: without it a natal cast
     # with ``--sidereal-mode USER`` crashes here (the mode needs its two
     # numbers on every rebuild, and EphemerisDataFactory accepts both).
-    eph_kwargs: dict[str, Any] = dict(step_type=stype, step=step_n)
-    if no_limit:
-        eph_kwargs.update(max_days=None, max_hours=None, max_minutes=None)
-    for src, dst in (
-        ("lat", "lat"),
-        ("lng", "lng"),
-        ("tz_str", "tz_str"),
-        ("zodiac_type", "zodiac_type"),
-        ("sidereal_mode", "sidereal_mode"),
-        ("houses_system_identifier", "houses_system_identifier"),
-        ("perspective_type", "perspective_type"),
-        ("custom_ayanamsa_t0", "custom_ayanamsa_t0"),
-        ("custom_ayanamsa_ayan_t0", "custom_ayanamsa_ayan_t0"),
-    ):
-        value = getattr(natal, src, None)
-        if value is not None:
-            eph_kwargs[dst] = value
+    inherited = (
+        "lat",
+        "lng",
+        "tz_str",
+        "zodiac_type",
+        "sidereal_mode",
+        "houses_system_identifier",
+        "perspective_type",
+        "custom_ayanamsa_t0",
+        "custom_ayanamsa_ayan_t0",
+    )
+    eph_kwargs: dict[str, Any] = {
+        "step_type": stype,
+        "step": step_n,
+        **(_ceiling_off() if no_limit else {}),
+        **_given(**{name: getattr(natal, name, None) for name in inherited}),
+    }
 
     points = EphemerisDataFactory(start, end, **eph_kwargs).get_ephemeris_data_as_astrological_subjects()
     tr_factory = TransitsTimeRangeFactory(natal, points)  # type: ignore[arg-type]

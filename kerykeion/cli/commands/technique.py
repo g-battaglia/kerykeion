@@ -17,9 +17,10 @@ from kerykeion.cli.commands._shared import (
     _aspect_names,
     _choose,
     _emit,
+    _given,
     _parse_aspects,
-    with_render_flags,
     _split_csv,
+    with_render_flags,
 )
 from kerykeion.cli.commands.charts import _emit_subject_or_chart
 from kerykeion.cli.options import (
@@ -83,13 +84,7 @@ def profections(
     from kerykeion import ProfectionsFactory
 
     subject = _need_subject(profile, "profections")
-    kwargs: dict[str, Any] = {}
-    if target_date is not None:
-        kwargs["target_date"] = target_date
-    if years_before is not None:
-        kwargs["years_before"] = years_before
-    if years_after is not None:
-        kwargs["years_after"] = years_after
+    kwargs = _given(target_date=target_date, years_before=years_before, years_after=years_after)
     _emit(ProfectionsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -105,11 +100,7 @@ def firdaria(
     from kerykeion import FirdariaFactory
 
     subject = _need_subject(profile, "firdaria")
-    kwargs: dict[str, Any] = {}
-    if target_date is not None:
-        kwargs["target_date"] = target_date
-    if life_cap_years is not None:
-        kwargs["life_cap_years"] = life_cap_years
+    kwargs = _given(target_date=target_date, life_cap_years=life_cap_years)
     _emit(FirdariaFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -127,18 +118,14 @@ def zr(
     from kerykeion import ZodiacalReleasingFactory
 
     subject = _need_subject(profile, "zr")
-    kwargs: dict[str, Any] = {}
-    chosen_lot = _choose(lot, ("fortune", "spirit"), "lot")
-    if chosen_lot is not None:
-        kwargs["lot"] = chosen_lot
-    if levels is not None:
-        if not 1 <= levels <= 4:
-            raise ValueError("--levels must be between 1 and 4")
-        kwargs["levels"] = levels
-    if target_date is not None:
-        kwargs["target_date"] = target_date
-    if life_cap_years is not None:
-        kwargs["life_cap_years"] = life_cap_years
+    if levels is not None and not 1 <= levels <= 4:
+        raise ValueError("--levels must be between 1 and 4")
+    kwargs = _given(
+        lot=_choose(lot, ("fortune", "spirit"), "lot"),
+        levels=levels,
+        target_date=target_date,
+        life_cap_years=life_cap_years,
+    )
     _emit(ZodiacalReleasingFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -166,9 +153,7 @@ def horary(
     from kerykeion import HoraryIndicatorsFactory
 
     subject = _need_subject(profile, "horary")
-    kwargs: dict[str, Any] = {}
-    if is_moon_void is not None:
-        kwargs["is_moon_void"] = is_moon_void
+    kwargs = _given(is_moon_void=is_moon_void)
     _emit(HoraryIndicatorsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -184,12 +169,7 @@ def midpoints(
     from kerykeion import MidpointFactory
 
     subject = _need_subject(profile, "midpoints")
-    kwargs: dict[str, Any] = {}
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["active_points"] = active
-    if orb is not None:
-        kwargs["aspect_orb"] = orb
+    kwargs = _given(active_points=_split_csv(planets), aspect_orb=orb)
     _emit(MidpointFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -206,12 +186,6 @@ def directions(
     from kerykeion import PrimaryDirectionsFactory
 
     subject = _need_subject(profile, "directions")
-    kwargs: dict[str, Any] = {}
-    if max_years is not None:
-        kwargs["max_years"] = max_years
-    chosen_rate = _choose(rate, ("ptolemy", "naibod"), "rate")
-    if chosen_rate is not None:
-        kwargs["rate_key"] = chosen_rate
     # ``aspects`` here is the set of aspect ANGLES (conjunction, sextile, …),
     # not planets: PrimaryDirectionsFactory.compute validates it against
     # ASPECT_ANGLES and has no planet filter. Binding ``--planets`` to it (as the
@@ -225,7 +199,11 @@ def directions(
         invalid = [a for a in chosen_aspects if a not in valid]
         if invalid:
             raise ValueError(f"--aspects must be one of {', '.join(sorted(valid))}; got {invalid}.")
-        kwargs["aspects"] = chosen_aspects
+    kwargs = _given(
+        max_years=max_years,
+        rate_key=_choose(rate, ("ptolemy", "naibod"), "rate"),
+        aspects=chosen_aspects,
+    )
     _emit(PrimaryDirectionsFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -242,18 +220,14 @@ def acg(
     from kerykeion import AstroCartographyFactory
 
     subject = _need_subject(profile, "acg")
-    kwargs: dict[str, Any] = {}
-    if step is not None:
-        kwargs["step"] = step
+    band = None
     if lat_range is not None:
         try:
-            lo, hi = (float(p) for p in lat_range.split(","))
+            lo, hi = (float(edge) for edge in lat_range.split(","))
         except ValueError as exc:
             raise ValueError(f"--lat-range needs 'min,max', got {lat_range!r}") from exc
-        kwargs["lat_range"] = (lo, hi)
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["planets"] = active
+        band = (lo, hi)
+    kwargs = _given(step=step, lat_range=band, planets=_split_csv(planets))
     _emit(AstroCartographyFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -277,12 +251,12 @@ def stars(
     altitude = getattr(subject, "altitude", 0.0) or 0.0
     if lat is None or lng is None:
         raise ValueError("heliacal search needs the subject's lat/lng")
-    kwargs: dict[str, Any] = dict(lat=lat, lng=lng, altitude=altitude)
-    if count is not None:
-        kwargs["count"] = count
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["planets"] = active
+    kwargs: dict[str, Any] = {
+        "lat": lat,
+        "lng": lng,
+        "altitude": altitude,
+        **_given(count=count, planets=_split_csv(planets)),
+    }
     factory = HeliacalFactory()
     _emit(factory.search_events(julian_day, **kwargs), fmt, output)  # type: ignore[arg-type]
 
@@ -332,13 +306,10 @@ def nodes(
     from kerykeion import PlanetaryNodesFactory
 
     subject = _need_subject(profile, "nodes")
-    kwargs: dict[str, Any] = {}
-    chosen = _choose(method, ("mean", "osculating"), "method")
-    if chosen is not None:
-        kwargs["method"] = chosen
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["planets"] = active
+    kwargs = _given(
+        method=_choose(method, ("mean", "osculating"), "method"),
+        planets=_split_csv(planets),
+    )
     _emit(PlanetaryNodesFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
@@ -359,10 +330,7 @@ def house_comparison(
         raise ValueError("house-comparison needs -S <profile> for the second subject")
     first = _need_subject(profile, "house-comparison")
     second = _need_subject(subject2, "house-comparison")
-    kwargs: dict[str, Any] = {}
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["active_points"] = active
+    kwargs = _given(active_points=_split_csv(planets))
     factory = HouseComparisonFactory(first, second, **kwargs)  # type: ignore[arg-type]
     _emit(factory.get_house_comparison(), fmt, output)
 
@@ -389,23 +357,16 @@ def solar_arc(
     subject = _need_subject(profile, "solar-arc")
     if target_year is None and target_iso is None:
         raise ValueError("solar-arc needs --target-year or --target-iso")
-    kwargs: dict[str, Any] = {}
-    if target_year is not None:
-        kwargs["target_year"] = target_year
-    if target_iso is not None:
-        kwargs["target_iso_utc_datetime"] = target_iso
-    active = _split_csv(planets)
-    if active is not None:
-        kwargs["active_points"] = active
-    if compute_aspects is not None:
-        kwargs["compute_aspects"] = compute_aspects
-    if aspect_orb is not None:
-        kwargs["aspect_orb"] = aspect_orb
-    # Solar arc takes one orb for all aspects (--aspect-orb), so a per-aspect
-    # ':orb' has nowhere to go and is refused rather than dropped.
-    chosen = _aspect_names(_parse_aspects(aspects), "solar arc")
-    if chosen is not None:
-        kwargs["aspects"] = chosen
+    kwargs = _given(
+        target_year=target_year,
+        target_iso_utc_datetime=target_iso,
+        active_points=_split_csv(planets),
+        compute_aspects=compute_aspects,
+        aspect_orb=aspect_orb,
+        # Solar arc takes one orb for all aspects (--aspect-orb), so a per-aspect
+        # ':orb' has nowhere to go and is refused rather than dropped.
+        aspects=_aspect_names(_parse_aspects(aspects), "solar arc"),
+    )
     _emit(SolarArcFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 

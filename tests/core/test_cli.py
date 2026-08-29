@@ -948,13 +948,16 @@ class TestXhighReviewFixes:
 
     # sky: inline --lat/--lng/--tz take precedence over the profile's location.
     def test_sky_location_inline_overrides_profile(self, ada_profile):
-        from kerykeion.cli.commands.sky import _latlng, _location
+        from kerykeion.cli.commands.sky import _location
 
         # ada is London (51.5074 / -0.1278); inline 40 / 10 wins.
         assert _location(ada_profile, 40.0, 10.0, "Europe/Rome", "t") == (
             40.0, 10.0, "Europe/Rome",
         )
-        assert _latlng(ada_profile, 40.0, 10.0, "t") == (40.0, 10.0)
+        # The timezone-free form (eclipses, occultations) resolves the same way.
+        assert _location(ada_profile, 40.0, 10.0, None, "t", require_tz=False)[:2] == (
+            40.0, 10.0,
+        )
         # Without inline flags the profile is used.
         lat, _lng, _tz = _location(ada_profile, None, None, None, "t")
         assert abs(lat - 51.5074) < 1e-3
@@ -1268,7 +1271,9 @@ class TestFullPrReviewFixes:
         assert sky._location(ada_profile, 40.0, 10.0, "Europe/Rome", "sun-times") == (
             40.0, 10.0, "Europe/Rome",
         )
-        assert sky._latlng(ada_profile, 40.0, 10.0, "eclipses") == (40.0, 10.0)
+        assert sky._location(ada_profile, 40.0, 10.0, None, "eclipses", require_tz=False)[
+            :2
+        ] == (40.0, 10.0)
 
     # The rendering helpers that bypassed -o and the warnings funnel are gone;
     # write_output/render are the only funnel.

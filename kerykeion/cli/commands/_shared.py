@@ -35,6 +35,17 @@ def _emit(model: object, fmt: Optional[str], output: Optional[str], opts: object
     warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output, opts=opts)
 
 
+def _given(**flags: Any) -> dict[str, Any]:
+    """The flags actually given, keyed by the library parameter they feed.
+
+    ``None`` means "not asked for", so it is dropped and the library's own
+    default decides — the CLI never restates a default it would have to keep in
+    sync. This is the command-level twin of
+    :func:`kerykeion.cli.subject_resolver._kwargs_for`.
+    """
+    return {name: value for name, value in flags.items() if value is not None}
+
+
 def _split_csv(values: Optional[list[str]]) -> Optional[list[str]]:
     """Flatten a repeatable option that may also carry comma-separated tokens."""
     if values is None:

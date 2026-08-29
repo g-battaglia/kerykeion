@@ -22,6 +22,7 @@ from kerykeion.cli import subject_resolver
 from kerykeion.cli.commands._shared import (
     _aspect_names,
     _emit,
+    _given,
     _parse_aspects,
     _parse_dt,
     _split_csv,
@@ -74,49 +75,35 @@ def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[
 
 
 def _location(
-    profile: Optional[str], lat: Optional[float], lng: Optional[float], tz: Optional[str], cmd: str
-) -> tuple[float, float, str]:
-    """Resolve (lat, lng, tz) from a profile or inline flags.
+    profile: Optional[str],
+    lat: Optional[float],
+    lng: Optional[float],
+    tz: Optional[str],
+    cmd: str,
+    *,
+    require_tz: bool = True,
+) -> tuple[float, float, Optional[str]]:
+    """Resolve a place from inline flags first, then a profile.
 
-    Inline flags take precedence over the profile (universal CLI convention: an
-    explicit value wins), so a relocated reading is honoured even when a profile
-    supplies the birthplace — mirroring ``charts.transit``.
+    Inline flags take precedence (universal CLI convention: an explicit value
+    wins), so a relocated reading is honoured even when a profile supplies the
+    birthplace — mirroring ``charts.transit``. ``require_tz=False`` is for the
+    commands that take no timezone (``eclipses``, ``occultations``).
     """
-    # Every value given inline: the profile would be materialised (a full
-    # ephemeris subject build) only for its coordinates to be overridden below.
-    if lat is not None and lng is not None and tz is not None:
+    wanted = ("--lat", "--lng", "--tz") if require_tz else ("--lat", "--lng")
+    # Everything given inline: the profile would be materialised (a full
+    # ephemeris subject build) only for its values to be overridden below.
+    if lat is not None and lng is not None and (tz is not None or not require_tz):
         return lat, lng, tz
     if profile:
         subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-        lat_v = lat if lat is not None else getattr(subject, "lat", None)
-        lng_v = lng if lng is not None else getattr(subject, "lng", None)
-        tz_v = tz if tz is not None else getattr(subject, "tz_str", None)
-        if lat_v is None or lng_v is None or tz_v is None:
-            raise ValueError(f"the {cmd} profile has no lat/lng/tz to derive a location from")
-        return float(lat_v), float(lng_v), str(tz_v)
-    if lat is None or lng is None or tz is None:
-        raise ValueError(f"{cmd} needs -s <profile> or --lat/--lng/--tz")
-    return lat, lng, tz
-
-
-def _latlng(profile: Optional[str], lat: Optional[float], lng: Optional[float], cmd: str) -> tuple[float, float]:
-    """Resolve (lat, lng) only — for commands that take no timezone (eclipses).
-
-    Inline flags take precedence over the profile (see :func:`_location`).
-    """
-    # Both given inline: skip the subject build whose values we would discard.
-    if lat is not None and lng is not None:
-        return lat, lng
-    if profile:
-        subject = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile)
-        lat_v = lat if lat is not None else getattr(subject, "lat", None)
-        lng_v = lng if lng is not None else getattr(subject, "lng", None)
-        if lat_v is None or lng_v is None:
-            raise ValueError(f"the {cmd} profile has no lat/lng to derive a location from")
-        return float(lat_v), float(lng_v)
-    if lat is None or lng is None:
-        raise ValueError(f"{cmd} needs -s <profile> or --lat/--lng")
-    return lat, lng
+        lat = lat if lat is not None else getattr(subject, "lat", None)
+        lng = lng if lng is not None else getattr(subject, "lng", None)
+        tz = tz if tz is not None else getattr(subject, "tz_str", None)
+        if lat is None or lng is None or (require_tz and tz is None):
+            raise ValueError(f"the {cmd} profile has no {'/'.join(w[2:] for w in wanted)} to derive a location from")
+        return float(lat), float(lng), str(tz) if tz is not None else None
+    raise ValueError(f"{cmd} needs -s <profile> or {'/'.join(wanted)}")
 
 
 def _attach_tz_offset(value: str, tz_str: Optional[str], cmd: str) -> str:
@@ -300,30 +287,32 @@ def eclipses(
     # a typo; don't silently fall back to a global search that ignores the coord.
     if (lat is None) != (lng is None):
         raise ValueError("eclipses needs both --lat and --lng (or neither, for a global search).")
-    has_loc = (lat is not None and lng is not None) or profile is not None
-    if has_loc:
-        la, lo = _latlng(profile, lat, lng, "eclipses")
-        kwargs: dict[str, Any] = {}
-        if start_year is not None:
-            kwargs["start_year"] = start_year
-        if count is not None:
-            kwargs["count"] = count
+    kwargs = _given(start_year=start_year, count=count)
+    if (lat is not None and lng is not None) or profile is not None:
+        la, lo, _ = _location(profile, lat, lng, None, "eclipses", require_tz=False)
         model = EclipseFactory.search_from_location(la, lo, **kwargs, **extra)
     else:
-        kwargs = {}
-        if start_year is not None:
-            kwargs["start_year"] = start_year
-        if count is not None:
-            kwargs["count"] = count
         model = EclipseFactory.search_global(**kwargs, **extra)
     _emit(model, fmt, output)
 
 
-def _range_factory_call(from_: Optional[str], to: Optional[str], cmd: str):
-    """Validate the --from/--to pair and return (start, end) as ISO strings."""
+def _range_query(
+    cmd: str,
+    from_: Optional[str],
+    to: Optional[str],
+    zodiac: Optional[str],
+    sidereal_mode: Optional[str],
+    **lists: Optional[list[str]],
+) -> tuple[str, str, dict[str, Any]]:
+    """Validate ``--from``/``--to`` and assemble the kwargs a range search shares.
+
+    *lists* carries the already-split list flags under the name the factory wants
+    for them (``planets=``, ``points=``, ``phases=``): they differ per command,
+    everything else does not.
+    """
     if from_ is None or to is None:
         raise ValueError(f"{cmd} needs --from and --to")
-    return from_, to
+    return from_, to, {**_zodiac_kwargs(zodiac, sidereal_mode), **_given(**lists)}
 
 
 @sky_app.command("lunations")
@@ -339,11 +328,7 @@ def lunations(
     """New and quarter moons in a range (filterable with --phase)."""
     from kerykeion import LunationFinderFactory
 
-    start, end = _range_factory_call(from_, to, "lunations")
-    extra = _zodiac_kwargs(zodiac, sidereal_mode)
-    phases = _split_csv(phase)
-    if phases is not None:
-        extra["phases"] = phases
+    start, end, extra = _range_query("lunations", from_, to, zodiac, sidereal_mode, phases=_split_csv(phase))
     _emit(LunationFinderFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
@@ -360,11 +345,7 @@ def ingresses(
     """Sign ingresses of the planets in a range."""
     from kerykeion import SignIngressFactory
 
-    start, end = _range_factory_call(from_, to, "ingresses")
-    extra = _zodiac_kwargs(zodiac, sidereal_mode)
-    active = _split_csv(planets)
-    if active is not None:
-        extra["planets"] = active
+    start, end, extra = _range_query("ingresses", from_, to, zodiac, sidereal_mode, planets=_split_csv(planets))
     _emit(SignIngressFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
@@ -381,11 +362,7 @@ def stations(
     """Retrograde/direct stations of the planets in a range."""
     from kerykeion import RetrogradeStationFactory
 
-    start, end = _range_factory_call(from_, to, "stations")
-    extra = _zodiac_kwargs(zodiac, sidereal_mode)
-    active = _split_csv(planets)
-    if active is not None:
-        extra["planets"] = active
+    start, end, extra = _range_query("stations", from_, to, zodiac, sidereal_mode, planets=_split_csv(planets))
     _emit(RetrogradeStationFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
@@ -403,15 +380,16 @@ def mundane(
     """Mundane (planet-to-planet) aspects exact within a range."""
     from kerykeion import MundaneAspectFactory
 
-    start, end = _range_factory_call(from_, to, "mundane")
-    extra = _zodiac_kwargs(zodiac, sidereal_mode)
-    active = _split_csv(planets)
-    if active is not None:
-        extra["points"] = active
-    # This factory takes aspect names only; a per-aspect ':orb' is refused.
-    chosen = _aspect_names(_parse_aspects(aspects), "mundane aspects")
-    if chosen is not None:
-        extra["aspects"] = chosen
+    start, end, extra = _range_query(
+        "mundane",
+        from_,
+        to,
+        zodiac,
+        sidereal_mode,
+        points=_split_csv(planets),
+        # This factory takes aspect names only; a per-aspect ':orb' is refused.
+        aspects=_aspect_names(_parse_aspects(aspects), "mundane aspects"),
+    )
     _emit(MundaneAspectFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
@@ -472,9 +450,7 @@ def occultations(
         raise ValueError(
             "occultations needs --planet: the body being occulted by the Moon (e.g. Venus, Mars, Aldebaran)."
         )
-    kwargs: dict[str, Any] = {"planet_id": planet}
-    if count is not None:
-        kwargs["count"] = count
+    kwargs: dict[str, Any] = {"planet_id": planet, **_given(count=count)}
     # A half-given coordinate is a typo, not a global search (same rule as
     # ``sky eclipses``).
     if (lat is None) != (lng is None):
