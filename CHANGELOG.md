@@ -1,5 +1,71 @@
 # Changelog
 
+## [6.0.0a91] - 2026-08-29
+
+Five defects that reached the screen of a downstream client as data that
+contradicted itself, each fixed where the semantics live. Nothing in the
+drawing changed except the words of the lunar phase.
+
+### Fixed
+
+- **The lunar phase name is centred on the event.** `calculate_moon_phase`
+  quantised the Sun–Moon separation into 28 bins and then handed the four
+  major phases bins that sat entirely to one side of the exact instant — Full
+  Moon covered [167.14°, 180.00°), so one minute after the true opposition a
+  chart read "Waning Gibbous" while the illumination read 100%. The names now
+  come from windows centred on the syzygy or quadrature with the widths they
+  always had (New and Full Moon ±6.4286°, the quarters ±19.2857°, the four
+  intermediate phases filling the rest). The 365 historical syzygies pinned in
+  `test_moon_phase_historical_verification.py` are all named correctly — 95
+  were not, and the test used to accept the wrong neighbour. The 1–28
+  `moon_phase` index (the "lunation day") is unchanged; `LunarPhaseModel`
+  gains `major_phase` (nearest of the four) and `stage` (`"waxing"` /
+  `"waning"`), the same two fields `MoonPhaseDetailsFactory` already exposed,
+  now computed by one definition for both. 14.29% of the circle changes name;
+  24 SVG baselines and one report fixture changed by exactly their phase line.
+
+- **Nakshatras on a tropical chart are the nakshatras the sky has.**
+  `calculate_nakshatra=True` used to run the 27-fold division on tropical
+  longitudes as they were — ~24° off, about two mansions — and log a warning
+  nobody downstream could see. The factory now rotates the longitudes by an
+  ayanamsa for the division only (`nakshatra_ayanamsa`, default `"LAHIRI"`,
+  any `SiderealMode` incl. `"USER"`), leaving the chart tropical; the subject
+  records `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Sidereal charts
+  are untouched. `nakshatra_ayanamsa=None` restores the uncorrected values,
+  still with the warning. Returns, progressions and Davison composites inherit
+  the setting.
+
+- **`moonrise` / `moonset` are populated.** The four fields on
+  `MoonPhaseMoonSummaryModel` existed, the XML serialiser printed them, and
+  no producer had ever filled them. `MoonPhaseDetailsFactory` now computes
+  them for the subject's civil day (ISO-8601 in the subject's zone plus the
+  Unix instant), `None` on the roughly one day in thirty when the Moon does
+  not rise, or does not set. `compute_rise_set_ephe(body=…)` generalises the
+  Sun-only routine; `compute_sun_rise_set_ephe` stays as an alias and is
+  pinned byte-identical.
+
+- **A planet one degree from the Sun is no longer just "an evening star".**
+  `is_morning_star` / `is_evening_star` were, and remain, pure geometry
+  (which side of the Sun), with no visibility threshold. Every
+  `PlanetaryPhenomenaModel` now also carries `solar_phase` — `"cazimi"`,
+  `"combust"`, `"under_the_beams"`, `"free"` — read from the published
+  `elongation` against `SolarPhaseThresholdsModel` (defaults 16′ / 8°30′ /
+  17°, parametric, echoed on the collection). `classify_solar_phase` is
+  public.
+
+- **The Moon has an apogee, not an aphelion.** `PlanetaryNodeModel` named
+  the Moon's apsides with the heliocentric words; the far one is, to the
+  decimal, the mean (or true) Black Moon Lilith. The model gains
+  `periapsis` / `apoapsis` and `apsis_kind` (`"geocentric"` for the Moon
+  alone); `perihelion` / `aphelion` are kept, populated with the same
+  objects, and deprecated in the docs.
+
+### Notes
+
+- `moon_phase_name` on existing charts can change for separations within
+  6.43° of a syzygy or quadrature boundary — that is the fix. `major_phase`
+  is the field to key display logic on.
+
 ## [6.0.0a90] - 2026-08-26
 
 ### Added
