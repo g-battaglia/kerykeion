@@ -27,6 +27,7 @@ from kerykeion.schemas import (
 from kerykeion.schemas.literals import (
     LunarPhaseEmoji,
     LunarPhaseName,
+    LunarPhaseStage,
     PointType,
     AstrologicalPoint,
     Houses,
@@ -765,6 +766,126 @@ def find_common_active_points(
 # =============================================================================
 
 
+# The name windows are CENTRED on the event they name, and each is exactly as
+# wide as the name it replaces already was under the 28-bin scheme — only its
+# position moved.
+#
+# The 1-28 lunation day is a bin index: bin 1 is [0°, 12.857°), so the old
+# name lookup gave "New Moon" to the twelve and a half degrees that FOLLOW the
+# conjunction and nothing before it, "Full Moon" to bin 14 = [167.143°, 180°)
+# which ENDS at the opposition, and three bins each to the quarters, likewise
+# offset. The measured cost: on the 365 historically-verified syzygies of
+# tests/core/test_moon_phase_historical_verification.py, 95 instants carried
+# the wrong name — a minute after the exact full moon the chart read "Waning
+# Gibbous" beside an illumination of 100%.
+#
+# Half of one bin either side of the syzygies (12.857° in total, bin 1's width)
+# and one and a half bins either side of the quarters (38.571° in total, the
+# width of bins 7-9), so no window grew or shrank: 14.29% of the circle answers
+# with a different name than it did, and the four events sit at the centre of
+# the window that names them.
+_LUNAR_BIN_WIDTH = 360.0 / 28.0
+#: Half-width of the New/Full Moon windows — half a bin, i.e. bin 1's width shared.
+_SYZYGY_HALF_WIDTH = _LUNAR_BIN_WIDTH / 2.0
+#: Half-width of the quarter windows — one and a half bins, i.e. the three bins
+#: the quarters already spanned, shared around 90° and 270°.
+_QUARTER_HALF_WIDTH = 3.0 * _LUNAR_BIN_WIDTH / 2.0
+
+#: Upper bound (exclusive) of each name's window, in the order of
+#: :data:`_LUNAR_PHASE_NAMES`. The last window ends at 360° - half a bin; past it
+#: the separation has wrapped back into the New Moon window that straddles 0°.
+_LUNAR_PHASE_WINDOW_UPPER_BOUNDS: tuple[float, ...] = (
+    _SYZYGY_HALF_WIDTH,  # New Moon      [353.571, 6.429)
+    90.0 - _QUARTER_HALF_WIDTH,  # Waxing Crescent  [6.429, 70.714)
+    90.0 + _QUARTER_HALF_WIDTH,  # First Quarter    [70.714, 109.286)
+    180.0 - _SYZYGY_HALF_WIDTH,  # Waxing Gibbous   [109.286, 173.571)
+    180.0 + _SYZYGY_HALF_WIDTH,  # Full Moon        [173.571, 186.429)
+    270.0 - _QUARTER_HALF_WIDTH,  # Waning Gibbous   [186.429, 250.714)
+    270.0 + _QUARTER_HALF_WIDTH,  # Last Quarter     [250.714, 289.286)
+    360.0 - _SYZYGY_HALF_WIDTH,  # Waning Crescent  [289.286, 353.571)
+)
+
+#: The four major phases and the separation each happens at. Order matters: an
+#: exactly equidistant separation (45°, 135°, 225°, 315°) resolves to the first
+#: of the two it ties between, which is the behaviour the moon-phase overview
+#: has always had.
+_LUNAR_MAJOR_PHASES: tuple[tuple[float, LunarPhaseName], ...] = (
+    (0.0, "New Moon"),
+    (90.0, "First Quarter"),
+    (180.0, "Full Moon"),
+    (270.0, "Last Quarter"),
+)
+
+
+def lunar_phase_name_from_degrees(degrees: float) -> tuple[LunarPhaseName, LunarPhaseEmoji]:
+    """
+    Name and emoji of the lunar phase for a Sun-Moon separation.
+
+    The eight windows are centred on the events they name: a separation within
+    half a bin of 0° or 180° is a New or Full Moon, one within one and a half
+    bins of 90° or 270° is a quarter, and the four intermediate names hold the
+    rest. So a minute either side of an exact syzygy reads the same, which is
+    what an ephemeris, an almanac and the illumination percentage all say.
+
+    This is the source the name comes from. The 1-28 lunation day
+    (:func:`get_moon_phase_name_from_phase_int`) is a coarser, offset partition
+    of the same circle and is kept only for callers that have the integer and
+    not the degrees.
+
+    Args:
+        degrees: Anti-clockwise separation Moon - Sun, in degrees. Any real
+            number: it is reduced modulo 360 first.
+
+    Returns:
+        A ``(name, emoji)`` pair.
+    """
+    angle = degrees % 360.0
+    for index, upper_bound in enumerate(_LUNAR_PHASE_WINDOW_UPPER_BOUNDS):
+        if angle < upper_bound:
+            return _LUNAR_PHASE_NAMES[index], _LUNAR_PHASE_EMOJIS[index]
+
+    # Past the last bound the angle is in [353.571, 360) — the upper half of the
+    # New Moon window, which straddles 0°.
+    return _LUNAR_PHASE_NAMES[0], _LUNAR_PHASE_EMOJIS[0]
+
+
+def lunar_major_phase_from_degrees(degrees: float) -> LunarPhaseName:
+    """
+    The nearest of the four major phases to a Sun-Moon separation.
+
+    Unlike :func:`lunar_phase_name_from_degrees`, which can answer with any of
+    the eight names, this always answers New Moon, First Quarter, Full Moon or
+    Last Quarter — the quarter of the cycle the moment belongs to.
+
+    Args:
+        degrees: Anti-clockwise separation Moon - Sun, in degrees.
+
+    Returns:
+        One of the four major phase names.
+    """
+    angle = degrees % 360.0
+
+    def angular_distance(a: float, b: float) -> float:
+        diff = (a - b) % 360.0
+        return min(diff, 360.0 - diff)
+
+    return min(_LUNAR_MAJOR_PHASES, key=lambda item: angular_distance(angle, item[0]))[1]
+
+
+def lunar_stage_from_degrees(degrees: float) -> LunarPhaseStage:
+    """
+    Whether the Moon is waxing or waning at a given Sun-Moon separation.
+
+    Args:
+        degrees: Anti-clockwise separation Moon - Sun, in degrees.
+
+    Returns:
+        ``"waxing"`` on [0°, 180°) — the light is growing — and ``"waning"``
+        on [180°, 360°).
+    """
+    return "waxing" if 0.0 <= degrees % 360.0 < 180.0 else "waning"
+
+
 def _get_lunar_phase_index(phase: int) -> int:
     """
     Get the index for lunar phase lookup based on phase number.
@@ -805,13 +926,20 @@ def _get_lunar_phase_index(phase: int) -> int:
 
 def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
     """
-    Get the emoji representation of a lunar phase.
+    Get the emoji representation of a lunation day.
+
+    APPROXIMATE, and kept only for callers that hold the 1-28 integer and not
+    the separation in degrees. The bins are offset from the events: bin 1 begins
+    at the conjunction instead of straddling it and bin 14 ends at the
+    opposition, so a full moon can land one bin past 🌕. Anything that has the
+    degrees must call :func:`lunar_phase_name_from_degrees`, which is what
+    :func:`calculate_moon_phase` does.
 
     Args:
-        phase: The lunar phase number (1-28)
+        phase: The lunation day (1-28)
 
     Returns:
-        The corresponding emoji for the lunar phase
+        The emoji for that lunation day, to a resolution of 12.857°
 
     Raises:
         KerykeionException: If phase is outside valid range
@@ -822,13 +950,18 @@ def get_moon_emoji_from_phase_int(phase: int) -> LunarPhaseEmoji:
 
 def get_moon_phase_name_from_phase_int(phase: int) -> LunarPhaseName:
     """
-    Get the name of a lunar phase from its numerical value.
+    Get the name of a lunar phase from its lunation day.
+
+    APPROXIMATE, and kept only for callers that hold the 1-28 integer and not
+    the separation in degrees — see :func:`get_moon_emoji_from_phase_int` for
+    why the two disagree near an event. Anything that has the degrees must call
+    :func:`lunar_phase_name_from_degrees`.
 
     Args:
-        phase: The lunar phase number (1-28)
+        phase: The lunation day (1-28)
 
     Returns:
-        The corresponding name for the lunar phase
+        The name for that lunation day, to a resolution of 12.857°
 
     Raises:
         KerykeionException: If phase is outside valid range
@@ -2100,6 +2233,11 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     """
     Calculate lunar phase information from Sun and Moon positions.
 
+    The lunation day (1-28) is the bin index and keeps its historical meaning.
+    The name, the emoji, the major phase and the stage all come from the
+    separation itself, through the windows centred on the events — the bin index
+    is NOT their source, because its boundaries do not sit where the events do.
+
     Args:
         moon_abs_pos: Absolute position of the Moon in degrees
         sun_abs_pos: Absolute position of the Sun in degrees
@@ -2110,13 +2248,16 @@ def calculate_moon_phase(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseM
     # Calculate the anti-clockwise degrees between the sun and moon
     degrees_between = (moon_abs_pos - sun_abs_pos) % 360
 
-    # Calculate the moon phase (1-28) based on the degrees between the sun and moon
-    step = 360.0 / 28.0
-    moon_phase = int(degrees_between // step) + 1
+    # Calculate the lunation day (1-28) based on the degrees between the sun and moon
+    moon_phase = int(degrees_between // _LUNAR_BIN_WIDTH) + 1
+
+    phase_name, phase_emoji = lunar_phase_name_from_degrees(degrees_between)
 
     return LunarPhaseModel(
         degrees_between_s_m=degrees_between,
         moon_phase=moon_phase,
-        moon_emoji=get_moon_emoji_from_phase_int(moon_phase),
-        moon_phase_name=get_moon_phase_name_from_phase_int(moon_phase),
+        moon_emoji=phase_emoji,
+        moon_phase_name=phase_name,
+        major_phase=lunar_major_phase_from_degrees(degrees_between),
+        stage=lunar_stage_from_degrees(degrees_between),
     )

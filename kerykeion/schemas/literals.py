@@ -242,6 +242,12 @@ LunarPhaseName: TypeAlias = Literal[
 """Literal type for Lunar Phases Name"""
 
 
+LunarPhaseStage: TypeAlias = Literal["waxing", "waning"]
+"""Literal type for the Moon's stage: waxing while the separation grows from the
+conjunction to the opposition, waning while it returns from the opposition to the
+conjunction."""
+
+
 SiderealMode: TypeAlias = Literal[
     "FAGAN_BRADLEY",
     "LAHIRI",
