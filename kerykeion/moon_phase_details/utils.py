@@ -11,7 +11,7 @@ Responsibilities:
     - Time conversions (datetime <-> Julian Day)
     - Sidereal time computation
     - Coordinate transformations (equatorial -> horizontal)
-    - Precise sunrise/sunset calculation via Swiss Ephemeris
+    - Precise rise/set calculation (Sun, Moon) via Swiss Ephemeris
     - Global solar and lunar eclipse search via Swiss Ephemeris
 
 These helpers keep the main factory module focused on building domain models
@@ -346,13 +346,14 @@ def compute_sun_transit_ephe(
         return None
 
 
-def compute_sun_rise_set_ephe(
+def compute_rise_set_ephe(
     jd_midnight: float,
     latitude: float,
     longitude: float,
+    body: Optional[int] = None,
 ) -> tuple[Optional[float], Optional[float]]:
     """
-    Compute precise sunrise and sunset times via the backend's `rise_trans`.
+    Compute precise rise and set times via the backend's `rise_trans`.
 
     This helper delegates the heavy lifting to the backend's dedicated
     rise/transit routines, avoiding any custom numerical search logic.
@@ -364,20 +365,35 @@ def compute_sun_rise_set_ephe(
     against the true horizon: within a few minutes of the event the two
     legitimately disagree, by 3.3 min at the equator and 10 min at 70 degrees.
 
+    The same convention is what makes the Moon's answer the one an almanac
+    prints: the backend adds the topocentric horizontal parallax for it, so the
+    moonrise is the moment the upper limb clears the horizon for an observer on
+    the ground, not for one at the Earth's centre.
+
     Args:
         jd_midnight: Julian Day at the start of the *local* civil day,
             expressed in UT (i.e. the Julian day of local midnight converted
             to UTC). The backend will search for events around this time.
         latitude: Observer latitude in degrees.
         longitude: Observer longitude in degrees.
+        body: Backend body id to rise and set. Defaults to ``ephe.SUN``
+            (resolved at call time, not at import, so a patched backend is
+            honoured). ``ephe.MOON`` gives moonrise/moonset.
 
     Returns:
-        tuple[Optional[float], Optional[float]]: (sunrise_jd, sunset_jd)
-            Returns None for each event that doesn't occur on this day (polar day/night).
+        tuple[Optional[float], Optional[float]]: (rise_jd, set_jd)
+            Returns None for each event the backend does not find after
+            ``jd_midnight`` at all (polar day/night). Note that a returned
+            instant is only guaranteed to be the NEXT event: for the Moon,
+            which is ~50 minutes later each day, it routinely falls on the
+            following civil day, and the caller decides whether that still
+            counts as this day's moonrise.
     """
     try:
         # Ensure the ephemeris backend is configured (idempotent).
         iflag = configure_ephemeris_path()
+
+        target_body = ephe.SUN if body is None else body
 
         # Observer position: longitude, latitude, altitude (meters)
         geopos = (float(longitude), float(latitude), 0.0)
@@ -390,10 +406,10 @@ def compute_sun_rise_set_ephe(
         CALC_RISE = getattr(ephe, "CALC_RISE", getattr(ephe, "SE_CALC_RISE", 1))
         CALC_SET = getattr(ephe, "CALC_SET", getattr(ephe, "SE_CALC_SET", 2))
 
-        # Sunrise (next rise after jd_midnight)
-        sunrise_result = ephe.rise_trans(
+        # Rise (next rise after jd_midnight)
+        rise_result = ephe.rise_trans(
             jd_midnight,
-            ephe.SUN,
+            target_body,
             CALC_RISE,
             geopos,
             atpress=atpress,
@@ -401,10 +417,10 @@ def compute_sun_rise_set_ephe(
             flags=iflag,
         )
 
-        # Sunset (next set after jd_midnight)
-        sunset_result = ephe.rise_trans(
+        # Set (next set after jd_midnight)
+        set_result = ephe.rise_trans(
             jd_midnight,
-            ephe.SUN,
+            target_body,
             CALC_SET,
             geopos,
             atpress=atpress,
@@ -412,19 +428,45 @@ def compute_sun_rise_set_ephe(
             flags=iflag,
         )
 
-        sunrise_jd = _extract_event_time(sunrise_result)
-        sunset_jd = _extract_event_time(sunset_result)
+        rise_jd = _extract_event_time(rise_result)
+        set_jd = _extract_event_time(set_result)
 
-        return sunrise_jd, sunset_jd
+        return rise_jd, set_jd
 
     except _BACKEND_ERRORS as exc:
         # Expected error: circumpolar conditions, ephemeris unavailable, etc.
-        logger.debug("Sun rise/set calculation failed (expected for polar regions): %s", exc)
+        logger.debug("Rise/set calculation failed (expected for polar regions): %s", exc)
         return None, None
     except (AttributeError, TypeError, IndexError, ValueError) as exc:  # pragma: no cover
         # Unexpected error: potential bug in code
-        logger.error("Unexpected error in Sun rise/set calculation: %s", exc, exc_info=True)
+        logger.error("Unexpected error in rise/set calculation: %s", exc, exc_info=True)
         return None, None
+
+
+def compute_sun_rise_set_ephe(
+    jd_midnight: float,
+    latitude: float,
+    longitude: float,
+) -> tuple[Optional[float], Optional[float]]:
+    """
+    Compute precise sunrise and sunset times via the backend's `rise_trans`.
+
+    Backwards-compatible alias kept for the Sun, which is the case with callers
+    (and patch targets) already in the wild. It forwards to
+    :func:`compute_rise_set_ephe` with no body argument, so the Sun's answer is
+    the same call it always was, byte for byte — pressure, temperature, flags
+    and refracted upper limb included.
+
+    Args:
+        jd_midnight: Julian Day at the start of the *local* civil day, in UT.
+        latitude: Observer latitude in degrees.
+        longitude: Observer longitude in degrees.
+
+    Returns:
+        tuple[Optional[float], Optional[float]]: (sunrise_jd, sunset_jd)
+            Returns None for each event that doesn't occur on this day (polar day/night).
+    """
+    return compute_rise_set_ephe(jd_midnight, latitude, longitude)
 
 
 def compute_lunar_phase_jd(
@@ -659,6 +701,7 @@ __all__ = [
     "configure_ephemeris_path",
     "compute_next_solar_eclipse_jd",
     "compute_next_lunar_eclipse_jd",
+    "compute_rise_set_ephe",
     "compute_sun_rise_set_ephe",
     "compute_sun_transit_ephe",
     "compute_lunar_phase_jd",

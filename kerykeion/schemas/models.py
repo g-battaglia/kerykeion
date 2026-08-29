@@ -357,10 +357,30 @@ class MoonPhaseMoonSummaryModel(SubscriptableBaseModel):
     lunar_cycle: Optional[str] = None
     emoji: Optional[LunarPhaseEmoji] = None
     zodiac: Optional[MoonPhaseZodiacModel] = None
-    moonrise: Optional[str] = None
-    moonrise_timestamp: Optional[int] = None
-    moonset: Optional[str] = None
-    moonset_timestamp: Optional[int] = None
+    moonrise: Optional[str] = Field(
+        default=None,
+        description=(
+            "Moonrise for the subject's civil day: an ISO-8601 timestamp in the subject's LOCAL "
+            "timezone, matching MoonPhaseSunInfoModel.sunrise's zone. None on the days that have "
+            "no moonrise at all — the Moon rises ~50 minutes later each day, so about one day in "
+            "thirty has none (and another has no moonset)."
+        ),
+    )
+    moonrise_timestamp: Optional[int] = Field(
+        default=None,
+        description="Unix timestamp (seconds UTC) of the same instant as `moonrise`. None when it is.",
+    )
+    moonset: Optional[str] = Field(
+        default=None,
+        description=(
+            "Moonset for the subject's civil day, in the same ISO-8601 local form as `moonrise`. "
+            "None on a day with no moonset."
+        ),
+    )
+    moonset_timestamp: Optional[int] = Field(
+        default=None,
+        description="Unix timestamp (seconds UTC) of the same instant as `moonset`. None when it is.",
+    )
     next_lunar_eclipse: Optional[MoonPhaseEclipseModel] = None
     detailed: Optional[MoonPhaseMoonDetailedModel] = None
     events: Optional[MoonPhaseEventsModel] = None

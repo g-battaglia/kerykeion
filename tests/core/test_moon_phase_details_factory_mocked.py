@@ -6,15 +6,16 @@ verified without ephemeris data files or real ephe calls. This isolates the
 factory's orchestration, model assembly, and edge-case handling.
 
 Mocking strategy:
-    All SIX ephemeris helpers imported by factory.py are patched via
-    ``kerykeion.moon_phase_details.factory.<function>``. The transit is patched by
-    a MODULE-level autouse fixture rather than per class: it was added later, and
-    patching it only in the two blocks that obviously needed it left thirteen
-    tests in this file making real backend calls — including the one asserting
-    that solar noon survives a rise/set failure, whose green then depended on a
-    real ephemeris succeeding. A per-class fixture cannot prevent that recurring;
-    a module-level one can. The two NON-mocked classes at the bottom
-    (`TestMoonPhaseDetailsIntegration`, `TestFactoryFromSubjectRangeEdge`)
+    All SEVEN ephemeris helpers imported by factory.py are patched via
+    ``kerykeion.moon_phase_details.factory.<function>``. The transit and the
+    generalized rise/set call (the Moon's) are patched by a MODULE-level autouse
+    fixture rather than per class: both were added after this file was written,
+    and patching such a helper only in the two blocks that obviously needed it
+    left thirteen tests in this file making real backend calls — including the
+    one asserting that solar noon survives a rise/set failure, whose green then
+    depended on a real ephemeris succeeding. A per-class fixture cannot prevent
+    that recurring; a module-level one can. The two NON-mocked classes at the
+    bottom (`TestMoonPhaseDetailsIntegration`, `TestFactoryFromSubjectRangeEdge`)
     override it back to the real call: an earlier revision blindfolded them too,
     silently zeroing the file's only real-ephemeris transit coverage while the
     commit message claimed the opposite.
@@ -23,7 +24,8 @@ Mocking strategy:
         - compute_lunar_phase_jd
         - compute_next_solar_eclipse_jd
         - compute_next_lunar_eclipse_jd
-        - compute_sun_rise_set_ephe
+        - compute_sun_rise_set_ephe   (the Sun's rise/set, via its alias)
+        - compute_rise_set_ephe       (the Moon's, called with body=ephe.MOON)
         - compute_sun_transit_ephe
         - compute_sun_position
 """
@@ -90,6 +92,14 @@ _SUNRISE_JD = 2449270.80208
 # assertion is one of the few things here that still says something.
 _SOLAR_NOON_JD = 2449270.9913192377
 _SUNSET_JD = 2449271.26250
+
+# Moonrise/moonset for the same subject and the same civil day (London,
+# 1993-10-10, which starts at 1993-10-09T23:00Z under BST). Real values, and —
+# unlike the Sun's — they have to be: the factory keeps only events that fall
+# inside the civil day, so a fabricated pair outside it would be filtered to
+# None and every assertion below would read as a missing event.
+_MOONRISE_JD = 2449270.48193  # 1993-10-09 23:33:59 UTC = 00:33 BST
+_MOONSET_JD = 2449271.10791  # 1993-10-10 14:35:23 UTC = 15:35 BST
 
 
 # ---------------------------------------------------------------------------
@@ -180,18 +190,24 @@ def _side_effect_lunar_phase_jd(jd_start: float, target_angle: float, forward: b
 
 
 @pytest.fixture(autouse=True)
-def _no_real_transit_calls():
-    """Patch the transit for EVERY test in this module.
+def _no_real_backend_calls():
+    """Patch the late-arriving helpers for EVERY test in this module.
 
     Module-scoped autouse, deliberately. `compute_sun_transit_ephe` arrived after
     this file was written, and patching it inside the two fixtures that obviously
     needed it left thirteen tests calling the real backend — the exact thing the
-    module docstring promises does not happen. Tests that want their own value
-    still override it with a nested `patch`; this only guarantees the floor.
-    The two real-ephemeris classes shadow this fixture with a no-op, or their
-    transit-path coverage would be silently zero.
+    module docstring promises does not happen. `compute_rise_set_ephe` (the
+    moonrise/moonset path) arrived later still and would have repeated the
+    lesson exactly, so it joins the same floor rather than the per-class
+    fixtures. Tests that want their own values still override with a nested
+    `patch`; this only guarantees the floor. The two real-ephemeris classes
+    shadow this fixture with a no-op, or their coverage of these paths would be
+    silently zero.
     """
-    with patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD):
+    with (
+        patch(f"{_FACTORY}.compute_sun_transit_ephe", return_value=_SOLAR_NOON_JD),
+        patch(f"{_FACTORY}.compute_rise_set_ephe", return_value=(_MOONRISE_JD, _MOONSET_JD)),
+    ):
         yield
 
 class TestSafeParseIsoDatetime:
@@ -329,6 +345,51 @@ class TestFactoryFromSubjectMocked:
         subject = _make_mock_subject()
         overview = MoonPhaseDetailsFactory.from_subject(subject)
         assert isinstance(overview, MoonPhaseOverviewModel)
+
+    def test_moonrise_and_moonset_are_populated(self) -> None:
+        """The four fields existed on the model from the start and were never
+        written: the summary simply did not pass them."""
+        subject = _make_mock_subject()
+        moon = MoonPhaseDetailsFactory.from_subject(subject).moon
+
+        assert moon.moonrise is not None
+        assert moon.moonset is not None
+        assert moon.moonrise_timestamp is not None
+        assert moon.moonset_timestamp is not None
+
+    def test_moonrise_carries_the_subject_local_zone(self) -> None:
+        """Same zone as `sun.sunrise` — the moon-phase context is presented for
+        the subject's civil day, so both endpoints read in its clock."""
+        subject = _make_mock_subject()
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        moonrise = datetime.fromisoformat(overview.moon.moonrise)
+        assert moonrise.utcoffset() is not None
+        assert moonrise.utcoffset() == overview.sun.sunrise.utcoffset()
+        # 1993-10-09 23:33:59 UTC read in BST: the civil day is 1993-10-10.
+        assert moonrise.date().isoformat() == "1993-10-10"
+        assert moonrise.strftime("%H:%M") == "00:33"
+
+    def test_moon_timestamps_are_the_utc_instants(self) -> None:
+        subject = _make_mock_subject()
+        moon = MoonPhaseDetailsFactory.from_subject(subject).moon
+
+        for iso, timestamp in ((moon.moonrise, moon.moonrise_timestamp), (moon.moonset, moon.moonset_timestamp)):
+            assert timestamp == int(datetime.fromisoformat(iso).timestamp())
+
+    def test_moon_times_are_asked_of_the_moon(self) -> None:
+        """The generalized helper is called with the Moon's body id — not left
+        at its Sun default, which would silently republish the sunrise."""
+        from kerykeion.ephemeris_backend.backend import ephe as _ephe
+
+        subject = _make_mock_subject()
+        with patch(
+            f"{_FACTORY}.compute_rise_set_ephe", return_value=(_MOONRISE_JD, _MOONSET_JD)
+        ) as mocked:
+            MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert mocked.call_args is not None
+        assert mocked.call_args.kwargs["body"] == _ephe.MOON
 
     def test_timestamp_and_datestamp(self) -> None:
         subject = _make_mock_subject()
@@ -474,6 +535,48 @@ class TestFactoryEdgeCasesNullReturns:
         assert overview.moon.phase_name is None
         assert overview.moon.stage is None
         assert overview.moon.detailed is None
+
+    def test_moonrise_moonset_fail(self) -> None:
+        """A day with no moonrise or moonset (or a backend that cannot answer)
+        leaves the four fields None — never an exception, and never a stale
+        value borrowed from another day."""
+        subject = _make_mock_subject()
+
+        with (
+            patch(f"{_FACTORY}.compute_lunar_phase_jd", side_effect=_side_effect_lunar_phase_jd),
+            patch(f"{_FACTORY}.compute_next_solar_eclipse_jd", return_value=None),
+            patch(f"{_FACTORY}.compute_next_lunar_eclipse_jd", return_value=None),
+            patch(f"{_FACTORY}.compute_sun_rise_set_ephe", return_value=(_SUNRISE_JD, _SUNSET_JD)),
+            patch(f"{_FACTORY}.compute_rise_set_ephe", return_value=(None, None)),
+            patch(f"{_FACTORY}.compute_sun_position", return_value=(None, None, None)),
+        ):
+            overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert overview.moon.moonrise is None
+        assert overview.moon.moonrise_timestamp is None
+        assert overview.moon.moonset is None
+        assert overview.moon.moonset_timestamp is None
+        # The rest of the summary is unharmed: a missing horizon crossing says
+        # nothing about the phase.
+        assert overview.moon.phase is not None
+
+    def test_moon_event_outside_the_civil_day_is_not_reported(self) -> None:
+        """`rise_trans` always answers with the NEXT event, so on a day with no
+        moonrise it hands back tomorrow's. Reporting that as today's moonrise —
+        a day late, and paired with today's moonset — is the failure the window
+        exists to prevent."""
+        subject = _make_mock_subject()
+
+        with patch(
+            f"{_FACTORY}.compute_rise_set_ephe",
+            # +1 day: still the next event, but it belongs to 1993-10-11.
+            return_value=(_MOONRISE_JD + 1.0, _MOONSET_JD),
+        ):
+            overview = MoonPhaseDetailsFactory.from_subject(subject)
+
+        assert overview.moon.moonrise is None
+        assert overview.moon.moonrise_timestamp is None
+        assert overview.moon.moonset is not None
 
     def test_eclipse_calculation_fails(self) -> None:
         """Factory handles None eclipse results gracefully."""
@@ -703,11 +806,12 @@ class TestMoonPhaseDetailsIntegration:
     """Integration test exercising real ephemeris backend calls."""
 
     @pytest.fixture(autouse=True)
-    def _no_real_transit_calls(self):
+    def _no_real_backend_calls(self):
         """Shadow the module blindfold: this class IS the real-ephemeris path.
 
         With the module fixture active its transit coverage was silently zero —
-        five real helpers plus one fake, while the commit message said six.
+        five real helpers plus one fake, while the commit message said six. The
+        moonrise/moonset call is shadowed for the same reason.
         """
         yield
 
@@ -752,6 +856,140 @@ class TestMoonPhaseDetailsIntegration:
         assert overview.sun.solar_noon is not None
         assert overview.sun.day_length is not None
         assert overview.sun.position is not None
+        # 1940-10-09 at Liverpool has both crossings; through the real path they
+        # are filled and read in the subject's own zone (BST that day).
+        assert overview.moon.moonrise is not None
+        assert overview.moon.moonset is not None
+        assert overview.moon.moonrise_timestamp is not None
+        assert overview.moon.moonset_timestamp is not None
+        assert datetime.fromisoformat(overview.moon.moonrise).date().isoformat() == "1940-10-09"
+
+
+class TestRiseSetRealValues:
+    """Real ephemeris, no mocks: the generalized rise/set call.
+
+    Two things are pinned here. First, that generalizing the helper left the
+    SUN alone — same pressure, same temperature, same flags, same refracted
+    upper limb, to the last bit. Second, the Moon's own answer against
+    independently checked times, and against the days it simply has no answer
+    for.
+    """
+
+    # Royal Observatory, Greenwich. The reference times below were measured at
+    # this latitude; 51.5 is ~2 arcseconds of time away, which the 1 s window
+    # would not forgive.
+    _LAT = 51.4779
+    _LNG = 0.0
+
+    @pytest.fixture(autouse=True)
+    def _no_real_backend_calls(self):
+        """Shadow the module blindfold: this class IS the real backend."""
+        yield
+
+    @staticmethod
+    def _jd_midnight_utc(year: int, month: int, day: int) -> float:
+        from kerykeion.utilities.core import datetime_to_julian
+
+        return datetime_to_julian(datetime(year, month, day, tzinfo=timezone.utc))
+
+    def test_the_sun_path_is_unchanged(self) -> None:
+        """`compute_sun_rise_set_ephe` is now an alias. Exact equality, not
+        approximate: a changed flag or a dropped refraction constant would move
+        the answer by seconds, and seconds are what this file measures in."""
+        from kerykeion.ephemeris_backend.backend import ephe as _ephe, ephemeris_session
+        from kerykeion.moon_phase_details.utils import (
+            compute_rise_set_ephe,
+            compute_sun_rise_set_ephe,
+        )
+
+        jd = self._jd_midnight_utc(2026, 8, 28)
+        with ephemeris_session():
+            alias = compute_sun_rise_set_ephe(jd, self._LAT, self._LNG)
+            explicit = compute_rise_set_ephe(jd, self._LAT, self._LNG, body=_ephe.SUN)
+            defaulted = compute_rise_set_ephe(jd, self._LAT, self._LNG)
+
+        assert alias[0] is not None and alias[1] is not None
+        assert alias == explicit == defaulted
+
+    def test_the_moon_is_not_the_sun(self) -> None:
+        """Guards the default: a `body` left at SUN would have republished the
+        sunrise under the moonrise's name, and every 'is not None' assertion in
+        this file would still have passed."""
+        from kerykeion.ephemeris_backend.backend import ephe as _ephe, ephemeris_session
+        from kerykeion.moon_phase_details.utils import compute_rise_set_ephe
+
+        jd = self._jd_midnight_utc(2026, 8, 28)
+        with ephemeris_session():
+            sun = compute_rise_set_ephe(jd, self._LAT, self._LNG, body=_ephe.SUN)
+            moon = compute_rise_set_ephe(jd, self._LAT, self._LNG, body=_ephe.MOON)
+
+        assert abs(sun[0] - moon[0]) > 1.0 / 24.0
+        assert abs(sun[1] - moon[1]) > 1.0 / 24.0
+
+    def test_greenwich_2026_08_28_moon_times(self) -> None:
+        """Independently checked: moonrise 18:56:01 UTC, moonset 05:15:21 UTC.
+        One second of tolerance — enough for the last bits of the Julian Day,
+        not enough for a wrong horizon convention."""
+        from kerykeion.moon_phase_details.factory import _compute_moon_times
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich Moon", 2026, 8, 28, 12, 0,
+            lng=self._LNG, lat=self._LAT, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        moonrise, moonset = _compute_moon_times(subject)
+
+        assert moonrise is not None and moonset is not None
+        assert abs((moonrise - datetime(2026, 8, 28, 18, 56, 1, tzinfo=timezone.utc)).total_seconds()) <= 1.0
+        assert abs((moonset - datetime(2026, 8, 28, 5, 15, 21, tzinfo=timezone.utc)).total_seconds()) <= 1.0
+
+    @pytest.mark.parametrize(
+        "year, month, day, expect_rise, expect_set",
+        [
+            # The Moon rises ~50 min later each day, so it skips one civil day
+            # in roughly thirty: on 2026-01-09 at Greenwich it never rises, and
+            # on 2026-01-25 it never sets. Both must read None rather than
+            # borrowing tomorrow's event, which is what `rise_trans` hands back.
+            (2026, 1, 9, False, True),
+            (2026, 1, 25, True, False),
+            (2026, 8, 28, True, True),
+        ],
+        ids=["no-moonrise", "no-moonset", "both"],
+    )
+    def test_days_without_a_moonrise_or_a_moonset(
+        self, year: int, month: int, day: int, expect_rise: bool, expect_set: bool
+    ) -> None:
+        from kerykeion.moon_phase_details.factory import _compute_moon_times
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich", year, month, day, 12, 0,
+            lng=self._LNG, lat=self._LAT, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        moonrise, moonset = _compute_moon_times(subject)
+
+        assert (moonrise is not None) is expect_rise
+        assert (moonset is not None) is expect_set
+        for event in (moonrise, moonset):
+            if event is not None:
+                assert event.date() == datetime(year, month, day).date()
+
+    def test_the_overview_carries_the_real_times(self) -> None:
+        """The four model fields, filled by the real factory path."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich Overview", 2026, 8, 28, 12, 0,
+            lng=self._LNG, lat=self._LAT, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        moon = MoonPhaseDetailsFactory.from_subject(subject).moon
+
+        assert moon.moonrise is not None and moon.moonrise.startswith("2026-08-28T18:56:0")
+        assert moon.moonset is not None and moon.moonset.startswith("2026-08-28T05:15:2")
+        assert moon.moonrise_timestamp == int(datetime.fromisoformat(moon.moonrise).timestamp())
+        assert moon.moonset_timestamp == int(datetime.fromisoformat(moon.moonset).timestamp())
 
 
 class TestFactoryFromSubjectRangeEdge:
@@ -771,11 +1009,11 @@ class TestFactoryFromSubjectRangeEdge:
     silently substitute a lower-precision source")."""
 
     @pytest.fixture(autouse=True)
-    def _no_real_transit_calls(self):
+    def _no_real_backend_calls(self):
         """Shadow the module blindfold — same reason as the class above: the
         whole point of this class is that the REAL backend degrades cleanly,
-        transit included (it computes fine at 2649-12-20; the edge the class
-        exercises is the forward phase scan, not the transit)."""
+        transit and moonrise/moonset included (they compute fine at 2649-12-20;
+        the edge the class exercises is the forward phase scan)."""
         yield
 
     def test_range_end_subject_returns_model(self) -> None:
