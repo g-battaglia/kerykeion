@@ -17,8 +17,8 @@
   before the range or a retrograde that outlives it is reported honestly
   instead of being invisible — the state at the range start is read in the
   same ephemeris session (same zodiac frame) as the scan that follows it,
-  with a one-second probe past either bound so a boundary sitting exactly on
-  a range edge is recognised (a stay entered on the start, or left on the
+  with a probe a solver's resolution (50 ms) past either bound so a boundary
+  sitting exactly on a range edge is recognised (a stay entered on the start, or left on the
   end, is not clipped there; a station on the start decides the motion
   state, one on the end closes the span).
   See `release_notes/v6.0.0a92.md`.

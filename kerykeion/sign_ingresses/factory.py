@@ -297,23 +297,26 @@ class SignPeriodsCollectionModel(SubscriptableBaseModel):
     periods: List[SignPeriodModel]
 
 
-# An ingress within one second of a range bound IS that bound: the stay it
-# opens or closes meets the bound unclipped, and no hair-thin stay is emitted
-# on the far side of it. One second is far coarser than the bisection (which
-# resolves a crossing to milliseconds) and far finer than any real stay.
-_EDGE_TOL_DAYS = 1.0 / 86400.0
+# An ingress within the solver's own resolution of a range bound IS that bound:
+# the stay it opens or closes meets the bound unclipped, and no hair-thin stay
+# is emitted on the far side of it. A twentieth of a second is ten times the
+# widest bisection error (a 7-day bracket halved 27 times: ~2 ms) and still
+# twenty times finer than the second the ISO output resolves — so it absorbs
+# the solver's error and nothing else: a crossing half a second inside the
+# range is a real boundary and stays one.
+_EDGE_TOL_DAYS = 0.05 / 86400.0
 
 
 def _scan_edges(
     name: str, body: int, start_jd: float, end_jd: float, iflag: int, tropical: bool, found: List[IngressModel]
 ) -> List[IngressModel]:
-    """Crossings within the second just outside either bound — typically a
-    root this very factory produced, which bisection may leave a hair to either
-    side of the true instant — so the fold can treat them as sitting on the
-    bound. Scanned apart from the range so the in-range brackets, hence the
-    in-range instants, stay exactly those of :meth:`from_julian_day`. At the
-    very edge of the ephemeris that second does not exist and the bound
-    stands. A crossing the range scan already holds is not reported twice."""
+    """Crossings within ``_EDGE_TOL_DAYS`` just outside either bound — a root
+    this very factory produced, which bisection may leave a hair to either side
+    of the true instant — so the fold can treat them as sitting on the bound.
+    Scanned apart from the range so the in-range brackets, hence the in-range
+    instants, stay exactly those of :meth:`from_julian_day`. At the very edge
+    of the ephemeris that sliver does not exist and the bound stands. A
+    crossing the range scan already holds is not reported twice."""
     edges: List[IngressModel] = []
     before, after = start_jd - _EDGE_TOL_DAYS, end_jd + _EDGE_TOL_DAYS
     for a, b, probe in ((before, start_jd, before), (end_jd, after, after)):
@@ -337,9 +340,11 @@ def _fold_sign_periods(
     """Turn the sign at the range start plus the scanned ingresses into
     contiguous stays: open at ``start_jd``, hand over at each ingress, close
     the last at ``end_jd``. A stay that reaches a bound is clipped — unless an
-    ingress sits on that bound (within ``_EDGE_TOL_DAYS``, the scan's edge
-    probe): then the bound is the ingress, the stay opens or closes there
-    unclipped, and whatever lies beyond belongs to the neighbouring range."""
+    ingress sits on that bound (within ``_EDGE_TOL_DAYS``, the solver's own
+    resolution): then the bound is the ingress, the stay opens or closes there
+    unclipped, and whatever lies beyond belongs to the neighbouring range. An
+    ingress farther inside the range than that is a real boundary, however
+    close to the bound."""
 
     def period(sign_num: int, a: float, b: float, a_clipped: bool, b_clipped: bool) -> SignPeriodModel:
         return SignPeriodModel(
@@ -499,11 +504,14 @@ class SignIngressFactory:
         are contiguous and ordered; an empty or inverted range yields none.
 
         The in-range instants are exactly those :meth:`from_julian_day` reports
-        for the same range. The scan also looks one second beyond either bound:
-        a range that starts or ends on an ingress — say, on an instant this
-        factory reported — opens or closes the stay there unclipped instead of
-        emitting a hair-thin stay on the wrong side of the crossing. Beyond
-        that second nothing is searched outside the range.
+        for the same range. The scan also looks a solver's resolution (a
+        twentieth of a second) beyond either bound: a range that starts or ends
+        on an ingress — on an instant this factory reported, which bisection
+        leaves a few milliseconds off the true crossing — opens or closes the
+        stay there unclipped instead of emitting a hair-thin stay on the wrong
+        side of the crossing. An ingress any farther from a bound, inside or
+        outside the range, is what it is: a boundary or not in range. Beyond
+        that sliver nothing is searched outside the range.
 
         Raises:
             KerykeionException / ValueError: as :meth:`from_julian_day`.

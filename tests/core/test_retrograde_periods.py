@@ -30,7 +30,7 @@ class TestMarch2025:
         stations = RetrogradeStationFactory.from_iso_range("2025-01-01", "2025-12-31").stations
         # The in-range brackets are the station scan's own, so the instants
         # agree exactly; only a station snapped onto a range bound (edge rule)
-        # moves, by under a second.
+        # moves, by the solver's own few milliseconds.
         sr = [(s.planet, s.julian_day) for s in stations if s.station_type == "SR"]
         sd = [(s.planet, s.julian_day) for s in stations if s.station_type == "SD"]
 
@@ -81,6 +81,26 @@ class TestEdges:
             )
             assert [(p.start_clipped, p.end_clipped) for p in res.periods] == [(True, False)], sd.julian_day
             assert res.periods[0].end_jd == sd.julian_day
+
+    def test_a_bound_half_a_second_off_the_station_keeps_the_real_station(self):
+        # Half a second is far beyond the solver's resolution: the station is
+        # then a real station inside the range, or simply outside it — never a
+        # bound. Mercury, June-July 2020 (SR 18 June, SD 12 July).
+        stations = RetrogradeStationFactory.from_iso_range("2020-06-01", "2020-07-31", ["Mercury"]).stations
+        sr = next(s for s in stations if s.station_type == "SR")
+        sd = next(s for s in stations if s.station_type == "SD")
+        half = 0.5 / 86400.0
+        periods = lambda a, b: RetrogradeStationFactory.retrograde_periods_from_julian_day(a, b, ["Mercury"]).periods
+        starting_before = periods(sr.julian_day - half, sr.julian_day + 10)
+        assert [(p.start_clipped, p.end_clipped) for p in starting_before] == [(False, True)]
+        assert 0 < starting_before[0].start_jd - (sr.julian_day - half) < 2 * half
+        starting_after = periods(sr.julian_day + half, sr.julian_day + 10)
+        assert [(p.start_clipped, p.end_clipped) for p in starting_after] == [(True, True)]
+        ending_before = periods(sd.julian_day - 10, sd.julian_day - half)
+        assert [(p.start_clipped, p.end_clipped) for p in ending_before] == [(True, True)]
+        ending_after = periods(sd.julian_day - 10, sd.julian_day + half)
+        assert [(p.start_clipped, p.end_clipped) for p in ending_after] == [(True, False)]
+        assert 0 < (sd.julian_day + half) - ending_after[0].end_jd < 2 * half
 
     def test_a_sub_second_range_inside_retrograde_motion_is_one_span(self):
         # Mercury is retrograde from 15 March to 7 April 2025: half a second of

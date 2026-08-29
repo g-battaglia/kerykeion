@@ -122,6 +122,29 @@ class TestRangeBoundsOnAnIngress:
         assert [(p.sign, p.start_clipped, p.end_clipped) for p in res.periods] == [("Pis", True, False)]
         assert res.periods[0].end_jd == aries.julian_day
 
+    def test_a_bound_half_a_second_off_the_ingress_keeps_the_real_boundary(self):
+        # Half a second is far beyond the solver's resolution: the crossing is
+        # then a real boundary inside the range, or simply outside it — never a
+        # bound. Only the bisection's own millisecond error is absorbed.
+        aries = self._aries_ingress(2026)
+        half = 0.5 / 86400.0
+        starting_before = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day - half, aries.julian_day + 10, ["Sun"])
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in starting_before.periods] == [
+            ("Pis", True, False),
+            ("Ari", False, True),
+        ]
+        assert 0 < starting_before.periods[0].end_jd - starting_before.periods[0].start_jd < 2 * half
+        starting_after = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day + half, aries.julian_day + 10, ["Sun"])
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in starting_after.periods] == [("Ari", True, True)]
+        ending_before = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day - 10, aries.julian_day - half, ["Sun"])
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in ending_before.periods] == [("Pis", True, True)]
+        ending_after = SignIngressFactory.sign_periods_from_julian_day(aries.julian_day - 10, aries.julian_day + half, ["Sun"])
+        assert [(p.sign, p.start_clipped, p.end_clipped) for p in ending_after.periods] == [
+            ("Pis", True, False),
+            ("Ari", False, True),
+        ]
+        assert 0 < ending_after.periods[1].end_jd - ending_after.periods[1].start_jd < 2 * half
+
     def test_stays_are_clipped_when_the_range_cuts_mid_sign(self):
         res = SignIngressFactory.sign_periods_from_iso_range("2026-03-01", "2026-03-10", ["Sun"])
         assert [(p.sign, p.start_clipped, p.end_clipped) for p in res.periods] == [("Pis", True, True)]
