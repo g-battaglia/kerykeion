@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Tests for the Planetary Nodes & Apsides factory."""
 
+import math
+
 import pytest
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
-from kerykeion import AstrologicalSubjectFactory, PlanetaryNodesFactory
+from kerykeion import AstrologicalSubjectFactory, PlanetaryNodeModel, PlanetaryNodesFactory
 from kerykeion.schemas import KerykeionException
 
 # The full default set: every supported planet, Moon through Pluto. The Sun
@@ -229,3 +231,132 @@ class TestMethodValidation:
     def test_non_finite_julian_day_rejected_for_empty_selection(self, julian_day):
         with pytest.raises(ValueError, match="finite"):
             PlanetaryNodesFactory.from_julian_day(julian_day, planets=[])
+
+
+@pytest.fixture(scope="module")
+def subject_with_liliths():
+    """Same instant as ``subject``, with the two Liliths and the mean node active.
+
+    They are off by default in v6, and the lunar-apsis identities below are
+    exactly the comparison between them and this factory's output.
+    """
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Nodes Lilith", 2000, 1, 1, 12, 0,
+        lng=0.0, lat=51.5, tz_str="Etc/GMT",
+        city="Greenwich", nation="GB", online=False,
+        active_points=[
+            "Sun", "Moon", "Mean_Lilith", "True_Lilith", "Mean_North_Lunar_Node",
+        ],
+    )
+
+
+class TestLunarApsidesAreGeocentric:
+    """The Moon does not go round the Sun, so it has no perihelion.
+
+    ``nod_aps_ut`` returns the apsides of whatever orbit the body is on, and for
+    the Moon that orbit is about the Earth: what came back under the name
+    "aphelion" is the APOGEE — and the apogee of the Moon is, to the last
+    decimal the ephemeris prints, the Black Moon Lilith the chart already has.
+    The heliocentric names were never wrong about the numbers, only about what
+    the numbers are. ``periapsis``/``apoapsis``/``apsis_kind`` fix the naming
+    without touching a single value.
+    """
+
+    def test_the_moon_apogee_is_the_mean_lilith(self, subject_with_liliths):
+        """mean elements -> mean_lilith. Not approximately: the same number."""
+        moon = next(
+            n
+            for n in PlanetaryNodesFactory.from_subject(subject_with_liliths, method="mean").nodes
+            if n.planet_name == "Moon"
+        )
+        assert math.isclose(
+            moon.apoapsis.abs_pos,
+            subject_with_liliths.mean_lilith.abs_pos,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        ), f"apoapsis={moon.apoapsis.abs_pos} mean_lilith={subject_with_liliths.mean_lilith.abs_pos}"
+
+    def test_the_moon_apogee_is_the_true_lilith_when_osculating(self, subject_with_liliths):
+        """osculating elements -> true_lilith, by the same identity."""
+        moon = next(
+            n
+            for n in PlanetaryNodesFactory.from_subject(
+                subject_with_liliths, method="osculating"
+            ).nodes
+            if n.planet_name == "Moon"
+        )
+        assert math.isclose(
+            moon.apoapsis.abs_pos,
+            subject_with_liliths.true_lilith.abs_pos,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        ), f"apoapsis={moon.apoapsis.abs_pos} true_lilith={subject_with_liliths.true_lilith.abs_pos}"
+
+    def test_the_moon_ascending_node_is_the_charts_mean_node(self, subject_with_liliths):
+        """The same identity one field over, and the reason to trust the others."""
+        moon = next(
+            n
+            for n in PlanetaryNodesFactory.from_subject(subject_with_liliths, method="mean").nodes
+            if n.planet_name == "Moon"
+        )
+        assert math.isclose(
+            moon.ascending_node.abs_pos,
+            subject_with_liliths.mean_north_lunar_node.abs_pos,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        )
+
+    @pytest.mark.parametrize("method", ["mean", "osculating"])
+    def test_only_the_moon_is_geocentric(self, subject, method):
+        result = PlanetaryNodesFactory.from_subject(subject, method=method)
+        kinds = {n.planet_name: n.apsis_kind for n in result.nodes}
+        assert kinds["Moon"] == "geocentric"
+        for name in _DEFAULT_NODE_PLANETS - {"Moon"}:
+            assert kinds[name] == "heliocentric", f"{name} should be heliocentric"
+
+    def test_the_generic_names_carry_the_legacy_values(self, subject):
+        """Retro-compatibility: the deprecated pair is still there, unchanged.
+
+        The two names are the same object, so this can never become a rounding
+        question — but assert the values, since that is the contract a consumer
+        reading either field depends on.
+        """
+        for node in PlanetaryNodesFactory.from_subject(subject).nodes:
+            assert node.periapsis.abs_pos == node.perihelion.abs_pos
+            assert node.apoapsis.abs_pos == node.aphelion.abs_pos
+            assert node.periapsis == node.perihelion
+            assert node.apoapsis == node.aphelion
+
+    def test_a_caller_that_knows_only_the_old_names_still_builds_the_model(self, subject):
+        """The addition is additive in the strict sense: old construction works.
+
+        A caller written before these fields existed passes four points and no
+        apsis_kind; the model derives the rest instead of raising.
+        """
+        source = PlanetaryNodesFactory.from_subject(subject, planets=["Moon"]).nodes[0]
+        legacy = PlanetaryNodeModel(
+            planet_name="Moon",
+            ascending_node=source.ascending_node,
+            descending_node=source.descending_node,
+            perihelion=source.perihelion,
+            aphelion=source.aphelion,
+        )
+        assert legacy.apsis_kind == "geocentric"
+        assert legacy.periapsis == legacy.perihelion
+        assert legacy.apoapsis == legacy.aphelion
+
+        mars = PlanetaryNodeModel(
+            planet_name="Mars",
+            ascending_node=source.ascending_node,
+            descending_node=source.descending_node,
+            perihelion=source.perihelion,
+            aphelion=source.aphelion,
+        )
+        assert mars.apsis_kind == "heliocentric"
+
+    def test_the_serialized_shape_keeps_both_pairs(self, subject):
+        """Nothing disappears from model_dump(): three keys are added, none lost."""
+        node = PlanetaryNodesFactory.from_subject(subject, planets=["Moon"]).nodes[0]
+        keys = set(node.model_dump().keys())
+        assert {"perihelion", "aphelion"} <= keys
+        assert {"periapsis", "apoapsis", "apsis_kind"} <= keys

@@ -556,3 +556,21 @@ difference in ecliptic longitude alone. The two agree only for a body on the
 ecliptic, and the difference is the reason a body may sit at the same longitude
 as the Sun and still be several degrees away from it in the sky.
 """
+
+
+ApsisKind: TypeAlias = Literal["heliocentric", "geocentric"]
+"""Which body the apsides of an orbit are measured against.
+
+An apsis is the nearest or farthest point of an orbit from the body being
+orbited, and the classical names carry that body inside them: *peri-helion* and
+*ap-helion* say "the Sun". They are right for the planets, which orbit the Sun,
+and wrong for the Moon, which orbits the Earth — its apsides are the perigee and
+the apogee, and the astrological tradition knows the far one by yet another name,
+the Black Moon Lilith.
+
+- ``"heliocentric"``: apsides about the Sun (every planet).
+- ``"geocentric"``: apsides about the Earth (the Moon).
+
+The generic ``periapsis``/``apoapsis`` fields are correct under either reading;
+this field says which one is in force.
+"""
