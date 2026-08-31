@@ -69,7 +69,7 @@ This will generate a dual-wheel chart where:
 
 ### Solar Return Example
 
-![Solar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return%20-%20House%20Comparison%20Only.svg)
+![Solar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return%20-%20House%20Comparison%20Only.svg)
 
 ### Lunar Return Example
 
@@ -85,23 +85,28 @@ chart_data = ChartDataFactory.create_return_chart_data(
 )
 ```
 
-![Lunar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return%20-%20No%20House%20Comparison.svg)
+![Lunar Return Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return%20-%20No%20House%20Comparison.svg)
 
 ## Toggling Degree Indicators
 
-All charts can display radial **degree indicators** for planets. You can disable them for a cleaner layout:
+The classic wheel can display radial **degree indicators** for planets;
+`show_degree_indicators=False` hides them for a cleaner layout. The option is
+**classic-only**: the modern renderer draws its own graduated ruler ring and
+logs a warning when the flag is set, so pass `style="classic"` alongside it.
 
 ```python
 drawer = ChartDrawer(
     chart_data=chart_data,
     show_cusp_position_comparison=True,
     show_degree_indicators=False,  # hide radial degree indicators
+    style="classic",               # the option only takes effect here
 )
 
 svg_content = drawer.generate_svg_string()
 ```
 
-Set `show_degree_indicators=True` (the default) to keep the indicators for both single and dual wheels.
+`show_degree_indicators=True` (the default) keeps the indicators. The same
+classic-only rule applies to `external_view` and `show_aspect_icons`.
 
 ---
 

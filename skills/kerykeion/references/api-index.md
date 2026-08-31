@@ -1,7 +1,7 @@
 # API Index
 
 Map of every name this skill documents to the reference file that covers it:
-the 120 root exports, the literals and presets, the env vars, and every API
+the 124 root exports, the literals and presets, the env vars, and every API
 the references mark as a **Subpackage import**. Names are importable from
 bare `kerykeion` unless the Kind column says otherwise. Use this file to
 answer "where is X documented?"; the domain file is always the richer source.
@@ -14,6 +14,7 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `ALL_ACTIVE_ASPECTS` | subpackage import — `kerykeion.settings.config_constants` | `references/aspects-and-orbs.md` |
 | `ALL_ACTIVE_POINTS` | constant/function — `kerykeion.settings` | `references/subjects.md` |
 | `AlmutenFigurisStrategy` | subpackage import — `kerykeion.dominants` | `references/analysis.md` |
+| `angle_house_identities` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `AngularityModel` | model | `references/charts-and-drawing.md` |
 | `ApsisKind` | literal — `kerykeion.schemas` | `references/mundane-events.md` |
 | `aspect_to_context` | subpackage import — `kerykeion.context` | `references/reports-and-ai-context.md` |
@@ -46,7 +47,10 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `civil_leap_year` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `classify_motion_state` | subpackage import — `kerykeion.motion` | `references/utilities.md` |
 | `classify_solar_phase` | module import — `kerykeion.planetary_phenomena.factory` | `references/utilities.md` |
+| `coincident_cusp_groups` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `CompositeChartType` | literal — `kerykeion.schemas` | `references/subjects.md` |
+| `CompositeHouseAnchor` | literal — `kerykeion.schemas` | `references/subjects.md` |
+| `CompositeHouseFrame` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `CompositeSubjectFactory` | factory | `references/subjects.md` |
 | `CompositeSubjectModel` | model | `references/subjects.md` |
 | `compute_rise_set_ephe` | module import — `kerykeion.moon_phase_details.utils` | `references/utilities.md` |
@@ -132,8 +136,11 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `HouseComparisonModel` | model | `references/analysis.md` |
 | `HouseNumbers` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `Houses` | literal — `kerykeion.schemas` | `references/subjects.md` |
+| `house_spans` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `HouseRing` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
 | `houses_ex2_with_polar_fallback` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
 | `houses_ex2_with_polar_fallback_ex` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
+| `houses_ring_with_polar_fallback` | subpackage import — `kerykeion.ephemeris_backend` | `references/backends-and-provenance.md` |
 | `HousesSystemIdentifier` | literal — `kerykeion.schemas` | `references/zodiac-houses-perspectives.md` |
 | `IndicatorTag` | subpackage import — `kerykeion.charts.svg_metadata` | `references/charts-and-drawing.md` |
 | `IngressModel` | model | `references/mundane-events.md` |
@@ -165,7 +172,11 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `lunar_phase_to_context` | subpackage import — `kerykeion.context` | `references/reports-and-ai-context.md` |
 | `LunarEclipseModel` | model | `references/mundane-events.md` |
 | `LunarPhaseEmoji` | literal — `kerykeion.schemas` | `references/calendars-hours-moon.md` |
+| `lunar_major_phase_from_degrees` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `lunar_phase_name_from_degrees` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
+| `lunar_stage_from_degrees` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `LunarPhaseName` | literal — `kerykeion.schemas` | `references/calendars-hours-moon.md` |
+| `LunarPhaseStage` | literal — `kerykeion.schemas` | `references/calendars-hours-moon.md` |
 | `LunationFinderFactory` | factory | `references/mundane-events.md` |
 | `LunationModel` | model | `references/mundane-events.md` |
 | `LunationsCollectionModel` | model | `references/mundane-events.md` |
@@ -186,6 +197,7 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `MutualReceptionsFactory` | factory | `references/traditional.md` |
 | `MutualReceptionsModel` | model | `references/traditional.md` |
 | `NO_POINT_ORB_ADJUSTMENTS` | subpackage import — `kerykeion.settings.config_constants` | `references/aspects-and-orbs.md` |
+| `normalize_degree` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `normalize_longitude` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `normalize_zodiac_type` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `OccultationFactory` | factory | `references/mundane-events.md` |
@@ -234,10 +246,10 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `resolve_subject_birth_datetime` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `resolve_subject_local_moment` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
 | `resolve_subject_local_now` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
-| `RetrogradeStationFactory` | factory | `references/mundane-events.md` |
-| `RetrogradeStationsCollectionModel` | model | `references/mundane-events.md` |
 | `RetrogradePeriodModel` | model | `references/mundane-events.md` |
 | `RetrogradePeriodsCollectionModel` | model | `references/mundane-events.md` |
+| `RetrogradeStationFactory` | factory | `references/mundane-events.md` |
+| `RetrogradeStationsCollectionModel` | model | `references/mundane-events.md` |
 | `ReturnType` | literal — `kerykeion.schemas` | `references/predictive.md` |
 | `ROYAL_FIXED_STARS` | subpackage import — `kerykeion.settings.config_constants` | `references/subjects.md` |
 | `safe_timezone` | subpackage import — `kerykeion.utilities` | `references/utilities.md` |
@@ -249,9 +261,9 @@ answer "where is X documented?"; the domain file is always the richer source.
 | `Sign` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `SIGN_CODES` | literal — `kerykeion.schemas` | `references/zodiac-houses-perspectives.md` |
 | `SignIngressesCollectionModel` | model | `references/mundane-events.md` |
+| `SignIngressFactory` | factory | `references/mundane-events.md` |
 | `SignPeriodModel` | model | `references/mundane-events.md` |
 | `SignPeriodsCollectionModel` | model | `references/mundane-events.md` |
-| `SignIngressFactory` | factory | `references/mundane-events.md` |
 | `SignNumbers` | literal — `kerykeion.schemas` | `references/subjects.md` |
 | `single_chart_data_to_context` | subpackage import — `kerykeion.context` | `references/reports-and-ai-context.md` |
 | `SingleChartAspectsModel` | model | `references/aspects-and-orbs.md` |

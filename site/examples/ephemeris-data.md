@@ -84,7 +84,9 @@ factory = EphemerisDataFactory(
 subjects = factory.get_ephemeris_data_as_astrological_subjects()
 
 for subject in subjects:
-    print(f"{subject.name}: Sun in {subject.sun.sign}, Moon in {subject.moon.sign}")
+    # subject.name is "Now" for every sample — the date is on the model itself
+    print(f"{subject.iso_formatted_local_datetime[:10]}: "
+          f"Sun in {subject.sun.sign}, Moon in {subject.moon.sign}")
 ```
 
 ## Constructor Parameters
@@ -98,10 +100,16 @@ for subject in subjects:
 | `lat` | `float` | `51.4769` | Latitude for house calculations |
 | `lng` | `float` | `0.0005` | Longitude for house calculations |
 | `tz_str` | `str` | `"Etc/UTC"` | Timezone string |
+| `is_dst` | `bool` | `False` | How to resolve a wall time that falls in a DST fold |
 | `zodiac_type` | `ZodiacType` | `"Tropical"` | Tropical or Sidereal zodiac |
 | `sidereal_mode` | `SiderealMode` | `None` | Ayanamsa for sidereal mode |
+| `custom_ayanamsa_t0` | `float \| None` | `None` | Reference Julian Day for `sidereal_mode="USER"` |
+| `custom_ayanamsa_ayan_t0` | `float \| None` | `None` | Ayanamsa value at `custom_ayanamsa_t0` |
 | `houses_system_identifier` | `str` | `"P"` | House system (Placidus default) |
 | `perspective_type` | `PerspectiveType` | `"Apparent Geocentric"` | Observation perspective |
+| `active_points` | `list[AstrologicalPoint] \| None` | `None` | Points each sample computes; `None` uses the default 14 |
+| `active_fixed_stars` | `list[str] \| None` | `None` | Fixed stars each sample computes |
+| `altitude` | `float \| None` | `None` | Observer altitude in metres, for topocentric work |
 | `max_days` | `int` | `730` | Safety limit for day ranges |
 | `max_hours` | `int` | `8760` | Safety limit for hour ranges |
 | `max_minutes` | `int` | `525600` | Safety limit for minute ranges |

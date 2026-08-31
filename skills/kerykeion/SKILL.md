@@ -141,7 +141,7 @@ print(to_context(subject)[:400])                # non-interpretive XML for promp
 
 (`AstrologicalSubjectFactory`, `ChartDataFactory`, `ChartDrawer`,
 `CompositeSubjectFactory`, `KerykeionSettingsModel` are the usual top-level
-imports; the package root exports 120 names. Some public APIs are deliberately
+imports; the package root exports 124 names. Some public APIs are deliberately
 subpackage-only — e.g. `kerykeion.utilities` helpers, `FixedStarCatalog`, the
 named context serializers — and the references mark each one as **Subpackage
 import** with its exact path.)
@@ -187,12 +187,13 @@ import** with its exact path.)
 | Midpoints + aspects to midpoints | `MidpointFactory` | `references/analysis.md` |
 | Positions sampled over a date range | `EphemerisDataFactory` | `references/predictive.md` |
 | Transit aspects over time; exact-hit refinement | `TransitsTimeRangeFactory` | `references/predictive.md` |
-| Solar/lunar/heliocentric returns; node crossings | `PlanetaryReturnFactory` | `references/predictive.md` |
+| Solar/lunar/heliocentric returns; node crossings; walking the sequence | `PlanetaryReturnFactory` | `references/predictive.md` |
 | Secondary progressions | `SecondaryProgressionFactory` | `references/predictive.md` |
 | Solar arc directions | `SolarArcFactory` | `references/predictive.md` |
 | Eclipses (local or global search) | `EclipseFactory` | `references/mundane-events.md` |
 | New/full moons over a range | `LunationFinderFactory` | `references/mundane-events.md` |
 | Retrograde stations; sign ingresses; mundane aspects | `RetrogradeStationFactory`, `SignIngressFactory`, `MundaneAspectFactory` | `references/mundane-events.md` |
+| Which sign a planet is IN over a range; whether it IS retrograde | `sign_periods_from_iso_range`, `retrograde_periods_from_iso_range` | `references/mundane-events.md` |
 | Planetary nodes, phenomena, heliacal events, occultations | `PlanetaryNodesFactory`, `PlanetaryPhenomenaFactory`, `HeliacalFactory`, `OccultationFactory` | `references/mundane-events.md` |
 | Search the fixed-star catalog | `FixedStarCatalog`, `FixedStarDiscoveryFactory` | `references/mundane-events.md` |
 | Moon phase; sunrise/sunset; planetary hours; void-of-course | `MoonPhaseDetailsFactory`, `SunTimesFactory`, `PlanetaryHoursFactory`, `VoidOfCourseMoonFactory` | `references/calendars-hours-moon.md` |
@@ -235,7 +236,9 @@ from bare `kerykeion` — use the exact import path shown there.
 8. **`ChartDrawer`: `theme` defaults to `"classic"` but `style` defaults to
    `"modern"`** — two orthogonal knobs. Default filenames carry the style
    suffix (`" - Modern.svg"` / `" - Classic.svg"`). `external_view`,
-   `show_degree_indicators`, `show_aspect_icons` are classic-only.
+   `show_degree_indicators`, `show_aspect_icons` are classic-only; `glyph_size`
+   (`"small"`/`"medium"`/`"large"`) and `show_zodiac_background_ring` are
+   modern-only and ignored in silence by classic.
 9. **Time is local wall-clock** + `tz_str`; never pre-convert to UTC except
    with `from_iso_utc_time` (which is UTC by contract).
 10. **Sidereal coherence.** The subject factories default a missing

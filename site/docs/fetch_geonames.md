@@ -10,8 +10,9 @@ order: 21
 
 The `FetchGeonames` class provides an interface to the GeoNames API to retrieve geographical coordinates and timezone information necessary for chart calculations.
 
-> [!NOTE]
-> This module requires internet access and valid credentials for the GeoNames API.
+**Note:** this module requires internet access and a GeoNames username. The
+built-in default account is shared and rate-limited; register a free one at
+[geonames.org](https://www.geonames.org/login) for anything beyond trying it out.
 
 ## Usage
 
@@ -100,13 +101,46 @@ Returns a dictionary containing the necessary data for Kerykeion calculations.
 -   `countryCode`: Country code
 -   `timezonestr`: Timezone ID (e.g., "Europe/Rome")
 
+#### `get_timezone_for_coordinates(lat, lng)`
+
+Resolves the timezone for explicit coordinates through the GeoNames
+`timezoneJSON` endpoint. It performs no city search, and reuses the same cached
+session, so repeated lookups are served locally.
+
+**Returns:** `dict[str, str]` with `timezonestr` (and the cache status) on
+success; an **empty dict** when the response carries no `timezoneId` or the
+request fails.
+
+This is the path `AstrologicalSubjectFactory.from_birth_data` takes when it is
+given coordinates and no `tz_str` and no `city` — resolving the zone from the
+`"Greenwich"` default would silently build the chart in the wrong zone.
+
+#### `close()`
+
+Closes the underlying cached HTTP session and releases its file handles. Each
+`FetchGeonames` opens a sqlite-backed `CachedSession` (two file descriptors), so
+a long-lived caller that keeps instances referenced can otherwise exhaust them.
+The class is also a context manager, which is the preferred form:
+
+```python
+# doc-snippet: no-run — contacts the GeoNames API
+from kerykeion.geonames.fetcher import FetchGeonames
+
+with FetchGeonames("Rome", "IT") as geonames:
+    data = geonames.get_serialized_data()
+```
+
 #### `set_default_cache_name(cache_name)` (classmethod)
 
-Override the default cache path used when none is provided.
+Override the default cache path used when none is provided. The current value is
+readable as the class attribute `FetchGeonames.default_cache_name`, a `Path`
+that starts at `~/.kerykeion/cache/kerykeion_geonames_cache` and is also
+settable through `KERYKEION_GEONAMES_CACHE_NAME`.
 
 ```python
 from pathlib import Path
 FetchGeonames.set_default_cache_name(Path("/custom/cache/path"))
+print(FetchGeonames.default_cache_name)
 ```
 
 ---

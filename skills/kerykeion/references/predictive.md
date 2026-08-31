@@ -188,6 +188,56 @@ searches backward in time and requires the libephemeris backend — pyswisseph r
 Searches that walk off the ephemeris date range raise `KerykeionException`. Sidereal
 subjects are searched in sidereal longitude (the crossing tracks the drifting ayanamsa).
 
+### Reported instants are re-usable as seeds
+
+Return instants are reported truncated to the whole second, so ordering between a
+seed and a return is decided at that same resolution. Feed a reported instant back
+into any `*_from_iso_formatted_time` entry point and you step exactly one return:
+
+```
+next(reported(N))     == N + 1
+previous(reported(N)) == N − 1
+previous(next(r))     == r        exactly, instant for instant
+```
+
+A forward search starts from the whole second AFTER the seed's, a backward search
+from the seed's own whole second, so a walk of N steps forward and N back lands on
+each return once and comes home to the same instant. Nothing can be skipped:
+consecutive crossings of one kind are at least ~12.4 days apart. This holds for
+Solar, Lunar, heliocentric and lunar-node searches alike.
+
+Consequences to know:
+
+- **A seed inside the same second as a crossing selects the FOLLOWING return.**
+  Seeding a solar-return search with the natal instant itself — a crossing by
+  construction — returns the first birthday, not the birth moment. `previous` from
+  the natal instant gives the cycle before birth, never a "return" a second earlier.
+- Only the ISO entry points snap their seed. `next_return_from_date` and the
+  `*_from_year` wrappers keep their INCLUSIVE midnight seed: "the first return of
+  this date" still includes one in the date's first second.
+- A seed at the edge of the civil range refuses with `KerykeionException` naming
+  the range (years 1 to 9999) instead of overflowing `datetime`. Seeds are
+  normalized to UTC before the check, so `9999-12-31T23:59:59+14:00` — a
+  mid-morning UTC instant — seeds normally.
+- Heliocentric instants are settled onto the crossing itself by bisection, so the
+  slow bodies can report a second or so away from what a bare solver would answer.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory
+natal = AstrologicalSubjectFactory.from_birth_data(
+    name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+factory = PlanetaryReturnFactory(
+    natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
+this_year = factory.next_return_from_date(2025, 1, 1, return_type="Solar")
+next_year = factory.next_return_from_iso_formatted_time(
+    this_year.iso_formatted_utc_datetime, "Solar")            # steps forward, never stalls
+back = factory.next_return_from_iso_formatted_time(
+    next_year.iso_formatted_utc_datetime, "Solar", backwards=True)
+assert back.iso_formatted_utc_datetime == this_year.iso_formatted_utc_datetime
+print(this_year.iso_formatted_utc_datetime, next_year.iso_formatted_utc_datetime)
+```
+
 Deprecated (DeprecationWarning, removal in 7.0.0 — see `references/migration-and-deprecations.md`):
 `next_return_from_year(year, return_type)` and
 `next_return_from_month_and_year(year, month, return_type)` → use `next_return_from_date`.

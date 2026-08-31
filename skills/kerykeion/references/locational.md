@@ -30,7 +30,7 @@ Semantics — the UTC instant and `julian_day` are unchanged:
 - **Replaced:** `polar_house_fallbacks` records only the relocated house call
   (relocating into a polar latitude may substitute the house system; the
   requested one stays in `houses_system_identifier`).
-- Local date fields (`year`…`seconds`, `iso_formatted_local_datetime`,
+- Local date fields (`year`…`minute`, `iso_formatted_local_datetime`,
   `day_of_week`) are recomputed only when `new_tz_str` is given (always for
   BCE subjects, which use Local Mean Time from the new longitude).
 

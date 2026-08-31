@@ -86,8 +86,6 @@ When customizing `active_points`, you can use any of the following string identi
 ### Special Points
 
 -   `Earth` (meaningful in heliocentric perspective)
--   `Vertex`
--   `Anti_Vertex`
 -   `Interpolated_Perigee`
 -   `White_Moon` (Selena)
 
@@ -158,6 +156,17 @@ Identifiers for configuring `active_aspects`.
 -   `sesquiquadrate` (135°)
 -   `biquintile` (144°)
 -   `quincunx` (150°)
+
+### Declination Aspects
+
+-   `parallel` (equal declination, same side of the equator)
+-   `contra-parallel` (equal declination, opposite sides)
+
+These two are members of `AspectName`, but they are **not** requested through
+`active_aspects`: they compare declination rather than ecliptic longitude, so
+they come from `AspectsFactory.single_chart_declination_aspects()` and
+`AspectsFactory.dual_chart_declination_aspects()`. Passing either name in
+`active_aspects` logs a warning and is ignored by the longitude scan.
 
 ## Default Preset Constants
 

@@ -2,7 +2,7 @@
 title: 'Report Module'
 description: 'Generate human-readable text reports and tables from your astrological data. Ideal for CLI applications, debugging, and consolidated chart summaries.'
 category: 'Core'
-tags: ['docs', 'reports', 'cli', 'kerykeion']
+tags: ['docs', 'reports', 'kerykeion']
 order: 5
 ---
 
@@ -64,7 +64,12 @@ The simplest way to use the generator is to print the report directly to `stdout
 ```python
 from kerykeion import ReportGenerator, AstrologicalSubjectFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    city="London", nation="GB",
+    lng=-0.1257, lat=51.5085, tz_str="Europe/London",
+    online=False,
+)
 ReportGenerator(subject).print_report()
 ```
 
@@ -101,16 +106,17 @@ Alice — Subject Report
 | Active Points Count | 14                  |
 +---------------------+---------------------+
 
-+Celestial Points-------+--------+----------+--------------+---------+------+---------------+
-| Point                 | Sign   | Position | Speed        | Decl.   | Ret. | House         |
-+-----------------------+--------+----------+--------------+---------+------+---------------+
-| Ascendant             | Vir ♍ | 14.74°   | +253.7350°/d | N/A     | -    | First House   |
-| Medium Coeli          | Gem ♊ | 9.98°    | +338.4840°/d | N/A     | -    | Tenth House   |
-| Sun                   | Gem ♊ | 24.09°   | +0.9551°/d   | +23.31° | -    | Tenth House   |
-| Moon                  | Pis ♓ | 14.80°   | +13.3469°/d  | -3.13°  | -    | Seventh House |
-| Mercury               | Gem ♊ | 5.62°    | +1.7140°/d   | +19.60° | -    | Ninth House   |
-| ...                                                                                       |
-+-----------------------+--------+----------+--------------+---------+------+---------------+
++Celestial Points-------+--------+----------+--------------+------------+---------+-----+------+---------------+
+| Point                 | Sign   | Position | Speed        | Motion     | Decl.   | OOB | Ret. | House         |
++-----------------------+--------+----------+--------------+------------+---------+-----+------+---------------+
+| Ascendant             | Vir ♍ | 14.74°   | +253.7365°/d | -          | N/A     | -   | -    | First House   |
+| Medium Coeli          | Gem ♊ | 9.98°    | +338.4858°/d | -          | N/A     | -   | -    | Tenth House   |
+| Sun                   | Gem ♊ | 24.09°   | +0.9551°/d   | Average    | +23.31° | -   | -    | Tenth House   |
+| Moon                  | Pis ♓ | 14.80°   | +13.3469°/d  | Average    | -3.13°  | -   | -    | Seventh House |
+| Mercury               | Gem ♊ | 5.62°    | +1.7140°/d   | Fast       | +19.60° | -   | -    | Ninth House   |
+| Uranus                | Cap ♑ | 8.17°    | -0.0389°/d   | Retrograde | -23.51° | Y   | R    | Fourth House  |
+| ...                                                                                                             |
++-----------------------+--------+----------+--------------+------------+---------+-----+------+---------------+
 
 ...
 
@@ -130,11 +136,14 @@ Use `generate_report()` to return the string instead of printing it.
 ```python
 from kerykeion import ChartDataFactory
 
+from pathlib import Path
+
 natal_data = ChartDataFactory.create_natal_chart_data(subject)
 report_text = ReportGenerator(natal_data).generate_report(include_aspects=True)
 
-with open("report.txt", "w") as f:
-    f.write(report_text)
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+(output_dir / "report.txt").write_text(report_text, encoding="utf-8")
 ```
 
 ### Synastry / Transit Report
@@ -181,18 +190,21 @@ See the [Moon Phase Details Factory](/content/docs/moon_phase_details_factory) d
 
 ## Configuration
 
-| Parameter         | Type                                                                    | Default      | Description                                                                                          |
-| :---------------- | :---------------------------------------------------------------------- | :----------- | :--------------------------------------------------------------------------------------------------- |
-| `model`           | `ChartDataModel`, `AstrologicalSubjectModel`, or `MoonPhaseOverviewModel` | **Required** | The data model to generate the report for.                                                           |
-| `include_aspects` | `bool`                                                                  | `True`       | Include the Aspect table (default: `True`). Ignored for moon phase overview reports.                 |
-| `max_aspects`     | `int`                                                                   | `None`       | Limit the number of aspects shown (default: `None` = all). Ignored for moon phase overview reports.  |
+`ReportGenerator(model, *, include_aspects=True, max_aspects=None)` — everything
+after `model` is keyword-only.
+
+| Parameter         | Type   | Default      | Description                                                                                          |
+| :---------------- | :----- | :----------- | :--------------------------------------------------------------------------------------------------- |
+| `model`           | One of the nine models listed under [Supported Inputs](#supported-inputs): `ChartDataModel` (`SingleChartDataModel` / `DualChartDataModel`), `AstrologicalSubjectModel`, `MoonPhaseOverviewModel`, `ProfectionsModel`, `FirdariaModel`, `HoraryIndicatorsModel`, `MutualReceptionsModel`, `DominantsModel`, `ZodiacalReleasingModel` | **Required** | The data model to generate the report for. |
+| `include_aspects` | `bool` | `True`       | Include the Aspect table. Ignored by the report layouts that have none.                              |
+| `max_aspects`     | `int \| None` | `None` | Limit the number of aspects shown (`None` = all). Ignored by the report layouts that have none.      |
 
 ## Public API
 
 | Method                                                           | Description                             |
 | :--------------------------------------------------------------- | :-------------------------------------- |
-| `generate_report(include_aspects=None, max_aspects=None) -> str` | Build the report content as a string.   |
-| `print_report(include_aspects=None, max_aspects=None) -> None`   | Print the generated report to `stdout`. |
+| `generate_report(*, include_aspects=None, max_aspects=None) -> str` | Build the report content as a string. Both arguments are keyword-only; `None` keeps the constructor's value. |
+| `print_report(*, include_aspects=None, max_aspects=None) -> None`   | Print the generated report to `stdout`, same arguments. |
 
 ---
 

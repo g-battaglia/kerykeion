@@ -55,6 +55,8 @@ print(subject.ascendant.source)   # None — house-geometry points carry no prov
     download/degrade. This is the shipped default.
   - `auto` — LEB if available, else Skyfield/DE440 (may download).
   - `skyfield` — always Skyfield/DE440.
+  - `horizons` — query JPL Horizons. Like `auto`/`skyfield` it may reach the
+    network; only `leb` guarantees it will not.
 - **`KERYKEION_EPHE_PATH`** — ephemeris data directory. libephemeris: a no-op
   (manages its own data). swisseph: point it at a directory of `.se1` files;
   without it the default download dir of `python -m kerykeion.swisseph_setup`
@@ -198,7 +200,7 @@ every requested star fails).
 
 ## The ephemeris_backend package facade
 
-**Subpackage import:** `from kerykeion.ephemeris_backend import ephe, BACKEND_NAME, EPHE_DATA_PATH, EPHEMERIS_LOCK, ephemeris_session, reset_ephemeris_session, DEFAULT_SWEPH_DOWNLOAD_DIR, POLAR_HOUSES_ERROR_TYPES, houses_ex2_with_polar_fallback, houses_ex2_with_polar_fallback_ex`
+**Subpackage import:** `from kerykeion.ephemeris_backend import ephe, BACKEND_NAME, EPHE_DATA_PATH, EPHEMERIS_LOCK, ephemeris_session, reset_ephemeris_session, DEFAULT_SWEPH_DOWNLOAD_DIR, POLAR_HOUSES_ERROR_TYPES, houses_ex2_with_polar_fallback, houses_ex2_with_polar_fallback_ex, houses_ring_with_polar_fallback, HouseRing` (the package `__all__`, 12 names)
 
 | Name | What it is |
 |---|---|
@@ -212,6 +214,26 @@ every requested star fails).
 | `POLAR_HOUSES_ERROR_TYPES` | exception types meaning "house system undefined inside the polar circle" (libephemeris `PolarCircleError`; swisseph generic `Error`) |
 | `houses_ex2_with_polar_fallback(tjdut, lat, lon, hsys, flags, *, context="")` | cusps with polar substitution, returns 4-tuple `(cusps, ascmc, cusps_speed, ascmc_speed)` |
 | `houses_ex2_with_polar_fallback_ex(..., polar_strategy="substitute_system")` | same plus a 5th element: the `PolarHouseFallbackModel` record or `None` |
+| `houses_ring_with_polar_fallback(tjdut, lat, lon, hsys, flags, *, context="", polar_strategy="substitute_system")` | same computation, returned as a `HouseRing` — preferred over the two tuple-returning siblings |
+| `HouseRing` | dataclass: `cusps`, `ascmc`, `cusps_speed`, `ascmc_speed`, `polar_fallback`, `angle_houses`, `coincident_cusps` |
+
+`HouseRing` carries the two facts that only the house call itself can know, and
+that twelve cusp longitudes cannot answer afterwards:
+
+- `angle_houses` — which house each angle OPENS, keyed by model field name, for
+  the angles this chart puts on their own cusp (all four under quadrant systems,
+  Asc/Desc only under equal houses, MC/IC only under meridian houses, none under
+  whole sign / Vehlow / Morinus). Where several cusps land on ONE longitude the
+  shared reader answers with the lowest-numbered of them, so an Imum Coeli that
+  IS the fourth cusp would otherwise be filed in the second. The subject factory
+  and the relocated chart both record this at the ring, which is why
+  `subject.imum_coeli.house` is right where a bare cusp scan is not.
+- `coincident_cusps` — groups of house numbers standing on one longitude, which
+  is what `subject.coincident_house_cusps` holds. Empty for every ordinary chart.
+
+Nothing else changed with it: `get_planet_house` behaves exactly as before, and
+every other caller projects a point into a ring that is not its own, where no
+identity exists and none is claimed.
 
 ### Sessions (advanced)
 

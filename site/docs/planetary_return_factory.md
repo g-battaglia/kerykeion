@@ -104,7 +104,10 @@ solar_return = return_factory.next_return_from_date(2024, 1, 1, return_type="Sol
 print(f"Return ayanamsa: {solar_return.ayanamsa_value:.4f}°")
 ```
 
-> Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when the natal subject uses `sidereal_mode="USER"`. Omitting them raises a `KerykeionException`.
+> When the natal subject uses `sidereal_mode="USER"`, passing
+> `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` explicitly overrides the
+> natal's; leaving them out reads them from the natal subject. The constructor
+> raises `KerykeionException` only when neither source provides both.
 
 ## Supported Return Types
 
@@ -125,7 +128,7 @@ helio = return_factory.next_heliocentric_return_from_year("Jupiter", 2026)
 print(helio.iso_formatted_utc_datetime)
 ```
 
-Convenience wrappers mirror the Solar/Lunar ones: `next_heliocentric_return_from_year(planet_name, year)`, `next_heliocentric_return_from_date(...)`, `next_heliocentric_return_from_iso_formatted_time(...)`.
+Convenience wrappers mirror the Solar/Lunar ones: `next_heliocentric_return_from_year(planet_name, year)`, `next_heliocentric_return_from_date(planet_name, year, month, day=1, backwards=False)`, `next_heliocentric_return_from_iso_formatted_time(planet_name, iso_formatted_time, backwards=False)`.
 
 ## Lunar Node Crossings
 
@@ -136,7 +139,7 @@ crossing = return_factory.next_lunar_node_crossing_from_year(2026)
 print(crossing.iso_formatted_utc_datetime)
 ```
 
-Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_node_crossing_from_date(...)`, `next_lunar_node_crossing_from_iso_formatted_time(...)`.
+Convenience wrappers: `next_lunar_node_crossing_from_year(year)`, `next_lunar_node_crossing_from_date(year, month, day=1, backwards=False)`, `next_lunar_node_crossing_from_iso_formatted_time(iso_formatted_time, backwards=False)`.
 
 ## Constructor Parameters
 
@@ -177,7 +180,7 @@ result = return_factory.next_return_from_date(2025, 1, 1, return_type="Solar")
 | `year`        | `int`        | **Required** | Year to start searching from.            |
 | `month`       | `int`        | **Required** | Month to start searching from.           |
 | `day`         | `int`        | `1`          | Day to start searching from.             |
-| `return_type` | `ReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).   |
+| `return_type` | `SolarLunarReturnType` | **Required** | `"Solar"` or `"Lunar"` (keyword-only).   |
 | `backwards`   | `bool`       | `False`      | If `True`, return the most recent return before the starting date instead of the next one. |
 
 ### `next_return_from_iso_formatted_time(iso_formatted_time, return_type, backwards=False)`
@@ -191,7 +194,7 @@ result = return_factory.next_return_from_iso_formatted_time("2024-06-15T12:00:00
 | Parameter            | Type         | Default      | Description                              |
 | :------------------- | :----------- | :----------- | :--------------------------------------- |
 | `iso_formatted_time` | `str`        | **Required** | ISO 8601 timestamp at which to start the search (naive values are read as UTC). |
-| `return_type`        | `ReturnType` | **Required** | `"Solar"` or `"Lunar"`.                  |
+| `return_type`        | `SolarLunarReturnType` | **Required** | `"Solar"` or `"Lunar"`.                  |
 | `backwards`          | `bool`       | `False`      | If `True`, search for the most recent return before the timestamp. |
 
 Return instants are reported truncated to the whole second, and the search is

@@ -35,7 +35,7 @@ from kerykeion import AstrologicalSubject
 
 subject = AstrologicalSubject(
     "John", 1990, 1, 1, 12, 0,
-    city="London", nat="GB"
+    city="London", nation="GB"
 )
 ```
 
@@ -136,9 +136,9 @@ Key changes:
 
 ### 4. Lunar Node Naming
 
-All lunar node properties have been renamed for clarity:
+All lunar node properties were renamed for clarity:
 
-| v4 Property | v5 Property |
+| v4 Property | v6 Property |
 |:------------|:------------|
 | `subject.mean_node` | `subject.mean_north_lunar_node` |
 | `subject.true_node` | `subject.true_north_lunar_node` |
@@ -147,14 +147,14 @@ All lunar node properties have been renamed for clarity:
 
 In active_points lists:
 
-| v4 String | v5 String |
+| v4 String | v6 String |
 |:----------|:----------|
 | `"Mean_Node"` | `"Mean_North_Lunar_Node"` |
 | `"True_Node"` | `"True_North_Lunar_Node"` |
 
 ### 5. Import Path Changes
 
-| v4 Import | v5 Import |
+| v4 Import | v6 Import |
 |:----------|:----------|
 | `from kerykeion.kr_types import *` | `from kerykeion.schemas import *` |
 | `from kerykeion.kr_types.kr_literals import Planet` | `from kerykeion.schemas.literals import AstrologicalPoint` |
@@ -274,11 +274,11 @@ This is the largest silent change, and it has three separate parts. Expect **few
 | square | 5° | 6° |
 | quintile | 1° | *removed from the defaults* |
 
-**Non-natal charts moved to a flat 3°.** In v5 every chart type used the same defaults. In v6 only the natal family (`Natal`, `Synastry`, `Composite`) uses `DEFAULT_ACTIVE_ASPECTS`; transits, returns and progressions use `PREDICTIVE_ACTIVE_ASPECTS`, which is 3° for all five aspects.
+**Non-natal charts moved to a flat 3°.** In v5 every chart type used the same defaults. In v6 only the natal family (`Natal`, `Synastry`, `Composite`) uses `DEFAULT_ACTIVE_ASPECTS`; transits, returns and progressions use `PREDICTIVE_ACTIVE_ASPECTS`, which is 3° for all five aspects. Both presets live in `kerykeion.settings.config_constants`.
 
 The difference is small on a natal chart and large everywhere else. On one sample chart: 38 natal aspects under v6 against 40 with the v5 orbs — but **19 transit aspects against 51**. If your code reads transits, returns or progressions, this is the change to look at first.
 
-**Luminaries gained a 1.5° bonus — natal family only.** `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` widens aspects involving the Sun or the Moon. It applies *only* where `chart_type` is in the natal family; every other `create_*_chart_data` already uses no adjustment, so `point_orb_adjustments={}` is a no-op there.
+**Luminaries gained a 1.5° bonus — natal family only.** `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` (also in `kerykeion.settings.config_constants`) widens aspects involving the Sun or the Moon. It applies *only* where `chart_type` is in the natal family; every other `create_*_chart_data` already uses no adjustment, so `point_orb_adjustments={}` is a no-op there.
 
 To restore v5 orbs, pass the aspect list explicitly — this is the part `V5_DEFAULT_ACTIVE_POINTS` does *not* cover:
 
@@ -379,8 +379,14 @@ v5 included a compatibility layer in `kerykeion.backword` that allowed gradual m
 # from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 # New
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
+from pathlib import Path
+
+from kerykeion import (
+    AspectsFactory,
+    AstrologicalSubjectFactory,
+    ChartDataFactory,
+    ChartDrawer,
+)
 ```
 
 ### Step 2: Update Subject Creation

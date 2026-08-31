@@ -2160,7 +2160,13 @@ def inline_css_variables_in_svg(svg_content: str) -> str:
         else:
             return ""
 
-    variable_usage_pattern = re.compile(r"var\(\s*(--[\w-]+)\s*(,\s*([^)]+))?\s*\)")
+    # The fallback may itself contain one level of parentheses — a nested
+    # ``var(--other, #hex)`` or an ``rgba(...)`` — so it is matched with
+    # balanced parens rather than ``[^)]+``. The narrower pattern stopped at
+    # the first ``)``, substituted the value, and left the outer ``)`` behind
+    # as ``stroke='#81818d)'``: an invalid colour the browser drops, which is
+    # what every modern-wheel cusp line did in the README's inlined charts.
+    variable_usage_pattern = re.compile(r"var\(\s*(--[\w-]+)\s*(,\s*([^()]*(?:\([^()]*\)[^()]*)*))?\s*\)")
 
     processed_svg = svg_without_style_blocks
     # Nested var() references need repeated passes, but self-/mutually-

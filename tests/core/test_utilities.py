@@ -555,6 +555,31 @@ class TestInlineCssVariables:
         result = inline_css_variables_in_svg(svg)
         assert "blue" in result
 
+    def test_nested_var_fallback_is_consumed_whole(self):
+        """``var(--a, var(--b, #hex))`` must resolve to one value with no
+        trailing ``)``: the modern wheel's cusp colour is written this way, and
+        the README's inlined charts carried ``stroke='#81818d)'`` — an invalid
+        colour the browser drops — while the fallback was matched up to the
+        first ``)`` only."""
+        svg = """
+        <style>:root { --cusp: #81818d; }</style>
+        <line stroke="var(--cusp, var(--stroke, #000000))" />
+        <line stroke="var(--missing, var(--stroke, #123456))" />
+        <line stroke="var(--missing, var(--also-missing, #abcdef))" />
+        """
+        result = inline_css_variables_in_svg(svg)
+        assert 'stroke="#81818d"' in result
+        assert 'stroke="#abcdef"' in result
+        assert ")" not in result.replace("var(", "").replace("<style>", "")
+        assert "var(" not in result
+
+    def test_parenthesised_fallback_is_consumed_whole(self):
+        """A fallback such as ``rgba(...)`` closes its own parenthesis; the
+        outer ``)`` belongs to ``var`` and must go with it."""
+        svg = '<rect fill="var(--missing, rgba(0, 0, 0, 0.5))" stroke="var(--missing, rgba(1,2,3,.4))" />'
+        result = inline_css_variables_in_svg(svg)
+        assert result == '<rect fill="rgba(0, 0, 0, 0.5)" stroke="rgba(1,2,3,.4)" />'
+
     def test_multiple_variables(self):
         svg = """
         <style>:root { --a: red; --b: blue; }</style>

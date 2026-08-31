@@ -4,7 +4,7 @@ Visual reference for the astrological glyphs used in Kerykeion charts: planets, 
 
 Every glyph is geometry — no font is needed to render a chart. The colours shown are the light theme's; each is a CSS variable a theme can override.
 
-![Kerykeion chart glyphs](assets/chart-glyphs.svg)
+![Kerykeion chart glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/site/docs/assets/chart-glyphs.svg)
 
 ## Glyphs by family
 

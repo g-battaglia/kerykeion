@@ -44,8 +44,9 @@ See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).
   distribution, including the commercial edition.
 - **Runtime backend.** The default ephemeris backend, `libephemeris`, is licensed
   **AGPL-3.0-only** and is authored by the same maintainer. Both the AGPL edition
-  and the commercial edition may use it; the commercial edition requires a
-  separate commercial license for `libephemeris` as well. The optional Swiss
+  and the commercial edition may use it; the commercial grant for Kerykeion
+  includes a commercial license for `libephemeris` as well (see
+  [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md)). The optional Swiss
   Ephemeris backend (`pyswisseph`) is never used on the default path and requires
   a separate license from Astrodienst AG for closed use.
 

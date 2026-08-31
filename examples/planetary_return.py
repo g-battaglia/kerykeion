@@ -40,7 +40,7 @@ def main() -> None:
     solar_return = factory.next_return_from_date(2025, 12, 1, return_type="Solar")
 
     chart_data = ChartDataFactory.create_return_chart_data(natal, solar_return)
-    drawer = ChartDrawer(chart_data=chart_data, theme="light")
+    drawer = ChartDrawer(chart_data=chart_data, theme="classic")
     drawer.save_svg(output_path=output_dir, filename="grace_hopper_solar_return", minify=True)
 
     print("Solar return cast for:", solar_return.iso_formatted_local_datetime)

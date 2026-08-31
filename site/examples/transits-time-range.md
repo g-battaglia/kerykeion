@@ -93,8 +93,14 @@ for moment in result.transits:
 | `natal_chart` | `AstrologicalSubjectModel` | **Required** | The natal chart to transit against |
 | `ephemeris_data_points` | `list[AstrologicalSubjectModel]` | **Required** | Time-series data from `EphemerisDataFactory` |
 | `active_points` | `list[AstrologicalPoint]` | `DEFAULT_ACTIVE_POINTS` | Which points to consider |
-| `active_aspects` | `list[ActiveAspect]` | `DEFAULT_ACTIVE_ASPECTS` | Which aspects to detect (with orbs) |
+| `active_aspects` | `list[ActiveAspect]` | `PREDICTIVE_ACTIVE_ASPECTS` | Which aspects to detect (with orbs); the predictive preset is a flat 3° |
+| `settings_file` | `Path`, `KerykeionSettingsModel`, `dict`, or `None` | `None` | Custom orb/calculation settings |
 | `axis_orb_limit` | `float` | `None` | Stricter orb for angles (Asc, MC) *(keyword-only)* |
+
+The time series itself is configured on `EphemerisDataFactory`, whose own
+constructor also takes `is_dst`, `custom_ayanamsa_t0` /
+`custom_ayanamsa_ayan_t0`, `active_points`, `active_fixed_stars` and `altitude`
+— see [Ephemeris Data](/content/examples/ephemeris-data).
 
 ## Tips
 

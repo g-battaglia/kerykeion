@@ -44,7 +44,13 @@ Compute ACG lines for a natal chart.
 | `lat_range` | tuple[float, float]      | (-66, 66)  | Finite ordered bounds within -90..+90 degrees            |
 | `planets`   | list[str] or tuple[str, ...] or None | None | Supported planet names (defaults to Sun through Pluto); malformed or unknown entries raise `KerykeionException` |
 
-**Returns:** `List[ACGLineModel]` -- one per planet per line type.
+**Returns:** `List[ACGLineModel]` -- up to one per planet per line type. A
+requested planet the subject does not carry (it is absent from its
+`active_points`) is dropped, and an empty selection returns an empty list.
+Every selected planet always gets its MC and IC lines, but the ASC and DSC
+lines are emitted only when the horizon equation has a solution at at least
+one sampled latitude: a body circumpolar (or never rising) across the whole
+`lat_range` carries no ASC/DSC entry at all.
 
 ## Data Models
 

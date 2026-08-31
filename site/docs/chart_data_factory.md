@@ -41,7 +41,7 @@ print(f"Qualities: {natal_data.quality_distribution.cardinal_percentage}% Cardin
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `subject`                    | `AstrologicalSubjectModel` | **Required** | The subject to create chart data for. Also accepts `CompositeSubjectModel` or `PlanetReturnModel`. |
-| `active_points`              | `List[str]`                | `None`       | Custom points list. If `None`, uses the first subject's own `active_points`.  |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with the subject's own `active_points` (points the subject never computed are dropped). If `None`, uses the subject's own list. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to natal defaults. Each item: `{"name": "conjunction", "orb": 10}`. |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only. |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; `None` resolves to the natal Sun/Moon preset. Keyword-only. |
@@ -79,7 +79,7 @@ if synastry_data.relationship_score:
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `first_subject`              | `AstrologicalSubjectModel` | **Required** | Primary subject.                                                              |
 | `second_subject`             | `AstrologicalSubjectModel` | **Required** | Partner subject.                                                              |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with both subjects' own `active_points`. If `None`, uses the points common to both. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to natal defaults.             |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; `None` resolves to the natal Sun/Moon preset. Keyword-only. |
@@ -104,7 +104,7 @@ transit_data = ChartDataFactory.create_transit_chart_data(subject, now)
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `natal_subject`              | `AstrologicalSubjectModel` | **Required** | Birth chart.                                                                  |
 | `transit_subject`            | `AstrologicalSubjectModel` | **Required** | Current time chart.                                                           |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with both subjects' own `active_points`. If `None`, uses the points common to both. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list; `None` resolves to predictive defaults.                  |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
@@ -129,7 +129,7 @@ composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `composite_subject`          | `CompositeSubjectModel`    | **Required** | Composite subject from `CompositeSubjectFactory`.                             |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with the composite subject's own `active_points`. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to natal defaults.             |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; `None` resolves to the natal Sun/Moon preset. Keyword-only. |
@@ -156,7 +156,7 @@ return_data = ChartDataFactory.create_return_chart_data(subject, solar_return)
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `natal_subject`              | `AstrologicalSubjectModel` | **Required** | The natal subject (inner wheel).                                              |
 | `return_subject`             | `PlanetReturnModel`        | **Required** | The return subject from `PlanetaryReturnFactory`.                             |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with both subjects' own `active_points`. If `None`, uses the points common to both. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to predictive defaults.        |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
@@ -178,7 +178,7 @@ single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(sola
 | Parameter                    | Type                       | Default      | Description                                                                   |
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `return_subject`             | `PlanetReturnModel`        | **Required** | The return subject.                                                           |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with the return subject's own `active_points`. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to predictive defaults.        |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
@@ -203,7 +203,7 @@ progression_data = ChartDataFactory.create_progression_chart_data(subject, progr
 | :--------------------------- | :------------------------- | :----------- | :---------------------------------------------------------------------------- |
 | `natal_subject`              | `AstrologicalSubjectModel` | **Required** | The natal subject (inner ring).                                               |
 | `progressed_subject`         | `AstrologicalSubjectModel` | **Required** | Progressed subject from `SecondaryProgressionFactory.compute()`.              |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with both subjects' own `active_points`. If `None`, uses the points common to both. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; `None` resolves to predictive defaults.        |
 | `axis_orb_limit`             | `float`                    | `None`       | Finite positive stricter orb for angles; `None` disables it. Keyword-only.    |
 | `point_orb_adjustments`      | `Mapping[str, float \| Mapping[str, float]]` | `None`       | Finite additive per-point orb adjustments; predictive methods apply none by default. Keyword-only. |
@@ -229,7 +229,7 @@ chart_data = ChartDataFactory.create_chart_data(
 | `chart_type`                 | `ChartType`                | **Required** | `"Natal"`, `"Synastry"`, `"Transit"`, `"Composite"`, `"Progression"`, `"DualReturnChart"`, `"SingleReturnChart"`. |
 | `first_subject`              | Subject Model              | **Required** | Primary subject.                                                              |
 | `second_subject`             | Subject Model              | `None`       | Second subject (for dual-chart types).                                        |
-| `active_points`              | `List[str]`                | `None`       | Custom points list.                                                           |
+| `active_points`              | `List[str]`                | `None`       | Custom points list, intersected with the first subject's own `active_points` and, for dual charts, with the second subject's. If `None`, uses the subject's own list. |
 | `active_aspects`             | `List[ActiveAspect]`       | `None`       | Custom aspects list with orbs; chart-type defaults are resolved internally.   |
 | `include_house_comparison`   | `bool`                     | `True`       | Calculate house overlays (dual charts only).                                  |
 | `include_relationship_score` | `bool`                     | `False`      | Calculate compatibility score (synastry only).                                |
@@ -239,29 +239,41 @@ chart_data = ChartDataFactory.create_chart_data(
 | `distribution_method`        | `str`                      | `"weighted"` | `"weighted"` or `"pure_count"`. Keyword-only.                                 |
 | `custom_distribution_weights`| `Mapping[str, float]`      | `None`       | Override point weights. Keyword-only.                                         |
 
+An unknown `chart_type`, or a missing `second_subject` for a dual chart type,
+raises `KerykeionException`; so does a `first_subject`/`second_subject` whose
+model class does not match the requested chart type (for example a `Composite`
+chart whose first subject is not a `CompositeSubjectModel`).
+
 ## Data Models
 
 ### `SingleChartDataModel`
 
 Used for Natal, Composite, and Single Return charts.
 
-- `subject`: The `AstrologicalSubjectModel`.
+- `chart_type`: `"Natal"`, `"Composite"` or `"SingleReturnChart"`.
+- `subject`: The subject — an `AstrologicalSubjectModel`, `CompositeSubjectModel` or `PlanetReturnModel`.
 - `aspects`: List of internal aspects.
 - `element_distribution`: Fire/Earth/Air/Water breakdown.
 - `quality_distribution`: Cardinal/Fixed/Mutable breakdown.
 - `angularities`: List of `AngularityModel` — classical planets conjunct the four angles (Ascendant, Medium Coeli, Descendant, Imum Coeli) within the orb (default 8°). Each entry carries `point`, `angle`, and `distance`.
 - `stelliums`: List of `StelliumModel` — houses with three or more classical planets. Each entry carries `house` (1-12) and `points` (list of planet names).
+- `active_points`: The points actually used, after the intersection described above.
+- `active_aspects`: The aspects and orbs actually used.
 
 ### `DualChartDataModel`
 
-Used for Synastry, Transit, and Dual Return charts.
+Used for Synastry, Transit, Progression, and Dual Return charts.
 
+- `chart_type`: `"Transit"`, `"Synastry"`, `"DualReturnChart"` or `"Progression"`.
 - `first_subject`, `second_subject`: The two subjects.
 - `aspects`: Inter-chart aspects.
 - `relationship_score`: Compatibility score (if requested).
 - `house_comparison`: Planet overlays in houses (if requested).
+- `element_distribution`, `quality_distribution`: Combined over both subjects for Synastry; over the first subject alone for Transit, Progression and Dual Return charts.
 - `first_subject_angularities`, `first_subject_stelliums`: Angularities and stelliums for the first (natal) subject.
-- `second_subject_angularities`, `second_subject_stelliums`: Angularities and stelliums for the second (transit/partner/return) subject.
+- `second_subject_angularities`, `second_subject_stelliums`: Angularities and stelliums for the second (transit/partner/progressed/return) subject.
+- `active_points`: The points actually used, after the intersection described above.
+- `active_aspects`: The aspects and orbs actually used.
 
 ## Analysis Example
 

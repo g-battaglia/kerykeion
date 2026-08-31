@@ -45,28 +45,36 @@ Find fixed stars conjunct natal planets within the given orb.
 
 Each returned `KerykeionPointModel` is enriched with discovery metadata:
 
-| Field         | Description                                    |
-| :------------ | :--------------------------------------------- |
-| `name`        | Star name from the catalog                     |
-| `sign`        | Zodiac sign                                    |
-| `position`    | Position within the sign (0-30)                |
-| `abs_pos`     | Absolute ecliptic longitude (0-360)            |
-| `magnitude`   | Apparent visual magnitude                      |
-| `declination` | Equatorial declination                         |
-| `house`       | House placement (if house cusps are available)  |
-| `near_point`  | Name of the nearest conjunct natal planet      |
-| `orb`         | Orb of the conjunction in degrees              |
+| Field             | Type        | Description                                              |
+| :---------------- | :---------- | :-------------------------------------------------------- |
+| `name`            | str         | Star name from the catalog                                |
+| `sign`            | str         | Zodiac sign                                               |
+| `position`        | float       | Position within the sign (0-30)                           |
+| `degree`          | float       | Same value as `position`, under the generic point name    |
+| `abs_pos`         | float       | Absolute ecliptic longitude (0-360)                       |
+| `longitude`       | float       | Same value as `abs_pos`                                   |
+| `latitude`        | float       | Ecliptic latitude of the star                             |
+| `magnitude`       | float       | Apparent visual magnitude                                 |
+| `declination`     | float       | Equatorial declination                                    |
+| `speed`           | float       | Apparent longitudinal drift, dominated by precession      |
+| `retrograde`      | bool        | Always `False`: a fixed star never retrogrades            |
+| `house`           | str or None | House placement (if house cusps are available)            |
+| `near_point`      | str         | Name of the nearest conjunct natal point                  |
+| `orb`             | float       | Orb of the conjunction in degrees                         |
+| `aspect`          | str         | Always `"conjunction"` -- the only aspect this factory looks for |
+| `source`          | str         | Which ephemeris source supplied the position              |
+| `precision_class` | str         | Precision tier of that source                             |
 
 ## Catalog Source
 
-The catalog is sourced from **libephemeris** (the default backend). On the swisseph backend, the factory requires `sefstars.txt` to be present in the ephemeris data path (see [Swiss Ephemeris Configuration](/content/docs/swisseph_configuration) for details).
+The catalog is sourced from **libephemeris** (the default backend). On the swisseph backend, the factory requires `sefstars.txt` to be present in the ephemeris data path (see [Swiss Ephemeris Configuration](/content/docs/swisseph_configuration) for details); without it the scan logs a warning and returns whatever it could resolve, which is an incomplete list rather than an error.
 
 Catalog enumeration uses immutable `FixedStarMetadataModel` entries containing
 `name`, canonical `slug`, optional Hipparcos number, nomenclature, visual
-magnitude, and `constellation` (the IAU three-letter abbreviation of the star's
-constellation, e.g. `"Ori"` for Orion, derived from the nomenclature; `None` when
-the star has no standard constellation assignment). Discovery results remain
-enriched `KerykeionPointModel` objects as described above.
+magnitude, and `constellation` (the full IAU constellation name, e.g.
+`"Orion"`, derived from the nomenclature suffix; `None` when the star has no
+standard constellation assignment). Discovery results remain enriched
+`KerykeionPointModel` objects as described above.
 
 ## Wider Orb Example
 

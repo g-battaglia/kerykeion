@@ -12,7 +12,7 @@ Kerykeion calculates a balance report for Elements (Fire/Earth/Air/Water) and Qu
 
 ## Usage
 
-Configure the distribution method when creating chart data via `ChartDataFactory`. Both `distribution_method` and `custom_distribution_weights` are **keyword-only** parameters available on all `ChartDataFactory` methods.
+Configure the distribution method when creating chart data via `ChartDataFactory`. Both `distribution_method` and `custom_distribution_weights` are **keyword-only** parameters available on all `ChartDataFactory` methods. `distribution_method` is `Literal["pure_count", "weighted"]` and defaults to `"weighted"`.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
@@ -69,15 +69,27 @@ Mutable: 54%
 
 In **Weighted** mode, points contribute different amounts to the score.
 
-| Points                                         | Weight  |
-| :--------------------------------------------- | :------ |
-| `Sun`, `Moon`, `Ascendant`                     | **2.0** |
-| `Mercury`, `Venus`, `Mars`, `MC`, `Desc`, `IC` | **1.5** |
-| `Jupiter`, `Saturn`                            | **1.0** |
-| `Vertex`, `Pars_Fortunae`                      | **0.8** |
-| `Chiron`                                       | **0.6** |
-| `Ceres`, `Uranus`, `Neptune`, `Pluto`, `Lunar Nodes` | **0.5** |
-| `Pallas`, `Juno`, `Vesta` (other asteroids)    | **0.4** |
+The table is `DEFAULT_WEIGHTED_POINT_WEIGHTS` in `kerykeion.charts.utils`, and it
+covers every member of `AstrologicalPoint` — all 76 names, fixed stars included.
+
+| Points                                                                     | Weight  |
+| :------------------------------------------------------------------------- | :------ |
+| `Sun`, `Moon`, `Ascendant`                                                 | **2.0** |
+| `Mercury`, `Venus`, `Mars`, `Medium_Coeli`, `Descendant`, `Imum_Coeli`     | **1.5** |
+| `Jupiter`, `Saturn`                                                        | **1.0** |
+| `Vertex`, `Anti_Vertex`, `Pars_Fortunae`                                   | **0.8** |
+| `Pars_Spiritus`                                                            | **0.7** |
+| `Chiron`, `Pars_Amoris`, `Pars_Fidei`                                      | **0.6** |
+| `Uranus`, `Neptune`, `Pluto`, the four lunar nodes, `Ceres`, the Lilith and Priapus variants, `Interpolated_Perigee`, `White_Moon` | **0.5** |
+| `Pallas`, `Juno`, `Vesta`                                                  | **0.4** |
+| `Pholus`, the seven TNOs (`Eris`, `Sedna`, `Haumea`, `Makemake`, `Ixion`, `Orcus`, `Quaoar`), the eight Uranian points, `Earth` | **0.3** |
+| The 23 fixed stars of `DEFAULT_FIXED_STARS`                                | **0.2** |
+
+A point outside the table takes the fallback weight, `1.0`. An **active fixed
+star** outside the table is the one exception: it takes a dedicated star
+fallback of `0.2`, so a catalog star can never inherit a planet-grade weight.
+In `pure_count` mode both fallbacks are `1.0`, since every counted item must
+contribute exactly one.
 
 ## Custom Weights
 

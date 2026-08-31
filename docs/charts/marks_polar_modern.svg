@@ -94,8 +94,8 @@
 <g kr:node='ModernHoroscope' font-family='Arial, Helvetica, Liberation Sans, sans-serif' transform='rotate(-90 50.0 50.0)'>
 <g kr:node='ZodiacBackgrounds'>
   <g kr:node='ZodiacSign' kr:sign='Ari' kr:signnumber='0'>
-  <path d='M 56.427474,99.585155 A 50.0,50.0 0 0,0 80.358933,89.728267 L 77.930218,86.550005 A 46.0,46.0 0 0,1 55.913276,95.618342 Z' fill='#ff7200' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 56.427474,99.585155 A 50.0,50.0 0 0,0 80.358933,89.728267 Z' fill='#ff7200' fill-opacity='0' pointer-events='none' />
+  <path d='M 56.427474,99.585155 A 50.0,50.0 0 0,0 80.358933,89.728267 L 77.930218,86.550005 A 46.0,46.0 0 0,1 55.913276,95.618342 Z' fill='#ffb880' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 56.427474,99.585155 A 50.0,50.0 0 0,0 80.358933,89.728267 Z' fill='#ffb880' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-202.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(292.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Ari' />
@@ -103,8 +103,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Tau' kr:signnumber='1'>
-  <path d='M 80.358933,89.728267 A 50.0,50.0 0 0,0 96.155741,69.226222 L 92.463281,67.688124 A 46.0,46.0 0 0,1 77.930218,86.550005 Z' fill='#6b3d00' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 80.358933,89.728267 A 50.0,50.0 0 0,0 96.155741,69.226222 Z' fill='#6b3d00' fill-opacity='0' pointer-events='none' />
+  <path d='M 80.358933,89.728267 A 50.0,50.0 0 0,0 96.155741,69.226222 L 92.463281,67.688124 A 46.0,46.0 0 0,1 77.930218,86.550005 Z' fill='#b59e80' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 80.358933,89.728267 A 50.0,50.0 0 0,0 96.155741,69.226222 Z' fill='#b59e80' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-232.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(322.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Tau' />
@@ -112,8 +112,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Gem' kr:signnumber='2'>
-  <path d='M 96.155741,69.226222 A 50.0,50.0 0 0,0 99.585155,43.572526 L 95.618342,44.086724 A 46.0,46.0 0 0,1 92.463281,67.688124 Z' fill='#69acf1' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 96.155741,69.226222 A 50.0,50.0 0 0,0 99.585155,43.572526 Z' fill='#69acf1' fill-opacity='0' pointer-events='none' />
+  <path d='M 96.155741,69.226222 A 50.0,50.0 0 0,0 99.585155,43.572526 L 95.618342,44.086724 A 46.0,46.0 0 0,1 92.463281,67.688124 Z' fill='#b4d6f8' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 96.155741,69.226222 A 50.0,50.0 0 0,0 99.585155,43.572526 Z' fill='#b4d6f8' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-262.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(352.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Gem' />
@@ -121,8 +121,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Can' kr:signnumber='3'>
-  <path d='M 99.585155,43.572526 A 50.0,50.0 0 0,0 89.728267,19.641067 L 86.550005,22.069782 A 46.0,46.0 0 0,1 95.618342,44.086724 Z' fill='#2b4972' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 99.585155,43.572526 A 50.0,50.0 0 0,0 89.728267,19.641067 Z' fill='#2b4972' fill-opacity='0' pointer-events='none' />
+  <path d='M 99.585155,43.572526 A 50.0,50.0 0 0,0 89.728267,19.641067 L 86.550005,22.069782 A 46.0,46.0 0 0,1 95.618342,44.086724 Z' fill='#95a4b8' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 99.585155,43.572526 A 50.0,50.0 0 0,0 89.728267,19.641067 Z' fill='#95a4b8' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-292.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(382.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Can' />
@@ -130,8 +130,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Leo' kr:signnumber='4'>
-  <path d='M 89.728267,19.641067 A 50.0,50.0 0 0,0 69.226222,3.844259 L 67.688124,7.536719 A 46.0,46.0 0 0,1 86.550005,22.069782 Z' fill='#ff7200' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 89.728267,19.641067 A 50.0,50.0 0 0,0 69.226222,3.844259 Z' fill='#ff7200' fill-opacity='0' pointer-events='none' />
+  <path d='M 89.728267,19.641067 A 50.0,50.0 0 0,0 69.226222,3.844259 L 67.688124,7.536719 A 46.0,46.0 0 0,1 86.550005,22.069782 Z' fill='#ffb880' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 89.728267,19.641067 A 50.0,50.0 0 0,0 69.226222,3.844259 Z' fill='#ffb880' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-322.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(412.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Leo' />
@@ -139,8 +139,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Vir' kr:signnumber='5'>
-  <path d='M 69.226222,3.844259 A 50.0,50.0 0 0,0 43.572526,0.414845 L 44.086724,4.381658 A 46.0,46.0 0 0,1 67.688124,7.536719 Z' fill='#6b3d00' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 69.226222,3.844259 A 50.0,50.0 0 0,0 43.572526,0.414845 Z' fill='#6b3d00' fill-opacity='0' pointer-events='none' />
+  <path d='M 69.226222,3.844259 A 50.0,50.0 0 0,0 43.572526,0.414845 L 44.086724,4.381658 A 46.0,46.0 0 0,1 67.688124,7.536719 Z' fill='#b59e80' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 69.226222,3.844259 A 50.0,50.0 0 0,0 43.572526,0.414845 Z' fill='#b59e80' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-352.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(442.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Vir' />
@@ -148,8 +148,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Lib' kr:signnumber='6'>
-  <path d='M 43.572526,0.414845 A 50.0,50.0 0 0,0 19.641067,10.271733 L 22.069782,13.449995 A 46.0,46.0 0 0,1 44.086724,4.381658 Z' fill='#69acf1' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 43.572526,0.414845 A 50.0,50.0 0 0,0 19.641067,10.271733 Z' fill='#69acf1' fill-opacity='0' pointer-events='none' />
+  <path d='M 43.572526,0.414845 A 50.0,50.0 0 0,0 19.641067,10.271733 L 22.069782,13.449995 A 46.0,46.0 0 0,1 44.086724,4.381658 Z' fill='#b4d6f8' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 43.572526,0.414845 A 50.0,50.0 0 0,0 19.641067,10.271733 Z' fill='#b4d6f8' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-22.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(112.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Lib' />
@@ -157,8 +157,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Sco' kr:signnumber='7'>
-  <path d='M 19.641067,10.271733 A 50.0,50.0 0 0,0 3.844259,30.773778 L 7.536719,32.311876 A 46.0,46.0 0 0,1 22.069782,13.449995 Z' fill='#2b4972' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 19.641067,10.271733 A 50.0,50.0 0 0,0 3.844259,30.773778 Z' fill='#2b4972' fill-opacity='0' pointer-events='none' />
+  <path d='M 19.641067,10.271733 A 50.0,50.0 0 0,0 3.844259,30.773778 L 7.536719,32.311876 A 46.0,46.0 0 0,1 22.069782,13.449995 Z' fill='#95a4b8' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 19.641067,10.271733 A 50.0,50.0 0 0,0 3.844259,30.773778 Z' fill='#95a4b8' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-52.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(142.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Sco' />
@@ -166,8 +166,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Sag' kr:signnumber='8'>
-  <path d='M 3.844259,30.773778 A 50.0,50.0 0 0,0 0.414845,56.427474 L 4.381658,55.913276 A 46.0,46.0 0 0,1 7.536719,32.311876 Z' fill='#ff7200' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 3.844259,30.773778 A 50.0,50.0 0 0,0 0.414845,56.427474 Z' fill='#ff7200' fill-opacity='0' pointer-events='none' />
+  <path d='M 3.844259,30.773778 A 50.0,50.0 0 0,0 0.414845,56.427474 L 4.381658,55.913276 A 46.0,46.0 0 0,1 7.536719,32.311876 Z' fill='#ffb880' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 3.844259,30.773778 A 50.0,50.0 0 0,0 0.414845,56.427474 Z' fill='#ffb880' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-82.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(172.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Sag' />
@@ -175,8 +175,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Cap' kr:signnumber='9'>
-  <path d='M 0.414845,56.427474 A 50.0,50.0 0 0,0 10.271733,80.358933 L 13.449995,77.930218 A 46.0,46.0 0 0,1 4.381658,55.913276 Z' fill='#6b3d00' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 0.414845,56.427474 A 50.0,50.0 0 0,0 10.271733,80.358933 Z' fill='#6b3d00' fill-opacity='0' pointer-events='none' />
+  <path d='M 0.414845,56.427474 A 50.0,50.0 0 0,0 10.271733,80.358933 L 13.449995,77.930218 A 46.0,46.0 0 0,1 4.381658,55.913276 Z' fill='#b59e80' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 0.414845,56.427474 A 50.0,50.0 0 0,0 10.271733,80.358933 Z' fill='#b59e80' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-112.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(202.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Cap' />
@@ -184,8 +184,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Aqu' kr:signnumber='10'>
-  <path d='M 10.271733,80.358933 A 50.0,50.0 0 0,0 30.773778,96.155741 L 32.311876,92.463281 A 46.0,46.0 0 0,1 13.449995,77.930218 Z' fill='#69acf1' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 10.271733,80.358933 A 50.0,50.0 0 0,0 30.773778,96.155741 Z' fill='#69acf1' fill-opacity='0' pointer-events='none' />
+  <path d='M 10.271733,80.358933 A 50.0,50.0 0 0,0 30.773778,96.155741 L 32.311876,92.463281 A 46.0,46.0 0 0,1 13.449995,77.930218 Z' fill='#b4d6f8' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 10.271733,80.358933 A 50.0,50.0 0 0,0 30.773778,96.155741 Z' fill='#b4d6f8' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-142.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(232.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Aqu' />
@@ -193,8 +193,8 @@
   </g>
   </g>
   <g kr:node='ZodiacSign' kr:sign='Pis' kr:signnumber='11'>
-  <path d='M 30.773778,96.155741 A 50.0,50.0 0 0,0 56.427474,99.585155 L 55.913276,95.618342 A 46.0,46.0 0 0,1 32.311876,92.463281 Z' fill='#2b4972' style='fill-opacity: 0.5' />
-  <path kr:highlight='sign-full' d='M 50.0,50.0 L 30.773778,96.155741 A 50.0,50.0 0 0,0 56.427474,99.585155 Z' fill='#2b4972' fill-opacity='0' pointer-events='none' />
+  <path d='M 30.773778,96.155741 A 50.0,50.0 0 0,0 56.427474,99.585155 L 55.913276,95.618342 A 46.0,46.0 0 0,1 32.311876,92.463281 Z' fill='#95a4b8' style='fill-opacity: 1' />
+  <path kr:highlight='sign-full' d='M 50.0,50.0 L 30.773778,96.155741 A 50.0,50.0 0 0,0 56.427474,99.585155 Z' fill='#95a4b8' fill-opacity='0' pointer-events='none' />
   <g transform='rotate(-172.385780 50.0 50.0)'>
     <g transform='translate(50.0 2.0) rotate(262.385780) scale(0.09) translate(-16 -16)'>
       <use xlink:href='#Pis' />
@@ -301,34 +301,34 @@
 </g>
 <g kr:node='PlanetRing'>
 <path d='M 5.347999999999999,50.0 A 44.652,44.652 0 1,1 94.652,50.0 A 44.652,44.652 0 1,1 5.347999999999999,50.0 M 28.0,50.0 A 22.0,22.0 0 1,1 72.0,50.0 A 22.0,22.0 0 1,1 28.0,50.0 Z' fill='#f4f4f5' fill-rule='evenodd' stroke='#d4d4d8' stroke-width='0.25'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='8.417' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='8.417' x2='50.0' y2='23.376' stroke='#81818d)' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.07' transform='rotate(-26.004005 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='7.910' stroke='#81818d)' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
-<line x1='50.0' y1='7.910' x2='50.0' y2='26.596' stroke='#81818d)' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-52.008009 50.0 50.0)'/>
-<line x1='50.0' y1='26.596' x2='50.0' y2='28.000' stroke='#81818d)' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.6' transform='rotate(-78.012014 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='8.167' stroke='#81818d)' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
-<line x1='50.0' y1='8.167' x2='50.0' y2='26.596' stroke='#81818d)' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-112.008009 50.0 50.0)'/>
-<line x1='50.0' y1='26.596' x2='50.0' y2='28.000' stroke='#81818d)' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.07' transform='rotate(-146.004005 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.07' transform='rotate(-206.004005 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.07' transform='rotate(-232.008009 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='8.572' stroke='#81818d)' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
-<line x1='50.0' y1='8.572' x2='50.0' y2='23.376' stroke='#81818d)' stroke-width='0.6' stroke-opacity='0.35' transform='rotate(-258.012014 50.0 50.0)'/>
-<line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='#81818d)' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='8.029' stroke='#81818d)' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
-<line x1='50.0' y1='8.029' x2='50.0' y2='23.376' stroke='#81818d)' stroke-width='0.07' stroke-opacity='0.35' transform='rotate(-292.008009 50.0 50.0)'/>
-<line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='#81818d)' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
-<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d)' stroke-width='0.07' transform='rotate(-326.004005 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='8.417' stroke='#81818d' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='8.417' x2='50.0' y2='23.376' stroke='#ccccd1' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='#81818d' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.07' transform='rotate(-26.004005 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='7.910' stroke='#81818d' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
+<line x1='50.0' y1='7.910' x2='50.0' y2='26.596' stroke='#ccccd1' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
+<line x1='50.0' y1='26.596' x2='50.0' y2='28.000' stroke='#81818d' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.6' transform='rotate(-78.012014 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='8.167' stroke='#81818d' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
+<line x1='50.0' y1='8.167' x2='50.0' y2='26.596' stroke='#ccccd1' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
+<line x1='50.0' y1='26.596' x2='50.0' y2='28.000' stroke='#81818d' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.07' transform='rotate(-146.004005 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.07' transform='rotate(-206.004005 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.07' transform='rotate(-232.008009 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='8.572' stroke='#81818d' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
+<line x1='50.0' y1='8.572' x2='50.0' y2='23.376' stroke='#ccccd1' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
+<line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='#81818d' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='8.029' stroke='#81818d' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
+<line x1='50.0' y1='8.029' x2='50.0' y2='23.376' stroke='#ccccd1' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
+<line x1='50.0' y1='23.376' x2='50.0' y2='28.000' stroke='#81818d' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
+<line x1='50.0' y1='5.348' x2='50.0' y2='28.0' stroke='#81818d' stroke-width='0.07' transform='rotate(-326.004005 50.0 50.0)'/>
 <g kr:node='ChartPoint' kr:house='First_House' kr:sign='Vir' kr:absoluteposition='172.61421986038195' kr:signposition='22.61421986038195' kr:slug='Ascendant' kr:speed='125.541925' kr:cx='164.33152' kr:cy='290.00000000000006' transform='rotate(-0.000000 50.0 50.0)'>
   <g transform='translate(50.0 10.22) rotate(90.000000) scale(0.172368) translate(-12 -12)'>
     <use xlink:href='#Ascendant' kr:slug='Ascendant' kr:node='Glyph' fill='#7f3f00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#7f3f00' font-weight='500' transform='rotate(90.000000 50.0 14.21) translate(0 0.2408)'>22º</text>
-  <g transform='translate(50.0 17.89) rotate(90.000000) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(90.000000) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Vir' fill='#7f3f00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#7f3f00' font-weight='500' transform='rotate(90.000000 50.0 21.89) translate(0 0.1968)'>36'</text>
@@ -341,7 +341,7 @@
     <use xlink:href='#Pluto' kr:slug='Pluto' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(142.788969 50.0 14.21) translate(0 0.2240)'>15º</text>
-  <g transform='translate(50.0 17.89) rotate(142.788969) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(142.788969) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Sco' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(142.788969 50.0 21.89) translate(0 0.2124)'>24'</text>
@@ -355,7 +355,7 @@
     <use xlink:href='#Uranus' kr:slug='Uranus' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(194.721756 50.0 14.21) translate(0 0.2240)'>8º</text>
-  <g transform='translate(50.0 17.89) rotate(194.721756) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(194.721756) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(194.721756 50.0 21.89) translate(0 0.1968)'>10'</text>
@@ -369,7 +369,7 @@
     <use xlink:href='#Neptune' kr:slug='Neptune' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(201.937421 50.0 14.21) translate(0 0.2240)'>13º</text>
-  <g transform='translate(50.0 17.89) rotate(201.937421) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(201.937421) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(201.937421 50.0 21.89) translate(0 0.1968)'>43'</text>
@@ -383,7 +383,7 @@
     <use xlink:href='#Saturn' kr:slug='Saturn' kr:node='Glyph' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#b03030' font-weight='500' transform='rotate(211.422598 50.0 14.21) translate(0 0.2408)'>24º</text>
-  <g transform='translate(50.0 17.89) rotate(211.422598) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(211.422598) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Cap' fill='#b03030' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#b03030' font-weight='500' transform='rotate(211.422598 50.0 21.89) translate(0 0.2124)'>2'</text>
@@ -397,7 +397,7 @@
     <use xlink:href='#True_North_Lunar_Node' kr:slug='True_North_Lunar_Node' kr:node='Glyph' fill='#4c1541' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#4c1541' font-weight='500' transform='rotate(225.506523 50.0 14.21) translate(0 0.2240)'>8º</text>
-  <g transform='translate(50.0 17.89) rotate(225.506523) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(225.506523) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Aqu' fill='#4c1541' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#4c1541' font-weight='500' transform='rotate(225.506523 50.0 21.89) translate(0 0.2072)'>7'</text>
@@ -410,7 +410,7 @@
     <use xlink:href='#Moon' kr:slug='Moon' kr:node='Glyph' fill='#150052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#150052' font-weight='500' transform='rotate(261.631580 50.0 14.21) translate(0 0.2408)'>14º</text>
-  <g transform='translate(50.0 17.89) rotate(261.631580) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(261.631580) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Pis' fill='#150052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#150052' font-weight='500' transform='rotate(261.631580 50.0 21.89) translate(0 0.2124)'>14'</text>
@@ -423,7 +423,7 @@
     <use xlink:href='#Mars' kr:slug='Mars' kr:node='Glyph' fill='#540000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#540000' font-weight='500' transform='rotate(288.367174 50.0 14.21) translate(0 0.2240)'>10º</text>
-  <g transform='translate(50.0 17.89) rotate(288.367174) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(288.367174) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Ari' fill='#540000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#540000' font-weight='500' transform='rotate(288.367174 50.0 21.89) translate(0 0.1968)'>58'</text>
@@ -436,7 +436,7 @@
     <use xlink:href='#Venus' kr:slug='Venus' kr:node='Glyph' fill='#400052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#400052' font-weight='500' transform='rotate(326.065383 50.0 14.21) translate(0 0.2240)'>18º</text>
-  <g transform='translate(50.0 17.89) rotate(326.065383) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(326.065383) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Tau' fill='#400052' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#400052' font-weight='500' transform='rotate(326.065383 50.0 21.89) translate(0 0.1968)'>40'</text>
@@ -449,7 +449,7 @@
     <use xlink:href='#Mercury' kr:slug='Mercury' kr:node='Glyph' fill='#520800' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#520800' font-weight='500' transform='rotate(342.163266 50.0 14.21) translate(0 0.2240)'>5º</text>
-  <g transform='translate(50.0 17.89) rotate(342.163266) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(342.163266) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='#520800' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#520800' font-weight='500' transform='rotate(342.163266 50.0 21.89) translate(0 0.1968)'>32'</text>
@@ -462,7 +462,7 @@
     <use xlink:href='#Medium_Coeli' kr:slug='Medium_Coeli' kr:node='Glyph' fill='#a80000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#a80000' font-weight='500' transform='rotate(348.782394 50.0 14.21) translate(0 0.2240)'>10º</text>
-  <g transform='translate(50.0 17.89) rotate(348.782394) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(348.782394) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='#a80000' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#a80000' font-weight='500' transform='rotate(348.782394 50.0 21.89) translate(0 0.1968)'>37'</text>
@@ -475,7 +475,7 @@
     <use xlink:href='#Sun' kr:slug='Sun' kr:node='Glyph' fill='#7e3e00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#7e3e00' font-weight='500' transform='rotate(361.435744 50.0 14.21) translate(0 0.2408)'>24º</text>
-  <g transform='translate(50.0 17.89) rotate(361.435744) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(361.435744) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Gem' fill='#7e3e00' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#7e3e00' font-weight='500' transform='rotate(361.435744 50.0 21.89) translate(0 0.2124)'>2'</text>
@@ -488,7 +488,7 @@
     <use xlink:href='#Jupiter' kr:slug='Jupiter' kr:node='Glyph' fill='#47133d' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#47133d' font-weight='500' transform='rotate(380.025862 50.0 14.21) translate(0 0.2240)'>15º</text>
-  <g transform='translate(50.0 17.89) rotate(380.025862) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(380.025862) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Can' fill='#47133d' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#47133d' font-weight='500' transform='rotate(380.025862 50.0 21.89) translate(0 0.1968)'>52'</text>
@@ -501,7 +501,7 @@
     <use xlink:href='#Chiron' kr:slug='Chiron' kr:node='Glyph' fill='#505705' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='14.21' font-size='2.24' fill='#505705' font-weight='500' transform='rotate(386.669217 50.0 14.21) translate(0 0.2240)'>16º</text>
-  <g transform='translate(50.0 17.89) rotate(386.669217) scale(0.092781) translate(-16 -16)'>
+  <g transform='translate(50.0 17.89) rotate(386.669217) scale(0.085356) translate(-16 -16)'>
     <use xlink:href='#Can' fill='#505705' />
   </g>
   <text text-anchor='middle' dominant-baseline='middle' x='50.0' y='21.89' font-size='2.072' fill='#505705' font-weight='500' transform='rotate(386.669217 50.0 21.89) translate(0 0.1968)'>3'</text>
@@ -512,29 +512,29 @@
 </g>
 <g kr:node='HouseRing'>
 <path d='M 28.0,50.0 A 22.0,22.0 0 1,1 72.0,50.0 A 22.0,22.0 0 1,1 28.0,50.0 M 30.5,50.0 A 19.5,19.5 0 1,1 69.5,50.0 A 19.5,19.5 0 1,1 30.5,50.0 Z' fill='#e4e4e7' fill-rule='evenodd'/>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.6' transform='rotate(-0.000000 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='1' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-13.002002 50.0 50.0) rotate(103.002002 50.0 29.25)'>1</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-26.004005 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-26.004005 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='2' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-39.006007 50.0 50.0) rotate(129.006007 50.0 29.25)'>2</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-52.008009 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='3' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-65.010011 50.0 50.0) rotate(155.010011 50.0 29.25)'>3</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-78.012014 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.6' transform='rotate(-78.012014 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='4' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-95.010011 50.0 50.0) rotate(185.010011 50.0 29.25)'>4</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-112.008009 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='5' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-129.006007 50.0 50.0) rotate(219.006007 50.0 29.25)'>5</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-146.004005 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-146.004005 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='6' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-163.002002 50.0 50.0) rotate(253.002002 50.0 29.25)'>6</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.6' transform='rotate(-180.000000 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='7' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-193.002002 50.0 50.0) rotate(283.002002 50.0 29.25)'>7</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-206.004005 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-206.004005 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='8' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-219.006007 50.0 50.0) rotate(309.006007 50.0 29.25)'>8</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-232.008009 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-232.008009 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='9' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-245.010011 50.0 50.0) rotate(335.010011 50.0 29.25)'>9</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.6' transform='rotate(-258.012014 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='10' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-275.010011 50.0 50.0) rotate(365.010011 50.0 29.25)'>10</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-292.008009 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='11' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-309.006007 50.0 50.0) rotate(399.006007 50.0 29.25)'>11</text></g>
-<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d)' stroke-width='0.07' transform='rotate(-326.004005 50.0 50.0)'/>
+<line x1='50.0' y1='28.0' x2='50.0' y2='30.5' stroke='#81818d' stroke-width='0.07' transform='rotate(-326.004005 50.0 50.0)'/>
 <g kr:node='HouseNumber' kr:house='12' kr:horoscope='0'><text text-anchor='middle' dominant-baseline='middle' x='50.0' y='29.25' font-size='1.5' fill='#000000' font-weight='500' transform='rotate(-343.002002 50.0 50.0) rotate(433.002002 50.0 29.25)'>12</text></g>
 </g>
 <g kr:node='HouseSector' kr:house='1'><path d='M 50.000000,0.000000 A 50.0,50.0 0 0,0 28.078302,5.061830 L 41.450538,32.474114 A 19.5,19.5 0 0,1 50.000000,30.500000 Z' fill='transparent' stroke='none' pointer-events='all'/></g>

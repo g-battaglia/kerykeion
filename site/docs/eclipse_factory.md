@@ -95,17 +95,17 @@ sidereal_results = EclipseFactory.search_global(
 | `type`         | str            | Eclipse type: total, annular, partial, annular-total |
 | `maximum_jd`   | float          | Julian Day of maximum eclipse              |
 | `datestamp`     | str            | ISO 8601 formatted datetime of maximum     |
-| `magnitude`    | float or None          | Fraction of solar diameter covered          |
-| `obscuration`  | float or None          | Fraction of solar disk area covered         |
-| `sun_altitude` | float or None  | Sun altitude at maximum (degrees)          |
+| `magnitude`    | float or None          | Fraction of solar diameter covered. Observer-dependent: populated by `search_from_location`, always `None` in `search_global`. |
+| `obscuration`  | float or None          | Fraction of solar disk area covered. Observer-dependent: populated by `search_from_location`, always `None` in `search_global`. |
+| `sun_altitude` | float or None  | Sun altitude at maximum (degrees). Set only by `search_from_location`; `None` in `search_global`. |
 | `ecliptic_longitude` | float or None | Eclipse longitude at maximum in the requested zodiac (0–360). |
 | `sign`         | str or None    | Zodiac sign at maximum in the requested zodiac. |
 | `sign_num`     | int or None    | Zodiac sign index (0=Aries). |
 | `degree`       | float or None  | Degree within the sign (0–30). |
 | `saros`        | int or None    | Saros series number when the active backend/catalog provides one. |
 | `inex`         | int or None    | Reserved Inex series number; currently `None` because available nearest-series results are not trustworthy. |
-| `gamma`        | float or None  | Shadow-axis distance from Earth's centre, in Earth radii, when supported by the backend. |
-| `duration_minutes` | float or None | Central total/annular phase duration at the point of greatest eclipse; `None` for partial eclipses or unsupported backends. |
+| `gamma`        | float or None  | Shadow-axis distance from Earth's centre, in Earth radii. A global central-line property: set only by `search_global` (and only when supported by the backend); `None` in `search_from_location`. |
+| `duration_minutes` | float or None | Central total/annular phase duration at the point of greatest eclipse. Set only by `search_global`; `None` in `search_from_location`, for partial eclipses, or on unsupported backends. |
 
 ### `LunarEclipseModel`
 

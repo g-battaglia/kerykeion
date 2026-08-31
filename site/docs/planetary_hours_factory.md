@@ -38,11 +38,37 @@ The date and clock time are interpreted in `tz_str`. Latitude is north-positive
 `KerykeionException`. Planetary hours are undefined when a bounding sunrise or
 sunset is absent (polar day/night), which also raises `KerykeionException`.
 
+A planetary day runs from one sunrise to the next, so both ends of the
+representable calendar are refused with `KerykeionException`: an evening of
+9999-12-31 would need the sunrise of 10000-01-01, and a morning of 0001-01-01
+before sunrise would need the sunset of the day before year 1.
+
 ## Models
 
-`PlanetaryHoursModel` contains the planetary-day `date`, timezone and
-coordinates, `day_ruler`, `current_index`, `current_ruler`, the bounding
-`sunrise`, `sunset`, `next_sunrise`, and all 24 `hours`.
+### `PlanetaryHoursModel`
 
-Each `PlanetaryHourModel` has a 1-based `index`, `ruler`, `is_diurnal`, `start`,
-and `end`. All event instants are timezone-aware UTC datetimes.
+| Field           | Type                     | Description                                                     |
+| :-------------- | :----------------------- | :-------------------------------------------------------------- |
+| `date`          | str                      | Civil date (ISO) of the planetary day's sunrise, in `timezone`. |
+| `timezone`      | str                      | IANA timezone identifier.                                        |
+| `latitude`      | float                    | Observer latitude in degrees.                                    |
+| `longitude`     | float                    | Observer longitude in degrees.                                   |
+| `day_ruler`     | ClassicalPlanet          | Planet ruling the whole planetary day (from the weekday).        |
+| `current_index` | int                      | 1-based index of the hour containing the requested moment.       |
+| `current_ruler` | ClassicalPlanet          | Ruler of the hour containing the requested moment.               |
+| `sunrise`       | datetime                 | Sunrise opening the day hours.                                   |
+| `sunset`        | datetime                 | Sunset dividing day and night hours.                             |
+| `next_sunrise`  | datetime                 | Sunrise closing the night hours.                                 |
+| `hours`         | list[PlanetaryHourModel] | All 24 planetary hours, in chronological order.                  |
+
+### `PlanetaryHourModel`
+
+| Field        | Type            | Description                                                          |
+| :----------- | :-------------- | :------------------------------------------------------------------- |
+| `index`      | int             | 1-based position in the sequence (1-24).                             |
+| `ruler`      | ClassicalPlanet | Classical planet ruling the hour.                                    |
+| `is_diurnal` | bool            | `True` for the 12 day hours, `False` for the 12 night hours.         |
+| `start`      | datetime        | Hour start.                                                          |
+| `end`        | datetime        | Hour end.                                                            |
+
+All event instants are timezone-aware UTC datetimes.

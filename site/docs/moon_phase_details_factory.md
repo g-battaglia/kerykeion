@@ -8,7 +8,7 @@ order: 12
 
 # Moon Phase Details Factory
 
-The `MoonPhaseDetailsFactory` builds a complete `MoonPhaseOverviewModel` from an existing `AstrologicalSubjectModel`. While the basic `LunarPhaseModel` attached to every subject provides the Sun-Moon angle, phase name, and emoji, this factory enriches that data into a full lunar context suitable for UI display, API responses, or detailed reports.
+The `MoonPhaseDetailsFactory` builds a complete `MoonPhaseOverviewModel` from an existing `AstrologicalSubjectModel`. While the basic `LunarPhaseModel` attached to every subject already provides the Sun-Moon angle, phase name, emoji, `major_phase` and waxing/waning `stage`, this factory enriches that data into a full lunar context suitable for UI display, API responses, or detailed reports.
 
 ## What It Provides
 
@@ -172,7 +172,7 @@ This produces a formatted ASCII table report with sections for Moon Summary, Ill
 - **Polar regions**: When the Sun does not rise or set (polar day/night), sunrise and sunset fields will be `None`.
 - **Days without a moonrise or a moonset**: The Moon rises about 50 minutes later each day, so roughly one civil day in thirty has no moonrise at all, and another has no moonset. The backend always answers with the *next* event, which on those days belongs to tomorrow; anything falling outside the subject's own civil day is reported as `None` rather than passed off as today's.
 - **Missing lunar phase**: If the subject was created with `calculate_lunar_phase=False`, the moon summary will contain only `None` fields — except `moonrise` / `moonset`, which are computed regardless, since a horizon crossing is a fact about the place and the day rather than about the phase.
-- **No coordinates**: If the subject has no `lat`/`lng`, sun times and position will be `None`, and location fields will be empty.
+- **No coordinates**: If the subject has no `lat`/`lng`, sun times and position will be `None`, and the location block's `latitude`/`longitude` will be `None` — `precision` and `using_default_location` are still set from the call's arguments.
 
 ---
 

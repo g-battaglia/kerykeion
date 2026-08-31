@@ -74,21 +74,24 @@ Returns the sorted list of built-in strategy identifiers: `["almuten_figuris", "
 | `strategy_name`     | str             | Human-readable name of the strategy used.               |
 | `method`            | `DominantMethod` or None | Built-in method identifier (or `None` for custom). |
 | `planets`           | list[`DominantScoreModel`] | Ranked planetary/point dominants.              |
-| `signs`             | list            | Ranked sign dominants.                                  |
-| `elements`          | list            | Ranked element dominants (Fire/Earth/Air/Water).        |
-| `qualities`         | list            | Ranked mode/quality dominants (Cardinal/Fixed/Mutable). |
-| `houses`            | list            | Ranked house dominants.                                 |
-| `polarities`        | list            | Ranked polarity dominants (Yang/Yin, i.e. masculine/feminine). |
-| `hemispheres`       | list            | Ranked hemisphere dominants (N/S, E/W).                 |
-| `quadrants`         | list            | Ranked quadrant dominants.                              |
+| `signs`             | list[`DominantScoreModel`] | Ranked sign dominants.                         |
+| `elements`          | list[`DominantScoreModel`] | Ranked element dominants (Fire/Earth/Air/Water). |
+| `qualities`         | list[`DominantScoreModel`] | Ranked mode/quality dominants (Cardinal/Fixed/Mutable). |
+| `houses`            | list[`DominantScoreModel`] | Ranked house dominants.                        |
+| `polarities`        | list[`DominantScoreModel`] | Ranked polarity dominants (Yang/Yin, i.e. masculine/feminine). |
+| `hemispheres`       | list[`DominantScoreModel`] | Ranked hemisphere dominants (N/S, E/W).        |
+| `quadrants`         | list[`DominantScoreModel`] | Ranked quadrant dominants.                     |
 | `dominant_planet`   | str or None     | Convenience winner of `planets`.                        |
-| `dominant_sign`     | str or None     | Convenience winner of `signs`.                          |
-| `dominant_element`  | str or None     | Convenience winner of `elements`.                       |
-| `dominant_quality`  | str or None     | Convenience winner of `qualities`.                      |
-| `dominant_house`    | str or None     | Convenience winner of `houses`.                         |
+| `dominant_sign`     | `Sign` or None  | Convenience winner of `signs`.                          |
+| `dominant_element`  | `Element` or None | Convenience winner of `elements`.                     |
+| `dominant_quality`  | `Quality` or None | Convenience winner of `qualities`.                    |
+| `dominant_house`    | `Houses` or None | Convenience winner of `houses`.                        |
 | `score_breakdown`   | list[`DominantBreakdownItemModel`] | Per-rule audit trail; empty unless `include_score_breakdown=True`. |
 
-A school only populates the categories it computes (e.g. the `elemental` school leaves `planets`/`houses` empty); uncomputed categories are simply absent/empty.
+Every category is always present as a list, so the shape of the model is the
+same for every school: one that does not compute a category leaves the list
+empty and the matching `dominant_*` winner `None` (the `elemental` school, for
+instance, returns empty `planets` and `houses` and a `None` `dominant_planet`).
 
 `DominantScoreModel` gives every ranked item a `name`, raw `score`, normalized
 `percentage`, 1-based `rank`, and `is_dominant` flag. Each
@@ -100,9 +103,19 @@ Custom strategies implement the runtime-checkable `DominantStrategy` protocol.
 Subclass `BaseDominantStrategy` when its shared validation and result-building
 helpers are useful, or provide any independent object satisfying the protocol.
 
-The related essential-dignity helpers return `TriplicityLordsModel`, whose
-`primary`, `secondary`, and `participating` rulers are ordered for the requested
-day/night sect.
+The related essential-dignity helper,
+`get_triplicity_lords(element, is_diurnal)` from `kerykeion.dignities`, returns
+a `TriplicityLordsModel` whose `primary`, `secondary`, and `participating`
+rulers are ordered for the requested day/night sect. `element` is one of
+`"Fire"`, `"Earth"`, `"Air"`, `"Water"` — anything else raises
+`KerykeionException` — and `is_diurnal` selects which lord is `primary`:
+
+```python
+from kerykeion.dignities import get_triplicity_lords
+
+lords = get_triplicity_lords("Fire", True)
+print(lords.primary, lords.secondary, lords.participating)
+```
 
 ---
 

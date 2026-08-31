@@ -24,7 +24,7 @@ user or contributor may encounter.
 | Ephemeris source | Swiss Ephemeris (Moshier / `.se1` files) | NASA JPL DE440 / DE441 via LEB/Skyfield |
 | License          | AGPL-3.0                                 | AGPL-3.0                            |
 | Install          | `pip install kerykeion[swiss]`           | Included by default                 |
-| Bundled range    | Depends on installed Swiss `.se1` files | 1849–2150 (DE440s)                  |
+| Bundled range    | Depends on installed Swiss `.se1` files | 1850–2150 (DE440s)                  |
 | Wider range      | Install the required Swiss data files    | Download medium/extended LEB tiers  |
 | Compilation      | Requires C compiler                      | None                                |
 
@@ -113,12 +113,16 @@ JPL's numerical integration.
 ## Uranian / hypothetical planets
 
 The 8 Hamburg School hypothetical planets (Cupido, Hades, Zeus, Kronos,
-Apollon, Admetos, Vulkanus, Poseidon) are supported on both backends
-via Swiss Ephemeris IDs 40-47.
+Apollon, Admetos, Vulkanus, Poseidon) are supported on both backends.
+
+They are fictitious bodies, so neither backend reads them from an ephemeris
+file. On libephemeris they are always evaluated from the runtime analytical
+model and carry `source="Analytical"` (never `"LEB"`) at every tier and for
+every date; the White Moon (Selena) is computed the same way. swisseph
+evaluates its own hypothetical-planet series.
 
 Positions agree within ~1 deg. The larger tolerance is due to
-differences in how each backend evaluates the hypothetical-planet
-polynomial series.
+differences in how each backend evaluates the polynomial series.
 
 ---
 
@@ -128,7 +132,7 @@ Both backends are tested across three ephemeris tiers:
 
 | Tier             | Range           | Subjects |
 | ---------------- | --------------- | -------- |
-| Base (DE440s)    | 1849 - 2150     | 11       |
+| Base (DE440s)    | 1850 - 2150     | 11       |
 | Medium (DE440)   | 1550 - 2650     | 16       |
 | Extended (DE441) | -13200 - +17191 | 25       |
 
@@ -164,7 +168,7 @@ in automated test comparisons:
 | **Aspect list at orb boundaries** | A few aspects near the orb limit may appear in one backend and not the other, producing slightly different aspect tables. |
 | **SVG chart layout** | Small position differences cause different overlap-resolution paths in the chart renderer, producing structurally different (but visually equivalent) SVG output. |
 | **Minor bodies on ancient dates** | For dates before ~1550 CE, libephemeris may return `None` for TNOs (Eris, Sedna, etc.), Juno, and Vesta because the underlying SPK segments do not cover that range. swisseph falls back to its built-in Moshier analytical ephemeris and still returns a value. |
-| **Uranian hypothetical planets** | Positions agree within ~1 deg. The larger tolerance reflects differences in how each backend evaluates the Hamburg School polynomial series for bodies 40-47. |
+| **Uranian hypothetical planets** | Positions agree within ~1 deg. The larger tolerance reflects differences in how each backend evaluates the Hamburg School polynomial series. On libephemeris these points are always analytical (`source="Analytical"`), never file-backed. |
 
 ---
 
@@ -179,8 +183,19 @@ measured deltas:
 | Planet speed              | 0.0001 deg/day     | 0.05 deg/day                   |
 | Declination               | 0.01 deg           | 0.15 deg                       |
 | House cusps               | 0.01 deg           | 0.15 deg                       |
-| SVG chart comparison      | exact (1e-10)      | 0.5 deg + structural tolerance |
-| Report golden files       | exact string match | 10.0 numeric tolerance         |
+
+Golden files are not cross-backend comparisons and do not use those numbers:
+
+| Golden corpus | Structure | Numbers |
+| ------------- | --------- | ------- |
+| SVG baselines | Fatal on **both** backends: line count, count of numbers per line, and the numbers-blanked skeleton must match exactly. | `abs_tol = 1e-4`, no relative component, and **only** on libephemeris — the backend the baselines were generated with. On swisseph the numeric half is skipped with a reason. |
+| Report snapshots | Fatal: line count and the non-numeric skeleton must match exactly. | `abs_tol = 0.01`, enough for a last-decimal display flip and nothing more. |
+
+Numeric strictness is backend-scoped on purpose: measured over the 369 golden
+tests, structural strictness costs 6 baselines on swisseph and 5 on
+libephemeris, while numeric strictness would cost 155 on swisseph against 5 on
+libephemeris. The two backends compute different charts, and a single tolerance
+wide enough to cover that difference is wide enough to hide a redrawn chart.
 
 ---
 

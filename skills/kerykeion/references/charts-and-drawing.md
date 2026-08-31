@@ -151,8 +151,18 @@ Constructor: `ChartDrawer(chart_data, *, ...)` — `chart_data` is the only posi
 | `show_aspect_icons` | `True` | Classic style only. |
 | `style` | `"modern"` | `KerykeionChartStyle` — wheel geometry default for render methods. |
 | `show_zodiac_background_ring` | `True` | Colored zodiac wedges (modern only); overridable at render time. |
-| `glyph_size` | `"medium"` | `KerykeionGlyphSize` — planet-cluster size on the modern wheel (`"small"`/`"medium"`/`"large"`; large = classic-parity glyph in the default configuration, ring active and per-glyph map applied); overridable at render time. |
+| `glyph_size` | `"medium"` | `KerykeionGlyphSize` — planet-cluster size on the modern wheel (`"small"`/`"medium"`/`"large"`); classic ignores it in silence, like `show_zodiac_background_ring`. `"medium"` IS the pre-existing drawing, byte for byte. `"small"` scales the whole cluster to 90%. `"large"` draws the planet GLYPH at the classic style's own size — exact in the default configuration (zodiac background ring active, per-glyph optical map applied), and on the dual rings only the glyph grows: degrees, sign, minutes and ℞ stay at the medium size. Overridable at render time. |
 | `show_diurnality` | `True` | Diurnality line in the bottom-left info panel. |
+| `show_motion_state` | `False` | Mark a planet at a station: `SR` (retrograde phase opening) or `SD` (closing). Modern recolours the cluster and reuses the `RX` row; classic writes the letters at the foot of the glyph. |
+| `show_out_of_bounds` | `False` | `OOB` badge in the point tables. |
+| `show_aspect_movement` | `False` | Dash the separating aspect lines. |
+| `show_relationship_score` | `False` | Synastry score in the info panel; needs a score on the chart data (`create_synastry_chart_data` computes one by default). |
+| `show_ayanamsa_value` | `False` | Ayanamsa offset in degrees and minutes on the zodiac line of a sidereal chart. |
+| `show_polar_fallback_note` | `False` | Mark the domification line when the requested house system was substituted at a polar latitude. |
+
+The last six draw facts the chart data already carries. Each is silent where it
+has no referent — no station, no score, a tropical zodiac, a house system that
+was honoured — so turning one on never produces an empty claim.
 
 **THE TRAP — `theme` vs `style` are orthogonal axes.** `theme` selects a CSS palette and defaults to `"classic"`; `style` selects the wheel geometry and defaults to `"modern"`. The default render is therefore classic *palette* on a modern *wheel*. `"classic"` appears in both literals but means different things; to get the traditional v5-style drawing pass `style="classic"` (theme choice is independent).
 
@@ -173,14 +183,16 @@ assert "<svg" in svg
 | Method | Extra kwargs beyond `minify=False, remove_css_variables=False` | Returns |
 |---|---|---|
 | `set_up_theme(theme=None)` | — | `None` (loads `charts/themes/{theme}.css`; `None` clears CSS) |
-| `generate_svg_string(...)` | `*, custom_title=None, style=<ctor>, show_zodiac_background_ring=<ctor>` | `str` |
+| `generate_svg_string(...)` | `*, custom_title=None, style=<ctor>, show_zodiac_background_ring=<ctor>, glyph_size=<ctor>` | `str` |
 | `save_svg(output_path=None, filename=None, ...)` | same as above | `None` |
-| `generate_wheel_only_svg_string(...)` | `*, style=<ctor>, show_zodiac_background_ring=<ctor>` | `str` |
+| `generate_wheel_only_svg_string(...)` | `*, style=<ctor>, show_zodiac_background_ring=<ctor>, glyph_size=<ctor>` | `str` |
 | `save_wheel_only_svg_file(output_path=None, filename=None, ...)` | same as above | `None` |
 | `generate_aspect_grid_only_svg_string(...)` | — | `str` |
 | `save_aspect_grid_only_svg_file(output_path=None, filename=None, ...)` | — | `None` |
 
-`style=` at render time overrides the constructor default per call. `minify=True` strips whitespace/quotes; `remove_css_variables=True` inlines the CSS custom-property definitions (needed by SVG consumers that do not resolve `var(...)`, e.g. many raster converters). `output_path=None` writes to the user's HOME directory — always pass a directory. `filename` is the basename without `.svg`; user-supplied names are sanitized (path separators, `..`, leading dots become underscores) and the resolved path must stay inside the output directory or `KerykeionException` is raised.
+`style=`, `show_zodiac_background_ring=` and `glyph_size=` at render time each
+override the constructor default for that call only (the aspect-grid-only
+methods take none of the three — there is no wheel to size). `minify=True` strips whitespace/quotes; `remove_css_variables=True` inlines the CSS custom-property definitions (needed by SVG consumers that do not resolve `var(...)`, e.g. many raster converters). `output_path=None` writes to the user's HOME directory — always pass a directory. `filename` is the basename without `.svg`; user-supplied names are sanitized (path separators, `..`, leading dots become underscores) and the resolved path must stay inside the output directory or `KerykeionException` is raised.
 
 Layout notes: with more than 24 active points the aspect list/grid moves to a full-height right-side panel instead of below the wheel. `double_chart_aspect_grid_type="table"` renders the dual-chart aspect grid as a matrix instead of the default column list.
 
@@ -233,6 +245,12 @@ Rendered SVGs carry `kr:` metadata: each celestial point is a `<g kr:node="Chart
 
 - `parse_chart_points(svg: str) -> list[ChartPointTag]` — frozen dataclass with `slug: str`, `horoscope: str` (`"0"` single/inner ring, `"1"` dual outer ring), `display_angle: float` (post-decluttering wheel angle), `sign: Optional[str]`, `sign_position: Optional[float]`, `retrograde: bool`.
 - `parse_indicators(svg: str) -> list[IndicatorTag]` — `slug`, `horoscope`, `true_angle: float` (the point's undisplaced angle).
+
+A small or large modern wheel also stamps `kr:glyphsize` on its root
+(`ModernHoroscope` / `ModernDualHoroscope`), so a consumer holding only the SVG
+can tell which cluster profile drew it. `"medium"` is unstamped on purpose:
+the attribute's ABSENCE is the default, and the default render is byte-identical
+to one produced before `glyph_size` existed.
 
 ## Chart settings and translations
 

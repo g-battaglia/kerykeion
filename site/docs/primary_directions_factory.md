@@ -47,9 +47,11 @@ Compute primary directions for a natal chart.
 | `subject`   | AstrologicalSubjectModel  | --         | The natal chart subject                                 |
 | `max_years` | float                     | 100        | Finite, non-negative maximum number of years to compute directions for |
 | `rate_key`  | "ptolemy" or "naibod"     | "ptolemy"  | Conversion rate (ptolemy: 1 deg = 1 yr, naibod: 0.98564 deg = 1 yr); other values raise `KerykeionException` |
-| `aspects`   | List[str] or None         | None       | Unique supported aspect names; non-strings, unknown names, and malformed entries raise `KerykeionException` |
+| `aspects`   | List[str] or None         | None       | Supported aspect names; repeated names are collapsed to one; non-strings, unknown names, and malformed entries raise `KerykeionException` |
 
-**Returns:** `List[PrimaryDirectionModel]` sorted by `direction_years`.
+**Returns:** `List[PrimaryDirectionModel]` sorted by `direction_years`. Only
+directions whose `direction_years` is above 0.1 and not greater than
+`max_years` are kept: an arc that resolves to 0.1 years or less is dropped.
 
 ### `compute_speculum(subject)`
 
@@ -87,10 +89,14 @@ the observer coordinates including `subject.altitude` (sea level when `None`).
 | `is_converse`     | bool  | `True` for converse directions (see note below)   |
 
 > **Note:** `compute()` returns both **direct** (`is_converse=False`) and
-> **converse** (`is_converse=True`) entries interleaved, so the same
-> promissor/significator pair appears twice at different arcs. The converse
-> arc is an explicit sign-flip approximation of the classical technique —
-> filter on `is_converse` if you only want the traditional direct directions.
+> **converse** (`is_converse=True`) entries interleaved, so each aspect point
+> yields two arcs. Sextile, square and trine are directed to both the dexter
+> and the sinister aspect point (`longitude - aspect` and `longitude +
+> aspect`), while conjunction and opposition have a single one: the same
+> promissor/significator/aspect combination therefore appears up to four times
+> for the former and twice for the latter. The converse arc is an explicit
+> sign-flip approximation of the classical technique — filter on `is_converse`
+> if you only want the traditional direct directions.
 
 ### `SpeculumEntryModel`
 

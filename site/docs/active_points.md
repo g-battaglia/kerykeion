@@ -129,7 +129,7 @@ inactive by default and are selected with `active_fixed_stars`, not
 | `Antares` | ~1.1 | Royal star, intensity and obsession |
 | `Fomalhaut` | ~1.2 | Royal star, idealism and vision |
 
-#### Behenian Stars (12, not listed above)
+#### Behenian Stars (11, not listed above)
 
 | Point | Magnitude | Description |
 | :---- | :-------- | :---------- |
@@ -144,12 +144,12 @@ inactive by default and are selected with `active_fixed_stars`, not
 | `Alphecca` | ~2.2 | Gemma, the jewel in the crown |
 | `Algorab` | ~2.9 | Delta Corvi, cunning |
 | `Deneb_Algedi` | ~2.8 | Tail of the goat, law and justice |
-| `Alkaid` | ~1.9 | Tip of Great Bear's tail, mourning and leadership |
 
-#### Other Bright Stars (7)
+#### Other Bright Stars (8)
 
 | Point | Magnitude | Description |
 | :---- | :-------- | :---------- |
+| `Alkaid` | ~1.9 | Tip of Great Bear's tail, mourning and leadership |
 | `Canopus` | -0.7 | Second brightest, pathfinding and navigation |
 | `Rigel` | 0.1 | Knowledge and ambition |
 | `Betelgeuse` | 0.4 | Fame and endings |
@@ -255,7 +255,7 @@ print(f"Pars Fortunae: {subject.pars_fortunae.sign} at {subject.pars_fortunae.po
 
 ## Diurnal / Nocturnal Detection
 
-Since v5.8.0, the `AstrologicalSubjectModel` includes an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (for `Pars_Fortunae` and `Pars_Spiritus` the formula reverses in night charts; `Pars_Amoris` and `Pars_Fidei` use the same formula regardless of sect, as shown in the table above).
+The `AstrologicalSubjectModel` carries an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (for `Pars_Fortunae` and `Pars_Spiritus` the formula reverses in night charts; `Pars_Amoris` and `Pars_Fidei` use the same formula regardless of sect, as shown in the table above).
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(

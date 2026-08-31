@@ -688,7 +688,7 @@ drawing changed except the words of the lunar phase.
   stored a86 composite re-rendered on a87 can read a planet in the opposite
   house; the two are distinguishable because a87 records `house_anchor`.
 
-## [6.0.0a86]
+## [6.0.0a86] - 2026-08-21
 
 ### Fixed
 
@@ -954,6 +954,12 @@ drawing changed except the words of the lunar phase.
   genuinely has its referent — Mercury at its August 1990 station (with Uranus
   out of bounds), a Longyearbyen chart whose Placidus request could not be
   honoured, a sidereal Lahiri chart, and a synastry pair. Runs offline.
+
+## [6.0.0a85] - 2026-08-12
+
+No library changes on this branch. The a85 release carried optional tooling
+that lives on a separate, unmerged branch; `kerykeion.__all__` and every
+Pydantic schema are exactly what a84 shipped, and no calculation changed.
 
 ## 6.0.0a84 - 2026-08-12
 

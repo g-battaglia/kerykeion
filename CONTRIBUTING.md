@@ -26,13 +26,24 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
 4. Make your changes, add tests if applicable, and ensure the test suite passes:
 
    ```bash
-   uv run pytest
+   uv run poe test:core
    ```
 
+   Use the poe task rather than a bare `uv run pytest`: `-m 'not online'` is not
+   in `addopts`, so a plain run also fires the GeoNames network tests and fails
+   without an account. `uv run pytest tests/core -m 'not online'` is equivalent.
+
    The suite auto-detects the range of the installed ephemeris kernel and
-   skips tests that need a wider one, so a plain run is green out of the box.
-   With the full-range DE441 kernel installed you can force everything with
-   `uv run pytest --tier=extended`.
+   skips tests that need a wider one, so a plain run is green out of the box —
+   on a default install that means the `medium` tier, with the extended-tier
+   subjects skipped rather than run. To actually exercise the full range,
+   install the DE441 kernel and set the environment variable the
+   `regenerate:*` tasks set for themselves:
+
+   ```bash
+   uv run python -c "import libephemeris; libephemeris.download_leb_for_tier('extended')"
+   LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
+   ```
 
 5. Push your branch and open a Pull Request against the `main` branch.
 

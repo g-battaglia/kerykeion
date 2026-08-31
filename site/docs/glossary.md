@@ -82,7 +82,7 @@ In astrology, "planets" includes the Sun and Moon (called "luminaries"), plus Me
 | Planet | Represents | Orbit |
 |:-------|:-----------|:------|
 | **Sun** | Core identity, ego, vitality | 1 year |
-| **Moon** | Emotions, instincts, habits | 28 days |
+| **Moon** | Emotions, instincts, habits | 27.3 days sidereal / 29.5 days synodic |
 | **Mercury** | Communication, thinking | 88 days |
 | **Venus** | Love, beauty, values | 225 days |
 | **Mars** | Action, energy, desire | 2 years |
@@ -176,6 +176,12 @@ aspect.orbit  # The actual deviation from exact
 ### Applying vs Separating
 - **Applying**: Planets moving toward exact aspect (considered stronger)
 - **Separating**: Planets moving away from exact aspect
+- **Static**: Neither — the pair's relative speed is too small to say which way
+  the aspect is going, which happens between two slow outer planets or when one
+  of them is at a station
+
+`AspectModel.aspect_movement` is `Literal["Applying", "Separating", "Static"]`,
+so a consumer must handle all three.
 
 ---
 
@@ -215,6 +221,13 @@ When a planet appears to move backward through the zodiac due to relative orbita
 if subject.mercury.retrograde:
     print("Mercury is retrograde")
 ```
+
+`retrograde` is the bare sign of the speed. `motion_state` grades it against the
+body's own mean daily motion: `retrograde`, `stationary`,
+`stationary_retrograde`, `stationary_direct`, `slow`, `average`, `fast`. The two
+station values name which turn the planet is making — the sign of the speed
+cannot tell them apart, since both stations are approached from one side of zero
+and left on the other.
 
 ### Declination
 A planet's angular distance north or south of the celestial equator. Planets with the same declination are "in parallel."

@@ -1,6 +1,6 @@
 ---
 title: 'Report'
-tags: ['examples', 'reports', 'cli', 'kerykeion']
+tags: ['examples', 'reports', 'kerykeion']
 order: 14
 ---
 
@@ -13,6 +13,7 @@ from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFact
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Kanye", 1977, 6, 8, 8, 45,
+    city="Atlanta", nation="US",
     lng=-84.38798, lat=33.7490, tz_str="America/New_York", online=False,
 )
 
@@ -37,8 +38,8 @@ Kanye — Subject Report
 | Name               | Kanye                     |
 | Date               | 08/06/1977                |
 | Time               | 08:45                     |
-| City               | Greenwich                 |
-| Nation             | GB                        |
+| City               | Atlanta                   |
+| Nation             | US                        |
 | Latitude           | 33.7490°                  |
 | Longitude          | -84.3880°                 |
 | Timezone           | America/New_York          |

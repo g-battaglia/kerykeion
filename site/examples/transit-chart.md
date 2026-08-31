@@ -42,13 +42,11 @@ The output will be:
 
 ![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart%20-%20Classic.svg)
 
-## New Transit Chart Features
+## Aspect Table Grid View
 
-### Aspect Table Grid View
-
-You can now display aspects in a grid format, providing a clearer and more organized view compared to the traditional list format. This feature enhances the readability and analysis of transit charts.
-
-Here is an example of how to enable the Aspect Table Grid View:
+`double_chart_aspect_grid_type="table"` renders the dual-chart aspects as a grid
+instead of the default `"list"`, which is easier to scan when a transit chart
+carries many contacts.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
@@ -93,7 +91,7 @@ transit_subject = AstrologicalSubjectFactory.from_birth_data(
 data = ChartDataFactory.create_transit_chart_data(natal_subject, transit_subject)
 drawer = ChartDrawer(data)
 
-out_dir = Path("./transit_charts")
+out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
 drawer.save_svg(output_path=out_dir, filename="transit-example")
 ```

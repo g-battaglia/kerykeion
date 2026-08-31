@@ -36,9 +36,10 @@ from kerykeion import AstrologicalSubjectFactory
 from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 from kerykeion.transits.factory import TransitsTimeRangeFactory
 
-# 1. Create Natal Subject
+# 1. Create Natal Subject (offline mode: explicit coordinates, no GeoNames lookup)
 natal_subject = AstrologicalSubjectFactory.from_birth_data(
-    "Alice", 1990, 6, 15, 12, 0, "London", "GB"
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1278, lat=51.5074, tz_str="Europe/London", online=False,
 )
 
 # 2. Generate Ephemeris Data (e.g., for 30 days starting now)
@@ -69,9 +70,20 @@ transit_factory = TransitsTimeRangeFactory(
 results = transit_factory.get_transit_moments()
 ```
 
+### Ephemeris Generation Errors
+
+`EphemerisDataFactory` raises `ValueError` for an invalid time series:
+
+- `step` is not a positive integer.
+- `step_type` is not `"days"`, `"hours"` or `"minutes"`.
+- The projected number of samples exceeds `max_days`, `max_hours` or `max_minutes`.
+- The range produces no dates at all — in particular an inverted range, where `end_datetime` precedes `start_datetime`, raises `ValueError("No dates found. Check the date range and step values.")`.
+
+All of these are raised while sizing the series, before any chart is computed.
+
 ## Analyzing Results
 
-The results contain a list of `transit_moments`, each representing a point in time where valid aspects were found.
+The results contain a list of `transits`, each entry representing a point in time where valid aspects were found.
 
 ```python
 print(f"Total time points analyzed: {len(results.transits)}")
@@ -88,10 +100,11 @@ for moment in results.transits:
 
 The `get_transit_moments()` method returns `TransitsTimeRangeModel`, a specialized object simplifying access to the data.
 
-- `results.dates`: List of all ISO timestamps checked.
-- `results.transits`: List of objects containing:
+- `results.transits`: List of `TransitMomentModel` objects containing:
   - `date`: The specific timestamp.
   - `aspects`: List of `AspectModel` objects (Transiting Planet -> Natal Planet).
+- `results.subject`: The natal `AstrologicalSubjectModel` the transits were measured against (`None` when it was not carried through).
+- `results.dates`: List of all ISO timestamps checked (`None` when not populated).
 
 ## Constructor Parameters
 
@@ -102,7 +115,7 @@ The `get_transit_moments()` method returns `TransitsTimeRangeModel`, a specializ
 | `active_points` | `List[AstrologicalPoint]` | `DEFAULT_ACTIVE_POINTS` | Points to include in calculation. |
 | `active_aspects` | `List[ActiveAspect]` | `PREDICTIVE_ACTIVE_ASPECTS` | Aspect types and orbs to use (tight 3° predictive orbs by default). |
 | `settings_file` | `Path`, `KerykeionSettingsModel`, `dict`, or `None` | `None` | Custom orb/calculation settings. |
-| `axis_orb_limit` | `float` | `None` | Finite, positive stricter orb for angles (Asc, MC). |
+| `axis_orb_limit` | `float` | `None` | Finite, positive stricter orb for angles (Asc, MC). Keyword-only. |
 
 ## Transit Events with Exact Moment Refinement (v6)
 
@@ -123,7 +136,9 @@ for ev in events.events[:5]:
 When `refine_exact_moments=True`, the factory performs a ternary search between the two ephemeris steps that bracket the minimum orb, yielding a much more precise `exact_moment` timestamp.
 
 The return type is `TransitEventsTimeRangeModel`: its chronological `events`
-list contains `TransitEventModel` objects. Each event records `p1_name`,
+list contains `TransitEventModel` objects, and `subject` carries the natal
+`AstrologicalSubjectModel` the events were measured against (`None` when it was
+not carried through). Each event records `p1_name`,
 `p2_name`, `aspect`, optional `applying_start`/`separating_end`, `exact_moment`,
 `min_orb`, and optional `orb_rate`. A missing phase boundary means it was
 outside the sampled range or missed by a step too coarse for that fast pass.

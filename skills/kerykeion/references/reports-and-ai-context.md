@@ -53,6 +53,22 @@ Attribute after init: `gen.chart_type` (`"Natal"`, `"Synastry"`, `"Subject"`,
 `"Profections"`, ...). Subject-provided strings (name/city/nation) are
 sanitized against terminal-control characters before printing.
 
+Rows a consumer should not be surprised by (both surfaces carry them, and both
+are silent when the chart has nothing to say):
+
+- The house line names the division ACTUALLY cast, not the request:
+  `Porphyry (substituted for Placidus)` on a polar chart. The context emits a
+  `<polar_house_fallback>` element beside it.
+- **Cusps On One Longitude** lists the groups from `coincident_house_cusps` —
+  houses with no width, which can never contain anything. The context emits one
+  `<coincident_house_cusps houses="...">` per group. Empty on every ordinary
+  chart, so nothing is printed there.
+- A midpoint composite prints a **House Anchor** row saying whether the request
+  was granted: `midheaven (not held: the twelve cusps are not a house division)`
+  where `house_frame` is not `"anchored"`. The context carries `house_frame`
+  beside `house_anchor` on its composite element. A Davison chart has neither
+  and prints no such row.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 chart_data = ChartDataFactory.create_natal_chart_data(
