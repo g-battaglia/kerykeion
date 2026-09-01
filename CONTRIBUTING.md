@@ -35,7 +35,8 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
 
    The suite auto-detects the range of the installed ephemeris kernel and
    skips tests that need a wider one, so a plain run is green out of the box —
-   on a default install that means the `medium` tier, with the extended-tier
+   a fresh install bundles the base DE440s kernel (1849-2150), so on a default
+   install that means the `base` tier, with the medium- and extended-tier
    subjects skipped rather than run. To actually exercise the full range,
    install the DE441 kernel and set the environment variable the
    `regenerate:*` tasks set for themselves:

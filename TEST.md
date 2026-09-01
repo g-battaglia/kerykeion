@@ -8,9 +8,11 @@ Tests are run through **4 hierarchical tiers** (`core < base < medium < extended
 
 **The task name asks for a tier; the installed kernel decides which one you get.**
 `poe test:extended` and `poe test:all` are both plain `pytest tests/ -m 'not online'`
-and set no `LIBEPHEMERIS_PRECISION`, so on a default install the auto-detected tier
-is `medium` and the extended-tier subjects are skipped rather than run. To really
-run them, install the full-range kernel and set the variable:
+and set no `LIBEPHEMERIS_PRECISION`, so the tier is whatever the installed kernel
+can serve. A fresh install bundles the base DE440s kernel (1849-2150), so on a
+default install the auto-detected tier is `base` and the medium- and extended-tier
+subjects are skipped rather than run. To really run them, install the full-range
+kernel and set the variable:
 
 ```bash
 uv run python -c "import libephemeris; libephemeris.download_leb_for_tier('extended')"
@@ -389,7 +391,7 @@ SVG baseline files live in `tests/data/svg/` (354 files). Tests compare generate
 
 A few golden charts cast two millennia back differ STRUCTURALLY between the backends — an aspect falls in or out of orb. Those carry `@pytest.mark.reference_backend_only`, one at a time and with a reason.
 
-**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; twenty were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader. On the default (medium) kernel the baselines of extended-tier subjects are exempt by tier, so a lost reader for one of them is invisible there; `poe check` therefore also runs `test:gates:extended`, the same gates under `LIBEPHEMERIS_PRECISION=extended`, where only what the backend cannot compute is exempt — and the run fails if the extended kernel it asked for is not the one installed.
+**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; twenty were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader. On the default (base) kernel the baselines of medium- and extended-tier subjects are exempt by tier, so a lost reader for one of them is invisible there; `poe check` therefore also runs `test:gates:extended`, the same gates under `LIBEPHEMERIS_PRECISION=extended`, where only what the backend cannot compute is exempt — and the run fails if the extended kernel it asked for is not the one installed.
 
 **Golden charts are hermetic.** They are cast at coordinates frozen in `tests/data/golden_places.py`, never resolved through GeoNames — `from_birth_data` defaults to `online=True`, so the whole golden suite used to depend on what a remote service answered that minute. `tests/core/test_golden_charts_are_hermetic.py` fails if one reaches for the network: it drives every golden test in all five golden modules through the same driver with both GeoNames doors — the city lookup and the timezone-for-coordinates lookup — refused.
 

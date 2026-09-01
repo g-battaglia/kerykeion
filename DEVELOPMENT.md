@@ -77,10 +77,12 @@ uv run pytest tests/ --collect-only -q -m 'not online' | tail -1
 
 `test:extended` and `test:all` both run `pytest tests/ -m 'not online'` and set
 **no** `LIBEPHEMERIS_PRECISION`. `tests/conftest.py` probes the ephemeris kernel
-that is actually loaded and picks the widest tier it can serve — on a default
-install that is `medium`, so the extended-tier subjects (500 BC through 1492)
-are **skipped with a reason**, not run and not failed. The task name says which
-tier is being asked for; the installed kernel decides which one you get.
+that is actually loaded and picks the widest tier it can serve — a fresh install
+bundles the base DE440s kernel (1849-2150), so on a default install that is
+`base`, and the medium-tier (1550-1848, 2200) and extended-tier (500 BC through
+1492) subjects are **skipped with a reason**, not run and not failed. The task
+name says which tier is being asked for; the installed kernel decides which one
+you get.
 
 To really run the extended tier, install the full-range kernel and ask for it:
 
@@ -143,9 +145,12 @@ uv run poe regenerate:docs-charts
 #### Documentation gates
 
 `poe docs:check` fails on an export in `kerykeion.__all__` that no user-facing
-page documents. `poe docs:snippets` executes every ` ```python ` block in every
-Markdown file in the repository; `poe docs:snippets:skill` is the focused run
-over `skills/kerykeion/` alone. `poe regenerate:docs-charts` rewrites
+page documents. `poe docs:snippets` executes every ` ```python ` block in
+`README.md`, `kerykeion/llms.txt`, `site/docs`, `site/examples` and
+`skills/kerykeion/` — release notes and other top-level Markdown files are
+skipped by default; `--all` scans every Markdown file in the tree, ignored
+virtual environments and worktrees included. `poe docs:snippets:skill` is the
+focused run over `skills/kerykeion/` alone. `poe regenerate:docs-charts` rewrites
 `docs/charts/` — the SVGs the README embeds **by raw URL**, so they must be
 regenerated whenever the chart renderer changes or the README shows charts the
 library no longer draws.
