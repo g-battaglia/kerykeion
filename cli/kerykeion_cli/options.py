@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Annotated, Callable, Optional
 
-from kerykeion.extra.cli.parser import Opt
+from kerykeion_cli.parser import Opt
 
 Str = Optional[str]
 Int = Optional[int]

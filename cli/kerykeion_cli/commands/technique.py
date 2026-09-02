@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from kerykeion.extra.cli.commands._shared import (
+from kerykeion_cli.commands._shared import (
     _aspect_names,
     _choose,
     _emit,
@@ -20,8 +20,8 @@ from kerykeion.extra.cli.commands._shared import (
     _stored_subject,
     with_render_flags,
 )
-from kerykeion.extra.cli.commands.charts import _emit_subject_or_chart
-from kerykeion.extra.cli.options import (
+from kerykeion_cli.commands.charts import _emit_subject_or_chart
+from kerykeion_cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
     AspectOrbOpt,

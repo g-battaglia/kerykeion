@@ -11,10 +11,10 @@ from __future__ import annotations
 from typing import Annotated, Optional
 
 import sys
-from kerykeion.extra.cli import profiles, subject_resolver, warnings
-from kerykeion.extra.cli.commands._shared import _emit, _subject_from
-from kerykeion.extra.cli.parser import Arg
-from kerykeion.extra.cli.options import (
+from kerykeion_cli import profiles, subject_resolver, warnings
+from kerykeion_cli.commands._shared import _emit, _subject_from
+from kerykeion_cli.parser import Arg
+from kerykeion_cli.options import (
     FixedStarsFlag,
     FormatOpt,
     HousesSystemOpt,
@@ -40,7 +40,7 @@ from kerykeion.extra.cli.options import (
     WithoutFlags,
     ZodiacTypeOpt,
 )
-from kerykeion.extra.cli import rendering
+from kerykeion_cli import rendering
 
 
 

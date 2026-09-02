@@ -35,11 +35,13 @@ those instead of guessing; the tables are large (48 ayanamsas, 23 house systems,
 
 ```bash
 # gate: skip
-pip install "kerykeion[cli]"
+pip install "kerykeion[cli]"     # or: uv tool install kerykeion-cli
 ```
 
-The interface is built on the standard library alone, so the extra adds no
-third-party package. `kerykeion status` is always safe to run first.
+The command lives in its own package, `kerykeion-cli`, which the extra installs;
+a plain `pip install kerykeion` has the library and no command. The interface is
+built on the standard library alone, so nothing third-party comes with it.
+`kerykeion status` is always safe to run first.
 
 ## The three rules that keep output usable
 

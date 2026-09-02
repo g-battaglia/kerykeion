@@ -13,9 +13,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal, Optional, overload
 
-from kerykeion.extra.cli import subject_resolver
-from kerykeion.extra.cli.commands._shared import _aspect_names, _emit, _given, _parse_aspects, _parse_dt, _split_csv
-from kerykeion.extra.cli.options import (
+from kerykeion_cli import subject_resolver
+from kerykeion_cli.commands._shared import _aspect_names, _emit, _given, _parse_aspects, _parse_dt, _split_csv
+from kerykeion_cli.options import (
     AspectsOpt,
     CountOpt,
     FormatOpt,

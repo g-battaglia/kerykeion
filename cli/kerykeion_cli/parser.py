@@ -4,7 +4,7 @@
 A command is a plain function whose parameters are ``Annotated[T, Opt(...)]``
 (or ``Annotated[T, Arg(...)]`` for a positional). :func:`add_command` reads
 that signature and declares the matching arguments, so a flag is spelled once,
-in :mod:`kerykeion.extra.cli.options`, and every command that takes it composes
+in :mod:`kerykeion_cli.options`, and every command that takes it composes
 its signature from the alias. Standard library only; nothing here imports kerykeion.
 """
 
@@ -92,7 +92,7 @@ def add_command(subparsers: Any, name: str, func: Callable[..., Any]) -> argpars
             continue
         _add_argument(parser, groups, param_name, hints.get(param_name, param.annotation), param.default)
     if getattr(func, "render_flags", False):
-        from kerykeion.extra.cli.commands._shared import _RENDER_FLAGS
+        from kerykeion_cli.commands._shared import _RENDER_FLAGS
 
         for flag, (alias, _) in _RENDER_FLAGS.items():
             _add_argument(parser, groups, flag, alias, None)

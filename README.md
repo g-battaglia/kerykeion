@@ -2617,13 +2617,17 @@ print(f"Querent ruler: {indicators.querent.ruler}, Quesited ruler: {indicators.q
 
 Kerykeion ships a command-line interface that exposes the whole library —
 every chart type, analytical technique, sky event and factory — without
-writing any Python. It is built on the standard library alone, so the `cli`
-extra adds no third-party package (`kerykeion[all]` also pulls the Swiss
+writing any Python. It lives in its own package, `kerykeion-cli`, which the
+`cli` extra installs; the interface is built on the standard library alone, so
+nothing third-party comes with it (`kerykeion[all]` also pulls the Swiss
 Ephemeris backend):
 
 ```bash
-pip3 install "kerykeion[cli]"
+pip3 install "kerykeion[cli]"          # the library plus the command
+uv tool install kerykeion-cli          # or as a standalone tool (pipx works too)
 ```
+
+A plain `pip install kerykeion` installs the library alone, with no command.
 
 Save a subject profile once, then reuse it across every command:
 

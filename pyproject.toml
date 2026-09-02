@@ -78,20 +78,16 @@ dependencies = [
 
 [project.optional-dependencies]
 swiss = ["pyswisseph>=2.10.3.1"]
-# The command-line interface is built on the standard library alone, so this
-# extra carries no third-party package: it stays as the documented way to ask
-# for the CLI, and the place a dependency would go if one were ever needed.
-cli = []
+# The command-line interface is its own distribution, in ``cli/``: it owns the
+# ``kerykeion`` console script, so a plain ``pip install kerykeion`` has no
+# command and this extra is what really brings one. Unpinned on purpose — the
+# CLI pins the library exactly, and a pin here would be a fourth number to bump.
+cli = ["kerykeion-cli"]
 # ``all`` includes ``cli`` on purpose: a name that says "all" but omits an extra
 # is a lie in the name. Self-referencing the other extras (PEP 508, supported by
 # every resolver this project targets) keeps the version floors defined once —
 # re-listing them here made the same pins live in three hand-synced places.
 all = ["kerykeion[swiss]", "kerykeion[cli]"]
-
-[project.scripts]
-# Installed for every user (``[project.scripts]`` is static metadata); the CLI
-# is standard-library only, so it works on any install.
-kerykeion = "kerykeion.extra.cli:main"
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
@@ -103,6 +99,14 @@ Issues = "https://github.com/g-battaglia/kerykeion/issues"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# The CLI is a second distribution in this repository: one lockfile, one venv,
+# one version. `uv build --all-packages` builds both wheels into dist/.
+[tool.uv.workspace]
+members = ["cli"]
+
+[tool.uv.sources]
+kerykeion-cli = { workspace = true }
 
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
@@ -132,7 +136,7 @@ include = [
 ignore_missing_imports = true
 # No mypy_path: adding "kerykeion" here would also resolve `utilities`, `report`,
 # `schemas` as top-level modules, masking imports written without the package prefix.
-files = "kerykeion"
+files = ["kerykeion", "cli/kerykeion_cli"]
 
 # PyTest Automated Testing
 [tool.pytest.ini_options]
@@ -266,7 +270,7 @@ cmd = "ruff format"
 help = "Format code with ruff"
 
 [tool.poe.tasks."format:all"]
-cmd = "ruff format kerykeion tests"
+cmd = "ruff format kerykeion cli tests"
 help = "Format all code (kerykeion + tests)"
 
 [tool.poe.tasks.analyze]
@@ -457,11 +461,11 @@ help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 # Utilities
 [tool.poe.tasks."build:smoke"]
 shell = """
-rm -rf dist && uv build &&
-uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check.py &&
-uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check_cli.py
+rm -rf dist && uv build --all-packages -o dist &&
+uv run --isolated --no-project --with dist/kerykeion-*.whl python scripts/build_smoke_check.py &&
+uv run --isolated --no-project --with dist/kerykeion-*.whl --with dist/kerykeion_cli-*.whl python scripts/build_smoke_check_cli.py
 """
-help = "Build sdist+wheel, then in an ISOLATED env holding the wheel alone verify that the library imports and renders a chart and that the kerykeion command works end to end. Catches missing packaged data before publishing."
+help = "Build both distributions, then in ISOLATED envs verify: the library wheel alone imports, renders a chart and carries no command; library + CLI wheels serve the kerykeion command end to end. Catches missing packaged data and a broken split before publishing."
 
 [tool.poe.tasks.clean]
 cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
@@ -521,4 +525,7 @@ dev = [
     "ruff>=0.12.9",
     "types-requests>=2.32.4.20250611",
     "pyswisseph>=2.10.3.2",
+    # The checkout's CLI, installed editable: `uv sync` does not install extras,
+    # and `skill:cli:smoke` needs the `kerykeion` command on .venv/bin.
+    "kerykeion-cli",
 ]

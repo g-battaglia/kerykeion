@@ -40,11 +40,12 @@ from kerykeion import (
 
 Install with `pip install "kerykeion[cli]"` to get a `kerykeion` command that
 exposes the whole library locally — same in-process engine as the Python API,
-no API key, offline-capable. Output defaults to text on a terminal and JSON in a
-pipe (`-f text|json|xml|svg`).
+no API key, offline-capable. The command lives in a separate package,
+`kerykeion-cli`, which that extra installs; the library alone has none. Output
+defaults to text on a terminal and JSON in a pipe (`-f text|json|xml|svg`).
 
 ```bash
-pip install "kerykeion[cli]"
+pip install "kerykeion[cli]"     # or: uv tool install kerykeion-cli
 ```
 
 ```console

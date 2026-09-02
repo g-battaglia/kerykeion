@@ -4,22 +4,24 @@
 
 ### Changed
 
-- **The CLI package moved to `kerykeion.extra.cli`.** The command-line
-  interface now lives under `kerykeion/extra/`, the home of everything behind
-  an optional dependency group, instead of the package root. The `kerykeion`
-  command, `python -m kerykeion` and the `kerykeion[cli]` extra are unchanged;
-  only the import path moved (`python -m kerykeion.extra.cli` replaces
-  `python -m kerykeion.cli`). Nothing in the library imports it, before or
-  after.
+- **The CLI is its own distribution, `kerykeion-cli`.** The command-line
+  interface moved out of the library package into `cli/` (import name
+  `kerykeion_cli`), a second distribution built from this repository, and it
+  owns the `kerykeion` console script. A plain `pip install kerykeion` now
+  installs the library and **no command**; `pip install "kerykeion[cli]"` — the
+  documented line, unchanged — installs both, and `uv tool install kerykeion-cli`
+  serves the command on its own. The two are released together and share one
+  version, which the CLI pins exactly. `python -m kerykeion` is gone;
+  `python -m kerykeion_cli` reaches the same entry point.
 - **No third-party package behind the CLI.** typer and rich are gone; the
-  interface is argparse over the library, and `kerykeion[cli]` is now an
-  empty extra that stays as the documented way to ask for it. With no
-  dependency to miss there is no install hint and no exit `3`: a bare
-  install serves every command. Help is argparse's, one line per command,
-  `-h` everywhere; `--major-aspects-only` (the default) is gone, `--all-aspects`
-  stays. `technique stars` (heliacal risings and settings) is renamed
-  `technique heliacal`: next to `fixed-stars` the old name said the opposite
-  of what it did.
+  interface is argparse over the library, so kerykeion is the whole dependency
+  of `kerykeion-cli` and the NOTICE no longer lists a CLI stack. With no
+  dependency to miss there is no install hint and no exit `3`: wherever the
+  command exists, every command works. Help is argparse's, one line per
+  command, `-h` everywhere; `--major-aspects-only` (the default) is gone,
+  `--all-aspects` stays. `technique stars` (heliacal risings and settings) is
+  renamed `technique heliacal`: next to `fixed-stars` the old name said the
+  opposite of what it did.
 
 - **Three things the CLI no longer does.** `subject save --snapshot` (a cache
   of the computed subject, with provenance checks and four `verify` states)

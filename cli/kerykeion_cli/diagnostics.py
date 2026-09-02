@@ -144,7 +144,7 @@ def run_checks(state: dict[str, Any]) -> list[dict[str, str]]:
         add("ephemeris data", True if count else None, f"{count} .se1 file(s) at {ephemeris.get('data_path') or 'built-in Moshier'}")
 
     try:  # the store holds birth data: a widened mode is worth a warning
-        from kerykeion.extra.cli import profiles
+        from kerykeion_cli import profiles
 
         store = profiles.profiles_dir()
         if store.is_dir():

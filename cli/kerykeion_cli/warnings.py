@@ -13,7 +13,7 @@ from __future__ import annotations
 import sys
 from typing import Any, Iterable, Tuple
 
-from kerykeion.extra.cli import errors
+from kerykeion_cli import errors
 
 
 def _field(obj: Any, key: str) -> Any:
@@ -88,7 +88,7 @@ def _wrap_envelope(obj: Any, eph: list, polar: list) -> dict:
     from datetime import datetime, timezone
 
     from kerykeion import BACKEND_NAME, __version__
-    from kerykeion.extra.cli.rendering import render_json
+    from kerykeion_cli.rendering import render_json
 
     return {
         "kerykeion": {
@@ -108,7 +108,7 @@ def output_with_warnings(obj: Any, fmt: str, output: str | None, warning_source:
     command that renders a derivative of the subject (``subject verify``). A
     render error is held so the warnings still surface and exit 9 still wins.
     """
-    from kerykeion.extra.cli import rendering
+    from kerykeion_cli import rendering
 
     eph, polar = collect_warnings(obj if warning_source is None else warning_source)
     payload = obj

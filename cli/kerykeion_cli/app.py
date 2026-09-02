@@ -13,11 +13,11 @@ import argparse
 from importlib.metadata import PackageNotFoundError, version as _pkg_version
 from typing import Any, Callable
 
-from kerykeion.extra.cli import errors
-from kerykeion.extra.cli.parser import add_command, add_group
+from kerykeion_cli import errors
+from kerykeion_cli.parser import add_command, add_group
 
 try:
-    __version__ = _pkg_version("kerykeion")
+    __version__ = _pkg_version("kerykeion-cli")
 except PackageNotFoundError:  # a source tree without installation
     __version__ = "0.0.0"
 
@@ -33,10 +33,10 @@ _INTERNAL = frozenset({"handler", "menu", "traceback", "warnings_as_errors"})
 
 def build_parser() -> argparse.ArgumentParser:
     """The root parser with every command mounted: charts, analyses, techniques and events, subjects and setup."""
-    from kerykeion.extra.cli.commands import analysis, call, charts, info, series, sky, status, subject, technique
+    from kerykeion_cli.commands import analysis, call, charts, info, series, sky, status, subject, technique
 
     root = argparse.ArgumentParser(prog="kerykeion", description=DESCRIPTION)
-    root.add_argument("-V", "--version", action="version", version=__version__, help="Print the kerykeion version and exit.")
+    root.add_argument("-V", "--version", action="version", version=__version__, help="Print the kerykeion-cli version and exit.")
     root.add_argument("--traceback", action="store_true", help="Show a full traceback on error (default: a one-line message).")
     root.add_argument("--warnings-as-errors", action="store_true", help="Exit 9 when any ephemeris warning or house fallback occurs.")
     root.set_defaults(menu=root)
@@ -79,7 +79,7 @@ def run(argv: list[str]) -> int:
         return 0
     kwargs = {name: value for name, value in vars(args).items() if name not in _INTERNAL}
     if getattr(handler, "render_flags", False):
-        from kerykeion.extra.cli.commands._shared import _RENDER_FLAGS, _render_options
+        from kerykeion_cli.commands._shared import _RENDER_FLAGS, _render_options
 
         kwargs["opts"] = _render_options({flag: kwargs.pop(flag, None) for flag in _RENDER_FLAGS})
     handler(**kwargs)
