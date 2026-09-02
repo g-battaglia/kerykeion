@@ -28,7 +28,7 @@ from kerykeion.extra.cli.options import (
     SubjectProfile,
 )
 from kerykeion.extra.cli.parser import Arg
-from kerykeion.extra.cli.rendering import formats
+from kerykeion.extra.cli import rendering
 
 
 def _bind_subjects(
@@ -58,7 +58,7 @@ def call(
     output: OutputOpt = None,
 ) -> None:
     """Any public factory method, for what has no command of its own."""
-    listing_fmt = formats.resolve_format("json" if json_flag else fmt, output)
+    listing_fmt = rendering.resolve_format("json" if json_flag else fmt, output)
     if list_flag:
         _emit(registry.list_targets(), listing_fmt, output)
         return

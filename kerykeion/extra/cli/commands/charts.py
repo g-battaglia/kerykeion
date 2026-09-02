@@ -49,7 +49,7 @@ from kerykeion.extra.cli.options import (
     YearOpt,
     ZodiacTypeOpt,
 )
-from kerykeion.extra.cli.rendering import formats
+from kerykeion.extra.cli import rendering
 
 _RETURN_TYPES = ("Solar", "Lunar")
 # The natal frame a transit wheel must share, as SubjectFlags field → model attribute.
@@ -67,7 +67,7 @@ _FRAME = {
 
 def _emit_subject_or_chart(subject: object, fmt: Optional[str], output: Optional[str], opts: object = None) -> None:
     """Subject for text/json/xml; a natal chart-data wrapper for SVG."""
-    resolved = formats.resolve_format(fmt, output)
+    resolved = rendering.resolve_format(fmt, output)
     if resolved == "svg":
         from kerykeion import ChartDataFactory
 

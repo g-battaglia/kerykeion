@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Helpers shared across the command modules — everything a command would otherwise repeat.
 
-A leaf module: it imports the CLI ``options``/``warnings``/``formats`` helpers
+A leaf module: it imports the CLI ``options``/``warnings``/``rendering`` helpers
 and the stdlib, never another command module, so importing it cannot cycle.
 """
 
@@ -11,14 +11,14 @@ from datetime import datetime
 from typing import Any, Callable, Optional, TypeVar
 
 from kerykeion.extra.cli import options, warnings
-from kerykeion.extra.cli.rendering import formats
+from kerykeion.extra.cli import rendering
 
 _C = TypeVar("_C", bound=Callable[..., Any])
 
 
 def _emit(model: object, fmt: Optional[str], output: Optional[str], opts: object = None) -> None:
     """Resolve the format and route the payload through the warnings funnel."""
-    warnings.output_with_warnings(model, formats.resolve_format(fmt, output), output, opts=opts)
+    warnings.output_with_warnings(model, rendering.resolve_format(fmt, output), output, opts=opts)
 
 
 def _given(**flags: Any) -> dict[str, Any]:
@@ -174,7 +174,7 @@ _RENDER_FLAGS: dict[str, tuple[Any, Optional[str]]] = {
 
 def _render_options(given: dict[str, Any]) -> object:
     """The render flags → ``RenderOptions`` (``None`` if none were given)."""
-    from kerykeion.extra.cli.rendering import options as render_options
+    from kerykeion.extra.cli import render_options
 
     kwargs = {param: given[flag] for flag, (_, param) in _RENDER_FLAGS.items() if param}
     kwargs["include_aspects"] = False if given["no_aspects"] else None  # not passing it stays "not given"

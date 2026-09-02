@@ -339,14 +339,12 @@ class TestEntryPoint:
 class TestTtyDetection:
     def test_format_defaults_to_text_on_tty_and_json_in_pipe(self, runner, app, ada_profile, monkeypatch):
         # The single seam: patch stdout_is_tty and confirm the default format flips.
-        # NB formats.py does `from ...io import stdout_is_tty`, so the live reference
-        # lives in the formats namespace — patch it there, not in io.
-        from kerykeion.extra.cli.rendering import formats
+        from kerykeion.extra.cli import rendering
 
-        monkeypatch.setattr(formats, "stdout_is_tty", lambda: True)
-        assert formats.resolve_format(None, None) == "text"
-        monkeypatch.setattr(formats, "stdout_is_tty", lambda: False)
-        assert formats.resolve_format(None, None) == "json"
+        monkeypatch.setattr(rendering, "stdout_is_tty", lambda: True)
+        assert rendering.resolve_format(None, None) == "text"
+        monkeypatch.setattr(rendering, "stdout_is_tty", lambda: False)
+        assert rendering.resolve_format(None, None) == "json"
 
 
 # ── input-validation regressions ─────────────────────────────────────────────
@@ -531,7 +529,7 @@ class TestCodeReviewFixes:
     # F12: --warnings-as-errors must not be bypassed when the renderer itself
     # crashes; the warnings are fatal (exit 9) even then.
     def test_warnings_as_errors_survives_render_crash(self, monkeypatch):
-        import kerykeion.extra.cli.rendering.emit as _emit
+        from kerykeion.extra.cli import rendering as _emit
         from kerykeion.extra.cli import errors, warnings
 
         class _Obj:
@@ -586,7 +584,7 @@ class TestCodeReviewFixes:
     # F7: -o files keep LF endings on every platform (no CRLF translation), so
     # byte-exact JSON/SVG survives a Windows save for jq/diff.
     def test_output_file_uses_lf(self, tmp_path):
-        from kerykeion.extra.cli.rendering.emit import write_output
+        from kerykeion.extra.cli.rendering import write_output
 
         out = tmp_path / "o.json"
         write_output("a\nb", str(out))
@@ -658,11 +656,11 @@ class TestThirdReviewPass:
     # closes the buffer (a CliRunner/pytest-capture artefact, not a CLI bug — a
     # bare-process run produces both wheels Sidereal).
     def test_transit_inherits_natal_zodiac_frame(self, deterministic_cli_env):
-        from kerykeion.extra.cli import config, profiles
+        from kerykeion.extra.cli import profiles
 
         # Persist a Sidereal profile into the isolated store.
         profiles.save(
-            config.profile_path("cyb"),
+            profiles.profile_path("cyb"),
             profiles.Profile(
                 name="Cyb",
                 input=profiles.ProfileInput(
@@ -765,7 +763,7 @@ class TestThirdReviewPass:
     # #12: -o into a not-yet-existing directory creates it (mirroring subject
     # save) instead of failing with a confusing exit-4 "invalid input".
     def test_output_file_creates_parent_dir(self, tmp_path):
-        from kerykeion.extra.cli.rendering.emit import write_output
+        from kerykeion.extra.cli.rendering import write_output
 
         out = tmp_path / "new" / "deep" / "o.json"
         write_output("{}", str(out))
@@ -774,9 +772,9 @@ class TestThirdReviewPass:
     # #13: a lookup miss for -s must not create the profile store as a side
     # effect of gathering "did you mean" suggestions.
     def test_resolve_path_does_not_create_store_on_miss(self, deterministic_cli_env, monkeypatch):
-        from kerykeion.extra.cli import config, profiles
+        from kerykeion.extra.cli import profiles
 
-        store = config.profiles_dir()
+        store = profiles.profiles_dir()
         assert not store.exists()
         with pytest.raises(profiles.ProfileNotFound):
             profiles.resolve_path("nonexistent")
@@ -1030,9 +1028,9 @@ class TestFullPrReviewFixes:
     def test_save_failure_leaves_the_previous_profile_intact(
         self, runner, app, ada_profile, monkeypatch, deterministic_cli_env
     ):
-        from kerykeion.extra.cli import config, profiles
+        from kerykeion.extra.cli import profiles
 
-        path = config.profile_path(ada_profile)
+        path = profiles.profile_path(ada_profile)
         original = path.read_text(encoding="utf-8")
 
         def boom(*a, **k):
@@ -1048,10 +1046,10 @@ class TestFullPrReviewFixes:
 
     # The store holds PII: BOTH the app dir and the subjects dir must be 0700.
     def test_profile_store_dirs_are_private(self, runner, app, ada_profile):
-        from kerykeion.extra.cli import config
+        from kerykeion.extra.cli import profiles
 
-        assert config.app_dir().stat().st_mode & 0o777 == 0o700
-        assert config.profiles_dir().stat().st_mode & 0o777 == 0o700
+        assert profiles.app_dir().stat().st_mode & 0o777 == 0o700
+        assert profiles.profiles_dir().stat().st_mode & 0o777 == 0o700
 
     # --no-online was documented and implemented in the resolver, but the parser was
     # never told to generate it, so the flag did not exist.
@@ -1103,15 +1101,9 @@ class TestFullPrReviewFixes:
     # The rendering helpers that bypassed -o and the warnings funnel are gone;
     # write_output/render are the only funnel.
     def test_stdout_bypassing_emitters_are_gone(self):
-        from kerykeion.extra.cli.rendering import emit, json_out, svg_out, text, xml_out
+        from kerykeion.extra.cli import rendering
 
-        assert not hasattr(emit, "emit")
-        for module, name in (
-            (json_out, "emit_json"), (text, "emit_text"),
-            (xml_out, "emit_xml"), (svg_out, "emit_svg"),
-        ):
-            assert not hasattr(module, name), f"{name} should be deleted"
-        assert hasattr(emit, "write_output") and hasattr(emit, "render")
+        assert not [name for name in dir(rendering) if name.startswith("emit")]
 
 
 @pytest.fixture
@@ -1199,7 +1191,7 @@ class TestRenderOptions:
     # `style` is annotated with an unevaluated forward-ref in chart_drawer, so
     # reading the raw signature yields no choices and would reject everything.
     def test_chart_choices_resolve_forward_refs(self):
-        from kerykeion.extra.cli.rendering.options import chart_choices
+        from kerykeion.extra.cli.render_options import chart_choices
 
         assert chart_choices("style") == ("classic", "modern")
         assert "dark" in chart_choices("theme")
@@ -1524,7 +1516,7 @@ class TestFourthReviewPass:
 
     @staticmethod
     def _save_profile(store_name: str, **recipe):
-        from kerykeion.extra.cli import config, profiles
+        from kerykeion.extra.cli import profiles
 
         base = dict(
             name=store_name.capitalize(), mode="birth",
@@ -1533,7 +1525,7 @@ class TestFourthReviewPass:
         )
         base.update(recipe)
         profiles.save(
-            config.profile_path(store_name),
+            profiles.profile_path(store_name),
             profiles.Profile(
                 name=base["name"],
                 input=profiles.ProfileInput(**base),

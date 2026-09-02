@@ -2,7 +2,7 @@
 """The knobs a command hands to the renderers.
 
 :class:`RenderOptions` is one frozen value threaded from the command down to
-``emit.render``. Every field is ``Optional`` and ``None`` means "the user did
+``rendering.render``. Every field is ``Optional`` and ``None`` means "the user did
 not ask": the ``*_kwargs`` helpers drop those, so the library's own defaults
 decide and the CLI never restates a default it would have to keep in sync.
 """

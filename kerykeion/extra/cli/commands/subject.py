@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Annotated, Optional
 
 import sys
-from kerykeion.extra.cli import config, profiles, subject_resolver, warnings
+from kerykeion.extra.cli import profiles, subject_resolver, warnings
 from kerykeion.extra.cli.commands._shared import _emit, _subject_from
 from kerykeion.extra.cli.parser import Arg
 from kerykeion.extra.cli.options import (
@@ -40,7 +40,7 @@ from kerykeion.extra.cli.options import (
     WithoutFlags,
     ZodiacTypeOpt,
 )
-from kerykeion.extra.cli.rendering import formats
+from kerykeion.extra.cli import rendering
 
 
 
@@ -79,7 +79,7 @@ def save(
     flags.name = flags.name or store_name
     recipe = subject_resolver.merge_inputs(flags)
     profile = profiles.Profile(name=flags.name, input=profiles.ProfileInput(**recipe), meta=profiles.make_meta())
-    path = config.profile_path(store_name)
+    path = profiles.profile_path(store_name)
     profiles.save(path, profile)
     print(path)  # stdout is scriptable; the human line goes to stderr
     print(f"Saved profile {store_name!r} ({path}).", file=sys.stderr)
@@ -128,7 +128,7 @@ def verify(
         "ascendant": sign("first_house") or sign("ascendant"),
     }
     # The summary carries no warnings; the subject it came from may — collect from that one.
-    warnings.output_with_warnings(summary, formats.resolve_format(fmt, output), output, warning_source=model)
+    warnings.output_with_warnings(summary, rendering.resolve_format(fmt, output), output, warning_source=model)
 
 
 COMMANDS = [

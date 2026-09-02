@@ -88,7 +88,7 @@ def _wrap_envelope(obj: Any, eph: list, polar: list) -> dict:
     from datetime import datetime, timezone
 
     from kerykeion import BACKEND_NAME, __version__
-    from kerykeion.extra.cli.rendering.json_out import render_json
+    from kerykeion.extra.cli.rendering import render_json
 
     return {
         "kerykeion": {
@@ -108,7 +108,7 @@ def output_with_warnings(obj: Any, fmt: str, output: str | None, warning_source:
     command that renders a derivative of the subject (``subject verify``). A
     render error is held so the warnings still surface and exit 9 still wins.
     """
-    from kerykeion.extra.cli.rendering import emit
+    from kerykeion.extra.cli import rendering
 
     eph, polar = collect_warnings(obj if warning_source is None else warning_source)
     payload = obj
@@ -121,7 +121,7 @@ def output_with_warnings(obj: Any, fmt: str, output: str | None, warning_source:
         payload = _wrap_envelope(obj, eph, polar)
     render_error = None
     try:
-        emit.write_output(emit.render(payload, fmt, opts), output)
+        rendering.write_output(rendering.render(payload, fmt, opts), output)
     except Exception as exc:  # noqa: BLE001 — held, not swallowed
         render_error = exc
     finally:

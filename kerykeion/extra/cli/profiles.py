@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-"""Profile store: the editable recipe that rebuilds a subject.
+"""Profile store: the XDG paths and the editable recipe that rebuilds a subject.
 
-A profile (JSON, 0600 — it holds birth data) has an ``input`` recipe in CLI
-shapes and ``meta`` provenance (version, backend, creation time). Every read
-rebuilds the subject from the recipe. No kerykeion import at module level.
+A profile (JSON, 0600 — it holds birth data, so the store is 0700 too) has an
+``input`` recipe in CLI shapes and ``meta`` provenance (version, backend,
+creation time). Every read rebuilds the subject from the recipe. No kerykeion
+import at module level.
 """
 
 from __future__ import annotations
 
 import difflib
 import os
+import re
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,9 +19,40 @@ from typing import Any, Optional
 
 import pydantic
 
-from kerykeion.extra.cli import config
-
 PROFILE_FORMAT_VERSION = 1
+APP_DIR_NAME = "kerykeion"
+PROFILES_SUBDIR = "subjects"
+
+
+def app_dir() -> Path:
+    """``$XDG_CONFIG_HOME/kerykeion`` or ``~/.config/kerykeion`` — a path only, never created here."""
+    xdg = os.environ.get("XDG_CONFIG_HOME")
+    return (Path(xdg).expanduser() if xdg else Path.home() / ".config") / APP_DIR_NAME
+
+
+def profiles_dir() -> Path:
+    return app_dir() / PROFILES_SUBDIR
+
+
+def ensure_profile_store() -> Path:
+    """Create the 0700 store if missing (the write path only, so a lookup miss has no side effects)."""
+    for directory in (app_dir(), profiles_dir()):
+        directory.mkdir(parents=True, exist_ok=True)
+        try:
+            directory.chmod(0o700)
+        except OSError:  # non-POSIX filesystems ignore the mode
+            pass
+    return profiles_dir()
+
+
+def profile_path(name: str) -> Path:
+    """The on-disk path for a profile name, restricted to a safe charset so it cannot escape the store."""
+    if not name:
+        raise ValueError("profile name must not be empty")
+    cleaned = re.sub(r"[^A-Za-z0-9_.\- ]+", "_", name).strip(" .")
+    if not cleaned or cleaned in {".", ".."}:
+        raise ValueError(f"profile name {name!r} has no usable characters")
+    return profiles_dir() / f"{cleaned}.json"
 
 
 class ProfileInput(pydantic.BaseModel):
@@ -97,8 +130,8 @@ def save(path: Path, profile: Profile) -> None:
     full disk or a Ctrl-C leaves either the old profile or the new one — never a
     truncated recipe. The 0700 store mode is enforced only inside the XDG store.
     """
-    if path.parent == config.profiles_dir():
-        config.ensure_profile_store()
+    if path.parent == profiles_dir():
+        ensure_profile_store()
     else:
         path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent))
@@ -125,7 +158,7 @@ def load(path: Path) -> Profile:
 
 def list_profiles() -> list[str]:
     """Names of every profile in the store; read-only, a missing store is simply empty."""
-    store = config.profiles_dir()
+    store = profiles_dir()
     return sorted(p.stem for p in store.glob("*.json")) if store.is_dir() else []
 
 
@@ -138,7 +171,7 @@ def resolve_path(spec: str) -> Path:
         return candidate
     if spec.startswith(("/", "~")) or "/" in spec or spec.endswith(".json"):
         raise FileNotFoundError(f"No such profile file: {candidate}")
-    in_store = config.profile_path(spec)
+    in_store = profile_path(spec)
     if in_store.is_file():
         return in_store
     raise ProfileNotFound(spec, difflib.get_close_matches(spec, list_profiles(), n=5, cutoff=0.4))

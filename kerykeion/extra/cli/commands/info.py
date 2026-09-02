@@ -73,7 +73,7 @@ def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
 def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """Strategy and method names per flag, as the library reports them."""
     from kerykeion import DominantsFactory
-    from kerykeion.extra.cli.rendering.options import SVG_VARIANTS, chart_choices
+    from kerykeion.extra.cli.render_options import SVG_VARIANTS, chart_choices
 
     _emit(
         {
