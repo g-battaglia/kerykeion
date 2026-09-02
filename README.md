@@ -2615,22 +2615,15 @@ print(f"Querent ruler: {indicators.querent.ruler}, Quesited ruler: {indicators.q
 
 ## Command Line Interface
 
-Kerykeion ships an optional command-line interface that exposes the whole
-library — every chart type, analytical technique, sky event and factory —
-without writing any Python. Install the `cli` extra (it adds
-[Typer](https://typer.tiangolo.com) and [Rich](https://rich.readthedocs.io);
-`kerykeion[all]` also pulls the Swiss Ephemeris backend):
+Kerykeion ships a command-line interface that exposes the whole library —
+every chart type, analytical technique, sky event and factory — without
+writing any Python. It is built on the standard library alone, so the `cli`
+extra adds no third-party package (`kerykeion[all]` also pulls the Swiss
+Ephemeris backend):
 
 ```bash
 pip3 install "kerykeion[cli]"
 ```
-
-> **No extra? Still useful.** A bare `pip install kerykeion` installs the
-> `kerykeion` command too, and a stdlib-only core works without the extra:
-> `kerykeion status` reports the active backend, the LEB calc mode, the
-> ephemeris data files and the environment knobs in effect (`--json` for
-> machine-readable output); `kerykeion --version` and `kerykeion --help` work as
-> well. Every other subcommand prints an install hint and exits `3`.
 
 Save a subject profile once, then reuse it across every command:
 

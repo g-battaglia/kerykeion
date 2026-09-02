@@ -7,9 +7,6 @@ and the stdlib, never another command module, so importing it cannot cycle.
 
 from __future__ import annotations
 
-import functools
-import inspect
-import typing
 from datetime import datetime
 from typing import Any, Callable, Optional, TypeVar
 
@@ -122,10 +119,10 @@ def _active_aspects(parsed: Optional[list[tuple[str, Optional[float]]]]) -> Opti
     return out
 
 
-# ── Signature helpers: the shared flag sets are declared once, here ──────────
-# typer builds a command from its signature, so the commands must spell the
-# flags; these keep the *set* in one place and turn a dropped flag into a loud
-# failure instead of one that quietly does nothing.
+# ── The shared flag sets are declared once, here ──────────────────────────────
+# A command is built from its signature, so the commands must spell the flags;
+# these keep the *set* in one place and turn a dropped flag into a loud failure
+# instead of one that quietly does nothing.
 
 _SUBJECT_FLAGS = (
     "name", "date", "time", "seconds", "iso_utc", "lat", "lng", "tz", "city", "nation", "online", "offline",
@@ -185,35 +182,6 @@ def _render_options(given: dict[str, Any]) -> object:
 
 
 def with_render_flags(command: _C) -> _C:
-    """Append the shared report/chart flags to *command*'s signature and hand it the assembled ``RenderOptions``.
-
-    The decorated function declares its own flags plus ``*, opts: object = None``.
-    Annotations are resolved here, in the command's own module: with
-    ``from __future__ import annotations`` the signature carries strings that
-    typer could not resolve from this module and would silently turn into bare,
-    help-less flags.
-    """
-    hints = typing.get_type_hints(command, include_extras=True)
-    signature = inspect.signature(command)
-    own = [
-        p.replace(annotation=hints.get(name, p.annotation))
-        for name, p in signature.parameters.items()
-        if name != "opts"
-    ]
-    injected = [
-        inspect.Parameter(flag, inspect.Parameter.KEYWORD_ONLY, default=None, annotation=alias)
-        for flag, (alias, _) in _RENDER_FLAGS.items()
-    ]
-
-    @functools.wraps(command)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        given = {flag: kwargs.pop(flag, None) for flag in _RENDER_FLAGS}
-        return command(*args, **kwargs, opts=_render_options(given))
-
-    wrapper.__signature__ = signature.replace(parameters=[*own, *injected])  # type: ignore[attr-defined]
-    wrapper.__annotations__ = {
-        **{p.name: p.annotation for p in own},
-        **{flag: alias for flag, (alias, _) in _RENDER_FLAGS.items()},
-        "return": None,
-    }
-    return wrapper  # type: ignore[return-value]
+    """Mark *command* as taking the shared report/chart flags: the parser declares them, the dispatcher hands them over as ``opts``."""
+    command.render_flags = True  # type: ignore[attr-defined]
+    return command

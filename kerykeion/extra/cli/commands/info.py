@@ -10,20 +10,12 @@ from __future__ import annotations
 
 import difflib
 import typing
-from typing import Optional
-
-import typer
+from typing import Annotated, Optional
 
 from kerykeion.extra.cli.commands._shared import _emit
 from kerykeion.extra.cli.options import FormatOpt, OutputOpt
-from kerykeion.extra.cli.typer_app import KerykeionTyper
+from kerykeion.extra.cli.parser import Arg
 
-info_app = KerykeionTyper(
-    name="info",
-    help="What the flags accept: literals, point sets, fixed stars, methods.",
-    no_args_is_help=True,
-    add_completion=False,
-)
 
 
 def _literal_tables() -> dict[str, list[str]]:
@@ -38,9 +30,8 @@ def _literal_tables() -> dict[str, list[str]]:
     return dict(sorted(tables.items()))
 
 
-@info_app.command("literals")
 def literals(
-    name: Optional[str] = typer.Argument(None, help="One alias to show (e.g. HousesSystemIdentifier). Omit for all."),
+    name: Annotated[Optional[str], Arg(help="One alias to show (e.g. HousesSystemIdentifier). Omit for all.")] = None,
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
@@ -57,7 +48,6 @@ def literals(
     _emit({match: tables[match]}, fmt, output)
 
 
-@info_app.command("points")
 def points(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """The --points presets and their contents."""
     from kerykeion.extra.cli import subject_resolver
@@ -65,7 +55,6 @@ def points(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     _emit(subject_resolver._point_sets(), fmt, output)
 
 
-@info_app.command("stars")
 def stars(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """The --fixed-stars presets and their contents."""
     from kerykeion.extra.cli import subject_resolver
@@ -73,7 +62,6 @@ def stars(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     _emit(subject_resolver._fixed_star_sets(), fmt, output)
 
 
-@info_app.command("houses")
 def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """What --houses accepts: letters (case matters) and names."""
     from kerykeion.extra.cli import subject_resolver
@@ -82,7 +70,6 @@ def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     _emit({"letters": letters, "names": dict(sorted(subject_resolver._HOUSES_BY_NAME.items()))}, fmt, output)
 
 
-@info_app.command("methods")
 def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """Strategy and method names per flag, as the library reports them."""
     from kerykeion import DominantsFactory
@@ -103,3 +90,11 @@ def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
         output,
     )
 
+
+COMMANDS = [
+    ("literals", literals),
+    ("points", points),
+    ("stars", stars),
+    ("houses", houses),
+    ("methods", methods),
+]

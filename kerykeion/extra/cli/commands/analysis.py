@@ -23,7 +23,7 @@ from kerykeion.extra.cli.options import (
     DominantMethodOpt,
     FormatOpt,
     LocationPrecisionOpt,
-    MajorAspectsOnlyFlag,
+    AllAspectsFlag,
     OutputOpt,
     PlanetsOpt,
     ScoreBreakdownFlag,
@@ -143,7 +143,7 @@ def moon(
 def relationship_score(
     profile: SubjectProfile = None,
     subject2: Subject2Profile = None,
-    all_aspects: MajorAspectsOnlyFlag = None,
+    all_aspects: AllAspectsFlag = None,
     axis_orb_limit: AxisOrbLimitOpt = None,
     fmt: FormatOpt = None,
     output: OutputOpt = None,

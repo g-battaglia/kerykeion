@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-"""``kerykeion status`` on the Typer path — a thin wrapper over :mod:`kerykeion.extra.cli.diagnostics`, shared with the no-extra path."""
+"""``kerykeion status`` — a thin wrapper over :mod:`kerykeion.extra.cli.diagnostics`."""
 
 from __future__ import annotations
 
 from typing import Annotated
 
-import typer
-
 from kerykeion.extra.cli import diagnostics
+from kerykeion.extra.cli.parser import Opt
 
 
 def status(
-    json_out: Annotated[bool, typer.Option("--json", help="Emit the status as JSON (default: human-readable text).")] = False,
+    json_out: Annotated[bool, Opt(("--json",), "Emit the status as JSON (default: human-readable text).")] = False,
     check: Annotated[
-        bool, typer.Option("--check", help="Also run the install checks (a real calculation included); exit 6 if one fails.")
+        bool, Opt(("--check",), "Also run the install checks (a real calculation included); exit 6 if one fails.")
     ] = False,
 ) -> None:
     """Backend, ephemeris data and calc mode in use; --check judges the install."""

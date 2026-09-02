@@ -145,10 +145,10 @@ uv run poe regenerate:docs-charts
 ### Command-Line Interface
 
 ```bash
-# Run the `cli` marker (offline; in-process via typer's CliRunner)
+# Run the `cli` marker (offline; in-process)
 uv run poe test:cli
 
-# Smoke-test the entry point and the lazy-import guard (no traceback without the extra)
+# Smoke-test the entry point from the checkout
 uv run poe cli:smoke
 
 # Run every bash block in skills/kerykeion-cli against a sandboxed profile
@@ -157,14 +157,8 @@ uv run poe cli:smoke
 uv run poe skill:cli:smoke
 ```
 
-> **Why `typer` and `rich` live in two places.** They are declared both in the
-> `[cli]` optional extra (`kerykeion[cli]`) **and** in the `[dev]` dependency
-> group. This is intentional, not redundancy: `pyrightconfig.json` runs in
-> `basic` mode where `reportMissingImports` is an error and includes the whole
-> `kerykeion/` tree — so without `typer`/`rich` in the dev environment **every
-> contributor's `poe typecheck` fails** on the `kerykeion/extra/cli/` imports. The
-> extra is what a user installs; the dev group is what a contributor needs to
-> type-check. Never "clean up" one away without removing the other.
+The CLI is standard-library only (argparse): the `[cli]` extra carries no
+dependency and exists as the documented way to ask for it.
 
 #### Documentation gates
 

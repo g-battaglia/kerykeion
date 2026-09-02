@@ -31,21 +31,15 @@ itself — `kerykeion info literals -f json` lists every accepted value, and
 those instead of guessing; the tables are large (48 ayanamsas, 23 house systems,
 76 points) and change between releases.
 
-## Install, and what works without the extra
+## Install
 
 ```bash
 # gate: skip
 pip install "kerykeion[cli]"
 ```
 
-`pip install kerykeion` (no extra) still installs the `kerykeion` command,
-because `[project.scripts]` is static metadata. Without the extra only three
-things work — `status`, `--version`, `--help` — and **every other subcommand
-exits 3** with an install hint, never a traceback. So:
-
-- exit 3 from any command means "the `[cli]` extra is not installed", not "bad
-  usage";
-- `kerykeion status` is always safe to run first, on any install.
+The interface is built on the standard library alone, so the extra adds no
+third-party package. `kerykeion status` is always safe to run first.
 
 ## The three rules that keep output usable
 
@@ -80,7 +74,6 @@ kerykeion natal -s ada -f json --envelope
 | 0 | success | — |
 | 1 | unexpected error | rerun with `--traceback`; this is a bug |
 | 2 | usage error (from the parser) | fix the command line |
-| 3 | the `[cli]` extra is missing | `pip install "kerykeion[cli]"` |
 | 4 | invalid input | fix the flag the message names |
 | 5 | kerykeion rejected the request | astrological/domain error |
 | 6 | ephemeris problem | date out of coverage, missing data files |

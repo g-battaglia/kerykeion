@@ -78,12 +78,10 @@ dependencies = [
 
 [project.optional-dependencies]
 swiss = ["pyswisseph>=2.10.3.1"]
-# The command-line interface. A FLOOR, not a pin (project policy): typer >=0.26
-# vendorizes click, which removes a silent conflict — click 8.3 already enters
-# the runtime graph as a transitive of libephemeris, so below 0.26 the CLI's
-# correctness would depend on which click another dependency resolves. The .4
-# patch is the settled point. rich shares the same floor family.
-cli = ["typer>=0.26.4", "rich>=13.8.0"]
+# The command-line interface is built on the standard library alone, so this
+# extra carries no third-party package: it stays as the documented way to ask
+# for the CLI, and the place a dependency would go if one were ever needed.
+cli = []
 # ``all`` includes ``cli`` on purpose: a name that says "all" but omits an extra
 # is a lie in the name. Self-referencing the other extras (PEP 508, supported by
 # every resolver this project targets) keeps the version floors defined once —
@@ -91,12 +89,8 @@ cli = ["typer>=0.26.4", "rich>=13.8.0"]
 all = ["kerykeion[swiss]", "kerykeion[cli]"]
 
 [project.scripts]
-# The console command is installed for EVERY user — even ``pip install kerykeion``
-# with no extras, because ``[project.scripts]`` is static metadata. ``main``
-# serves a small stdlib-only core without the [cli] extra (``status``,
-# ``--version``, ``--help``); every other subcommand prints an install hint and
-# exits 3, so the bare command is useful out of the box and never crashes with a
-# ModuleNotFoundError traceback.
+# Installed for every user (``[project.scripts]`` is static metadata); the CLI
+# is standard-library only, so it works on any install.
 kerykeion = "kerykeion.extra.cli:main"
 
 [project.urls]
@@ -155,7 +149,7 @@ markers = [
     "base: DE440s tier (1849-2150)",
     "medium: DE440 tier (1550-2650, cumulative)",
     "extended: DE441 tier (full range, cumulative)",
-    "cli: command-line interface tests (requires the kerykeion[cli] extra)",
+    "cli: command-line interface tests",
     "reference_backend_only: golden comparison the two ephemerides genuinely disagree on (deep antiquity); skipped off the baseline backend with a reason",
 ]
 
@@ -239,11 +233,11 @@ help = "Compare libephemeris vs swisseph (both must be installed via pip install
 # ── Command-line interface ──
 [tool.poe.tasks."test:cli"]
 cmd = "pytest tests/ -m 'cli and not online'"
-help = "Run CLI tests (requires the kerykeion[cli] extra)"
+help = "Run the command-line interface tests"
 
 [tool.poe.tasks."cli:smoke"]
 cmd = "python scripts/cli_smoke_check.py"
-help = "Smoke-check the kerykeion CLI entry point, --version, --help"
+help = "Smoke the entry point from the checkout: --version, --help, and that import kerykeion never imports the CLI"
 
 # ── Coverage ──
 [tool.poe.tasks."test:core:cov"]
@@ -464,13 +458,10 @@ help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 [tool.poe.tasks."build:smoke"]
 shell = """
 rm -rf dist && uv build &&
-echo '== build:smoke env 1: wheel only (library chart + CLI install-hint guard) ==' &&
 uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check.py &&
-uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check_cli.py &&
-echo '== build:smoke env 2: wheel + [cli] (CLI functional) ==' &&
-uv run --isolated --no-project --with "typer>=0.26.4" --with "rich>=13.8.0" --with dist/*.whl python scripts/build_smoke_check_cli.py
+uv run --isolated --no-project --with dist/*.whl python scripts/build_smoke_check_cli.py
 """
-help = "Build sdist+wheel, then in ISOLATED envs verify: (env 1) the wheel imports and renders a chart and the bare kerykeion command degrades to the install hint; (env 2) with [cli], --version/--help work. Catches missing packaged data and a broken CLI guard before publishing."
+help = "Build sdist+wheel, then in an ISOLATED env holding the wheel alone verify that the library imports and renders a chart and that the kerykeion command works end to end. Catches missing packaged data before publishing."
 
 [tool.poe.tasks.clean]
 cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
@@ -530,12 +521,4 @@ dev = [
     "ruff>=0.12.9",
     "types-requests>=2.32.4.20250611",
     "pyswisseph>=2.10.3.2",
-    # CLI deps repeated in the dev group, NOT redundantly: pyrightconfig.json is
-    # typeCheckingMode "basic" where reportMissingImports is an ERROR and the
-    # include covers the whole ``kerykeion`` tree, so without typer/rich in the
-    # venv ``poe typecheck`` fails for every contributor. mypy would not fail
-    # (ignore_missing_imports = true) — it would just degrade the CLI to Any,
-    # which is worse. Keep these floors aligned with the [cli] extra above.
-    "typer>=0.26.4",
-    "rich>=13.8.0",
 ]

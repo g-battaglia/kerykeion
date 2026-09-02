@@ -3,9 +3,9 @@
 
     0  OK                          5  a kerykeion-level error (KerykeionException)
     1  unexpected (a bug)          6  an ephemeris/backend error (out of coverage, unknown body…)
-    2  usage — Click/typer's       7  a network error (GeoNames unreachable…)
-    3  the [cli] extra is missing  8  a sampling limit (series too long)
-    4  invalid input               9  warnings treated as errors      130  interrupted
+    2  usage — argparse's          7  a network error (GeoNames unreachable…)
+    4  invalid input               8  a sampling limit (series too long)
+                                   9  warnings treated as errors      130  interrupted
 
 Backend hard-error types are matched before ``ValueError``: Skyfield's
 ``EphemerisRangeError`` is a ``ValueError`` subclass, and an out-of-coverage
@@ -18,14 +18,12 @@ import os
 import sys
 import traceback
 from enum import IntEnum
-from functools import wraps
-from typing import Callable, NoReturn, Optional, Tuple, Type, TypeVar
+from typing import NoReturn, Optional, Tuple, Type
 
 
 class ExitCode(IntEnum):
     OK = 0
     UNEXPECTED = 1
-    CLI_EXTRA_MISSING = 3
     INVALID_INPUT = 4
     KERYKEION_ERROR = 5
     EPHEMERIS = 6
@@ -155,24 +153,3 @@ def handle_uncaught(exc: BaseException) -> NoReturn:
         sys.stderr.write("kerykeion: rerun with --traceback to see the full error.\n")
     raise SystemExit(int(code))
 
-
-_F = TypeVar("_F", bound=Callable[..., object])
-
-
-def error_boundary(func: _F) -> _F:
-    """Wrap a command so any exception becomes a classified exit — also under an in-process ``CliRunner``."""
-
-    @wraps(func)
-    def wrapper(*args: object, **kwargs: object) -> object:
-        try:
-            return func(*args, **kwargs)
-        except SystemExit:
-            raise
-        except BaseException as exc:  # noqa: BLE001 — the whole point is to catch all
-            from typer import Exit
-
-            if isinstance(exc, Exit):  # typer's control-flow signal, not a crash
-                raise
-            handle_uncaught(exc)
-
-    return wrapper  # type: ignore[return-value]

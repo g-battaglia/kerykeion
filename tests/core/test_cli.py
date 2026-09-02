@@ -12,9 +12,9 @@ Design rules (see DEVELOPMENT.md / TEST.md):
 * the file name and every test name avoid the token ``all_points`` —
   ``tests/conftest.py`` skips TNO-needing node ids by regex, and that token
   would silently disable tests on the Swiss-Ephemeris backend;
-* CliRunner runs in-process (counts toward coverage); a couple of cases that
-  CliRunner cannot demonstrate (the real entry point, ``import kerykeion``
-  staying typer-free) use a subprocess.
+* the runner drives ``main()`` in-process (counts toward coverage); a couple
+  of cases it cannot demonstrate (the real entry point, ``import kerykeion``
+  not importing the CLI) use a subprocess.
 """
 
 from __future__ import annotations
@@ -41,12 +41,7 @@ _ADA = dict(
 
 @pytest.fixture
 def deterministic_cli_env(tmp_path, monkeypatch):
-    """Isolate Rich's terminal probing and the profile store from the dev shell.
-
-    Rich reads the width from ``os.get_terminal_size()`` on fds 0/1/2 of the
-    process, NOT from the Console file — so CliRunner alone does not shield us
-    from the developer's terminal width. Pinning COLUMNS/LINES does.
-    """
+    """Isolate the terminal width and the profile store from the dev shell (argparse wraps help at COLUMNS)."""
     monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
     monkeypatch.setenv("NO_COLOR", "1")
     monkeypatch.setenv("TERM", "dumb")
@@ -55,18 +50,38 @@ def deterministic_cli_env(tmp_path, monkeypatch):
     return tmp_path
 
 
+class _Invocation:
+    def __init__(self, exit_code: int, stdout: str, stderr: str) -> None:
+        self.exit_code, self.stdout, self.stderr = exit_code, stdout, stderr
+        self.output = stdout + stderr
+
+
+class _Runner:
+    """In-process ``main(argv)`` with captured streams, in the shape the tests were written against."""
+
+    def invoke(self, _app, args):
+        import contextlib
+        import io
+
+        from kerykeion.extra.cli import main
+
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            try:
+                code = main(list(args)) or 0
+            except SystemExit as exc:
+                code = exc.code if isinstance(exc.code, int) else (0 if exc.code is None else 1)
+        return _Invocation(code, out.getvalue(), err.getvalue())
+
+
 @pytest.fixture
 def runner(deterministic_cli_env):
-    from typer.testing import CliRunner
-
-    return CliRunner()
+    return _Runner()
 
 
 @pytest.fixture
 def app():
-    from kerykeion.extra.cli.app import app
-
-    return app
+    return None  # the runner drives main(); kept so ``invoke(app, ...)`` reads as before
 
 
 @pytest.fixture(autouse=True)
@@ -74,8 +89,8 @@ def _reset_cli_error_policy():
     """Reset the CLI's process-global error knobs around every test.
 
     ``--traceback`` and ``--warnings-as-errors`` set module globals in
-    :mod:`kerykeion.extra.cli.errors` (via the root callback) that typer never resets,
-    so without this a test that escalates warnings leaks the policy into every
+    :mod:`kerykeion.extra.cli.errors` that nothing resets, so without this a
+    test that escalates warnings leaks the policy into every
     later test in the same process — making the suite order-dependent. Reset
     before and after so each test starts and ends clean.
     """
@@ -118,7 +133,7 @@ class TestRoot:
     def test_bare_invocation_shows_help_and_exits_zero(self, runner, app):
         r = runner.invoke(app, [])
         assert r.exit_code == 0
-        assert "Usage:" in r.output or "Commands" in r.output
+        assert "usage:" in r.output.lower()
 
     def test_unknown_command_is_usage_error(self, runner, app):
         r = runner.invoke(app, ["definitely-not-a-command"])
@@ -299,14 +314,11 @@ class TestEntryPoint:
         names = {ep.name for ep in entry_points(group="console_scripts")}
         assert "kerykeion" in names
 
-    def test_import_kerykeion_does_not_load_typer(self):
-        # The [cli] extra is optional; importing the library must stay typer-free
-        # so `pip install kerykeion` (without [cli]) never fails on the guard.
+    def test_import_kerykeion_does_not_load_the_cli(self):
         script = textwrap.dedent(
             """
             import sys
             import kerykeion
-            assert "typer" not in sys.modules, "typer leaked into import kerykeion"
             assert "kerykeion.extra.cli" not in sys.modules, "kerykeion.extra.cli auto-imported"
             """
         )
@@ -411,19 +423,10 @@ class TestInputValidationRegressions:
 
 
 # ── kerykeion status (diagnostics) ───────────────────────────────────────────
-#
-# ``status`` is a stdlib-only diagnostic (kerykeion/extra/cli/diagnostics.py) served
-# both by this Typer command and by the no-extra dispatch in kerykeion.extra.cli.main.
-# TestStatus exercises the Typer registration; TestNoExtraFallback exercises the
-# stdlib path that a bare ``pip install kerykeion`` (no [cli]) actually sees.
 
 
 class TestStatus:
-    """``kerykeion status`` reports runtime backend/ephemeris state (Typer path).
-
-    The no-extra path cannot run here (typer is installed in the dev env and
-    CliRunner is in-process); it is covered by :class:`TestNoExtraFallback`.
-    """
+    """``kerykeion status`` reports runtime backend/ephemeris state."""
 
     def test_status_text_lists_backend_and_mode(self, runner, app):
         r = runner.invoke(app, ["status"])
@@ -456,76 +459,6 @@ class TestStatus:
             assert "calc mode:" in r.output
             assert "Ephemeris data (libephemeris LEB):" in r.output
             assert "files:" in r.output  # the inventory summary line
-
-
-class TestNoExtraFallback:
-    """The stdlib core that runs when the ``[cli]`` extra is absent.
-
-    The dev env has typer installed, and CliRunner runs in-process, so it
-    cannot show the no-extra behaviour. We spawn a subprocess that blocks
-    typer/rich via a ``sys.meta_path`` finder and drives ``kerykeion.extra.cli.main``
-    the way a bare ``pip install kerykeion`` would. click is NOT blocked: it is
-    a transitive of libephemeris (present even without the extra), and the
-    dispatch decision is based on typer, not click.
-    """
-
-    _SCRIPT = textwrap.dedent(
-        """\
-        import sys
-        class _Blocker:
-            def find_spec(self, name, path=None, target=None):
-                if name in ("typer", "rich"):
-                    raise ImportError("blocked by test")
-                return None
-        sys.meta_path.insert(0, _Blocker())
-        sys.argv = ["kerykeion", *sys.argv[1:]]
-        from kerykeion.extra.cli import main
-        raise SystemExit(main())
-        """
-    )
-
-    def _run(self, args):
-        return subprocess.run(
-            [sys.executable, "-c", self._SCRIPT, *args],
-            capture_output=True,
-            text=True,
-        )
-
-    def test_status_works_without_extra(self):
-        r = self._run(["status"])
-        assert r.returncode == 0, r.stderr
-        assert "Backend:" in r.stdout
-
-    def test_status_json_works_without_extra(self):
-        r = self._run(["status", "--json"])
-        assert r.returncode == 0, r.stderr
-        json.loads(r.stdout)  # valid JSON, no further assertion needed
-
-    def test_version_works_without_extra(self):
-        r = self._run(["--version"])
-        assert r.returncode == 0, r.stderr
-        assert r.stdout.strip()
-
-    def test_help_works_without_extra(self):
-        r = self._run(["--help"])
-        assert r.returncode == 0, r.stderr
-        assert "Usage" in r.stdout
-
-    def test_bare_invocation_shows_help_without_extra(self):
-        r = self._run([])
-        assert r.returncode == 0, r.stderr
-        assert "Usage" in r.stdout
-
-    def test_full_cli_command_degrades_to_install_hint(self):
-        r = self._run(["natal", "-s", "ada"])
-        assert r.returncode == 3, r.stderr
-        assert "kerykeion[cli]" in r.stderr
-        assert "Traceback" not in r.stderr
-
-    def test_status_unknown_option_is_invalid_input(self):
-        r = self._run(["status", "--bogus"])
-        assert r.returncode == 4, r.stderr
-        assert "Traceback" not in r.stderr
 
 
 # ── second code-review pass (PR #249) ────────────────────────────────────────
@@ -639,13 +572,12 @@ class TestCodeReviewFixes:
         finally:
             errors._backend_types = None  # rebuild normally afterwards
 
-    # F11: main(argv) must honor an explicit argv on the typer path (Click reads
-    # sys.argv, so without the swap a passed argv is silently ignored).
+    # F11: main(argv) must honor an explicit argv over sys.argv.
     def test_main_honors_explicit_argv(self, monkeypatch):
         from kerykeion.extra.cli import main
 
-        # If argv were ignored, Click would see this bogus command line and exit
-        # 2 (unknown command). A 0 means the explicit argv won.
+        # If argv were ignored, the parser would see this bogus command line and
+        # exit 2 (unknown command). A 0 means the explicit argv won.
         monkeypatch.setattr(sys, "argv", ["kerykeion", "definitely-not-a-command"])
         with pytest.raises(SystemExit) as ei:
             main(["--version"])
@@ -1093,19 +1025,6 @@ class TestFullPrReviewFixes:
         with pytest.raises(ValueError):
             resolve_house_system("G")
 
-    # Bare ``@app.command`` (no parentheses) silently registered nothing and
-    # rebound the module symbol to typer's decorator.
-    def test_bare_command_decorator_registers(self):
-        from kerykeion.extra.cli.typer_app import KerykeionTyper
-
-        t = KerykeionTyper()
-
-        @t.command
-        def hello() -> None: ...
-
-        assert len(t.registered_commands) == 1
-        assert hello.__name__ == "hello"
-
     # subject save is atomic: a failure mid-write must not destroy the profile
     # that was already on disk (it holds birth data and has no backup).
     def test_save_failure_leaves_the_previous_profile_intact(
@@ -1134,7 +1053,7 @@ class TestFullPrReviewFixes:
         assert config.app_dir().stat().st_mode & 0o777 == 0o700
         assert config.profiles_dir().stat().st_mode & 0o777 == 0o700
 
-    # --no-online was documented and implemented in the resolver, but typer was
+    # --no-online was documented and implemented in the resolver, but the parser was
     # never told to generate it, so the flag did not exist.
     def test_no_online_flag_exists(self, runner, app):
         r = runner.invoke(app, [
@@ -1348,8 +1267,8 @@ class TestRenderOptions:
         assert result.exit_code == 4
         assert needle in result.output
 
-    # @with_render_flags injects the shared knobs into the signature typer reads,
-    # so every chart command must actually offer all of them. A knob added to the
+    # @with_render_flags marks the commands whose parser declares the shared
+    # knobs, so every chart command must actually offer all of them. A knob added to the
     # table but not reaching the commands is the silent no-op this guards.
     @pytest.mark.parametrize(
         "command",
@@ -1365,14 +1284,15 @@ class TestRenderOptions:
         for flag in _RENDER_FLAGS:
             assert f"--{flag.replace('_', '-')}" in rendered, f"{command} is missing --{flag}"
 
-    # The decorated command receives the assembled RenderOptions as `opts`; the
-    # flags themselves never reach its body.
+    # The marked command receives the assembled RenderOptions as `opts`; the
+    # flags themselves are declared by the parser and never reach its signature.
     def test_render_flags_reach_the_command_as_options(self):
         from kerykeion.extra.cli.commands import charts
 
         parameters = inspect.signature(charts.natal).parameters
-        assert "opts" not in parameters, "opts is supplied by the decorator, not by typer"
-        assert "theme" in parameters, "the render flags must be visible to typer"
+        assert "opts" in parameters
+        assert "theme" not in parameters
+        assert charts.natal.render_flags is True
 
 
 class TestCuratedCommands:

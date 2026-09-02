@@ -2,29 +2,26 @@
 title: 'Command Line Interface'
 description: 'The optional kerykeion[cli] extra exposes every chart, technique, sky event and factory from the terminal — text on a TTY, JSON in a pipe.'
 category: 'Integration'
-tags: ['docs', 'kerykeion', 'cli', 'terminal', 'typer']
+tags: ['docs', 'kerykeion', 'cli', 'terminal', 'argparse']
 order: 64
 ---
 
 # Command Line Interface
 
-Kerykeion ships an optional command-line interface that exposes the whole
+Kerykeion ships a command-line interface that exposes the whole
 library — every chart type, analytical technique, sky event and factory —
 without writing any Python. It is a **local** engine: it computes with the same
 in-process backend as the library, so it works offline and needs no API key.
 
-Install the `cli` extra (it adds [Typer](https://typer.tiangolo.com) and
-[Rich](https://rich.readthedocs.io)):
+Install it with the `cli` extra; the interface is built on the standard
+library alone, so the extra adds no third-party package:
 
 ```bash
 pip3 install "kerykeion[cli]"
 ```
 
 `kerykeion[all]` adds the extra **and** the optional Swiss Ephemeris backend.
-
-> **No extra, no crash.** The `kerykeion` command is installed even by a plain
-> `pip install kerykeion`. Without the extra it prints a one-line install hint
-> and exits `3` — never a `Traceback`. `import kerykeion` stays free of `typer`.
+`import kerykeion` never imports the CLI.
 
 ## Output formats
 
@@ -197,8 +194,7 @@ kerykeion: error: 'os' is not in the kerykeion public API; ...
 |------|---------|
 | `0` | success |
 | `1` | unexpected error (rerun with `--traceback`) |
-| `2` | usage error (reserved for Click/Typer) |
-| `3` | the `[cli]` extra is missing |
+| `2` | usage error (the argument parser rejected the command line) |
 | `4` | invalid input (bad flag, unknown profile, malformed date) |
 | `5` | a `KerykeionException` |
 | `6` | an ephemeris / backend error |

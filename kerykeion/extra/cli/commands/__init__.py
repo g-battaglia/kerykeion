@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-"""Command modules, registered on the Typer app by :mod:`kerykeion.extra.cli.app`."""
+"""Command modules, mounted on the parser by :mod:`kerykeion.extra.cli.app`."""

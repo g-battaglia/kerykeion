@@ -34,14 +34,7 @@ from kerykeion.extra.cli.options import (
     ToOpt,
     ZodiacSkyOpt,
 )
-from kerykeion.extra.cli.typer_app import KerykeionTyper
 
-sky_app = KerykeionTyper(
-    name="sky",
-    help="Sun, Moon and planet events, at a moment or over a range.",
-    no_args_is_help=True,
-    add_completion=False,
-)
 
 
 def _zodiac_kwargs(zodiac: Optional[str], sidereal_mode: Optional[str]) -> dict[str, Any]:
@@ -165,7 +158,6 @@ def _range_query(
     return from_, to, {**_zodiac_kwargs(zodiac, sidereal_mode), **_given(**lists)}
 
 
-@sky_app.command("sun-times", rich_help_panel="At a moment and place")
 def sun_times(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -183,7 +175,6 @@ def sun_times(
     _emit(SunTimesFactory.from_date(m.year, m.month, m.day, latitude=la, longitude=lo, tz_str=tz_str), fmt, output)
 
 
-@sky_app.command("hours", rich_help_panel="At a moment and place")
 def hours(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -204,7 +195,6 @@ def hours(
     _emit(model, fmt, output)
 
 
-@sky_app.command("voc", rich_help_panel="Over a range")
 def voc(
     profile: SubjectProfile = None,
     tz: SubjectTz = None,
@@ -240,7 +230,6 @@ def voc(
     )
 
 
-@sky_app.command("eclipses", rich_help_panel="Over a range")
 def eclipses(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -265,7 +254,6 @@ def eclipses(
         _emit(EclipseFactory.search_global(**kwargs), fmt, output)
 
 
-@sky_app.command("lunations", rich_help_panel="Over a range")
 def lunations(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -282,7 +270,6 @@ def lunations(
     _emit(LunationFinderFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
-@sky_app.command("ingresses", rich_help_panel="Over a range")
 def ingresses(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -301,7 +288,6 @@ def ingresses(
     _emit(search(start, end, **extra), fmt, output)
 
 
-@sky_app.command("stations", rich_help_panel="Over a range")
 def stations(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -324,7 +310,6 @@ def stations(
     _emit(search(start, end, **extra), fmt, output)
 
 
-@sky_app.command("mundane", rich_help_panel="Over a range")
 def mundane(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -350,7 +335,6 @@ def mundane(
     _emit(MundaneAspectFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
-@sky_app.command("phenomena", rich_help_panel="At a moment and place")
 def phenomena(
     profile: SubjectProfile = None,
     planets: PlanetsOpt = None,
@@ -366,7 +350,6 @@ def phenomena(
     _emit(PlanetaryPhenomenaFactory.from_subject(subject, _split_csv(planets)), fmt, output)  # type: ignore[arg-type]
 
 
-@sky_app.command("occultations", rich_help_panel="At a moment and place")
 def occultations(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -407,3 +390,17 @@ def occultations(
         _emit(factory.search_local(julian_day, lat=float(la), lng=float(lo), **kwargs), fmt, output)
     else:
         _emit(factory.search_global(julian_day, **kwargs), fmt, output)
+
+
+COMMANDS = [
+    ("sun-times", sun_times),
+    ("hours", hours),
+    ("voc", voc),
+    ("eclipses", eclipses),
+    ("lunations", lunations),
+    ("ingresses", ingresses),
+    ("stations", stations),
+    ("mundane", mundane),
+    ("phenomena", phenomena),
+    ("occultations", occultations),
+]

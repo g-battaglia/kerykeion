@@ -11,11 +11,13 @@
   only the import path moved (`python -m kerykeion.extra.cli` replaces
   `python -m kerykeion.cli`). Nothing in the library imports it, before or
   after.
-- **The help screen reads as a menu.** `kerykeion` (and `-h`, now accepted
-  everywhere, as it already was without the extra) groups the commands into
-  four panels — charts, analyses, techniques and events, subjects and setup —
-  and every entry is one line. `technique` and `sky` are panelled the same
-  way. `technique stars` (heliacal risings and settings) is renamed
+- **No third-party package behind the CLI.** typer and rich are gone; the
+  interface is argparse over the library, and `kerykeion[cli]` is now an
+  empty extra that stays as the documented way to ask for it. With no
+  dependency to miss there is no install hint and no exit `3`: a bare
+  install serves every command. Help is argparse's, one line per command,
+  `-h` everywhere; `--major-aspects-only` (the default) is gone, `--all-aspects`
+  stays. `technique stars` (heliacal risings and settings) is renamed
   `technique heliacal`: next to `fixed-stars` the old name said the opposite
   of what it did.
 

@@ -53,17 +53,9 @@ from kerykeion.extra.cli.options import (
     YearsAfterOpt,
     YearsBeforeOpt,
 )
-from kerykeion.extra.cli.typer_app import KerykeionTyper
-
-technique_app = KerykeionTyper(
-    name="technique",
-    help="Analytical techniques on a stored subject.",
-    no_args_is_help=True,
-    add_completion=False,
-)
 
 
-@technique_app.command("profections", rich_help_panel="Time lords")
+
 def profections(
     profile: SubjectProfile = None,
     target_date: TargetDateOpt = None,
@@ -80,7 +72,6 @@ def profections(
     _emit(ProfectionsFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("firdaria", rich_help_panel="Time lords")
 def firdaria(
     profile: SubjectProfile = None,
     target_date: TargetDateOpt = None,
@@ -96,7 +87,6 @@ def firdaria(
     _emit(FirdariaFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("zr", rich_help_panel="Time lords")
 def zr(
     profile: SubjectProfile = None,
     lot: LotOpt = None,
@@ -121,7 +111,6 @@ def zr(
     _emit(ZodiacalReleasingFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("receptions", rich_help_panel="Traditional")
 def receptions(profile: SubjectProfile = None, fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """Mutual receptions by domicile and exaltation."""
     from kerykeion import MutualReceptionsFactory
@@ -130,7 +119,6 @@ def receptions(profile: SubjectProfile = None, fmt: FormatOpt = None, output: Ou
     _emit(MutualReceptionsFactory.from_subject(subject), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("horary", rich_help_panel="Traditional")
 def horary(
     profile: SubjectProfile = None,
     is_moon_void: IsMoonVoidOpt = None,
@@ -144,7 +132,6 @@ def horary(
     _emit(HoraryIndicatorsFactory.from_subject(subject, **_given(is_moon_void=is_moon_void)), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("midpoints", rich_help_panel="Modern")
 def midpoints(
     profile: SubjectProfile = None,
     planets: PlanetsOpt = None,
@@ -160,7 +147,6 @@ def midpoints(
     _emit(MidpointFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("directions", rich_help_panel="Traditional")
 def directions(
     profile: SubjectProfile = None,
     max_years: MaxYearsOpt = None,
@@ -185,7 +171,6 @@ def directions(
     _emit(PrimaryDirectionsFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("acg", rich_help_panel="Modern")
 def acg(
     profile: SubjectProfile = None,
     step: AcgStepOpt = None,
@@ -209,7 +194,6 @@ def acg(
     _emit(AstroCartographyFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("heliacal", rich_help_panel="Traditional")
 def heliacal(
     profile: SubjectProfile = None,
     count: CountOpt = None,
@@ -235,7 +219,6 @@ def heliacal(
     _emit(HeliacalFactory().search_events(julian_day, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("relocate", rich_help_panel="Modern")
 @with_render_flags
 def relocate(
     profile: SubjectProfile = None,
@@ -266,7 +249,6 @@ def relocate(
     _emit_subject_or_chart(relocated, fmt, output, opts)  # a relocated chart is a subject: emitted like `natal`
 
 
-@technique_app.command("nodes", rich_help_panel="Modern")
 def nodes(
     profile: SubjectProfile = None,
     method: MethodOpt = None,
@@ -282,7 +264,6 @@ def nodes(
     _emit(PlanetaryNodesFactory.from_subject(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("house-comparison", rich_help_panel="Modern")
 def house_comparison(
     profile: SubjectProfile = None,
     subject2: Subject2Profile = None,
@@ -299,7 +280,6 @@ def house_comparison(
     _emit(factory.get_house_comparison(), fmt, output)
 
 
-@technique_app.command("solar-arc", rich_help_panel="Modern")
 def solar_arc(
     profile: SubjectProfile = None,
     target_year: TargetYearOpt = None,
@@ -328,7 +308,6 @@ def solar_arc(
     _emit(SolarArcFactory.compute(subject, **kwargs), fmt, output)  # type: ignore[arg-type]
 
 
-@technique_app.command("fixed-stars", rich_help_panel="Traditional")
 def fixed_stars(
     profile: SubjectProfile = None, orb: StarOrbOpt = None, fmt: FormatOpt = None, output: OutputOpt = None
 ) -> None:
@@ -337,3 +316,21 @@ def fixed_stars(
 
     subject = _stored_subject(profile, "fixed-stars")
     _emit(FixedStarDiscoveryFactory.find_prominent_stars(subject, **_given(orb=orb)), fmt, output)  # type: ignore[arg-type]
+
+
+COMMANDS = [
+    ("profections", profections),
+    ("firdaria", firdaria),
+    ("zr", zr),
+    ("receptions", receptions),
+    ("horary", horary),
+    ("midpoints", midpoints),
+    ("directions", directions),
+    ("acg", acg),
+    ("heliacal", heliacal),
+    ("relocate", relocate),
+    ("nodes", nodes),
+    ("house-comparison", house_comparison),
+    ("solar-arc", solar_arc),
+    ("fixed-stars", fixed_stars),
+]

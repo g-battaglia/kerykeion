@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The ``Annotated[T, typer.Option(...)]`` aliases every command composes its signature from.
+"""The ``Annotated[T, Opt(...)]`` aliases every command composes its signature from.
 
 One spelling per flag, shared by every command that takes it. Almost every alias
 is ``Optional`` with a ``None`` default: ``None`` means "not given", so the
@@ -10,9 +10,9 @@ but pyright then sees a variable, not a type alias, and rejects every use.
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Callable, Optional
+from typing import Annotated, Callable, Optional
 
-import typer
+from kerykeion.extra.cli.parser import Opt
 
 Str = Optional[str]
 Int = Optional[int]
@@ -21,9 +21,9 @@ Bool = Optional[bool]
 Strs = Optional[list[str]]
 
 
-def _panel(panel: Optional[str]) -> Callable[..., Any]:
-    """``typer.Option`` bound to one help panel: ``subject("--name", help=...)``."""
-    return lambda *names, help: typer.Option(*names, help=help, rich_help_panel=panel)
+def _panel(group: Optional[str]) -> Callable[..., Opt]:
+    """An ``Opt`` factory bound to one help section: ``subject("--name", help=...)``."""
+    return lambda *names, help: Opt(names, help, group)
 
 
 subject, advanced, render = _panel("Subject"), _panel("Subject (advanced)"), _panel(None)
@@ -210,12 +210,7 @@ AccidentalDignitiesFlag = Annotated[
     Bool, analysis("--accidental-dignities", help="Include accidental dignities in the dominants scoring.")
 ]
 ScoreBreakdownFlag = Annotated[Bool, analysis("--score-breakdown", help="Include the per-point score breakdown.")]
-MajorAspectsOnlyFlag = Annotated[
-    Bool,
-    analysis(
-        "--all-aspects/--major-aspects-only", help="Score every aspect, or only the major ones (default: major only)."
-    ),
-]
+AllAspectsFlag = Annotated[Bool, analysis("--all-aspects", help="Score every aspect, not only the major ones.")]
 UsingDefaultLocationFlag = Annotated[
     Bool, analysis("--using-default-location", help="Use the library's default location rather than the subject's.")
 ]

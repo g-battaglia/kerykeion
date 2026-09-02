@@ -8,12 +8,12 @@ the factory. The chart commands take it as ``-s <name>``.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Annotated, Optional
 
-import typer
-
+import sys
 from kerykeion.extra.cli import config, profiles, subject_resolver, warnings
 from kerykeion.extra.cli.commands._shared import _emit, _subject_from
+from kerykeion.extra.cli.parser import Arg
 from kerykeion.extra.cli.options import (
     FixedStarsFlag,
     FormatOpt,
@@ -41,19 +41,11 @@ from kerykeion.extra.cli.options import (
     ZodiacTypeOpt,
 )
 from kerykeion.extra.cli.rendering import formats
-from kerykeion.extra.cli.typer_app import KerykeionTyper
-
-subject_app = KerykeionTyper(
-    name="subject",
-    help="Save and inspect subjects; -s <name> reuses them everywhere.",
-    no_args_is_help=True,
-    add_completion=False,
-)
 
 
-@subject_app.command("save")
+
 def save(
-    store_name: str = typer.Argument(..., help="Name under which the profile is stored."),
+    store_name: Annotated[str, Arg(help="Name under which the profile is stored.")],
     name: SubjectName = None,
     date: SubjectDate = None,
     time: SubjectTime = None,
@@ -89,13 +81,12 @@ def save(
     profile = profiles.Profile(name=flags.name, input=profiles.ProfileInput(**recipe), meta=profiles.make_meta())
     path = config.profile_path(store_name)
     profiles.save(path, profile)
-    typer.echo(str(path))  # stdout is scriptable; the human line goes to stderr
-    typer.echo(f"Saved profile {store_name!r} ({path}).", err=True)
+    print(path)  # stdout is scriptable; the human line goes to stderr
+    print(f"Saved profile {store_name!r} ({path}).", file=sys.stderr)
 
 
-@subject_app.command("show")
 def show(
-    profile_spec: str = typer.Argument(..., help="Profile name or file path."),
+    profile_spec: Annotated[str, Arg(help="Profile name or file path.")],
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
@@ -103,21 +94,18 @@ def show(
     _emit(profiles.load(profiles.resolve_path(profile_spec)), fmt, output)
 
 
-@subject_app.command("list")
 def list_cmd(fmt: FormatOpt = None) -> None:
     """List the stored profile names."""
     _emit(profiles.list_profiles(), fmt, None)
 
 
-@subject_app.command("path")
-def path_cmd(profile_spec: str = typer.Argument(..., help="Profile name or file path.")) -> None:
+def path_cmd(profile_spec: Annotated[str, Arg(help="Profile name or file path.")]) -> None:
     """Print a profile's file path."""
-    typer.echo(str(profiles.resolve_path(profile_spec)))
+    print(profiles.resolve_path(profile_spec))
 
 
-@subject_app.command("verify")
 def verify(
-    profile_spec: str = typer.Argument(..., help="Profile name or file path."),
+    profile_spec: Annotated[str, Arg(help="Profile name or file path.")],
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
@@ -141,3 +129,12 @@ def verify(
     }
     # The summary carries no warnings; the subject it came from may — collect from that one.
     warnings.output_with_warnings(summary, formats.resolve_format(fmt, output), output, warning_source=model)
+
+
+COMMANDS = [
+    ("save", save),
+    ("show", show),
+    ("list", list_cmd),
+    ("path", path_cmd),
+    ("verify", verify),
+]

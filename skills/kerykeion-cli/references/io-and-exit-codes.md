@@ -51,7 +51,6 @@ without it. It is JSON-only; asking for it with another format is exit 4.
 | 0 | OK | success |
 | 1 | UNEXPECTED | a bug; rerun with `--traceback` to see it |
 | 2 | usage | the argument parser rejected the command line |
-| 3 | CLI_EXTRA_MISSING | `pip install "kerykeion[cli]"` |
 | 4 | INVALID_INPUT | a flag or value is wrong; the message names it |
 | 5 | KERYKEION_ERROR | the library refused the request |
 | 6 | EPHEMERIS | outside coverage, or the data files are unusable |
@@ -67,7 +66,6 @@ if kerykeion natal -s ada -f json -o /tmp/out.json 2>/tmp/err.log; then
   echo "ok"
 else
   case $? in
-    3) echo "install the [cli] extra" ;;
     4) echo "bad input: $(cat /tmp/err.log)" ;;
     6) echo "date outside ephemeris coverage" ;;
     *) echo "unexpected" ;;

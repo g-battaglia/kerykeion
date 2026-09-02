@@ -13,9 +13,7 @@ type coercion from :mod:`kerykeion.extra.cli.introspect`.
 
 from __future__ import annotations
 
-from typing import Any, Optional
-
-import typer
+from typing import Annotated, Any, Optional
 
 from kerykeion.extra.cli import introspect, registry, subject_resolver
 from kerykeion.extra.cli.commands._shared import _emit
@@ -29,6 +27,7 @@ from kerykeion.extra.cli.options import (
     ParamOpt,
     SubjectProfile,
 )
+from kerykeion.extra.cli.parser import Arg
 from kerykeion.extra.cli.rendering import formats
 
 
@@ -48,7 +47,7 @@ def _bind_subjects(
 
 
 def call(
-    target_arg: str = typer.Argument(None, help="Call target: Factory.method or a bare function."),
+    target_arg: Annotated[Optional[str], Arg(help="Call target: Factory.method or a bare function.")] = None,
     list_flag: ListFlag = None,
     json_flag: JsonListFlag = None,
     explain_flag: ExplainFlag = None,

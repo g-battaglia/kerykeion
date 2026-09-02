@@ -1,6 +1,6 @@
 # The command tree
 
-Global flags on every invocation: `--version`, `--traceback` (show the traceback
+Global flags, before the command: `--version`, `--traceback` (show the traceback
 on an unexpected error), `--warnings-as-errors` (exit 9 when any warning fires).
 
 Every command that produces output takes `-f/--format` and `-o/--output`.

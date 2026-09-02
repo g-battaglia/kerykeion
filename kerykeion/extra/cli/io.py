@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Single seam for TTY detection, so the test suite can monkeypatch one spot.
-
-Rich reads the terminal width from ``os.get_terminal_size()`` on the process's
-fds 0/1/2 — not from the ``file`` a :class:`rich.console.Console` wraps — so
-``typer.testing.CliRunner`` alone does not isolate output rendering from the
-developer's real terminal width. Routing every "are we interactive?" question
-through :func:`stdout_is_tty` gives the test suite exactly one function to pin.
-"""
+"""Single seam for TTY detection: every "are we interactive?" question goes through :func:`stdout_is_tty`, so the test suite has one function to pin."""
 
 from __future__ import annotations
 

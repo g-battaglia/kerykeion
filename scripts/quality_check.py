@@ -31,7 +31,7 @@ def main() -> int:
         # quality gate silently depends on GeoNames being reachable.
         ("test", ["pytest", "--tb=no", "-q", "-m", "not online"]),
         # The CLI is an optional extra; this proves the entry point still works
-        # from the dev checkout and that ``import kerykeion`` stays typer-free.
+        # from the dev checkout and that ``import kerykeion`` never imports the CLI.
         ("cli", ["python", "scripts/cli_smoke_check.py"]),
         # The CLI skill's examples are shell, which the python snippet runner
         # and pytest both ignore; without this a broken example would ship
