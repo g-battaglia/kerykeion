@@ -23,6 +23,14 @@
   renamed `technique heliacal`: next to `fixed-stars` the old name said the
   opposite of what it did.
 
+- **One flag vocabulary for the agents that drive the CLI.** `--json` is gone
+  from `status` and `call --list`/`--explain`: `-f json` is the one format flag,
+  and `status` follows the same rule as every command (text on a terminal,
+  JSON when piped; `xml` and `svg` are refused as invalid input). `--envelope`,
+  which carries provenance and the warnings inside the JSON for a consumer
+  that only reads stdout, was a chart-command flag; every command that
+  produces a payload now takes it, `status` included.
+
 - **Three things the CLI no longer does.** `subject save --snapshot` (a cache
   of the computed subject, with provenance checks and four `verify` states)
   is gone: a subject computes in about 40 ms against a second of library

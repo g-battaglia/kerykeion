@@ -230,7 +230,7 @@ broken. A widened profile-store mode or a stray `./.env` are warnings, not
 failures.
 
 ```console
-$ kerykeion status --json
+$ kerykeion status -f json
 $ kerykeion status --check
 ```
 

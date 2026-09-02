@@ -22,9 +22,11 @@ kerykeion natal -s ada -f xml | head -2
 kerykeion natal -s ada -f svg -o /tmp/ada.svg
 ```
 
-`xml` is `to_context()`, the LLM-oriented serialisation. It supports a narrower
-set of models than JSON; on an unsupported one you get exit 4 naming the
-supported types rather than a silent format switch.
+`xml` is `to_context()`, the LLM-oriented serialisation: a natal chart is ~5 KB
+against ~35 KB of JSON, so it is the shape to read into a context window when
+the full model is not needed. It supports a narrower set of models than JSON;
+on an unsupported one you get exit 4 naming the supported types rather than a
+silent format switch. JSON is the library model verbatim; project it with `jq`.
 
 ## Streams
 
@@ -34,7 +36,8 @@ fallbacks) and notes are written to **stderr**, in every format. A JSON payload 
 `--warnings-as-errors` turns any warning into exit 9 — but only *after* the
 payload has been written, so nothing is lost.
 
-To carry the warnings in-band, for a consumer that only captures stdout:
+To carry the warnings in-band, for a consumer that only captures stdout,
+`--envelope` — every command that produces a payload takes it:
 
 ```bash
 kerykeion natal -s ada -f json --envelope | jq '{backend: .kerykeion.backend, warnings: .warnings | length}'
@@ -94,8 +97,8 @@ Naming one is case-insensitive, and a typo gets a suggestion.
 `status` reports; `status --check` judges.
 
 ```bash
-kerykeion status --json | jq -r '.backend, .calc_mode'
-kerykeion status --check --json | jq -r '.ok, (.checks[] | "\(.status) \(.check)")'
+kerykeion status -f json | jq -r '.backend, .calc_mode'
+kerykeion status --check -f json | jq -r '.ok, (.checks[] | "\(.status) \(.check)")'
 ```
 
 `--check` adds the install assertions, a real natal calculation included, and

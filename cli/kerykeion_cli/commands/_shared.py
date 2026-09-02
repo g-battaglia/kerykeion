@@ -151,7 +151,6 @@ def _subject_from(scope: dict, **overrides: object):
 _RENDER_FLAGS: dict[str, tuple[Any, Optional[str]]] = {
     "no_aspects": (options.NoAspectsFlag, None),
     "max_aspects": (options.MaxAspectsOpt, "max_aspects"),
-    "envelope": (options.EnvelopeFlag, "envelope"),
     "theme": (options.ThemeOpt, "theme"),
     "chart_language": (options.ChartLanguageOpt, "chart_language"),
     "style": (options.ChartStyleOpt, "style"),

@@ -51,6 +51,9 @@ built on the standard library alone, so nothing third-party comes with it.
 2. **Format follows the destination**: a terminal gets text, a pipe gets JSON.
    Force it with `-f text|json|xml|svg`, or let `-o out.svg` infer from the
    suffix. Scripts should pass `-f` explicitly rather than rely on the default.
+   JSON is the library's full model (a natal chart is ~35 KB); `-f xml` is
+   `to_context()`, the same chart in ~5 KB, and the shape to read into a
+   context window. `-f` is the one format flag, on every command.
 3. **Exit codes are the contract.** Branch on them; do not match on messages.
 
 ```bash
@@ -63,7 +66,7 @@ kerykeion natal -s ada -f svg -o /tmp/ada.svg   # SVG to a file
 ```
 
 If a consumer cannot read stderr, `--envelope` puts provenance and the warnings
-in the JSON itself:
+in the JSON itself. Every command that produces a payload takes it:
 
 ```bash
 kerykeion natal -s ada -f json --envelope
@@ -88,7 +91,7 @@ kerykeion natal -s ada -f json --envelope
 is genuinely broken; a plain `kerykeion status` only reports and always exits 0.
 
 ```bash
-kerykeion status --check --json
+kerykeion status --check -f json
 ```
 
 ## Subjects live in profiles

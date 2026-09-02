@@ -21,14 +21,12 @@ from kerykeion_cli.options import (
     CallSubject2Opt,
     ExplainFlag,
     FormatOpt,
-    JsonListFlag,
     ListFlag,
     OutputOpt,
     ParamOpt,
     SubjectProfile,
 )
 from kerykeion_cli.parser import Arg
-from kerykeion_cli import rendering
 
 
 def _bind_subjects(
@@ -49,7 +47,6 @@ def _bind_subjects(
 def call(
     target_arg: Annotated[Optional[str], Arg(help="Call target: Factory.method or a bare function.")] = None,
     list_flag: ListFlag = None,
-    json_flag: JsonListFlag = None,
     explain_flag: ExplainFlag = None,
     profile: SubjectProfile = None,
     subject2: CallSubject2Opt = None,
@@ -58,15 +55,14 @@ def call(
     output: OutputOpt = None,
 ) -> None:
     """Any public factory method, for what has no command of its own."""
-    listing_fmt = rendering.resolve_format("json" if json_flag else fmt, output)
     if list_flag:
-        _emit(registry.list_targets(), listing_fmt, output)
+        _emit(registry.list_targets(), fmt, output)
         return
     if target_arg is None:
         raise ValueError("call needs a target (Factory.method) or --list.")
     target = registry.resolve_target(target_arg)
     if explain_flag:
-        _emit([p.as_dict() for p in introspect.explain(target)], listing_fmt, output)
+        _emit([p.as_dict() for p in introspect.explain(target)], fmt, output)
         return
 
     known = {**target.init_params, **target.method_params}

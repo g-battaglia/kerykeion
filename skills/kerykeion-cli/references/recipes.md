@@ -85,7 +85,7 @@ stale across kerykeion versions or backends.
 ## Reach something with no curated command
 
 ```bash
-kerykeion call --list --json | jq -r '.[] | select(.owner | test("Factory$")) | .owner' | head -3
-kerykeion call DominantsFactory.from_subject --explain --json | jq -r '.[].name' | head -3
+kerykeion call --list -f json | jq -r '.[] | select(.owner | test("Factory$")) | .owner' | head -3
+kerykeion call DominantsFactory.from_subject --explain -f json | jq -r '.[].name' | head -3
 kerykeion call DominantsFactory.from_subject -s ada -f json | jq 'keys | length'
 ```

@@ -15,8 +15,8 @@ public API — that is the test this command exists to pass.
 ## Discovering targets
 
 ```bash
-kerykeion call --list --json | jq -r '.[0:3][] | .owner'
-kerykeion call ProfectionsFactory.from_subject --explain --json
+kerykeion call --list -f json | jq -r '.[0:3][] | .owner'
+kerykeion call ProfectionsFactory.from_subject --explain -f json
 ```
 
 `--explain` classifies every parameter, which is what tells you how to pass it:

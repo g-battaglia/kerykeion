@@ -51,12 +51,10 @@ class RenderOptions:
     double_chart_aspect_grid_type: Optional[str] = None
     svg_variant: Optional[str] = None
     chart_settings: Optional[dict[str, Any]] = None
-    # payload shape
-    envelope: Optional[bool] = None
 
     def chart_kwargs(self) -> dict[str, Any]:
         """ChartDrawer kwargs for the options actually given."""
-        skip = {"include_aspects", "max_aspects", "svg_variant", "chart_settings", "envelope"}
+        skip = {"include_aspects", "max_aspects", "svg_variant", "chart_settings"}
         kwargs = {
             f.name: getattr(self, f.name)
             for f in fields(self)

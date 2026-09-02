@@ -13,7 +13,7 @@ import argparse
 from importlib.metadata import PackageNotFoundError, version as _pkg_version
 from typing import Any, Callable
 
-from kerykeion_cli import errors
+from kerykeion_cli import errors, warnings
 from kerykeion_cli.parser import add_command, add_group
 
 try:
@@ -28,7 +28,7 @@ DESCRIPTION = (
 )
 
 # Namespace entries that are the parser's, not a command's.
-_INTERNAL = frozenset({"handler", "menu", "traceback", "warnings_as_errors"})
+_INTERNAL = frozenset({"handler", "menu", "traceback", "warnings_as_errors", "envelope"})
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -73,6 +73,7 @@ def run(argv: list[str]) -> int:
     args = build_parser().parse_args(argv)
     errors.set_traceback_enabled(args.traceback)
     errors.set_warnings_as_errors(args.warnings_as_errors)
+    warnings.set_envelope(bool(getattr(args, "envelope", False)))
     handler = getattr(args, "handler", None)
     if handler is None:
         args.menu.print_help()

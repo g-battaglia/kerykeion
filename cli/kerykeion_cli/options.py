@@ -107,6 +107,10 @@ FormatOpt = Annotated[
 OutputOpt = Annotated[
     Str, render("-o", "--output", help="Write to a file. Format is inferred from the suffix unless -f is also given.")
 ]
+# Declared by the parser on every command that has an ``fmt`` parameter, never spelled in a signature.
+EnvelopeFlag = Annotated[
+    Bool, render("--envelope", help="Wrap the payload with provenance and the warnings, in-band (JSON only).")
+]
 
 # ── Second subject, return, progression, transit ─────────────────────────────
 Subject2Profile = Annotated[
@@ -277,9 +281,6 @@ RefineFlag = Annotated[
 
 # ── `kerykeion call` ─────────────────────────────────────────────────────────
 ListFlag = Annotated[Bool, render("--list", help="List the call targets available (Factory.method / function).")]
-JsonListFlag = Annotated[
-    Bool, render("--json", help="With --list: a JSON array. With --explain: a JSON array of parameters.")
-]
 ExplainFlag = Annotated[
     Bool,
     render(
@@ -297,13 +298,10 @@ CallSubject2Opt = Annotated[
     Str, call("-S", "--subject2", help="Second subject (profile): bound to the target's second subject parameter.")
 ]
 
-# ── Report (text) and payload shape ──────────────────────────────────────────
+# ── Report (text) ────────────────────────────────────────────────────────────
 NoAspectsFlag = Annotated[Bool, report("--no-aspects", help="Omit the aspects section from the text report.")]
 MaxAspectsOpt = Annotated[
     Int, report("--max-aspects", help="Keep at most N aspects in the text report (the tightest first).")
-]
-EnvelopeFlag = Annotated[
-    Bool, report("--envelope", help="Wrap the payload with provenance and the warnings, in-band (JSON only).")
 ]
 
 # ── Chart appearance (svg) ───────────────────────────────────────────────────

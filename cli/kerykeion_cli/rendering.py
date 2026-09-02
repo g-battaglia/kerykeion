@@ -63,6 +63,8 @@ def _report(model: pydantic.BaseModel, opts: Any = None) -> str | None:
 
 def render_text(obj: Any, opts: Any = None) -> str:
     """The library's own report where it supports the model, verbatim; JSON otherwise, so ``call`` always has a legible text path."""
+    if isinstance(obj, str):
+        return obj  # already text (``status``'s report, a function returning prose)
     if isinstance(obj, pydantic.BaseModel):
         report = _report(obj, opts)
         return render_json(obj) if report is None else report

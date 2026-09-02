@@ -10,7 +10,6 @@ job is to surface state, not to crash on it. ``--check`` adds the assertions
 
 from __future__ import annotations
 
-import json
 import os
 import platform
 import sys
@@ -243,16 +242,24 @@ def format_checks_text(checks: list[dict[str, str]]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def render(json_out: bool = False, check: bool = False) -> int:
-    """Write the status (and the checks, with *check*) to stdout; the exit code is 6 when a check fails."""
+def render(fmt: str, check: bool = False) -> int:
+    """Write the status (and the checks, with *check*) to stdout as *fmt*; the exit code is 6 when a check fails.
+
+    The payload goes through the warnings funnel like every other command's, so
+    ``--envelope`` wraps it; ``text`` and ``json`` are the two shapes it has.
+    """
+    from kerykeion_cli import warnings
+
     state = gather_status()
-    if not check:
-        sys.stdout.write(json.dumps(state, indent=2, default=str) + "\n" if json_out else format_status_text(state))
-        return 0
-    checks = run_checks(state)
+    checks = run_checks(state) if check else []
     failed = any(c["status"] == "fail" for c in checks)
-    if json_out:
-        sys.stdout.write(json.dumps({**state, "ok": not failed, "checks": checks}, indent=2, default=str) + "\n")
+    if check:
+        state = {**state, "ok": not failed, "checks": checks}
+    if fmt == "text":
+        payload: Any = format_status_text(state) + (format_checks_text(checks) if check else "")
+    elif fmt == "json":
+        payload = state
     else:
-        sys.stdout.write(format_status_text(state) + format_checks_text(checks))
+        raise ValueError(f"status renders text or json, not {fmt!r}")
+    warnings.output_with_warnings(payload, fmt, None)
     return 6 if failed else 0

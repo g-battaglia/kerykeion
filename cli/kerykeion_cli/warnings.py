@@ -5,7 +5,9 @@
 model but not on the chart-data wrappers, whose subjects nest inside — so
 collection walks the nested subjects (cycle-safe by object id). Warnings go
 to **stderr** even with ``--format json``, so a piped payload stays clean;
-``--warnings-as-errors`` turns them into exit 9 only after the payload is out.
+``--envelope`` (every command that emits a payload takes it) carries them
+in-band instead, and ``--warnings-as-errors`` turns them into exit 9 only after
+the payload is out.
 """
 
 from __future__ import annotations
@@ -14,6 +16,14 @@ import sys
 from typing import Any, Iterable, Tuple
 
 from kerykeion_cli import errors
+
+# Set by the dispatcher from the chosen command's --envelope.
+_envelope = False
+
+
+def set_envelope(value: bool) -> None:
+    global _envelope
+    _envelope = value
 
 
 def _field(obj: Any, key: str) -> Any:
@@ -102,17 +112,18 @@ def _wrap_envelope(obj: Any, eph: list, polar: list) -> dict:
 
 
 def output_with_warnings(obj: Any, fmt: str, output: str | None, warning_source: Any = None, opts: Any = None) -> None:
-    """Emit the payload, then the warnings; exit 9 if ``--warnings-as-errors``.
+    """Emit the payload (wrapped if ``--envelope``), then the warnings; exit 9 if ``--warnings-as-errors``.
 
     *warning_source* (default *obj*) is what warnings are collected from, for a
-    command that renders a derivative of the subject (``subject verify``). A
-    render error is held so the warnings still surface and exit 9 still wins.
+    command that renders a derivative of the subject (``subject verify``); *opts*
+    are the report/chart knobs. A render error is held so the warnings still
+    surface and exit 9 still wins.
     """
     from kerykeion_cli import rendering
 
     eph, polar = collect_warnings(obj if warning_source is None else warning_source)
     payload = obj
-    if opts is not None and getattr(opts, "envelope", None):
+    if _envelope:
         if fmt != "json":
             raise ValueError(
                 "--envelope wraps the payload in a JSON object; it needs --format json "

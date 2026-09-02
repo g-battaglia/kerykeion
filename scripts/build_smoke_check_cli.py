@@ -56,7 +56,7 @@ def main() -> int:
 
     # ``status --check`` exercises the backend end to end and exits non-zero if
     # the packaged install cannot actually compute.
-    rd = _run(["status", "--check", "--json"])
+    rd = _run(["status", "--check", "-f", "json"])
     if rd.returncode != 0:
         return _fail("status --check", f"rc={rd.returncode}\n{rd.stdout}\n{rd.stderr}")
 

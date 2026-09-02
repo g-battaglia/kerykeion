@@ -286,14 +286,14 @@ class TestCallDispatcher:
         assert "public API" in r.output or "not in" in r.output
 
     def test_list_returns_known_factories(self, runner, app):
-        r = runner.invoke(app, ["call", "--list", "--json"])
+        r = runner.invoke(app, ["call", "--list", "-f", "json"])
         assert r.exit_code == 0
         owners = {item["owner"] for item in json.loads(r.output)}
         assert "ProfectionsFactory" in owners
         assert "os" not in owners
 
     def test_explain_classifies_subject_param(self, runner, app):
-        r = runner.invoke(app, ["call", "ProfectionsFactory.from_subject", "--explain", "--json"])
+        r = runner.invoke(app, ["call", "ProfectionsFactory.from_subject", "--explain", "-f", "json"])
         assert r.exit_code == 0
         params = {p["name"]: p["cli"] for p in json.loads(r.output)}
         assert params.get("subject") == "subject"
@@ -456,13 +456,13 @@ class TestStatus:
     """``kerykeion status`` reports runtime backend/ephemeris state."""
 
     def test_status_text_lists_backend_and_mode(self, runner, app):
-        r = runner.invoke(app, ["status"])
+        r = runner.invoke(app, ["status", "-f", "text"])
         assert r.exit_code == 0, r.output
         assert "Backend:" in r.output
         assert "Environment:" in r.output
 
     def test_status_json_is_parseable(self, runner, app):
-        r = runner.invoke(app, ["status", "--json"])
+        r = runner.invoke(app, ["status", "-f", "json"])
         assert r.exit_code == 0, r.output
         payload = json.loads(r.output)
         assert payload["backend"] in ("libephemeris", "swisseph")
@@ -479,7 +479,7 @@ class TestStatus:
     def test_status_lists_leb_files_on_libephemeris(self, runner, app):
         from kerykeion import BACKEND_NAME
 
-        r = runner.invoke(app, ["status"])
+        r = runner.invoke(app, ["status", "-f", "text"])
         assert r.exit_code == 0, r.output
         # calc_mode / LEB inventory exist only on the libephemeris backend.
         if BACKEND_NAME == "libephemeris":
@@ -580,7 +580,7 @@ class TestCodeReviewFixes:
     # F15: call --list must not advertise pydantic-model methods (model_validate,
     # model_dump) that resolve_target refuses to dispatch.
     def test_call_list_omits_pydantic_models(self, runner, app):
-        r = runner.invoke(app, ["call", "--list", "--json"])
+        r = runner.invoke(app, ["call", "--list", "-f", "json"])
         assert r.exit_code == 0, r.output
         owners = {entry["owner"] for entry in json.loads(r.output)}
         assert "AstrologicalSubjectModel" not in owners
@@ -1259,6 +1259,33 @@ class TestRenderOptions:
         assert result.exit_code == 4
         assert "--envelope" in result.output
 
+    # One flag for every payload, not a chart privilege: an agent that only reads
+    # stdout gets the warnings from a sky search or a diagnostic the same way.
+    @pytest.mark.parametrize(
+        "argv",
+        [
+            ["sky", "lunations", "--from", "2026-01-01", "--to", "2026-02-01"],
+            ["technique", "profections", "-s", "ada"],
+            ["info", "houses"],
+            ["subject", "list"],
+            ["status"],
+            ["call", "--list"],
+        ],
+        ids=lambda argv: " ".join(argv[:2]),
+    )
+    def test_every_payload_command_takes_envelope(self, runner, app, ada_profile, argv):
+        plain = runner.invoke(app, [*argv, "-f", "json"])
+        wrapped = runner.invoke(app, [*argv, "-f", "json", "--envelope"])
+        assert wrapped.exit_code == 0, wrapped.output
+        body = json.loads(wrapped.output)
+        assert set(body) == {"kerykeion", "warnings", "data"}
+        assert body["data"] == json.loads(plain.output)
+
+    def test_no_payload_no_envelope(self, runner, app, ada_profile):
+        result = runner.invoke(app, ["subject", "path", "ada", "--envelope"])
+        assert result.exit_code == 2  # argparse: the flag does not exist where nothing is rendered
+        assert "--envelope" in result.output
+
     # A partial settings file must overlay the library defaults: replacing the
     # whole palette wholesale made ChartDrawer die on KeyError('zodiac_icon_0').
     def test_partial_chart_settings_merge_over_defaults(
@@ -1504,7 +1531,7 @@ class TestInfoAndChecks:
         assert body["dominants_method"] == list(DominantsFactory.available_methods())
 
     def test_status_check_passes_on_a_working_install(self, runner, app):
-        result = runner.invoke(app, ["status", "--check", "--json"])
+        result = runner.invoke(app, ["status", "--check", "-f", "json"])
         assert result.exit_code == 0, result.output
         body = json.loads(result.output)
         assert body["ok"] is True
@@ -1512,10 +1539,20 @@ class TestInfoAndChecks:
         assert {"backend", "ephemeris data", "sample calculation"} <= names
 
     def test_status_check_text_is_readable_not_json(self, runner, app):
-        result = runner.invoke(app, ["status", "--check"])
+        result = runner.invoke(app, ["status", "--check", "-f", "text"])
         assert result.exit_code == 0
         assert "All checks passed." in result.output
         assert not result.output.lstrip().startswith("{")
+
+    # -f is the one format flag: status follows the same rule as every command
+    # (JSON when piped, text on a terminal) and refuses the shapes it has not got.
+    def test_status_defaults_to_json_when_piped(self, runner, app):
+        assert json.loads(runner.invoke(app, ["status"]).output)["backend"] in ("libephemeris", "swisseph")
+
+    def test_status_refuses_a_format_it_cannot_render(self, runner, app):
+        result = runner.invoke(app, ["status", "-f", "xml"])
+        assert result.exit_code == 4
+        assert "text or json" in result.output
 
     # This is what separates --check from a plain status: it judges, and says so.
     def test_status_check_fails_when_a_calculation_raises(self, runner, app, monkeypatch):
@@ -1527,13 +1564,13 @@ class TestInfoAndChecks:
         monkeypatch.setattr(
             kerykeion.AstrologicalSubjectFactory, "from_birth_data", staticmethod(boom)
         )
-        result = runner.invoke(app, ["status", "--check", "--json"])
+        result = runner.invoke(app, ["status", "--check", "-f", "json"])
         assert result.exit_code == 6
         body = json.loads(result.output)
         assert body["ok"] is False
         assert any(c["status"] == "fail" for c in body["checks"])
         # a plain status only reports, so it stays green on the same broken install.
-        assert runner.invoke(app, ["status", "--json"]).exit_code == 0
+        assert runner.invoke(app, ["status", "-f", "json"]).exit_code == 0
 
 
 class TestFourthReviewPass:

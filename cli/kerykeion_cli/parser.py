@@ -96,6 +96,10 @@ def add_command(subparsers: Any, name: str, func: Callable[..., Any]) -> argpars
 
         for flag, (alias, _) in _RENDER_FLAGS.items():
             _add_argument(parser, groups, flag, alias, None)
+    if "fmt" in hints:  # a command that emits a payload can wrap it; the dispatcher reads the flag, not the command
+        from kerykeion_cli.options import EnvelopeFlag
+
+        _add_argument(parser, groups, "envelope", EnvelopeFlag, None)
     positionals = [f"[{a.dest}]" if a.nargs == "?" else a.dest for a in parser._get_positional_actions()]
     parser.usage = " ".join([parser.prog, *positionals, "[flags]"])  # not the forty-flag usage argparse would print
     parser.set_defaults(handler=func)
