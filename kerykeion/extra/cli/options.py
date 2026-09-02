@@ -58,14 +58,6 @@ OnlineFlag = Annotated[
     ),
 ]
 OfflineFlag = Annotated[Bool, subject("--offline", help="Never call GeoNames (the safer default for pipelines).")]
-SnapshotFlag = Annotated[
-    Bool,
-    subject(
-        "--snapshot",
-        help="Also store the computed subject in the profile, so later reads reuse it instead of recomputing "
-        "(ignored automatically if the kerykeion version or backend changes).",
-    ),
-]
 
 # ── Zodiac, houses, points, calculation toggles ──────────────────────────────
 ZodiacTypeOpt = Annotated[Str, advanced("--zodiac", help="Tropical | Sidereal.")]
@@ -274,7 +266,7 @@ NoLimitFlag = Annotated[
     Bool,
     series(
         "--no-limit",
-        help="Disable the sampling ceiling (730 days / 8760 hours / 525600 minutes) and the library's own guard. Use carefully.",
+        help="Lift the sampling ceiling (730 days / 8760 hours / 525600 minutes). Use carefully.",
     ),
 ]
 EventsFlag = Annotated[

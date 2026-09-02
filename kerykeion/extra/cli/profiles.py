@@ -2,9 +2,8 @@
 """Profile store: the editable recipe that rebuilds a subject.
 
 A profile (JSON, 0600 — it holds birth data) has an ``input`` recipe in CLI
-shapes, an optional ``snapshot`` (a full ``AstrologicalSubjectModel`` dump
-written by ``subject save --snapshot``) and ``meta`` provenance. No kerykeion
-import at module level.
+shapes and ``meta`` provenance (version, backend, creation time). Every read
+rebuilds the subject from the recipe. No kerykeion import at module level.
 """
 
 from __future__ import annotations
@@ -69,7 +68,6 @@ class Profile(pydantic.BaseModel):
     kerykeion_profile: int = PROFILE_FORMAT_VERSION
     name: str
     input: ProfileInput
-    snapshot: Optional[dict[str, Any]] = None
     meta: Optional[dict[str, Any]] = None
 
 

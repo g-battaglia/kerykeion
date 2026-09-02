@@ -71,37 +71,14 @@ kerykeion subject save adv --name Adv --date 1990-01-01 --time 12:00 \
 
 Underscore-prefixed (private) parameters are refused.
 
-## `--snapshot`: cache the computed subject
-
-By default a profile is recomputed on every read. `--snapshot` also stores the
-computed subject, and later reads reuse it instead of recomputing:
-
-```bash
-kerykeion subject save fast --name Fast --date 1990-01-01 --time 12:00 \
-  --lat 45.0 --lng 9.0 --tz Europe/Rome --offline --snapshot
-kerykeion subject verify fast -f json | jq -r '.snapshot'
-```
-
-`verify` always recomputes from the recipe — that is what it is for — and reports
-how the stored copy compares:
-
-| state | meaning |
-|---|---|
-| `absent` | no snapshot stored |
-| `matches` | identical to a fresh computation |
-| `stale` | written by another kerykeion version or backend — already being ignored |
-| `drifted` | current provenance, but different: re-save it |
-
-A snapshot is **ignored automatically** when the kerykeion version or the
-ephemeris backend differs from the one that wrote it, with a note on stderr,
-because reusing it would answer with numbers this installation would not
-compute. Any inline override also bypasses it: the override describes something
-the snapshot does not.
-
 ## Checking a profile still builds
 
+A profile is a recipe, never a cached chart: every read rebuilds the subject
+(about 40 ms, against a second of library start-up), so a profile can never
+answer with numbers the current install would not compute.
+
 ```bash
-kerykeion subject verify ada -f json | jq '{ok, sun, snapshot}'
+kerykeion subject verify ada -f json | jq '{ok, sun, moon, ascendant}'
 ```
 
 `verify` is the cheap pre-flight for a batch: it surfaces a malformed recipe, a

@@ -36,7 +36,7 @@ class ExitCode(IntEnum):
 
 
 class SamplingLimitError(ValueError):
-    """A requested series exceeds the sampling ceiling — raised before any computation (exit 8)."""
+    """A requested series exceeds the library's sampling ceiling (exit 8); nothing was computed."""
 
 
 # Set by the root callback before the chosen command runs.

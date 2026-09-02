@@ -37,7 +37,8 @@ kerykeion - astrology from the terminal.
 Base commands (work without any extras):
   status              Show the runtime state of kerykeion (active backend,
                       ephemeris data files, calc mode) and exit.
-                      Add --json for machine-readable output.
+                      Add --json for machine-readable output, --check to
+                      also run the install checks (exit 6 if one fails).
   -V, --version       Print the kerykeion version and exit.
   -h, --help          Show this help and exit.
 
@@ -76,16 +77,16 @@ def _stdlib_dispatch(args: list[str]) -> int:
         sys.stdout.write(_version_string() + "\n")
         return 0
     if first == "status":
-        unknown = [a for a in rest if a != "--json"]
+        unknown = [a for a in rest if a not in ("--json", "--check")]
         if unknown:
             sys.stderr.write(
-                f"kerykeion: error: unknown option for 'status': {unknown[0]!r}\nHint: 'status' accepts only --json.\n"
+                f"kerykeion: error: unknown option for 'status': {unknown[0]!r}\n"
+                "Hint: 'status' accepts only --json and --check.\n"
             )
             return 4
         from kerykeion.extra.cli import diagnostics
 
-        diagnostics.render(json_out="--json" in rest)
-        return 0
+        return diagnostics.render(json_out="--json" in rest, check="--check" in rest)
     sys.stderr.write(_INSTALL_HINT)
     return 3
 

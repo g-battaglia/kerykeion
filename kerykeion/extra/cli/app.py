@@ -84,7 +84,6 @@ def _register_commands() -> None:
         (events_panel, "ephemeris", series.ephemeris),
         (events_panel, "transits", series.transits),  # the time series
         (setup_panel, "status", status.status),  # stdlib-only; also served without the extra
-        (setup_panel, "doctor", info.doctor),  # status with a verdict
         (setup_panel, "call", call.call),
     ):
         app.command(name=name, rich_help_panel=panel)(command)

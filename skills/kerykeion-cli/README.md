@@ -14,8 +14,7 @@ Gemini CLI, Windsurf, Cline, and others.
   warnings always on stderr;
 - the exit-code table, so a script branches on codes instead of matching
   messages;
-- the profile store — where birth data is kept, its permissions, `--set` and
-  `--snapshot`;
+- the profile store — where birth data is kept, its permissions and `--set`;
 - `kerykeion call`, the guarded dispatcher that reaches every public factory
   the curated commands do not cover;
 - the traps that silently produce a wrong chart (house-letter case, DST folds,
@@ -56,8 +55,8 @@ pip install "kerykeion[cli]"
 ```
 SKILL.md                          the router: rules, traps, capability table
 references/commands.md            every command and what it needs
-references/io-and-exit-codes.md   formats, streams, --envelope, exit codes, info, doctor
-references/profiles.md            the profile store, --set, --snapshot, PII
+references/io-and-exit-codes.md   formats, streams, --envelope, exit codes, info, status --check
+references/profiles.md            the profile store, --set, PII
 references/rendering.md           SVG appearance and report shaping
 references/call-dispatcher.md     reaching any public factory
 references/recipes.md             task-shaped examples for pipelines and CI

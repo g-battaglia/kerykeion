@@ -19,6 +19,16 @@
   `technique heliacal`: next to `fixed-stars` the old name said the opposite
   of what it did.
 
+- **Three things the CLI no longer does.** `subject save --snapshot` (a cache
+  of the computed subject, with provenance checks and four `verify` states)
+  is gone: a subject computes in about 40 ms against a second of library
+  start-up, so the cache saved nothing a user could notice while adding a way
+  for a profile to go stale. The pre-flight sample count of `ephemeris` and
+  `transits` is gone too: the library counts the samples in its constructor
+  before building anything, so the CLI now only rewords that refusal as exit
+  8 with the flags to change. And `doctor` is `status --check`: the same
+  probes, the same verdict, one command less to learn.
+
 ### Added
 
 - `kerykeion sky ingresses --periods` and `kerykeion sky stations --periods`

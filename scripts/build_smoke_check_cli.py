@@ -111,15 +111,15 @@ def _smoke_with_extra() -> int:
     if not tables.get("HousesSystemIdentifier"):
         return _fail("wheel-with-extra info json", f"empty table: {ri.stdout}")
 
-    # doctor exercises the backend end to end and exits non-zero if the packaged
-    # install cannot actually compute.
-    rd = _run(["doctor", "-f", "json"])
+    # status --check exercises the backend end to end and exits non-zero if the
+    # packaged install cannot actually compute.
+    rd = _run(["status", "--check", "--json"])
     if rd.returncode != 0:
-        return _fail("wheel-with-extra doctor", f"rc={rd.returncode}\n{rd.stdout}\n{rd.stderr}")
+        return _fail("wheel-with-extra status --check", f"rc={rd.returncode}\n{rd.stdout}\n{rd.stderr}")
 
     print(
         f"wheel-with-extra OK: --version ({rv.stdout.strip()}), --help, "
-        f"info ({len(tables)} literal tables) and doctor green"
+        f"info ({len(tables)} literal tables) and status --check green"
     )
     return 0
 

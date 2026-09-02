@@ -65,12 +65,10 @@ The same subject-building flags (`--date`, `--time`, `--lat`, `--lng`, `--tz`,
 spelled identically by `subject save`, `natal` and `now`.
 
 Profiles are stored as JSON recipes (`0600`, in a `0700` directory — birth data
-is personal) and written atomically. `subject save --snapshot` additionally
-caches the computed subject, so later reads reuse it instead of recomputing;
-the cache is dropped automatically when the kerykeion version or the ephemeris
-backend changes, and any inline override bypasses it. `subject verify` always
-recomputes from the recipe and reports how the stored copy compares
-(`absent` / `matches` / `stale` / `drifted`).
+is personal) and written atomically. A profile is a recipe, never a cached
+chart: every read rebuilds the subject, so it cannot go stale across kerykeion
+versions or backends. `subject verify` rebuilds one and prints a short summary,
+the cheap pre-flight before a long batch.
 
 ## Charts
 
@@ -227,13 +225,14 @@ $ kerykeion info points                   # what --points accepts
 $ kerykeion info methods                  # per-command strategy names
 ```
 
-`status` reports the runtime environment; `doctor` judges it — the same probes
-plus a real calculation — and exits `6` when the install is genuinely broken.
-A widened profile-store mode or a stray `./.env` are warnings, not failures.
+`status` reports the runtime environment; `status --check` judges it — the same
+probes plus a real calculation — and exits `6` when the install is genuinely
+broken. A widened profile-store mode or a stray `./.env` are warnings, not
+failures.
 
 ```console
 $ kerykeion status --json
-$ kerykeion doctor
+$ kerykeion status --check
 ```
 
 ## Global flags

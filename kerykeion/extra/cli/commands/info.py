@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-"""``kerykeion info <sub>`` and ``kerykeion doctor`` — describe and check the install.
+"""``kerykeion info <sub>`` — what the flags accept.
 
-``info`` lists what the flags accept, derived at runtime from the library (the
-literal aliases, the point/star presets, the dominant strategies), so it cannot
-drift from what the flags validate against. ``doctor`` is ``status`` with a
-verdict: the same probes plus a real calculation, and a non-zero exit when
-something is actually broken.
+Derived at runtime from the library (the literal aliases, the point/star
+presets, the dominant strategies), so it cannot drift from what the flags
+validate against.
 """
 
 from __future__ import annotations
 
 import difflib
 import typing
-from typing import Any, Optional
+from typing import Optional
 
 import typer
 
@@ -105,102 +103,3 @@ def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
         output,
     )
 
-
-def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
-    """The environment assertions: ``ok`` True passes, False fails, None is a warning."""
-    out: list[dict[str, str]] = []
-
-    def add(name: str, ok: bool | None, detail: str) -> None:
-        out.append({"check": name, "status": "pass" if ok else ("warn" if ok is None else "fail"), "detail": detail})
-
-    backend = state.get("backend")
-    add("backend", bool(backend) and backend != "unknown", f"active backend: {backend}")
-
-    eph = state.get("ephemeris") or {}
-    if "error" in eph:
-        add("ephemeris data", False, f"inventory error: {eph['error']}")
-    elif backend == "libephemeris":
-        ready = eph.get("ready")
-        detail = (
-            f"{eph.get('file_count', 0)} file(s) in {eph.get('data_dir')}"
-            if ready
-            else f"reader not ready in {eph.get('data_dir')}"
-        )
-        add("ephemeris data", bool(ready), detail)
-    else:
-        count = eph.get("se1_count", 0)
-        add(
-            "ephemeris data",
-            True if count else None,
-            f"{count} .se1 file(s) at {eph.get('data_path') or 'built-in Moshier'}",
-        )
-
-    try:  # the store holds birth data: a widened mode is worth a warning
-        from kerykeion.extra.cli import config
-
-        store = config.profiles_dir()
-        if store.is_dir():
-            mode = store.stat().st_mode & 0o777
-            add(
-                "profile store permissions",
-                mode == 0o700 or None,
-                f"{store} is {oct(mode)}" + ("" if mode == 0o700 else " (expected 0o700)"),
-            )
-        else:
-            add("profile store permissions", None, f"{store} does not exist yet")
-    except Exception as exc:  # pragma: no cover
-        add("profile store permissions", None, f"could not stat the store: {exc}")
-
-    if (state.get("env") or {}).get("_cwd_env_present"):  # libephemeris loads ./.env at import
-        add(
-            "working-directory .env",
-            None,
-            "a .env in the current directory is loaded at import and may repoint LIBEPHEMERIS_* settings",
-        )
-
-    try:  # the one check that exercises the whole stack
-        from kerykeion import AstrologicalSubjectFactory
-
-        subject = AstrologicalSubjectFactory.from_birth_data(
-            name="doctor", year=2000, month=1, day=1, hour=12, minute=0, lat=51.5, lng=-0.12, tz_str="Europe/London",
-            online=False, suppress_geonames_warning=True,
-        )  # fmt: skip
-        sun = getattr(subject, "sun", None)
-        add(
-            "sample calculation",
-            getattr(sun, "sign", None) is not None,
-            f"2000-01-01 natal: Sun in {getattr(sun, 'sign', '?')}",
-        )
-    except Exception as exc:
-        add("sample calculation", False, f"{type(exc).__name__}: {exc}")
-    return out
-
-
-def doctor(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
-    """Check the install; exit 6 if it is broken (warnings pass)."""
-    from kerykeion.extra.cli import diagnostics, errors
-    from kerykeion.extra.cli.rendering import formats
-
-    state = diagnostics.gather_status()
-    checks = _checks(state)
-    failed = [c for c in checks if c["status"] == "fail"]
-    if formats.resolve_format(fmt, output) == "text":
-        marks = {"pass": "ok  ", "warn": "warn", "fail": "FAIL"}
-        lines = [
-            f"kerykeion {state.get('kerykeion_version')} — backend: {state.get('backend')}",
-            "",
-            *(f"  [{marks[c['status']]}] {c['check']}: {c['detail']}" for c in checks),
-            "",
-            "All checks passed." if not failed else f"{len(failed)} check(s) failed.",
-        ]
-        _emit(lines, fmt, output)
-    else:
-        body = {
-            "ok": not failed,
-            "kerykeion_version": state.get("kerykeion_version"),
-            "backend": state.get("backend"),
-            "checks": checks,
-        }
-        _emit(body, fmt, output)
-    if failed:
-        raise SystemExit(int(errors.ExitCode.EPHEMERIS))

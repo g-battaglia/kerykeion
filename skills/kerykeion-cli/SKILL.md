@@ -89,11 +89,11 @@ kerykeion natal -s ada -f json --envelope
 | 9 | warnings escalated | you passed `--warnings-as-errors` |
 | 130 | interrupted | — |
 
-`kerykeion doctor` runs the environment checks and exits 6 when the install is
-genuinely broken; `kerykeion status` only reports and always exits 0.
+`kerykeion status --check` runs the install checks and exits 6 when the install
+is genuinely broken; a plain `kerykeion status` only reports and always exits 0.
 
 ```bash
-kerykeion doctor -f json
+kerykeion status --check --json
 ```
 
 ## Subjects live in profiles
@@ -109,7 +109,7 @@ kerykeion subject verify ada -f json
 ```
 
 Inline flags override the profile, so a stored subject can be reused for a
-relocated reading without editing it. Full details, `--set`, and `--snapshot`:
+relocated reading without editing it. Full details and `--set`:
 [references/profiles.md](references/profiles.md).
 
 ## Capability routing — find the command, then open the reference
@@ -168,9 +168,9 @@ kerykeion info methods                          # strategy names per command
 - [references/commands.md](references/commands.md) — the whole command tree, with
   what each one needs.
 - [references/io-and-exit-codes.md](references/io-and-exit-codes.md) — formats,
-  streams, `--envelope`, exit codes, `info`, `doctor`.
+  streams, `--envelope`, exit codes, `info`, `status --check`.
 - [references/profiles.md](references/profiles.md) — the profile store, `--set`,
-  `--snapshot`, permissions and PII.
+  permissions and PII.
 - [references/rendering.md](references/rendering.md) — every SVG and report
   option, and which chart types they affect.
 - [references/call-dispatcher.md](references/call-dispatcher.md) — reaching any

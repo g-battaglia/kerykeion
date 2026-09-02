@@ -2,8 +2,8 @@
 """``kerykeion subject`` — create, inspect and verify stored subject profiles.
 
 A profile is the editable recipe (JSON, 0600) that rebuilds a subject: ``save``
-persists it, ``show``/``list``/``path`` read it, ``verify`` round-trips it
-through the factory. The chart commands take it as ``-s <name>``.
+persists it, ``show``/``list``/``path`` read it, ``verify`` rebuilds it through
+the factory. The chart commands take it as ``-s <name>``.
 """
 
 from __future__ import annotations
@@ -25,7 +25,6 @@ from kerykeion.extra.cli.options import (
     PointsFlag,
     SetFlags,
     SiderealModeOpt,
-    SnapshotFlag,
     SubjectAltitude,
     SubjectCity,
     SubjectDate,
@@ -77,7 +76,6 @@ def save(
     with_flags: WithFlags = None,
     without_flags: WithoutFlags = None,
     set_flags: SetFlags = None,
-    snapshot: SnapshotFlag = None,
 ) -> None:
     """Save a subject under a name, for -s <name> everywhere."""
     if store_name.endswith(".json"):  # the store adds .json, and -s reads a .json spec as a file path
@@ -88,11 +86,7 @@ def save(
     flags = _subject_from(locals())
     flags.name = flags.name or store_name
     recipe = subject_resolver.merge_inputs(flags)
-    # With --snapshot the recipe is materialised now, so a broken one fails at `save`, not at the first read.
-    stored = subject_resolver.materialize(recipe).model_dump(mode="json") if snapshot else None
-    profile = profiles.Profile(
-        name=flags.name, input=profiles.ProfileInput(**recipe), snapshot=stored, meta=profiles.make_meta()
-    )
+    profile = profiles.Profile(name=flags.name, input=profiles.ProfileInput(**recipe), meta=profiles.make_meta())
     path = config.profile_path(store_name)
     profiles.save(path, profile)
     typer.echo(str(path))  # stdout is scriptable; the human line goes to stderr
@@ -129,22 +123,14 @@ def verify(
 ) -> None:
     """Rebuild a profile and print a short summary.
 
-    Always recomputes (a snapshot reading back fine is not what ``verify``
-    claims) and reports how the stored snapshot compares: ``absent``, ``stale``
-    (other version/backend), ``matches``, or ``drifted`` (re-save it).
+    The cheap pre-flight for a batch: a malformed recipe, a bad timezone or an
+    ephemeris gap surfaces here, before a long run starts.
     """
-    model = subject_resolver.materialize(subject_resolver.merge_inputs(subject_resolver.SubjectFlags(), profile_spec))
+    model = subject_resolver.resolve_subject(subject_resolver.SubjectFlags(), profile_spec)
 
     def sign(attr: str) -> Optional[str]:
         return getattr(getattr(model, attr, None), "sign", None)
 
-    profile = profiles.load(profiles.resolve_path(profile_spec))
-    if not profile.snapshot:
-        state = "absent"
-    elif subject_resolver.snapshot_is_usable(profile.meta) is not None:
-        state = "stale"
-    else:
-        state = "matches" if model.model_dump(mode="json") == profile.snapshot else "drifted"
     summary = {
         "ok": True,
         "name": getattr(model, "name", None),
@@ -152,7 +138,6 @@ def verify(
         "sun": sign("sun"),
         "moon": sign("moon"),
         "ascendant": sign("first_house") or sign("ascendant"),
-        "snapshot": state,
     }
     # The summary carries no warnings; the subject it came from may — collect from that one.
     warnings.output_with_warnings(summary, formats.resolve_format(fmt, output), output, warning_source=model)

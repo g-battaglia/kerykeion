@@ -237,8 +237,8 @@ class TestSamplingLimit:
         assert "Traceback" not in r.output
 
     def test_no_limit_overrides_ceiling(self, runner, app):
-        # 740 days > the 730-day ceiling; --no-limit bypasses the pre-flight check
-        # so the series actually computes instead of exiting 8.
+        # 740 days > the 730-day ceiling; --no-limit lifts it so the series
+        # actually computes instead of exiting 8.
         r = runner.invoke(app, [
             "ephemeris", "--from", "2025-01-01", "--to", "2027-01-11",
             "--no-limit", "-f", "json",
@@ -408,60 +408,6 @@ class TestInputValidationRegressions:
         r = runner.invoke(app, ["natal", "-s", "ada", "-o", str(tmp_path)])
         assert r.exit_code == 4
         assert "Traceback" not in r.output
-
-
-# ── sampling-limit DST awareness (#13) ───────────────────────────────────────
-
-
-class TestSamplingDstAwareness:
-    """The pre-flight sample count must match the library's UTC-based count.
-
-    Across a DST fall-back a wall-clock 48h span is 49 UTC hours; the library
-    counts in UTC (one extra sample), so the pre-flight check must too, or it
-    under-counts and lets an over-ceiling series slip through to exit 4 instead
-    of the dedicated exit 8.
-    """
-
-    def test_fall_back_hours_count_matches_library(self):
-        # Europe/Rome fell back on 2024-10-27 03:00 CEST → 02:00 CET: the local
-        # 2024-10-26 → 2024-10-28 span is 48 wall-clock hours but 49 UTC hours.
-        from datetime import datetime
-
-        from kerykeion import EphemerisDataFactory
-        from kerykeion.extra.cli.sampling import count_samples
-
-        start, end = datetime(2024, 10, 26), datetime(2024, 10, 28)
-        cli_count = count_samples(start, end, "hours", 1, tz_str="Europe/Rome")
-        # Library's own n_samples formula: int(utc_delta_hours) // step + 1.
-        factory = EphemerisDataFactory(
-            start, end, step_type="hours", step=1, tz_str="Europe/Rome"
-        )
-        factory.get_ephemeris_data(as_model=True)
-        library_count = len(factory.dates_list)
-        assert cli_count == library_count == 50
-        # And the DST correction actually changed the answer vs naive.
-        assert count_samples(start, end, "hours", 1) == 49
-
-    def test_days_count_is_dst_independent(self):
-        # Days use wall-clock day arithmetic in both the CLI and the library,
-        # so a range that spans a fall-back boundary still counts whole days.
-        from datetime import datetime
-
-        from kerykeion.extra.cli.sampling import count_samples
-
-        start, end = datetime(2024, 10, 26), datetime(2024, 10, 28)
-        assert count_samples(start, end, "days", 1) == 3
-        assert count_samples(start, end, "days", 1, tz_str="Europe/Rome") == 3
-
-    def test_count_samples_rejects_non_positive_step(self):
-        from datetime import datetime
-
-        from kerykeion.extra.cli.sampling import count_samples
-
-        with pytest.raises(ValueError):
-            count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "days", 0)
-        with pytest.raises(ValueError):
-            count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "hours", -1)
 
 
 # ── kerykeion status (diagnostics) ───────────────────────────────────────────
@@ -1027,18 +973,15 @@ class TestXhighReviewFixes:
         # A PEP 604 subject union is recognised as a subject binding site.
         assert _is_subject(AstrologicalSubjectModel | None) is True
 
-    # sampling: mixed offset-aware/naive bounds raise a clean ValueError.
-    def test_count_samples_mixed_awareness_is_clean_error(self):
-        from datetime import datetime, timezone
-
-        from kerykeion.extra.cli.sampling import count_samples
-
-        with pytest.raises(ValueError, match="same ISO form"):
-            count_samples(
-                datetime(2024, 1, 1),
-                datetime(2024, 12, 31, tzinfo=timezone.utc),
-                "days", 1,
-            )
+    # series: mixed offset-aware/naive bounds are refused as invalid input.
+    def test_mixed_awareness_bounds_are_invalid_input(self, runner, app):
+        r = runner.invoke(
+            app,
+            ["ephemeris", "--lat", "0", "--lng", "0", "--tz", "UTC",
+             "--from", "2024-01-01", "--to", "2024-01-03T00:00+00:00"],
+        )
+        assert r.exit_code == 4
+        assert "same ISO form" in r.output
 
     # sky: --zodiac accepts the casing the library accepts.
     def test_zodiac_kwargs_case_insensitive(self):
@@ -1067,40 +1010,6 @@ class TestXhighReviewFixes:
         # 2024-10-27 01:30 UTC = 02:30 Europe/Rome, the second (CET/fold=1) reading.
         with pytest.raises(ValueError, match="ambiguous wall time"):
             _moment("2024-10-27T01:30:00+00:00", "hours", "Europe/Rome")
-
-    # sampling: the hours count across a fold bound matches the library
-    # (localize_naive is_dst=False, not replace(tzinfo=tz) fold=0).
-    def test_utc_bounds_fold_matches_library(self):
-        from datetime import datetime
-
-        from kerykeion import EphemerisDataFactory
-        from kerykeion.extra.cli.sampling import count_samples
-
-        # Both bounds sit inside Rome's 2024-10-27 fall-back fold.
-        start = datetime(2024, 10, 27, 1, 30)
-        end = datetime(2024, 10, 27, 2, 30)
-        cli = count_samples(start, end, "hours", 1, tz_str="Europe/Rome")
-        factory = EphemerisDataFactory(
-            start, end, step_type="hours", step=1, tz_str="Europe/Rome", is_dst=False
-        )
-        factory.get_ephemeris_data(as_model=True)
-        assert cli == len(factory.dates_list)
-
-    # sampling: days count on aware bounds spanning DST matches the library.
-    def test_days_count_aware_matches_library_across_dst(self):
-        from datetime import datetime, timezone
-
-        from kerykeion import EphemerisDataFactory
-        from kerykeion.extra.cli.sampling import count_samples
-
-        start = datetime(2024, 3, 30, 12, 0, tzinfo=timezone.utc)
-        end = datetime(2024, 3, 31, 12, 0, tzinfo=timezone.utc)
-        cli = count_samples(start, end, "days", 1, tz_str="Europe/Rome")
-        factory = EphemerisDataFactory(
-            start, end, step_type="days", step=1, tz_str="Europe/Rome"
-        )
-        factory.get_ephemeris_data(as_model=True)
-        assert cli == len(factory.dates_list) == 2
 
     # subject_resolver: explicit --seconds 0 is forwarded to the factory rather
     # than dropped by `if seconds:` truthiness (latent today — the factory
@@ -1601,8 +1510,8 @@ class TestAspectsFlagHasOneMeaning:
         assert "--aspects must be one of" in result.output
 
 
-class TestInfoAndDoctor:
-    """The CLI can now list what it validates against, and judge its own install."""
+class TestInfoAndChecks:
+    """The CLI can list what it validates against, and judge its own install."""
 
     def test_literals_are_derived_from_the_library(self, runner, app):
         import typing
@@ -1653,22 +1562,22 @@ class TestInfoAndDoctor:
         body = json.loads(runner.invoke(app, ["info", "methods", "-f", "json"]).output)
         assert body["dominants_method"] == list(DominantsFactory.available_methods())
 
-    def test_doctor_passes_on_a_working_install(self, runner, app):
-        result = runner.invoke(app, ["doctor", "-f", "json"])
+    def test_status_check_passes_on_a_working_install(self, runner, app):
+        result = runner.invoke(app, ["status", "--check", "--json"])
         assert result.exit_code == 0, result.output
         body = json.loads(result.output)
         assert body["ok"] is True
         names = {c["check"] for c in body["checks"]}
         assert {"backend", "ephemeris data", "sample calculation"} <= names
 
-    def test_doctor_text_is_readable_not_json(self, runner, app):
-        result = runner.invoke(app, ["doctor", "-f", "text"])
+    def test_status_check_text_is_readable_not_json(self, runner, app):
+        result = runner.invoke(app, ["status", "--check"])
         assert result.exit_code == 0
         assert "All checks passed." in result.output
         assert not result.output.lstrip().startswith("{")
 
-    # This is what separates doctor from status: it judges, and says so.
-    def test_doctor_fails_when_a_calculation_raises(self, runner, app, monkeypatch):
+    # This is what separates --check from a plain status: it judges, and says so.
+    def test_status_check_fails_when_a_calculation_raises(self, runner, app, monkeypatch):
         import kerykeion
 
         def boom(*args, **kwargs):
@@ -1677,130 +1586,13 @@ class TestInfoAndDoctor:
         monkeypatch.setattr(
             kerykeion.AstrologicalSubjectFactory, "from_birth_data", staticmethod(boom)
         )
-        result = runner.invoke(app, ["doctor", "-f", "json"])
+        result = runner.invoke(app, ["status", "--check", "--json"])
         assert result.exit_code == 6
         body = json.loads(result.output)
         assert body["ok"] is False
         assert any(c["status"] == "fail" for c in body["checks"])
-        # status only reports, so it stays green on the same broken install.
+        # a plain status only reports, so it stays green on the same broken install.
         assert runner.invoke(app, ["status", "--json"]).exit_code == 0
-
-
-class TestSnapshot:
-    """``subject save --snapshot``: the profile field that used to be a stub."""
-
-    _RECIPE = [
-        "--name", "Ada", "--date", "1900-12-10", "--time", "18:00",
-        "--lat", "51.5074", "--lng", "-0.1278", "--tz", "Europe/London", "--offline",
-    ]
-
-    def _save(self, runner, app, name, *extra):
-        result = runner.invoke(app, ["subject", "save", name, *self._RECIPE, *extra])
-        assert result.exit_code == 0, result.output
-        return name
-
-    def _profile_path(self, name):
-        from kerykeion.extra.cli import config
-
-        return config.profile_path(name)
-
-    def _verify_state(self, runner, app, name):
-        result = runner.invoke(app, ["subject", "verify", name, "-f", "json"])
-        assert result.exit_code == 0, result.output
-        return json.loads(result.output)["snapshot"]
-
-    def test_save_without_snapshot_stores_none(self, runner, app):
-        self._save(runner, app, "plain")
-        stored = json.loads(self._profile_path("plain").read_text(encoding="utf-8"))
-        assert stored["snapshot"] is None
-        assert self._verify_state(runner, app, "plain") == "absent"
-
-    def test_save_with_snapshot_stores_the_subject(self, runner, app):
-        self._save(runner, app, "snap", "--snapshot")
-        stored = json.loads(self._profile_path("snap").read_text(encoding="utf-8"))
-        assert stored["snapshot"], "the snapshot field is still empty"
-        assert stored["snapshot"]["name"] == "Ada"
-        assert self._verify_state(runner, app, "snap") == "matches"
-
-    def test_reading_a_snapshot_profile_skips_the_factory(self, runner, app, monkeypatch):
-        """The point of the feature: reuse, not recompute."""
-        import kerykeion
-
-        self._save(runner, app, "snap", "--snapshot")
-        self._save(runner, app, "plain")
-
-        calls = []
-        original = kerykeion.AstrologicalSubjectFactory.from_birth_data
-
-        def counting(*args, **kwargs):
-            calls.append(1)
-            return original(*args, **kwargs)
-
-        monkeypatch.setattr(
-            kerykeion.AstrologicalSubjectFactory, "from_birth_data", staticmethod(counting)
-        )
-        assert runner.invoke(app, ["natal", "-s", "snap", "-f", "json"]).exit_code == 0
-        assert calls == [], "the stored snapshot was not used"
-        assert runner.invoke(app, ["natal", "-s", "plain", "-f", "json"]).exit_code == 0
-        assert len(calls) == 1, "the profile without a snapshot must recompute"
-
-    # A snapshot from another version/backend holds numbers this install would
-    # not compute: silently reusing it is worse than the work it saves.
-    @pytest.mark.parametrize("field,value", [
-        ("kerykeion_version", "0.0.1-ancient"),
-        ("backend", "some-other-backend"),
-    ])
-    def test_snapshot_from_other_provenance_is_ignored(
-        self, runner, app, monkeypatch, field, value
-    ):
-        import kerykeion
-
-        self._save(runner, app, "snap", "--snapshot")
-        path = self._profile_path("snap")
-        stored = json.loads(path.read_text(encoding="utf-8"))
-        stored["meta"][field] = value
-        path.write_text(json.dumps(stored), encoding="utf-8")
-
-        assert self._verify_state(runner, app, "snap") == "stale"
-
-        calls = []
-        original = kerykeion.AstrologicalSubjectFactory.from_birth_data
-        monkeypatch.setattr(
-            kerykeion.AstrologicalSubjectFactory,
-            "from_birth_data",
-            staticmethod(lambda *a, **k: (calls.append(1), original(*a, **k))[1]),
-        )
-        result = runner.invoke(app, ["natal", "-s", "snap", "-f", "json"])
-        assert result.exit_code == 0
-        assert len(calls) == 1, "a stale snapshot must be recomputed, not reused"
-        assert "ignoring the stored snapshot" in result.output
-
-    def test_verify_reports_a_drifted_snapshot(self, runner, app):
-        """verify recomputes on purpose, so it can catch a cache that disagrees."""
-        self._save(runner, app, "snap", "--snapshot")
-        path = self._profile_path("snap")
-        stored = json.loads(path.read_text(encoding="utf-8"))
-        stored["snapshot"]["name"] = "TAMPERED"
-        path.write_text(json.dumps(stored), encoding="utf-8")
-        assert self._verify_state(runner, app, "snap") == "drifted"
-
-    def test_an_inline_override_bypasses_the_snapshot(self, runner, app):
-        self._save(runner, app, "snap", "--snapshot")
-        path = self._profile_path("snap")
-        stored = json.loads(path.read_text(encoding="utf-8"))
-        stored["snapshot"]["name"] = "FROM-SNAPSHOT"
-        path.write_text(json.dumps(stored), encoding="utf-8")
-
-        reused = runner.invoke(app, ["natal", "-s", "snap", "-f", "json"])
-        assert json.loads(reused.output)["name"] == "FROM-SNAPSHOT"
-
-        # An override describes something the snapshot does not: recompute.
-        overridden = runner.invoke(
-            app, ["natal", "-s", "snap", "--houses", "koch", "-f", "json"]
-        )
-        body = json.loads(overridden.output)
-        assert body["name"] != "FROM-SNAPSHOT"
-        assert body["houses_system_identifier"] == "K"
 
 
 class TestFourthReviewPass:

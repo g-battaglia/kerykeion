@@ -2675,7 +2675,7 @@ And the CLI describes itself, so no table of valid values has to be memorised:
 
 ```console
 $ kerykeion info literals SiderealMode    # what --sidereal-mode accepts
-$ kerykeion doctor                        # check the install; exits 6 if broken
+$ kerykeion status --check                # check the install; exits 6 if broken
 ```
 
 **📖 Full CLI reference: [Command Line Interface](https://www.kerykeion.net/content/docs/cli)**

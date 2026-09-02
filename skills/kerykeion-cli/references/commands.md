@@ -117,6 +117,6 @@ and `--refine` (which sharpens the exact moment) requires `--events`.
 ## Subjects, info, diagnostics
 
 `subject save|show|list|path|verify`, `info literals|points|stars|houses|methods`,
-`status`, `doctor`, and `call`. See
+`status [--check]`, and `call`. See
 [profiles.md](profiles.md), [io-and-exit-codes.md](io-and-exit-codes.md) and
 [call-dispatcher.md](call-dispatcher.md).

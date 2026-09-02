@@ -13,7 +13,6 @@ from __future__ import annotations
 import difflib
 import functools
 import re
-import sys
 import typing
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -429,59 +428,6 @@ def materialize(merged: dict[str, Any]):
     )
 
 
-# ── Snapshots ────────────────────────────────────────────────────────────────
-
-
-def snapshot_is_usable(meta: Optional[dict[str, Any]]) -> Optional[str]:
-    """``None`` if a snapshot written with *meta* is still trustworthy, else why not.
-
-    A snapshot from another kerykeion version or backend would answer with
-    numbers this installation would not compute; provenance is the cheap check.
-    """
-    from kerykeion import BACKEND_NAME, __version__
-
-    meta = meta or {}
-    stored_version = meta.get("kerykeion_version")
-    if stored_version and stored_version != __version__:
-        return f"written by kerykeion {stored_version}, running {__version__}"
-    stored_backend = meta.get("backend")
-    if stored_backend and stored_backend != BACKEND_NAME:
-        return f"written with the {stored_backend} backend, running {BACKEND_NAME}"
-    return None
-
-
-def _note(message: str) -> None:
-    sys.stderr.write(f"kerykeion: note: {message}\n")
-
-
-def _subject_from_snapshot(flags: SubjectFlags, profile_spec: Optional[str]):
-    """The stored subject, only when the read is unambiguous: a profile, no inline override, matching provenance."""
-    if profile_spec is None or flags != SubjectFlags():
-        return None
-    from kerykeion.extra.cli import profiles
-
-    try:
-        profile = profiles.load(profiles.resolve_path(profile_spec))
-    except Exception:
-        return None  # the ordinary path reports the real error
-    if not profile.snapshot:
-        return None
-    reason = snapshot_is_usable(profile.meta)
-    if reason is not None:
-        _note(f"ignoring the stored snapshot for {profile_spec!r} ({reason}); recomputing.")
-        return None
-    from kerykeion.schemas.models import AstrologicalSubjectModel
-
-    try:
-        return AstrologicalSubjectModel.model_validate(profile.snapshot)
-    except Exception:
-        _note(f"the stored snapshot for {profile_spec!r} is unreadable; recomputing.")
-        return None
-
-
 def resolve_subject(flags: SubjectFlags, profile_spec: Optional[str] = None):
-    """Build the subject from a profile plus inline flags, reusing a trustworthy ``--snapshot`` when present."""
-    stored = _subject_from_snapshot(flags, profile_spec)
-    if stored is not None:
-        return stored
+    """Build the subject from a profile plus inline flags."""
     return materialize(merge_inputs(flags, profile_spec))

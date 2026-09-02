@@ -70,18 +70,17 @@ For a consumer that only reads stdout, fold the warnings into the payload:
 kerykeion natal -s ada -f json --envelope | jq '.warnings | length'
 ```
 
-## Reuse a computed subject across many commands
+## Reuse one subject across many commands
 
 ```bash
 kerykeion subject save fast --name Fast --date 1990-01-01 --time 12:00 \
-  --lat 45.0 --lng 9.0 --tz Europe/Rome --offline --snapshot
+  --lat 45.0 --lng 9.0 --tz Europe/Rome --offline
 kerykeion natal -s fast -f json | jq -r '.name'
 kerykeion aspects -s fast -f json | jq '.aspects | length'
 ```
 
-The snapshot is dropped automatically if the kerykeion version or the ephemeris
-backend changes, so a cached subject cannot silently answer with numbers the
-current install would not compute.
+Every read rebuilds the subject from the recipe, so the profile never goes
+stale across kerykeion versions or backends.
 
 ## Reach something with no curated command
 

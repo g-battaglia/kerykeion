@@ -29,8 +29,7 @@ supported types rather than a silent format switch.
 ## Streams
 
 The payload is written to **stdout**. Warnings (ephemeris coverage, polar-house
-fallbacks) and notes (an ignored snapshot) are written to **stderr**, in every
-format. A JSON payload is therefore always clean to pipe.
+fallbacks) and notes are written to **stderr**, in every format. A JSON payload is therefore always clean to pipe.
 
 `--warnings-as-errors` turns any warning into exit 9 — but only *after* the
 payload has been written, so nothing is lost.
@@ -94,15 +93,15 @@ Naming one is case-insensitive, and a typo gets a suggestion.
 
 ## Checking the install
 
-`status` reports; `doctor` judges.
+`status` reports; `status --check` judges.
 
 ```bash
 kerykeion status --json | jq -r '.backend, .calc_mode'
-kerykeion doctor -f json | jq -r '.ok, (.checks[] | "\(.status) \(.check)")'
+kerykeion status --check --json | jq -r '.ok, (.checks[] | "\(.status) \(.check)")'
 ```
 
-`doctor` runs the same probes plus a real natal calculation and exits **6** when
-something is genuinely broken. Warnings — a widened store mode, a stray `.env`
-in the working directory — do not fail it. That `.env` check matters: the
-ephemeris backend loads `./.env` at import, so a stray file can silently
-repoint the data directory or the calc mode.
+`--check` adds the install assertions, a real natal calculation included, and
+exits **6** when something is genuinely broken. Warnings — a widened store mode,
+a stray `.env` in the working directory — do not fail it. That `.env` check
+matters: the ephemeris backend loads `./.env` at import, so a stray file can
+silently repoint the data directory or the calc mode.
