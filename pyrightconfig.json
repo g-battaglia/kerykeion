@@ -1,5 +1,8 @@
 {
-  "include": ["kerykeion"],
+  "include": [
+    "kerykeion",
+    "cli/kerykeion_cli"
+  ],
   "exclude": [
     "tests",
     "examples",

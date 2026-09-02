@@ -14,9 +14,9 @@ import re
 from datetime import datetime
 from typing import Any, Literal, Optional, cast, get_args
 
-from kerykeion.extra.cli.commands._shared import _emit, _given, _parse_dt, _stored_subject
-from kerykeion.extra.cli.errors import SamplingLimitError
-from kerykeion.extra.cli.options import (
+from kerykeion_cli.commands._shared import _emit, _given, _parse_dt, _stored_subject
+from kerykeion_cli.errors import SamplingLimitError
+from kerykeion_cli.options import (
     EventsFlag,
     FormatOpt,
     FromOpt,
@@ -103,7 +103,7 @@ def ephemeris(
     output: OutputOpt = None,
 ) -> None:
     """Planet positions and house cusps over a date range."""
-    from kerykeion.extra.cli.subject_resolver import resolve_house_system
+    from kerykeion_cli.subject_resolver import resolve_house_system
 
     start, end, stype, step_n = _series("ephemeris", from_, to, step_type, step)
     kwargs = {

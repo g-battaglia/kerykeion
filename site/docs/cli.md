@@ -13,14 +13,17 @@ library — every chart type, analytical technique, sky event and factory —
 without writing any Python. It is a **local** engine: it computes with the same
 in-process backend as the library, so it works offline and needs no API key.
 
-Install it with the `cli` extra; the interface is built on the standard
-library alone, so the extra adds no third-party package:
+The interface is its own package, `kerykeion-cli`, which the `cli` extra
+installs. It is built on the standard library alone, so nothing third-party
+comes with it:
 
 ```bash
-pip3 install "kerykeion[cli]"
+pip3 install "kerykeion[cli]"          # the library plus the command
+uv tool install kerykeion-cli          # or as a standalone tool (pipx works too)
 ```
 
-`kerykeion[all]` adds the extra **and** the optional Swiss Ephemeris backend.
+`kerykeion[all]` adds the extra **and** the optional Swiss Ephemeris backend. A
+plain `pip install kerykeion` installs the library alone, with no command, and
 `import kerykeion` never imports the CLI.
 
 ## Output formats

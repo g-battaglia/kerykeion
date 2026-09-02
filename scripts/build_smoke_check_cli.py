@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 """Smoke-check the kerykeion CLI against the BUILT WHEEL in a clean room.
 
-Run by ``poe build:smoke`` in an isolated environment holding the wheel alone:
-the CLI is standard-library only, so a bare install must already serve it.
-Unlike ``scripts/build_smoke_check.py`` (which imports kerykeion to render a
-chart), this script exercises the COMMAND through a subprocess, because the
-point is the entry point as a user runs it.
+Run by ``poe build:smoke`` in an isolated environment holding BOTH wheels — the
+library and the CLI — which is what ``pip install "kerykeion[cli]"`` gives a
+user. Unlike ``scripts/build_smoke_check.py`` (which imports kerykeion to render
+a chart and asserts the library wheel carries no command), this script exercises
+the COMMAND through a subprocess, because the point is the entry point as a user
+runs it.
 """
 
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run([sys.executable, "-m", "kerykeion", *args], capture_output=True, text=True, check=False)
+    return subprocess.run([sys.executable, "-m", "kerykeion_cli", *args], capture_output=True, text=True, check=False)
 
 
 def _fail(label: str, detail: str) -> int:
@@ -25,6 +27,9 @@ def _fail(label: str, detail: str) -> int:
 
 
 def main() -> int:
+    # The console script the CLI wheel declares: a user types this, not python -m.
+    if shutil.which("kerykeion") is None:
+        return _fail("console script", "the kerykeion command is not on PATH in the wheel environment")
     rv = _run(["--version"])
     if rv.returncode != 0 or not rv.stdout.strip():
         return _fail("--version", f"rc={rv.returncode} out={rv.stdout!r}\n{rv.stderr}")
@@ -55,7 +60,7 @@ def main() -> int:
     if rd.returncode != 0:
         return _fail("status --check", f"rc={rd.returncode}\n{rd.stdout}\n{rd.stderr}")
 
-    print(f"wheel CLI OK: --version ({rv.stdout.strip()}), --help, clean exit 4, info ({len(tables)} literal tables), status --check green")
+    print(f"wheel CLI OK: kerykeion on PATH, --version ({rv.stdout.strip()}), --help, clean exit 4, info ({len(tables)} literal tables), status --check green")
     return 0
 
 

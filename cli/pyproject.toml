@@ -1,0 +1,79 @@
+[project]
+name = "kerykeion-cli"
+# One version, two wheels: this equals the root pyproject's version, and the pin below
+# says the same number. Nothing in the resolver enforces it — a stale pin would publish
+# a CLI that installs the wrong library — so
+# tests/core/test_cli.py::TestEntryPoint::test_one_version_two_distributions does.
+version = "6.0.0a92"
+description = "The kerykeion command-line interface: every chart, technique, sky event and factory from the terminal."
+readme = "README.md"
+license = { text = "AGPL-3.0" }
+authors = [
+    { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
+]
+requires-python = ">=3.12"
+keywords = [
+    "astrology",
+    "kerykeion",
+    "cli",
+    "command line",
+    "natal chart",
+    "synastry",
+    "transit",
+    "ephemeris",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Utilities",
+]
+# The interface is standard library only; the library is the whole dependency.
+dependencies = ["kerykeion==6.0.0a92"]
+
+[project.urls]
+Homepage = "https://www.kerykeion.net/"
+Documentation = "https://www.kerykeion.net/content/docs/cli/"
+Repository = "https://github.com/g-battaglia/kerykeion"
+Changelog = "https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md"
+Issues = "https://github.com/g-battaglia/kerykeion/issues"
+
+[project.scripts]
+kerykeion = "kerykeion_cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kerykeion_cli"]
+
+# uv builds the wheel from the sdist, so this list has to be complete.
+[tool.hatch.build.targets.sdist]
+include = [
+    "/kerykeion_cli",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+# Develop against the checkout's library (the workspace root); a published wheel
+# resolves kerykeion from PyPI.
+[tool.uv.sources]
+kerykeion = { workspace = true }
+
+# The root pyproject is the one configuration. ruff discovers the closest
+# pyproject.toml — this one — so it has to be told where the settings live, or
+# these files would silently be linted and formatted under ruff's defaults
+# instead of the repository's. pytest, mypy and pyright are pointed here from
+# the root and need no table.
+[tool.ruff]
+extend = "../pyproject.toml"

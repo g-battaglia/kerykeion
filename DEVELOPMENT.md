@@ -157,8 +157,13 @@ uv run poe cli:smoke
 uv run poe skill:cli:smoke
 ```
 
-The CLI is standard-library only (argparse): the `[cli]` extra carries no
-dependency and exists as the documented way to ask for it.
+The CLI is a **second distribution** in this repository, `cli/` (package
+`kerykeion_cli`, published as `kerykeion-cli`). It owns the `kerykeion` console
+script, so the library's own wheel installs no command and `kerykeion[cli]` is
+what brings one. It is standard-library only (argparse), so the library is its
+whole dependency. `uv` treats the two as a workspace: one lockfile, one `.venv`,
+and `uv sync` installs the CLI editable through the `dev` group (extras are not
+synced), which is what puts `kerykeion` on `.venv/bin` for `skill:cli:smoke`.
 
 #### Documentation gates
 
@@ -199,8 +204,6 @@ kerykeion/
 │   ├── eclipses/                # Localized solar and lunar eclipse search
 │   ├── ephemeris_backend/       # Backend selection (libephemeris/swisseph) and the ephemeris lock
 │   ├── ephemeris_data/          # EphemerisDataFactory — time-series ephemeris
-│   ├── extra/                   # Optional extras, each behind a dependency group; never imported by the library
-│   │   └── cli/                 # The command-line interface — install with kerykeion[cli]
 │   ├── firdaria/                # Firdaria (Firdariyyat), the Persian time-lord technique
 │   ├── fixed_stars/             # Dynamic fixed-star discovery and catalog
 │   ├── geonames/                # GeoNames city/timezone lookup (the only networked module)
@@ -236,6 +239,7 @@ kerykeion/
 │   ├── vedic/                   # Nakshatra calculations
 │   ├── void_of_course_moon/     # Void-of-course Moon state and windows
 │   └── zodiacal_releasing/      # Zodiacal releasing (aphesis) time-lord periods
+├── cli/                         # The kerykeion-cli distribution: the `kerykeion` command (argparse, stdlib only)
 ├── tests/core/                  # Test suite (102 files — see TEST.md)
 ├── tests/data/, tests/fixtures/ # Golden baselines: SVGs, positions, aspects, report snapshots
 ├── examples/                    # Runnable usage examples (see examples/README.md)
@@ -398,14 +402,38 @@ uv tree --outdated
 ## 🏗️ Building the Package
 
 ```bash
-# Build wheel and source distribution
-uv build
+# Build both distributions (library and CLI) into dist/
+uv build --all-packages -o dist
 
-# The built packages will be in the dist/ folder
-
-# Release gate: build, install the wheel in isolation, and render a chart
+# Release gate: build, then in isolated envs verify the library wheel alone
+# renders a chart and carries no command, and that both wheels serve it
 uv run poe build:smoke
 ```
+
+### Releasing
+
+One version, two wheels. A release bumps **three** numbers, which must agree:
+
+| Where | What |
+|---|---|
+| `pyproject.toml` | `[project] version` |
+| `cli/pyproject.toml` | `[project] version` **and** the `kerykeion==` pin |
+
+Nothing in the resolver enforces this, so
+`tests/core/test_cli.py::TestEntryPoint::test_one_version_two_distributions`
+does, and it says which one drifted. Then: the `Verified against` pins in `skills/*/SKILL.md`,
+the CHANGELOG entry and the release note, `uv lock`, `uv run poe check`,
+`uv run poe build:smoke`, the tag, and finally publish **the library first**:
+
+```bash
+uv publish dist/kerykeion-*        # then, only once it is on PyPI:
+uv publish dist/kerykeion_cli-*    # its pin resolves against the library
+```
+
+> **While v6 is in alpha**, the CLI's pin names a pre-release, so `uv` needs to
+> be told: `uv tool install --prerelease=allow kerykeion-cli` (pip accepts it
+> already — a specifier that spells out a pre-release opts into one). The flag
+> stops being necessary at `6.0.0`.
 
 ---
 

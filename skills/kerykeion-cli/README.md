@@ -43,11 +43,12 @@ cp -r skills/kerykeion-cli /path/to/your-project/.codex/skills/kerykeion-cli
 # Cursor, Windsurf, Cline and others: copy into the agent's skills directory.
 ```
 
-The skill documents the CLI; using it also needs the CLI itself:
+The skill documents the CLI; using it also needs the CLI itself, which lives in
+the `kerykeion-cli` package:
 
 ```bash
 # gate: skip
-pip install "kerykeion[cli]"
+pip install "kerykeion[cli]"     # or: uv tool install kerykeion-cli
 ```
 
 ## Contents

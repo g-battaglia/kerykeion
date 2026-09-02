@@ -12,9 +12,9 @@ import difflib
 import typing
 from typing import Annotated, Optional
 
-from kerykeion.extra.cli.commands._shared import _emit
-from kerykeion.extra.cli.options import FormatOpt, OutputOpt
-from kerykeion.extra.cli.parser import Arg
+from kerykeion_cli.commands._shared import _emit
+from kerykeion_cli.options import FormatOpt, OutputOpt
+from kerykeion_cli.parser import Arg
 
 
 
@@ -50,21 +50,21 @@ def literals(
 
 def points(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """The --points presets and their contents."""
-    from kerykeion.extra.cli import subject_resolver
+    from kerykeion_cli import subject_resolver
 
     _emit(subject_resolver._point_sets(), fmt, output)
 
 
 def stars(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """The --fixed-stars presets and their contents."""
-    from kerykeion.extra.cli import subject_resolver
+    from kerykeion_cli import subject_resolver
 
     _emit(subject_resolver._fixed_star_sets(), fmt, output)
 
 
 def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """What --houses accepts: letters (case matters) and names."""
-    from kerykeion.extra.cli import subject_resolver
+    from kerykeion_cli import subject_resolver
 
     letters = sorted(subject_resolver.literal_values("HousesSystemIdentifier"))
     _emit({"letters": letters, "names": dict(sorted(subject_resolver._HOUSES_BY_NAME.items()))}, fmt, output)
@@ -73,7 +73,7 @@ def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
 def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
     """Strategy and method names per flag, as the library reports them."""
     from kerykeion import DominantsFactory
-    from kerykeion.extra.cli.render_options import SVG_VARIANTS, chart_choices
+    from kerykeion_cli.render_options import SVG_VARIANTS, chart_choices
 
     _emit(
         {

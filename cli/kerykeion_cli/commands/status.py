@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""``kerykeion status`` — a thin wrapper over :mod:`kerykeion.extra.cli.diagnostics`."""
+"""``kerykeion status`` — a thin wrapper over :mod:`kerykeion_cli.diagnostics`."""
 
 from __future__ import annotations
 
 from typing import Annotated
 
-from kerykeion.extra.cli import diagnostics
-from kerykeion.extra.cli.parser import Opt
+from kerykeion_cli import diagnostics
+from kerykeion_cli.parser import Opt
 
 
 def status(

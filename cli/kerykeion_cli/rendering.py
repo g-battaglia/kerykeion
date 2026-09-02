@@ -84,7 +84,7 @@ def render_xml(obj: Any) -> str:
 def render_svg(obj: Any, opts: Any = None) -> str:
     """A chart-data model through ``ChartDrawer.generate_*_svg_string`` — never ``save_svg``, which writes into the home directory."""
     from kerykeion import ChartDrawer, KerykeionException
-    from kerykeion.extra.cli.render_options import SVG_VARIANTS
+    from kerykeion_cli.render_options import SVG_VARIANTS
 
     if not hasattr(obj, "chart_type"):
         raise KerykeionException(

@@ -2,6 +2,12 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 
+[manifest]
+members = [
+    "kerykeion",
+    "kerykeion-cli",
+]
+
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -312,7 +318,11 @@ dependencies = [
 
 [package.optional-dependencies]
 all = [
+    { name = "kerykeion-cli" },
     { name = "pyswisseph" },
+]
+cli = [
+    { name = "kerykeion-cli" },
 ]
 swiss = [
     { name = "pyswisseph" },
@@ -322,6 +332,7 @@ swiss = [
 dev = [
     { name = "coverage" },
     { name = "fonttools" },
+    { name = "kerykeion-cli" },
     { name = "mypy" },
     { name = "pdoc" },
     { name = "poethepoet" },
@@ -339,6 +350,7 @@ dev = [
 requires-dist = [
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
+    { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
     { name = "libephemeris", specifier = ">=3.1.0,<4" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
@@ -355,6 +367,7 @@ provides-extras = ["swiss", "cli", "all"]
 dev = [
     { name = "coverage", specifier = ">=7.6.0" },
     { name = "fonttools", specifier = ">=4.50" },
+    { name = "kerykeion-cli", editable = "cli" },
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pdoc", specifier = ">=15.0.4" },
     { name = "poethepoet", specifier = ">=0.36.0" },
@@ -367,6 +380,17 @@ dev = [
     { name = "ruff", specifier = ">=0.12.9" },
     { name = "types-requests", specifier = ">=2.32.4.20250611" },
 ]
+
+[[package]]
+name = "kerykeion-cli"
+version = "6.0.0a92"
+source = { editable = "cli" }
+dependencies = [
+    { name = "kerykeion" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "kerykeion", editable = "." }]
 
 [[package]]
 name = "libephemeris"

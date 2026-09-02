@@ -29,19 +29,18 @@ import pytest
 import kerykeion
 import kerykeion.schemas as schemas
 
-# Modules that must not be imported by the discovery walk.
-# __main__ modules run a CLI when executed; the walk must not trigger them.
-# kerykeion.extra.cli is the whole command-line package: its leaves import the optional
-# [cli] extra (typer/rich), absent from a bare install, so importing them here
-# would break the walk for anyone who has not installed it.
-_EXCLUDED_MODULES = ("__main__", "kerykeion.extra.cli")
+# Modules that must not be imported by the discovery walk: a ``__main__`` runs a
+# command when executed. (The command-line interface is no longer in this package
+# at all — it is the separate ``kerykeion-cli`` distribution — so the walk over
+# ``kerykeion.__path__`` cannot reach it.)
+_EXCLUDED_MODULES = ("__main__",)
 
 
 def _is_excluded(module_name: str) -> bool:
     """Precise exclusion: exact name, dot-prefixed subtree, or dot-suffixed leaf.
 
-    Never a bare substring: ``"kerykeion.extra.cli" in "kerykeion.extra.client"`` is
-    True, so a substring test would swallow a future ``kerykeion.extra.client`` too.
+    Never a bare substring: a module whose own name merely contains an excluded
+    one (``kerykeion.foo.__main__helper``) must still be walked.
     """
     return any(
         module_name == ex or module_name.startswith(ex + ".") or module_name.endswith("." + ex)

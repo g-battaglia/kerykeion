@@ -2,9 +2,10 @@
 """Smoke-check the kerykeion CLI in the development environment.
 
 Complements ``scripts/build_smoke_check_cli.py``: that one proves the BUILT
-WHEEL behaves in a clean room; this one proves the live entry point still
-works from the repo checkout and that ``import kerykeion`` never imports the
-CLI. Run by ``poe cli:smoke``. Exits non-zero on any failure.
+WHEELS behave in a clean room; this one proves the live entry point still works
+from the repo checkout, that the two distributions agree on a version, and that
+``import kerykeion`` never imports the CLI. Run by ``poe cli:smoke``. Exits
+non-zero on any failure.
 """
 
 from __future__ import annotations
@@ -19,19 +20,25 @@ def _fail(label: str, detail: str) -> None:
 
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[str]:
-    # ``python -m kerykeion`` is the same code path as the ``kerykeion`` console
-    # script (both reach ``kerykeion/__main__.py`` -> ``kerykeion.extra.cli.main``),
-    # and it does not depend on the console script being on $PATH.
-    return subprocess.run([sys.executable, "-m", "kerykeion", *args], capture_output=True, text=True, check=False)
+    # ``python -m kerykeion_cli`` is the same code path as the ``kerykeion``
+    # console script (both reach ``kerykeion_cli.main``), and it does not depend
+    # on the console script being on $PATH.
+    return subprocess.run([sys.executable, "-m", "kerykeion_cli", *args], capture_output=True, text=True, check=False)
 
 
 def main() -> int:
     failures = 0
-    want = version("kerykeion")
+    want = version("kerykeion-cli")
+
+    # 0. One version, two wheels: the CLI is released with the library it pins.
+    library = version("kerykeion")
+    if want != library:
+        _fail("version pair", f"kerykeion-cli {want} against kerykeion {library}")
+        failures += 1
 
     # 1. The library never imports the CLI: ``import kerykeion`` stays free of it.
     r = subprocess.run(
-        [sys.executable, "-c", "import kerykeion, sys; assert 'kerykeion.extra.cli' not in sys.modules, 'cli auto-imported'"],
+        [sys.executable, "-c", "import kerykeion, sys; assert 'kerykeion_cli' not in sys.modules, 'cli auto-imported'"],
         capture_output=True, text=True,
     )
     if r.returncode != 0:
@@ -40,7 +47,7 @@ def main() -> int:
 
     # 2. The console_scripts entry point is registered and points at main.
     eps = [e for e in entry_points(group="console_scripts") if e.name == "kerykeion"]
-    if not eps or eps[0].value != "kerykeion.extra.cli:main":
+    if not eps or eps[0].value != "kerykeion_cli:main":
         _fail("entry point", f"console_scripts kerykeion missing/wrong: {eps!r}")
         failures += 1
 
