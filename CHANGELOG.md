@@ -25,7 +25,7 @@
   of the computed subject, with provenance checks and four `verify` states)
   is gone: a subject computes in about 40 ms against a second of library
   start-up, so the cache saved nothing a user could notice while adding a way
-  for a profile to go stale. The pre-flight sample count of `ephemeris` and
+  for a profile to go stale; a profile written by an earlier version still loads. The pre-flight sample count of `ephemeris` and
   `transits` is gone too: the library counts the samples in its constructor
   before building anything, so the CLI now only rewords that refusal as exit
   8 with the flags to change. And `doctor` is `status --check`: the same
