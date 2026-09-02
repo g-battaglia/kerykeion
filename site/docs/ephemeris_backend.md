@@ -84,30 +84,70 @@ Controls the calculation pipeline. Default: `"leb"` (mandatory `.leb` files).
 KERYKEION_LEB_MODE=auto python my_script.py
 ```
 
+The mode is applied with `set_calc_mode()` at import time, and in the default
+`leb` mode Kerykeion additionally pins `set_network_policy("sealed")`. Both
+calls override whatever libephemeris read from its own `LIBEPHEMERIS_MODE` /
+`LIBEPHEMERIS_NETWORK_POLICY` variables, so setting those has no effect on a
+Kerykeion process — use `KERYKEION_LEB_MODE`. `reset_ephemeris_session()`
+re-applies the pinned mode after every reset, since a reset would otherwise
+leave the session in `auto` and silently re-enable the Skyfield fallback.
+
+### `LIBEPHEMERIS_PRECISION`
+
+*Only applies when libephemeris is the active backend.*
+
+Selects the ephemeris tier — `base`, `medium` or `extended` — and therefore the
+date range that can be computed. Unset, libephemeris auto-detects the widest
+tier the installed kernel can serve. A date outside the active range raises
+`KerykeionException`; sealed `leb` mode does not substitute a lower-precision
+source.
+
+```bash
+LIBEPHEMERIS_PRECISION=extended python my_script.py
+```
+
 #### Installing `.leb` files
 
 `.leb` files contain precomputed Chebyshev polynomial approximations and
 live in `~/.libephemeris/leb/`. Download them with:
 
 ```python
+# doc-snippet: no-run — downloads ephemeris kernels
 from libephemeris import download_leb_for_tier
 
 # Every tier installs the SAME 14-body core (Sun-Pluto, Earth,
 # Mean/True Node, Mean Apogee). Tiers differ by DATE RANGE, not by
 # which bodies the core contains.
-download_leb_for_tier("base")      # 1850-2150, ~10 MB (bundled in the wheel)
-download_leb_for_tier("medium")    # 1550-2650, ~37 MB
-download_leb_for_tier("extended")  # full range (incl. BCE dates), ~1154 MB
+download_leb_for_tier("base")      # 1850-2150 (DE440s), ~31 MB, bundled
+download_leb_for_tier("medium")    # 1550-2650 (DE440), ~114 MB
+download_leb_for_tier("extended")  # -13200 to +17191 (DE441), ~3.1 GB
 ```
+
+The authoritative table is `libephemeris.list_tiers()`, which reports each
+tier's name, kernel file, range and size.
 
 Asteroids (Chiron, Ceres, Pallas, Juno, Vesta), other curated minor
 bodies and exotics (centaurs, trans-Neptunians), and lunar apsides are
 **separate companion groups**, available at every tier — they are not
 folded into the core by tier. Install them alongside the core with
-`download_leb2_for_tier(tier, groups=[...])`. The Hamburg/Uranian points
-and the White Moon need **no files at all**: they are fictitious bodies,
-always computed from their runtime analytical models (provenance
-`source="Analytical"`), at every tier and for every date.
+`download_leb2_for_tier`, which lives in `libephemeris.download` rather than at
+the package root:
+
+```python
+# doc-snippet: no-run — downloads ephemeris kernels
+from libephemeris.download import download_leb2_for_tier
+
+download_leb2_for_tier("medium", groups=["core", "asteroids"])
+```
+
+`download_leb2_for_tier(tier_name, groups=None, force=False, show_progress=True,
+quiet=False, activate=True)`; the group names are `core`, `asteroids`, `exotics`
+and `apogee` (`libephemeris.leb_groups.LEB2_GROUPS`), and `groups=None` installs
+all of them.
+
+The Hamburg/Uranian points and the White Moon need **no files at all**: they are
+fictitious bodies, always computed from their runtime analytical models
+(provenance `source="Analytical"`), at every tier and for every date.
 
 ## Architecture
 
@@ -122,8 +162,31 @@ kerykeion.ephemeris_backend   <-- single import point
        +-- EPHE_DATA_PATH     (resolved data directory)
        |
        v
-~28 consumer modules          <-- all import: from kerykeion.ephemeris_backend import ephe
+29 consumer modules           <-- from kerykeion.ephemeris_backend.backend
+                                  import ephe, ephemeris_session
 ```
+
+### Package Exports
+
+`kerykeion.ephemeris_backend.__all__`:
+
+| Name | What it is |
+| :-- | :-- |
+| `ephe` | The selected backend module itself (`libephemeris` or `swisseph`). |
+| `BACKEND_NAME` | `"libephemeris"` or `"swisseph"`. |
+| `EPHE_DATA_PATH` | Resolved ephemeris data directory. |
+| `EPHEMERIS_LOCK` | The lock every backend call is serialized behind. |
+| `ephemeris_session` | Context manager: takes the lock, applies zodiac/sidereal/perspective/topocentric configuration, yields the `iflag`, resets and releases on exit. |
+| `reset_ephemeris_session` | Resets per-calculation backend state and re-pins the calc mode. Callers must hold `EPHEMERIS_LOCK`; never call `ephe.close()` directly. |
+| `houses_ex2_with_polar_fallback` | House cusps with the polar substitution applied. |
+| `houses_ex2_with_polar_fallback_ex` | Same, also returning the fallback record. |
+| `houses_ring_with_polar_fallback` | Cusp ring variant for the 36-sector Gauquelin grid. |
+| `HouseRing` | Return type of the ring helper. |
+| `POLAR_HOUSES_ERROR_TYPES` | Backend exception types that mean "undefined at this latitude". |
+| `DEFAULT_SWEPH_DOWNLOAD_DIR` | Where the Swiss Ephemeris data files are looked for. |
+
+The polar helpers are the only supported way to compute houses above the polar
+circle.
 
 **Key design decisions:**
 
@@ -182,9 +245,25 @@ poe test:compare
 
 The `test:lib` and `test:swe` suites are **identical** -- same test files,
 same assertions. The only difference is the `KERYKEION_BACKEND` environment
-variable. Golden-file tests (SVG baselines, report snapshots) use numeric
-tolerance (0.5 degrees) to accommodate the minor positional deltas between
-backends.
+variable.
+
+Golden-file tests do **not** use a loose numeric tolerance. For SVG baselines
+(`tests/data/compare_svg_lines.py`) the contract has two halves:
+
+- **Structure is fatal on both backends.** Line count, the count of numbers per
+  line, and each line with its numbers blanked out must match the baseline
+  exactly, or the test fails and names the line.
+- **Numbers are compared only on `libephemeris`**, the backend the baselines
+  were generated with, at `abs_tol = 1e-4` with no relative component. A DMS
+  label printed to the second cannot move by less than 2.78e-4, so any flipped
+  label is rejected. On the other backend the structural assertions still run in
+  full and the test then reports SKIPPED with a reason — not compared is not the
+  same as compared and equal.
+
+Report snapshots (`tests/core/test_report.py`) apply the same shape: line count
+and the non-numeric skeleton must match exactly, and numbers are compared at
+`abs_tol = 0.01`, which absorbs display-rounding flips of the last printed
+decimals and nothing more.
 
 ### Numerical Differences
 

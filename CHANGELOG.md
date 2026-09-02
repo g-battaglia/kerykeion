@@ -1,5 +1,35 @@
 # Changelog
 
+## [6.0.0a92] - 2026-08-29
+
+### Added
+
+- **Sign periods and retrograde periods.** Two range queries that answer
+  "where is every planet, and who is retrograde, across these dates" without
+  the caller stitching events together:
+  `SignIngressFactory.sign_periods_from_iso_range` / `_from_julian_day` return
+  contiguous, non-overlapping sign stays per planet (`SignPeriodModel`, in
+  `SignPeriodsCollectionModel`), and
+  `RetrogradeStationFactory.retrograde_periods_from_iso_range` /
+  `_from_julian_day` return retrograde spans (`RetrogradePeriodModel`, in
+  `RetrogradePeriodsCollectionModel`). Both are clipped to the range and flag
+  each clipped bound (`start_clipped` / `end_clipped`), so a stay that began
+  before the range or a retrograde that outlives it is reported honestly
+  instead of being invisible — the state at the range start is read in the
+  same ephemeris session (same zodiac frame) as the scan that follows it,
+  with a probe a solver's resolution (50 ms) past either bound so a boundary
+  sitting exactly on a range edge is recognised (a stay entered on the start, or left on the
+  end, is not clipped there; a station on the start decides the motion
+  state, one on the end closes the span).
+  See `release_notes/v6.0.0a92.md`.
+- **Chiron stations, opt-in.** `RetrogradeStationFactory` accepts `"Chiron"`
+  in `planets`; the default set (and its baselines) is unchanged.
+
+### Changed
+
+- `SignIngressFactory.from_iso_range` parses its bounds through a shared
+  helper (`_iso_range_to_jd`); behaviour is unchanged.
+
 ## [6.0.0a91] - 2026-08-29
 
 Five defects that reached the screen of a downstream client as data that
@@ -658,7 +688,7 @@ drawing changed except the words of the lunar phase.
   stored a86 composite re-rendered on a87 can read a planet in the opposite
   house; the two are distinguishable because a87 records `house_anchor`.
 
-## [6.0.0a86]
+## [6.0.0a86] - 2026-08-21
 
 ### Fixed
 
@@ -925,7 +955,7 @@ drawing changed except the words of the lunar phase.
   out of bounds), a Longyearbyen chart whose Placidus request could not be
   honoured, a sidereal Lahiri chart, and a synastry pair. Runs offline.
 
-## 6.0.0a85 - 2026-08-12
+## [6.0.0a85] - 2026-08-12
 
 ### Added
 

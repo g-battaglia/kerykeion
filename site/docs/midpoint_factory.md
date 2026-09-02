@@ -44,7 +44,7 @@ Compute every pairwise midpoint and (optionally) aspect activations.
 | Parameter        | Type              | Default | Description                                           |
 | :--------------- | :---------------- | :------ | :---------------------------------------------------- |
 | `subject`        | AstrologicalSubjectModel | --  | The natal/event chart to analyse                      |
-| `active_points`  | Sequence[str] or None | None | Points to use as midpoint constituents (defaults to standard set) |
+| `active_points`  | Sequence[str] or None | None | Points to use as midpoint constituents. Defaults to `DEFAULT_PREDICTIVE_POINTS`: Sun through Pluto, True North Lunar Node, Chiron, Ascendant and Medium Coeli. Names the subject does not carry are skipped, and fewer than two resolved points give an empty list |
 | `compute_aspects`| bool              | True    | Also compute third-point aspect activations           |
 | `aspect_orb`     | float             | 1.0     | Orb in degrees for aspect-to-midpoint detection       |
 | `aspects`        | Sequence[str] or None | None | Whitelist of aspect names (defaults to all configured) |
@@ -60,7 +60,12 @@ Materialize midpoints as `KerykeionPointModel` entries so the chart drawer can r
 | `subject`    | AstrologicalSubjectModel | The natal subject                          |
 | `pair_names` | Sequence[str]  | Pair identifiers in `"A_B"` form (e.g. `"Sun_Moon"`)    |
 
-**Returns:** `List[KerykeionPointModel]`
+**Returns:** `List[KerykeionPointModel]`, one per resolved pair, named
+`"A_B_Midpoint"` with `point_type="Midpoint"` and sign, element, quality and
+house derived from the midpoint longitude on the shorter arc. Both sides of a
+pair must resolve in the subject's own `active_points`: a pair that does not
+is skipped and logged as a warning. A repeated pair, or the reversed `"B_A"`
+twin of one already emitted, is skipped too — the first occurrence wins.
 
 ## Data Models
 

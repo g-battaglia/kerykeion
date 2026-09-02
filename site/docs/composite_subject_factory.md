@@ -82,8 +82,18 @@ svg = drawer.generate_svg_string()
 | `first_subject`  | `AstrologicalSubjectModel` | **Required** | First person's natal subject.                                                     |
 | `second_subject` | `AstrologicalSubjectModel` | **Required** | Second person's natal subject.                                                    |
 | `chart_name`     | `Optional[str]`            | `None`       | Custom name for the composite chart. If `None`, auto-generates as `"{name1} and {name2} Composite Chart"`. |
+| `house_anchor`   | `Literal["auto", "ascendant", "midheaven"]` | `"auto"` | Which angle keeps its near midpoint when the twelve cusp midpoints do not form a house division. See [Methodology](#methodology). |
 
-**Method:** Call `get_midpoint_composite_subject_model()` on the factory instance to get the `CompositeSubjectModel`.
+The constructor raises `KerykeionException` when the two subjects share no
+active point at all: a composite needs at least one, and the two construction
+paths would otherwise diverge silently.
+
+## Methods
+
+| Method                                                                              | Returns                 | Description                                                                |
+| :---------------------------------------------------------------------------------- | :---------------------- | :-------------------------------------------------------------------------- |
+| `get_midpoint_composite_subject_model()`                                            | `CompositeSubjectModel` | The midpoint composite: every position is the mean of the two charts'.     |
+| `get_davison_composite_subject_model(*, custom_ayanamsa_t0=None, custom_ayanamsa_ayan_t0=None)` | `CompositeSubjectModel` | The Davison composite: a real chart cast for the midpoint moment and place. Both keyword arguments are needed only for `sidereal_mode="USER"` parents. |
 
 ## Requirements
 
@@ -144,8 +154,8 @@ print(composite.effective_houses_system_name)        # "Porphyry"
 for record in composite.polar_house_fallbacks:
     print(record.latitude, record.requested_house_system_identifier,
           record.used_house_system_identifier)
-# 78.2232 P O
-# 79.0    P O
+# 69.6492 P O
+# 67.8558 P O
 ```
 
 The requested pair is deliberately left untouched. A substitution forced by one parent's latitude is a fact about that parent, not a preference the relationship adopted, and the requested value is what a relocation or a re-cast has to start from. The substitution stays visible because the parents' own records travel with the composite, and the `effective_houses_system_*` view is derived from them.
@@ -168,19 +178,25 @@ print(davison.sun.sign, f"{davison.sun.abs_pos:.2f}°")
 
 When the input subjects use `sidereal_mode="USER"`, pass `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` to `get_davison_composite_subject_model()` so the Davison chart is built with the same ayanamsa. The return value is a `CompositeSubjectModel` with `composite_chart_type="Davison"`.
 
+A Davison chart averages no cusps, so it has no frame to speak of: both
+`house_anchor` and `house_frame` are `None` on it. The model enforces the pair
+— on a midpoint composite both are set, on a Davison neither is.
+
 ## Methodology
 
-- **Midpoint method**: Positions are calculated as the shortest-arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°); house cusps are also taken by midpoint, which is why both parents' cusps have to come from the same division. Only points present in _both_ input subjects are included.
+- **Midpoint method**: Positions are calculated as the shortest-arc mean between the two input points (e.g., Aries 0° and Aries 20° = Aries 10°); house cusps are also taken by midpoint, which is why both parents' cusps have to come from the same division. `active_points` is the intersection of the two subjects' point sets.
 
   Between two points on a circle there are two midpoints, half a turn apart, and taking the nearer one for each of the twelve cusps independently breaks down when the two charts' angles are nearly opposed: the choice flips partway round the ring, the twelve arcs come to 1080° instead of 360°, and the result is not a house division at all. About one pair in sixteen is affected. The cusps are repaired the way the field documents — Solar Fire moves the offending cusps to their long-arc midpoint, Kepler calls it flipping the houses 180°, Townley prescribes it for the stray cusp and its opposite — by holding one angle at its near midpoint and moving the others.
 
-  `house_anchor` chooses which angle is held: `"auto"` (the default; whichever of the Ascendant and the Midheaven has its two base cusps closer together, which is Solar Fire's rule and its default too), `"ascendant"`, or `"midheaven"` (Kepler's two named methods). Anything else raises. A chart whose near midpoints already run in order is returned untouched, value for value, and the anchor is recorded on the model as `house_anchor` so the result can be reproduced.
+  `house_anchor` chooses which angle is held: `"auto"` (the default; whichever of the Ascendant and the Midheaven has its two base cusps closer together, which is Solar Fire's rule and its default too), `"ascendant"`, or `"midheaven"` (Kepler's two named methods). Anything else raises. A chart whose near midpoints already run in order keeps them as its cusps, but the whole ring may still be turned half a circle so that the held angle stays on the cusp it shares a number with -- a rotation leaves the twelve tiling exactly as they were, and half a turn takes each cusp from one midpoint of its pair to the other. The anchor is recorded on the model as `house_anchor` so the result can be reproduced.
 
-  The four angles follow their cusp only where the parents made them one point. Under a quadrant system the first cusp is the Ascendant and the tenth the Midheaven, and the composite keeps that true; under whole sign, equal, Morinus or meridian houses they are different points, and the angle stays the midpoint of its own pair — an angle is where the ecliptic meets the horizon and the meridian, and no house system moves it.
+  What the ring actually turned out to be is recorded separately, in `house_frame`: `"anchored"` (a frame was hung from the requested angle and the twelve cover the circle exactly once -- the anchor was held), `"midpoints"` (no frame spans the two charts, so every position is its own near midpoint, and the twelve are still a house division), or `"gapped"` (as `"midpoints"`, but the twelve are *not* a house division: they leave gaps, and a longitude falling in one is named for the house whose cusp it last passed, which is a reading rather than a containment). `house_anchor` says what was asked for; `house_frame` says what was built. `composite.coincident_house_cusps` groups the house numbers whose midpoint cusps landed on one longitude, exactly as on an ordinary subject.
+
+  The four angles follow their cusp only where **both** parents put the angle on that cusp: it is their cusps that are being averaged, so the identity may be used only where they both have it. Quadrant systems put all four angles on their cusps, equal houses the Ascendant and the Descendant only, meridian houses the Midheaven and the Imum Coeli only, whole sign and Morinus none. Everywhere else the angle stays the midpoint of its own pair — an angle is where the ecliptic meets the horizon and the meridian, and no house system moves it.
 
   Where the two subjects' houses run opposite ways round the wheel — one of them born inside the polar circle under a system that reverses there — no arrangement of midpoints makes a ring, and the library says so on its logger rather than shipping the chart quietly.
 - **Davison method**: The two birth moments (Julian Day) and the two locations (lat/lng) are averaged, then a standard natal chart is cast for that derived moment and place.
-- **Active Points**: For the midpoint composite, only points present in _both_ input subjects are included.
+- **Active Points**: For the midpoint composite, `active_points` is the intersection of the two subjects' point sets — it says what was asked for, and the display and aspect filters read it. Beyond that list the composite always materialises the four angles (Ascendant, Medium Coeli, Descendant, Imum Coeli) and derives the opposite of any point it carries at exactly 180°, so a horizon, a meridian and a node section are always present. Deriving rather than averaging is deliberate: two points half a circle apart are the same unordered pair as their own opposites, so a symmetric mean would put a south node on top of its north node.
 
 ---
 

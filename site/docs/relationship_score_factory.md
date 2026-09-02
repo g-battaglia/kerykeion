@@ -33,8 +33,7 @@ This numerical approach is useful for:
 To calculate a score, create two astrological subjects via `AstrologicalSubjectFactory` (one for each partner) and pass them to the factory.
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.relationship_score.factory import RelationshipScoreFactory
+from kerykeion import AstrologicalSubjectFactory, RelationshipScoreFactory
 
 # 1. Create Subjects (offline mode: explicit coordinates, no GeoNames lookup)
 person_a = AstrologicalSubjectFactory.from_birth_data(
@@ -71,7 +70,7 @@ for aspect in score_model.aspects[:3]:
 **Expected Output:**
 
 ```text
-Sun sextile Sun (orb: 3.6354400115408794°)
+Sun sextile Sun (orb: 3.6354400137083758°)
 Ascendant trine Moon (orb: 2.242423320728676°)
 ```
 
@@ -84,16 +83,34 @@ Ascendant trine Moon (orb: 2.242423320728676°)
 | `use_only_major_aspects` | `bool`  | `True`   | Only consider major aspects (conj, opp, sq, etc). |
 | `axis_orb_limit`         | `float` | `None`   | Finite, positive stricter orb for angles (Asc, MC). Keyword-only.  |
 
+## Raises
+
+`KerykeionException` is raised when:
+
+- The two subjects do not share the same reference frame — zodiac type,
+  perspective type, and (for sidereal charts) sidereal mode. The check runs in
+  the constructor, before any aspect is computed. House systems are not
+  compared, and are allowed to differ.
+- Either input is not a subject-like model at all (it does not expose the frame
+  attributes).
+- `axis_orb_limit` is given but is not a finite, positive number.
+- Either subject was built without the Sun in its active points. The Discepolo
+  method is defined on the Sun (destiny sign) and the luminary aspects, so
+  `get_relationship_score()` fails rather than returning a partial score.
+
 ## Score Categories
 
-| Score       | Category         | Description                                     |
-| :---------- | :--------------- | :---------------------------------------------- |
-| **0 - 5**   | Minimal          | Low compatibility, few significant connections. |
-| **5 - 10**  | Medium           | Moderate compatibility.                         |
-| **10 - 15** | Important        | Strong compatibility, notable connections.      |
-| **15 - 20** | Very Important   | High compatibility, significant harmony.        |
-| **20 - 30** | Exceptional      | Outstanding compatibility.                      |
-| **30+**     | Rare Exceptional | Extraordinary cosmic connection.                |
+Each bound is strict: a category applies while `score_value` is **below** its
+threshold, so a score of exactly 5 is Medium, and exactly 20 is Exceptional.
+
+| Score         | Category         | Description                                     |
+| :------------ | :--------------- | :---------------------------------------------- |
+| **< 5**       | Minimal          | Low compatibility, few significant connections. |
+| **5 - < 10**  | Medium           | Moderate compatibility.                         |
+| **10 - < 15** | Important        | Strong compatibility, notable connections.      |
+| **15 - < 20** | Very Important   | High compatibility, significant harmony.        |
+| **20 - < 30** | Exceptional      | Outstanding compatibility.                      |
+| **>= 30**     | Rare Exceptional | Extraordinary cosmic connection.                |
 
 ## Scoring System Details
 
@@ -107,9 +124,11 @@ The algorithm awards points for specific "Destiny" indicators and aspects.
 | **Sun-Ascendant**          | +4        | Any major aspect.                                             |
 | **Moon-Ascendant**         | +4        | Any major aspect.                                             |
 | **Venus-Mars**             | +4        | Any major aspect.                                             |
-| **Other Sun/Moon**         | +4        | Other major aspects involving Luminaries.                     |
+| **Sun-Sun** (other)        | +4        | Any Sun-Sun aspect other than conjunction, opposition or square. |
+| **Sun-Moon** (other)       | +4        | Any Sun-Moon aspect other than conjunction.                   |
 
-_Note: The system prioritizes "Luminaries" (Sun/Moon) and Angles._
+_Note: The system prioritizes "Luminaries" (Sun/Moon) and Angles. Moon-Moon
+aspects carry no rule and score nothing._
 
 ## Return Model (`RelationshipScoreModel`)
 

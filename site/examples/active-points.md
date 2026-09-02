@@ -20,15 +20,16 @@ The `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS` preset includes only the 7 classical p
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.settings.config_constants import TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
+# The preset belongs on from_birth_data: that is where the points are computed.
+# Passing it only to create_natal_chart_data would narrow the chart while the
+# subject kept its 14 defaults.
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Traditional Chart", 1990, 6, 15, 12, 0,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
     active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
 )
+
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
 # Only classical planets and nodes will appear
 for point_name in ["sun", "moon", "mars", "jupiter", "saturn"]:
@@ -118,12 +119,13 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     active_fixed_stars=DEFAULT_FIXED_STARS,
 )
 
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    active_points=ALL_ACTIVE_POINTS,
-)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
-# Generate a chart with all 53 non-star points plus the configured fixed stars
+print(f"Points on the chart: {len(chart_data.subject.active_points)}")
+
+# 52, not 53: Earth is dropped in the default Apparent Geocentric perspective,
+# where it has no position as seen from itself. The configured fixed stars are
+# separate and are not counted here.
 chart = ChartDrawer(chart_data=chart_data)
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)

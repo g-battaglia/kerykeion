@@ -17,7 +17,8 @@ them, regenerate — and read the diff, because that diff is the change.
 
 | Script | `poe` task | What it rewrites |
 | :-- | :-- | :-- |
-| `regenerate_all.py` | `regenerate:all` | Everything below, in dependency order. |
+| `regenerate_all.py` | `regenerate:positions`, `regenerate:configurations` | The positions and subjects (`--positions --subjects`), and the configuration fixtures (`--configurations`): house systems, sidereal modes, perspectives, returns, composite, ephemeris and Arabic parts, under `tests/data/configurations/`. |
+| — | `regenerate:all` | Everything in this table, in dependency order, at the extended tier. |
 | `regenerate_test_charts.py` | `regenerate:svg:base` | The core SVG baselines in `tests/data/svg/`. The subject's name becomes the filename, so a variant is named by naming its subject. |
 | `regenerate_test_charts_extended.py` | `regenerate:svg:extended` | The rest of `tests/data/svg/`: themes, 2 700 years of dates, and geographic sweeps. |
 | `generate_modern_baselines.py` | `regenerate:svg:modern` | The modern-style baselines. Filenames are explicit here, not derived. |
@@ -27,20 +28,21 @@ them, regenerate — and read the diff, because that diff is the change.
 | `regenerate_synastry_aspects.py` | `regenerate:aspects:synastry` | `tests/data/expected_synastry_aspects.py`. |
 | `regenerate_report_snapshots.py` | `regenerate:reports:snapshots` | The text-report golden files in `tests/fixtures/`. |
 | `regenerate_test_output.py` | `regenerate:reports:output` | The report-snapshot output fixtures. |
-| `regenerate_docs_charts.py` | — | `docs/charts/`, which the README embeds by raw URL. Run it after anything that changes how a chart looks, or the README shows a chart the library no longer draws. |
-| `generate_v6_test_gallery.py` | — | `tests/data/v6_gallery/` and its index page. |
+| `regenerate_docs_charts.py` | `regenerate:docs-charts` | `docs/charts/`, which the README embeds by raw URL. Run it after anything that changes how a chart looks, or the README shows a chart the library no longer draws. |
+| `generate_v6_test_gallery.py` | `regenerate:gallery-v6` | `tests/data/v6_gallery/` and its index page. |
 
-`regenerate:svg`, `regenerate:reports`, `regenerate:positions` and
-`regenerate:aspects` run the groups above and set
-`LIBEPHEMERIS_PRECISION=extended` — without it, dates before roughly 1600 fall
-outside the loaded ephemeris and their fixtures are silently left stale.
+`regenerate:svg`, `regenerate:reports`, `regenerate:positions`,
+`regenerate:aspects`, `regenerate:configurations`, `regenerate:docs-charts` and
+`regenerate:gallery-v6` all set `LIBEPHEMERIS_PRECISION=extended` — without it,
+dates before roughly 1600 fall outside the loaded ephemeris and their fixtures
+are silently left stale. `regenerate:all` runs all of them in dependency order.
 
 ## Looking at the output
 
 | Script | `poe` task | What it produces |
 | :-- | :-- | :-- |
 | `generate_svg_validation_gallery.py` | `gallery`, `gallery:index` | The visual validation sweep (see below). |
-| `generate_glyph_gallery.py` | — | A self-contained poster of every chart glyph, plus its Markdown page. |
+| `generate_glyph_gallery.py` | `regenerate:glyph-gallery` | A self-contained poster of every chart glyph, plus its Markdown page. |
 | `generate_glyph_playground.py` | `playground` | `glyph_playground.html` — the modern cluster's three sizes and nine air steps per ring, pre-drawn, with sliders for the sizes and the row spacing. See below. |
 | `report_modern_displacement.py` | — | How far the modern decluttering moves each planet from its true position. Reads the SVG back through `charts.svg_metadata`, so it measures what was drawn rather than what was intended. |
 | `benchmark.py` | `benchmark` | Timings for subject creation, aspects and SVG rendering. |
@@ -65,7 +67,9 @@ in the targets say so; edit the script, never the output.
 
 | Script | `poe` task | Target |
 | :-- | :-- | :-- |
+| `glyph_catalog.py` | — | Not a generator: the single list of what the glyph set contains, in the order it ships. `build_chart_glyphs.py` and `generate_glyph_gallery.py` both read it, because the list used to live in both and had drifted — the published gallery was missing five symbols. |
 | `build_chart_glyphs.py` | — | The `<symbol>` definitions between the `GLYPHS:BEGIN`/`GLYPHS:END` markers in all four SVG templates. |
+| `derive_modern_cluster_profiles.py` | — | The `GLYPH_SIZE_PROFILES` literals in `charts/draw_modern.py` — the small and large cluster layouts, derived from the shipped, eye-tuned medium by scaling the element sizes by `k` and every quantity of air the cluster owns by the same rule. The medium is the source and is never derived; `test_derivation_reproduces_the_shipped_profiles` keeps the two from drifting. |
 | `regenerate_glyph_widths.py` | `regenerate:glyph-widths` | `charts/glyph_metrics.py` — the per-character width tables the info panel measures rows against. Reads the reference fonts, so macOS only. |
 | `measure_modern_separation.py` | `regenerate:glyph-ink` | `charts/glyph_ink_metrics.py` — the ink extents of every modern glyph, measured in a real browser. Interactive: it opens a page. The modern wheel's spacing is derived from these numbers, so changing a glyph without re-measuring invalidates the separation model. |
 | `extract_swisseph_full_docs.py` | — | One-off extraction of upstream ephemeris documentation. |

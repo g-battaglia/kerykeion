@@ -212,8 +212,8 @@ def size_factors(ring_name: str) -> dict[str, tuple[float, float, float]]:
     ``k_text`` scales the primary reading (degrees, sign); ``k_minor`` the
     secondary one (minutes, ℞). They split only on the single wheel at large:
     the degrees keep the ×1.248 ramp while minutes and ℞ stay at the medium
-    size — Giacomo, on the rendered wheel: «i gradi secondi ed ℞ sono un po'
-    troppo grandi, riduciamoli per avere più spazio» — the same call already
+    size — Giacomo, on the rendered wheel: "the seconds degrees and ℞ are a
+    bit too big, let's shrink them to gain room" — the same call already
     made for the whole dual reading. The dual rings keep one text factor.
     """
     base = RINGS[ring_name].sizes[0]

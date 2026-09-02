@@ -29,7 +29,8 @@ second = AstrologicalSubjectFactory.from_birth_data(
 data = ChartDataFactory.create_synastry_chart_data(first, second)
 drawer = ChartDrawer(data)
 
-out_dir = Path(".")
+out_dir = Path("charts_output")
+out_dir.mkdir(exist_ok=True)
 drawer.save_svg(output_path=out_dir, filename="lennon-mccartney-synastry")
 ```
 
@@ -38,15 +39,15 @@ Note: If you want to save the output in a different directory, pass the `output_
 The output will be:
 ![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
 
-## New Synastry Chart Features
+## Aspect Table Grid View
 
-### Aspect Table Grid View
-
-You can now display aspects in a grid format, providing a clearer and more organized view compared to the traditional list format. This feature enhances the readability and analysis of synastry charts.
-
-Here is an example of how to enable the Aspect Table Grid View:
+`double_chart_aspect_grid_type="table"` renders the dual-chart aspects as a grid
+instead of the default `"list"`, which is easier to scan when the two charts
+share many contacts.
 
 ```python
+from pathlib import Path
+
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.chart_data.factory import ChartDataFactory
 from kerykeion.charts.drawer import ChartDrawer
@@ -62,7 +63,9 @@ second = AstrologicalSubjectFactory.from_birth_data(
 
 data = ChartDataFactory.create_synastry_chart_data(first, second)
 drawer = ChartDrawer(data, double_chart_aspect_grid_type="table")
-drawer.save_svg(output_path=".", filename="synastry-grid-view")
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="synastry-grid-view")
 ```
 
 ---

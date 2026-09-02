@@ -42,7 +42,7 @@ Build the firdaria timeline for a subject.
 | :--------------- | :------------------------- | :------ | :---------------------------------------------------------------------------------------------- |
 | `subject`        | `AstrologicalSubjectModel` | --      | The natal chart. Requires a real sect (`is_diurnal` must be a boolean). Midpoint composites are rejected. |
 | `target_date`    | str (ISO date/datetime) or None | None | Date the current period is resolved against. Astronomical year numbering accepted. When omitted, now in the subject's timezone. |
-| `life_cap_years` | int                        | 120     | How far the timeline extends, in years of life.                                                 |
+| `life_cap_years` | int                        | 120     | How far the timeline extends, in years of life. Values below 1 are raised to 1. Periods are emitted whole, so the last one can end past the cap. |
 
 **Returns:** `FirdariaModel`
 
@@ -55,7 +55,7 @@ Build the firdaria timeline for a subject.
 | Field         | Type                             | Description                                                      |
 | :------------ | :------------------------------- | :--------------------------------------------------------------- |
 | `is_diurnal`  | `bool`                           | Sect the sequence was chosen from.                               |
-| `periods`     | `list[FirdariaPeriodModel]`      | Major periods from birth up to the life cap, in order.           |
+| `periods`     | `list[FirdariaPeriodModel]`      | Major periods from birth, in order. The sequence is unrolled until the life cap is reached, and the period that reaches it is kept whole: with the default cap of 120 a diurnal timeline ends at age 126. |
 | `current`     | `FirdariaPeriodModel \| None`    | The major period containing the target date, if any.             |
 | `current_sub` | `FirdariaSubPeriodModel \| None` | The sub-period containing the target date, if any.               |
 

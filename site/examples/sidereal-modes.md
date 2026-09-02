@@ -8,7 +8,7 @@ order: 9
 
 Kerykeion supports both **Tropical** (default) and **Sidereal** zodiac systems. When using the Sidereal zodiac, you must specify an **ayanamsa** (sidereal mode) that defines the starting point of the zodiac relative to the fixed stars.
 
-As of v5.12, Kerykeion supports **48 sidereal modes** (47 named + USER for custom definitions).
+Kerykeion supports **48 sidereal modes** (47 named + `USER` for custom definitions).
 
 ## Tropical vs Sidereal
 
@@ -46,7 +46,7 @@ Due to the precession of the equinoxes, the tropical and sidereal zodiacs differ
 | `BABYL_ETPSC` | Babylonian (ETPSC). | Historical |
 | `USHASHASHI` | Ushashashi ayanamsa. | India |
 
-### New in v5.12
+### Extended Modes
 
 | Mode | Description | Category |
 |:-----|:------------|:---------|

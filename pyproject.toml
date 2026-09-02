@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a91"
+version = "6.0.0a92"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -102,6 +102,9 @@ kerykeion = "kerykeion.cli:main"
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
 Repository = "https://github.com/g-battaglia/kerykeion"
+Documentation = "https://www.kerykeion.net/content/docs/"
+Changelog = "https://github.com/g-battaglia/kerykeion/blob/alpha/v6/CHANGELOG.md"
+Issues = "https://github.com/g-battaglia/kerykeion/issues"
 
 [build-system]
 requires = ["hatchling"]

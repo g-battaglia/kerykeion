@@ -333,7 +333,7 @@ SYN_R_OUTER_PLANET_OUTER = R_RULER_INNER
 # Outer ring: top AT the ruler's inner edge, the same anchor the natal lines
 # and every tether hang from. It sat at 6.5 — 1.15 units short of the ruler —
 # and the axes of a dual wheel visibly stopped mid-air (Giacomo, on the
-# rendered chart: «assi e cuspidi non arrivano in fondo, solo nelle doppie»).
+# rendered chart: "axes and cusps do not reach the end, only on the duals").
 SYN_HOUSE_LINE_OUTER_Y1 = HOUSE_LINE_OUTER_Y
 SYN_HOUSE_LINE_OUTER_Y2 = 20.5  # Outer ring: bottom (at boundary)
 SYN_HOUSE_LINE_INNER_Y1 = 20.5  # Inner ring: top (at boundary)

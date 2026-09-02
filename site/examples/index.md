@@ -18,6 +18,9 @@ Practical, self-contained examples covering all major Kerykeion features.
 -   **[Minimalist Charts & Aspect Table](/content/examples/minimalist-charts-and-aspect-table)**: Wheel-only and aspect-grid-only components.
 -   **[Modern Charts](/content/examples/modern-charts)**: Modern concentric-ring chart style.
 -   **[Cusp Comparison Grids](/content/examples/cusp-comparison)**: Cusp overlay grids for dual charts.
+-   **[Composite Chart](/content/examples/composite-chart)**: Midpoint and Davison composites, and the `house_anchor` choice.
+-   **[Glyph Sizes](/content/examples/glyph-sizes)**: The three modern planet-cluster sizes.
+-   **[Chart Marks](/content/examples/chart-marks)**: The six opt-in marks — stations, out-of-bounds, aspect movement, and more.
 
 ## Data & Analysis
 
@@ -40,6 +43,7 @@ Practical, self-contained examples covering all major Kerykeion features.
 -   **[Transits Time Range](/content/examples/transits-time-range)**: Calculating transits over a period.
 -   **[House Comparison](/content/examples/house-comparison)**: Bidirectional house overlay analysis.
 -   **[Moon Phase Details](/content/examples/moon-phase-details)**: Rich lunar phase context with illumination and eclipses.
+-   **[Retrograde and Sign Periods](/content/examples/planet-periods)**: Complete retrograde arcs and sign stays over a date range.
 
 ## Predictive Techniques
 

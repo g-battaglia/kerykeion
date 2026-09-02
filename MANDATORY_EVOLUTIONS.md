@@ -10,87 +10,66 @@ Status legend: 🔴 not started · 🟡 in progress · 🟢 done · 🔵 optiona
 
 ---
 
-## 1. 🔴 Migrate timezone handling from `pytz` to `zoneinfo`
+## 1. 🟢 DONE — Migrate timezone handling from `pytz` to `zoneinfo`
 
-**Why (limitation being removed).** `pytz` compiles only the *explicit* IANA DST
-transitions, which end around 2037. Beyond the last compiled transition it
-**freezes** the offset at the last known entry instead of applying the zone's
-perpetual POSIX rule. For a birth/event date past ~2037 in a DST zone (e.g. a
-summer 2038+ `America/New_York` chart) the resolved instant can be off by one
-hour (Moon ≈ 0.55°, angles up to ~15°). The ephemeris range reaches 2650, so
-future charts are in scope. `zoneinfo` (stdlib ≥ 3.9) reads the TZif POSIX
-footer and extrapolates future DST correctly.
-
-Documented meanwhile as a "Known limitation" in `CHANGELOG.md`.
-
-**Secondary benefits.** Removes the `pytz` API footguns the codebase currently
-works around: mandatory `tz.localize()` (never the `datetime(tzinfo=…)`
-constructor — it attaches the LMT offset), `tz.normalize()` after arithmetic,
-and `is_dst=` disambiguation. `zoneinfo` uses the standard PEP 495 `fold`
-attribute instead and handles wall-clock arithmetic natively.
-
-**Scope (files with pytz coupling — audit before starting).**
-- `kerykeion/astrological_subject_factory.py` — the core local↔UTC conversion,
-  DST fold handling via `is_dst`, `from_current_time`, partial-date defaults.
-- `kerykeion/ephemeris_data_factory.py` — per-step localize/`astimezone`.
-- `kerykeion/moon_phase_details/factory.py` — the `tzinfo.normalize(...)` call
-  for solar-noon offset.
-- `kerykeion/relocated_chart_factory.py`, `kerykeion/utilities.py` (`safe_timezone`),
-  and any `import pytz` / `.localize(` / `.normalize(` / `is_dst` site
-  (`grep -rn "pytz\|localize\|normalize\|is_dst" kerykeion/`).
-- `pyproject.toml` — drop the `pytz` dependency (add `tzdata` for platforms
-  without a system tz database, e.g. Windows).
-
-**Risk.** High. Rounds 16–17 built careful DST-fold handling on the pytz
-`is_dst` model; the fold/ambiguous/non-existent-time semantics must be
-re-expressed on PEP 495 `fold` with identical results. Extensive golden
-baselines (positions, houses, reports, SVG) encode current instants — most are
-pre-2037 and must stay byte-identical; only post-2037 DST-zone cases should
-change (and become correct).
-
-**Acceptance criteria.**
-- All existing tests pass; pre-2037 instants byte-identical (no baseline churn
-  except intentional post-2037 corrections).
-- New tests: a summer 2038+ chart in a DST zone resolves to the DST offset
-  (matching `zoneinfo`), spring-forward gap and fall-back fold still handled.
-- `import pytz` gone from `kerykeion/`; the CHANGELOG limitation note removed.
-- Quality gate green.
+**Shipped in 6.0.0a76 (2026-07-20).** `pytz` is gone from the package and
+`tzdata` is a hard runtime dependency; `grep -rn pytz kerykeion/ pyproject.toml`
+returns nothing. Charts past ~2037 (and before 1901-12-13) now get the zone's
+perpetual POSIX rule instead of a frozen offset. See the `6.0.0a76` CHANGELOG
+entry for the full account.
 
 ---
 
-## 2. 🔴 Canonical backend-error taxonomy + runtime name validation
+## 2. 🟡 Canonical backend-error taxonomy + runtime name validation
+
+**Status: partially done.** The individual sites were repaired one by one, but
+the canonical taxonomy the item asks for does not exist yet: nothing is exported
+from `kerykeion/ephemeris_backend/` beyond `POLAR_HOUSES_ERROR_TYPES`, and every
+module still resolves the backend error type for itself.
 
 **Why (limitation being removed).** The library repeatedly rediscovers, module
 by module, that the ephemeris backend does *not* raise `RuntimeError` for its
 failures (libephemeris raises an `Error` hierarchy — `CalculationError` /
 `EphemerisRangeError`, `DataNotFoundError` / `UnknownBodyError`, `ConfigurationError`;
-pyswisseph raises a generic `swisseph.Error`). Three modules independently
-learned this the hard way (`dominants/utils.py`, `lunations/lunation_factory.py`,
-and — fixed in round 23 — `moon_phase_details`, `void_of_course_moon`,
-`heliacal`). Each site resolves the backend error type ad hoc with
-`getattr(ephe, "Error", …)`. There is no single source of truth that also
-distinguishes the *range* / *data* / *config* subtrees, so "expected no-event"
-vs "hard failure" is re-derived everywhere and easy to get wrong (round 23's
-HIGH was exactly this: heliacal treating every backend error as "no event").
+pyswisseph raises a generic `swisseph.Error`). Several modules learned this the
+hard way (`dominants/utils.py`, `lunations/factory.py`, and — fixed in round 23 —
+`moon_phase_details`, `void_of_course_moon`, `heliacal`). There is no single
+source of truth that also distinguishes the *range* / *data* / *config* subtrees,
+so "expected no-event" vs "hard failure" is re-derived everywhere and easy to get
+wrong (round 23's HIGH was exactly this: heliacal treating every backend error as
+"no event").
 
-**Scope.**
-- Export a canonical tuple/enum from `kerykeion/ephemeris_backend.py`, e.g.
-  `BACKEND_ERROR_TYPES` (the base) plus distinguishable `BACKEND_RANGE_ERRORS`,
-  `BACKEND_DATA_ERRORS`, `BACKEND_CONFIG_ERRORS`, resolved once for the active
-  backend (swisseph collapses to the generic `Error` — document that these
-  cannot be told apart there). Include the *Skyfield* `EphemerisRangeError`
-  (libephemeris runs `heliacal_ut` through Skyfield, which raises its own
-  `ValueError` subclass — round 23 discovered this).
-- Migrate every ad-hoc `getattr(ephe, "Error", …)` handler and the remaining
-  dead `except RuntimeError` site (`sun_times/utils.py:368`, left untouched in
-  round 23 because no harm was reproduced) to the canonical types.
+**What is done.**
+- `kerykeion/void_of_course_moon/factory.py` resolves the hierarchy once through
+  `_resolve_backend_error_types()` and splits it into `_BACKEND_ERROR_TYPES` and
+  `_RANGE_ERROR_TYPES` — the shape the canonical export should take, but private
+  to that one module.
+- `dominants/utils.py` no longer keys on `RuntimeError`; it catches broadly with
+  a comment naming the reason.
+- Round 23 hard-validated the closed `PLANETS` set in heliacal `search_events`.
+
+**What is left (verified by grep today).**
+- **Five ad-hoc resolutions of the backend error type** to migrate onto one
+  canonical export: `moon_phase_details/factory.py:86`,
+  `moon_phase_details/utils.py:41`, `heliacal/factory.py:38`,
+  `void_of_course_moon/factory.py:28`, `planetary_returns/factory.py:98`.
+- **One `except RuntimeError` left on a backend call**: `sun_times/utils.py:465`
+  (the twilight `rise_trans` wrapper — it moved from `:368`, still untouched
+  because no harm has been reproduced).
+- **The canonical export itself.** From `kerykeion/ephemeris_backend/backend.py`,
+  e.g. `BACKEND_ERROR_TYPES` (the base) plus distinguishable
+  `BACKEND_RANGE_ERRORS`, `BACKEND_DATA_ERRORS`, `BACKEND_CONFIG_ERRORS`,
+  resolved once for the active backend (swisseph collapses to the generic
+  `Error` — document that these cannot be told apart there). Include the
+  *Skyfield* `EphemerisRangeError` (libephemeris runs `heliacal_ut` through
+  Skyfield, which raises its own `ValueError` subclass — round 23 discovered
+  this).
 - **Runtime validation of open `str` name parameters** at public entries whose
   type is only a `Literal` at static-check time (no runtime enforcement for
   API/JSON/form callers): aspects `active_points`, heliacal `planets` and the
   fixed-star-accepting `planet_name_or_star` (validate against the
   fixed-star catalog so a mistyped star yields "unknown body", not a misleading
-  "no event found"), `active_fixed_stars`. Round 23 hard-validated only the
-  closed `PLANETS` set in `search_events`; the star-accepting entries still
+  "no event found"), `active_fixed_stars`. The star-accepting entries still
   return a correct exception *type* but an imprecise message.
 
 **Risk.** Low–medium. Mostly mechanical, but the range/data/config split must
@@ -120,7 +99,8 @@ different chart with only scattered log lines to explain it:
   needs a missing planetary kernel (notably the **Sun**, which needs `sepl_18.se1`)
   falls back to its **geocentric** position — returned under the planetocentric
   label, ~62° off, with only a `logging.warning`. The fallback is deliberate and
-  logged (see the comment at `astrological_subject_factory.py` ~2386), but the
+  logged (see the planet-calculation branch in
+  `kerykeion/astrological_subject/factory.py`), but the
   point is not flagged as degraded on the returned model.
 - **Chiron / asteroids / TNOs** need `seas_18.se1`; **fixed stars** need
   `sefstars.txt`; **barycentric** perspectives need `sepl_*.se1`. These are
@@ -128,8 +108,8 @@ different chart with only scattered log lines to explain it:
 
 The `libephemeris` default backend and a fully-provisioned `swisseph` install are
 both correct — this is only the incomplete-swisseph state. The test suite
-`conftest.py` fail-fasts there, so it is invisible to CI but reachable by a real
-user immediately after `pip install kerykeion[swiss]`.
+`conftest.py` fail-fasts there, so no local gate sees it, yet it is reachable by
+a real user immediately after `pip install kerykeion[swiss]`.
 
 **Scope.**
 - Add a machine-readable degradation signal on the subject model (e.g. a

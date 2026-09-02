@@ -66,23 +66,29 @@ print(moon.apoapsis.abs_pos == subject.mean_lilith.abs_pos)   # True
 
 Calculate nodes from an existing astrological subject.
 
+The node and apsis longitudes -- and the sign metadata derived from them --
+are computed in the subject's own zodiac frame: a sidereal subject gets
+sidereal longitudes, consistent with the rest of its chart.
+
 | Parameter | Type                     | Default | Description                                |
 | :-------- | :----------------------- | :------ | :----------------------------------------- |
-| `subject` | AstrologicalSubjectModel | --      | An astrological subject                    |
-| `method`  | str                      | "mean"  | "mean" or "osculating"                     |
-| `planets` | List[str] or None        | None    | Planet names (defaults to Moon through Pluto; the Sun is deliberately excluded — it has no geocentric nodes) |
+| `subject` | AstrologicalSubjectModel | --      | An astrological subject with a Julian Day (composites are rejected) |
+| `method`  | str                      | "mean"  | "mean" or "osculating"; any other value raises `KerykeionException` |
+| `planets` | List[str] or None        | None    | Planet names (defaults to Moon through Pluto; an unknown name raises `ValueError`). The Sun is deliberately excluded — it has no geocentric nodes — and requesting it raises `KerykeionException` |
 
 **Returns:** `PlanetaryNodesCollectionModel`
 
 ### `from_julian_day(julian_day, method, planets)`
 
-Calculate nodes from a Julian Day number.
+Calculate nodes from a Julian Day number. A bare instant carries no zodiac
+frame, so the longitudes are always tropical -- pass a subject to
+`from_subject` when sidereal ones are wanted.
 
 | Parameter    | Type              | Default | Description            |
 | :----------- | :---------------- | :------ | :--------------------- |
 | `julian_day` | float             | --      | Finite Julian Day number |
-| `method`     | str               | "mean"  | "mean" or "osculating" |
-| `planets`    | List[str] or None | None    | Planet names           |
+| `method`     | str               | "mean"  | "mean" or "osculating"; any other value raises `KerykeionException` |
+| `planets`    | List[str] or None | None    | Planet names; an unknown name raises `ValueError`, and "Sun" raises `KerykeionException` |
 
 **Returns:** `PlanetaryNodesCollectionModel`
 

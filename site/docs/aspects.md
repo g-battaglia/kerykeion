@@ -30,7 +30,10 @@ Calculates aspects within a single astrological subject.
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 # Create subject
-subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+)
 
 # Calculate aspects
 aspects_data = AspectsFactory.single_chart_aspects(subject)
@@ -59,7 +62,10 @@ Calculates aspects between two different subjects (Synastry/Transits).
 
 ```python
 # Create second subject
-subject_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 20, 14, 30, "New York", "US")
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.006, lat=40.7128, tz_str="America/New_York", online=False,
+)
 
 # Calculate synastry
 synastry = AspectsFactory.dual_chart_aspects(subject, subject_b)
@@ -156,9 +162,19 @@ aspects = AspectsFactory.single_chart_aspects(subject, axis_orb_limit=2.0)
 
 Widen or tighten the orb for specific points (for example, give the luminaries a
 larger orb). `point_orb_adjustments` maps a point name to a **finite additive
-adjustment** in degrees, and `point_orb_adjustment_strategy` (default
-`"max_explicit"`) controls how the two endpoints' adjustments combine. NaN and
-infinite adjustments are rejected before calculation.
+adjustment** in degrees, and `point_orb_adjustment_strategy` controls how the
+two endpoints' adjustments combine. NaN and infinite adjustments are rejected
+before calculation.
+
+| Strategy | Combination |
+| :------- | :---------- |
+| `"max_explicit"` (default) | The larger of the adjustments that are actually configured. |
+| `"min_explicit"` | The smaller of the configured adjustments — a negative one still tightens the pair. |
+| `"sum"` | Both adjustments added together. |
+| `"none"` | No adjustment; the base orb stands. |
+
+Only *explicitly configured* points take part: an unconfigured endpoint is
+absent from the comparison rather than counted as `0.0`.
 
 ```python
 # Add 1.5° to aspects involving the Sun or Moon.
@@ -282,6 +298,13 @@ Applying
 
 Low-level function to check if two points form an aspect.
 
+`get_aspect_from_two_points(aspects_settings, point_one, point_two, extra_orb=0.0)`
+
+`extra_orb` accepts either a number, applied to every aspect's base orb, or a
+mapping of aspect name → adjustment (missing names get `0.0`; the caller
+resolves any `"*"` wildcard before building the mapping). The effective orb is
+clamped to `>= 0.0`.
+
 ```python
 from kerykeion.aspects.utils import get_aspect_from_two_points
 
@@ -290,8 +313,17 @@ aspect = get_aspect_from_two_points(
     0.0,
     120.5,
 )
-# Returns dict with aspect details if found, else verdict=False
+print(aspect["verdict"], aspect["name"], round(aspect["orbit"], 2))
 ```
+
+**Expected Output:**
+
+```text
+True trine 0.5
+```
+
+`verdict` is `False` when no configured aspect matches; `orbit` always reports
+the distance from exactness.
 
 ### `get_active_points_list`
 

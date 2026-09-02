@@ -52,6 +52,9 @@ A `fixed_stars` key is added to each sample **only when** the factory was built 
 
 The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not plain dicts -- which support both attribute access (`point.abs_pos`) and dictionary-style subscripting (`point["abs_pos"]`).
 
+`date` is the UTC instant of the sample, serialised with `datetime.isoformat()`
+from a timezone-aware datetime, so it always ends in the `+00:00` offset.
+
 | Parameter  | Type   | Default | Description                                              |
 | :--------- | :----- | :------ | :------------------------------------------------------- |
 | `as_model` | `bool` | `False` | If `True`, returns `EphemerisDictModel` instances instead of dicts. |
@@ -61,7 +64,7 @@ The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not pla
 ```text
 [
   {
-    "date": "2024-01-01T00:00:00",
+    "date": "2024-01-01T00:00:00+00:00",
     "planets": [
       KerykeionPointModel(name="Sun", abs_pos=280.04, sign="Cap", ...),
       ...
@@ -123,8 +126,18 @@ print(subjects[0].sun.sign)
 | `custom_ayanamsa_t0`      | Reference epoch (Julian Day) for USER sidereal mode | `None` |
 | `custom_ayanamsa_ayan_t0` | Ayanamsa offset in degrees at epoch (USER mode)     | `None` |
 | `active_points`            | Points computed on every generated subject | `None` (= `DEFAULT_ACTIVE_POINTS`) |
+| `active_fixed_stars`       | Fixed stars computed on every generated subject; adds a `fixed_stars` key to each sample | `None` (= none) |
+| `altitude`                 | Observer altitude in metres, used only with the `"Topocentric"` perspective | `None` |
 
 _Note: You can override safety limits by passing `None` if you need large datasets. Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when `sidereal_mode="USER"`._
+
+### Raises
+
+The constructor raises `ValueError` for a non-positive `step`, for an unknown
+`step_type`, when the sample count exceeds the `max_days` / `max_hours` /
+`max_minutes` limit in force, and -- as `"No dates found. Check the date range
+and step values."` -- when the range yields no sample at all, which is what an
+inverted range (`end_datetime` before `start_datetime`) produces.
 
 _Note: When feeding `TransitsTimeRangeFactory` with non-default points (asteroids, TNOs, extra angles), pass the **same** `active_points` list here — aspects can only be detected for points present on both the natal and the ephemeris subjects; the transit factory warns if a requested point is present on only one side (missing from the ephemeris series or from the natal chart)._
 

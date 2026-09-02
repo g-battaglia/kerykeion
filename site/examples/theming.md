@@ -43,8 +43,15 @@ out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
 
 for theme in ("classic", "dark", "black-and-white"):
-    ChartDrawer(data, theme=theme).save_svg(output_path=out_dir)
+    ChartDrawer(data, theme=theme).save_svg(
+        output_path=out_dir,
+        filename=f"lennon-{theme}",
+    )
 ```
+
+Without an explicit `filename` every iteration would write the same default name
+(`John Lennon - Natal Chart - Modern.svg`) and each theme would overwrite the
+last.
 
 Passing a name that is not one of the three raises `KerykeionException`. There is
 no silent fallback: a misspelt theme is a bug you want to hear about, not a chart
@@ -99,8 +106,10 @@ is information.
 
 ### Measure what you make
 
-A palette that pleases the eye on a big screen can still lose a reader. Before
-shipping your own, put it through the same measurement the built-in themes are
-held to — every mark against the surface it is actually drawn on, at the
-threshold its role demands. That check exists as a tool, not only as an internal
-guard, precisely so that a custom palette can be held to it.
+A palette that pleases the eye on a big screen can still lose a reader. Hold
+your own to the same thresholds the shipped themes meet: 7:1 (WCAG AAA) for
+everything a reader *reads* — degrees, minutes, house numbers, percentages — and
+at least 3:1 (WCAG AA) for the marks a reader *looks at*: aspect lines, sign
+icons against their own band, the degree indicator, the house cusps. Measure
+each mark against the surface it is actually drawn on, not against the page
+background, since a sign glyph sits on its zodiac band rather than on the paper.

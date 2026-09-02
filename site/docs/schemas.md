@@ -89,6 +89,36 @@ Detailed information about a celestial body or house cusp.
 | `motion_state` | `MotionState \| None`           | Speed classification (`retrograde`/`stationary`/`stationary_retrograde`/`stationary_direct`/`slow`/`average`/`fast`). Populated for the ten planets in Earth-centred perspectives. |
 | `azimuth`    | `float \| None`                   | Azimuth angle in degrees. Requires `calculate_local_space=True` |
 | `altitude_above_horizon` | `float \| None`       | Altitude above horizon. Requires `calculate_local_space=True` |
+| `ecliptic_latitude` | `float \| None`            | Ecliptic latitude in degrees north (+) or south (-) of the ecliptic plane |
+| `decan_number` | `int \| None`                  | Decan (1-3) within the sign, each spanning 10° |
+| `decan_ruler`  | `str \| None`                  | Ruling planet of the Chaldean decan |
+| `term_ruler`   | `str \| None`                  | Ruling planet of the Egyptian term (bound) |
+| `dignity_score` | `int \| None`                 | Net Ptolemaic dignity score: the sum of every applicable dignity (domicile +5, exaltation +4, triplicity +3, term +2, face +1) and debility (detriment -5, fall -4) |
+| `nakshatra_number` | `int \| None`              | Nakshatra number (1-27). Requires `calculate_nakshatra=True` |
+
+**Provenance fields.** Every point records where its numbers came from:
+
+| Field | Type | Description |
+| :---- | :--- | :---------- |
+| `source` | `str \| None` | Ephemeris or derivation source selected for this point (`LEB`, `SPK`, `Skyfield`, `Analytical`, `Derived`, ...) |
+| `precision_class` | `str \| None` | Machine-readable source class: `ephemeris`, `analytical`, `numerical-model`, `approximate`, `mixed`, `unverified-local` |
+| `source_reviewed` | `bool \| None` | Whether the active source artifact passed the backend's pinned review gate |
+| `ephemeris_coverage_start_jd` | `float \| None` | First Julian Day covered by the selected source, when the backend reports it |
+| `ephemeris_coverage_end_jd` | `float \| None` | Last Julian Day covered by the selected source, when the backend reports it |
+
+**Fixed-star discovery fields.** Populated on the points returned by
+[`FixedStarDiscoveryFactory`](/content/docs/fixed_star_discovery_factory) and
+left `None` everywhere else:
+
+| Field | Type | Description |
+| :---- | :--- | :---------- |
+| `near_point` | `str \| None` | Nearest chart point that surfaced this star |
+| `aspect` | `str \| None` | Aspect name for the contact, usually `"conjunction"` |
+| `orb` | `float \| None` | Orb from `near_point` in degrees |
+| `longitude` | `float \| None` | Ecliptic longitude for discovery consumers; mirrors `abs_pos` |
+| `latitude` | `float \| None` | Ecliptic latitude for discovery results |
+| `degree` | `float \| None` | Degree within the sign for discovery consumers; mirrors `position` |
+
 
 ### SingleChartDataModel
 
@@ -209,9 +239,9 @@ substitute.
 - `polar_house_fallbacks` (`list[PolarHouseFallbackModel]`, empty when nothing was substituted) records each substitution: the requested and used systems, the real latitude, the latitude the successful call ran at, the epoch's polar threshold and obliquity, and which chart products changed.
 - `effective_houses_system_identifier` / `effective_houses_system_name` are derived from that list and report the division the cusps really came from. With no fallback they equal the requested pair.
 
-New in v5.12: `ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
+`ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
 
-New in v6: `nakshatra_ayanamsa` (`SiderealMode | None`) and `nakshatra_ayanamsa_value` (`float | None`) -- the ayanamsa a **non-sidereal** chart rotated its longitudes by to derive the nakshatras, and the offset in degrees it actually subtracted. Both are `None` on a sidereal chart (its own `sidereal_mode`/`ayanamsa_value` apply), on a chart that computed no nakshatras, and when `nakshatra_ayanamsa=None` selected the legacy uncorrected behaviour.
+`nakshatra_ayanamsa` (`SiderealMode | None`) and `nakshatra_ayanamsa_value` (`float | None`) -- the ayanamsa a **non-sidereal** chart rotated its longitudes by to derive the nakshatras, and the offset in degrees it actually subtracted. Both are `None` on a sidereal chart (its own `sidereal_mode`/`ayanamsa_value` apply), on a chart that computed no nakshatras, and when `nakshatra_ayanamsa=None` selected the legacy uncorrected behaviour.
 
 ### EphemerisDictModel
 
@@ -474,6 +504,7 @@ These models are returned by the v6 advanced calculation factories. Each factory
 | `OccultationModel` | [`OccultationFactory`](/content/docs/occultation_factory) | A single lunar occultation event |
 | `ACGLineModel` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
 | `ACGLinePointModel` | `AstroCartographyFactory` | A geographic coordinate on an ACG line |
+| `FixedStarMetadataModel` | [`FixedStarCatalog`](/content/docs/fixed_star_discovery_factory) | One catalog entry: `name`, `slug`, `hip_number`, `nomenclature`, `magnitude`, `constellation` |
 
 ### Traditional / Hellenistic Models
 
@@ -489,6 +520,43 @@ These models are returned by the v6 advanced calculation factories. Each factory
 | `HoraryIndicatorsModel` | [`HoraryIndicatorsFactory`](/content/docs/horary_factory) | Horary chart analysis with significators and considerations |
 | `HorarySignificatorModel` | `HoraryIndicatorsFactory` | A horary significator planet |
 | `HoraryConsiderationModel` | `HoraryIndicatorsFactory` | A horary consideration before judgment |
+| `DominantsModel` | [`DominantsFactory`](/content/docs/dominants_factory) | Full dominants result: per-category score tables plus the winning planet/sign/element/quality/house and the score breakdown |
+| `DominantScoreModel` | `DominantsFactory` | One scored entry (`name`, `score`, `percentage`, `rank`, `is_dominant`) |
+| `DominantBreakdownItemModel` | `DominantsFactory` | One audit row explaining where a score came from (`category`, `target`, `rule`, `points`, `detail`) |
+| `ZodiacalReleasingModel` | [`ZodiacalReleasingFactory`](/content/docs/zodiacal_releasing_factory) | Aphesis timeline from the Lot of Fortune or Spirit, plus the current path |
+| `ZRPeriodModel` | `ZodiacalReleasingFactory` | One releasing period, with `is_angular`, `is_loosing_the_bond` and nested `subperiods` |
+| `TriplicityLordsModel` | `kerykeion.dignities.get_triplicity_lords` | Primary, secondary and participating triplicity lords for an element and sect |
+
+### Calendar / Event Models
+
+Returned by the factories that scan a date range for discrete moments. Every
+collection carries the requested `start_jd` / `end_jd` alongside its results,
+and every instant is a timezone-aware UTC datetime unless the field name says
+Julian Day.
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `LunationModel` | [`LunationFinderFactory`](/content/docs/lunation_factory) | One New/First-Quarter/Full/Last-Quarter Moon, with the Sun and Moon positions at that instant |
+| `LunationsCollectionModel` | `LunationFinderFactory` | `lunations` over the requested range |
+| `StationModel` | [`RetrogradeStationFactory`](/content/docs/retrograde_station_factory) | One retrograde or direct station: `planet`, `station_type`, instant, sign and longitude |
+| `RetrogradeStationsCollectionModel` | `RetrogradeStationFactory` | `stations` over the requested range |
+| `RetrogradePeriodModel` | `RetrogradeStationFactory` | A complete retrograde arc (`start`/`end`), with `start_clipped` / `end_clipped` when the range cut it |
+| `RetrogradePeriodsCollectionModel` | `RetrogradeStationFactory` | `periods` over the requested range |
+| `IngressModel` | [`SignIngressFactory`](/content/docs/sign_ingress_factory) | One sign change: `from_sign` to `sign`, `retrograde`, and `season_marker` for the solstice/equinox ingresses |
+| `SignIngressesCollectionModel` | `SignIngressFactory` | `ingresses` over the requested range |
+| `SignPeriodModel` | `SignIngressFactory` | The stay of one planet in one sign, with the same clip flags |
+| `SignPeriodsCollectionModel` | `SignIngressFactory` | `periods` over the requested range |
+| `MundaneAspectModel` | [`MundaneAspectFactory`](/content/docs/mundane_aspects_factory) | One exact transiting-to-transiting aspect, with both points' longitude, sign and retrograde state |
+| `MundaneAspectsCollectionModel` | `MundaneAspectFactory` | `aspects` over the requested range |
+| `TransitEventModel` | [`TransitsTimeRangeFactory`](/content/docs/transits_time_range_factory) | One transit contact grouped into an event: `applying_start`, `exact_moment`, `separating_end`, `min_orb`, `orb_rate` |
+| `TransitEventsTimeRangeModel` | `TransitsTimeRangeFactory` | Chronological `events` plus the natal `subject` they were measured against |
+| `VoidOfCourseMoonModel` | [`VoidOfCourseMoonFactory`](/content/docs/void_of_course_moon_factory) | Void state at one moment: `is_void_of_course`, the window, and the aspects that bound it |
+| `VoidOfCourseWindowModel` | `VoidOfCourseMoonFactory` | One complete void window with its `duration_minutes` |
+| `VoidOfCourseWindowsCollectionModel` | `VoidOfCourseMoonFactory` | Non-overlapping `windows` over the requested range |
+| `VoidOfCourseAspectModel` | `VoidOfCourseMoonFactory` | The `planet`, `aspect`, `aspect_degrees` and `exact_time` of a bounding aspect |
+| `SunTimesModel` | [`SunTimesFactory`](/content/docs/sun_times_factory) | Sunrise, sunset, solar noon, day length, the three twilights, and the polar day/night flags |
+| `PlanetaryHoursModel` | [`PlanetaryHoursFactory`](/content/docs/planetary_hours_factory) | The planetary day: `day_ruler`, `current_index`, `current_ruler`, its three bounding solar events, and all 24 `hours` |
+| `PlanetaryHourModel` | `PlanetaryHoursFactory` | One unequal hour: `index`, `ruler`, `is_diurnal`, `start`, `end` |
 
 ### Chart Analysis Models
 
@@ -717,7 +785,7 @@ The Ayanamsa (precession mode) used for Sidereal calculations.
 
 48 modes total: 47 named + USER for custom ayanamsa definitions.
 
-**Classic modes (pre-v5.12):**
+**Classic modes:**
 
 | Value               | Description                                                  |
 | :------------------ | :----------------------------------------------------------- |
@@ -742,7 +810,7 @@ The Ayanamsa (precession mode) used for Sidereal calculations.
 | `"J1900"`           | Julian epoch J1900.0 reference frame.                        |
 | `"B1950"`           | Besselian epoch B1950.0 reference frame.                     |
 
-**New in v5.12:**
+**Extended modes:**
 
 | Value                       | Category           | Description                                          |
 | :-------------------------- | :----------------- | :--------------------------------------------------- |
@@ -1041,7 +1109,7 @@ These models are used internally for SVG generation but exposed for advanced cus
 
 ### `ChartTemplateModel`
 
-Variables passed to the Jinja2 template for rendering the SVG.
+Variables passed to the XML `string.Template` for rendering the SVG.
 
 | Field                                  | Type    | Description                                            |
 | :------------------------------------- | :------ | :----------------------------------------------------- |

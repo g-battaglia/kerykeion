@@ -28,11 +28,13 @@ that instant:
   `phase_name`, `major_phase` (nearest of the four quarters), `stage`
   (`"waxing"`/`"waning"`), `illumination` (e.g. `"51%"`), `age_days` /
   `age_days_precise` (days since last New Moon, exact ephemeris-based),
-  `lunar_cycle`, `emoji`, `zodiac` (Sun/Moon signs), `next_lunar_eclipse`, and
+  `lunar_cycle`, `emoji`, `zodiac` (Sun/Moon signs), `next_lunar_eclipse`, the
+  four rise/set fields `moonrise`/`moonrise_timestamp`/`moonset`/`moonset_timestamp`
+  (all directly on `moon`, not nested), `events` (`MoonPhaseEventsModel`:
+  `moonrise_visible`, `moonset_visible`, `optimal_viewing_period`), and
   `detailed.upcoming_phases` — precise last/next instants for New Moon, First
   Quarter, Full Moon, Last Quarter (each with timestamp, datestamp and
-  days_ago/days_ahead), plus `moonrise`/`moonset` and their
-  `moonrise_timestamp`/`moonset_timestamp`.
+  days_ago/days_ahead).
 - `moonrise`/`moonset` are ISO-8601 strings in the subject's **local** zone (the
   same zone `sun.sunrise` uses — but `str` here against `sun.sunrise`'s
   `datetime`: the moon block mirrors a web-API shape and keeps everything a
@@ -55,7 +57,15 @@ that instant:
 Literals (8 values each): `LunarPhaseEmoji` = 🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘;
 `LunarPhaseName` = `"New Moon"`, `"Waxing Crescent"`, `"First Quarter"`,
 `"Waxing Gibbous"`, `"Full Moon"`, `"Waning Gibbous"`, `"Last Quarter"`,
-`"Waning Crescent"`.
+`"Waning Crescent"`. `LunarPhaseStage` (2 values) = `"waxing"` | `"waning"` —
+the type of both `stage` fields.
+
+`major_phase` and `stage` read the SAME definition on `LunarPhaseModel` and on
+this factory's `moon` block: the phase name comes from windows **centred** on
+the syzygy or quadrature (New/Full ±6.4286°, the quarters ±19.2857°, the four
+crescent/gibbous names filling the rest), so the word tracks the event and
+cannot disagree with a 100% illumination. The 1–28 `moon_phase` index is a
+separate, unchanged quantity — see `references/utilities.md`.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory

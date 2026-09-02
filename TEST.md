@@ -2,9 +2,25 @@
 
 ## Overview
 
-Kerykeion's test suite lives in `tests/core/` with **74 test files** and parallel execution via `pytest-xdist` (`-n 8`).
+Kerykeion's test suite lives in `tests/core/` with **102 test files** and parallel execution via `pytest-xdist` (`-n auto`).
 
 Tests are run through **4 hierarchical tiers** (`core < base < medium < extended`). Without an explicit `--tier` option, the tier is auto-detected by probing the loaded ephemeris kernel, so a plain `pytest` run is green on any kernel; test cases for subjects outside the active tier are skipped (with a reason), not failed.
+
+**The task name asks for a tier; the installed kernel decides which one you get.**
+`poe test:extended` and `poe test:all` are both plain `pytest tests/ -m 'not online'`
+and set no `LIBEPHEMERIS_PRECISION`, so the tier is whatever the installed kernel
+can serve. A fresh install bundles the base DE440s kernel (1849-2150), so on a
+default install the auto-detected tier is `base` and the medium- and extended-tier
+subjects are skipped rather than run. To really run them, install the full-range
+kernel and set the variable:
+
+```bash
+uv run python -c "import libephemeris; libephemeris.download_leb_for_tier('extended')"
+LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
+```
+
+The `regenerate:*` tasks and `test:gates:extended` set
+`LIBEPHEMERIS_PRECISION=extended` for themselves.
 
 ---
 
@@ -12,8 +28,8 @@ Tests are run through **4 hierarchical tiers** (`core < base < medium < extended
 
 ```bash
 # Test — 4 tiers, each includes everything from the previous one
-poe test:core         # ~4,600 tests — every module, no exhaustive matrix
-poe test:base         # full suite (~11,000 collected) — exhaustive matrix, DE440s subjects (1849-2150)
+poe test:core         # ~7,500 tests — every module, no exhaustive matrix
+poe test:base         # full suite (~14,000 collected) — exhaustive matrix, DE440s subjects (1849-2150)
 poe test:medium       # full suite — adds DE440 subjects (1550-2650)
 poe test:extended     # full suite — all subjects, full ephemeris range
 
@@ -22,22 +38,41 @@ poe test:core:cov     # Coverage on core tier
 poe test:base:cov     # Coverage on base tier
 poe test:medium:cov   # Coverage on medium tier
 poe test:extended:cov # Coverage on extended tier (full)
+poe test:all:cov      # Alias of test:extended:cov, with an explicit --cov=kerykeion
 
-# Regenerate golden standards
-poe regenerate:svg        # SVG chart baselines (tests/data/svg/) — three scripts, then the eleven test-owned baselines via KERYKEION_REGEN_BASELINES
-poe regenerate:reports    # Report golden files (tests/fixtures/)
-poe regenerate:positions  # Expected positions & subjects (tests/data/expected_*.py)
-poe regenerate:aspects    # Expected aspects (tests/data/expected_*_aspects.py)
-poe regenerate:all        # All of the above
+# Backend-specific runs (same tests, different ephemeris engine)
+poe test:lib          # core tests forced on libephemeris
+poe test:swe          # core tests forced on swisseph (needs kerykeion[swiss])
+poe test:compare      # the two backends compared head to head
+
+# Regenerate golden standards — the full list
+poe regenerate:svg            # SVG chart baselines (tests/data/svg/) — three scripts, then the eleven test-owned baselines via KERYKEION_REGEN_BASELINES
+poe regenerate:reports        # Report golden files (tests/fixtures/)
+poe regenerate:positions      # Expected positions & subjects (tests/data/expected_*.py)
+poe regenerate:aspects        # Expected aspects (tests/data/expected_*_aspects.py)
+poe regenerate:configurations # House-system, sidereal-mode, perspective, return, composite, ephemeris and Arabic-part fixtures
+poe regenerate:docs-charts    # docs/charts/ — the README's showcase SVGs, embedded by raw URL
+poe regenerate:gallery-v6     # tests/data/v6_gallery/ and its index page
+poe regenerate:glyph-gallery  # The glyph poster and site/docs/chart-glyphs.md
+poe regenerate:glyph-widths   # charts/glyph_metrics.py — per-character widths (macOS only)
+poe regenerate:glyph-ink      # charts/glyph_ink_metrics.py — measured in a browser (interactive)
+poe regenerate:all            # Everything above except the two glyph-measurement tasks
 ```
+
+`regenerate:all` runs `regenerate:svg`, `regenerate:docs-charts`,
+`regenerate:gallery-v6`, `regenerate:glyph-gallery`, `regenerate:reports`,
+`regenerate:positions`, `regenerate:aspects` and `regenerate:configurations`.
+The two glyph-measurement tasks are excluded on purpose: one needs macOS system
+fonts, the other opens a browser.
 
 ---
 
 ## What Each Tier Tests
 
-### `test:core` (~7,100 tests)
+### `test:core` (~7,500 tests)
 
-Runs **92 of the 97 test files** in `tests/core/` (about 7,100 offline tests), one per
+Runs **97 of the 102 test files** in `tests/core/` — 7,517 offline tests at the
+time of writing; run `--collect-only` for today's figure — one per
 module/concern. This tier exercises representative paths across Kerykeion:
 subject creation, chart drawing, aspects, reports, composite subjects,
 planetary returns, ephemeris data, transits, relationship scores, context
@@ -52,7 +87,7 @@ It **excludes** the 5 exhaustive matrix files that generate thousands of paramet
 |---------------|-------------|
 | `test_houses_positions.py` | Every house system x temporal/geographic subject x cusp |
 | `test_planetary_positions.py` | Every planet x temporal/geographic subject |
-| `test_moon_phase_historical_verification.py` | 2,042 historical moon phase cases |
+| `test_moon_phase_historical_verification.py` | 365 historical syzygies from the AstroPixels tables |
 | `test_subject_factory_parametrized.py` | Every house system/sidereal mode/perspective x subjects |
 | `test_chart_parametrized.py` | Temporal/geographic x themes/house systems cross-products |
 
@@ -60,7 +95,7 @@ Use `test:core` for fast local development feedback.
 
 ### `test:base`
 
-Includes **all 74 test files** (core + the 5 matrix files above). The full suite always collects ~11,000 tests; the tier controls which temporal subjects actually run — cases for subjects outside the tier are skipped at runtime. `base` restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended local-validation tier — it catches regressions across the full matrix without requiring extended ephemeris files.
+Includes **all 102 test files** (core + the 5 matrix files above). The full suite always collects ~14,000 tests; the tier controls which temporal subjects actually run — cases for subjects outside the tier are skipped at runtime. `base` restricts temporal subjects to the **DE440s ephemeris** range (1849-2150, 11 subjects). This is the recommended local-validation tier — it catches regressions across the full matrix without requiring extended ephemeris files.
 
 ### `test:medium`
 
@@ -77,7 +112,7 @@ Runs everything with **all 25 temporal subjects** spanning from 500 BC to 2200 A
 ```
 tests/
 ├── conftest.py              # Tier filtering (auto-detected), parametrized fixtures, session subjects
-├── core/                    # All 74 test files (representative subset shown)
+├── core/                    # All 102 test files (representative subset shown)
 │   ├── conftest.py          # Session fixtures, SVG/report comparison helpers
 │   ├── test_arabic_parts.py
 │   ├── test_aspects.py
@@ -105,7 +140,7 @@ tests/
 │   ├── test_subject_factory_parametrized.py
 │   ├── test_transits.py
 │   ├── test_utilities.py
-│   └── ...                  # (74 files total — see Test Files Reference below)
+│   └── ...                  # (102 files total — see Test Files Reference below)
 ├── data/                    # Shared test data
 │   ├── compare_svg_lines.py          # SVG line-by-line comparison utility
 │   ├── expected_natal_aspects.py     # Golden natal aspect data
@@ -115,7 +150,7 @@ tests/
 │   ├── expected_arabic_parts.py
 │   ├── test_subjects_matrix.py       # Subject matrix: 25 temporal, 16 geographic
 │   ├── configurations/               # Settings override JSON files
-│   ├── svg/                           # 346 SVG baseline files
+│   ├── svg/                           # 354 SVG baseline files
 │   ├── golden_places.py              # frozen coordinates: golden charts never resolve a city online
 │   ├── compare_svg_lines.py          # THE SVG comparison; there is one
 │   └── regeneration_guard.py         # refuses to regenerate from another checkout's code
@@ -194,6 +229,17 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 | `test_chart_parametrized.py` | Temporal x themes cross-product, geographic x house systems, extreme latitude whole-sign, sidereal x theme combinations, house system synastry/transit |
 | `test_draw_planets.py` | Planet glyph positioning, retrograde markers, degree labels, planet grouping/overlap handling, edge cases (empty list, single planet, zero/359 degrees), SVG output structure, chart type variants, internal helpers |
 | `test_lunar_phase_svg.py` | All 8 standard moon phases match reference SVG sheet |
+| `test_glyph_system.py` | One declared glyph set: no hand-edit survives inside the generated `<symbol>` block, no symbol silently deleted, one weight and one colour per glyph |
+| `test_wheel_growth.py` | The modern wheel grows only on the two canvas shapes that have room for it, and stays byte-identical below that |
+| `test_modern_cusp_dimming.py` | A cusp line dims for exactly the span of the reading written across it — all of it or none |
+| `test_house_number_spread.py` | How far apart two house numbers are pushed when a quadrant system crowds four cusps into three degrees |
+| `test_house_sector_wedges.py` | The invisible clickable house wedge sits under the cusp line the reader sees, so a click near a cusp selects the right house |
+| `test_grid_point_labels.py` | The name a planet-grid row prints and the room it leaves — a translated name may not overrun the block beside it |
+| `test_diurnality_svg.py` | The info panel's diurnality line: neutral wording, and absent rather than guessed where it has no referent |
+| `test_optional_chart_marks.py` | The six opt-in marks (stations, out-of-bounds, separating dashes, relationship score, ayanamsa, polar fallback): off is genuinely off, on draws the mark |
+| `test_optional_mark_baselines.py` | The twenty optional-mark SVG baselines that nothing was comparing |
+| `test_translation_coverage.py` | Every label a chart can print exists in all ten language packs |
+| `test_glyph_playground.py` | The 264 diffs in `scripts/glyph_playground.html` round-trip to real renders |
 
 ### Reports
 
@@ -236,8 +282,14 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 | `test_arabic_parts.py` | Formula correctness (Pars Fortunae/Spiritus/Amoris/Fidei), day/night symmetry, result properties, auto-activation of dependencies, day/night detection (Sun altitude), geographic edge cases, sidereal mode, `is_diurnal` field, single-part-only activation |
 | `test_house_comparison.py` | Cusps/points in reciprocal houses, limited active points, HouseComparisonFactory end-to-end, malformed data handling |
 | `test_moon_phase_details_factory_mocked.py` | Moon phase details factory with mocked ephemeris backend, phase identification, illumination, upcoming phases, eclipses, integration test |
-| `test_moon_phase_historical_verification.py` | 2,042-case historical moon phase verification |
+| `test_moon_phase_historical_verification.py` | 365 historical syzygies (AstroPixels, 2001-2040) verified for angle, illumination and synodic month |
 | `test_v512_features.py` | Regression tests for v5.12 features (house cusp speeds, expanded fixed stars, sidereal modes, ayanamsa value) |
+| `test_profections.py` | Annual profections against the Lennon chart: one house per year, the sign on the profected cusp, the Lord of the Year, birthday boundaries |
+| `test_firdaria.py` | Firdaria invariants: the opening lord matches the chart's sect luminary, the 75-year cycle is contiguous, node periods carry no sub-periods |
+| `test_receptions_horary.py` | Mutual receptions, horary indicators, and the rulership lookups both build on |
+| `test_lunar_phase_windows.py` | The phase name is a window *centred* on the event it names, not a bin starting at it |
+| `test_point_and_chartdata_enrichments.py` | The v6 enrichments: per-point `motion_state`, star constellation, chart angularities and stelliums, progressed points, precise lunar age |
+| `test_timezone_correctness.py` | The civil-time layer: offsets outside the tz database's recorded range, spring-forward gaps and fall-back folds |
 
 ### v6 Advanced Features
 
@@ -290,6 +342,25 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 | `test_v5_migration_errors.py` | v5-to-v6 migration error messages |
 | `test_void_of_course_moon_factory.py` | Void-of-course Moon detection |
 | `test_zodiacal_releasing.py` | Zodiacal releasing (aphesis) periods |
+| `test_retrograde_periods.py` | `RetrogradeStationFactory.retrograde_periods_*` — retrograde spans clipped to a range |
+| `test_sign_periods.py` | `SignIngressFactory.sign_periods_*` — contiguous sign stays clipped to a range |
+| `test_planetary_return_roundtrip.py` | A reported return instant re-fed as the seed of the next search finds the *next* return, not the same one |
+| `test_polar_house_invariants.py` | What must still hold when a house system is undefined inside the polar circle |
+| `test_sun_times_anchors.py` | Sunrise, sunset and solar noon against two national observatories — hand-transcribed values no script may rewrite |
+| `test_sun_times_altitude_invariant.py` | The Sun-vs-horizon geometry re-measured as an angle by a second implementation, where near-polar clock comparisons stop being meaningful |
+| `test_ephemeris_provenance.py` | Source propagation and sealed-LEB coverage behaviour |
+
+### Gates
+
+These run in `poe check` / `poe quality` and fail on documentation and baseline
+rot rather than on a calculation.
+
+| File | What it covers |
+|------|----------------|
+| `test_agent_skill_contract.py` | `skills/kerykeion/` against version drift, license loss and dangling reference files — it is copied verbatim into third-party repos |
+| `test_every_baseline_has_a_reader.py` | A stored SVG baseline that no test compares. Twenty were unread when it was written |
+| `test_golden_charts_are_hermetic.py` | A golden chart asking GeoNames where it was cast; both network doors are refused for the whole golden suite |
+| `test_baseline_freshness.py` | A committed baseline missing an info-panel row the template now emits — how fifty-one baselines, eleven of them README images, were left behind |
 
 ---
 
@@ -312,7 +383,7 @@ Latitude diversity from 66°S to 66°N, plus date-line coverage:
 
 ### Golden-File Testing
 
-SVG baseline files live in `tests/data/svg/` (346 files). Tests compare generated SVGs through `compare_svg_file()` in `tests/data/compare_svg_lines.py`, which is the only such comparison in the repository.
+SVG baseline files live in `tests/data/svg/` (354 files). Tests compare generated SVGs through `compare_svg_file()` in `tests/data/compare_svg_lines.py`, which is the only such comparison in the repository.
 
 **Structure is fatal, on every backend.** Line count, the count of numbers in a line, and the line with its numbers blanked out must all match. A missing baseline fails and names `uv run poe regenerate:svg`. The extended parametrized matrix alone skips a combination whose baseline was never generated.
 
@@ -320,7 +391,7 @@ SVG baseline files live in `tests/data/svg/` (346 files). Tests compare generate
 
 A few golden charts cast two millennia back differ STRUCTURALLY between the backends — an aspect falls in or out of orb. Those carry `@pytest.mark.reference_backend_only`, one at a time and with a reason.
 
-**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; twenty were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader. On the default (medium) kernel the baselines of extended-tier subjects are exempt by tier, so a lost reader for one of them is invisible there; `poe check` therefore also runs `test:gates:extended`, the same gates under `LIBEPHEMERIS_PRECISION=extended`, where only what the backend cannot compute is exempt — and the run fails if the extended kernel it asked for is not the one installed.
+**Every baseline has a reader.** `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline is compared by no test; twenty were, when it was written. It finds out by running every golden test with the comparison replaced by a recorder (`tests/data/golden_drive.py` — parametrized cases expanded, `setup_class` called, skips survived), plus the source lines that hand a name to a comparison; a name that is merely mentioned, in a docstring or an exemption table, is not a reader. On the default (base) kernel the baselines of medium- and extended-tier subjects are exempt by tier, so a lost reader for one of them is invisible there; `poe check` therefore also runs `test:gates:extended`, the same gates under `LIBEPHEMERIS_PRECISION=extended`, where only what the backend cannot compute is exempt — and the run fails if the extended kernel it asked for is not the one installed.
 
 **Golden charts are hermetic.** They are cast at coordinates frozen in `tests/data/golden_places.py`, never resolved through GeoNames — `from_birth_data` defaults to `online=True`, so the whole golden suite used to depend on what a remote service answered that minute. `tests/core/test_golden_charts_are_hermetic.py` fails if one reaches for the network: it drives every golden test in all five golden modules through the same driver with both GeoNames doors — the city lookup and the timezone-for-coordinates lookup — refused.
 
@@ -332,7 +403,7 @@ Report golden files live in `tests/fixtures/` (42 `.txt` files). The `assert_rep
 
 1. **Offline by default.** All subjects use `online=False, suppress_geonames_warning=True` with explicit `lat`, `lng`, `tz_str` coordinates. Only tests marked `@pytest.mark.online` require network access.
 
-2. **Parallel-safe.** No shared mutable state between tests. Session-scoped fixtures create immutable subjects. Tests are distributed across 8 workers by default.
+2. **Parallel-safe.** No shared mutable state between tests. Session-scoped fixtures create immutable subjects. Tests are distributed with `-n auto --dist loadgroup` (one worker per core) by default.
 
 3. **Tiered ephemeris.** Historical and future test subjects are stratified by the JPL ephemeris file required. Run `test:base` for fast validation and `test:extended` for full coverage.
 

@@ -45,7 +45,7 @@ Kerykeion uses [poethepoet](https://github.com/nat-n/poethepoet) as a task runne
 Tests are organized in 4 tiers (each tier includes the previous):
 
 ```bash
-# Core tests (fastest, ~4,600 tests, excludes heavy parametrized suites)
+# Core tests (fastest — excludes the 5 heavy parametrized suites)
 uv run poe test:core
 
 # Base tier (DE440s range: 1849-2150)
@@ -68,7 +68,32 @@ uv run pytest tests/core/test_aspects.py
 
 # Run tests with verbose output (useful for debugging)
 uv run pytest tests/core/test_aspects.py -s -vvv
+
+# How many tests each command collects, without running them
+uv run pytest tests/ --collect-only -q -m 'not online' | tail -1
 ```
+
+#### The tier is auto-detected, and `LIBEPHEMERIS_PRECISION` is what widens it
+
+`test:extended` and `test:all` both run `pytest tests/ -m 'not online'` and set
+**no** `LIBEPHEMERIS_PRECISION`. `tests/conftest.py` probes the ephemeris kernel
+that is actually loaded and picks the widest tier it can serve — a fresh install
+bundles the base DE440s kernel (1849-2150), so on a default install that is
+`base`, and the medium-tier (1550-1848, 2200) and extended-tier (500 BC through
+1492) subjects are **skipped with a reason**, not run and not failed. The task
+name says which tier is being asked for; the installed kernel decides which one
+you get.
+
+To really run the extended tier, install the full-range kernel and ask for it:
+
+```bash
+uv run python -c "import libephemeris; libephemeris.download_leb_for_tier('extended')"
+LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
+```
+
+The `regenerate:*` tasks and `test:gates:extended` set
+`LIBEPHEMERIS_PRECISION=extended` themselves — baselines must be regenerated on
+the full-range kernel or the long-range subjects are silently dropped.
 
 ### Code Quality
 ```bash
@@ -112,6 +137,9 @@ uv run poe docs:check
 # always run standalone — no import prelude, no shared page context — even in
 # the default docs:snippets run. Focused version:
 uv run poe docs:snippets:skill
+
+# Regenerate the README's showcase charts (docs/charts/)
+uv run poe regenerate:docs-charts
 ```
 
 ### Command-Line Interface
@@ -138,59 +166,92 @@ uv run poe skill:cli:smoke
 > extra is what a user installs; the dev group is what a contributor needs to
 > type-check. Never "clean up" one away without removing the other.
 
+#### Documentation gates
+
+`poe docs:check` fails on an export in `kerykeion.__all__` that no user-facing
+page documents. `poe docs:snippets` executes every ` ```python ` block in
+`README.md`, `kerykeion/llms.txt`, `site/docs`, `site/examples` and
+`skills/kerykeion/` — release notes and other top-level Markdown files are
+skipped by default; `--all` scans every Markdown file in the tree, ignored
+virtual environments and worktrees included. `poe docs:snippets:skill` is the
+focused run over `skills/kerykeion/` alone. `poe regenerate:docs-charts` rewrites
+`docs/charts/` — the SVGs the README embeds **by raw URL**, so they must be
+regenerated whenever the chart renderer changes or the README shows charts the
+library no longer draws.
+
+### No CI — every gate is local
+
+This project deliberately runs **no** GitHub Actions. `.github/` holds only
+`FUNDING.yml`. Every gate lives in `pyproject.toml` as a poe task and is run
+locally before a push or a release: `poe check`, `poe quality`, `poe test:core`,
+`poe docs:check`, `poe docs:snippets`, `poe build:smoke`. Do not add a workflow
+file.
+
 ## 📁 Project Structure
 
 ```
 kerykeion/
-├── kerykeion/                       # Main package
-│   ├── __init__.py                  # Public API exports
-│   ├── cli/                        # Optional CLI — install with kerykeion[cli]; never imported by the library
-│   ├── astrological_subject_factory.py  # Core subject creation
-│   ├── chart_data_factory.py        # Chart data computation
-│   ├── composite_subject_factory.py # Composite/Davison charts
-│   ├── ephemeris_backend.py         # Backend abstraction (libephemeris/swisseph)
-│   ├── ephemeris_data_factory.py    # Time-series ephemeris
-│   ├── planetary_return_factory.py  # Solar/Lunar returns
-│   ├── relationship_score_factory.py # Compatibility scoring
-│   ├── relocated_chart_factory.py   # Relocated charts
-│   ├── transits_time_range_factory.py # Transit tracking
-│   ├── context_serializer.py        # AI/LLM XML export
-│   ├── report.py                    # Text reports
-│   ├── utilities.py                 # Zodiac math helpers
-│   ├── aspects/                     # Aspect detection
-│   ├── astro_cartography/           # ACG lines
-│   ├── charts/                      # SVG chart rendering
-│   ├── dignities/                   # Essential dignities
-│   ├── dominants/                   # Planet/sign/element/quality scoring
-│   ├── eclipses/                    # Eclipse search
-│   ├── fixed_stars/                 # Dynamic star discovery
-│   ├── heliacal/                    # Heliacal risings/settings
-│   ├── house_comparison/            # Synastry house overlay
-│   ├── lunations/                   # Lunar phase event search
-│   ├── midpoints/                   # Cosmobiology midpoints
-│   ├── moon_phase_details/          # Lunar phase context
-│   ├── mundane_aspects/             # Exact transiting aspects
-│   ├── occultations/                # Lunar occultations
-│   ├── planetary_hours/             # Chaldean planetary hours
-│   ├── planetary_nodes/             # Nodes & apsides
-│   ├── planetary_phenomena/         # Elongation/station/etc
-│   ├── primary_directions/          # Placidus semi-arc
-│   ├── retrograde_stations/         # Retrograde/direct station search
-│   ├── schemas/                     # Pydantic models & types
-│   ├── secondary_progressions/      # Progressions & solar arc
-│   ├── settings/                    # Configuration & constants
-│   ├── sign_ingresses/              # Zodiac sign-boundary search
-│   ├── sun_times/                   # Sunrise/sunset/twilight
-│   ├── vedic/                       # Nakshatra support
-│   ├── void_of_course_moon/         # Void-of-course state/windows
-│   └── zodiacal_releasing/          # Hellenistic time-lord periods
-├── tests/core/                      # Test suite (74 files)
-├── examples/                        # Usage examples
-├── site/docs/                       # Documentation source (markdown)
-├── skills/kerykeion/                # Cross-platform AI Agent Skill (agentskills.io)
-├── release_notes/                   # Selective longer release notes
-├── pyproject.toml                   # Project configuration
-├── uv.lock                          # Dependency lock file
+├── kerykeion/                   # Main package — every module below is a package
+│   ├── __init__.py              # Public API exports (__all__)
+│   ├── aspects/                 # Natal, synastry and transit aspect detection
+│   ├── astro_cartography/       # Astro-cartography (ACG) lines
+│   ├── astrological_subject/    # AstrologicalSubjectFactory — the core subject
+│   ├── chart_data/              # ChartDataFactory — chart models with aspects and distributions
+│   ├── charts/                  # SVG chart rendering (natal, synastry, transit, composite, return)
+│   ├── composite_subject/       # Composite (midpoint) and Davison charts
+│   ├── context/                 # Serialization of the models into semantic XML for AI consumption
+│   ├── dignities/               # Essential dignities for traditional evaluation
+│   ├── dominants/               # Planet/sign/element/quality scoring
+│   ├── eclipses/                # Localized solar and lunar eclipse search
+│   ├── ephemeris_backend/       # Backend selection (libephemeris/swisseph) and the ephemeris lock
+│   ├── ephemeris_data/          # EphemerisDataFactory — time-series ephemeris
+│   ├── cli/                     # Optional CLI — install with kerykeion[cli]; never imported by the library
+│   ├── firdaria/                # Firdaria (Firdariyyat), the Persian time-lord technique
+│   ├── fixed_stars/             # Dynamic fixed-star discovery and catalog
+│   ├── geonames/                # GeoNames city/timezone lookup (the only networked module)
+│   ├── heliacal/                # Heliacal risings and settings
+│   ├── horary/                  # Horary significators and considerations before judgment
+│   ├── house_comparison/        # Bidirectional synastry house overlay
+│   ├── lunations/               # New/quarter/full moon moments over a range
+│   ├── midpoints/               # Cosmobiology midpoints
+│   ├── moon_phase_details/      # Lunar phase context and upcoming phases
+│   ├── motion/                  # Per-point motion state (retrograde, stationary, slow, fast)
+│   ├── mundane_aspects/         # Exact transiting-to-transiting aspects
+│   ├── occultations/            # Lunar occultations
+│   ├── planetary_hours/         # Chaldean planetary hours
+│   ├── planetary_nodes/         # Planetary nodes and apsides
+│   ├── planetary_phenomena/     # Elongation, phase, station and other observational data
+│   ├── planetary_returns/       # Solar and lunar returns
+│   ├── predictive/              # Shared helpers for the predictive techniques
+│   ├── primary_directions/      # Placidus semi-arc primary directions
+│   ├── profections/             # Annual profections, the Hellenistic year-lord technique
+│   ├── receptions/              # Mutual receptions between classical planets
+│   ├── relationship_score/      # Compatibility scoring (Ciro Discepolo method)
+│   ├── relocated_chart/         # Relocated charts: natal positions, recomputed houses
+│   ├── report/                  # Plain-text reports
+│   ├── retrograde_stations/     # Retrograde/direct stations and retrograde spans
+│   ├── schemas/                 # Canonical home of all public models, literals and settings
+│   ├── secondary_progressions/  # Secondary progressions and solar arc
+│   ├── settings/                # Global configuration, chart defaults, translations
+│   ├── sign_ingresses/          # Zodiac sign-boundary crossings and sign stays
+│   ├── sun_times/               # Sunrise, sunset, solar noon and the twilights
+│   ├── swisseph_setup/          # Fetches the Swiss Ephemeris data files (optional backend)
+│   ├── transits/                # TransitsTimeRangeFactory — transits over a period
+│   ├── utilities/               # Zodiac/house lookups, Julian-day and angle math, tz resolution
+│   ├── vedic/                   # Nakshatra calculations
+│   ├── void_of_course_moon/     # Void-of-course Moon state and windows
+│   └── zodiacal_releasing/      # Zodiacal releasing (aphesis) time-lord periods
+├── tests/core/                  # Test suite (102 files — see TEST.md)
+├── tests/data/, tests/fixtures/ # Golden baselines: SVGs, positions, aspects, report snapshots
+├── examples/                    # Runnable usage examples (see examples/README.md)
+├── scripts/                     # Developer tooling and gates (see scripts/README.md)
+├── site/docs/                   # Documentation source (markdown)
+├── skills/kerykeion/            # Cross-platform AI Agent Skill (agentskills.io)
+├── skills/kerykeion-cli/        # The CLI's agent skill (shell recipes, gated by skill:cli:smoke)
+├── release_notes/               # Selective longer release notes
+├── docs/charts/                 # The README's showcase SVGs (regenerate:docs-charts)
+├── pyproject.toml               # Project configuration and every poe task
+├── uv.lock                      # Dependency lock file
 └── README.md
 ```
 
@@ -274,11 +335,16 @@ uv sync --dev
 
 **Issue: Tests failing**
 ```bash
-# Run tests with verbose output
-uv run pytest -v
+# Run the fast tier with verbose output. Prefer this over a bare `uv run pytest`:
+# `-m 'not online'` is NOT in addopts, so a plain run also fires the GeoNames
+# network tests and fails without an account.
+uv run poe test:core -v
 
-# Run specific test with debugging
-uv run pytest tests/test_specific.py -s -vvv
+# Or, if you want pytest directly, deselect the online tests yourself
+uv run pytest tests/core -m 'not online' -v
+
+# Run a specific test with debugging (tests live under tests/core/)
+uv run pytest tests/core/test_aspects.py -s -vvv
 ```
 
 ## 📊 Code Style Guidelines

@@ -32,11 +32,14 @@ Creating any chart follows the same 3-step process:
 3.  **Draw**: Use `ChartDrawer` to render the SVG.
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
-# 1. Subject
-subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
+# 1. Subject (offline: explicit coordinates, no GeoNames lookup)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False,
+)
 
 # 2. Data
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
@@ -185,7 +188,7 @@ drawer.save_wheel_only_svg_file(output_path, filename="wheel", style="classic")
 
 The classic-only options `external_view`, `show_degree_indicators` and `show_aspect_icons` only take effect with `style="classic"`; the modern renderer ignores them and logs a warning.
 
-Since v5.12, `style` and `show_zodiac_background_ring` can also be set on the `ChartDrawer` constructor as per-instance defaults. Per-render overrides via the render methods still work.
+`style` and `show_zodiac_background_ring` can also be set on the `ChartDrawer` constructor as per-instance defaults. Per-render overrides via the render methods still work.
 
 ## Configuration & Customization
 
@@ -205,6 +208,9 @@ drawer = ChartDrawer(
 - `"classic"` (Default): White background, traditional look.
 - `"dark"`: Modern dark mode.
 - `"black-and-white"`: High contrast monochrome for print.
+- `None`: No CSS theme is emitted at all. The drawing inherits its colours from
+  the document that hosts it, which is what an embedded chart on a themed page
+  wants. Any other value raises `KerykeionException`.
 
 ### Languages
 
@@ -335,10 +341,12 @@ drawer.save_aspect_grid_only_svg_file(output_dir, filename="grid_only")
 
 **Constructor Parameters:**
 
+Everything after `chart_data` is keyword-only.
+
 | Parameter                       | Type                     | Default      | Description                                 |
 | :------------------------------ | :----------------------- | :----------- | :------------------------------------------ |
 | `chart_data`                    | `ChartDataModel`         | **Required** | Pre-computed data from a Factory.           |
-| `theme`                         | `KerykeionChartTheme`    | `"classic"`  | Visual theme (e.g. `"dark"`).               |
+| `theme`                         | `KerykeionChartTheme \| None` | `"classic"`  | Visual theme (`"classic"`, `"dark"`, `"black-and-white"`); `None` emits no CSS. |
 | `chart_language`                | `KerykeionChartLanguage` | `"EN"`       | Label language (`"IT"`, `"ES"`, etc).       |
 | `transparent_background`        | `bool`                   | `False`      | Remove background color.                    |
 | `external_view`                 | `bool`                   | `False`      | Place planets on outer ring (Single chart). |
@@ -385,6 +393,22 @@ All render/save methods accept `minify` and `remove_css_variables`. The full-cha
 - `save_wheel_only_svg_file(output_path, filename, minify, remove_css_variables, *, style, show_zodiac_background_ring, glyph_size)`
 - `save_aspect_grid_only_svg_file(output_path, filename, minify, remove_css_variables)`
 
+**Where the files land.** On every `save_*` method `output_path` and `filename`
+both default to `None`. A `None` `output_path` writes to the user's home
+directory, and a `None` `filename` builds one from the subject and the chart
+type:
+
+| Method | Default filename |
+| :-- | :-- |
+| `save_svg` | `{name} - {chart_type} Chart - Modern.svg`, or `... - Classic.svg` when the effective style is `"classic"` |
+| `save_wheel_only_svg_file` | `{name} - {chart_type} Chart - Modern Wheel Only.svg`, or `... - Classic Wheel Only.svg` |
+| `save_aspect_grid_only_svg_file` | `{name} - {chart_type} Chart - Aspect Grid Only.svg` |
+
+Pass an explicit `output_path` in any script that should not scatter charts
+across the home directory. The basename is sanitised (path separators, `..` and
+leading dots become underscores) and a target resolving outside `output_path`
+raises `KerykeionException`.
+
 ## Machine-Readable SVG Point Metadata
 
 Every rendered celestial point is a `<g kr:node="ChartPoint">` with stable
@@ -425,6 +449,7 @@ such state from a chart style that forgot to say so.
 | `kr:magnitude`    | fixed stars                                           | Apparent visual magnitude, 2 decimals.               |
 | `kr:nearpoint`    | a fixed star surfaced by discovery                    | The point that brought the star in.                  |
 | `kr:orb`          | a fixed star surfaced by discovery                    | Arc to that point in degrees, 4 decimals.            |
+| `kr:retrograde`   | the point **is** retrograde                           | `"true"`.                                            |
 
 Chart-level analyses are annotated onto the finished markup rather than emitted
 by the point serializers, and in a dual wheel each ring is annotated from its
@@ -458,6 +483,28 @@ browser client maps `kr:name` to `data-kr-name` through `/\bkr:([a-zA-Z]+)=/`
 before sanitizing), so a name carrying an underscore or a digit would be dropped
 in silence instead of rejected loudly. That is why the attributes read
 `motionstate` and `nearpoint` rather than `motion_state` and `near_point`.
+
+### Chart-Level Nodes
+
+Every group the renderer emits carries a `kr:node` tag naming what it is —
+`ChartPoint`, `Glyph`, `Cusp`, `CuspRing`, `HouseSector`, `HouseNumber`,
+`HouseRing`, `PlanetRing`, `RulerRing`, `Aspect`, `AspectCore`,
+`AspectsGridRect`, `ZodiacSign`, `ZodiacBackgrounds`, `GauquelinSector`,
+`Indicator`, `ConnectingLine`, and the wheel roots themselves. Selecting on
+`kr:node` is how a consumer finds a layer without depending on element order.
+
+The modern wheel root is `<g kr:node="ModernHoroscope">` (single charts) or
+`<g kr:node="ModernDualHoroscope">` (Transit, Synastry, DualReturnChart,
+Progression, which also carry `kr:charttype`). Both roots are stamped with the
+planet-cluster size:
+
+| Attribute       | Emitted when                                   | Value                    |
+| :-------------- | :--------------------------------------------- | :----------------------- |
+| `kr:glyphsize`  | `glyph_size` is `"small"` or `"large"`          | `"small"` or `"large"`.  |
+
+The default `"medium"` is written as absence, the same way `kr:oob` and
+`kr:retrograde` mark only the exception. The classic style has no such root and
+never stamps the attribute.
 
 `kerykeion.charts.svg_metadata` holds both ends of this contract: the emitter
 (`point_state_attributes`) and a parser that reads the markup back.

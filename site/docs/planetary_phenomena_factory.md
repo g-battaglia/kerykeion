@@ -72,7 +72,7 @@ A central solar eclipse is **not** a promise of `"cazimi"`, and the reason is th
 
 ## Methods
 
-### `from_subject(subject, planets)`
+### `from_subject(subject, planets, solar_phase_thresholds)`
 
 Calculate phenomena from an existing astrological subject.
 
@@ -84,7 +84,11 @@ Calculate phenomena from an existing astrological subject.
 
 **Returns:** `PlanetaryPhenomenaCollectionModel`
 
-### `from_julian_day(julian_day, planets)`
+**Raises:** `KerykeionException` if the subject has no Julian Day — a composite
+subject has no single moment in time and is not supported here. An unknown or
+mistyped planet name raises `ValueError` (names are case-sensitive).
+
+### `from_julian_day(julian_day, planets, solar_phase_thresholds)`
 
 Calculate phenomena from a Julian Day number.
 
@@ -95,6 +99,11 @@ Calculate phenomena from a Julian Day number.
 | `solar_phase_thresholds` | SolarPhaseThresholdsModel or None | None | Cut-offs for `solar_phase`; defaults to the classical 0.2833° / 8.5° / 17° |
 
 **Returns:** `PlanetaryPhenomenaCollectionModel`
+
+**Raises:** `ValueError` for an unknown or mistyped planet name (names are
+case-sensitive) or a non-finite `julian_day`, and `KerykeionException` if every
+requested planet fails, which usually means the ephemeris backend is unavailable
+or the moment is out of its range.
 
 ## Supported Planets
 

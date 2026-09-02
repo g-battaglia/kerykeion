@@ -20,7 +20,9 @@ Import from: `kerykeion.settings.config_constants`
 | :------------------------------------- | :----------------------------------------------------------------- |
 | `DEFAULT_ACTIVE_POINTS`                | Standard points: Sun, Moon, the planets, the True North Node, Chiron, plus Asc & MC (14 points) |
 | `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`  | Classical planets (Sun-Saturn) + True Lunar Nodes (9 points)       |
-| `ALL_ACTIVE_POINTS`                    | Complete list including asteroids, TNOs, Uranian points, and Arabic parts (no fixed stars -- those are requested via `active_fixed_stars`) |
+| `ALL_ACTIVE_POINTS`                    | Complete list including asteroids, TNOs, Uranian points, and Arabic parts (53 names; no fixed stars -- those are requested via `active_fixed_stars`) |
+| `V5_DEFAULT_ACTIVE_POINTS`             | The v5 default set (18 points), for reproducing pre-v6 output. Also importable from `kerykeion.settings` |
+| `DEFAULT_PREDICTIVE_POINTS`            | The 14 points the predictive factories scan by default. Import from `kerykeion.settings.chart_defaults` |
 
 ```python
 from kerykeion.settings.config_constants import (
@@ -51,6 +53,12 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 | `DEFAULT_ACTIVE_ASPECTS`         | Core aspects (conj, opp, trine, sextile, square)     |
 | `ALL_ACTIVE_ASPECTS`             | Includes minor aspects (semi-sextile, quincunx, etc.)            |
 | `DISCEPOLO_SCORE_ACTIVE_ASPECTS` | Orbs per Ciro Discepolo scoring methodology                      |
+| `PREDICTIVE_ACTIVE_ASPECTS`      | The five Ptolemaic aspects at a flat 3° orb -- the default for transits, returns and progressions |
+
+`DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` (`{"Sun": 1.5, "Moon": 1.5}`) widens the
+orb for the luminaries in natal work; see
+[Aspects](/content/docs/aspects) for how the adjustments
+are combined.
 
 ```python
 from kerykeion import AspectsFactory
@@ -71,6 +79,29 @@ Import from: `kerykeion.settings.chart_defaults` (also re-exported from `kerykei
 | `DEFAULT_CHART_COLORS`              | Default color scheme for charts.             |
 | `DEFAULT_CELESTIAL_POINTS_SETTINGS` | Default settings for planets (colors, etc.). |
 | `DEFAULT_CHART_ASPECTS_SETTINGS`    | Default aspect configuration.                |
+| `KNOWN_GLYPH_NAMES`                 | `frozenset` of the 55 point names that ship a dedicated SVG `<symbol>`. |
+
+Two builders extend the celestial-point settings at render time with entries the
+static table cannot hold, because the names are only known once the chart is
+computed:
+
+| Helper | Signature | Purpose |
+| :----- | :-------- | :------ |
+| `build_dynamic_fixed_star_settings` | `(star_names: list[str], existing_settings: list \| tuple)` | Appends a settings entry per catalog fixed star in the chart. |
+| `build_dynamic_midpoint_settings` | `(midpoint_names: list[str], existing_settings: list \| tuple)` | Appends a settings entry per computed midpoint. |
+| `resolve_glyph_id` | `(name: str) -> str` | Maps a point name to its SVG `<symbol>` id. Pair-specific midpoint names resolve to the generic `"Midpoint"` glyph; a name outside `KNOWN_GLYPH_NAMES` falls back to `"FixedStar"`. |
+
+### Fixed-Star and Zodiac Defaults
+
+Import from: `kerykeion.settings.config_constants`
+
+| Constant | Value | Description |
+| :------- | :---- | :---------- |
+| `DEFAULT_FIXED_STARS` | 23 names | The opt-in fixed-star preset: the 15 Behenian stars plus 8 further bright stars. |
+| `ROYAL_FIXED_STARS` | 4 names | Aldebaran, Regulus, Antares, Fomalhaut. |
+| `BEHENIAN_FIXED_STARS` | 15 names | The medieval Behenian set (the 4 Royal Stars among them). |
+| `DEFAULT_SIDEREAL_MODE` | `"FAGAN_BRADLEY"` | Ayanamsa used when `zodiac_type="Sidereal"` and no `sidereal_mode` is given. |
+| `DEFAULT_NAKSHATRA_AYANAMSA` | `"LAHIRI"` | Ayanamsa used to place nakshatras on a non-sidereal chart. |
 
 ## Settings Model
 
@@ -120,6 +151,21 @@ overrides = {
     }
 }
 settings = load_language_settings(overrides)
+```
+
+### `load_language_pair`
+
+`load_language_pair(language, overrides=None) -> tuple[dict, dict]`
+
+Returns `(selected_language, english_fallback)` and materializes only those two,
+avoiding the full-table deepcopy `load_language_settings` performs. This is what
+`ChartDrawer` uses to resolve its labels.
+
+```python
+from kerykeion.settings import load_language_pair
+
+italian, english = load_language_pair("IT")
+print(italian["celestial_points"]["Sun"])
 ```
 
 ### `load_settings_mapping` (deprecated)

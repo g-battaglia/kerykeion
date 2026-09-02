@@ -142,6 +142,45 @@ def _lon(jd: float, body: int, iflag: int) -> float:
         ) from exc
 
 
+def _iso_range_to_jd(start_date: str, end_date: str) -> tuple[float, float]:
+    """ISO date(time) strings (treated as UTC) → Julian Day bounds.
+
+    A date-only end means "through the end of that UTC day".
+    """
+    try:
+        start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
+        end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
+    except (ValueError, TypeError) as exc:
+        # Wrap the bare datetime error as the library's own exception, so a
+        # caller catching KerykeionException around this entry point is not
+        # broken by a malformed ISO start_date/end_date. Same contract as
+        # LunationFinderFactory.from_iso_range.
+        raise KerykeionException(
+            f"Invalid ISO date/datetime for ingress range "
+            f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
+        ) from exc
+    # Parse as a date so every valid datetime separator remains exact.
+    if is_iso_date_only(end_date):
+        end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+    return datetime_to_julian(start_dt), datetime_to_julian(end_dt)
+
+
+def _resolve_bodies(planets: Optional[List[str]]) -> List[tuple[str, int]]:
+    """Requested planet names → (name, id) pairs; ``None`` = the default set."""
+    # None = default set; an explicit empty list = scan nothing.
+    if planets is None:
+        return list(_INGRESS_PLANETS)
+    invalid = sorted(set(planets) - set(_PLANET_IDS))
+    if invalid:
+        raise ValueError(
+            f"Unknown planets: {', '.join(invalid)}. "
+            f"Valid: {', '.join(_PLANET_IDS)}"
+        )
+    # Deduplicate (preserve order): duplicates would repeat the scan and
+    # emit every event multiple times.
+    return [(name, _PLANET_IDS[name]) for name in dict.fromkeys(planets)]
+
+
 def _sign_name(sign_num: int) -> str:
     """Zodiac sign name for an index (0=Aries), via the shared degree helper."""
     return get_kerykeion_point_from_degree(
@@ -230,6 +269,116 @@ class SignIngressesCollectionModel(SubscriptableBaseModel):
     ingresses: List[IngressModel]
 
 
+class SignPeriodModel(SubscriptableBaseModel):
+    """One stay of a planet in a sign, clipped to the requested range.
+
+    Consecutive periods of the same planet are contiguous (``end`` of one is
+    the ``start`` of the next — the ingress instant) and together cover the
+    whole range. The clip flags say whether a bound is the range edge rather
+    than a real ingress.
+    """
+
+    planet: str = Field(description="Planet name (kerykeion AstrologicalPoint vocabulary)")
+    sign: str = Field(description="Sign the planet is in")
+    sign_num: int = Field(description="Sign number (0=Aries)")
+    start_jd: float = Field(description="Julian Day (UT) the stay begins (clipped to the range start)")
+    end_jd: float = Field(description="Julian Day (UT) the stay ends (clipped to the range end)")
+    start: str = Field(description="ISO 8601 UTC of start_jd")
+    end: str = Field(description="ISO 8601 UTC of end_jd")
+    start_clipped: bool = Field(description="True when the sign was entered before the range")
+    end_clipped: bool = Field(description="True when the sign is left after the range")
+
+
+class SignPeriodsCollectionModel(SubscriptableBaseModel):
+    """Sign stays of every requested planet across a Julian Day range."""
+
+    start_jd: float
+    end_jd: float
+    periods: List[SignPeriodModel]
+
+
+# An ingress within the solver's own resolution of a range bound IS that bound:
+# the stay it opens or closes meets the bound unclipped, and no hair-thin stay
+# is emitted on the far side of it. A twentieth of a second is ten times the
+# widest bisection error (a 7-day bracket halved 27 times: ~2 ms) and still
+# twenty times finer than the second the ISO output resolves — so it absorbs
+# the solver's error and nothing else: a crossing half a second inside the
+# range is a real boundary and stays one.
+_EDGE_TOL_DAYS = 0.05 / 86400.0
+
+
+def _scan_edges(
+    name: str, body: int, start_jd: float, end_jd: float, iflag: int, tropical: bool, found: List[IngressModel]
+) -> List[IngressModel]:
+    """Crossings within ``_EDGE_TOL_DAYS`` just outside either bound — a root
+    this very factory produced, which bisection may leave a hair to either side
+    of the true instant — so the fold can treat them as sitting on the bound.
+    Scanned apart from the range so the in-range brackets, hence the in-range
+    instants, stay exactly those of :meth:`from_julian_day`. At the very edge
+    of the ephemeris that sliver does not exist and the bound stands. A
+    crossing the range scan already holds is not reported twice."""
+    edges: List[IngressModel] = []
+    before, after = start_jd - _EDGE_TOL_DAYS, end_jd + _EDGE_TOL_DAYS
+    for a, b, probe in ((before, start_jd, before), (end_jd, after, after)):
+        try:
+            _lon(probe, body, iflag)
+        except KerykeionException:
+            continue
+        for ingress in SignIngressFactory._scan_planet(name, body, a, b, iflag, tropical):
+            if all(abs(ingress.julian_day - known.julian_day) > _EDGE_TOL_DAYS for known in found):
+                edges.append(ingress)
+    return edges
+
+
+def _fold_sign_periods(
+    name: str,
+    sign0: int,
+    ingresses: List[IngressModel],
+    start_jd: float,
+    end_jd: float,
+) -> List[SignPeriodModel]:
+    """Turn the sign at the range start plus the scanned ingresses into
+    contiguous stays: open at ``start_jd``, hand over at each ingress, close
+    the last at ``end_jd``. A stay that reaches a bound is clipped — unless an
+    ingress sits on that bound (within ``_EDGE_TOL_DAYS``, the solver's own
+    resolution): then the bound is the ingress, the stay opens or closes there
+    unclipped, and whatever lies beyond belongs to the neighbouring range. An
+    ingress farther inside the range than that is a real boundary, however
+    close to the bound."""
+
+    def period(sign_num: int, a: float, b: float, a_clipped: bool, b_clipped: bool) -> SignPeriodModel:
+        return SignPeriodModel(
+            planet=name,
+            sign=_sign_name(sign_num),
+            sign_num=sign_num % 12,
+            start_jd=a,
+            end_jd=b,
+            start=_jd_to_iso(a),
+            end=_jd_to_iso(b),
+            start_clipped=a_clipped,
+            end_clipped=b_clipped,
+        )
+
+    out: List[SignPeriodModel] = []
+    cur_sign, cur_start, cur_clipped = sign0, start_jd, True
+    for ingress in sorted(ingresses, key=lambda i: i.julian_day):
+        if not out and cur_start == start_jd and ingress.julian_day <= start_jd + _EDGE_TOL_DAYS:
+            # On the range start: the entered sign opens the range, unclipped.
+            # The snapshot may read either side of the crossing — it does not
+            # matter, the ingress decides.
+            cur_sign, cur_clipped = ingress.sign_num, False
+            continue
+        if ingress.julian_day >= end_jd - _EDGE_TOL_DAYS:
+            # On the range end: the current stay closes there, unclipped; the
+            # entered sign is the next range's business.
+            out.append(period(cur_sign, cur_start, end_jd, cur_clipped, False))
+            return out
+        out.append(period(cur_sign, cur_start, ingress.julian_day, cur_clipped, False))
+        cur_sign, cur_start, cur_clipped = ingress.sign_num, ingress.julian_day, False
+    out.append(period(cur_sign, cur_start, end_jd, cur_clipped, True))
+    return out
+
+
 # =============================================================================
 # FACTORY
 # =============================================================================
@@ -265,23 +414,7 @@ class SignIngressFactory:
                 is ``None`` on every sidereal ingress.
             sidereal_mode: Ayanamsha when ``zodiac_type='Sidereal'``.
         """
-        try:
-            start_dt = _to_utc_naive(datetime.fromisoformat(start_date))
-            end_dt = _to_utc_naive(datetime.fromisoformat(end_date))
-        except (ValueError, TypeError) as exc:
-            # Wrap the bare datetime error as the library's own exception, so a
-            # caller catching KerykeionException around this entry point is not
-            # broken by a malformed ISO start_date/end_date. Same contract as
-            # LunationFinderFactory.from_iso_range.
-            raise KerykeionException(
-                f"Invalid ISO date/datetime for ingress range "
-                f"(start_date={start_date!r}, end_date={end_date!r}): {exc}"
-            ) from exc
-        # Parse as a date so every valid datetime separator remains exact.
-        if is_iso_date_only(end_date):
-            end_dt = end_dt.replace(hour=23, minute=59, second=59, microsecond=999999)
-        start_jd = datetime_to_julian(start_dt)
-        end_jd = datetime_to_julian(end_dt)
+        start_jd, end_jd = _iso_range_to_jd(start_date, end_date)
         return SignIngressFactory.from_julian_day(start_jd, end_jd, planets, zodiac_type, sidereal_mode)
 
     @staticmethod
@@ -312,21 +445,7 @@ class SignIngressFactory:
                 non-finite, or the range is too large to scan.
         """
         validate_julian_bounds(start_jd, end_jd)
-
-        # None = default set; an explicit empty list = scan nothing.
-        if planets is not None:
-            invalid = sorted(set(planets) - set(_PLANET_IDS))
-            if invalid:
-                raise ValueError(
-                    f"Unknown planets: {', '.join(invalid)}. "
-                    f"Valid: {', '.join(_PLANET_IDS)}"
-                )
-            # Deduplicate (preserve order): duplicates would repeat the scan and
-            # emit every event multiple times.
-            bodies = [(name, _PLANET_IDS[name]) for name in dict.fromkeys(planets)]
-        else:
-            bodies = list(_INGRESS_PLANETS)
-
+        bodies = _resolve_bodies(planets)
         _validate_zodiac(zodiac_type, sidereal_mode)
         # season_marker is meaningful ONLY in the tropical frame: the Sun
         # crossing a SIDEREAL cardinal boundary is not the equinox/solstice.
@@ -351,6 +470,68 @@ class SignIngressFactory:
             end_jd=end_jd,
             ingresses=ingresses,
         )
+
+    @staticmethod
+    def sign_periods_from_iso_range(
+        start_date: str,
+        end_date: str,
+        planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
+    ) -> SignPeriodsCollectionModel:
+        """Where each planet is, sign by sign, between two ISO date(time) strings.
+
+        Same arguments as :meth:`from_iso_range`. The Moon is opt-in here too
+        (``planets=[..., "Moon"]``).
+        """
+        start_jd, end_jd = _iso_range_to_jd(start_date, end_date)
+        return SignIngressFactory.sign_periods_from_julian_day(start_jd, end_jd, planets, zodiac_type, sidereal_mode)
+
+    @staticmethod
+    def sign_periods_from_julian_day(
+        start_jd: float,
+        end_jd: float,
+        planets: Optional[List[str]] = None,
+        zodiac_type: ZodiacType = "Tropical",
+        sidereal_mode: Optional[SiderealMode] = None,
+    ) -> SignPeriodsCollectionModel:
+        """Sign stays of each planet across ``[start_jd, end_jd]``, clipped to it.
+
+        The sign at the range start is read in the same ephemeris session (same
+        zodiac frame) as the ingress scan, so the first period and the
+        ingresses that follow it can never disagree — a sidereal request gets
+        sidereal stays with sidereal ingress instants. Per planet the periods
+        are contiguous and ordered; an empty or inverted range yields none.
+
+        The in-range instants are exactly those :meth:`from_julian_day` reports
+        for the same range. The scan also looks a solver's resolution (a
+        twentieth of a second) beyond either bound: a range that starts or ends
+        on an ingress — on an instant this factory reported, which bisection
+        leaves a few milliseconds off the true crossing — opens or closes the
+        stay there unclipped instead of emitting a hair-thin stay on the wrong
+        side of the crossing. An ingress any farther from a bound, inside or
+        outside the range, is what it is: a boundary or not in range. Beyond
+        that sliver nothing is searched outside the range.
+
+        Raises:
+            KerykeionException / ValueError: as :meth:`from_julian_day`.
+        """
+        validate_julian_bounds(start_jd, end_jd)
+        bodies = _resolve_bodies(planets)
+        _validate_zodiac(zodiac_type, sidereal_mode)
+        tropical = zodiac_type != "Sidereal"
+
+        periods: List[SignPeriodModel] = []
+        if end_jd > start_jd and bodies:
+            _ensure_scannable(start_jd, end_jd, bodies)
+            with ephemeris_session(zodiac_type=zodiac_type, sidereal_mode=sidereal_mode) as iflag:
+                for name, body in bodies:
+                    sign0 = int(_lon(start_jd, body, iflag) // 30)
+                    ingresses = SignIngressFactory._scan_planet(name, body, start_jd, end_jd, iflag, tropical)
+                    ingresses += _scan_edges(name, body, start_jd, end_jd, iflag, tropical, ingresses)
+                    periods.extend(_fold_sign_periods(name, sign0, ingresses, start_jd, end_jd))
+
+        return SignPeriodsCollectionModel(start_jd=start_jd, end_jd=end_jd, periods=periods)
 
     @staticmethod
     def _scan_planet(

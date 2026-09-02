@@ -14,7 +14,15 @@ This page covers common issues, error messages, and their solutions when using K
 
 ### "You need to set the city if you want to use the online mode!"
 
-**Cause:** Using `online=True` without providing a `city` parameter.
+**Cause:** `PlanetaryReturnFactory` was constructed with `online=True` and no
+`city` (the companion message *"You need to set the city and nation if you want
+to use the online mode!"* covers a missing `nation`). Both are raised by that
+factory only.
+
+`AstrologicalSubjectFactory.from_birth_data` never raises them: with `online=True`
+and no `city` it falls back to `"Greenwich"` / `"GB"` and looks *that* up, so a
+missing city produces a chart for the wrong place rather than an error. Always
+name the city, or pass coordinates and `online=False`.
 
 **Solution:** Either provide city/nation or switch to offline mode:
 
@@ -35,9 +43,16 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-### "No data found for this city, try again!"
+### "No data found for this city, try again! Maybe check your connection?"
 
-**Cause:** GeoNames API couldn't find the city, or network issues.
+**Cause:** `PlanetaryReturnFactory` asked GeoNames for a city and got nothing back.
+
+The equivalent failure on `AstrologicalSubjectFactory.from_birth_data` reads
+*"Missing data from geonames: `<fields>`. Check your connection or try a
+different location."*, naming the fields the response was missing
+(`countryCode`, `timezonestr`, `lat`, `lng`). A response whose `lat`/`lng` are
+present but not numeric raises *"Invalid coordinates from geonames for
+`<city>`, `<nation>` ..."* instead.
 
 **Solutions:**
 1. Check the city name spelling
@@ -223,9 +238,22 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-### "Both subjects must have the same zodiac type/house system/perspective"
+### "Both subjects must have the same ..."
 
-**Cause:** Creating a composite chart with subjects that have different configurations.
+**Cause:** Creating a composite chart with subjects that have different
+configurations. `CompositeSubjectFactory` checks six properties and names the
+first mismatch it finds:
+
+- `Both subjects must have the same zodiac type`
+- `Both subjects must have the same sidereal mode`
+- `Both subjects must have the same custom ayanamsa values` (only when `sidereal_mode="USER"`)
+- `Both subjects must have the same houses system`
+- `Both subjects must have the same houses system name`
+- `Both subjects must have the same perspective type`
+
+Disjoint `active_points` are refused separately, with *"The two subjects share
+no common active points; a composite chart needs at least one. Align their
+active_points."*
 
 **Solution:** Ensure both subjects have identical settings:
 
@@ -326,24 +354,44 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
-### Thread Safety Warning
+### Threads, Locks, and Throughput
 
-**Issue:** `AstrologicalSubjectFactory` is NOT thread-safe.
+**Issue:** the ephemeris backend keeps process-global state (ephemeris path,
+sidereal mode, topocentric observer), so two concurrent calculations would
+overwrite each other's configuration.
 
-**Reason:** The underlying Swiss Ephemeris library maintains global state.
+**What Kerykeion does about it:** every backend call is serialised behind an
+internal lock. `kerykeion.ephemeris_backend` exposes `EPHEMERIS_LOCK` and the
+`ephemeris_session` context manager, which acquires the lock, applies the
+requested configuration, yields the calculation flag, then resets the session
+and releases the lock. Calling the factories from several threads is therefore
+**safe** — but not **parallel**: the threads queue on that lock.
 
-**Solution:** Use separate processes or implement locking:
+**Solution:** for throughput, use processes rather than threads. Each process
+gets its own backend state and runs at full speed.
 
 ```python
-import threading
+from concurrent.futures import ProcessPoolExecutor
 
-lock = threading.Lock()
+def build(birth_data):
+    from kerykeion import AstrologicalSubjectFactory
+    return AstrologicalSubjectFactory.from_birth_data(**birth_data)
 
-def calculate_chart(data):
-    with lock:  # Ensure only one calculation at a time
-        subject = AstrologicalSubjectFactory.from_birth_data(**data)
-        return subject
+births = [
+    {"name": "Alice", "year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0,
+     "lng": -0.1276, "lat": 51.5074, "tz_str": "Europe/London", "online": False},
+    {"name": "Bob", "year": 1992, "month": 6, "day": 15, "hour": 8, "minute": 30,
+     "lng": -74.006, "lat": 40.7128, "tz_str": "America/New_York", "online": False},
+]
+
+if __name__ == "__main__":
+    with ProcessPoolExecutor(max_workers=2) as pool:
+        for subject in pool.map(build, births):
+            print(subject.name, subject.sun.sign)
 ```
+
+Only reach for `EPHEMERIS_LOCK` directly if you call `ephe.*` yourself; the
+public factories already hold it.
 
 ### Large Number of Active Points
 
@@ -368,15 +416,20 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 ### Forgetting `online=False` with Manual Coordinates
 
+GeoNames is contacted only when `tz_str`, `lat` or `lng` is missing, so a call
+that already carries all three computes offline whatever `online` says. What
+`online=True` still costs there is the default-username warning and the
+ambiguity of a call whose intent is not stated:
+
 ```python
-# Wrong: Has coordinates but online=True (will try to use GeoNames anyway)
+# Works, but says the opposite of what it does
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London"
     # Missing online=False
 )
 
-# Correct
+# Correct: the mode matches the data
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London",
@@ -384,9 +437,39 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 ```
 
+Drop any one of the three and `online=True` does reach the network — with
+coordinates but no `tz_str` and no `city`, the timezone is resolved from the
+coordinates themselves rather than from the `"Greenwich"` default. With
+`online=False` the same call raises `KerykeionException("For offline mode, you
+must provide timezone (tz_str) and coordinates (lat, lng)")`.
+
 ### Using Removed v4 API
 
-If you see `ImportError: cannot import name 'AstrologicalSubject'`, you're using the old v4 API that was removed in v6:
+`kerykeion.__getattr__` raises `ImportError` (not `AttributeError`) for every
+name removed in v6, so the message reaches you verbatim through
+`from kerykeion import ...`:
+
+```text
+'AstrologicalSubject' was removed in v6. Use the factory instead:
+    from kerykeion import AstrologicalSubjectFactory
+    subject = AstrologicalSubjectFactory.from_birth_data(...)
+
+Note: v6 also changed defaults that affect RESULTS, not just imports:
+  - active points: 18 -> 14 (Descendant, Imum_Coeli, True_South_Lunar_Node,
+    Mean_Lilith are no longer active unless requested)
+  - aspect orbs are narrower (conjunction/opposition 10 -> 6 degrees,
+    quintile dropped), and transits/returns/progressions now use a flat
+    3-degree orb, so expect FEWER aspects
+  - chart style: 'classic' -> 'modern'
+Porting the call above does not restore v5 output. See 'What changes in the
+results' in the guide; kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS restores
+the old point set, and the guide gives the v5 aspect list.
+Migration guide: https://www.kerykeion.net/content/docs/migration
+```
+
+The trade-off is that `hasattr(kerykeion, "AstrologicalSubject")` and
+`getattr(kerykeion, "AstrologicalSubject", None)` raise as well; feature-detect
+with `try` / `except ImportError`.
 
 ```python
 # REMOVED in v6 (raises ImportError):
@@ -409,6 +492,18 @@ See the [Migration Guide](/content/docs/migration) and [Legacy API](/content/doc
 ## FAQ
 
 ### How do I suppress the GeoNames warning?
+
+The warning fires because the shared default username is in use. Registering
+your own account and exporting it removes both the warning and the shared rate
+limit:
+
+```bash
+export KERYKEION_GEONAMES_USERNAME="your_username"
+```
+
+The username is resolved from `geonames_username`, then the
+`KERYKEION_GEONAMES_USERNAME` environment variable, then the shared default. To
+silence the warning without changing the username:
 
 ```python
 # doc-snippet: no-run — illustrative fragment (placeholder arguments)
@@ -438,9 +533,10 @@ Two messages people ask about:
   passed the perspective's center body in `active_points`, and it has no
   position as seen from itself. Remove it from your list or ignore the line.
 - `LEB body=NN ... unavailable in sealed mode` for bodies 40–47/56 (Uranian
-  points, White Moon) — a logging bug fixed in libephemeris 3.1.0: those
+  points, White Moon) — a logging bug of older libephemeris releases. Those
   bodies are always computed from their analytical models by design, and the
-  routing is no longer reported as a warning. Upgrade rather than filter.
+  routing is no longer reported as a warning. Kerykeion's dependency floor is
+  already `libephemeris>=3.1.0`, so a fresh install does not show the line.
 
 ### How do I cache GeoNames results?
 
@@ -467,11 +563,44 @@ Some TNOs (Eris, Sedna, etc.) may not have ephemeris data for all dates. If calc
 
 ### Can I use historical dates?
 
-Yes, Kerykeion supports historical dates including BCE dates. The Swiss Ephemeris handles Julian/Gregorian calendar conversion automatically.
+How far back depends on the ephemeris tier installed for the default
+libephemeris backend. Outside the active range a date does not degrade quietly:
+it raises `KerykeionException("Cannot calculate Sun for JD ...: ... is outside
+active LEB coverage range ...")`, because sealed `leb` mode refuses to
+substitute a lower-precision source.
 
-### Why do Placidus houses fail for my location?
+| Tier | Range | Kernel | Size |
+| :-- | :-- | :-- | :-- |
+| `base` | 1850 - 2150 | DE440s | ~31 MB (bundled) |
+| `medium` | 1550 - 2650 | DE440 | ~114 MB |
+| `extended` | -13200 to +17191 (BCE included) | DE441 | ~3.1 GB |
 
-Placidus and Koch house systems fail at extreme latitudes (>60°). Use Whole Sign (`W`) or Equal (`A`) houses instead:
+Install a wider tier to reach earlier dates:
+
+```python
+# doc-snippet: no-run — downloads a multi-gigabyte ephemeris kernel
+import libephemeris
+
+libephemeris.download_leb_for_tier("extended")
+```
+
+The optional Swiss Ephemeris backend (`pip install kerykeion[swiss]`, then
+`KERYKEION_BACKEND=swisseph`) is the other route: it falls back to its built-in
+Moshier analytical ephemeris for dates its data files do not cover. Both
+backends handle the Julian/Gregorian calendar switch themselves.
+
+### Why did my Placidus chart come back with Porphyry cusps?
+
+Quadrant systems (Placidus `"P"`, Koch `"K"`, ...) are undefined inside the
+polar circle, so Kerykeion substitutes Porphyry (`"O"`) **at the real latitude**
+rather than failing or moving the observer. The substitution is logged, recorded
+in `subject.polar_house_fallbacks`, and reported by
+`effective_houses_system_identifier` while `houses_system_identifier` still
+returns what you asked for. See [Polar Latitudes](#polar-latitudes) for the full
+behaviour, including why the boundary is not a fixed 66°.
+
+To pick the division yourself instead of accepting a substitute, use one that is
+defined everywhere:
 
 ```python
 # doc-snippet: no-run — illustrative fragment (placeholder arguments)

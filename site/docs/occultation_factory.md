@@ -35,7 +35,7 @@ Find occultations visible from anywhere on Earth.
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
 | `julian_day` | float | --      | Finite starting Julian Day (UT) for the search   |
-| `planet_id`  | int   | --      | Planet identifier (ephe-style constant, e.g. `ephe.VENUS`) |
+| `planet_id`  | int or str | -- | Body identifier: an ephe-style constant (e.g. `ephe.VENUS`) or a planet name (e.g. `"Venus"`) |
 | `count`      | int   | 5       | Number of events to return                       |
 
 **Returns:** `List[OccultationModel]`
@@ -47,7 +47,7 @@ Find occultations visible from a specific location.
 | Parameter    | Type  | Default | Description                                      |
 | :----------- | :---- | :------ | :----------------------------------------------- |
 | `julian_day` | float | --      | Finite starting Julian Day (UT) for the search   |
-| `planet_id`  | int   | --      | Planet identifier (ephe-style constant)           |
+| `planet_id`  | int or str | -- | Body identifier: an ephe-style constant or a planet name |
 | `lat`        | float | --      | Geographic latitude in [-90, 90] (north positive) |
 | `lng`        | float | --      | Geographic longitude in [-180, 180] (east positive) |
 | `count`      | int   | 5       | Number of events to return                       |
@@ -55,7 +55,10 @@ Find occultations visible from a specific location.
 **Returns:** `List[OccultationModel]`
 
 For both search methods, `count` must be between 0 and 1,000 inclusive;
-invalid counts raise `ValueError` before any backend call.
+invalid counts raise `ValueError` before any backend call. A `planet_id` that
+is neither an `int` nor a `str` raises `TypeError`, and a body outside the
+occultable set (see [Planet Identifiers](#planet-identifiers)) raises
+`KerykeionException`.
 
 ```python
 # Find occultations visible from Rome
@@ -70,15 +73,34 @@ events = factory.search_local(
 
 ## Planet Identifiers
 
-Use `ephe` constants for the `planet_id` parameter:
+`planet_id` accepts either an `ephe` constant or the body's name as a string:
 
-| Planet  | Constant       |
-| :------ | :------------- |
-| Mercury | `ephe.MERCURY`  |
-| Venus   | `ephe.VENUS`    |
-| Mars    | `ephe.MARS`     |
-| Jupiter | `ephe.JUPITER`  |
-| Saturn  | `ephe.SATURN`   |
+| Planet  | Constant       | Name        |
+| :------ | :------------- | :---------- |
+| Mercury | `ephe.MERCURY`  | `"Mercury"` |
+| Venus   | `ephe.VENUS`    | `"Venus"`   |
+| Mars    | `ephe.MARS`     | `"Mars"`    |
+| Jupiter | `ephe.JUPITER`  | `"Jupiter"` |
+| Saturn  | `ephe.SATURN`   | `"Saturn"`  |
+
+A name is resolved through the project-wide name-to-ID map, so
+`factory.search_global(jd, "Venus")` and `factory.search_global(jd, ephe.VENUS)`
+are equivalent.
+
+### Accepted Bodies
+
+Only physically real bodies can be occulted by the Moon, so both forms are
+restricted to: **Sun, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune,
+Pluto, Chiron, Pholus, Ceres, Pallas, Juno, Vesta**.
+
+Anything else raises:
+
+- `KerykeionException` — an unknown planet name, or a known name/ID outside the
+  set above: the calculated points (lunar nodes, Lilith and apogee variants, the
+  Uranian hypotheticals) have no disk to be covered, and the Moon and the Earth
+  are not occultable either.
+- `TypeError` — a `planet_id` that is neither an `int` nor a `str` (booleans
+  included).
 
 ## Data Models
 

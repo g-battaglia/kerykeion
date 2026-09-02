@@ -246,4 +246,4 @@ only Kerykeion's own AGPL-3.0 license applies.
 | Fixed stars | Native catalog | `sefstars.txt` file |
 
 For a detailed numerical comparison, see
-[Backend Precision Comparison](backend_precision_comparison.md).
+[Backend Precision Comparison](/content/docs/backend_precision_comparison).

@@ -15,12 +15,17 @@ The `HouseComparisonFactory` performs a bidirectional analysis of where one subj
 Initialize the factory with two subjects to generate a bidirectional comparison report showing planet-in-house placements.
 
 ```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.house_comparison import HouseComparisonFactory
+from kerykeion import AstrologicalSubjectFactory, HouseComparisonFactory
 
-# 1. Create Subjects
-person_a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 5, 15, 10, 30, "Rome", "IT")
-person_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 23, 14, 45, "Milan", "IT")
+# 1. Create Subjects (offline mode: explicit coordinates, no GeoNames lookup)
+person_a = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 5, 15, 10, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+)
+person_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 23, 14, 45,
+    lng=9.19, lat=45.4642, tz_str="Europe/Rome", online=False,
+)
 
 # 2. Generate Comparison
 factory = HouseComparisonFactory(person_a, person_b)
@@ -39,6 +44,11 @@ for point in comparison.second_points_in_first_houses:
 ## Data Structure
 
 The `HouseComparisonModel` contains:
+
+**Subject Names:**
+
+- `first_subject_name`: Name of the first subject.
+- `second_subject_name`: Name of the second subject.
 
 **Point Comparisons:**
 
@@ -69,6 +79,17 @@ Each point model includes:
 | `first_subject`  | `AstrologicalSubjectModel` or `PlanetReturnModel` | Required    | First subject for comparison.  |
 | `second_subject` | `AstrologicalSubjectModel` or `PlanetReturnModel` | Required    | Second subject for comparison. |
 | `active_points`  | `List[AstrologicalPoint]`  | `DEFAULT_ACTIVE_POINTS` | Points to include in analysis. |
+
+## Raises
+
+The constructor raises `KerykeionException` when the two subjects do not share
+the same reference frame — zodiac type, perspective type, and (for sidereal
+charts) sidereal mode — or when either input is not a subject-like model at all.
+Overlaying a Tropical chart's points on a Sidereal chart's houses compares
+longitudes measured from different zero points, so it is rejected up front.
+
+The house system identifier is deliberately **not** compared: a house overlay
+between two subjects cast with different house systems is legitimate.
 
 ## Utility Functions
 

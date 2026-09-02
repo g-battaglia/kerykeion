@@ -19,6 +19,18 @@ The `HeliacalFactory` calculates **heliacal events** -- the first/last visibilit
 | `EVENING_FIRST`    | Evening first (Mercury/Venus only)                 |
 | `MORNING_LAST`     | Morning last (Mercury/Venus only)                  |
 
+These constants are exported from the `kerykeion.heliacal` subpackage, not from
+the top-level `kerykeion` namespace:
+
+```python
+from kerykeion.heliacal import (
+    HELIACAL_RISING,
+    HELIACAL_SETTING,
+    EVENING_FIRST,
+    MORNING_LAST,
+)
+```
+
 ## Basic Usage
 
 ```python
@@ -42,6 +54,17 @@ print(f"Venus heliacal rising: {event.datestamp}")
 
 ## Methods
 
+### `HeliacalFactory(ephe_path=None)`
+
+Build a factory. The instance is stateless apart from the ephemeris path.
+
+| Parameter   | Type          | Default | Description                                                 |
+| :---------- | :------------ | :------ | :---------------------------------------------------------- |
+| `ephe_path` | str or None   | None    | Path to the ephemeris data directory. `None` falls back to the path configured via `KERYKEION_EPHE_PATH` (or the empty string). |
+
+The path is applied per calculation, inside the ephemeris session each method
+opens, rather than mutating global backend state at construction time.
+
 ### `next_heliacal_rising(julian_day, planet_name_or_star, geopos=None, atmo=None, observer=None, *, lat=None, lng=None, altitude=None)`
 
 Find the next heliacal rising after the given Julian Day.
@@ -58,6 +81,12 @@ Find the next heliacal rising after the given Julian Day.
 | `altitude`             | float or None                          | None         | Finite observer altitude in metres; defaults to `0` with `lat`/`lng`. |
 
 **Returns:** `HeliacalEventModel`
+
+**Raises:** `KerykeionException` when no rising is found after `julian_day`,
+when the body is not a supported planet or a recognized fixed-star name, or
+when the search date falls outside the available ephemeris range. The first two
+cases share one message: the backend reports them identically, so the exception
+names both possibilities and suggests widening the window.
 
 ### `search_events(julian_day, geopos=None, count=5, planets=None, event_types=None, atmo=None, observer=None, *, lat=None, lng=None, altitude=None)`
 

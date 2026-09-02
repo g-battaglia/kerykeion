@@ -51,7 +51,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `name`                     | `str`                    | `"Now"`         | Name or identifier for the subject.                                    |
 | `year`, `month`, `day`     | `Optional[int]`          | `None`          | Date components. Defaults to current date if omitted.                  |
 | `hour`, `minute`           | `Optional[int]`          | `None`          | Time components. Defaults to current time if omitted.                  |
-| `seconds`                  | `int`                    | `0`             | Seconds component of the time.                                         |
+| `seconds`                  | `int`                    | `0`             | Seconds component of the time. Keyword-only.                           |
 | `city`                     | `Optional[str]`          | `None`          | City name (used with `online=True`).                                   |
 | `nation`                   | `Optional[str]`          | `None`          | ISO Country code (e.g., "GB").                                         |
 | `lng`, `lat`               | `Optional[float]`        | `None`          | Coordinates (used with `online=False` or as override).                 |
@@ -59,7 +59,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `geonames_username`        | `Optional[str]`          | `None`          | GeoNames username (required for `online=True`). Can also be set via `KERYKEION_GEONAMES_USERNAME` env var. |
 | `online`                   | `bool`                   | `True`          | Whether to fetch location/timezone data from GeoNames API.             |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`    | "Tropical" or "Sidereal".                                              |
-| `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g. `"LAHIRI"`). Defaults to `FAGAN_BRADLEY` when `zodiac_type="Sidereal"`; setting it with a Tropical zodiac raises `KerykeionException`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`           | House system code (e.g., "P" for Placidus, "W" for Whole Sign).        |
 | `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | 11 options including Geocentric, Heliocentric, Topocentric, Barycentric, and Planetocentric variants. |
 | `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (14 points).  |
@@ -103,7 +103,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `lng`, `lat`               | `Optional[float]`        | `None`                  | Explicit coordinates override lookup values. Missing values are looked up online or fall back to `0.0`, `51.5074` offline. |
 | `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
-| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode (e.g. `"LAHIRI"`). Defaults to `FAGAN_BRADLEY` when `zodiac_type="Sidereal"`; setting it with a Tropical zodiac raises `KerykeionException`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`                   | House system code.                                                     |
 | `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | Calculation perspective.                                               |
 | `active_points`            | `Optional[List[str]]`    | `None`                  | Points to calculate.                                                   |
@@ -144,7 +144,7 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 | `tz_str`                   | `Optional[str]`          | `None`                  | Timezone string. Required if `online=False`.                           |
 | `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
-| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode (e.g. `"LAHIRI"`). Defaults to `FAGAN_BRADLEY` when `zodiac_type="Sidereal"`; setting it with a Tropical zodiac raises `KerykeionException`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`                   | House system code.                                                     |
 | `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | Calculation perspective.                                               |
 | `active_points`            | `Optional[List[str]]`    | `None`                  | Points to calculate.                                                   |
@@ -186,6 +186,13 @@ Use `position` for display purposes and `abs_pos` for calculations (aspect detec
 | **"A"**    | Equal         | Equal 30° houses starting from Ascendant.                                 |
 | **"M"**    | Morinus       | Space-based system.                                                       |
 
+`subject.coincident_house_cusps` (`list[list[int]]`) groups the house numbers
+whose cusps fall on the same longitude, leaving the houses between them with no
+width. It is empty for every chart whose twelve cusps are twelve distinct
+points, which is every ordinary chart; some systems crowd cusps together at
+extreme latitudes, and the cusps are reported as computed rather than repaired,
+so this field is where that shows.
+
 ### Zodiac Types
 
 - **Tropical** (Default): Fixed to seasons (0° Aries = Vernal Equinox). Standard in Western astrology.
@@ -211,7 +218,11 @@ These opt-in features add extra data to the subject model. All are disabled by d
 
 ### Essential Dignities (`calculate_dignities=True`)
 
-Adds `essential_dignity` field to each point (Domicile, Exaltation, Detriment, Fall, Term, Peregrine).
+Adds five fields to each point: `essential_dignity` (the strongest dignity
+held: `"Domicile"`, `"Exaltation"`, `"Triplicity"`, `"Term"`, `"Face"`, or,
+when only a debility applies, `"Detriment"` or `"Fall"`, and `"Peregrine"` when
+none applies), `dignity_score` (the summed Ptolemaic weights), `term_ruler`,
+`decan_ruler`, and `decan_number`.
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -253,11 +264,11 @@ Derived charts inherit the setting: `PlanetaryReturnFactory` (which also accepts
 
 ### Gauquelin Sectors (`calculate_gauquelin=True`)
 
-Adds `gauquelin_sector` field (1-36) to each point, plus `gauquelin_sector_cusps` on the subject.
+Adds `gauquelin_sector` (`Optional[float]`, 1-36, fractional within the sector) to each point, plus `gauquelin_sector_cusps` on the subject.
 
 ### Nutation (`calculate_nutation=True`)
 
-Adds `subject.nutation` with `true_obliquity`, `mean_obliquity`, `nutation_in_longitude`, and `nutation_in_obliquity`.
+Adds `subject.nutation` with `true_obliquity`, `mean_obliquity`, `nutation_longitude`, and `nutation_obliquity`.
 
 ### Local Space (`calculate_local_space=True`)
 

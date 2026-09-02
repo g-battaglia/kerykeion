@@ -12,8 +12,8 @@ order: 1
 
 ### What you can do with Kerykeion
 
-- **Calculate** positions for 63+ celestial points (planets, asteroids, TNOs, fixed stars, Arabic parts)
-- **Generate** professional SVG charts in 6 themes, 2 styles, and 10 languages
+- **Calculate** positions for 53 chart points (planets, asteroids, TNOs, Uranian points, Arabic parts) plus fixed stars from a 1,447-name catalog
+- **Generate** professional SVG charts in 3 themes (plus `theme=None`), 2 styles, and 10 languages
 - **Analyze** aspects, element/quality distributions, and relationship compatibility
 - **Forecast** with solar/lunar returns, transits over time ranges, and ephemeris data
 - **Integrate** with AI/LLMs via structured XML context serialization
@@ -32,8 +32,7 @@ Requires **Python 3.12** or higher.
 ## Quick Start
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 # Create an astrological subject (offline mode with explicit coordinates)
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -80,7 +79,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 
 -   **[Astrological Subject Factory](/content/docs/astrological_subject_factory)**: Creating astrological subjects from birth data, ISO timestamps, or current time.
 -   **[Chart Data Factory](/content/docs/chart_data_factory)**: Calculating structured chart data for natal, synastry, transit, composite, and return charts.
--   **[Charts Module](/content/docs/charts)**: Rendering professional SVG charts with `ChartDrawer`.
+-   **[Charts Module](/content/docs/charts)**: Rendering professional SVG charts with `ChartDrawer`, in the modern or classic style and at three planet-cluster sizes (`glyph_size`).
 -   **[Chart Glyphs](/content/docs/chart-glyphs)**: Visual reference for every glyph rendered in charts (planets, points, signs, aspects).
 -   **[Report Module](/content/docs/report)**: Generating human-readable text reports.
 
@@ -98,7 +97,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Forecasting
 
 -   **[Planetary Return Factory](/content/docs/planetary_return_factory)**: Calculating solar and lunar returns with relocation support.
--   **[Moon Phase Details Factory](/content/docs/moon_phase_details_factory)**: Rich lunar phase context with illumination, upcoming phases, eclipses, and sun info.
+-   **[Moon Phase Details Factory](/content/docs/moon_phase_details_factory)**: Rich lunar phase context with illumination, upcoming phases, eclipses, sun info, and moonrise/moonset.
 -   **[Transits Time Range Factory](/content/docs/transits_time_range_factory)**: Tracking transit aspects over a date range.
 -   **[Ephemeris Data Factory](/content/docs/ephemeris_data_factory)**: Generating time-series planetary position data.
 -   **[Secondary Progressions](/content/docs/secondary_progressions_factory)**: Day-for-a-year progressions via `SecondaryProgressionFactory`.
@@ -108,8 +107,8 @@ For more examples, see the [Examples Gallery](/content/examples/).
 -   **[Profections](/content/docs/profections_factory)**: Annual profection timeline via `ProfectionsFactory`.
 -   **[Firdaria](/content/docs/firdaria_factory)**: Persian planetary time-lord periods via `FirdariaFactory`.
 -   **[Lunation Finder](/content/docs/lunation_factory)**: New/First-Quarter/Full/Last-Quarter Moons over a date range.
--   **[Retrograde Stations](/content/docs/retrograde_station_factory)**: Planetary retrograde/direct stations over a date range.
--   **[Sign Ingresses](/content/docs/sign_ingress_factory)**: Planet sign-change moments over a date range.
+-   **[Retrograde Stations](/content/docs/retrograde_station_factory)**: Planetary retrograde/direct stations over a date range, or complete retrograde periods via `retrograde_periods_from_iso_range` (Chiron is opt-in).
+-   **[Sign Ingresses](/content/docs/sign_ingress_factory)**: Planet sign-change moments over a date range, or the sign occupancy periods between them via `sign_periods_from_iso_range`.
 -   **[Mundane Aspects](/content/docs/mundane_aspects_factory)**: Exact transiting-to-transiting aspects for calendar aspectarians.
 -   **[Void-of-Course Moon](/content/docs/void_of_course_moon_factory)**: Current void state and complete void windows over a range.
 -   **[Sun Times](/content/docs/sun_times_factory)**: Sunrise, sunset, twilight, solar noon, and day length.
@@ -130,7 +129,7 @@ For more examples, see the [Examples Gallery](/content/examples/).
 ## Reference
 
 -   **[Types & Schemas](/content/docs/schemas)**: Complete Pydantic model and type reference.
--   **[Active Points](/content/docs/active_points)**: Reference for 53 non-star chart points, separately configured fixed stars, and their presets.
+-   **[Active Points](/content/docs/active_points)**: Reference for the 53 non-star chart points, separately configured fixed stars, and their presets.
 -   **[Cookbook](/content/docs/cookbook)**: Practical recipes and code snippets for common tasks.
 -   **[Constants](/content/docs/constants)**: Exhaustive lists of points, aspects, and preset constants.
 -   **[Utilities](/content/docs/utilities)**: Helper functions for zodiac math, Julian Day, and SVG processing.

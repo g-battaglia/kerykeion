@@ -77,8 +77,8 @@ Each `LunationModel` item has:
 | `phase`      | str   | `new` / `first_quarter` / `full` / `last_quarter`.    |
 | `iso_utc`    | str   | ISO 8601 UTC datetime of the exact phase.             |
 | `julian_day` | float | Julian Day (UT) of the exact phase.                   |
-| `sun`        | object | Sun position (sign + longitude) at the lunation.     |
-| `moon`       | object | Moon position (sign + longitude) at the lunation.    |
+| `sun`        | `KerykeionPointModel` | Sun position at the phase: `sign`, `sign_num`, `position`, `abs_pos`, `element`, `quality`, `emoji`. Chart-only fields such as `house` and `retrograde` are `None`. |
+| `moon`       | `KerykeionPointModel` | Moon position at the phase, same fields.             |
 
 ---
 

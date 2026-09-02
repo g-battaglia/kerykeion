@@ -384,8 +384,9 @@ report = ReportGenerator(natal_data)
 report_text = report.generate_report(max_aspects=10)
 
 # Save to file
-with open("alice_report.txt", "w") as f:
-    f.write(report_text)
+report_dir = Path("charts_output")
+report_dir.mkdir(exist_ok=True)
+(report_dir / "alice_report.txt").write_text(report_text, encoding="utf-8")
 ```
 
 ### Element and Quality Distribution

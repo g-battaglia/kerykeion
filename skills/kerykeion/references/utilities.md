@@ -4,7 +4,7 @@ Public helpers of `kerykeion.utilities` (a flat facade: `kerykeion/utilities/__i
 re-exports everything from `kerykeion/utilities/core.py`), plus the motion-state
 classifier from `kerykeion.motion`. **Subpackage import:** `from kerykeion.utilities
 import wrap_180` — none of these names are in `kerykeion.__all__`, so `from kerykeion
-import wrap_180` fails. The facade's `__all__` lists 47 functions and 2 constants;
+import wrap_180` fails. The facade's `__all__` lists 54 functions and 2 constants;
 underscore-prefixed re-exports are internal, do not use them.
 
 ## Validation and normalization
@@ -87,6 +87,8 @@ print(localize_naive(gap, tz, is_dst=True).utcoffset())  # 2:00:00
 | `get_kerykeion_point_from_degree` | `(degree, name, point_type, speed=None, declination=None, magnitude=None, ecliptic_latitude=None) -> KerykeionPointModel` | Build a point from a longitude; finite degrees wrapped into [0, 360), non-finite raise |
 | `get_planet_house` | `(planet_degree, houses_degree_ut_list: list) -> Houses` | House containing a longitude (12 cusp degrees in). Direction-aware: several house systems return descending cusps above the polar circle |
 | `house_spans` | `(cusps: Sequence[float]) -> tuple[list[float], list[bool]]` | The twelve house widths and which run against the frame given. Six systems reverse above ~68°, two cross |
+| `angle_house_identities` | `(cusps: Sequence[float], ascendant: float, medium_coeli: float) -> dict[str, Houses]` | Which house each angle OPENS, keyed by model field name (`"ascendant"`, `"medium_coeli"`, `"descendant"`, `"imum_coeli"`). Only for angles the chart puts on their own cusp: all four under quadrant systems, Asc/Desc only under equal houses, MC/IC only under meridian houses, none under whole sign / Vehlow / Morinus. Twelve cusp longitudes alone cannot answer this where several coincide — the subject factory records it at the house call |
+| `coincident_cusp_groups` | `(cusps: Sequence[float]) -> list[list[int]]` | Groups of 1-based house numbers whose cusps share a longitude; `[]` for a chart whose twelve cusps are twelve distinct points. This is what `subject.coincident_house_cusps` holds |
 | `normalize_degree` | `(angle: float) -> float` | Into [0, 360). Use instead of `% 360`, which answers exactly 360.0 for a hair-negative angle; propagates NaN |
 | `get_house_name` | `(house_number: int) -> Houses` | 1–12 → `"First_House"`...; else `ValueError` |
 | `get_house_number` | `(house_name: Houses) -> int` | Inverse of the above |
@@ -115,6 +117,9 @@ print(localize_naive(gap, tz, is_dst=True).utcoffset())  # 2:00:00
 | `calculate_moon_phase` | `(moon_abs_pos: float, sun_abs_pos: float) -> LunarPhaseModel` | Full `LunarPhaseModel` from two longitudes: `degrees_between_s_m`, `moon_phase` (1–28), `moon_emoji`, `moon_phase_name`, `major_phase`, `stage` |
 | `get_moon_emoji_from_phase_int` | `(phase: int) -> LunarPhaseEmoji` | Phase 1–28 → emoji; out of range raises `KerykeionException` |
 | `get_moon_phase_name_from_phase_int` | `(phase: int) -> LunarPhaseName` | Phase 1–28 → name (e.g. `"Full Moon"`) |
+| `lunar_phase_name_from_degrees` | `(degrees: float) -> tuple[LunarPhaseName, LunarPhaseEmoji]` | Name AND emoji from the Sun–Moon separation, off the centred windows — the definition `calculate_moon_phase` and `MoonPhaseDetailsFactory` both read |
+| `lunar_major_phase_from_degrees` | `(degrees: float) -> LunarPhaseName` | The nearest of the four syzygy/quadrature events (what `major_phase` holds) |
+| `lunar_stage_from_degrees` | `(degrees: float) -> LunarPhaseStage` | `"waxing"` or `"waning"` (what `stage` holds); `LunarPhaseStage` imports from `kerykeion.schemas` |
 
 `moon_phase_name` and `moon_emoji` come from windows **centred on the syzygies**:
 New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and
@@ -145,7 +150,9 @@ you have it.
 **Subpackage import:** `from kerykeion.motion import classify_motion_state`.
 
 `classify_motion_state(point_name: str, speed: Optional[float]) -> Optional[MotionState]`
-— `MotionState = Literal["retrograde", "stationary", "slow", "average", "fast"]`;
+— `MotionState = Literal["retrograde", "stationary", "stationary_retrograde",
+"stationary_direct", "slow", "average", "fast"]` (7 values — the two station
+variants are told apart by a second speed sample, never by the sign);
 returns `None` for bodies without a tabulated mean motion (nodes, asteroids,
 fixed stars, cusps) or unknown speed. Also exported: `MEAN_DAILY_MOTION_DEGREES`
 (dict of mean motions), thresholds `STATIONARY_FRACTION` (0.05), `SLOW_FRACTION`

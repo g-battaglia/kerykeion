@@ -57,15 +57,35 @@ Relocate a natal chart to a new geographic location.
 
 **Returns:** `AstrologicalSubjectModel` with relocated houses and angles.
 
+**Raises:** `KerykeionException` if the subject uses the `"Topocentric"`
+perspective -- its planetary positions embed the parallax of the natal
+observer, so they cannot be kept while the observer moves coherently. Re-create
+the subject with the new coordinates instead. Also `KerykeionException` for a
+geometrically impossible `|new_lat| > 90`;
+`new_lng` is not rejected but wrapped into `[-180, 180)`, so `370` is read as
+`10` east.
+
 ## What Changes
 
-| Unchanged              | Recalculated                    |
-| :--------------------- | :------------------------------ |
-| All planetary positions | Ascendant (1st house cusp)     |
-| Planetary speeds        | Medium Coeli (10th house cusp) |
-| Aspects between planets | All 12 house cusps             |
-| Fixed star positions    | Descendant, Imum Coeli         |
-|                        | Planet-in-house assignments     |
+| Unchanged               | Recalculated                                                |
+| :---------------------- | :---------------------------------------------------------- |
+| All planetary positions | Ascendant, Medium Coeli, Descendant, Imum Coeli             |
+| Planetary speeds        | All 12 house cusps                                          |
+| Aspects between planets | Vertex and Anti-Vertex                                      |
+| Fixed star longitudes   | Planet-in-house assignments, fixed stars and midpoints included |
+| Midpoint longitudes     | `is_diurnal`, and the essential dignities that depend on sect |
+|                         | The Ascendant-derived Arabic parts, with the re-selected sect |
+|                         | `polar_house_fallbacks` and `coincident_house_cusps`         |
+|                         | The local ISO datetime, when `new_tz_str` is given           |
+
+Three per-point enrichments describe the natal horizon and cannot survive the
+move, so they are reset to `None` rather than carried over stale: `azimuth`,
+`altitude_above_horizon` and `gauquelin_sector` on every point (fixed stars
+included), along with `gauquelin_sector_cusps` on the subject.
+
+For a sidereal subject the house ring is computed tropically and then shifted
+by the natal `ayanamsa_value`, the same value the natal cusps used, so the
+relocated cusps land in the subject's own sidereal zodiac.
 
 ## Use Cases
 

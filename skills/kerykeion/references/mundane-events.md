@@ -18,8 +18,8 @@ Source of each factory: `kerykeion/<subpackage>/factory.py` — subpackages
 - [Shared range-factory contract](#shared-range-factory-contract)
 - [EclipseFactory](#eclipsefactory)
 - [LunationFinderFactory](#lunationfinderfactory)
-- [RetrogradeStationFactory](#retrogradestationfactory)
-- [SignIngressFactory](#signingressfactory)
+- [RetrogradeStationFactory](#retrogradestationfactory) (+ retrograde periods)
+- [SignIngressFactory](#signingressfactory) (+ sign periods)
 - [MundaneAspectFactory](#mundaneaspectfactory)
 - [PlanetaryPhenomenaFactory](#planetaryphenomenafactory)
 - [PlanetaryNodesFactory](#planetarynodesfactory)
@@ -50,6 +50,11 @@ Source of each factory: `kerykeion/<subpackage>/factory.py` — subpackages
   silently truncated); `ValueError` for non-finite JD bounds, over-large
   ranges/counts, or unknown filter names.
 - Collections carry `start_jd`/`end_jd` plus a chronologically sorted list.
+
+`SignIngressFactory` and `RetrogradeStationFactory` each carry a second pair of
+entry points with the same argument list — `sign_periods_from_*` and
+`retrograde_periods_from_*` — reporting the SPANS between the events instead of
+the events (below).
 
 `EclipseFactory`, `OccultationFactory` and `HeliacalFactory` are count-based
 ("next N events from a start point") instead of range-based.
@@ -119,6 +124,41 @@ Pluto` (Sun/Moon never station and are not accepted). `StationModel`: `planet`,
 `station_type` (`"SR"` = turns retrograde, `"SD"` = turns direct),
 `julian_day`, `iso_utc`, `sign`, `sign_num`, `degree`, `ecliptic_longitude`.
 
+### Retrograde periods — the spans, not just the turns
+
+`retrograde_periods_from_iso_range(start_date, end_date, planets=None, zodiac_type="Tropical", sidereal_mode=None)`
+/ `retrograde_periods_from_julian_day(start_jd, end_jd, planets=None, ...)` →
+`RetrogradePeriodsCollectionModel` (`start_jd`, `end_jd`, `periods`). Answers
+"is this planet retrograde right now?", which the station list alone cannot.
+
+Each `RetrogradePeriodModel` is one retrograde span clipped to the range:
+`planet`, `start_jd`, `end_jd`, `start`, `end` (ISO UTC), `start_clipped`,
+`end_clipped`. An SR opens a span, an SD closes it; a planet already retrograde
+at the range start is reported from the start with `start_clipped=True`, one
+still retrograde at the range end with `end_clipped=True`. Periods carry **no
+sign or degree** — a station instant is zodiac-independent, so a sidereal
+request returns the same span times.
+
+Edge rules worth knowing:
+
+- The initial motion state comes from the speed at the range start, EXCEPT when
+  a station sits within a solver's resolution (50 ms — ten times the
+  bisection's error, twenty times finer than the second the ISO strings
+  resolve) of a bound. Such a station IS that bound: at the start it sets the
+  state deterministically (rather than the sign of a speed that is numerically
+  ~0 there), at the end it closes the span unclipped. This matters when the
+  bounds are instants this library reported, which bisection leaves a hair to
+  either side of the true zero. A station any farther from a bound is a real
+  station, however close.
+- Beyond that 50 ms probe **nothing is searched outside the range**: a clipped
+  bound says where the range cut the span, not where the real station is.
+- Only an EMPTY span is dropped; a span is as short as the range makes it.
+- Stations that do not alternate (an SR while already retrograde, an SD while
+  not) raise `KerykeionException` rather than folding silently.
+
+`"Chiron"` is accepted opt-in by the station finder and by the periods alike;
+the default set stays Mercury..Pluto, so existing outputs are unchanged.
+
 ## SignIngressFactory
 
 Static; same pair of entry points with `planets=None` →
@@ -132,12 +172,47 @@ Sun ingresses at 0/90/180/270° with hemisphere-neutral values
 `march_equinox`/`june_solstice`/`september_equinox`/`december_solstice`;
 tropical-only (`None` on every sidereal ingress).
 
+### Sign periods — where a planet IS, not just where it changes
+
+`sign_periods_from_iso_range(start_date, end_date, planets=None, zodiac_type="Tropical", sidereal_mode=None)`
+/ `sign_periods_from_julian_day(start_jd, end_jd, planets=None, ...)` →
+`SignPeriodsCollectionModel` (`start_jd`, `end_jd`, `periods`). The ingress
+finder reports what CHANGES; this reports the stays, so a planet that does not
+ingress inside the range still appears.
+
+Per planet the result is the contiguous list of `SignPeriodModel` covering the
+whole range: `planet`, `sign`, `sign_num`, `start_jd`, `end_jd`, `start`, `end`
+(ISO UTC), `start_clipped`, `end_clipped`. The first stay opens at the range
+start (`start_clipped=True`), each ingress hands over to the next stay (one
+stay's `end` IS the next one's `start`, at the ingress instant and to the same
+bisection), and the last stay closes at the range end (`end_clipped=True`).
+`planets` and the Moon opt-in follow the ingress rules above.
+
+The sign at the range start is read **inside the same ephemeris session** as
+the scan, with that session's `iflag`: a sidereal request therefore yields
+sidereal stays bounded by sidereal ingress instants, and the first stay can
+never disagree with the ingresses that follow it. A range bound that sits
+exactly on an ingress opens or closes its stay there UNCLIPPED — the scan looks
+a solver's resolution (50 ms) beyond either bound, so a bound that is itself an
+instant this library reported is recognised; an ingress any farther in is a
+real boundary and clips nothing.
+
 ```python
 from kerykeion import RetrogradeStationFactory, SignIngressFactory
 st = RetrogradeStationFactory.from_iso_range("2024-01-01", "2024-12-31", planets=["Mercury"])
 print([(s.station_type, s.iso_utc[:10], s.sign) for s in st.stations])
 ing = SignIngressFactory.from_iso_range("2024-03-01", "2024-03-31", planets=["Sun"])
 print([(i.sign, i.iso_utc[:16], i.season_marker) for i in ing.ingresses])
+
+# The spans, not the events: two contiguous stays across the March equinox,
+# each clipped at the range bound it reaches.
+stays = SignIngressFactory.sign_periods_from_iso_range(
+    "2026-03-01", "2026-03-31", planets=["Sun"])
+print([(p.sign, p.start[:10], p.end[:10], p.start_clipped, p.end_clipped)
+       for p in stays.periods])
+spans = RetrogradeStationFactory.retrograde_periods_from_iso_range(
+    "2025-03-01", "2025-03-31", planets=["Mercury"])
+print([(s.planet, s.start[:16], s.end[:16], s.end_clipped) for s in spans.periods])
 ```
 
 ## MundaneAspectFactory
