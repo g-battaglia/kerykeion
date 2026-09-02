@@ -23,7 +23,12 @@ except PackageNotFoundError:  # a source tree without installation
 
 app = KerykeionTyper(
     name="kerykeion",
-    help="Command-line interface for the Kerykeion astrology library.",
+    help=(
+        "Astrology from the terminal.\n\n"
+        "Start with a subject: kerykeion subject save ada --date 1990-07-15 --time 10:30 "
+        "--lat 41.9 --lng 12.5 --tz Europe/Rome. Then pass -s ada to any command below.\n\n"
+        "A terminal gets a text report, a pipe gets JSON; -f text|json|xml|svg and -o FILE choose explicitly."
+    ),
     pretty_exceptions_enable=False,  # the CLI renders its own errors
     rich_markup_mode="rich",
     add_completion=False,
@@ -57,31 +62,36 @@ def _root(
 
 
 def _register_commands() -> None:
+    """The help screen is a menu: one panel per kind of question, groups and commands side by side."""
     from kerykeion.extra.cli.commands import analysis, call, charts, info, series, sky, status, subject, technique
 
-    app.command(name="status")(status.status)  # stdlib-only; also served without the extra
-    app.command(name="doctor")(info.doctor)  # status with a verdict
-    app.add_typer(subject.subject_app, name="subject")
-    for name, command in (
-        ("natal", charts.natal),
-        ("now", charts.now),
-        ("synastry", charts.synastry),
-        ("transit", charts.transit),  # the single-moment dual wheel
-        ("composite", charts.composite),
-        ("return", charts.return_chart),  # `return` is a keyword, hence the callable's name
-        ("progression", charts.progression),
-        ("ephemeris", series.ephemeris),
-        ("transits", series.transits),  # the time series
-        ("aspects", analysis.aspects),
-        ("dominants", analysis.dominants),
-        ("moon", analysis.moon),
-        ("relationship-score", analysis.relationship_score),
-        ("call", call.call),
+    charts_panel = "Charts"
+    analyses_panel = "Analyses"
+    events_panel = "Techniques, sky events and time series"
+    setup_panel = "Subjects and setup"
+    for panel, name, command in (
+        (charts_panel, "natal", charts.natal),
+        (charts_panel, "now", charts.now),
+        (charts_panel, "synastry", charts.synastry),
+        (charts_panel, "transit", charts.transit),  # the single-moment dual wheel
+        (charts_panel, "composite", charts.composite),
+        (charts_panel, "return", charts.return_chart),  # `return` is a keyword, hence the callable's name
+        (charts_panel, "progression", charts.progression),
+        (analyses_panel, "aspects", analysis.aspects),
+        (analyses_panel, "dominants", analysis.dominants),
+        (analyses_panel, "moon", analysis.moon),
+        (analyses_panel, "relationship-score", analysis.relationship_score),
+        (events_panel, "ephemeris", series.ephemeris),
+        (events_panel, "transits", series.transits),  # the time series
+        (setup_panel, "status", status.status),  # stdlib-only; also served without the extra
+        (setup_panel, "doctor", info.doctor),  # status with a verdict
+        (setup_panel, "call", call.call),
     ):
-        app.command(name=name)(command)
-    app.add_typer(technique.technique_app, name="technique")
-    app.add_typer(sky.sky_app, name="sky")
-    app.add_typer(info.info_app, name="info")
+        app.command(name=name, rich_help_panel=panel)(command)
+    app.add_typer(technique.technique_app, name="technique", rich_help_panel=events_panel)
+    app.add_typer(sky.sky_app, name="sky", rich_help_panel=events_panel)
+    app.add_typer(subject.subject_app, name="subject", rich_help_panel=setup_panel)
+    app.add_typer(info.info_app, name="info", rich_help_panel=setup_panel)
 
 
 _register_commands()

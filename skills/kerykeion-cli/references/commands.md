@@ -56,7 +56,7 @@ Declination aspects use a single `--orb` instead and refuse `--aspects` and
 ## `technique <sub>` — analytical techniques on a stored subject
 
 `profections`, `firdaria`, `zr`, `receptions`, `horary`, `midpoints`,
-`directions`, `acg`, `stars`, `nodes`, `relocate`, `house-comparison`,
+`directions`, `acg`, `heliacal`, `nodes`, `relocate`, `house-comparison`,
 `solar-arc`, `fixed-stars`.
 
 ```bash

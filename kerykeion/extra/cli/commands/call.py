@@ -58,7 +58,7 @@ def call(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Dispatch to any public kerykeion factory method or function."""
+    """Any public factory method, for what has no command of its own."""
     listing_fmt = formats.resolve_format("json" if json_flag else fmt, output)
     if list_flag:
         _emit(registry.list_targets(), listing_fmt, output)

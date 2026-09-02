@@ -38,7 +38,7 @@ from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 sky_app = KerykeionTyper(
     name="sky",
-    help="Astronomical events: sun, moon, eclipses, ingresses, stations.",
+    help="Sun, Moon and planet events, at a moment or over a range.",
     no_args_is_help=True,
     add_completion=False,
 )
@@ -165,7 +165,7 @@ def _range_query(
     return from_, to, {**_zodiac_kwargs(zodiac, sidereal_mode), **_given(**lists)}
 
 
-@sky_app.command("sun-times")
+@sky_app.command("sun-times", rich_help_panel="At a moment and place")
 def sun_times(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -175,7 +175,7 @@ def sun_times(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Sunrise, sunset, noon and twilight bands for a date and place."""
+    """Sunrise, sunset, noon and twilights for a date and place."""
     from kerykeion import SunTimesFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "sun-times")
@@ -183,7 +183,7 @@ def sun_times(
     _emit(SunTimesFactory.from_date(m.year, m.month, m.day, latitude=la, longitude=lo, tz_str=tz_str), fmt, output)
 
 
-@sky_app.command("hours")
+@sky_app.command("hours", rich_help_panel="At a moment and place")
 def hours(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -193,7 +193,7 @@ def hours(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Planetary hours and the day/hour rulers for a moment."""
+    """Planetary hours and rulers for a moment."""
     from kerykeion import PlanetaryHoursFactory
 
     la, lo, tz_str = _location(profile, lat, lng, tz, "hours")
@@ -204,7 +204,7 @@ def hours(
     _emit(model, fmt, output)
 
 
-@sky_app.command("voc")
+@sky_app.command("voc", rich_help_panel="Over a range")
 def voc(
     profile: SubjectProfile = None,
     tz: SubjectTz = None,
@@ -215,7 +215,11 @@ def voc(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Void-of-Course Moon: the windows in a range (with --to), or the status at --from (needs --tz or -s)."""
+    """Void-of-course Moon: the windows in a range, or the state at a moment.
+
+    With --from and --to, the windows in the range; with --from alone, the
+    state at that moment (needs --tz or -s).
+    """
     from kerykeion import VoidOfCourseMoonFactory
 
     extra = _zodiac_kwargs(zodiac, sidereal_mode)
@@ -236,7 +240,7 @@ def voc(
     )
 
 
-@sky_app.command("eclipses")
+@sky_app.command("eclipses", rich_help_panel="Over a range")
 def eclipses(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -248,7 +252,7 @@ def eclipses(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Solar and lunar eclipses. Located (with -s/--lat/--lng) or global."""
+    """Solar and lunar eclipses, global or as seen from a place."""
     from kerykeion import EclipseFactory
 
     if (lat is None) != (lng is None):  # a half-given place is a typo, not a global search
@@ -261,7 +265,7 @@ def eclipses(
         _emit(EclipseFactory.search_global(**kwargs), fmt, output)
 
 
-@sky_app.command("lunations")
+@sky_app.command("lunations", rich_help_panel="Over a range")
 def lunations(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -271,14 +275,14 @@ def lunations(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """New and quarter moons in a range (filterable with --phase)."""
+    """New, quarter and full moons in a range."""
     from kerykeion import LunationFinderFactory
 
     start, end, extra = _range_query("lunations", from_, to, zodiac, sidereal_mode, phases=_split_csv(phase))
     _emit(LunationFinderFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
-@sky_app.command("ingresses")
+@sky_app.command("ingresses", rich_help_panel="Over a range")
 def ingresses(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -289,7 +293,7 @@ def ingresses(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Sign ingresses of the planets in a range — or, with --periods, the sign stays clipped to it."""
+    """Sign ingresses in a range, or the sign stays with --periods."""
     from kerykeion import SignIngressFactory
 
     start, end, extra = _range_query("ingresses", from_, to, zodiac, sidereal_mode, planets=_split_csv(planets))
@@ -297,7 +301,7 @@ def ingresses(
     _emit(search(start, end, **extra), fmt, output)
 
 
-@sky_app.command("stations")
+@sky_app.command("stations", rich_help_panel="Over a range")
 def stations(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -308,7 +312,7 @@ def stations(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Retrograde/direct stations of the planets in a range — or, with --periods, the retrograde spans clipped to it."""
+    """Retrograde and direct stations in a range, or the spans with --periods."""
     from kerykeion import RetrogradeStationFactory
 
     start, end, extra = _range_query("stations", from_, to, zodiac, sidereal_mode, planets=_split_csv(planets))
@@ -320,7 +324,7 @@ def stations(
     _emit(search(start, end, **extra), fmt, output)
 
 
-@sky_app.command("mundane")
+@sky_app.command("mundane", rich_help_panel="Over a range")
 def mundane(
     from_: FromOpt = None,
     to: ToOpt = None,
@@ -331,7 +335,7 @@ def mundane(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Mundane (planet-to-planet) aspects exact within a range."""
+    """Exact planet-to-planet aspects in a range."""
     from kerykeion import MundaneAspectFactory
 
     start, end, extra = _range_query(
@@ -346,14 +350,14 @@ def mundane(
     _emit(MundaneAspectFactory.from_iso_range(start, end, **extra), fmt, output)
 
 
-@sky_app.command("phenomena")
+@sky_app.command("phenomena", rich_help_panel="At a moment and place")
 def phenomena(
     profile: SubjectProfile = None,
     planets: PlanetsOpt = None,
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Planetary phenomena (phase, elongation, magnitude, diameter) for a moment."""
+    """Phase, elongation, magnitude and diameter of the planets."""
     from kerykeion import PlanetaryPhenomenaFactory
 
     if not profile:
@@ -362,7 +366,7 @@ def phenomena(
     _emit(PlanetaryPhenomenaFactory.from_subject(subject, _split_csv(planets)), fmt, output)  # type: ignore[arg-type]
 
 
-@sky_app.command("occultations")
+@sky_app.command("occultations", rich_help_panel="At a moment and place")
 def occultations(
     profile: SubjectProfile = None,
     lat: SubjectLat = None,
@@ -372,7 +376,7 @@ def occultations(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Lunar occultations of a body, globally or as seen from a place.
+    """Lunar occultations of a body, from the subject's moment on.
 
     The search starts from ``-s``'s moment (the library exposes no public
     date-to-JD helper). Give ``--lat/--lng`` — or a profile that has them — for

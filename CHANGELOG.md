@@ -11,6 +11,13 @@
   only the import path moved (`python -m kerykeion.extra.cli` replaces
   `python -m kerykeion.cli`). Nothing in the library imports it, before or
   after.
+- **The help screen reads as a menu.** `kerykeion` (and `-h`, now accepted
+  everywhere, as it already was without the extra) groups the commands into
+  four panels — charts, analyses, techniques and events, subjects and setup —
+  and every entry is one line. `technique` and `sky` are panelled the same
+  way. `technique stars` (heliacal risings and settings) is renamed
+  `technique heliacal`: next to `fixed-stars` the old name said the opposite
+  of what it did.
 
 ### Added
 

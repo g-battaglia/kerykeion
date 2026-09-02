@@ -139,7 +139,7 @@ def natal(
     *,
     opts: object = None,
 ) -> None:
-    """Natal chart for a subject: report (text), JSON, XML or SVG."""
+    """Natal chart: text report, JSON, XML or SVG."""
     model = subject_resolver.resolve_subject(_subject_from(locals()), profile)
     _emit_subject_or_chart(model, fmt, output, opts)
 
@@ -169,7 +169,7 @@ def now(
     *,
     opts: object = None,
 ) -> None:
-    """Subject for the current moment (transit-style snapshot)."""
+    """Chart of the current moment at a place."""
     flags = _subject_from(locals(), date=None, time=None, seconds=None, iso_utc=None, mode_override="current")
     _emit_subject_or_chart(subject_resolver.resolve_subject(flags, None), fmt, output, opts)
 
@@ -183,7 +183,7 @@ def synastry(
     *,
     opts: object = None,
 ) -> None:
-    """Synastry (dual wheel) between two stored subjects."""
+    """Synastry of two stored subjects (dual wheel)."""
     from kerykeion import ChartDataFactory
 
     first = _stored_subject(profile, "synastry")
@@ -209,7 +209,7 @@ def transit(
     *,
     opts: object = None,
 ) -> None:
-    """Transit dual wheel: natal (inner) vs a transit moment (outer).
+    """Natal chart against a transit moment (dual wheel).
 
     The moment defaults to now at the natal birthplace (offline). Pass
     ``--lat/--lng/--tz`` for a relocated transit, or ``--city`` to geocode; pass
@@ -256,7 +256,7 @@ def composite(
     *,
     opts: object = None,
 ) -> None:
-    """Composite chart (midpoint) of two stored subjects."""
+    """Midpoint composite of two stored subjects."""
     from kerykeion import ChartDataFactory, CompositeSubjectFactory
 
     first = _stored_subject(profile, "composite")
@@ -284,7 +284,7 @@ def return_chart(
     *,
     opts: object = None,
 ) -> None:
-    """Planetary return (Solar/Lunar) as a dual wheel: natal + return chart.
+    """Solar or lunar return for a year (dual wheel).
 
     Cast for the natal birthplace by default (offline). Relocate with
     ``--lat/--lng/--tz`` or with ``--city --nation`` (geocoded), never both.
@@ -322,7 +322,7 @@ def progression(
     *,
     opts: object = None,
 ) -> None:
-    """Secondary progression dual wheel for a target year (Q2 / daily-houses angles)."""
+    """Secondary progression to a target year (dual wheel)."""
     if target_year is None:
         raise ValueError("progression needs --target-year")
     from kerykeion import ChartDataFactory, SecondaryProgressionFactory

@@ -46,7 +46,7 @@ from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 subject_app = KerykeionTyper(
     name="subject",
-    help="Store and inspect subject profiles (birth-data recipes).",
+    help="Save and inspect subjects; -s <name> reuses them everywhere.",
     no_args_is_help=True,
     add_completion=False,
 )
@@ -79,7 +79,7 @@ def save(
     set_flags: SetFlags = None,
     snapshot: SnapshotFlag = None,
 ) -> None:
-    """Build a recipe from the flags and persist it as a profile (0600)."""
+    """Save a subject under a name, for -s <name> everywhere."""
     if store_name.endswith(".json"):  # the store adds .json, and -s reads a .json spec as a file path
         raise ValueError(
             "profile names cannot end in '.json': -s resolves a .json spec as a file path, so the stored profile "
@@ -105,19 +105,19 @@ def show(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Print a stored profile (recipe + provenance)."""
+    """Print a stored profile."""
     _emit(profiles.load(profiles.resolve_path(profile_spec)), fmt, output)
 
 
 @subject_app.command("list")
 def list_cmd(fmt: FormatOpt = None) -> None:
-    """List profile names in the store (text: one per line; pipe: JSON array)."""
+    """List the stored profile names."""
     _emit(profiles.list_profiles(), fmt, None)
 
 
 @subject_app.command("path")
 def path_cmd(profile_spec: str = typer.Argument(..., help="Profile name or file path.")) -> None:
-    """Print the resolved on-disk path of a profile."""
+    """Print a profile's file path."""
     typer.echo(str(profiles.resolve_path(profile_spec)))
 
 
@@ -127,7 +127,7 @@ def verify(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Materialise the recipe into a subject and print a compact summary.
+    """Rebuild a profile and print a short summary.
 
     Always recomputes (a snapshot reading back fine is not what ``verify``
     claims) and reports how the stored snapshot compares: ``absent``, ``stale``

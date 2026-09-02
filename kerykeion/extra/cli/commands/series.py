@@ -75,7 +75,7 @@ def ephemeris(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """A time series of planet positions and house cusps."""
+    """Planet positions and house cusps over a date range."""
     from kerykeion import EphemerisDataFactory
     from kerykeion.extra.cli.subject_resolver import resolve_house_system
 
@@ -108,7 +108,11 @@ def transits(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Natal chart vs a time series of transits: per-sample aspects, or events with --events (--refine sharpens them)."""
+    """Transits to a natal chart over a date range.
+
+    Per-sample aspects by default; --events collapses them into applying,
+    exact and separating events, and --refine sharpens the exact moments.
+    """
     from kerykeion import EphemerisDataFactory, TransitsTimeRangeFactory
 
     if refine and not events:  # get_transit_moments() takes no refine argument: never drop it silently

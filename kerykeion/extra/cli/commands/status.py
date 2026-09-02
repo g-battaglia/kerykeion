@@ -15,5 +15,5 @@ def status(
         bool, typer.Option("--json", help="Emit the status as JSON (default: human-readable text).")
     ] = False,
 ) -> None:
-    """Show the runtime state of kerykeion: active backend, ephemeris data, calc mode."""
+    """Backend, ephemeris data and calc mode in use."""
     diagnostics.render(json_out=json_out)

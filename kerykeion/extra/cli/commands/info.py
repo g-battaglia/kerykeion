@@ -22,7 +22,7 @@ from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 info_app = KerykeionTyper(
     name="info",
-    help="List what the flags accept: literals, point sets, fixed stars, methods.",
+    help="What the flags accept: literals, point sets, fixed stars, methods.",
     no_args_is_help=True,
     add_completion=False,
 )
@@ -46,7 +46,7 @@ def literals(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """The accepted values of every literal the flags validate against."""
+    """Accepted values by literal name (house systems, ayanamsas, ...)."""
     tables = _literal_tables()
     if name is None:
         _emit(tables, fmt, output)
@@ -61,7 +61,7 @@ def literals(
 
 @info_app.command("points")
 def points(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
-    """The preset names --points accepts, and what each one contains."""
+    """The --points presets and their contents."""
     from kerykeion.extra.cli import subject_resolver
 
     _emit(subject_resolver._point_sets(), fmt, output)
@@ -69,7 +69,7 @@ def points(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
 
 @info_app.command("stars")
 def stars(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
-    """The preset names --fixed-stars accepts, and what each one contains."""
+    """The --fixed-stars presets and their contents."""
     from kerykeion.extra.cli import subject_resolver
 
     _emit(subject_resolver._fixed_star_sets(), fmt, output)
@@ -77,7 +77,7 @@ def stars(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
 
 @info_app.command("houses")
 def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
-    """What --houses accepts: the system letters (case matters: i and I differ) and the names that map to them."""
+    """What --houses accepts: letters (case matters) and names."""
     from kerykeion.extra.cli import subject_resolver
 
     letters = sorted(subject_resolver.literal_values("HousesSystemIdentifier"))
@@ -86,7 +86,7 @@ def houses(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
 
 @info_app.command("methods")
 def methods(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
-    """Strategy/method names the technique flags accept, as the library reports them."""
+    """Strategy and method names per flag, as the library reports them."""
     from kerykeion import DominantsFactory
     from kerykeion.extra.cli.rendering.options import SVG_VARIANTS, chart_choices
 
@@ -177,7 +177,7 @@ def _checks(state: dict[str, Any]) -> list[dict[str, str]]:
 
 
 def doctor(fmt: FormatOpt = None, output: OutputOpt = None) -> None:
-    """Check the install and exit non-zero if something is actually broken (warnings do not fail the run)."""
+    """Check the install; exit 6 if it is broken (warnings pass)."""
     from kerykeion.extra.cli import diagnostics, errors
     from kerykeion.extra.cli.rendering import formats
 

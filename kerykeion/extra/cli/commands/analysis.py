@@ -44,7 +44,7 @@ def aspects(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Aspects within one chart, or between two (-S) — ecliptic or declination.
+    """Aspects within a chart, or between two (-S).
 
     Declination aspects take a single ``--orb`` and have no per-aspect table
     or axis rule, so ``--aspects`` and ``--axis-orb-limit`` are rejected there.
@@ -96,7 +96,7 @@ def dominants(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Dominant signs, elements, qualities and planets for a subject."""
+    """Dominant signs, elements, qualities and planets."""
     from kerykeion import DominantsFactory
 
     subject = _stored_subject(profile, "dominants")
@@ -132,7 +132,7 @@ def moon(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Moon phase details for the subject's moment and place."""
+    """Moon phase at the subject's moment and place."""
     from kerykeion import MoonPhaseDetailsFactory
 
     subject = _stored_subject(profile, "moon")
@@ -148,7 +148,7 @@ def relationship_score(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Ciro Discepolo's relationship score between two stored subjects."""
+    """Discepolo relationship score of two stored subjects."""
     from kerykeion import RelationshipScoreFactory
 
     first = _stored_subject(profile, "relationship-score")
