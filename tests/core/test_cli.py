@@ -232,6 +232,18 @@ class TestSubjectStore:
         mode = os.stat(path).st_mode & 0o777
         assert mode == 0o600
 
+    # Profiles written before 6.0.0a93 carry a ``snapshot`` key; they must still load.
+    def test_profile_with_legacy_keys_still_loads(self, runner, app, ada_profile):
+        from kerykeion.extra.cli import profiles
+
+        path = profiles.profile_path(ada_profile)
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        stored["snapshot"] = None
+        path.write_text(json.dumps(stored), encoding="utf-8")
+        r = runner.invoke(app, ["subject", "verify", ada_profile, "-f", "json"])
+        assert r.exit_code == 0, r.output
+        assert json.loads(r.output)["ok"] is True
+
     def test_list_and_show(self, runner, app, ada_profile):
         r_list = runner.invoke(app, ["subject", "list"])
         assert r_list.exit_code == 0

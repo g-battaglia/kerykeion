@@ -94,9 +94,9 @@ class ProfileInput(pydantic.BaseModel):
 
 
 class Profile(pydantic.BaseModel):
-    """A stored subject profile."""
+    """A stored subject profile. Unknown envelope keys are ignored, so a file written by another version still loads."""
 
-    model_config = pydantic.ConfigDict(extra="forbid")
+    model_config = pydantic.ConfigDict(extra="ignore")
 
     kerykeion_profile: int = PROFILE_FORMAT_VERSION
     name: str
