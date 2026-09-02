@@ -13,14 +13,15 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal, Optional, overload
 
-from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import _aspect_names, _emit, _given, _parse_aspects, _parse_dt, _split_csv
-from kerykeion.cli.options import (
+from kerykeion.extra.cli import subject_resolver
+from kerykeion.extra.cli.commands._shared import _aspect_names, _emit, _given, _parse_aspects, _parse_dt, _split_csv
+from kerykeion.extra.cli.options import (
     AspectsOpt,
     CountOpt,
     FormatOpt,
     FromOpt,
     OutputOpt,
+    PeriodsFlag,
     PhaseOpt,
     PlanetIdOpt,
     PlanetsOpt,
@@ -33,7 +34,7 @@ from kerykeion.cli.options import (
     ToOpt,
     ZodiacSkyOpt,
 )
-from kerykeion.cli.typer_app import KerykeionTyper
+from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 sky_app = KerykeionTyper(
     name="sky",
@@ -214,7 +215,7 @@ def voc(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Void-of-Course Moon: the windows in a range (with ``--to``), or the status at ``--from`` (needs ``--tz`` or ``-s``)."""
+    """Void-of-Course Moon: the windows in a range (with --to), or the status at --from (needs --tz or -s)."""
     from kerykeion import VoidOfCourseMoonFactory
 
     extra = _zodiac_kwargs(zodiac, sidereal_mode)
@@ -282,16 +283,18 @@ def ingresses(
     from_: FromOpt = None,
     to: ToOpt = None,
     planets: PlanetsOpt = None,
+    periods: PeriodsFlag = None,
     zodiac: ZodiacSkyOpt = None,
     sidereal_mode: SiderealSkyOpt = None,
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Sign ingresses of the planets in a range."""
+    """Sign ingresses of the planets in a range — or, with --periods, the sign stays clipped to it."""
     from kerykeion import SignIngressFactory
 
     start, end, extra = _range_query("ingresses", from_, to, zodiac, sidereal_mode, planets=_split_csv(planets))
-    _emit(SignIngressFactory.from_iso_range(start, end, **extra), fmt, output)
+    search = SignIngressFactory.sign_periods_from_iso_range if periods else SignIngressFactory.from_iso_range
+    _emit(search(start, end, **extra), fmt, output)
 
 
 @sky_app.command("stations")
@@ -299,16 +302,22 @@ def stations(
     from_: FromOpt = None,
     to: ToOpt = None,
     planets: PlanetsOpt = None,
+    periods: PeriodsFlag = None,
     zodiac: ZodiacSkyOpt = None,
     sidereal_mode: SiderealSkyOpt = None,
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Retrograde/direct stations of the planets in a range."""
+    """Retrograde/direct stations of the planets in a range — or, with --periods, the retrograde spans clipped to it."""
     from kerykeion import RetrogradeStationFactory
 
     start, end, extra = _range_query("stations", from_, to, zodiac, sidereal_mode, planets=_split_csv(planets))
-    _emit(RetrogradeStationFactory.from_iso_range(start, end, **extra), fmt, output)
+    search = (
+        RetrogradeStationFactory.retrograde_periods_from_iso_range
+        if periods
+        else RetrogradeStationFactory.from_iso_range
+    )
+    _emit(search(start, end, **extra), fmt, output)
 
 
 @sky_app.command("mundane")

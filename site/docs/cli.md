@@ -155,6 +155,7 @@ $ kerykeion sky eclipses --start-year 2025 --count 5
 $ kerykeion sky lunations --from 2026-01-01 --to 2026-12-31
 $ kerykeion sky sun-times --from 2026-06-21 --lat 41.9 --lng 12.5 --tz Europe/Rome
 $ kerykeion sky mundane --from 2026-01-01 --to 2026-03-01
+$ kerykeion sky ingresses --from 2026-01-01 --to 2026-12-31 --periods   # sign stays, not events
 $ kerykeion sky phenomena -s ada
 $ kerykeion sky occultations -s ada --planet Venus
 ```

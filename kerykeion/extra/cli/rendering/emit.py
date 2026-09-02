@@ -16,19 +16,19 @@ from typing import Any
 def render(obj: Any, fmt: str, opts: Any = None) -> str:
     """Render *obj* for *fmt* (no trailing newline); *opts* carries the report/chart knobs."""
     if fmt == "json":
-        from kerykeion.cli.rendering.json_out import render_json
+        from kerykeion.extra.cli.rendering.json_out import render_json
 
         return render_json(obj)
     if fmt == "text":
-        from kerykeion.cli.rendering.text import render_text
+        from kerykeion.extra.cli.rendering.text import render_text
 
         return render_text(obj, opts)
     if fmt == "xml":
-        from kerykeion.cli.rendering.xml_out import render_xml
+        from kerykeion.extra.cli.rendering.xml_out import render_xml
 
         return render_xml(obj)
     if fmt == "svg":
-        from kerykeion.cli.rendering.svg_out import render_svg
+        from kerykeion.extra.cli.rendering.svg_out import render_svg
 
         return render_svg(obj, opts)
     raise ValueError(f"unsupported format {fmt!r}")  # pragma: no cover - resolve_format guards

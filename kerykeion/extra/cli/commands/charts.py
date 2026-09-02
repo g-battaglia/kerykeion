@@ -12,9 +12,9 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from kerykeion.cli import subject_resolver
-from kerykeion.cli.commands._shared import _emit, _stored_subject, _subject_from, with_render_flags
-from kerykeion.cli.options import (
+from kerykeion.extra.cli import subject_resolver
+from kerykeion.extra.cli.commands._shared import _emit, _stored_subject, _subject_from, with_render_flags
+from kerykeion.extra.cli.options import (
     DayOpt,
     FixedStarsFlag,
     FormatOpt,
@@ -49,7 +49,7 @@ from kerykeion.cli.options import (
     YearOpt,
     ZodiacTypeOpt,
 )
-from kerykeion.cli.rendering import formats
+from kerykeion.extra.cli.rendering import formats
 
 _RETURN_TYPES = ("Solar", "Lunar")
 # The natal frame a transit wheel must share, as SubjectFlags field → model attribute.

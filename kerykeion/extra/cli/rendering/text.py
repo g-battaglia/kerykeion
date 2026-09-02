@@ -12,7 +12,7 @@ from typing import Any
 
 import pydantic
 
-from kerykeion.cli.rendering.json_out import render_json
+from kerykeion.extra.cli.rendering.json_out import render_json
 
 
 def _report(model: pydantic.BaseModel, opts: Any = None) -> str | None:

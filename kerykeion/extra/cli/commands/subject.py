@@ -12,9 +12,9 @@ from typing import Optional
 
 import typer
 
-from kerykeion.cli import config, profiles, subject_resolver, warnings
-from kerykeion.cli.commands._shared import _emit, _subject_from
-from kerykeion.cli.options import (
+from kerykeion.extra.cli import config, profiles, subject_resolver, warnings
+from kerykeion.extra.cli.commands._shared import _emit, _subject_from
+from kerykeion.extra.cli.options import (
     FixedStarsFlag,
     FormatOpt,
     HousesSystemOpt,
@@ -41,8 +41,8 @@ from kerykeion.cli.options import (
     WithoutFlags,
     ZodiacTypeOpt,
 )
-from kerykeion.cli.rendering import formats
-from kerykeion.cli.typer_app import KerykeionTyper
+from kerykeion.extra.cli.rendering import formats
+from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 subject_app = KerykeionTyper(
     name="subject",

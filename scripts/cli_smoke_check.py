@@ -30,7 +30,7 @@ def _check_import(code: str, label: str) -> bool:
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[str]:
     # ``python -m kerykeion`` is the same code path as the ``kerykeion`` console
-    # script (both reach ``kerykeion/__main__.py`` -> ``kerykeion.cli.main``),
+    # script (both reach ``kerykeion/__main__.py`` -> ``kerykeion.extra.cli.main``),
     # and it does not depend on the console script being on $PATH.
     return subprocess.run(
         [sys.executable, "-m", "kerykeion", *args], capture_output=True, text=True, check=False
@@ -46,22 +46,22 @@ def main() -> int:
     if not _check_import(
         "import kerykeion, sys; "
         "assert 'typer' not in sys.modules, 'typer leaked into import kerykeion'; "
-        "assert 'kerykeion.cli' not in sys.modules, 'cli auto-imported'",
+        "assert 'kerykeion.extra.cli' not in sys.modules, 'cli auto-imported'",
         "bare kerykeion import pulled typer",
     ):
         failures += 1
 
-    # 2. ``import kerykeion.cli`` (the package init) must NOT pull typer either:
-    #    only the leaves (kerykeion.cli.app) do, and only when the CLI runs.
+    # 2. ``import kerykeion.extra.cli`` (the package init) must NOT pull typer either:
+    #    only the leaves (kerykeion.extra.cli.app) do, and only when the CLI runs.
     if not _check_import(
-        "import kerykeion.cli, sys; assert 'typer' not in sys.modules",
-        "kerykeion.cli package init pulled typer",
+        "import kerykeion.extra.cli, sys; assert 'typer' not in sys.modules",
+        "kerykeion.extra.cli package init pulled typer",
     ):
         failures += 1
 
     # 3. The console_scripts entry point is registered and points at main.
     eps = [e for e in entry_points(group="console_scripts") if e.name == "kerykeion"]
-    if not eps or eps[0].value != "kerykeion.cli:main":
+    if not eps or eps[0].value != "kerykeion.extra.cli:main":
         _fail("entry point", f"console_scripts kerykeion missing/wrong: {eps!r}")
         failures += 1
 

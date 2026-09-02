@@ -64,7 +64,7 @@ def runner(deterministic_cli_env):
 
 @pytest.fixture
 def app():
-    from kerykeion.cli.app import app
+    from kerykeion.extra.cli.app import app
 
     return app
 
@@ -74,12 +74,12 @@ def _reset_cli_error_policy():
     """Reset the CLI's process-global error knobs around every test.
 
     ``--traceback`` and ``--warnings-as-errors`` set module globals in
-    :mod:`kerykeion.cli.errors` (via the root callback) that typer never resets,
+    :mod:`kerykeion.extra.cli.errors` (via the root callback) that typer never resets,
     so without this a test that escalates warnings leaks the policy into every
     later test in the same process — making the suite order-dependent. Reset
     before and after so each test starts and ends clean.
     """
-    from kerykeion.cli import errors
+    from kerykeion.extra.cli import errors
 
     errors.set_traceback_enabled(False)
     errors.set_warnings_as_errors(False)
@@ -281,7 +281,7 @@ class TestCallDispatcher:
         # and `--explain` all share ONE object. It must be immutable, or a future
         # caller filtering/extending it (names.pop(...) / names[x] = y) would leak
         # into every later dispatch in the process.
-        import kerykeion.cli.registry as registry
+        import kerykeion.extra.cli.registry as registry
 
         first = registry.public_names()
         assert registry.public_names() is first  # cached → same object
@@ -307,7 +307,7 @@ class TestEntryPoint:
             import sys
             import kerykeion
             assert "typer" not in sys.modules, "typer leaked into import kerykeion"
-            assert "kerykeion.cli" not in sys.modules, "kerykeion.cli auto-imported"
+            assert "kerykeion.extra.cli" not in sys.modules, "kerykeion.extra.cli auto-imported"
             """
         )
         r = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True)
@@ -329,7 +329,7 @@ class TestTtyDetection:
         # The single seam: patch stdout_is_tty and confirm the default format flips.
         # NB formats.py does `from ...io import stdout_is_tty`, so the live reference
         # lives in the formats namespace — patch it there, not in io.
-        from kerykeion.cli.rendering import formats
+        from kerykeion.extra.cli.rendering import formats
 
         monkeypatch.setattr(formats, "stdout_is_tty", lambda: True)
         assert formats.resolve_format(None, None) == "text"
@@ -428,7 +428,7 @@ class TestSamplingDstAwareness:
         from datetime import datetime
 
         from kerykeion import EphemerisDataFactory
-        from kerykeion.cli.sampling import count_samples
+        from kerykeion.extra.cli.sampling import count_samples
 
         start, end = datetime(2024, 10, 26), datetime(2024, 10, 28)
         cli_count = count_samples(start, end, "hours", 1, tz_str="Europe/Rome")
@@ -447,7 +447,7 @@ class TestSamplingDstAwareness:
         # so a range that spans a fall-back boundary still counts whole days.
         from datetime import datetime
 
-        from kerykeion.cli.sampling import count_samples
+        from kerykeion.extra.cli.sampling import count_samples
 
         start, end = datetime(2024, 10, 26), datetime(2024, 10, 28)
         assert count_samples(start, end, "days", 1) == 3
@@ -456,7 +456,7 @@ class TestSamplingDstAwareness:
     def test_count_samples_rejects_non_positive_step(self):
         from datetime import datetime
 
-        from kerykeion.cli.sampling import count_samples
+        from kerykeion.extra.cli.sampling import count_samples
 
         with pytest.raises(ValueError):
             count_samples(datetime(2024, 1, 1), datetime(2024, 1, 2), "days", 0)
@@ -466,8 +466,8 @@ class TestSamplingDstAwareness:
 
 # ── kerykeion status (diagnostics) ───────────────────────────────────────────
 #
-# ``status`` is a stdlib-only diagnostic (kerykeion/cli/diagnostics.py) served
-# both by this Typer command and by the no-extra dispatch in kerykeion.cli.main.
+# ``status`` is a stdlib-only diagnostic (kerykeion/extra/cli/diagnostics.py) served
+# both by this Typer command and by the no-extra dispatch in kerykeion.extra.cli.main.
 # TestStatus exercises the Typer registration; TestNoExtraFallback exercises the
 # stdlib path that a bare ``pip install kerykeion`` (no [cli]) actually sees.
 
@@ -517,7 +517,7 @@ class TestNoExtraFallback:
 
     The dev env has typer installed, and CliRunner runs in-process, so it
     cannot show the no-extra behaviour. We spawn a subprocess that blocks
-    typer/rich via a ``sys.meta_path`` finder and drives ``kerykeion.cli.main``
+    typer/rich via a ``sys.meta_path`` finder and drives ``kerykeion.extra.cli.main``
     the way a bare ``pip install kerykeion`` would. click is NOT blocked: it is
     a transitive of libephemeris (present even without the extra), and the
     dispatch decision is based on typer, not click.
@@ -533,7 +533,7 @@ class TestNoExtraFallback:
                 return None
         sys.meta_path.insert(0, _Blocker())
         sys.argv = ["kerykeion", *sys.argv[1:]]
-        from kerykeion.cli import main
+        from kerykeion.extra.cli import main
         raise SystemExit(main())
         """
     )
@@ -598,7 +598,7 @@ class TestCodeReviewFixes:
     # CompositeSubjectModel | PlanetReturnModel, as in AspectsFactory) must still
     # be recognised as a -s binding site, not misclassified json-only.
     def test_union_subject_param_is_recognised(self):
-        from kerykeion.cli import introspect, registry
+        from kerykeion.extra.cli import introspect, registry
 
         target = registry.resolve_target("AspectsFactory.single_chart_aspects")
         classes = [p.classification for p in introspect.explain(target)]
@@ -623,7 +623,7 @@ class TestCodeReviewFixes:
     # F3: --set on a list-typed profile field (active_points) must coerce to a
     # list, matching --points / --param, not store a string the recipe rejects.
     def test_set_active_points_is_coerced_to_list(self, runner, app, deterministic_cli_env):
-        from kerykeion.cli import profiles
+        from kerykeion.extra.cli import profiles
 
         r = runner.invoke(app, [
             "subject", "save", "bod",
@@ -652,8 +652,8 @@ class TestCodeReviewFixes:
     # F12: --warnings-as-errors must not be bypassed when the renderer itself
     # crashes; the warnings are fatal (exit 9) even then.
     def test_warnings_as_errors_survives_render_crash(self, monkeypatch):
-        import kerykeion.cli.rendering.emit as _emit
-        from kerykeion.cli import errors, warnings
+        import kerykeion.extra.cli.rendering.emit as _emit
+        from kerykeion.extra.cli import errors, warnings
 
         class _Obj:
             ephemeris_warnings = ["fake"]
@@ -681,7 +681,7 @@ class TestCodeReviewFixes:
 
     # F9: a libephemeris coverage/data error maps to exit 6 (ephemeris), not 5/4.
     def test_libephemeris_range_error_is_exit_six(self):
-        from kerykeion.cli import errors
+        from kerykeion.extra.cli import errors
 
         try:
             from libephemeris import EphemerisRangeError
@@ -696,7 +696,7 @@ class TestCodeReviewFixes:
     # F11: main(argv) must honor an explicit argv on the typer path (Click reads
     # sys.argv, so without the swap a passed argv is silently ignored).
     def test_main_honors_explicit_argv(self, monkeypatch):
-        from kerykeion.cli import main
+        from kerykeion.extra.cli import main
 
         # If argv were ignored, Click would see this bogus command line and exit
         # 2 (unknown command). A 0 means the explicit argv won.
@@ -708,7 +708,7 @@ class TestCodeReviewFixes:
     # F7: -o files keep LF endings on every platform (no CRLF translation), so
     # byte-exact JSON/SVG survives a Windows save for jq/diff.
     def test_output_file_uses_lf(self, tmp_path):
-        from kerykeion.cli.rendering.emit import write_output
+        from kerykeion.extra.cli.rendering.emit import write_output
 
         out = tmp_path / "o.json"
         write_output("a\nb", str(out))
@@ -717,7 +717,7 @@ class TestCodeReviewFixes:
     # F6: a saved profile is UTF-8 with LF endings and round-trips, even with a
     # non-ASCII name (the Windows cp1252 default would otherwise raise).
     def test_profile_save_is_utf8_lf_and_round_trips(self, runner, app, deterministic_cli_env):
-        from kerykeion.cli import profiles
+        from kerykeion.extra.cli import profiles
 
         r = runner.invoke(app, [
             "subject", "save", "maja",
@@ -744,7 +744,7 @@ class TestThirdReviewPass:
     # HousesSystemIdentifier Literal. Porphyry is "O" (not "B" = Alcabitius);
     # APC is "Y" (not "n", which is not even a member).
     def test_house_name_map_matches_the_literal(self):
-        from kerykeion.cli.subject_resolver import resolve_house_system
+        from kerykeion.extra.cli.subject_resolver import resolve_house_system
 
         assert resolve_house_system("porphyry") == "O"
         assert resolve_house_system("porphyrius") == "O"
@@ -754,7 +754,7 @@ class TestThirdReviewPass:
     # #6: an unknown single letter is rejected here with a helpful message, not
     # deferred to a confusing pydantic "input does not match the literal".
     def test_unknown_house_letter_is_rejected_cleanly(self):
-        from kerykeion.cli.subject_resolver import resolve_house_system
+        from kerykeion.extra.cli.subject_resolver import resolve_house_system
 
         with pytest.raises(ValueError) as ei:
             resolve_house_system("G")
@@ -780,7 +780,7 @@ class TestThirdReviewPass:
     # closes the buffer (a CliRunner/pytest-capture artefact, not a CLI bug — a
     # bare-process run produces both wheels Sidereal).
     def test_transit_inherits_natal_zodiac_frame(self, deterministic_cli_env):
-        from kerykeion.cli import config, profiles
+        from kerykeion.extra.cli import config, profiles
 
         # Persist a Sidereal profile into the isolated store.
         profiles.save(
@@ -797,7 +797,7 @@ class TestThirdReviewPass:
         out = deterministic_cli_env / "transit.json"
         script = textwrap.dedent(f"""
             import sys
-            from kerykeion.cli import main
+            from kerykeion.extra.cli import main
             sys.argv = ["kerykeion", "transit", "-s", "cyb", "-f", "json", "-o", {str(out)!r}]
             sys.exit(main())
         """)
@@ -861,7 +861,7 @@ class TestThirdReviewPass:
     # #9: a dict/Mapping --param is parsed as JSON, not forwarded as a literal
     # string that the factory then rejects with a confusing TypeError.
     def test_call_param_dict_is_parsed_as_json(self):
-        from kerykeion.cli.introspect import coerce_value
+        from kerykeion.extra.cli.introspect import coerce_value
 
         assert coerce_value(dict, '{"sun": 1.5}') == {"sun": 1.5}
         with pytest.raises(ValueError):
@@ -872,7 +872,7 @@ class TestThirdReviewPass:
     def test_emit_warnings_honors_redirected_stderr(self, monkeypatch):
         import io
 
-        from kerykeion.cli import warnings as _w
+        from kerykeion.extra.cli import warnings as _w
 
         class _Warn:
             code = "X"
@@ -887,7 +887,7 @@ class TestThirdReviewPass:
     # #12: -o into a not-yet-existing directory creates it (mirroring subject
     # save) instead of failing with a confusing exit-4 "invalid input".
     def test_output_file_creates_parent_dir(self, tmp_path):
-        from kerykeion.cli.rendering.emit import write_output
+        from kerykeion.extra.cli.rendering.emit import write_output
 
         out = tmp_path / "new" / "deep" / "o.json"
         write_output("{}", str(out))
@@ -896,7 +896,7 @@ class TestThirdReviewPass:
     # #13: a lookup miss for -s must not create the profile store as a side
     # effect of gathering "did you mean" suggestions.
     def test_resolve_path_does_not_create_store_on_miss(self, deterministic_cli_env, monkeypatch):
-        from kerykeion.cli import config, profiles
+        from kerykeion.extra.cli import config, profiles
 
         store = config.profiles_dir()
         assert not store.exists()
@@ -910,7 +910,7 @@ class TestThirdReviewPass:
     def test_output_with_warnings_collects_from_warning_source(self, monkeypatch):
         import io
 
-        from kerykeion.cli import warnings as _w
+        from kerykeion.extra.cli import warnings as _w
 
         class _Sink:  # what is rendered (a compact summary): no warnings
             pass
@@ -948,7 +948,7 @@ class TestXhighReviewFixes:
 
     # sky: inline --lat/--lng/--tz take precedence over the profile's location.
     def test_sky_location_inline_overrides_profile(self, ada_profile):
-        from kerykeion.cli.commands.sky import _location
+        from kerykeion.extra.cli.commands.sky import _location
 
         # ada is London (51.5074 / -0.1278); inline 40 / 10 wins.
         assert _location(ada_profile, 40.0, 10.0, "Europe/Rome", "t") == (
@@ -965,7 +965,7 @@ class TestXhighReviewFixes:
     # sky voc range: --tz is honoured by attaching the zone's offset to naive
     # bounds (from_iso_range is UTC-only).
     def test_sky_attach_tz_offset_for_naive_bound(self):
-        from kerykeion.cli.commands.sky import _attach_tz_offset
+        from kerykeion.extra.cli.commands.sky import _attach_tz_offset
 
         # Rome summer is +02:00; a naive bound becomes offset-aware.
         assert _attach_tz_offset("2025-06-01T00:00:00", "Europe/Rome", "voc") == (
@@ -983,7 +983,7 @@ class TestXhighReviewFixes:
 
     # warnings: a plural `subjects` list (RelationshipScoreModel) is recursed.
     def test_collect_warnings_recurses_plural_subjects(self):
-        from kerykeion.cli.warnings import collect_warnings
+        from kerykeion.extra.cli.warnings import collect_warnings
 
         class _Warn:
             code = "X"
@@ -1006,7 +1006,7 @@ class TestXhighReviewFixes:
     def test_coerce_value_non_string_literal(self):
         from typing import Literal
 
-        from kerykeion.cli.introspect import coerce_value
+        from kerykeion.extra.cli.introspect import coerce_value
 
         assert coerce_value(Literal[1, 2], "1") == 1
         assert coerce_value(Literal[1, 2], "2") == 2
@@ -1020,7 +1020,7 @@ class TestXhighReviewFixes:
     # introspect: PEP 604 `X | Y` unions are classified/coerced, not misread.
     def test_introspect_handles_pep604_union(self):
         from kerykeion import AstrologicalSubjectModel
-        from kerykeion.cli.introspect import _classify, _is_subject, _strip_optional
+        from kerykeion.extra.cli.introspect import _classify, _is_subject, _strip_optional
 
         assert _strip_optional(int | None) is int
         assert _classify(int | str | None) == "cli"
@@ -1031,7 +1031,7 @@ class TestXhighReviewFixes:
     def test_count_samples_mixed_awareness_is_clean_error(self):
         from datetime import datetime, timezone
 
-        from kerykeion.cli.sampling import count_samples
+        from kerykeion.extra.cli.sampling import count_samples
 
         with pytest.raises(ValueError, match="same ISO form"):
             count_samples(
@@ -1042,7 +1042,7 @@ class TestXhighReviewFixes:
 
     # sky: --zodiac accepts the casing the library accepts.
     def test_zodiac_kwargs_case_insensitive(self):
-        from kerykeion.cli.commands.sky import _zodiac_kwargs
+        from kerykeion.extra.cli.commands.sky import _zodiac_kwargs
 
         assert _zodiac_kwargs("tropical", None)["zodiac_type"] == "Tropical"
         assert _zodiac_kwargs("SIDEREAL", None)["zodiac_type"] == "Sidereal"
@@ -1062,7 +1062,7 @@ class TestXhighReviewFixes:
 
     # sky _moment: an aware instant in the fold's second reading is surfaced.
     def test_moment_rejects_ambiguous_fold(self):
-        from kerykeion.cli.commands.sky import _moment
+        from kerykeion.extra.cli.commands.sky import _moment
 
         # 2024-10-27 01:30 UTC = 02:30 Europe/Rome, the second (CET/fold=1) reading.
         with pytest.raises(ValueError, match="ambiguous wall time"):
@@ -1074,7 +1074,7 @@ class TestXhighReviewFixes:
         from datetime import datetime
 
         from kerykeion import EphemerisDataFactory
-        from kerykeion.cli.sampling import count_samples
+        from kerykeion.extra.cli.sampling import count_samples
 
         # Both bounds sit inside Rome's 2024-10-27 fall-back fold.
         start = datetime(2024, 10, 27, 1, 30)
@@ -1091,7 +1091,7 @@ class TestXhighReviewFixes:
         from datetime import datetime, timezone
 
         from kerykeion import EphemerisDataFactory
-        from kerykeion.cli.sampling import count_samples
+        from kerykeion.extra.cli.sampling import count_samples
 
         start = datetime(2024, 3, 30, 12, 0, tzinfo=timezone.utc)
         end = datetime(2024, 3, 31, 12, 0, tzinfo=timezone.utc)
@@ -1109,7 +1109,7 @@ class TestXhighReviewFixes:
         import inspect
 
         from kerykeion import AstrologicalSubjectFactory
-        from kerykeion.cli import subject_resolver as sr
+        from kerykeion.extra.cli import subject_resolver as sr
 
         captured = {}
         # Preserve the real parameter names on the spy: _kwargs_for introspects
@@ -1137,7 +1137,7 @@ class TestXhighReviewFixes:
     def test_coerce_scalar_maps_none_to_None(self):
         from typing import Any
 
-        from kerykeion.cli.introspect import coerce_value
+        from kerykeion.extra.cli.introspect import coerce_value
 
         assert coerce_value(Any, "none") is None
         assert coerce_value(Any, "null") is None
@@ -1153,7 +1153,7 @@ class TestFullPrReviewFixes:
     def test_sequence_param_coerces_like_a_list(self):
         from typing import Optional, Sequence
 
-        from kerykeion.cli.introspect import CLI, _classify, coerce_value
+        from kerykeion.extra.cli.introspect import CLI, _classify, coerce_value
 
         assert coerce_value(Optional[Sequence[str]], "Sun,Moon") == ["Sun", "Moon"]
         # --explain must advertise it as usable from the CLI, not "json-only".
@@ -1174,7 +1174,7 @@ class TestFullPrReviewFixes:
     # Upper-casing every letter made 'i' unreachable and silently re-framed a
     # transit ring inheriting a natal 'i'.
     def test_house_letter_case_is_preserved_when_valid(self):
-        from kerykeion.cli.subject_resolver import resolve_house_system
+        from kerykeion.extra.cli.subject_resolver import resolve_house_system
 
         assert resolve_house_system("i") == "i"
         assert resolve_house_system("I") == "I"
@@ -1187,7 +1187,7 @@ class TestFullPrReviewFixes:
     # Bare ``@app.command`` (no parentheses) silently registered nothing and
     # rebound the module symbol to typer's decorator.
     def test_bare_command_decorator_registers(self):
-        from kerykeion.cli.typer_app import KerykeionTyper
+        from kerykeion.extra.cli.typer_app import KerykeionTyper
 
         t = KerykeionTyper()
 
@@ -1202,7 +1202,7 @@ class TestFullPrReviewFixes:
     def test_save_failure_leaves_the_previous_profile_intact(
         self, runner, app, ada_profile, monkeypatch, deterministic_cli_env
     ):
-        from kerykeion.cli import config, profiles
+        from kerykeion.extra.cli import config, profiles
 
         path = config.profile_path(ada_profile)
         original = path.read_text(encoding="utf-8")
@@ -1220,7 +1220,7 @@ class TestFullPrReviewFixes:
 
     # The store holds PII: BOTH the app dir and the subjects dir must be 0700.
     def test_profile_store_dirs_are_private(self, runner, app, ada_profile):
-        from kerykeion.cli import config
+        from kerykeion.extra.cli import config
 
         assert config.app_dir().stat().st_mode & 0o777 == 0o700
         assert config.profiles_dir().stat().st_mode & 0o777 == 0o700
@@ -1258,8 +1258,8 @@ class TestFullPrReviewFixes:
 
     # sky must not build (and discard) a subject when every coordinate is inline.
     def test_sky_skips_subject_build_when_fully_inline(self, monkeypatch, ada_profile):
-        from kerykeion.cli import subject_resolver
-        from kerykeion.cli.commands import sky
+        from kerykeion.extra.cli import subject_resolver
+        from kerykeion.extra.cli.commands import sky
 
         def boom(*a, **k):  # pragma: no cover - must never run
             raise AssertionError("resolve_subject called despite complete inline coords")
@@ -1275,7 +1275,7 @@ class TestFullPrReviewFixes:
     # The rendering helpers that bypassed -o and the warnings funnel are gone;
     # write_output/render are the only funnel.
     def test_stdout_bypassing_emitters_are_gone(self):
-        from kerykeion.cli.rendering import emit, json_out, svg_out, text, xml_out
+        from kerykeion.extra.cli.rendering import emit, json_out, svg_out, text, xml_out
 
         assert not hasattr(emit, "emit")
         for module, name in (
@@ -1371,7 +1371,7 @@ class TestRenderOptions:
     # `style` is annotated with an unevaluated forward-ref in chart_drawer, so
     # reading the raw signature yields no choices and would reject everything.
     def test_chart_choices_resolve_forward_refs(self):
-        from kerykeion.cli.rendering.options import chart_choices
+        from kerykeion.extra.cli.rendering.options import chart_choices
 
         assert chart_choices("style") == ("classic", "modern")
         assert "dark" in chart_choices("theme")
@@ -1448,7 +1448,7 @@ class TestRenderOptions:
          "technique relocate"],
     )
     def test_every_chart_command_exposes_the_render_flags(self, runner, app, command):
-        from kerykeion.cli.commands._shared import _RENDER_FLAGS
+        from kerykeion.extra.cli.commands._shared import _RENDER_FLAGS
 
         result = runner.invoke(app, [*command.split(), "--help"])
         assert result.exit_code == 0
@@ -1459,7 +1459,7 @@ class TestRenderOptions:
     # The decorated command receives the assembled RenderOptions as `opts`; the
     # flags themselves never reach its body.
     def test_render_flags_reach_the_command_as_options(self):
-        from kerykeion.cli.commands import charts
+        from kerykeion.extra.cli.commands import charts
 
         parameters = inspect.signature(charts.natal).parameters
         assert "opts" not in parameters, "opts is supplied by the decorator, not by typer"
@@ -1482,6 +1482,11 @@ class TestCuratedCommands:
         ["technique", "solar-arc", "-s", "ada", "--target-year", "2026"],
         ["technique", "fixed-stars", "-s", "ada", "--orb", "1.5"],
         ["sky", "mundane", "--from", "2025-01-01", "--to", "2025-02-01"],
+        ["sky", "lunations", "--from", "2025-01-01", "--to", "2025-02-01"],
+        ["sky", "ingresses", "--from", "2025-01-01", "--to", "2025-02-01", "--planets", "Sun"],
+        ["sky", "ingresses", "--from", "2025-01-01", "--to", "2025-02-01", "--planets", "Sun", "--periods"],
+        ["sky", "stations", "--from", "2025-01-01", "--to", "2025-04-01", "--planets", "Mercury"],
+        ["sky", "stations", "--from", "2025-01-01", "--to", "2025-04-01", "--planets", "Mercury", "--periods"],
         ["sky", "phenomena", "-s", "ada"],
         ["sky", "occultations", "-s", "ada", "--planet", "Venus", "--count", "2"],
     ])
@@ -1527,11 +1532,38 @@ class TestCuratedCommands:
         assert "--planet" in result.output
 
 
+class TestPeriodQueries:
+    """``--periods`` reaches the a92 span queries, not a filtered event scan."""
+
+    def test_ingress_periods_match_the_factory(self, runner, app):
+        from kerykeion import SignIngressFactory
+
+        result = runner.invoke(app, [
+            "sky", "ingresses", "--from", "2025-01-01", "--to", "2025-02-01",
+            "--planets", "Sun,Mercury", "--periods", "-f", "json",
+        ])
+        assert result.exit_code == 0, result.output
+        expected = SignIngressFactory.sign_periods_from_iso_range("2025-01-01", "2025-02-01", planets=["Sun", "Mercury"])
+        assert json.loads(result.output) == json.loads(expected.model_dump_json())
+        assert json.loads(result.output)["periods"], "a month of Sun and Mercury has at least one sign stay"
+
+    def test_station_periods_match_the_factory(self, runner, app):
+        from kerykeion import RetrogradeStationFactory
+
+        result = runner.invoke(app, [
+            "sky", "stations", "--from", "2025-01-01", "--to", "2025-04-01",
+            "--planets", "Mercury", "--periods", "-f", "json",
+        ])
+        assert result.exit_code == 0, result.output
+        expected = RetrogradeStationFactory.retrograde_periods_from_iso_range("2025-01-01", "2025-04-01", planets=["Mercury"])
+        assert json.loads(result.output) == json.loads(expected.model_dump_json())
+
+
 class TestAspectsFlagHasOneMeaning:
     """`--aspects` used to mean angle-names on one command and nothing elsewhere."""
 
     def test_name_and_name_with_orb_both_parse(self):
-        from kerykeion.cli.commands._shared import _active_aspects, _parse_aspects
+        from kerykeion.extra.cli.commands._shared import _active_aspects, _parse_aspects
 
         parsed = _parse_aspects(["trine:6", "square"])
         assert parsed == [("trine", 6.0), ("square", None)]
@@ -1545,7 +1577,7 @@ class TestAspectsFlagHasOneMeaning:
         ]
 
     def test_a_non_numeric_orb_is_named(self):
-        from kerykeion.cli.commands._shared import _parse_aspects
+        from kerykeion.extra.cli.commands._shared import _parse_aspects
 
         with pytest.raises(ValueError, match="is not a number for the orb"):
             _parse_aspects(["trine:wide"])
@@ -1553,7 +1585,7 @@ class TestAspectsFlagHasOneMeaning:
     # The factories that take plain names must refuse an orb instead of dropping
     # it — a silently ignored orb is the failure mode this shared parser avoids.
     def test_orb_is_refused_where_it_cannot_be_used(self):
-        from kerykeion.cli.commands._shared import _aspect_names, _parse_aspects
+        from kerykeion.extra.cli.commands._shared import _aspect_names, _parse_aspects
 
         assert _aspect_names(_parse_aspects(["trine", "square"]), "mundane") == [
             "trine", "square",
@@ -1602,7 +1634,7 @@ class TestInfoAndDoctor:
     # info must describe what the flags actually accept, so it is read from the
     # resolver's own tables rather than a copy.
     def test_points_and_stars_match_the_resolver(self, runner, app):
-        from kerykeion.cli import subject_resolver
+        from kerykeion.extra.cli import subject_resolver
 
         points = json.loads(runner.invoke(app, ["info", "points", "-f", "json"]).output)
         stars = json.loads(runner.invoke(app, ["info", "stars", "-f", "json"]).output)
@@ -1668,7 +1700,7 @@ class TestSnapshot:
         return name
 
     def _profile_path(self, name):
-        from kerykeion.cli import config
+        from kerykeion.extra.cli import config
 
         return config.profile_path(name)
 
@@ -1780,7 +1812,7 @@ class TestFourthReviewPass:
 
     @staticmethod
     def _save_profile(store_name: str, **recipe):
-        from kerykeion.cli import config, profiles
+        from kerykeion.extra.cli import config, profiles
 
         base = dict(
             name=store_name.capitalize(), mode="birth",
@@ -1802,7 +1834,7 @@ class TestFourthReviewPass:
         # {args!r} is a flat list literal, so `+` splices it after the prog name.
         script = textwrap.dedent(f"""
             import sys
-            from kerykeion.cli import main
+            from kerykeion.extra.cli import main
             sys.argv = ["kerykeion"] + {args!r}
             sys.exit(main())
         """)
@@ -1928,7 +1960,7 @@ class TestFourthReviewPass:
     # other bad flag, not kerykeion-level errors (exit 5) that pipeline
     # branching cannot distinguish from library bugs.
     def test_sidereal_mode_is_canonicalised(self):
-        from kerykeion.cli.subject_resolver import resolve_sidereal_mode
+        from kerykeion.extra.cli.subject_resolver import resolve_sidereal_mode
 
         assert resolve_sidereal_mode("lahiri") == "LAHIRI"
         assert resolve_sidereal_mode("USER") == "USER"
@@ -1937,7 +1969,7 @@ class TestFourthReviewPass:
         assert "LAHIRI" in str(ei.value)  # the difflib hint points at the fix
 
     def test_perspective_is_canonicalised(self):
-        from kerykeion.cli.subject_resolver import resolve_perspective
+        from kerykeion.extra.cli.subject_resolver import resolve_perspective
 
         assert resolve_perspective("apparent geocentric") == "Apparent Geocentric"
         assert resolve_perspective("Topocentric") == "Topocentric"
@@ -1981,7 +2013,7 @@ class TestFourthReviewPass:
     # #8: a consumer closing the pipe (`… | head`) is a benign truncation:
     # exit 0, not "invalid input" (4) with a broken-pipe message.
     def test_broken_pipe_is_a_benign_truncation(self, monkeypatch):
-        from kerykeion.cli import errors
+        from kerykeion.extra.cli import errors
 
         assert errors.classify(BrokenPipeError()) == errors.ExitCode.OK
         # Neutralise the stdout-to-devnull redirect: the real one would point

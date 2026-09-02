@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Typer application assembly for the kerykeion CLI.
 
-Imported lazily by :func:`kerykeion.cli.main`. typer is imported at module
+Imported lazily by :func:`kerykeion.extra.cli.main`. typer is imported at module
 level on purpose — that is what lets the entry point detect a missing ``[cli]``
 extra. No kerykeion symbol is imported at module level, which keeps the
 cold-import gate green and ``import kerykeion`` typer-free.
@@ -14,7 +14,7 @@ from typing import Annotated
 
 import typer
 
-from kerykeion.cli.typer_app import KerykeionTyper
+from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 try:
     __version__ = _pkg_version("kerykeion")
@@ -44,7 +44,7 @@ def _root(
         bool, typer.Option("--warnings-as-errors", help="Exit 9 when any ephemeris warning or house fallback occurs.")
     ] = False,
 ) -> None:
-    from kerykeion.cli import errors
+    from kerykeion.extra.cli import errors
 
     errors.set_traceback_enabled(traceback)
     errors.set_warnings_as_errors(warnings_as_errors)
@@ -57,7 +57,7 @@ def _root(
 
 
 def _register_commands() -> None:
-    from kerykeion.cli.commands import analysis, call, charts, info, series, sky, status, subject, technique
+    from kerykeion.extra.cli.commands import analysis, call, charts, info, series, sky, status, subject, technique
 
     app.command(name="status")(status.status)  # stdlib-only; also served without the extra
     app.command(name="doctor")(info.doctor)  # status with a verdict
@@ -88,12 +88,12 @@ _register_commands()
 
 
 def run() -> None:
-    """Entry point invoked by :func:`kerykeion.cli.main`; anything that escapes Click becomes a classified exit."""
+    """Entry point invoked by :func:`kerykeion.extra.cli.main`; anything that escapes Click becomes a classified exit."""
     try:
         app()
     except SystemExit:
         raise
     except BaseException as exc:  # noqa: BLE001 — the whole point is to catch all
-        from kerykeion.cli.errors import handle_uncaught
+        from kerykeion.extra.cli.errors import handle_uncaught
 
         handle_uncaught(exc)

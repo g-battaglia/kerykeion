@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import typer
 
-from kerykeion.cli.errors import error_boundary
+from kerykeion.extra.cli.errors import error_boundary
 
 
 class KerykeionTyper(typer.Typer):

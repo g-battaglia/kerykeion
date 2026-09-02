@@ -18,7 +18,7 @@ from typing import Any, Optional
 
 import pydantic
 
-from kerykeion.cli import config
+from kerykeion.extra.cli import config
 
 PROFILE_FORMAT_VERSION = 1
 

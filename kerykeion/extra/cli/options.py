@@ -249,6 +249,14 @@ PhaseOpt = Annotated[
         help="Lunation phase to include (repeatable): new | first_quarter | full | last_quarter. Default: all.",
     ),
 ]
+PeriodsFlag = Annotated[
+    Bool,
+    sky(
+        "--periods",
+        help="Report the spans instead of the events: sign stays (ingresses) or retrograde spans (stations), "
+        "clipped to the range.",
+    ),
+]
 ZodiacSkyOpt = Annotated[Str, sky("--zodiac", help="Tropical | Sidereal (sky searches).")]
 SiderealSkyOpt = Annotated[Str, sky("--sidereal-mode", help="Ayanamsa for sidereal sky searches.")]
 PlanetIdOpt = Annotated[

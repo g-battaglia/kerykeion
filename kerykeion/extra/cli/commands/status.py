@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""``kerykeion status`` on the Typer path — a thin wrapper over :mod:`kerykeion.cli.diagnostics`, shared with the no-extra path."""
+"""``kerykeion status`` on the Typer path — a thin wrapper over :mod:`kerykeion.extra.cli.diagnostics`, shared with the no-extra path."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Annotated
 
 import typer
 
-from kerykeion.cli import diagnostics
+from kerykeion.extra.cli import diagnostics
 
 
 def status(

@@ -13,8 +13,8 @@ import typing
 from datetime import datetime
 from typing import Any, Callable, Optional, TypeVar
 
-from kerykeion.cli import options, warnings
-from kerykeion.cli.rendering import formats
+from kerykeion.extra.cli import options, warnings
+from kerykeion.extra.cli.rendering import formats
 
 _C = TypeVar("_C", bound=Callable[..., Any])
 
@@ -33,7 +33,7 @@ def _stored_subject(spec: Optional[str], cmd: str, flag: str = "-s", **flags: An
     """The stored subject a command names with ``-s`` (or ``-S``), or a usable error."""
     if not spec:
         raise ValueError(f"{cmd} needs {flag} <profile>")
-    from kerykeion.cli import subject_resolver
+    from kerykeion.extra.cli import subject_resolver
 
     return subject_resolver.resolve_subject(subject_resolver.SubjectFlags(**flags), spec)
 
@@ -136,7 +136,7 @@ _SUBJECT_FLAGS = (
 
 def _subject_from(scope: dict, **overrides: object):
     """``SubjectFlags`` from a command's ``locals()``; *overrides* replace flags the command does not expose."""
-    from kerykeion.cli import subject_resolver
+    from kerykeion.extra.cli import subject_resolver
 
     missing = [name for name in _SUBJECT_FLAGS if name not in scope and name not in overrides]
     if missing:
@@ -177,7 +177,7 @@ _RENDER_FLAGS: dict[str, tuple[Any, Optional[str]]] = {
 
 def _render_options(given: dict[str, Any]) -> object:
     """The render flags → ``RenderOptions`` (``None`` if none were given)."""
-    from kerykeion.cli.rendering import options as render_options
+    from kerykeion.extra.cli.rendering import options as render_options
 
     kwargs = {param: given[flag] for flag, (_, param) in _RENDER_FLAGS.items() if param}
     kwargs["include_aspects"] = False if given["no_aspects"] else None  # not passing it stays "not given"

@@ -84,12 +84,18 @@ kerykeion sky hours -s ada --from 2025-06-01T12:00 -f json | jq -r '.day_ruler'
 kerykeion sky lunations --from 2025-01-01 --to 2025-03-01 -f json | jq 'length'
 kerykeion sky ingresses --from 2025-01-01 --to 2025-06-01 -f json | jq 'length'
 kerykeion sky stations --from 2025-01-01 --to 2025-06-01 -f json | jq 'length'
+kerykeion sky ingresses --from 2025-01-01 --to 2025-06-01 --periods -f json | jq '.periods | length'
+kerykeion sky stations --from 2025-01-01 --to 2025-06-01 --periods -f json | jq '.periods | length'
 kerykeion sky mundane --from 2025-01-01 --to 2025-02-01 -f json | jq 'length'
 kerykeion sky eclipses --start-year 2025 --count 2 -f json | jq 'length'
 kerykeion sky voc --from 2025-01-01 --to 2025-01-10 --tz UTC -f json | jq 'length'
 kerykeion sky phenomena -s ada -f json | jq 'keys | length'
 kerykeion sky occultations -s ada --planet Venus --count 2 -f json | jq 'length'
 ```
+
+`--periods` on `ingresses` and `stations` reports the spans instead of the
+events — contiguous sign stays, or retrograde spans — clipped to the range, each
+flagged `start_clipped`/`end_clipped` when it began before or outlives it.
 
 `voc` ranges are UTC: pass `--tz` (or a profile) so naive bounds are interpreted
 in that zone. `occultations` searches forward from the subject's moment and

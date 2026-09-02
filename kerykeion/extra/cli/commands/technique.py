@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from kerykeion.cli.commands._shared import (
+from kerykeion.extra.cli.commands._shared import (
     _aspect_names,
     _choose,
     _emit,
@@ -20,8 +20,8 @@ from kerykeion.cli.commands._shared import (
     _stored_subject,
     with_render_flags,
 )
-from kerykeion.cli.commands.charts import _emit_subject_or_chart
-from kerykeion.cli.options import (
+from kerykeion.extra.cli.commands.charts import _emit_subject_or_chart
+from kerykeion.extra.cli.options import (
     AcgLatRangeOpt,
     AcgStepOpt,
     AspectOrbOpt,
@@ -53,7 +53,7 @@ from kerykeion.cli.options import (
     YearsAfterOpt,
     YearsBeforeOpt,
 )
-from kerykeion.cli.typer_app import KerykeionTyper
+from kerykeion.extra.cli.typer_app import KerykeionTyper
 
 technique_app = KerykeionTyper(
     name="technique",
@@ -274,7 +274,7 @@ def nodes(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Planetary nodes (ascending/descending, perihelion/aphelion)."""
+    """Planetary nodes and apsides: ascending/descending, perihelion/aphelion (perigee/apogee for the Moon)."""
     from kerykeion import PlanetaryNodesFactory
 
     subject = _stored_subject(profile, "nodes")
@@ -311,7 +311,7 @@ def solar_arc(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Solar-arc directions to a target year or moment (the sibling of ``progression``)."""
+    """Solar-arc directions to a target year or moment (the sibling of progression)."""
     from kerykeion import SolarArcFactory
 
     subject = _stored_subject(profile, "solar-arc")

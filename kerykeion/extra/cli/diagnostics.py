@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """The ``kerykeion status`` core — runtime introspection, stdlib-only.
 
-Shared by the Typer command and the no-extra dispatch in ``kerykeion.cli.main``,
-so it imports neither typer nor rich, and imports kerykeion only inside
-:func:`gather_status` (``--version``/``--help`` skip that ~1.5 s init). Every
+Shared by the Typer command and the no-extra dispatch in ``kerykeion.extra.cli.main``,
+so it imports neither typer nor rich; kerykeion itself is imported only inside
+:func:`gather_status`, so the module loads on any install. Every
 probe is defensive: a failing accessor becomes a labelled ``<error>`` field,
 never an abort — a diagnostic's job is to surface state, not to crash on it.
 """

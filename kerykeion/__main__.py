@@ -7,6 +7,6 @@ so adding it cannot pull the CLI (and typer) into the library's import path.
 The import-graph cold-import gate skips every ``__main__`` for the same reason.
 """
 
-from kerykeion.cli import main
+from kerykeion.extra.cli import main
 
 raise SystemExit(main())

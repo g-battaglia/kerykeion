@@ -82,7 +82,7 @@ def _stdlib_dispatch(args: list[str]) -> int:
                 f"kerykeion: error: unknown option for 'status': {unknown[0]!r}\nHint: 'status' accepts only --json.\n"
             )
             return 4
-        from kerykeion.cli import diagnostics
+        from kerykeion.extra.cli import diagnostics
 
         diagnostics.render(json_out="--json" in rest)
         return 0
@@ -96,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
     if not _typer_available():
         return _stdlib_dispatch(args)
     try:
-        from kerykeion.cli.app import run
+        from kerykeion.extra.cli.app import run
     except ModuleNotFoundError as exc:
         if exc.name in {"typer", "rich"}:  # find_spec saw typer but the install is broken
             return _stdlib_dispatch(args)

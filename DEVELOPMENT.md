@@ -162,7 +162,7 @@ uv run poe skill:cli:smoke
 > group. This is intentional, not redundancy: `pyrightconfig.json` runs in
 > `basic` mode where `reportMissingImports` is an error and includes the whole
 > `kerykeion/` tree — so without `typer`/`rich` in the dev environment **every
-> contributor's `poe typecheck` fails** on the `kerykeion/cli/` imports. The
+> contributor's `poe typecheck` fails** on the `kerykeion/extra/cli/` imports. The
 > extra is what a user installs; the dev group is what a contributor needs to
 > type-check. Never "clean up" one away without removing the other.
 
@@ -205,7 +205,8 @@ kerykeion/
 │   ├── eclipses/                # Localized solar and lunar eclipse search
 │   ├── ephemeris_backend/       # Backend selection (libephemeris/swisseph) and the ephemeris lock
 │   ├── ephemeris_data/          # EphemerisDataFactory — time-series ephemeris
-│   ├── cli/                     # Optional CLI — install with kerykeion[cli]; never imported by the library
+│   ├── extra/                   # Optional extras, each behind a dependency group; never imported by the library
+│   │   └── cli/                 # The command-line interface — install with kerykeion[cli]
 │   ├── firdaria/                # Firdaria (Firdariyyat), the Persian time-lord technique
 │   ├── fixed_stars/             # Dynamic fixed-star discovery and catalog
 │   ├── geonames/                # GeoNames city/timezone lookup (the only networked module)

@@ -97,7 +97,7 @@ all = ["kerykeion[swiss]", "kerykeion[cli]"]
 # ``--version``, ``--help``); every other subcommand prints an install hint and
 # exits 3, so the bare command is useful out of the box and never crashes with a
 # ModuleNotFoundError traceback.
-kerykeion = "kerykeion.cli:main"
+kerykeion = "kerykeion.extra.cli:main"
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"

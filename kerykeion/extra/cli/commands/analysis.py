@@ -11,8 +11,8 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from kerykeion.cli.commands._shared import _active_aspects, _emit, _given, _parse_aspects, _split_csv, _stored_subject
-from kerykeion.cli.options import (
+from kerykeion.extra.cli.commands._shared import _active_aspects, _emit, _given, _parse_aspects, _split_csv, _stored_subject
+from kerykeion.extra.cli.options import (
     AccidentalDignitiesFlag,
     AspectsOpt,
     AxisOrbLimitOpt,

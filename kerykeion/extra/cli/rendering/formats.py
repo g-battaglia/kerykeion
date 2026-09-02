@@ -6,7 +6,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from kerykeion.cli.io import stdout_is_tty
+from kerykeion.extra.cli.io import stdout_is_tty
 
 VALID_FORMATS = ("text", "json", "xml", "svg")
 _SUFFIX_FORMATS = {"svg": "svg", "json": "json", "xml": "xml", "txt": "text", "text": "text"}

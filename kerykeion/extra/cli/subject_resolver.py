@@ -5,7 +5,7 @@ Precedence, lowest to highest: library defaults → profile recipe → inline fl
 Every flag is ``Optional`` and ``None`` means "not given", so it overrides
 nothing. Dates go through a regex, never ``date.fromisoformat`` (it rejects
 year < 1, and BCE is a real case). No kerykeion import at module level: the
-cold-import gate keeps ``import kerykeion.cli`` cheap.
+cold-import gate keeps ``import kerykeion.extra.cli`` cheap.
 """
 
 from __future__ import annotations
@@ -193,7 +193,7 @@ def resolve_fixed_stars(value: Optional[str]) -> Optional[list[str]]:
 
 def _coerce_set_value(annotation: Any, raw: str) -> Any:
     """Coerce a ``--set key=value`` for a ``ProfileInput`` field: lists split on commas, scalars as ``--param``."""
-    from kerykeion.cli.introspect import coerce_scalar
+    from kerykeion.extra.cli.introspect import coerce_scalar
 
     if typing.get_origin(annotation) is typing.Union:
         (annotation,) = [a for a in typing.get_args(annotation) if a is not type(None)] or (annotation,)
@@ -243,7 +243,7 @@ def _profile_input_dict(profile_spec: Optional[str]) -> dict[str, Any]:
     """The non-None recipe fields of a profile, with its ``extra`` (``--set`` values) folded in."""
     if profile_spec is None:
         return {}
-    from kerykeion.cli import profiles
+    from kerykeion.extra.cli import profiles
 
     base = profiles.load(profiles.resolve_path(profile_spec)).input.model_dump(exclude_none=True)
     extra = base.pop("extra", None) or {}
@@ -263,7 +263,7 @@ def _apply_set_flags(merged: dict[str, Any], set_flags: list[str]) -> None:
     """``--set key=value``, whitelisted against the recipe shape (``ProfileInput``), never the raw factory signature."""
     if not set_flags:
         return
-    from kerykeion.cli.profiles import ProfileInput
+    from kerykeion.extra.cli.profiles import ProfileInput
 
     allowed = set(ProfileInput.model_fields) - {"extra"}
     for item in set_flags:
@@ -458,7 +458,7 @@ def _subject_from_snapshot(flags: SubjectFlags, profile_spec: Optional[str]):
     """The stored subject, only when the read is unambiguous: a profile, no inline override, matching provenance."""
     if profile_spec is None or flags != SubjectFlags():
         return None
-    from kerykeion.cli import profiles
+    from kerykeion.extra.cli import profiles
 
     try:
         profile = profiles.load(profiles.resolve_path(profile_spec))

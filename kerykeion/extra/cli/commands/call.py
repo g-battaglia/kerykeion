@@ -5,10 +5,10 @@
     kerykeion call --list
     kerykeion call DominantsFactory.from_subject --explain
 
-Safety is :mod:`kerykeion.cli.registry`'s job (only ``__all__`` names, no
+Safety is :mod:`kerykeion.extra.cli.registry`'s job (only ``__all__`` names, no
 private members, no models/exceptions). Subject parameters are bound from
 ``-s``/``-S`` profiles; everything else comes as ``--param key=value`` with
-type coercion from :mod:`kerykeion.cli.introspect`.
+type coercion from :mod:`kerykeion.extra.cli.introspect`.
 """
 
 from __future__ import annotations
@@ -17,9 +17,9 @@ from typing import Any, Optional
 
 import typer
 
-from kerykeion.cli import introspect, registry, subject_resolver
-from kerykeion.cli.commands._shared import _emit
-from kerykeion.cli.options import (
+from kerykeion.extra.cli import introspect, registry, subject_resolver
+from kerykeion.extra.cli.commands._shared import _emit
+from kerykeion.extra.cli.options import (
     CallSubject2Opt,
     ExplainFlag,
     FormatOpt,
@@ -29,7 +29,7 @@ from kerykeion.cli.options import (
     ParamOpt,
     SubjectProfile,
 )
-from kerykeion.cli.rendering import formats
+from kerykeion.extra.cli.rendering import formats
 
 
 def _bind_subjects(

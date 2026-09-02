@@ -12,8 +12,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Optional, cast, get_args
 
-from kerykeion.cli.commands._shared import _emit, _given, _parse_dt, _stored_subject
-from kerykeion.cli.options import (
+from kerykeion.extra.cli.commands._shared import _emit, _given, _parse_dt, _stored_subject
+from kerykeion.extra.cli.options import (
     EventsFlag,
     FormatOpt,
     FromOpt,
@@ -31,7 +31,7 @@ from kerykeion.cli.options import (
     ToOpt,
     ZodiacTypeOpt,
 )
-from kerykeion.cli.sampling import StepType, check_ephemeris_sampling, validate_range
+from kerykeion.extra.cli.sampling import StepType, check_ephemeris_sampling, validate_range
 
 _STEP_TYPES: tuple[StepType, ...] = get_args(StepType)
 
@@ -77,7 +77,7 @@ def ephemeris(
 ) -> None:
     """A time series of planet positions and house cusps."""
     from kerykeion import EphemerisDataFactory
-    from kerykeion.cli.subject_resolver import resolve_house_system
+    from kerykeion.extra.cli.subject_resolver import resolve_house_system
 
     start, end, stype, step_n = _series("ephemeris", from_, to, step_type, step)
     if not no_limit:
@@ -108,7 +108,7 @@ def transits(
     fmt: FormatOpt = None,
     output: OutputOpt = None,
 ) -> None:
-    """Natal chart vs a time series of transits: per-sample aspects, or events with ``--events`` (``--refine`` sharpens them)."""
+    """Natal chart vs a time series of transits: per-sample aspects, or events with --events (--refine sharpens them)."""
     from kerykeion import EphemerisDataFactory, TransitsTimeRangeFactory
 
     if refine and not events:  # get_transit_moments() takes no refine argument: never drop it silently

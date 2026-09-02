@@ -3,9 +3,10 @@
 
 ``EphemerisDataFactory`` builds one subject per sample, so a multi-year range at
 a fine step is an OOM risk first. The library's own ``max_days``/``max_hours``/
-``max_minutes`` guard fires *after* starting, as a bare ``ValueError`` (exit 4);
-this counts the samples first — from the same ceilings, read off the factory's
-signature so they cannot drift — and raises ``SamplingLimitError`` (exit 8).
+``max_minutes`` guard also fires before any computation, but as a bare
+``ValueError`` (exit 4) worded for a Python caller; this counts the samples
+first — from the same ceilings, read off the factory's signature so they cannot
+drift — and raises ``SamplingLimitError`` (exit 8) naming the flags to change.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import inspect
 from datetime import datetime, timezone
 from typing import Literal
 
-from kerykeion.cli.errors import SamplingLimitError
+from kerykeion.extra.cli.errors import SamplingLimitError
 
 StepType = Literal["days", "hours", "minutes"]
 

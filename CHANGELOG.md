@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **The CLI package moved to `kerykeion.extra.cli`.** The command-line
+  interface now lives under `kerykeion/extra/`, the home of everything behind
+  an optional dependency group, instead of the package root. The `kerykeion`
+  command, `python -m kerykeion` and the `kerykeion[cli]` extra are unchanged;
+  only the import path moved (`python -m kerykeion.extra.cli` replaces
+  `python -m kerykeion.cli`). Nothing in the library imports it, before or
+  after.
+
+### Added
+
+- `kerykeion sky ingresses --periods` and `kerykeion sky stations --periods`
+  reach the a92 span queries — contiguous sign stays and retrograde spans,
+  clipped to the range — instead of the event lists.
+
 ## [6.0.0a92] - 2026-08-29
 
 ### Added
