@@ -1726,6 +1726,18 @@ class TestFourthReviewPass:
         assert r.exit_code == 4
         assert "cannot end in '.json'" in r.output
 
+    # Distinct user-provided names must never collapse to the same store path:
+    # that allowed a later save to silently overwrite an unrelated profile.
+    @pytest.mark.parametrize("store_name", ["john@home", "john#home", " john", "john. "])
+    def test_subject_save_rejects_names_that_require_sanitizing(self, runner, app, store_name):
+        r = runner.invoke(app, [
+            "subject", "save", store_name, "--name", "John",
+            "--date", "2000-01-01", "--time", "12:00",
+            "--lat", "0", "--lng", "0", "--tz", "UTC",
+        ])
+        assert r.exit_code == 4
+        assert "invalid profile name" in r.output
+
     # #6: enum-shaped flag typos must be invalid input (exit 4) like every
     # other bad flag, not kerykeion-level errors (exit 5) that pipeline
     # branching cannot distinguish from library bugs.

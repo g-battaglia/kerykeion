@@ -49,10 +49,12 @@ def profile_path(name: str) -> Path:
     """The on-disk path for a profile name, restricted to a safe charset so it cannot escape the store."""
     if not name:
         raise ValueError("profile name must not be empty")
-    cleaned = re.sub(r"[^A-Za-z0-9_.\- ]+", "_", name).strip(" .")
-    if not cleaned or cleaned in {".", ".."}:
-        raise ValueError(f"profile name {name!r} has no usable characters")
-    return profiles_dir() / f"{cleaned}.json"
+    if not re.fullmatch(r"[A-Za-z0-9_.\- ]+", name) or name != name.strip(" .") or name in {".", ".."}:
+        raise ValueError(
+            f"invalid profile name {name!r}: use only ASCII letters, digits, spaces, '_', '-' and '.', "
+            "with no leading or trailing spaces or dots"
+        )
+    return profiles_dir() / f"{name}.json"
 
 
 class ProfileInput(pydantic.BaseModel):
