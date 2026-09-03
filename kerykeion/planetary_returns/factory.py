@@ -79,7 +79,11 @@ from typing import Any, Callable, List, Literal, Optional, Union, cast, get_args
 
 from kerykeion.schemas import KerykeionException
 from kerykeion.geonames.fetcher import FetchGeonames
-from kerykeion.utilities.core import julian_to_datetime, datetime_to_julian
+from kerykeion.utilities.core import (
+    julian_to_datetime,
+    datetime_to_julian,
+    get_available_astrological_points_list,
+)
 from kerykeion.astrological_subject.factory import (
     GEONAMES_DEFAULT_USERNAME_WARNING,
     DEFAULT_GEONAMES_CACHE_EXPIRE_AFTER_DAYS,
@@ -601,13 +605,15 @@ class PlanetaryReturnFactory:
         # from ANY populated point, not subject.sun specifically: in a
         # heliocentric chart the Sun is the excluded center body (sun is None),
         # so keying off it would silently drop the enrichments the user did
-        # request. Scan the standard bodies for the first one present.
+        # request. The scan covers every ACTIVE point rather than the standard
+        # bodies: nakshatra and local-space azimuth are computed for axes,
+        # asteroids and uranians too, so a natal whose active_points hold none of
+        # sun..pluto (`active_points=["Ascendant"]`) carried the enrichment while
+        # a planets-only scan reported False and dropped it from the return.
         def _any_point_has(attr: str) -> bool:
-            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
-                          "saturn", "uranus", "neptune", "pluto"):
-                _p = getattr(subject, _name, None)
-                if _p is not None:
-                    return getattr(_p, attr, None) is not None
+            for _point in get_available_astrological_points_list(subject):
+                if getattr(_point, attr, None) is not None:
+                    return True
             return False
 
         self.active_fixed_stars = (

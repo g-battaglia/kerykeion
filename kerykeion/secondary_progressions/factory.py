@@ -42,7 +42,7 @@ from kerykeion.ephemeris_backend.backend import ephe
 from kerykeion.schemas.models import AstrologicalSubjectModel
 from kerykeion.schemas import KerykeionException
 from kerykeion.predictive.utils import gather_active_points, build_aspect_settings, PTOLEMAIC_ASPECTS
-from kerykeion.utilities.core import datetime_to_julian
+from kerykeion.utilities.core import datetime_to_julian, get_available_astrological_points_list
 
 # Mean tropical year (epoch J2000) — the "year" unit of the day-for-a-year
 # method. Previously 365.25 (the Julian year), which contradicted this name
@@ -407,12 +407,15 @@ class SecondaryProgressionFactory:
         # specifically: in a heliocentric natal the Sun is the excluded center
         # body (sun is None), and even in geocentric charts the Sun may be absent
         # from active_points — keying off it would silently drop the enrichments.
+        # The scan covers every ACTIVE point rather than the standard bodies:
+        # nakshatra and local-space azimuth are computed for axes, asteroids and
+        # uranians too, so a natal whose active_points hold none of sun..pluto
+        # (`active_points=["Ascendant"]`) carried the enrichment while a
+        # planets-only scan reported False and dropped it from the progression.
         def _any_point_has(attr: str) -> bool:
-            for _name in ("sun", "moon", "mercury", "venus", "mars", "jupiter",
-                          "saturn", "uranus", "neptune", "pluto"):
-                _p = getattr(natal_subject, _name, None)
-                if _p is not None:
-                    return getattr(_p, attr, None) is not None
+            for _point in get_available_astrological_points_list(natal_subject):
+                if getattr(_point, attr, None) is not None:
+                    return True
             return False
 
         common_kwargs.update(
