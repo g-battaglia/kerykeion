@@ -57,7 +57,7 @@ dependencies = [
     # the release the lockfile holds, and nothing asserts the installed
     # version at runtime. The lockfile protects this repository; it does not
     # protect `pip install kerykeion`.
-    "libephemeris>=3.1.0,<4",
+    "libephemeris==3.2.1",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
