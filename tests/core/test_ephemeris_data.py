@@ -1015,3 +1015,67 @@ class TestFixedStarsInEphemeris:
         captured.clear()
         self._factory().get_ephemeris_data()
         assert captured == [None, None]
+
+
+# ===========================================================================
+# 11. TestEssentialDignitiesInEphemeris
+# ===========================================================================
+
+
+class TestEssentialDignitiesInEphemeris:
+    """``calculate_dignities`` is off by default and reaches every generated subject."""
+
+    @staticmethod
+    def _factory(**overrides):
+        settings = dict(
+            start_datetime=datetime(2024, 1, 1, 12, 0),
+            end_datetime=datetime(2024, 1, 2, 12, 0),
+            step_type="days",
+            step=1,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+        )
+        settings.update(overrides)
+        return EphemerisDataFactory(**settings)
+
+    def test_default_computes_no_dignities(self):
+        """The flag is opt-in: by default no sample carries dignity fields."""
+        factory = self._factory()
+        assert factory.calculate_dignities is False
+
+        for subject in factory.get_ephemeris_data_as_astrological_subjects():
+            assert subject.sun.essential_dignity is None
+            assert subject.sun.dignity_score is None
+
+    def test_dignities_on_every_sample_when_requested(self):
+        """Every classical planet of every sample gets a dignity and a score."""
+        subjects = self._factory(calculate_dignities=True).get_ephemeris_data_as_astrological_subjects()
+
+        assert len(subjects) == 2
+        for subject in subjects:
+            classical = (
+                subject.sun, subject.moon, subject.mercury, subject.venus,
+                subject.mars, subject.jupiter, subject.saturn,
+            )
+            for point in classical:
+                assert isinstance(point.essential_dignity, str), point.name
+                assert isinstance(point.dignity_score, int), point.name
+
+    def test_flag_is_forwarded_to_from_birth_data(self, monkeypatch):
+        """The factory hands the flag to the subject factory instead of post-processing."""
+        from kerykeion import AstrologicalSubjectFactory
+
+        captured = []
+        real = AstrologicalSubjectFactory.from_birth_data.__func__
+
+        def spy(cls, *args, **kwargs):
+            captured.append(kwargs.get("calculate_dignities"))
+            return real(cls, *args, **kwargs)
+
+        monkeypatch.setattr(AstrologicalSubjectFactory, "from_birth_data", classmethod(spy))
+
+        self._factory(calculate_dignities=True).get_ephemeris_data()
+        self._factory().get_ephemeris_data()
+
+        assert captured == [True, True, False, False]

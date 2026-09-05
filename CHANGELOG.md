@@ -43,6 +43,14 @@
 
 ### Added
 
+- **Transit moments can carry the transiting subject.**
+  `TransitsTimeRangeFactory.get_transit_moments(include_subjects=True)` attaches
+  the full `AstrologicalSubjectModel` of each ephemeris sample to its
+  `TransitMomentModel.subject` — positions, signs, lunar phase, motion state
+  and, when the series was built with the new
+  `EphemerisDataFactory(..., calculate_dignities=True)`, essential dignities —
+  for consumers that need per-sample positions next to the aspects. Both
+  flags default to off, so existing payloads and signatures are unchanged.
 - `kerykeion sky ingresses --periods` and `kerykeion sky stations --periods`
   reach the a92 span queries — contiguous sign stays and retrograde spans,
   clipped to the range — instead of the event lists.

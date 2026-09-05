@@ -555,7 +555,7 @@ class TransitsTimeRangeFactory:
                 min_orb,
             )
 
-    def get_transit_moments(self) -> TransitsTimeRangeModel:
+    def get_transit_moments(self, include_subjects: bool = False) -> TransitsTimeRangeModel:
         """
         Calculate and generate transit data for all configured time points.
 
@@ -571,6 +571,14 @@ class TransitsTimeRangeFactory:
         4. Creates timestamped transit moment records
         5. Compiles all data into a structured model for analysis
 
+        Args:
+            include_subjects: When True, every transit moment also carries the
+                transiting subject it was computed from (``TransitMomentModel.subject``):
+                positions, signs, lunar phase, motion state and — if the ephemeris
+                series was built with ``calculate_dignities=True`` — essential
+                dignities. Defaults to False, which leaves ``subject`` at None and
+                the payload as it always was.
+
         Returns:
             TransitsTimeRangeModel: A comprehensive model containing:
                 - dates (List[str]): ISO-formatted datetime strings for all data points
@@ -580,6 +588,8 @@ class TransitsTimeRangeFactory:
                   * date (str): ISO-formatted timestamp for the transit moment
                   * aspects (List[AspectModel]): All aspects formed at this moment
                     between transiting and natal positions
+                  * subject (Optional[AstrologicalSubjectModel]): The transiting
+                    subject, only when ``include_subjects`` is True
 
         Examples:
             Basic usage:
@@ -632,6 +642,7 @@ class TransitsTimeRangeFactory:
                 TransitMomentModel(
                     date=ephemeris_point.iso_formatted_utc_datetime,
                     aspects=aspects,
+                    subject=ephemeris_point if include_subjects else None,
                 )
             )
 

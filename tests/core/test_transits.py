@@ -575,3 +575,70 @@ def test_axis_orb_limit_validated_up_front(invalid_limit):
     )
     with pytest.raises(KerykeionException, match="axis_orb_limit"):
         TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=invalid_limit)
+
+
+# ===========================================================================
+# 7. TestTransitMomentSubjects
+# ===========================================================================
+
+
+class TestTransitMomentSubjects:
+    """``include_subjects`` attaches the transiting subject to each moment."""
+
+    def test_default_leaves_subject_unset(self, natal_subject, ephemeris_subjects):
+        """Without the flag every moment keeps ``subject`` at None, in model and dump alike."""
+        result = TransitsTimeRangeFactory(natal_subject, ephemeris_subjects).get_transit_moments()
+
+        assert all(moment.subject is None for moment in result.transits)
+        assert all(moment.model_dump()["subject"] is None for moment in result.transits)
+
+    def test_include_subjects_attaches_the_sample_it_was_computed_from(
+        self, natal_subject, ephemeris_subjects
+    ):
+        """Each moment carries the very ephemeris subject behind its aspects, not a copy."""
+        result = TransitsTimeRangeFactory(natal_subject, ephemeris_subjects).get_transit_moments(
+            include_subjects=True
+        )
+
+        assert len(result.transits) == len(ephemeris_subjects)
+        for moment, sample in zip(result.transits, ephemeris_subjects):
+            assert moment.subject is sample
+            assert moment.subject.iso_formatted_utc_datetime == moment.date
+
+    def test_included_subject_is_a_full_chart(self, natal_subject, ephemeris_subjects):
+        """Positions, signs, motion state and lunar phase are all there, per sample."""
+        result = TransitsTimeRangeFactory(natal_subject, ephemeris_subjects).get_transit_moments(
+            include_subjects=True
+        )
+
+        for moment in result.transits:
+            subject = moment.subject
+            assert subject.lunar_phase is not None
+            assert subject.lunar_phase.moon_phase_name
+            assert isinstance(subject.lunar_phase.moon_phase, int)
+            for point in (subject.sun, subject.moon, subject.mercury):
+                assert point.sign
+                assert isinstance(point.abs_pos, float)
+                assert point.motion_state is not None
+
+    def test_included_subjects_carry_dignities_when_the_series_computed_them(self, natal_subject):
+        """Dignities ride along only because the ephemeris series was asked for them."""
+        start = datetime(2024, 1, 1, 12, 0)
+        series = EphemerisDataFactory(
+            start_datetime=start,
+            end_datetime=start + timedelta(days=1),
+            step_type="days",
+            step=1,
+            lat=natal_subject.lat,
+            lng=natal_subject.lng,
+            tz_str=natal_subject.tz_str,
+            calculate_dignities=True,
+        ).get_ephemeris_data_as_astrological_subjects()
+
+        result = TransitsTimeRangeFactory(natal_subject, series).get_transit_moments(
+            include_subjects=True
+        )
+
+        for moment in result.transits:
+            assert isinstance(moment.subject.sun.essential_dignity, str)
+            assert isinstance(moment.subject.sun.dignity_score, int)

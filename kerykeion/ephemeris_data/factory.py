@@ -155,6 +155,11 @@ class EphemerisDataFactory:
             it. Defaults to None (sea level), matching what the single-subject path
             assumes for the same input. Placed last rather than beside ``lat``/``lng``
             so that existing positional callers keep binding to the same parameters.
+        calculate_dignities (bool, optional): Compute essential dignities on every
+            generated subject (same contract as
+            ``AstrologicalSubjectFactory.from_birth_data``), so each planet carries
+            ``essential_dignity`` and ``dignity_score``. Defaults to False. Appended
+            after ``altitude`` for the same positional-contract reason.
 
     Raises:
         ValueError: If step_type is not one of "days", "hours", or "minutes".
@@ -213,6 +218,7 @@ class EphemerisDataFactory:
         # order here is a public contract, and slotting a new one into the middle
         # would rebind every positional argument after it.
         altitude: Optional[float] = None,
+        calculate_dignities: bool = False,
     ):
         if step <= 0:
             # A non-positive step divides by zero when sizing the series; reject
@@ -228,6 +234,7 @@ class EphemerisDataFactory:
         # know that; forwarded unconditionally so the series and the single-subject
         # path answer the same for the same observer.
         self.altitude = altitude
+        self.calculate_dignities = calculate_dignities
         self.tz_str = tz_str
         self.is_dst = is_dst
         self.zodiac_type = normalize_zodiac_type(zodiac_type)
@@ -369,6 +376,7 @@ class EphemerisDataFactory:
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
             active_points=(list(self.active_points) if self.active_points is not None else None),
             active_fixed_stars=(list(self.active_fixed_stars) if self.active_fixed_stars is not None else None),
+            calculate_dignities=self.calculate_dignities,
             _lmt_offset_seconds=resolved_offset_seconds,
         )
 

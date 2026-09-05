@@ -1660,6 +1660,13 @@ class TransitMomentModel(SubscriptableBaseModel):
 
     date: str = Field(description="ISO 8601 formatted date and time of the transit moment.")
     aspects: list[AspectModel] = Field(description="List of aspects active at this specific moment.")
+    subject: Optional[AstrologicalSubjectModel] = Field(
+        default=None,
+        description=(
+            "The full transiting subject at this moment (positions, signs, essential dignities, "
+            "lunar phase, motion state). None unless the transit factory was asked to include it."
+        ),
+    )
 
 
 class SingleChartAspectsModel(SubscriptableBaseModel):

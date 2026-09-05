@@ -19,7 +19,7 @@ license: AGPL-3.0
 
 # Driving Kerykeion from the terminal
 
-Verified against **kerykeion 6.0.0a92**, Python 3.12+.
+Verified against **kerykeion 6.0.0a93**, Python 3.12+.
 
 The CLI ships as an optional extra. Everything the library computes is reachable
 from the shell: about fifty curated commands, plus `kerykeion call` as a guarded
