@@ -41,7 +41,7 @@ kerykeion call MidpointFactory.compute -s ada --param active_points=Sun,Moon -f 
 `--param` coercion follows the parameter's annotation:
 
 - scalars: `int`, `float`, `bool` (`true/yes/1` and `false/no/0`), `str`
-- `none` / `null` → `None`
+- `none` / `null` → `None` for a nullable annotation (`Optional[T]` / `T | None`)
 - `datetime` / `date`: ISO
 - `Literal`: membership, case-checked, with a suggestion on a near miss
 - lists **and abstract sequences** (`list[str]`, `Sequence[str]`): comma-separated
@@ -50,6 +50,9 @@ kerykeion call MidpointFactory.compute -s ada --param active_points=Sun,Moon -f 
 
 An unknown `--param` key is rejected up front, so a typo cannot silently run the
 factory with defaults.
+
+JSON output keeps Pydantic models as objects even when a factory nests them in
+a list or dictionary, so paths such as `.[0].planets[0].sign` remain queryable.
 
 ## Two shapes of factory
 

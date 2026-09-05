@@ -50,10 +50,21 @@
   and, when the series was built with the new
   `EphemerisDataFactory(..., calculate_dignities=True)`, essential dignities —
   for consumers that need per-sample positions next to the aspects. Both
-  flags default to off, so existing payloads and signatures are unchanged.
+  flags default to off, so existing calls and default payloads are unchanged.
+  The curated CLI exposes the same path with `transits --include-subjects` and
+  `--calculate-dignities`; `ephemeris --calculate-dignities` adds dignities to
+  its sampled positions too.
 - `kerykeion sky ingresses --periods` and `kerykeion sky stations --periods`
   reach the a92 span queries — contiguous sign stays and retrograde spans,
   clipped to the range — instead of the event lists.
+
+### Fixed
+
+- **The `call` dispatcher preserves structured payloads and warning policy.**
+  Pydantic models nested inside dictionary results now remain JSON objects;
+  `none` and `null` bind correctly to nullable parameters; and warnings carried
+  by dictionary results reach stderr, `--envelope`, and
+  `--warnings-as-errors` (exit 9).
 
 ## [6.0.0a92] - 2026-08-29
 

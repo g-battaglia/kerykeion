@@ -106,13 +106,21 @@ requires `--planet` — the Moon is the occulter, not the occulted body.
 ```bash
 kerykeion ephemeris --from 2025-01-01 --to 2025-01-05 --step-type days --step 1 \
   --lat 45.0 --lng 9.0 --tz Europe/Rome -f json | jq 'length'
-kerykeion transits -s ada --from 2025-01-01 --to 2025-01-05 --step-type days -f json | jq 'length'
+kerykeion ephemeris --from 2025-01-01 --to 2025-01-01 --calculate-dignities \
+  -f json | jq -r '.[0].planets[] | select(.name == "Sun") | .essential_dignity'
+kerykeion transits -s ada --from 2025-01-01 --to 2025-01-05 --step-type days \
+  --include-subjects -f json | jq -r '.transits[0].subject.sun.sign'
 ```
 
 Both refuse to start when the requested sampling exceeds the ceiling (exit 8);
 `--no-limit` removes both the pre-check and the library's own guard.
 `transits --events` collapses the series into applying→exact→separating events,
 and `--refine` (which sharpens the exact moment) requires `--events`.
+`ephemeris --calculate-dignities` computes dignity fields on its sampled
+positions. For transit moments, `--include-subjects` attaches the full
+transiting subject to each entry; add `--calculate-dignities` to compute those
+fields too. Attached subjects do not apply to the event-collapsed shape, so
+`--include-subjects` and `--events` are mutually exclusive.
 
 ## Subjects, info, diagnostics
 

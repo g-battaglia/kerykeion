@@ -274,6 +274,44 @@ class TestSamplingLimit:
         assert len(json.loads(r.output)) > 730
 
 
+class TestSeriesSubjectsAndDignities:
+    def test_ephemeris_can_calculate_dignities(self, runner, app):
+        r = runner.invoke(app, [
+            "ephemeris",
+            "--from", "2025-01-01",
+            "--to", "2025-01-01",
+            "--calculate-dignities",
+            "-f", "json",
+        ])
+        assert r.exit_code == 0, r.output
+        sun = next(point for point in json.loads(r.output)[0]["planets"] if point["name"] == "Sun")
+        assert sun["essential_dignity"] is not None
+        assert isinstance(sun["dignity_score"], int)
+
+    def test_transits_can_include_subjects_with_dignities(self, runner, app, ada_profile):
+        r = runner.invoke(app, [
+            "transits", "-s", ada_profile,
+            "--from", "2025-01-01",
+            "--to", "2025-01-01",
+            "--include-subjects",
+            "--calculate-dignities",
+            "-f", "json",
+        ])
+        assert r.exit_code == 0, r.output
+        subject = json.loads(r.output)["transits"][0]["subject"]
+        assert subject["sun"]["sign"]
+        assert subject["sun"]["essential_dignity"] is not None
+
+    def test_transit_subject_flags_reject_no_op_combinations(self, runner, app, ada_profile):
+        common = ["transits", "-s", ada_profile, "--from", "2025-01-01", "--to", "2025-01-01"]
+        dignities = runner.invoke(app, [*common, "--calculate-dignities"])
+        events = runner.invoke(app, [*common, "--include-subjects", "--events"])
+        assert dignities.exit_code == 4
+        assert "--include-subjects" in dignities.output
+        assert events.exit_code == 4
+        assert "--events" in events.output
+
+
 # ── dispatcher: security and introspection ───────────────────────────────────
 
 
@@ -314,6 +352,55 @@ class TestCallDispatcher:
         assert registry.public_names() is first  # cached → same object
         with pytest.raises(TypeError):
             first["__inject__"] = object()
+
+    def test_ephemeris_dict_result_preserves_nested_models_and_nullable_limit(self, runner, app):
+        r = runner.invoke(app, [
+            "call", "EphemerisDataFactory.get_ephemeris_data",
+            "--param", "start_datetime=2024-01-01",
+            "--param", "end_datetime=2024-01-01",
+            "--param", "max_days=none",
+            "-f", "json",
+        ])
+        assert r.exit_code == 0, r.output
+        payload = json.loads(r.output)
+        assert isinstance(payload[0]["planets"][0], dict)
+        assert payload[0]["planets"][0]["sign"]
+
+    def test_nullable_annotations_accept_both_null_tokens(self):
+        from typing import Optional
+
+        from kerykeion_cli.introspect import coerce_value
+
+        assert coerce_value(Optional[int], "none") is None
+        assert coerce_value(int | None, "null") is None
+        assert coerce_value(str, "null") == "null"
+
+    def test_dictionary_warning_source_recurses_nested_subjects(self):
+        from kerykeion_cli.warnings import collect_warnings
+
+        warning = {"code": "TEST", "point_name": "Moon", "message": "missing"}
+        eph, polar = collect_warnings({"subject": {"ephemeris_warnings": [warning]}})
+        assert eph == [warning]
+        assert polar == []
+
+    def test_dictionary_warnings_reach_envelope_and_exit_nine(self, runner, app, tmp_path):
+        output = tmp_path / "polar.json"
+        r = runner.invoke(app, [
+            "--warnings-as-errors",
+            "call", "EphemerisDataFactory.get_ephemeris_data",
+            "--param", "start_datetime=2024-01-01",
+            "--param", "end_datetime=2024-01-01",
+            "--param", "lat=80",
+            "--param", "lng=0",
+            "--param", "tz_str=UTC",
+            "--envelope",
+            "-f", "json",
+            "-o", str(output),
+        ])
+        assert r.exit_code == 9, r.output
+        envelope = json.loads(output.read_text(encoding="utf-8"))
+        assert envelope["warnings"]
+        assert envelope["data"][0]["polar_house_fallbacks"]
 
 
 # ── entry point & import isolation (subprocess — CliRunner can't show these) ──

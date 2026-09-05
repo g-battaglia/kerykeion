@@ -40,12 +40,12 @@ def _collect(obj: Any, eph: list, polar: list, seen: set[int]) -> None:
     if obj is None or id(obj) in seen:
         return
     seen.add(id(obj))
-    eph.extend(_as_iter(getattr(obj, "ephemeris_warnings", None)))
-    polar.extend(_as_iter(getattr(obj, "polar_house_fallbacks", None)))
+    eph.extend(_as_iter(_field(obj, "ephemeris_warnings")))
+    polar.extend(_as_iter(_field(obj, "polar_house_fallbacks")))
     # Chart wrappers and composites nest their subjects; ``subjects`` (a list) is
     # what RelationshipScoreModel carries, and the list branch walks it.
     for attr in ("subject", "first_subject", "second_subject", "subjects"):
-        _collect(getattr(obj, attr, None), eph, polar, seen)
+        _collect(_field(obj, attr), eph, polar, seen)
     if isinstance(obj, (list, tuple)):
         for item in obj:
             _collect(item, eph, polar, seen)

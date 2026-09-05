@@ -131,6 +131,14 @@ def coerce_value(annotation: Any, raw: str) -> Any:
     Unknown structural types fall through to the raw string — the library then
     validates it, which is the safest default.
     """
+    # Preserve the None arm long enough to recognise an explicit null. Stripping
+    # Optional first would send e.g. Optional[int] + "none" through int().
+    if (
+        _is_union(annotation)
+        and type(None) in get_args(annotation)
+        and raw.lower() in {"none", "null"}
+    ):
+        return None
     annotation = _strip_optional(annotation)
     if annotation is inspect.Parameter.empty or annotation is Any:
         return coerce_scalar(raw)

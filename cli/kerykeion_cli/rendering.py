@@ -43,12 +43,14 @@ def resolve_format(explicit: str | None, output_path: str | None) -> str:
 
 
 def render_json(obj: Any) -> str:
-    """Pydantic models through their own ``model_dump_json``; lists of models as arrays; anything else via ``json.dumps``."""
-    if isinstance(obj, pydantic.BaseModel):
-        return obj.model_dump_json(indent=2)
-    if isinstance(obj, (list, tuple)):
-        obj = [item.model_dump(mode="json") if isinstance(item, pydantic.BaseModel) else item for item in obj]
-    return json.dumps(obj, indent=2, default=str)
+    """JSON with Pydantic models preserved as objects at every nesting depth."""
+
+    def default(value: Any) -> Any:
+        if isinstance(value, pydantic.BaseModel):
+            return value.model_dump(mode="json")
+        return str(value)
+
+    return json.dumps(obj, indent=2, default=default)
 
 
 def _report(model: pydantic.BaseModel, opts: Any = None) -> str | None:

@@ -146,6 +146,9 @@ reason to read before composing a command.
 - **An offset-bearing `--from` on a DST fall-back hour is refused** rather than
   guessed, because the moment factories take wall-clock parts without a fold.
 - **`transits --refine` requires `--events`.** Alone it would be a silent no-op.
+- **`transits --include-subjects` is for per-sample moments, not `--events`.**
+  Add `--calculate-dignities` when those attached subjects also need essential
+  dignity fields; on `transits`, it requires `--include-subjects`.
 - **A long series hits the sampling ceiling (exit 8) before computing anything.**
   Widen the step or pass `--no-limit` deliberately.
 - **Chart flags `--degree-indicators`, `--aspect-icons` and `--external-view`

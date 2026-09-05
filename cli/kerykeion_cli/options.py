@@ -268,6 +268,20 @@ NoLimitFlag = Annotated[
         help="Lift the sampling ceiling (730 days / 8760 hours / 525600 minutes). Use carefully.",
     ),
 ]
+CalculateDignitiesFlag = Annotated[
+    Bool,
+    series(
+        "--calculate-dignities",
+        help="Compute essential dignities for every sampled subject.",
+    ),
+]
+IncludeSubjectsFlag = Annotated[
+    Bool,
+    series(
+        "--include-subjects",
+        help="For `transits`: attach the full transiting subject to every moment.",
+    ),
+]
 EventsFlag = Annotated[
     Bool,
     series(

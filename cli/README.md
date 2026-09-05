@@ -40,6 +40,8 @@ kerykeion natal -s ada                        # ASCII report on a terminal
 kerykeion natal -s ada | jq -r .sun.sign      # JSON in a pipe, no extra flag
 kerykeion natal -s ada -f svg -o ada.svg --theme dark
 kerykeion sky lunations --from 2026-01-01 --to 2026-12-31
+kerykeion transits -s ada --from 2026-01-01 --to 2026-01-02 \
+  --include-subjects --calculate-dignities -f json
 kerykeion status --check                      # judge the install (exit 6 if broken)
 ```
 

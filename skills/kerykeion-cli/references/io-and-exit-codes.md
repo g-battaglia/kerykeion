@@ -26,7 +26,8 @@ kerykeion natal -s ada -f svg -o /tmp/ada.svg
 against ~35 KB of JSON, so it is the shape to read into a context window when
 the full model is not needed. It supports a narrower set of models than JSON;
 on an unsupported one you get exit 4 naming the supported types rather than a
-silent format switch. JSON is the library model verbatim; project it with `jq`.
+silent format switch. JSON preserves nested Pydantic models as JSON objects;
+project the result with `jq`.
 
 ## Streams
 
