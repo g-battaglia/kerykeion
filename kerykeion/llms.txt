@@ -2,6 +2,10 @@
 
 **Comprehensive reference for AI agents using the Kerykeion Astrological Library**
 
+Version: **6.0.0rc1**, Python 3.12+. Install with
+`pip install "kerykeion==6.0.0rc1"`; an unqualified install selects the stable
+release. This v6 guide includes APIs and defaults that differ from v5.
+
 ## Quick Overview
 
 Kerykeion is a Python library for astrological calculations powered by the libephemeris backend by default (Swiss Ephemeris available as an opt-in extra). It provides:
@@ -45,7 +49,8 @@ no API key, offline-capable. The command lives in a separate package,
 defaults to text on a terminal and JSON in a pipe (`-f text|json|xml|svg`).
 
 ```bash
-pip install "kerykeion[cli]"     # or: uv tool install kerykeion-cli
+pip install --pre "kerykeion[cli]==6.0.0rc1"
+# Or: uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
 ```
 
 ```console

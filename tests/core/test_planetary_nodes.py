@@ -4,7 +4,7 @@
 import math
 
 import pytest
-from kerykeion.ephemeris_backend import ephe, ephemeris_session
+from kerykeion.ephemeris_backend import BACKEND_NAME, ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PlanetaryNodeModel, PlanetaryNodesFactory
 from kerykeion.schemas import KerykeionException
 
@@ -277,7 +277,7 @@ class TestLunarApsidesAreGeocentric:
         ), f"apoapsis={moon.apoapsis.abs_pos} mean_lilith={subject_with_liliths.mean_lilith.abs_pos}"
 
     def test_the_moon_apogee_is_the_true_lilith_when_osculating(self, subject_with_liliths):
-        """osculating elements -> true_lilith, by the same identity."""
+        """Osculating apogee matches the backend and agrees with true Lilith."""
         moon = next(
             n
             for n in PlanetaryNodesFactory.from_subject(
@@ -285,11 +285,19 @@ class TestLunarApsidesAreGeocentric:
             ).nodes
             if n.planet_name == "Moon"
         )
+        with ephemeris_session() as flags:
+            backend_apogee = ephe.nod_aps_ut(
+                subject_with_liliths.julian_day, ephe.MOON, ephe.NODBIT_OSCU, flags
+            )[3][0]
+        assert moon.apoapsis.abs_pos == backend_apogee % 360
+        # Swiss nod_aps_ut and calc_ut(OSCU_APOG) differ by about 0.1 arcsec
+        # at this instant. Preserve exact backend forwarding above, and keep
+        # the identity check below within 0.36 arcsec on Swiss only.
         assert math.isclose(
             moon.apoapsis.abs_pos,
             subject_with_liliths.true_lilith.abs_pos,
             rel_tol=0.0,
-            abs_tol=1e-12,
+            abs_tol=1e-12 if BACKEND_NAME == "libephemeris" else 1e-4,
         ), f"apoapsis={moon.apoapsis.abs_pos} true_lilith={subject_with_liliths.true_lilith.abs_pos}"
 
     def test_the_moon_ascending_node_is_the_charts_mean_node(self, subject_with_liliths):

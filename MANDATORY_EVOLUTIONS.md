@@ -88,7 +88,22 @@ tests for expected soft-failures first.
 
 ---
 
-## 3. 🔴 Surface degraded/substituted points on the model (swisseph-without-data)
+## 3. 🟡 Surface degraded/substituted points on the model (swisseph-without-data)
+
+**RC audit (2026-09-07): partially addressed.** The description below records
+the original problem and proposed scope. `_calculate_single_planet` now drops
+a failed planetocentric point and adds `subject.ephemeris_warnings`, rather
+than substituting a geocentric position under the wrong label. Failure to
+calculate the Sun or Moon raises `KerykeionException`. The regression
+`test_failed_planetocentric_point_is_never_replaced_with_geocentric` explicitly
+forbids that substitution; these changes predate the RC preparation.
+
+The remaining work is an audit of every missing-data configuration across the
+planetary, fixed-star, TNO and perspective paths. The suite's startup check for
+any `.se1` file does not prove that all optional data is installed, and Swiss
+source/precision metadata still differs from libephemeris metadata. This item
+must not be read as claiming that the old planetocentric substitution still
+exists.
 
 **Why (limitation being removed).** With the `swisseph` backend installed but its
 `.se1` data files not yet fetched (`python -m kerykeion.swisseph_setup`), swisseph

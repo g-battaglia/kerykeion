@@ -21,7 +21,7 @@ license: AGPL-3.0
 
 # Using Kerykeion
 
-Verified against **kerykeion 6.0.0a93**, Python 3.12+.
+Verified against **kerykeion 6.0.0rc1**, Python 3.12+.
 
 Kerykeion is a Python astrology library. Everything goes through **factories**:
 you never construct models by hand. Factories return **Pydantic models** whose
@@ -66,8 +66,8 @@ Two rules cover most charting tasks:
 ## Setup and environment
 
 ```bash
-pip3 install kerykeion          # pulls libephemeris (default backend) too
-pip3 install "kerykeion[swiss]" # optional: adds the Swiss Ephemeris C backend
+pip3 install "kerykeion==6.0.0rc1"          # includes the default libephemeris backend
+pip3 install "kerykeion[swiss]==6.0.0rc1"  # optional Swiss Ephemeris C backend
 ```
 
 Kerykeion reads exactly **five** environment variables:

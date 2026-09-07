@@ -26,7 +26,7 @@ For writing **Python** against the library, use the sibling
 ## Install
 
 The skill lives in the [kerykeion repository](https://github.com/g-battaglia/kerykeion),
-not in the PyPI package. **While v6 is in alpha, take it from the `alpha/v6`
+not in the PyPI package. **During the v6 prerelease cycle, take it from the `alpha/v6`
 branch.**
 
 ```bash
@@ -48,7 +48,8 @@ the `kerykeion-cli` package:
 
 ```bash
 # gate: skip
-pip install "kerykeion[cli]"     # or: uv tool install kerykeion-cli
+pip install --pre "kerykeion[cli]==6.0.0rc1"
+# Or: uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
 ```
 
 ## Contents

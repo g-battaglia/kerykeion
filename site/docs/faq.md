@@ -535,8 +535,9 @@ Two messages people ask about:
 - `LEB body=NN ... unavailable in sealed mode` for bodies 40–47/56 (Uranian
   points, White Moon) — a logging bug of older libephemeris releases. Those
   bodies are always computed from their analytical models by design, and the
-  routing is no longer reported as a warning. Kerykeion's dependency floor is
-  already `libephemeris>=3.1.0`, so a fresh install does not show the line.
+  routing is no longer reported as a warning. Kerykeion's dependency pin is
+  `libephemeris==3.2.1`, which includes the fix introduced in 3.1.0, so a fresh
+  install does not show the line.
 
 ### How do I cache GeoNames results?
 

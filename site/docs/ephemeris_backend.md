@@ -25,13 +25,13 @@ setup, and some search directions can differ.
 
 ```bash
 # Default (libephemeris only -- no C compiler needed)
-pip install kerykeion
+pip install "kerykeion==6.0.0rc1"
 
 # Swiss Ephemeris backend (requires C compiler)
-pip install kerykeion[swiss]
+pip install "kerykeion[swiss]==6.0.0rc1"
 
-# Both backends (needed for comparison tests)
-pip install kerykeion[all]
+# Both backends and the CLI (all optional extras)
+pip install --pre "kerykeion[all]==6.0.0rc1"
 ```
 
 ## Configuration

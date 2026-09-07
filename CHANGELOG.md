@@ -2,8 +2,52 @@
 
 ## [Unreleased]
 
+## [6.0.0rc1] - 2026-09-07
+
+The first release candidate for Kerykeion 6. Both `kerykeion` and the separate
+`kerykeion-cli` distribution use `6.0.0rc1`. See the
+[release notes](release_notes/v6.0.0rc1.md) for installation, v5 migration,
+known limitations and the publication checklist.
+
 ### Changed
 
+- Move both distributions from alpha to release candidate, retaining the
+  verified `libephemeris==3.2.1` dependency and Python 3.12+ requirement.
+- Document explicit RC installation commands, the library-first publication
+  order, and the distinction between the RC and the stable v5 release.
+
+### Fixed
+
+- **Solar arc directed motion uses the directed frame.** Every directed point
+  now receives the progressed Sun's speed divided by the tropical-year length
+  (degrees per real-time day), a matching retrograde flag, and no inherited
+  natal `motion_state`. Retrograde natal planets therefore no longer retain
+  natal motion metadata on a forward-directed chart. The arc is computed once.
+- **Heliacal count-limited searches stop at the requested event.** After
+  collecting the last requested result, the factory no longer searches for
+  another event and risks an unnecessary error at the ephemeris boundary.
+- **CLI sequence parameters preserve structure.** `call --param` accepts JSON
+  arrays for nested sequences and model lists, validates them against the
+  declared type, and reports malformed input as exit 4. Scalar sequences still
+  accept CSV, including literal values starting with `[` that are not JSON.
+- Correct the dependency-policy comment and FAQ to match the existing exact
+  ephemeris pin, and point the CLI package's changelog URL at the v6 branch.
+- Refresh the ancient-Rome report baseline for the pinned backend's fitted
+  apsides window. `Interpolated_Lilith` and `Interpolated_Perigee` are omitted
+  at year 100 and reported in `ephemeris_warnings`; their old extrapolated
+  positions and dependent aspects no longer belong in this fixture. The
+  temporal regression now checks these omissions and warnings explicitly.
+- Correct backend-specific test assumptions: CLI tests keep pytest's live
+  logging from replacing their captured streams; cusp continuity follows the
+  rendered angles; glyph-ceiling and wheel-height fixtures account for Swiss
+  positions and optional data. The osculating lunar-apsis test checks exact
+  backend forwarding and the small Swiss difference from its true-Lilith path.
+
+## [6.0.0a93] - 2026-09-05
+
+### Changed
+
+- Pin the default backend to `libephemeris==3.2.1`.
 - **The CLI is its own distribution, `kerykeion-cli`.** The command-line
   interface moved out of the library package into `cli/` (import name
   `kerykeion_cli`), a second distribution built from this repository, and it

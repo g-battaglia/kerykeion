@@ -18,8 +18,8 @@ installs. It is built on the standard library alone, so nothing third-party
 comes with it:
 
 ```bash
-pip3 install "kerykeion[cli]"          # the library plus the command
-uv tool install kerykeion-cli          # or as a standalone tool (pipx works too)
+pip3 install --pre "kerykeion[cli]==6.0.0rc1"  # the library plus the command
+uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"  # standalone tool
 ```
 
 `kerykeion[all]` adds the extra **and** the optional Swiss Ephemeris backend. A

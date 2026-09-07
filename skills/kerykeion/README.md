@@ -11,7 +11,7 @@ Gemini CLI, Windsurf, Cline, and others.
 ## Install
 
 The skill lives in the [kerykeion repository](https://github.com/g-battaglia/kerykeion),
-not in the PyPI package. **While v6 is in alpha, take it from the `alpha/v6`
+not in the PyPI package. **During the v6 prerelease cycle, take it from the `alpha/v6`
 branch**: the registry command resolves the repository's default branch, which
 still carries the v5-era skill.
 

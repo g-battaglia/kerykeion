@@ -139,9 +139,19 @@ It is [open source](https://github.com/g-battaglia/Astrologer-API) and directly 
 
 Kerykeion requires **Python 3.12** or higher.
 
+This branch documents **6.0.0rc1**, the first v6 release candidate. To test this
+version explicitly:
+
 ```bash
-pip3 install kerykeion
+pip3 install --upgrade "kerykeion==6.0.0rc1"
+# With the optional command-line interface:
+pip3 install --upgrade --pre "kerykeion[cli]==6.0.0rc1"
 ```
+
+An unqualified `pip install kerykeion` selects the stable release. Read the
+[RC release notes](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/release_notes/v6.0.0rc1.md)
+and [v4/v5 migration guide](https://github.com/g-battaglia/kerykeion/blob/alpha/v6/site/docs/migration.md)
+before upgrading: v6 changes defaults and removes deprecated APIs.
 
 For more installation options and environment setup, see the [Getting Started guide](https://www.kerykeion.net/content/docs/).
 
@@ -2623,8 +2633,8 @@ nothing third-party comes with it (`kerykeion[all]` also pulls the Swiss
 Ephemeris backend):
 
 ```bash
-pip3 install "kerykeion[cli]"          # the library plus the command
-uv tool install kerykeion-cli          # or as a standalone tool (pipx works too)
+pip3 install --pre "kerykeion[cli]==6.0.0rc1"  # the library plus the command
+uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"  # standalone tool
 ```
 
 A plain `pip install kerykeion` installs the library alone, with no command.
@@ -2732,7 +2742,7 @@ For the full configuration guide, see [Swiss Ephemeris Configuration](https://gi
 
 Kerykeion ships a cross-platform [Agent Skill](https://agentskills.io/) that teaches AI coding agents the real v6 API — factories, chart types, backends, sidereal modes, predictive and traditional techniques — so generated code stops guessing method names. It works with any skills-aware agent (Claude Code, Cursor, Codex, Copilot, Gemini CLI, and others).
 
-> **During the v6 alpha, install from the `alpha/v6` branch.** The skill is not part of the PyPI package, and the registry command below resolves this repository's default branch — which still carries the v5-era skill. Until v6 is merged to the default branch, clone the branch and copy the folder.
+> **During the v6 prerelease cycle, install from the `alpha/v6` branch.** The skill is not part of the PyPI package, and the registry command below resolves this repository's default branch — which still carries the v5-era skill. Until v6 is merged to the default branch, clone the branch and copy the folder.
 
 ```bash
 git clone --branch alpha/v6 --depth 1 https://github.com/g-battaglia/kerykeion.git

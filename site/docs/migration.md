@@ -10,6 +10,23 @@ order: 2
 
 This guide provides comprehensive instructions for migrating your code from Kerykeion v4 or v5 to v6. The v5 release introduced a factory-based architecture; v6 removes the v4 backward compatibility layer entirely and adds advanced calculation modules.
 
+The current v6 release is **6.0.0rc1**, a release candidate. Use Python 3.12 or
+newer and select it explicitly:
+
+```bash
+pip install --upgrade "kerykeion==6.0.0rc1"
+# Optional CLI, released with and pinned to the same library version:
+pip install --upgrade --pre "kerykeion[cli]==6.0.0rc1"
+```
+
+v6 uses `libephemeris==3.2.1` by default. Its bundled base data covers
+1850–2150 (upper bound exclusive); install a wider data tier before working
+outside that interval. See [backend configuration](/content/docs/ephemeris_backend)
+for data tiers and the optional Swiss Ephemeris backend. Timezone handling uses
+`zoneinfo` with `tzdata`; ambiguous and nonexistent local times require an
+explicit choice. The [`is_dst` migration notes](/content/docs/faq#what-is_dst-actually-selects)
+explain its offset-based contract.
+
 ## Quick Reference
 
 | v4 (Removed in v6) | v6 (Current) |
@@ -466,6 +483,9 @@ echo "Migration complete. Review changes before committing."
 ## Migration Checklist
 
 - [ ] Update imports to use new module paths
+- [ ] Use Python 3.12+ and install the v6 release candidate explicitly
+- [ ] Provision the ephemeris tier needed for your date range
+- [ ] Review active points, aspect orbs, chart style and timezone behavior
 - [ ] Replace `AstrologicalSubject` with `AstrologicalSubjectFactory.from_birth_data()`
 - [ ] Replace `KerykeionChartSVG` with `ChartDataFactory` + `ChartDrawer`
 - [ ] Replace `NatalAspects` with `AspectsFactory.single_chart_aspects()`
@@ -481,7 +501,7 @@ echo "Migration complete. Review changes before committing."
 | Version | Status |
 |:--------|:-------|
 | **v5.x** | Legacy - Backward compatibility was available |
-| **v6.0** | Current - All deprecated items have been removed |
+| **v6.0.0rc1** | Release candidate - The v4 compatibility layer and deprecated v5 aliases have been removed |
 
 ## Getting Help
 

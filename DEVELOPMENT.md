@@ -423,17 +423,33 @@ Nothing in the resolver enforces this, so
 `tests/core/test_cli.py::TestEntryPoint::test_one_version_two_distributions`
 does, and it says which one drifted. Then: the `Verified against` pins in `skills/*/SKILL.md`,
 the CHANGELOG entry and the release note, `uv lock`, `uv run poe check`,
-`uv run poe build:smoke`, the tag, and finally publish **the library first**:
+`uv run poe docs:check`, `uv run poe docs:snippets`, and the full extended suite
+with `LIBEPHEMERIS_PRECISION=extended` explicitly set. Build and smoke-test both
+distributions, commit the release preparation, tag that commit, then publish
+**the library first**. The [6.0.0rc1 checklist](release_notes/v6.0.0rc1.md#maintainer-publication-checklist)
+records this candidate's artifacts and validation.
+
+Use a version-specific output directory so a release upload cannot also select
+old artifacts already present in `dist/`:
 
 ```bash
-uv publish dist/kerykeion-*        # then, only once it is on PyPI:
-uv publish dist/kerykeion_cli-*    # its pin resolves against the library
+uv build --all-packages -o dist/6.0.0rc1
+uv run --isolated --no-project --with dist/6.0.0rc1/kerykeion-6.0.0rc1-py3-none-any.whl python scripts/build_smoke_check.py
+uv run --isolated --no-project --with dist/6.0.0rc1/kerykeion-6.0.0rc1-py3-none-any.whl --with dist/6.0.0rc1/kerykeion_cli-6.0.0rc1-py3-none-any.whl python scripts/build_smoke_check_cli.py
+uvx twine check --strict dist/6.0.0rc1/*
+
+uv publish dist/6.0.0rc1/kerykeion-6.0.0rc1-py3-none-any.whl dist/6.0.0rc1/kerykeion-6.0.0rc1.tar.gz
+# Only once the library is visible on PyPI:
+uv publish dist/6.0.0rc1/kerykeion_cli-6.0.0rc1-py3-none-any.whl dist/6.0.0rc1/kerykeion_cli-6.0.0rc1.tar.gz
 ```
 
-> **While v6 is in alpha**, the CLI's pin names a pre-release, so `uv` needs to
-> be told: `uv tool install --prerelease=allow kerykeion-cli` (pip accepts it
-> already — a specifier that spells out a pre-release opts into one). The flag
-> stops being necessary at `6.0.0`.
+> **During the v6 prerelease cycle (alpha and RC)**, explicitly select the
+> candidate: `uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"`.
+> For the extra, use `pip install --pre "kerykeion[cli]==6.0.0rc1"` so the
+> resolver also admits the separately versioned CLI prerelease. Mark a GitHub
+> release as **pre-release**; the PyPI classifiers use **4 - Beta** because
+> there is no RC-specific development-status classifier. The version itself
+> (`6.0.0rc1`) identifies the candidate.
 
 ---
 

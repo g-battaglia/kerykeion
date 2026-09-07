@@ -30,6 +30,7 @@ from typing import get_args
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
+from kerykeion.ephemeris_backend import BACKEND_NAME
 from kerykeion.schemas.literals import AstrologicalPoint
 
 _BIRTH = dict(
@@ -52,11 +53,20 @@ def _subject(point_count: int):
 
 
 def _chart(point_count: int, **kwargs) -> ChartDrawer:
-    return ChartDrawer(
-        ChartDataFactory.create_natal_chart_data(_subject(point_count)),
-        theme="classic",
-        **kwargs,
-    )
+    # The middle-band fixture needs an actually tall enough canvas. Swiss
+    # installs without optional TNO files omit some requested points, so the
+    # request count measured on libephemeris is only a starting point.
+    adapt_to_available_data = point_count == _MID and BACKEND_NAME == "swisseph"
+    counts = range(point_count, _TALL + 1) if adapt_to_available_data else (point_count,)
+    for count in counts:
+        chart = ChartDrawer(
+            ChartDataFactory.create_natal_chart_data(_subject(count)),
+            theme="classic",
+            **kwargs,
+        )
+        if not adapt_to_available_data or chart.height >= 800:
+            return chart
+    raise AssertionError("available points cannot exercise the middle wheel-growth band")
 
 
 def _wheel_transform(svg: str) -> str:
@@ -115,9 +125,16 @@ def test_a_dual_wheel_never_grows():
 # =============================================================================
 
 
-def test_the_two_bands():
-    assert _chart(_MID)._wheel_growth_scale() == pytest.approx(1.15)
-    assert _chart(_TALL)._wheel_growth_scale() == pytest.approx(1.45)
+@pytest.mark.parametrize(
+    ("point_count", "minimum_height", "scale"),
+    [(_MID, 800, 1.15), (_TALL, 1000, 1.45)],
+)
+def test_the_two_bands(point_count, minimum_height, scale):
+    chart = _chart(point_count)
+    if BACKEND_NAME == "swisseph" and chart.height < minimum_height:
+        pytest.skip("optional body data is insufficient to build this canvas-height fixture")
+    assert chart.height >= minimum_height
+    assert chart._wheel_growth_scale() == pytest.approx(scale)
 
 
 @pytest.mark.parametrize("point_count", [_MID, _TALL])

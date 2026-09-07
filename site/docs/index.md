@@ -8,7 +8,11 @@ order: 1
 
 # Kerykeion Documentation
 
-**Kerykeion** is a production-grade Python library for computational astrology. It provides high-precision planetary and house position calculations (via libephemeris, with optional Swiss Ephemeris backend), aspect detection, relationship scoring, transit forecasting, and professional SVG chart generation -- all with a clean, factory-based API and Pydantic models.
+**Kerykeion** is a Python library for computational astrology. This documentation
+targets **6.0.0rc1**, the first v6 release candidate. It provides planetary and
+house position calculations (via libephemeris, with optional Swiss Ephemeris
+backend), aspect detection, relationship scoring, transit forecasting, and SVG
+chart generation with a factory-based API and Pydantic models.
 
 ### What you can do with Kerykeion
 
@@ -24,10 +28,14 @@ order: 1
 ## Installation
 
 ```bash
-pip install kerykeion
+pip install --upgrade "kerykeion==6.0.0rc1"
 ```
 
 Requires **Python 3.12** or higher.
+
+An unqualified install selects the stable release. For v4/v5 upgrades, follow
+the [migration guide](/content/docs/migration); v6 changes calculation defaults
+and removes deprecated APIs.
 
 ## Quick Start
 

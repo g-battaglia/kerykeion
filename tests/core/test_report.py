@@ -2286,10 +2286,12 @@ class TestActiveAspectsContentValidation:
 
 
 class TestTemporalDiversity:
-    """Reports for different epochs must differ; ancient era excludes unsupported TNOs."""
+    """Reports for different epochs must differ and omit unsupported points."""
 
     @pytest.mark.extended
     def test_ancient_rome_has_fewer_points_due_to_ephemeris(self) -> None:
+        if BACKEND_NAME != "libephemeris":
+            pytest.skip("The fitted apsides window is a libephemeris sealed-mode contract")
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="Ancient Rome Subject",
             year=100,
@@ -2312,20 +2314,17 @@ class TestTemporalDiversity:
         # The core bodies are computable in any era on any kernel.
         for body in ("Sun", "Moon", "Mars", "Jupiter"):
             assert body in text, f"{body} must appear even in ancient era"
-        # The distant TNOs (Eris/Sedna/Haumea/Makemake) are only available for an
-        # ancient date when the full-range (extended DE441 + TNO SPK) data is
-        # loaded. On the default short-range kernel they are dropped — the
-        # "fewer points due to ephemeris" behaviour this test documents. With the
-        # extended kernel they ARE computed, so the limitation no longer applies.
-        distant = ("Eris", "Sedna", "Haumea", "Makemake")
-        if all(body in text for body in distant):
-            pytest.skip(
-                "extended/full-range ephemeris computes the ancient TNOs; the "
-                "fewer-points-due-to-ephemeris behaviour only applies to the "
-                "short-range default kernel"
-            )
-        for body in distant:
-            assert body not in text, f"{body} should be absent for 100 AD"
+        # libephemeris 3.2.1 serves the interpolated apsides from a fitted
+        # model whose window is narrower than the extended planetary kernel.
+        # Wider planetary data must not turn these omissions into invented
+        # positions, and consumers must be able to detect them from the model.
+        warnings = {warning.point_name: warning for warning in subject.ephemeris_warnings}
+        for point in ("Interpolated_Lilith", "Interpolated_Perigee"):
+            assert getattr(subject, point.lower()) is None
+            assert point not in subject.active_points
+            assert point.replace("_", " ") not in text
+            assert point in warnings
+            assert warnings[point].requested_jd == subject.julian_day
 
     def test_temporal_reports_differ(self) -> None:
         s1 = AstrologicalSubjectFactory.from_birth_data(

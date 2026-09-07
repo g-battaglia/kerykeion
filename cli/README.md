@@ -22,18 +22,19 @@ time series — plus a guarded `call` that reaches any public factory.
 ## Install
 
 ```bash
-pip install "kerykeion[cli]"          # the library plus this package
+pip install --pre "kerykeion[cli]==6.0.0rc1"  # the library plus this package
 # or, as a standalone tool:
-uv tool install kerykeion-cli         # pipx install kerykeion-cli
+uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
 ```
 
 Python 3.12+. `pip install kerykeion` alone installs the library without the
-command; `python -m kerykeion_cli` reaches the same entry point.
+command; `python -m kerykeion_cli` reaches the same entry point. This is the
+first v6 release candidate; the CLI pins the matching library version exactly.
 
 ## Use
 
 ```bash
-kerykeion subject save ada --name "Ada Lovelace" --date 1815-12-10 --time 18:00 \
+kerykeion subject save ada --name "Example Person" --date 1990-07-15 --time 18:00 \
   --lat 51.5074 --lng -0.1278 --tz Europe/London --offline
 
 kerykeion natal -s ada                        # ASCII report on a terminal

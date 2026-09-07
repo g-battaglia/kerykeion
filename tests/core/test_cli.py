@@ -75,7 +75,14 @@ class _Runner:
 
 
 @pytest.fixture
-def runner(deterministic_cli_env):
+def runner(deterministic_cli_env, request, monkeypatch):
+    # pytest's live log handler temporarily restores its own stdout/stderr
+    # when a warning is emitted, defeating the runner's redirect_stdout.
+    # Keep normal captured logs, but disable that live-stream handler while
+    # invoking the CLI in process (e.g. Swiss fixed-star coverage warnings).
+    logging_plugin = request.config.pluginmanager.get_plugin("logging-plugin")
+    if logging_plugin is not None:
+        monkeypatch.setattr(logging_plugin.log_cli_handler, "level", 100)
     return _Runner()
 
 
@@ -1522,7 +1529,7 @@ class TestCuratedCommands:
     def test_command_produces_json(self, runner, app, ada_profile, bob_profile, args):
         result = runner.invoke(app, [*args, "-f", "json"])
         assert result.exit_code == 0, result.output
-        assert json.loads(result.output) is not None
+        assert json.loads(result.stdout) is not None
 
     # The declination variants take (subject, active_points, orb) — no
     # active_aspects, no axis_orb_limit. Forwarding those crashed the factory.

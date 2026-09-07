@@ -4,7 +4,7 @@ name = "kerykeion-cli"
 # says the same number. Nothing in the resolver enforces it — a stale pin would publish
 # a CLI that installs the wrong library — so
 # tests/core/test_cli.py::TestEntryPoint::test_one_version_two_distributions does.
-version = "6.0.0a93"
+version = "6.0.0rc1"
 description = "The kerykeion command-line interface: every chart, technique, sky event and factory from the terminal."
 readme = "README.md"
 license = { text = "AGPL-3.0" }
@@ -23,7 +23,7 @@ keywords = [
     "ephemeris",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
@@ -37,13 +37,13 @@ classifiers = [
     "Topic :: Utilities",
 ]
 # The interface is standard library only; the library is the whole dependency.
-dependencies = ["kerykeion==6.0.0a93"]
+dependencies = ["kerykeion==6.0.0rc1"]
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
 Documentation = "https://www.kerykeion.net/content/docs/cli/"
 Repository = "https://github.com/g-battaglia/kerykeion"
-Changelog = "https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/g-battaglia/kerykeion/blob/alpha/v6/CHANGELOG.md"
 Issues = "https://github.com/g-battaglia/kerykeion/issues"
 
 [project.scripts]

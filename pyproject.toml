@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.0a93"
+version = "6.0.0rc1"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -25,7 +25,7 @@ keywords = [
     "astronomical algorithms"
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
@@ -45,18 +45,10 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # A FLOOR, not a pin (policy set at 3.0.0; see a62 vs a67-a78 history for
-    # the precedent debate). An exact pin would make kerykeion
-    # unco-installable with anything else depending on libephemeris.
-    # The floor is 3.1.0 because kerykeion's UX depends on its two changes:
-    # sealed leb mode no longer warns on fictitious-body dispatch (the
-    # kerykeion#240 flood), and Uranian points always report
-    # source="Analytical" (the retired uranians companion no longer flips
-    # provenance by environment). The standing caveat remains: this
-    # project's verification model is version-locked — golden fixtures track
-    # the release the lockfile holds, and nothing asserts the installed
-    # version at runtime. The lockfile protects this repository; it does not
-    # protect `pip install kerykeion`.
+    # Keep the exact backend version introduced in a93 for the RC. Golden
+    # fixtures and source/coverage contracts are verified against this release;
+    # the dependency pin gives PyPI installs the same backend as the lockfile.
+    # A backend upgrade requires rechecking the extended suite and fixtures.
     "libephemeris==3.2.1",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",

@@ -175,10 +175,14 @@ def test_dimming_never_breaks_the_line():
         assert "stroke-opacity" not in line
         assert "stroke-width='0.6'" in line
     # the pieces of a split line still cover it end to end
-    for angle in ("-0.000000", "-257.312566"):
+    # The actual MC angle varies by ephemeris; coverage is a geometric
+    # invariant of the rendered axes, not a golden longitude comparison.
+    angles = {re.search(r"rotate\(([-\d.]+) ", line).group(1) for line in _dimmed(svg)}
+    assert len(angles) == 2
+    for angle in angles:
         pieces = re.findall(
             rf"<line x1='50\.0' y1='([\d.]+)' x2='50\.0' y2='([\d.]+)'"
-            rf"[^>]*stroke-width='0\.6'[^>]*rotate\({angle} ", svg)
+            rf"[^>]*stroke-width='0\.6'[^>]*rotate\({re.escape(angle)} ", svg)
         outer_ring = sorted((float(a), float(b)) for a, b in pieces if float(b) <= LINE_BOTTOM)
         assert outer_ring[0][0] == pytest.approx(LINE_TOP)
         assert outer_ring[-1][1] == pytest.approx(LINE_BOTTOM)
