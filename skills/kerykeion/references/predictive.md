@@ -321,6 +321,9 @@ kwargs behave exactly as in `SecondaryProgressionFactory` (one of
   stay natal (biwheel: inner natal, outer directed, natal house grid). Position-derived
   enrichments (dignities, decan/term, nakshatra, azimuth/altitude, Gauquelin sector) are
   nulled on shifted points; house placement is recomputed against the natal cusps.
+  Every shifted point shares the progressed Sun's speed divided by 365.24219, in
+  degrees per real-time day, and its retrograde flag follows that speed. Natal
+  `motion_state` classifications are cleared because the motion is symbolic.
 
 ```python
 from kerykeion import AstrologicalSubjectFactory

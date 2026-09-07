@@ -44,7 +44,13 @@ kerykeion call MidpointFactory.compute -s ada --param active_points=Sun,Moon -f 
 - `none` / `null` → `None` for a nullable annotation (`Optional[T]` / `T | None`)
 - `datetime` / `date`: ISO
 - `Literal`: membership, case-checked, with a suggestion on a near miss
-- lists **and abstract sequences** (`list[str]`, `Sequence[str]`): comma-separated
+- lists **and abstract sequences** (`list[str]`, `Sequence[str]`): JSON arrays;
+  scalar elements also accept comma-separated text. Structured elements require
+  JSON, e.g. `--param 'active_aspects=[{"name":"trine","orb":5}]'` for
+  `AspectsFactory.single_chart_aspects`. JSON arrays preserve commas inside strings
+  and validate each element against its annotated type. For scalar sequences,
+  text starting with `[` uses JSON only if it is syntactically valid JSON;
+  otherwise it retains CSV parsing, so literal values such as `[Sun` still work.
 - mappings: JSON, e.g. `--param custom_weights='{"Sun": 1.5}'`
 - a Pydantic model parameter: the path to a JSON file holding it
 

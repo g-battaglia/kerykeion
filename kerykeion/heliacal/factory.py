@@ -481,7 +481,7 @@ class HeliacalFactory:
             # emit the globally earliest, and advance ONLY that combo. This
             # yields the true "next `count` events sorted by JD" without the old
             # hard cap of one-per-combo, while calling the (expensive) heliacal
-            # search at most count + len(combos) times — not count-per-combo.
+            # search at most count + len(combos) - 1 times — not count-per-combo.
             heads = {}
             for planet, etype in combos:
                 ev = _next_event(planet, etype, julian_day)
@@ -492,6 +492,8 @@ class HeliacalFactory:
                 key = min(heads, key=lambda k: heads[k].julian_day)
                 ev = heads.pop(key)
                 events.append(ev)
+                if len(events) == count:
+                    break
                 planet, etype = key
                 # Advance just past this event (+1 day is safely inside any
                 # body's synodic gap; a non-advancing cursor would re-find it).

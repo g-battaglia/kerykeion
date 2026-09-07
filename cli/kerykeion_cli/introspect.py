@@ -163,6 +163,23 @@ def coerce_value(annotation: Any, raw: str) -> Any:
         return annotation(raw)
     if annotation in (datetime, date):
         return annotation.fromisoformat(raw)
+    if origin in (list, set, frozenset, tuple) or origin in _SEQUENCE_ORIGINS:
+        inner_types = [a for a in get_args(annotation) if a is not ...] or [str]
+        use_json = not all(_is_csv_scalar(t) for t in inner_types)
+        if not use_json and raw.lstrip().startswith("["):
+            try:
+                json.loads(raw)
+            except json.JSONDecodeError:
+                # A scalar CSV value may literally start with "[".
+                pass
+            else:
+                use_json = True
+        if use_json:
+            from pydantic import TypeAdapter
+
+            # JSON preserves object boundaries, nested arrays and commas in
+            # strings. Validate elements against the annotated type as well.
+            return TypeAdapter(annotation).validate_json(raw)
     if origin in (list, set, frozenset) or origin in _SEQUENCE_ORIGINS:
         factory = origin if origin in (list, set, frozenset) else list
         (inner,) = get_args(annotation) or (str,)
@@ -192,6 +209,14 @@ def coerce_value(annotation: Any, raw: str) -> Any:
         with open(raw, encoding="utf-8") as fh:
             return annotation.model_validate_json(fh.read())
     return raw
+
+
+def _is_csv_scalar(annotation: Any) -> bool:
+    """Whether comma-separated text can represent this sequence element."""
+    annotation = _strip_optional(annotation)
+    if _is_union(annotation):
+        return all(_is_csv_scalar(a) for a in _union_args(annotation))
+    return annotation in _SCALARS or annotation is Any or get_origin(annotation) is Literal
 
 
 def _classify(annotation: Any) -> str:

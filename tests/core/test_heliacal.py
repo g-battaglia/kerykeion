@@ -161,6 +161,27 @@ class TestSearchEvents:
         events = self._get_events(factory, count=2)
         assert len(events) <= 2
 
+    @pytest.mark.parametrize("count", [1, 3])
+    def test_does_not_search_past_requested_count(self, factory, monkeypatch, count):
+        import kerykeion.heliacal.factory as hf
+
+        calls = []
+
+        def bounded_search(jd, *args, **kwargs):
+            calls.append(jd)
+            if len(calls) > count:
+                raise RuntimeError("Successor is outside ephemeris coverage")
+            return (jd + 10, jd + 10.1, jd + 10.2)
+
+        monkeypatch.setattr(hf.ephe, "heliacal_ut", bounded_search)
+        events = factory.search_events(
+            julian_day=START_JD, geopos=ROME_GEOPOS, count=count,
+            planets=["Jupiter"], event_types=[hf.HELIACAL_RISING],
+        )
+        assert len(events) == count
+        assert len(calls) == count
+        assert [e.julian_day for e in events] == [START_JD + 10 + 11 * i for i in range(count)]
+
     @pytest.mark.parametrize("event_types", [[999], [0], [-1], ["1"]])
     def test_invalid_event_types_rejected(self, factory, event_types):
         with pytest.raises(KerykeionException, match="event_types"):
