@@ -427,6 +427,37 @@ def test_solar_arc_empty_aspects_disables_aspect_detection():
     assert solar_arc.directed_to_natal_aspects == []
 
 
+def test_solar_arc_directed_motion_matches_positions_and_aspect_movement():
+    from kerykeion import ChartDataFactory
+
+    natal = AstrologicalSubjectFactory.from_birth_data(
+        "Directed motion", 1990, 1, 1, 12, 0,
+        lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+    )
+    original = natal.model_dump()
+    assert natal.mercury.retrograde is True
+    directed = SolarArcFactory.compute_directed_subject(natal, target_year=2026)
+    following = SolarArcFactory.compute_directed_subject(natal, target_year=2027)
+    elapsed_days = ephe.julday(2027, 1, 1, 0) - ephe.julday(2026, 1, 1, 0)
+    for field in SolarArcFactory._DIRECTABLE_FIELDS:
+        point = getattr(directed, field, None)
+        if point is None:
+            continue
+        advance = (getattr(following, field).abs_pos - point.abs_pos) % 360
+        assert point.speed == directed.sun.speed
+        assert point.speed == pytest.approx(advance / elapsed_days, rel=0.001)
+        assert point.retrograde is False
+        assert point.motion_state is None
+    assert natal.model_dump() == original
+
+    chart = ChartDataFactory.create_progression_chart_data(natal, directed)
+    conjunction = next(
+        a for a in chart.aspects
+        if a.p1_name == "Moon" and a.p2_name == "Mercury" and a.aspect == "conjunction"
+    )
+    assert conjunction.aspect_movement == "Applying"
+
+
 def test_solar_arc_roughly_1_deg_per_year():
     natal = _subject()
     solar_arc = SolarArcFactory.compute(natal, target_year=2030, compute_aspects=False)

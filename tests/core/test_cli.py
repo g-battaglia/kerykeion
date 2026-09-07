@@ -1125,6 +1125,47 @@ class TestFullPrReviewFixes:
         assert r.exit_code == 0, r.output
         assert json.loads(r.output)
 
+    def test_call_binds_structured_sequence_json(self, runner, app, ada_profile):
+        r = runner.invoke(
+            app,
+            ["call", "AspectsFactory.single_chart_aspects", "-s", ada_profile,
+             "--param", 'active_aspects=[{"name":"trine","orb":5}]', "-f", "json"],
+        )
+        assert r.exit_code == 0, r.output
+        payload = json.loads(r.output)
+        assert payload["aspects"]
+        assert all(a["aspect"] == "trine" and a["orbit"] <= 5 for a in payload["aspects"])
+
+    @pytest.mark.parametrize(
+        ("annotation", "raw", "expected"),
+        [
+            (list[str], '["Sun,Moon", "Venus"]', ["Sun,Moon", "Venus"]),
+            (list[int], '[1, "2"]', [1, 2]),
+            (list[int], "1,2", [1, 2]),
+            (list[dict[str, float]], '[{"Sun": 1.5, "Moon": 2}]', [{"Sun": 1.5, "Moon": 2.0}]),
+            (list[list[int]], '[[1,2],[3]]', [[1, 2], [3]]),
+            (tuple[int, str], '[1,"a,b"]', (1, "a,b")),
+            (set[int], '[1,2,1]', {1, 2}),
+            (list[dict[str, float]], '[]', []),
+        ],
+    )
+    def test_sequence_json_preserves_structure_and_coerces_elements(self, annotation, raw, expected):
+        from kerykeion_cli.introspect import coerce_value
+
+        assert coerce_value(annotation, raw) == expected
+
+    @pytest.mark.parametrize("raw", ['[{', '["trine"]', '{"name":"trine","orb":5}',
+                                     '[{"name":"trine","orb":"invalid"}]'])
+    def test_structured_sequence_rejects_invalid_json_or_elements(self, raw):
+        from typing import get_type_hints
+
+        from kerykeion import AspectsFactory
+        from kerykeion_cli.introspect import coerce_value
+
+        annotation = get_type_hints(AspectsFactory.single_chart_aspects)["active_aspects"]
+        with pytest.raises(ValueError):
+            coerce_value(annotation, raw)
+
     # House letters are case-SIGNIFICANT: 'i' (Sunshine/alt.) != 'I' (Sunshine).
     # Upper-casing every letter made 'i' unreachable and silently re-framed a
     # transit ring inheriting a natal 'i'.

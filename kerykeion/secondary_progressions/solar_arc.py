@@ -51,7 +51,7 @@ from kerykeion.utilities.core import (
     get_planet_house,
 )
 
-from .factory import SecondaryProgressionFactory
+from .factory import DAYS_PER_TROPICAL_YEAR, SecondaryProgressionFactory
 
 
 def _normalise_long(value: float) -> float:
@@ -196,26 +196,11 @@ class SolarArcFactory:
         # selected aspects would otherwise be silently ignored.
         validate_point_orb_adjustments(point_orb_adjustments)
 
-        if natal_subject.sun is None:
-            raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
-        if (target_iso_utc_datetime is None) == (target_year is None):
-            raise KerykeionException(
-                "Pass exactly one of `target_iso_utc_datetime` or `target_year`."
-            )
-
-        target_jd = SecondaryProgressionFactory._target_to_jd(
-            target_iso_utc_datetime, target_year
-        )
-
-        progressed = SecondaryProgressionFactory.compute(
+        solar_arc, target_jd, _ = SolarArcFactory._compute_arc(
             natal_subject,
             target_iso_utc_datetime=target_iso_utc_datetime,
             target_year=target_year,
         )
-        if progressed.sun is None:
-            raise KerykeionException("Progressed subject is missing the Sun — cannot compute solar arc.")
-
-        solar_arc = _forward_arc_diff(progressed.sun.abs_pos, natal_subject.sun.abs_pos)
 
         directed_sources = gather_active_points(natal_subject, active_points)
         natal_targets = gather_active_points(natal_subject, natal_subject.active_points)
@@ -329,6 +314,32 @@ class SolarArcFactory:
             directed_to_natal_aspects=directed_to_natal,
         )
 
+    @staticmethod
+    def _compute_arc(
+        natal_subject: AstrologicalSubjectModel,
+        *,
+        target_iso_utc_datetime: Optional[str],
+        target_year: Optional[int],
+    ) -> tuple[float, float, Optional[float]]:
+        """Return the arc, target JD and Sun speed at the progressed instant."""
+        if natal_subject.sun is None:
+            raise KerykeionException("Natal subject is missing the Sun — cannot compute solar arc.")
+        if (target_iso_utc_datetime is None) == (target_year is None):
+            raise KerykeionException("Pass exactly one of `target_iso_utc_datetime` or `target_year`.")
+        target_jd = SecondaryProgressionFactory._target_to_jd(target_iso_utc_datetime, target_year)
+        progressed = SecondaryProgressionFactory.compute(
+            natal_subject,
+            target_iso_utc_datetime=target_iso_utc_datetime,
+            target_year=target_year,
+        )
+        if progressed.sun is None:
+            raise KerykeionException("Progressed subject is missing the Sun — cannot compute solar arc.")
+        return (
+            _forward_arc_diff(progressed.sun.abs_pos, natal_subject.sun.abs_pos),
+            target_jd,
+            progressed.sun.speed,
+        )
+
     # Names of point fields whose abs_pos must be shifted by the solar arc
     # when building a directed AstrologicalSubjectModel. The four angles
     # (Asc/MC/Desc/IC) ARE directed — solar-arc-directed angles are a standard
@@ -367,14 +378,18 @@ class SolarArcFactory:
         :meth:`compute`, whose aspect list reports directed-angle contacts.
         Only the house CUSPS stay on the natal frame (they define the biwheel's
         house grid): inner ring = natal, outer ring = directed, houses fixed.
+        Directed speeds are in degrees per real-time day, shared by all points;
+        natal planetary motion-state classifications are cleared.
         """
-        result = SolarArcFactory.compute(
+        arc, _, sun_speed = SolarArcFactory._compute_arc(
             natal_subject,
             target_iso_utc_datetime=target_iso_utc_datetime,
             target_year=target_year,
-            compute_aspects=False,
         )
-        arc = result.solar_arc
+        if sun_speed is None:
+            raise KerykeionException("Progressed Sun is missing speed — cannot compute directed motion.")
+        # One ephemeris day corresponds to one tropical year of life.
+        directed_speed = sun_speed / DAYS_PER_TROPICAL_YEAR
 
         directed = natal_subject.model_copy(deep=True)
         directed.name = f"{natal_subject.name} (directed)"
@@ -399,6 +414,9 @@ class SolarArcFactory:
             point.sign = SIGN_CODES[sign_idx]
             point.sign_num = sign_idx
             point.position = new_abs - sign_idx * 30.0
+            point.speed = directed_speed
+            point.retrograde = directed_speed < 0.0
+            point.motion_state = None
             # Recompute sign-derived metadata so downstream consumers
             # (ChartDrawer, AI prompts, PDF exports) stay consistent
             # when a directed point crosses signs.
@@ -457,4 +475,3 @@ class SolarArcFactory:
             )
 
         return directed
-

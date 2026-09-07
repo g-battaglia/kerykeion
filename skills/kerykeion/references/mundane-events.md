@@ -339,6 +339,8 @@ planets); `count` max 200. `next_heliacal_rising` additionally accepts
 fixed-star names; "no event in window" and a mistyped body both surface as
 `KerykeionException`. `HeliacalEventModel`: `event_type` (label string, e.g.
 `"heliacal_rising"`), `julian_day`, `planet_name`, `datestamp` (`YYYY-MM-DD`).
+`search_events` stops as soon as `count` events have been collected; it does
+not search for an unused successor beyond the requested results.
 
 ```python
 # doc-snippet: no-run  (heliacal searches take ~10-20 s each)
