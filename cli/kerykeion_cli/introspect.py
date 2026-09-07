@@ -165,7 +165,16 @@ def coerce_value(annotation: Any, raw: str) -> Any:
         return annotation.fromisoformat(raw)
     if origin in (list, set, frozenset, tuple) or origin in _SEQUENCE_ORIGINS:
         inner_types = [a for a in get_args(annotation) if a is not ...] or [str]
-        if raw.lstrip().startswith("[") or not all(_is_csv_scalar(t) for t in inner_types):
+        use_json = not all(_is_csv_scalar(t) for t in inner_types)
+        if not use_json and raw.lstrip().startswith("["):
+            try:
+                json.loads(raw)
+            except json.JSONDecodeError:
+                # A scalar CSV value may literally start with "[".
+                pass
+            else:
+                use_json = True
+        if use_json:
             from pydantic import TypeAdapter
 
             # JSON preserves object boundaries, nested arrays and commas in

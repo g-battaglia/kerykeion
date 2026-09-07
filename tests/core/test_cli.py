@@ -1126,6 +1126,7 @@ class TestFullPrReviewFixes:
         assert json.loads(r.output)
 
     def test_call_binds_structured_sequence_json(self, runner, app, ada_profile):
+        """The dispatcher passes structured aspect settings through to the factory."""
         r = runner.invoke(
             app,
             ["call", "AspectsFactory.single_chart_aspects", "-s", ada_profile,
@@ -1150,13 +1151,36 @@ class TestFullPrReviewFixes:
         ],
     )
     def test_sequence_json_preserves_structure_and_coerces_elements(self, annotation, raw, expected):
+        """JSON retains nested values and embedded commas while validating element types."""
         from kerykeion_cli.introspect import coerce_value
 
         assert coerce_value(annotation, raw) == expected
 
+    @pytest.mark.parametrize(
+        ("raw", "expected"),
+        [("[Sun", ["[Sun"]), ("[Sun,Moon]", ["[Sun", "Moon]"]), (" [Sun, Moon ", ["[Sun", "Moon"])],
+    )
+    def test_scalar_sequence_preserves_csv_starting_with_bracket(self, raw, expected):
+        """A literal opening bracket in a CSV string does not require JSON input."""
+        from typing import Sequence
+
+        from kerykeion_cli.introspect import coerce_value
+
+        assert coerce_value(list[str], raw) == expected
+        assert coerce_value(Sequence[str], raw) == expected
+        assert coerce_value(tuple[str, ...], raw) == tuple(expected)
+
+    def test_scalar_sequence_does_not_fallback_on_json_element_errors(self):
+        """Syntactically valid JSON must still reject elements of the wrong type."""
+        from kerykeion_cli.introspect import coerce_value
+
+        with pytest.raises(ValueError):
+            coerce_value(list[str], '[{"name":"Sun"}]')
+
     @pytest.mark.parametrize("raw", ['[{', '["trine"]', '{"name":"trine","orb":5}',
                                      '[{"name":"trine","orb":"invalid"}]'])
     def test_structured_sequence_rejects_invalid_json_or_elements(self, raw):
+        """Structured sequences require valid JSON with correctly typed elements."""
         from typing import get_type_hints
 
         from kerykeion import AspectsFactory
