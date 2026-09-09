@@ -106,6 +106,7 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 - [AI Agent Skill](#ai-agent-skill)
 - [Development](#development)
 - [License and Commercial Use](#license-and-commercial-use)
+- [Astrologer Studio](#astrologer-studio)
 - [Contributing and Citation](#contributing-and-citation)
 
 ## Installation
@@ -837,11 +838,17 @@ A direct commercial license for embedding Kerykeion can also be discussed with t
 
 This section is a practical project summary, not legal advice. Consult qualified counsel for your specific use case.
 
+## Astrologer Studio
+
+**[Astrologer Studio](https://www.astrologerstudio.com/)** is a cloud astrology application powered by Kerykeion and the hosted Astrologer API. It brings professional astrological calculations and chart generation into a ready-to-use online workspace—without requiring a local Python installation or ephemeris setup.
+
+<p align="center">
+  <strong><a href="https://www.astrologerstudio.com/">Open Astrologer Studio</a></strong>
+</p>
+
 ## Contributing and Citation
 
 Contributions are welcome. Open an issue or discussion before substantial work and follow the local gates in [CONTRIBUTING.md](https://github.com/g-battaglia/kerykeion/blob/v6/CONTRIBUTING.md). Contributions are accepted under the copyright-assignment terms documented there; authorship remains visible in project history and release notes.
-
-[AstrologerStudio](https://www.astrologerstudio.com/) is a cloud astrology application built with Kerykeion and the Astrologer API.
 
 For academic or published work, cite:
 
