@@ -115,6 +115,12 @@ print(subjects[0].sun.sign)
 | `tz_str`  | Timezone string           | `"Etc/UTC"`        |
 | `is_dst`  | Which UTC offset to use when a wall time in the series is non-unique: `True` = the larger offset, `False` = the smaller. Applies to skipped times as well as repeated ones. | `False` (= the smaller offset) |
 
+Naive inputs are local wall times. Daily samples advance by local calendar days;
+hourly and minutely samples advance uniformly in UTC. Before a zone has any
+recorded civil time, a synthetic IANA `LMT` record is replaced by local mean
+time at the supplied longitude, exactly as in `AstrologicalSubjectFactory`.
+Named historical records such as RMT or BMT remain authoritative.
+
 ### Calculation Parameters
 
 | Parameter                  | Description                 | Default                 |

@@ -193,6 +193,13 @@ def pytest_collection_modifyitems(config, items):
         if tier != "extended" and item.get_closest_marker("extended") is not None:
             item.add_marker(skip_range)
             continue
+        if tier == "base" and item.get_closest_marker("medium") is not None:
+            item.add_marker(
+                pytest.mark.skip(
+                    reason=f"Requires at least the medium ephemeris kernel; current tier is '{tier}'{detected_note}"
+                )
+            )
+            continue
         for subject_id in all_subject_ids:
             if subject_id in node_id and subject_id not in allowed_ids:
                 item.add_marker(skip_subject)

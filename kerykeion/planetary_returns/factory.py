@@ -160,9 +160,9 @@ class PlanetaryReturnFactory:
         cache_expire_after_days (int, optional): Number of days to cache Geonames
             location data before refreshing. Defaults to system setting.
         altitude (Optional[Union[float, int]]): Elevation above sea level in meters
-            for the return chart location. Forwarded to the return chart's subject, where
-            a Topocentric perspective feeds it to the observer position (sub-arcsecond
-            effect on positions). Ignored by geocentric perspectives. Defaults to None.
+            for the return chart location. A Topocentric return uses it both to search
+            the exact crossing and to cast the returned subject, so both calculations
+            share one observer. Ignored by geocentric perspectives. Defaults to None.
 
     Raises:
         KerykeionException: If required location parameters are missing for the
@@ -512,9 +512,9 @@ class PlanetaryReturnFactory:
                 calls and improve performance for repeated calculations.
                 Defaults to system configuration value.
             altitude (Optional[Union[float, int]]): Elevation above sea level in meters
-                for the return chart location. Forwarded to the return chart's subject, where
-                a Topocentric perspective feeds it to the observer position (sub-arcsecond
-                effect on positions). Ignored by geocentric perspectives. Defaults to None.
+                for the return chart location. A Topocentric return uses it both to search
+                the exact crossing and to cast the returned subject, so both calculations
+                share one observer. Ignored by geocentric perspectives. Defaults to None.
             active_fixed_stars, calculate_dignities, calculate_nakshatra,
                 calculate_gauquelin, calculate_nutation, calculate_local_space: the v6
                 enrichment flags for the return chart. Each is additive over what the
@@ -904,13 +904,17 @@ class PlanetaryReturnFactory:
                 "'Apparent Geocentric', 'True Geocentric' and 'Topocentric'."
             )
 
-        # A topocentric natal frame is topocentric at the NATAL location, so
-        # the crossing search needs the natal coordinates. The subject model
-        # does not store altitude; 0.0 matches the factory default used when
-        # the natal chart was computed without an explicit altitude.
+        # The returned chart is topocentric at the RETURN location. Search the
+        # crossing in that same observer frame, otherwise a return cast away
+        # from the birthplace does not reproduce its natal target (for the Moon
+        # the parallax can shift the answer by tens of minutes). The target
+        # longitude remains the natal subject's position; only the observer used
+        # to find when the moving body reaches it comes from this factory.
         topo = None
         if perspective_type == "Topocentric":
-            topo = (self.subject.lng, self.subject.lat, 0.0)
+            # Offline/online validation has resolved both coordinates by now.
+            assert self.lng is not None and self.lat is not None
+            topo = (float(self.lng), float(self.lat), float(self.altitude or 0.0))
 
         return_julian_date = None
         with ephemeris_session(

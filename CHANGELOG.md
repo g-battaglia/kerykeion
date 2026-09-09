@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Relocated sidereal charts now compute their house ring directly in the subject's
+  configured frame. Whole Sign and fixed-reference-frame charts therefore keep
+  their cusp construction and planet houses when relocated onto the birthplace.
+- Topocentric Solar and Lunar returns now search from the return location and
+  altitude, matching the observer used to cast the returned subject.
+- Historical ephemeris series and single subjects now share one synthetic-LMT
+  policy, so the same local wall time and longitude resolve to the same UTC instant.
+- Localized biwheel point and house tables are positioned from their measured
+  content widths, removing the French and Italian OOB/cusp-label overlap.
+- Base-tier test runs now skip only cases that explicitly require at least the
+  medium ephemeris kernel, while medium and extended runs continue to execute them.
+
 ## [6.0.0rc1] - 2026-09-07
 
 The first release candidate for Kerykeion 6. Both `kerykeion` and the separate

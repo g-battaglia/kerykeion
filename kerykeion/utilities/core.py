@@ -1680,6 +1680,43 @@ def localize_naive(naive: datetime, tz: _tzinfo, *, is_dst: Optional[bool] = Non
     return naive.replace(tzinfo=tz, fold=larger_fold if is_dst else 1 - larger_fold)
 
 
+def localize_naive_with_longitude_lmt(
+    naive: datetime,
+    tz: _tzinfo,
+    *,
+    longitude: float,
+    is_dst: Optional[bool] = None,
+) -> datetime:
+    """Localize a wall time, replacing only a synthetic IANA ``LMT`` record.
+
+    An IANA zone's opening ``LMT`` offset belongs to the zone's reference city,
+    not necessarily to the observer's longitude. When that placeholder is all
+    the database has, use local mean time at the actual longitude instead
+    (15 degrees per hour, rounded to the whole second). Named historical records
+    such as RMT, BMT or KMT remain untouched because they describe civil clocks
+    that were genuinely observed.
+    """
+    localized = localize_naive(naive, tz, is_dst=is_dst)
+    if localized.tzname() != "LMT":
+        return localized
+    lmt_offset = timedelta(seconds=round(longitude / 15.0 * 3600))
+    return naive.replace(tzinfo=timezone(lmt_offset))
+
+
+def utc_to_local_with_longitude_lmt(instant: datetime, tz: _tzinfo, *, longitude: float) -> datetime:
+    """Render an aware instant locally with the same synthetic-LMT policy.
+
+    The input instant is unambiguous. Convert it through the IANA zone first;
+    only if that lands on its synthetic opening ``LMT`` record, re-render the
+    same instant through local mean time at the observer's longitude.
+    """
+    local_datetime = instant.astimezone(tz)
+    if local_datetime.tzname() != "LMT":
+        return local_datetime
+    lmt_offset = timedelta(seconds=round(longitude / 15.0 * 3600))
+    return instant.astimezone(timezone(lmt_offset))
+
+
 # =============================================================================
 # ANGULAR MATHEMATICS
 # =============================================================================

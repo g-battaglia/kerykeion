@@ -68,7 +68,8 @@ from kerykeion.utilities.core import (
     validate_latitude,
     normalize_longitude,
     safe_timezone,
-    localize_naive,
+    localize_naive_with_longitude_lmt,
+    utc_to_local_with_longitude_lmt,
     calculate_moon_phase,
     datetime_to_julian,
     format_ancient_iso,
@@ -2073,7 +2074,7 @@ class AstrologicalSubjectFactory:
             # past datetime's representable range, raising a raw OverflowError.
             # from_birth_data surfaces the equivalent boundary as
             # KerykeionException; match that contract here.
-            local_datetime = dt.astimezone(local_time)
+            local_datetime = utc_to_local_with_longitude_lmt(dt, local_time, longitude=lng)
         except (OverflowError, OSError) as exc:
             raise KerykeionException(
                 f"ISO UTC timestamp {iso_utc_time!r} is outside the representable "
@@ -2094,24 +2095,10 @@ class AstrologicalSubjectFactory:
         if _off is not None:
             resolved_offset_seconds = round(_off.total_seconds())
 
-        # Dates before the zone kept any recorded civil time: the IANA zone
-        # resolves to its synthetic reference-meridian "LMT" record, and
-        # from_birth_data re-derives the offset from the birth longitude (see
-        # _calculate_time_conversions, which also explains why the test is the
-        # record NAME rather than the era). The predicate MUST stay identical to
-        # that one, or the two entry points disagree. Convert UTC->local using
-        # the same longitude-based LMT here so the wall time we extract maps back
-        # to the original UTC instant instead of being double-interpreted (which
-        # would shift the instant by the longitude delta and trip the round-trip
-        # guard below). No DST exists in the LMT era, so is_dst is irrelevant.
-        # The offset is passed to from_birth_data explicitly (_lmt_offset_seconds)
-        # so it is applied directly rather than re-detected from a wall time that
-        # may land past the IANA LMT->standard transition boundary.
+        # Pass the resolved offset down directly. This preserves both sides of
+        # modern folds and the longitude-based fixed offset produced when the
+        # shared helper replaced a synthetic historical LMT record.
         lmt_offset_seconds: Optional[int] = resolved_offset_seconds
-        if local_datetime.tzname() == "LMT" and lng is not None:
-            lmt_offset_seconds = round(lng / 15.0 * 3600)
-            local_datetime = dt.astimezone(timezone(timedelta(seconds=lmt_offset_seconds)))
-            is_dst = False
 
         # Create the subject with local time
         subject = cls.from_birth_data(
@@ -2513,35 +2500,16 @@ class AstrologicalSubjectFactory:
         local_timezone = safe_timezone(location.tz_str)
         # Raises KerykeionException (same messages as before) when the wall time
         # is ambiguous or non-existent and the caller gave no is_dst.
-        local_datetime = localize_naive(naive_datetime, local_timezone, is_dst=data.get("is_dst"))
-
-        # Births before the zone kept ANY recorded civil time: the tz database
-        # answers with its synthetic opening record, always named "LMT", whose
-        # offset is the mean solar time of the zone's *reference meridian* (e.g.
-        # Berlin for Europe/Berlin), not the birth city's. That record is an
-        # admission of missing data, so we replace it with what the birth place
-        # itself would have read off a sundial. Mirror
-        # _calculate_time_conversions_bce and derive the offset from the birth
-        # longitude so historical Asc/MC line up.
-        #
-        # The test is the record NAME, not the era, and deliberately so: the
-        # later pre-standard records (Rome's RMT, Amsterdam's BMT, Kyiv's KMT,
-        # Moscow's MMT, …) are documented clock times the zone genuinely kept,
-        # and overriding those with a sundial reading would discard real data.
-        # This is a boundary with a step in it — the wall clock legitimately
-        # jumps when a city adopts an imported mean time — not a smooth ramp.
-        # NOTE: before the migration to zoneinfo this branch fired for EVERY
-        # pre-1901 birth, because the previous backend's transition table began
-        # in 1901 and collapsed all earlier dates onto the opening LMT record.
-        # Charts in the ~60 zones carrying a named 19th-century mean time move
-        # as a result, and toward the recorded civil time.
-        if local_datetime.tzname() == "LMT" and location.lng is not None:
-            # Exact longitude-based LMT (15° = 1 h, east = ahead of UT), rounded
-            # to the whole second because an ISO 8601 UTC offset has no
-            # sub-second field — the remainder we drop is astronomically
-            # irrelevant (<0.3" of arc).
-            lmt_offset = timedelta(seconds=round(location.lng / 15.0 * 3600))
-            local_datetime = naive_datetime.replace(tzinfo=timezone(lmt_offset))
+        # Localize through the shared policy used by EphemerisDataFactory.
+        # Only the zone database's synthetic opening LMT record is replaced by
+        # mean time at the observer's own longitude; named historical records
+        # (RMT, BMT, KMT, ...) remain authoritative civil time.
+        local_datetime = localize_naive_with_longitude_lmt(
+            naive_datetime,
+            local_timezone,
+            longitude=location.lng,
+            is_dst=data.get("is_dst"),
+        )
 
         # Store formatted times
         try:

@@ -255,7 +255,15 @@ SLOW_HELIOCENTRIC_MAX_GAP_DAYS = {
 }
 
 
-@pytest.mark.parametrize("planet", sorted(SLOW_HELIOCENTRIC_MAX_GAP_DAYS))
+@pytest.mark.parametrize(
+    "planet",
+    [
+        "Chiron",
+        pytest.param("Neptune", marks=pytest.mark.medium),
+        pytest.param("Pluto", marks=pytest.mark.medium),
+        pytest.param("Uranus", marks=pytest.mark.medium),
+    ],
+)
 def test_slow_heliocentric_bodies_step_and_come_back(factory, planet):
     first = _step(factory, planet, START)
     second = _step(factory, planet, first.iso_formatted_utc_datetime)

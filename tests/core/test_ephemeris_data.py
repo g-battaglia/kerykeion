@@ -116,6 +116,29 @@ class TestDailyEphemeris:
         assert dates == sorted(dates)
 
 
+class TestHistoricalLocalTimeConsistency:
+    """A series and a single subject must interpret one local wall time alike."""
+
+    @pytest.mark.medium
+    def test_synthetic_lmt_uses_the_observer_longitude(self):
+        from kerykeion import AstrologicalSubjectFactory
+
+        location = {"lng": 11.576, "lat": 48.137, "tz_str": "Europe/Berlin"}
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Munich", 1880, 1, 1, 12, 0, online=False, **location
+        )
+        sample = EphemerisDataFactory(
+            datetime(1880, 1, 1, 12),
+            datetime(1880, 1, 1, 12),
+            **location,
+        ).get_ephemeris_data_as_astrological_subjects()[0]
+
+        assert sample.julian_day == pytest.approx(subject.julian_day, abs=1.0 / 86400.0)
+        assert sample.iso_formatted_utc_datetime == subject.iso_formatted_utc_datetime
+        assert sample.iso_formatted_local_datetime == subject.iso_formatted_local_datetime
+        assert sample.ascendant.abs_pos == pytest.approx(subject.ascendant.abs_pos, abs=1e-6)
+
+
 # ===========================================================================
 # 2. TestHourlyEphemeris
 # ===========================================================================
