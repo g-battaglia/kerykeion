@@ -932,11 +932,7 @@ class TestReturnPerspectivePropagation:
         )
 
     def test_topocentric_lunar_return_moon_matches_natal(self):
-        """Return Moon (Topocentric, return cast at the natal location) must
-        equal the natal Moon within 1e-3°.
-
-        Pre-fix error was ~0.319° (the lunar parallax at the natal latitude).
-        """
+        """The returned Moon must reach the natal target in the return frame."""
         subject = self._make_subject("Topocentric")
         factory = self._make_factory(subject)
         result = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
@@ -944,8 +940,50 @@ class TestReturnPerspectivePropagation:
         diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
         assert diff < 1e-3, (
             f"Topocentric lunar return Moon {result.moon.abs_pos}° differs from natal "
-            f"{subject.moon.abs_pos}° by {diff}° — crossing searched without the natal topo frame"
+            f"{subject.moon.abs_pos}° by {diff}°"
         )
+
+    def test_topocentric_lunar_return_uses_return_location(self):
+        subject = self._make_subject("Topocentric")
+        factory = PlanetaryReturnFactory(
+            subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False,
+        )
+        result = factory.next_return_from_date(2026, 1, 1, return_type="Lunar")
+
+        diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"Topocentric return at a different location missed its natal target by {diff}°"
+        )
+
+    def test_topocentric_return_search_uses_return_altitude(self, monkeypatch):
+        import kerykeion.planetary_returns.factory as factory_module
+
+        subject = self._make_subject("Topocentric")
+        factory = PlanetaryReturnFactory(
+            subject,
+            lat=41.9028,
+            lng=12.4964,
+            altitude=4000.0,
+            tz_str="Europe/Rome",
+            online=False,
+        )
+        captured_topos = []
+        original_ephemeris_session = factory_module.ephemeris_session
+
+        def capture_ephemeris_session(*args, **kwargs):
+            captured_topos.append(kwargs.get("topo"))
+            return original_ephemeris_session(*args, **kwargs)
+
+        monkeypatch.setattr(factory_module, "ephemeris_session", capture_ephemeris_session)
+        result = factory.next_return_from_date(2026, 1, 1, return_type="Lunar")
+
+        assert captured_topos == [(12.4964, 41.9028, 4000.0)]
+        assert result.altitude == 4000.0
+        assert _angular_diff(result.moon.abs_pos, subject.moon.abs_pos) < 1e-3
 
     def test_topocentric_solar_return_sun_matches_natal(self):
         subject = self._make_subject("Topocentric")

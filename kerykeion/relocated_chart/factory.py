@@ -7,16 +7,17 @@ geographic location. This is equivalent to asking: "If I had been born at
 the same Universal Time but in a different city, which houses would my
 planets fall in?"
 
-Ephemeris function: ``houses_ex2_with_polar_fallback_ex(...)`` (a polar-safe
-wrapper over the backend's ``houses_ex2``, which substitutes the house SYSTEM
-rather than the latitude so the relocated angles stay exact)
+Ephemeris function: ``houses_ring_with_polar_fallback(...)`` (the same
+polar-safe wrapper used by the natal subject factory, in the subject's actual
+zodiac frame)
 
 Location-dependent derived points are recomputed as well: the Vertex /
 Anti-Vertex (from the same house call), the Ascendant-based Arabic
 parts (with the day/night formula re-selected from the Sun's altitude at the
 new location), and the local ISO datetime when a new timezone is provided.
-For sidereal subjects the tropical house output is shifted by the
-subject's ayanamsa so the relocated cusps stay in the natal zodiac.
+Sidereal subjects are recast with the backend's sidereal house mode directly,
+so Whole Sign and fixed-reference-frame systems preserve their own construction
+rather than being approximated by rotating tropical cusps.
 
 Per-point local-space / Gauquelin enrichments (``azimuth``,
 ``altitude_above_horizon``, ``gauquelin_sector``) and the subject-level
@@ -30,7 +31,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 
-from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session, houses_ex2_with_polar_fallback_ex
+from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session, houses_ring_with_polar_fallback
 
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.schemas.literals import AstrologicalPoint, Houses
@@ -41,39 +42,12 @@ from kerykeion.utilities.core import (
     normalize_longitude,
     safe_timezone,
     get_kerykeion_point_from_degree,
-    angle_house_identities,
-    coincident_cusp_groups,
     get_planet_house,
     _assemble_ancient_iso,
     _split_decimal_hour_with_carry,
 )
 
 _AXIAL_POINTS_SET: frozenset[str] = frozenset(AXIAL_POINTS)
-
-
-#: Sidereal modes that request a fixed reference frame rather than an ayanamsa
-#: along the ecliptic of date; the reference keeps Sunshine 'i' on its own
-#: construction under these.
-_FIXED_EPOCH_SIDEREAL_MODES = frozenset({"J2000", "J1900", "B1950", "GALALIGN_MARDYKS"})
-
-
-def _house_system_the_reference_casts(hsys: bytes, is_sidereal: bool, sidereal_mode: Optional[str]) -> bytes:
-    """The house system the ephemeris actually computes for a sidereal request.
-
-    Under a sidereal flag the reference implementation casts Sunshine 'i'
-    (Makransky) as 'I' (Treindl) — libephemeris matches it, see its
-    ``houses_ex`` — except in the fixed-epoch modes, where 'i' stays on its own
-    construction. The natal chart got that ring because it asked with the
-    sidereal flag. This factory asks TROPICALLY and applies the subject's own
-    ayanamsa afterwards, so it has to ask for the same system the reference would
-    pick, or a sidereal 'i' relocated onto its own birthplace would come back a
-    different chart: Makransky cusps, tens of degrees from Treindl's at sixty
-    degrees north, and inside the polar circle a refused cast substituted with
-    Porphyry, where the natal has a Sunshine ring.
-    """
-    if is_sidereal and hsys == b"i" and sidereal_mode not in _FIXED_EPOCH_SIDEREAL_MODES:
-        return b"I"
-    return hsys
 
 
 class RelocatedChartFactory:
@@ -199,10 +173,7 @@ class RelocatedChartFactory:
             )
 
         jd = subject.julian_day
-        is_sidereal = subject.zodiac_type == "Sidereal"
-        hsys = _house_system_the_reference_casts(
-            subject.houses_system_identifier.encode("ascii"), is_sidereal, subject.sidereal_mode
-        )
+        hsys = subject.houses_system_identifier.encode("ascii")
 
         # Validate but do NOT clamp: relocating to lat 78 must persist the real
         # latitude and cast latitude-agnostic house systems there, exactly like a
@@ -214,60 +185,32 @@ class RelocatedChartFactory:
         # the houses backend raising a raw CoordinateError.
         new_lng = normalize_longitude(new_lng)
 
-        # houses_ex2 outputs tropical longitudes. For sidereal subjects the
-        # session configures the subject's ayanamsa so get_ayanamsa_ut()
-        # returns the matching offset to shift cusps/angles into the
-        # subject's sidereal zodiac.
+        # Calculate the relocated ring through the same configured session and
+        # the same house wrapper as the natal factory. In particular, let the
+        # backend construct a SIDEREAL Whole Sign ring from the sidereal
+        # Ascendant. Rotating a tropical Whole Sign ring by the ayanamsa leaves
+        # its first cusp between sign boundaries and changes planet houses even
+        # when relocating onto the birthplace.
         with ephemeris_session(
             zodiac_type=subject.zodiac_type,
             sidereal_mode=subject.sidereal_mode,
             custom_ayanamsa_t0=subject.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=subject.custom_ayanamsa_ayan_t0,
-        ) as _iflag:
-            # Calculate new houses for the new location via houses_ex2 — the
-            # SAME call the natal path uses — so it computes the ARMC internally
-            # and exactly. Reconstructing the ARMC from ephe.sidtime(jd) + lng/15
-            # and feeding houses_armc introduced a sidtime-vs-internal-ARMC
-            # divergence (~1 arcsec, amplified at high latitude) that made
-            # relocating to one's own birthplace NOT a house no-op.
-            #
-            # Request TROPICAL cusps (mask FLG_SIDEREAL): the sidereal shift is
-            # applied explicitly below using the subject's stored ayanamsa_value
-            # (which carries nutation-in-longitude), matching the natal chart.
-            # Letting houses_ex2 apply the sidereal flag itself would double-
-            # subtract the ayanamsa.
-            tropical_iflag = _iflag & ~ephe.FLG_SIDEREAL
-            # The ``_ex`` variant also reports whether the requested house system
-            # had to be substituted: relocating TOWARDS a polar latitude is the
-            # most common way a real user meets the case, and the relocated
-            # subject is the only place that fact can still be told.
-            cusps, ascmc, _cusps_speed, _ascmc_speed, polar_fallback = houses_ex2_with_polar_fallback_ex(
-                jd, new_lat, new_lng, hsys, tropical_iflag, context=new_city or subject.name
+        ) as iflag:
+            ring = houses_ring_with_polar_fallback(
+                jd,
+                new_lat,
+                new_lng,
+                hsys,
+                iflag,
+                context=new_city or subject.name,
             )
 
-            # Sidereal charts: shift the tropical cusps/angles by the ayanamsa.
-            # Use the subject's stored ayanamsa_value: it was computed alongside
-            # the natal cusps so it is consistent by construction on both
-            # backends. (pyswisseph's get_ayanamsa_ut returns the MEAN ayanamsa
-            # — no nutation — while sidereal cusps use the true ayanamsa, which
-            # would leave relocated cusps off by nutation-in-longitude.)
-            if is_sidereal:
-                ayanamsa = subject.ayanamsa_value
-                if ayanamsa is None:
-                    ayanamsa = ephe.get_ayanamsa_ex_ut(jd, ephe.FLG_SWIEPH)[1]
-            else:
-                ayanamsa = 0.0
-
-        cusps = [(c - ayanamsa) % 360.0 for c in cusps]
-        ascmc = [(a - ayanamsa) % 360.0 for a in ascmc]
-
-        # Build house degree list for planet house assignment
+        cusps = ring.cusps
+        ascmc = ring.ascmc
+        polar_fallback = ring.polar_fallback
         houses_degree_ut = list(cusps)
-
-        # Decided on the cusps and angles this chart will actually carry — after
-        # the sidereal shift, which moves both by the same arc and so cannot
-        # change which cusp an angle is standing on, but is part of making them.
-        angle_houses = angle_house_identities(houses_degree_ut, ascmc[0], ascmc[1])
+        angle_houses = ring.angle_houses
 
         # Create house KerykeionPointModels
         house_data = {}
@@ -367,7 +310,7 @@ class RelocatedChartFactory:
         # nulled: carrying it over would attribute a substitution to a latitude
         # that no longer produced these cusps.
         relocated_data["polar_house_fallbacks"] = [polar_fallback] if polar_fallback is not None else []
-        relocated_data["coincident_house_cusps"] = coincident_cusp_groups(houses_degree_ut)
+        relocated_data["coincident_house_cusps"] = ring.coincident_cusps
         # As in the natal path, the requested system stays in
         # `houses_system_identifier` so a further recast is not poisoned by a
         # substitution that belonged to one location. Rendering reads

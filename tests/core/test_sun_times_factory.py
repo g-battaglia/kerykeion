@@ -122,6 +122,7 @@ def test_dst_spring_forward_midnight_gap_santiago():
     assert 11.0 < hours < 13.0
 
 
+@pytest.mark.medium
 def test_historical_date_supported():
     # The factory works across the full civil range; 1700 is comfortably in range.
     s = SunTimesFactory.from_date(1700, 3, 15, **ROME)

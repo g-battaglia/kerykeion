@@ -51,8 +51,9 @@ from kerykeion.utilities.core import (
     get_houses_list,
     get_available_astrological_points_list,
     normalize_zodiac_type,
-    localize_naive,
+    localize_naive_with_longitude_lmt,
     safe_timezone,
+    utc_to_local_with_longitude_lmt,
 )
 from kerykeion.astrological_subject.factory import (
     AstrologicalSubjectFactory,
@@ -269,7 +270,12 @@ class EphemerisDataFactory:
         _tz = safe_timezone(self.tz_str)
 
         def _localize_to_utc(naive: datetime) -> datetime:
-            return localize_naive(naive, _tz, is_dst=self.is_dst).astimezone(timezone.utc)
+            return localize_naive_with_longitude_lmt(
+                naive,
+                _tz,
+                longitude=self.lng,
+                is_dst=self.is_dst,
+            ).astimezone(timezone.utc)
 
         def _to_utc(dt: datetime) -> datetime:
             if dt.tzinfo is None:
@@ -279,7 +285,7 @@ class EphemerisDataFactory:
         def _to_local_naive(dt: datetime) -> datetime:
             if dt.tzinfo is None:
                 return dt
-            return dt.astimezone(_tz).replace(tzinfo=None)
+            return utc_to_local_with_longitude_lmt(dt, _tz, longitude=self.lng).replace(tzinfo=None)
 
         _start_utc = _to_utc(self.start_datetime)
         _end_utc = _to_utc(self.end_datetime)
@@ -337,29 +343,24 @@ class EphemerisDataFactory:
 
     def _create_subject_for_date(self, date: datetime) -> AstrologicalSubjectModel:
         """Create an AstrologicalSubject for a given date using the factory's settings."""
-        resolved_offset_seconds = None
-        if date.tzinfo is not None:
-            # UTC-stepped series: render the instant in the target timezone and
-            # pass the RESOLVED UTC offset down directly. bool(dst()) is the wrong
-            # fold-side discriminator for standard-offset-change folds (UK 1971,
-            # Portugal 1976): both occurrences have dst()==0, so is_dst=False would
-            # re-localize onto the wrong side, silently computing a chart 1 h off.
-            local_date = date.astimezone(safe_timezone(self.tz_str))
-            is_dst = bool(local_date.dst())
-            _off = local_date.utcoffset()
-            if _off is not None:
-                resolved_offset_seconds = round(_off.total_seconds())
+        if date.tzinfo is None:
+            # A manually supplied naive sample follows the same wall-clock policy
+            # as the constructor bounds and the single-subject factory.
+            instant_utc = localize_naive_with_longitude_lmt(
+                date,
+                safe_timezone(self.tz_str),
+                longitude=self.lng,
+                is_dst=self.is_dst,
+            ).astimezone(timezone.utc)
         else:
-            # Naive input (e.g. a hand-built dates_list): previous behavior.
-            local_date = date
-            is_dst = self.is_dst
-        return AstrologicalSubjectFactory.from_birth_data(
-            year=local_date.year,
-            month=local_date.month,
-            day=local_date.day,
-            hour=local_date.hour,
-            minute=local_date.minute,
-            seconds=local_date.second,
+            instant_utc = date.astimezone(timezone.utc)
+
+        # Build from the unambiguous instant. This preserves UTC-stepped series
+        # through every fold while from_iso_utc_time applies the shared synthetic-
+        # LMT policy when rendering the historical local fields.
+        return AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Now",
+            iso_utc_time=instant_utc.isoformat(),
             lng=self.lng,
             lat=self.lat,
             altitude=self.altitude,
@@ -371,13 +372,11 @@ class EphemerisDataFactory:
             sidereal_mode=self.sidereal_mode,
             houses_system_identifier=self.houses_system_identifier,
             perspective_type=self.perspective_type,
-            is_dst=is_dst,
             custom_ayanamsa_t0=self.custom_ayanamsa_t0,
             custom_ayanamsa_ayan_t0=self.custom_ayanamsa_ayan_t0,
             active_points=(list(self.active_points) if self.active_points is not None else None),
             active_fixed_stars=(list(self.active_fixed_stars) if self.active_fixed_stars is not None else None),
             calculate_dignities=self.calculate_dignities,
-            _lmt_offset_seconds=resolved_offset_seconds,
         )
 
     def get_ephemeris_data(self, as_model: bool = False) -> list:

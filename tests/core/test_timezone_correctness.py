@@ -332,6 +332,7 @@ class TestPreDaylightSavingWallTimesResolve:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.medium
 class TestSyntheticLmtRecordUsesTheBirthMeridian:
     """The tz database's opening "LMT" record is replaced by the birth meridian.
 

@@ -173,6 +173,32 @@ class TestRelocatedSiderealIdentity:
             relocated_pos = getattr(relocated, attr).abs_pos
             assert _angular_diff(relocated_pos, natal_pos) < 1e-5, f"{attr} moved on identity relocation"
 
+    @pytest.mark.parametrize("sidereal_mode", ["LAHIRI", "FAGAN_BRADLEY", "J2000", "J1900", "B1950"])
+    def test_sidereal_whole_sign_identity(self, sidereal_mode):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Whole Sign Identity", 1990, 7, 15, 10, 30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+            zodiac_type="Sidereal", sidereal_mode=sidereal_mode,
+            houses_system_identifier="W", suppress_geonames_warning=True,
+        )
+        relocated = RelocatedChartFactory.relocate(subject, subject.lat, subject.lng)
+
+        assert relocated.first_house.abs_pos == pytest.approx(subject.first_house.abs_pos, abs=1e-8)
+        assert relocated.venus.house == subject.venus.house
+
+    def test_user_sidereal_whole_sign_identity(self):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "USER Whole Sign Identity", 1990, 7, 15, 10, 30,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False,
+            zodiac_type="Sidereal", sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.5,
+            houses_system_identifier="W", suppress_geonames_warning=True,
+        )
+        relocated = RelocatedChartFactory.relocate(subject, subject.lat, subject.lng)
+
+        assert relocated.first_house.abs_pos == pytest.approx(subject.first_house.abs_pos, abs=1e-8)
+        assert relocated.venus.house == subject.venus.house
+
     def test_sidereal_offset_matches_ayanamsa(self, natal, sidereal_natal):
         """Sidereal relocated ASC = tropical relocated ASC - ayanamsa."""
         tropical = RelocatedChartFactory.relocate(natal, new_lat=40.7128, new_lng=-74.006)

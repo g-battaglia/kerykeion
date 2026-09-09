@@ -83,9 +83,10 @@ move, so they are reset to `None` rather than carried over stale: `azimuth`,
 `altitude_above_horizon` and `gauquelin_sector` on every point (fixed stars
 included), along with `gauquelin_sector_cusps` on the subject.
 
-For a sidereal subject the house ring is computed tropically and then shifted
-by the natal `ayanamsa_value`, the same value the natal cusps used, so the
-relocated cusps land in the subject's own sidereal zodiac.
+For a sidereal subject the house ring is computed directly in the subject's
+sidereal frame, through the same configured backend session as a natal chart.
+This matters for constructions such as Whole Sign and fixed reference frames:
+they cannot be reproduced reliably by rotating a tropical ring afterwards.
 
 ## Use Cases
 

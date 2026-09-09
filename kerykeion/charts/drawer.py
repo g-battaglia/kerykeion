@@ -91,6 +91,8 @@ from kerykeion.charts.utils import (
     convert_decimal_to_degree_string,
     gauquelin_column_width,
     planet_grid_column_width,
+    OUT_OF_BOUNDS_BADGE,
+    OUT_OF_BOUNDS_BADGE_X,
     get_decoded_kerykeion_celestial_point_name,
     CHART_TEXT_FONT_FAMILY,
 )
@@ -5052,6 +5054,45 @@ class ChartDrawer:  # type: ignore[no-redef]
         else:
             template_dict["makeLunarPhase"] = ""
 
+    def _planet_grid_right_edge(self, points: Sequence[object]) -> float:
+        """Right edge of a point table relative to its translated origin."""
+        right_edge = 87.0
+        if self.show_out_of_bounds and any(getattr(point, "is_out_of_bounds", None) for point in points):
+            right_edge = max(
+                right_edge,
+                OUT_OF_BOUNDS_BADGE_X + estimate_text_width(OUT_OF_BOUNDS_BADGE, 7),
+            )
+        return right_edge
+
+    def _house_grid_left_extent(self) -> float:
+        """Width by which the localized cusp labels extend left of the grid origin."""
+        cusp_label = self._translate("cusp", "Cusp")
+        widest_label = f"{cusp_label} 10:"
+        return max(0.0, estimate_text_width(widest_label, 10) - 40.0)
+
+    def _main_house_grid_x(self) -> int:
+        """Place the main house table after the main point table without overlap."""
+        minimum_x = self._MAIN_HOUSES_GRID_X + self._grid_x_shift
+        chained_x = (
+            self._MAIN_PLANET_GRID_X
+            + self._grid_x_shift
+            + self._planet_grid_right_edge(self.available_kerykeion_celestial_points)
+            + self._house_grid_left_extent()
+            + 0.5
+        )
+        return ceil(max(minimum_x, chained_x))
+
+    def _secondary_house_grid_x(self) -> int:
+        """Place the secondary house table after the secondary associated point table."""
+        minimum_x = self._SECONDARY_HOUSES_GRID_X
+        chained_x = (
+            self._SECONDARY_PLANET_GRID_X
+            + self._planet_grid_right_edge(self.second_subject_celestial_points)
+            + self._house_grid_left_extent()
+            + 0.5
+        )
+        return ceil(max(minimum_x, chained_x))
+
     def _setup_main_houses_grid(self, template_dict: dict, houses_list: list) -> None:
         """
         Populate template_dict with the main houses grid table.
@@ -5078,7 +5119,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 main_subject_houses_list=houses_list,
                 text_color=self.chart_colors_settings["paper_0"],
                 house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
-                x_position=self._MAIN_HOUSES_GRID_X + self._grid_x_shift,
+                x_position=self._main_house_grid_x(),
             )
 
     def _setup_main_planet_grid(self, template_dict: dict, subject_name: str, title: str = "") -> None:
@@ -5146,6 +5187,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             chart_type=self.chart_type,
             text_color=self.chart_colors_settings["paper_0"],
             celestial_point_language=self._language_model.celestial_points,
+            x_position=self._SECONDARY_PLANET_GRID_X,
             show_out_of_bounds=self.show_out_of_bounds,
         )
 
@@ -5164,6 +5206,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             secondary_subject_houses_list=houses_list,
             text_color=self.chart_colors_settings["paper_0"],
             house_cusp_generale_name_label=self._translate("cusp", "Cusp"),
+            x_position=self._secondary_house_grid_x(),
         )
 
     def _clear_element_quality_strings(self, template_dict: dict) -> None:

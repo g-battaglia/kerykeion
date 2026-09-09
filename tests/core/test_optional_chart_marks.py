@@ -583,26 +583,6 @@ class TestGauquelinBadgeHasItsOwnRoom:
         assert _render(chart_data, "classic") == _render(chart_data, "classic", show_out_of_bounds=True)
 
 
-#: A biwheel lays out four side tables at fixed offsets 105px apart, and a
-#: language whose labels are longer than English overruns that into the cusp
-#: column beside it. Fixing it means laying the four out as a chain — each
-#: starting where the one before ends — and feeding that into the canvas width
-#: estimator, which is its own change.
-_BIWHEEL_SIDE_TABLE_DEBT = (
-    "The biwheel's four side tables sit at fixed 105px offsets, so a language "
-    "with longer labels overruns into the column beside it. Wants the four laid "
-    "out as a chain, which is its own change."
-)
-
-#: Named rather than blanket: capping a point's name (abbreviate_point_name)
-#: cleared seven of the ten languages, and leaving the marker on all ten would
-#: let those seven regress in silence. What still overruns is not the point
-#: names — it is the out-of-bounds badge against a long cusp label in French and
-#: Italian. Hindi left this set when Devanagari entered the estimator's
-#: measured table: its overrun was the block ceiling charging every matra a
-#: full em, not the layout.
-_LANGUAGES_STILL_OVERRUNNING = frozenset({"FR", "IT"})
-
 class TestNothingPrintsOnTopOfAnythingElse:
     """No two strings share a baseline and the same pixels.
 
@@ -641,18 +621,7 @@ class TestNothingPrintsOnTopOfAnythingElse:
         overlaps = find_text_overlaps(svg)
         assert not overlaps, "\n".join(str(o) for o in overlaps[:6])
 
-    @pytest.mark.parametrize(
-        "language",
-        [
-            pytest.param(
-                lang,
-                marks=pytest.mark.xfail(
-                    reason=_BIWHEEL_SIDE_TABLE_DEBT, strict=False
-                ) if lang in _LANGUAGES_STILL_OVERRUNNING else (),
-            )
-            for lang in LANGUAGE_SETTINGS
-        ],
-    )
+    @pytest.mark.parametrize("language", LANGUAGE_SETTINGS)
     def test_no_overlap_in_any_language(self, synastry_data, language):
         svg = ChartDrawer(synastry_data, chart_language=language, **{m: True for m in ALL_MARKS}).generate_svg_string()
         overlaps = find_text_overlaps(svg)
