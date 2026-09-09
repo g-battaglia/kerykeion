@@ -12,17 +12,13 @@
   <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
 </p>
 
-Kerykeion is a comprehensive Python library for astrology. It calculates planetary and house positions, detects aspects and timing events, and generates SVG charts for natal, synastry, transit, return, composite, progression, and other workflows.
+Kerykeion is a comprehensive Python astrology library for calculations and SVG chart generation. It supports most major astrological traditions and techniques—from modern Western and traditional astrology to Vedic, Uranian, predictive, locational, and mundane work.
 
-Its broad API covers most major astrological schools and techniques, including modern Western, traditional and Hellenistic, sidereal and Vedic, Uranian, predictive, locational, mundane, and observational approaches. Calculations are extensively configurable: you can select the zodiac, ayanamsa, house system, observer perspective, celestial points, aspects, orbs, ephemeris backend, rendering style, and optional enrichments.
-
-Kerykeion provides carefully selected standard defaults optimized for modern astrology, so common charts work immediately while advanced users can tailor nearly every calculation and presentation choice. Results are typed, data-driven, serializable, and ready for Python applications, APIs, LLMs, and AI agents.
+It is highly configurable, with sensible defaults optimized for modern astrology. Results are typed, serializable, and ready for Python applications, APIs, LLMs, and AI agents.
 
 ## Hosted API
 
-If you are building a commercial application, a SaaS, or prefer to keep the codebase closed-source, consider the hosted **Astrologer API** on RapidAPI.
-
-Your app consumes Kerykeion as an external service rather than importing the AGPL library directly — no server setup, no copyleft concerns. Subscribing directly supports the ongoing development of this open-source project.
+Building a commercial, SaaS, or closed-source product? Use the hosted **Astrologer API** on RapidAPI. Your app calls Kerykeion as an external service—no Python or ephemeris infrastructure, and no AGPL library in your codebase.
 
 <p align="center">
   <strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Get Started on RapidAPI</a></strong>
@@ -30,7 +26,7 @@ Your app consumes Kerykeion as an external service rather than importing the AGP
   <strong><a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Full API Documentation</a></strong>
 </p>
 
-The hosted API provides JSON calculations, ready-to-display SVG charts, and AI-ready context endpoints. It is a practical fit for web, mobile, frontend-only, and production applications that should not operate their own Python and ephemeris infrastructure.
+Get JSON calculations, ready-to-display SVG charts, and AI-ready context endpoints while directly supporting Kerykeion's development.
 
 | | Kerykeion library | Hosted Astrologer API |
 |---|---|---|
