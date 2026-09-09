@@ -959,7 +959,9 @@ class TestReturnPerspectivePropagation:
             f"Topocentric return at a different location missed its natal target by {diff}°"
         )
 
-    def test_topocentric_return_search_uses_return_altitude(self):
+    def test_topocentric_return_search_uses_return_altitude(self, monkeypatch):
+        import kerykeion.planetary_returns.factory as factory_module
+
         subject = self._make_subject("Topocentric")
         factory = PlanetaryReturnFactory(
             subject,
@@ -969,8 +971,17 @@ class TestReturnPerspectivePropagation:
             tz_str="Europe/Rome",
             online=False,
         )
+        captured_topos = []
+        original_ephemeris_session = factory_module.ephemeris_session
+
+        def capture_ephemeris_session(*args, **kwargs):
+            captured_topos.append(kwargs.get("topo"))
+            return original_ephemeris_session(*args, **kwargs)
+
+        monkeypatch.setattr(factory_module, "ephemeris_session", capture_ephemeris_session)
         result = factory.next_return_from_date(2026, 1, 1, return_type="Lunar")
 
+        assert captured_topos == [(12.4964, 41.9028, 4000.0)]
         assert result.altitude == 4000.0
         assert _angular_diff(result.moon.abs_pos, subject.moon.abs_pos) < 1e-3
 
