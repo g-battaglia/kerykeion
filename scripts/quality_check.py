@@ -37,6 +37,10 @@ def main() -> int:
         # and pytest both ignore; without this a broken example would ship
         # verified-by-nothing into third-party repositories.
         ("skill-cli", ["python", "scripts/test_skill_cli_snippets.py"]),
+        # The man page is generated from the argparse tree and shipped in the
+        # wheel; a renamed or added command must reach it, or `man kerykeion`
+        # would document a tree that no longer exists.
+        ("man", ["python", "scripts/generate_cli_manpage.py", "--check"]),
     ]
 
     results = []

@@ -235,6 +235,14 @@ help = "Run the command-line interface tests"
 cmd = "python scripts/cli_smoke_check.py"
 help = "Smoke the entry point from the checkout: --version, --help, and that import kerykeion never imports the CLI"
 
+[tool.poe.tasks."man:generate"]
+cmd = "python scripts/generate_cli_manpage.py"
+help = "Regenerate cli/man/man1/kerykeion.1 from the CLI's argparse tree (the file ships in the kerykeion-cli wheel)"
+
+[tool.poe.tasks."man:check"]
+cmd = "python scripts/generate_cli_manpage.py --check"
+help = "Fail when the committed kerykeion(1) man page no longer matches the argparse tree"
+
 # ── Coverage ──
 [tool.poe.tasks."test:core:cov"]
 cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
@@ -289,8 +297,8 @@ help = "The baseline gates on the full-range kernel: on the default tier the rea
 LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended", "cli:smoke", "skill:cli:smoke"]
-help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel, cli:smoke, skill:cli:smoke)"
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended", "cli:smoke", "skill:cli:smoke", "man:check"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel, cli:smoke, skill:cli:smoke, man:check)"
 
 # cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
 # int return, so a `script` task exits 0 even when the checks fail — the gate

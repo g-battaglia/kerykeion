@@ -733,6 +733,8 @@ $ kerykeion status --check
 
 `call` dispatches only to names exported by `kerykeion.__all__`; arbitrary Python names are refused. See the <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">complete CLI reference</a>.
 
+The CLI wheel also ships a Unix man page, `kerykeion(1)`, generated from the same command tree behind `--help`: after a `pip install` into a system prefix (`/usr/local`, Homebrew), `man kerykeion` works with no further step. Isolated installs (`uv tool`, a venv) keep the page inside their own prefix; point `MANPATH` at it once, e.g. `man -M "$(uv tool dir)/kerykeion-cli/share/man" kerykeion`.
+
 For a commercial product that should not install Python, manage ephemeris data, or import the AGPL library, use the <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">hosted Astrologer API</a> instead.
 
 ## Documentation

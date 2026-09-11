@@ -15,6 +15,7 @@ import json
 import shutil
 import subprocess
 import sys
+from importlib.metadata import distribution
 
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -60,7 +61,33 @@ def main() -> int:
     if rd.returncode != 0:
         return _fail("status --check", f"rc={rd.returncode}\n{rd.stdout}\n{rd.stderr}")
 
-    print(f"wheel CLI OK: kerykeion on PATH, --version ({rv.stdout.strip()}), --help, clean exit 4, info ({len(tables)} literal tables), status --check green")
+    # The man page ships in the wheel's data payload. Where it lands follows the
+    # installer: pip materializes it under the installation prefix, while uv's
+    # cached layered environments keep it in the cache layer the distribution's
+    # RECORD points into — so the page is located through the distribution
+    # itself, never guessed from sys.prefix.
+    dist = distribution("kerykeion-cli")
+    recorded = [str(f) for f in (dist.files or []) if str(f).endswith("share/man/man1/kerykeion.1")]
+    if not recorded:
+        return _fail("man page", "kerykeion.1 is not in kerykeion-cli's RECORD: the wheel lost its share/man payload")
+    page = dist.locate_file(recorded[0])
+    if not page.is_file():
+        return _fail("man page", f"{recorded[0]} is recorded but not materialized at {page}")
+    body = page.read_text(encoding="utf-8")
+    for marker in (".TH KERYKEION", ".SH NAME", ".SH COMMANDS"):
+        if marker not in body:
+            return _fail("man page", f"{marker} missing from {page}")
+    if shutil.which("man") is not None:  # render it the way a user would
+        rendered = subprocess.run(
+            ["man", "-M", str(page.parent.parent), "kerykeion"], capture_output=True, text=True, check=False
+        )
+        if rendered.returncode != 0 or "KERYKEION(1)" not in rendered.stdout:
+            return _fail("man render", f"rc={rendered.returncode}\n{rendered.stdout}\n{rendered.stderr}")
+
+    print(
+        f"wheel CLI OK: kerykeion on PATH, --version ({rv.stdout.strip()}), --help, clean exit 4, "
+        f"info ({len(tables)} literal tables), status --check green, man page installed and renders"
+    )
     return 0
 
 

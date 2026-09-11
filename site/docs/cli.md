@@ -239,3 +239,26 @@ $ kerykeion status --check
 `--version`/`-V`, `--traceback`, `--warnings-as-errors` go before the
 subcommand: `kerykeion --traceback natal -s ada`. A bare `kerykeion` prints help
 and exits `0`.
+
+## Manual page
+
+The `kerykeion-cli` wheel ships a Unix man page, `kerykeion(1)`, generated from
+the same command tree behind `--help` (regenerated in the repository with
+`poe man:generate`). Where it lands depends on the install:
+
+| Install | `man kerykeion` |
+|---------|-----------------|
+| `pip install` into a system prefix (`/usr/local`, `/opt/homebrew`) | works as is: the page sits in the prefix's `share/man`, which `man` already searches |
+| a virtualenv, or `pip install --user` | the page sits inside the venv/user prefix, which `man` does not search by default |
+| `uv tool install` | same: the page stays inside the tool's own environment |
+
+For the isolated cases, point the manual path at the prefix once:
+
+```bash
+man -M "$(uv tool dir)/kerykeion-cli/share/man" kerykeion   # a one-off read
+export MANPATH="$HOME/.local/share/uv/tools/kerykeion-cli/share/man:$MANPATH"  # or in the profile
+```
+
+The page is the map — the command tree, the output formats, the profile store,
+the environment, the exit codes — while each command's flags remain one
+`kerykeion <command> --help` away.
