@@ -47,7 +47,17 @@ kerykeion status --check                      # judge the install (exit 6 if bro
 ```
 
 `kerykeion --help` lists every command; `kerykeion info literals` lists every
-value the flags accept, read from the library at runtime.
+value the flags accept, read from the library at runtime. A Unix man page,
+`kerykeion(1)`, ships in the wheel: after a `pip install` into a prefix whose
+`share/man` is indexed (a system Python, Homebrew), `man kerykeion` works with
+no further step. Isolated installs keep the page inside their own prefix, so
+add it to the search path once:
+
+```bash
+man -M "$(uv tool dir)/kerykeion-cli/share/man" kerykeion   # a uv tool install
+# or, in the shell profile:
+#   export MANPATH="$HOME/.local/share/uv/tools/kerykeion-cli/share/man:$MANPATH"
+```
 
 ## Documentation
 

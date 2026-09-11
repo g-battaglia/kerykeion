@@ -53,6 +53,13 @@ kerykeion = "kerykeion_cli:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# The man page rides the wheel's data payload: pip and uv unpack it into the
+# installation prefix (share/man/man1), where `man kerykeion` works whenever
+# that prefix's share/man is indexed. Isolated installs (uv tool, a venv) keep
+# it inside their own prefix; the README says how to point MANPATH at it.
+[tool.hatch.build.targets.wheel.shared-data]
+"man/man1/kerykeion.1" = "share/man/man1/kerykeion.1"
+
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion_cli"]
 
@@ -60,6 +67,7 @@ packages = ["kerykeion_cli"]
 [tool.hatch.build.targets.sdist]
 include = [
     "/kerykeion_cli",
+    "/man",
     "/README.md",
     "/LICENSE",
     "/pyproject.toml",

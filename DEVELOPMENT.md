@@ -155,6 +155,12 @@ uv run poe cli:smoke
 # store (also part of `poe check` and `poe quality`): the CLI skill's examples
 # are shell, which the python snippet runner and pytest both ignore.
 uv run poe skill:cli:smoke
+
+# Regenerate cli/man/man1/kerykeion.1 from the CLI's argparse tree; the
+# wheel ships it as share/man data. `poe man:check` (part of `poe check`
+# and `poe quality`) fails when the committed page has drifted from the tree.
+uv run poe man:generate
+uv run poe man:check
 ```
 
 The CLI is a **second distribution** in this repository, `cli/` (package
@@ -164,6 +170,12 @@ what brings one. It is standard-library only (argparse), so the library is its
 whole dependency. `uv` treats the two as a workspace: one lockfile, one `.venv`,
 and `uv sync` installs the CLI editable through the `dev` group (extras are not
 synced), which is what puts `kerykeion` on `.venv/bin` for `skill:cli:smoke`.
+
+The `kerykeion(1)` man page is generated source: `scripts/generate_cli_manpage.py`
+walks `build_parser()` and renders `cli/man/man1/kerykeion.1`, which the wheel
+carries as `share/man/man1` data. Never edit the page by hand — change the
+parser (or the generator) and run `poe man:generate`; `poe man:check` and
+`TestManPage` in `tests/core/test_cli.py` keep it in step.
 
 #### Documentation gates
 

@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- The `kerykeion-cli` wheel now ships a Unix man page, `kerykeion(1)`, generated
+  from the CLI's own argparse tree (`scripts/generate_cli_manpage.py`, kept in
+  step by `poe man:check` and the CLI test suite). A `pip install` into a
+  prefix whose `share/man` is indexed gives `man kerykeion` with no further
+  step; isolated installs (`uv tool`, a venv) keep the page inside their own
+  prefix, and the docs show the one-line `MANPATH`/`man -M` addition for those.
+
 ### Fixed
 
 - Relocated sidereal charts now compute their house ring directly in the subject's
