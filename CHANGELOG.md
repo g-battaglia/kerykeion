@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [6.0.1] - 2026-09-14
+
+Documentation and packaging maintenance release for both `kerykeion` and
+`kerykeion-cli`. No calculation, rendering or public API behavior changes.
+See the [release notes](release_notes/v6.0.1.md).
+
+### Changed
+
+- Rewrite the CLI README for AI agents and humans, with dedicated Agent Skill
+  installation, practical chart and transit examples, command discovery,
+  output envelopes, exit codes, privacy and ephemeris coverage guidance.
+- Keep the main README focused on the Python library, with a separate CLI
+  overview linking to its own README and Agent Skill.
+- Clarify hosted Astrologer API guidance and planned hosted CLI access.
+- Update current installation instructions, skill verification versions,
+  lockfile and generated man page to 6.0.1. Keep `libephemeris==3.2.1`.
+
+### Fixed
+
+- Use an absolute URL for the main README's Modern natal SVG so it renders
+  outside GitHub, including on PyPI.
+
 ## [6.0.0] - 2026-09-14
 
 The first stable Kerykeion 6 release. Both `kerykeion` and the separate

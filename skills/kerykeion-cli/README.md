@@ -47,8 +47,8 @@ the `kerykeion-cli` package:
 
 ```bash
 # gate: skip
-pip install "kerykeion[cli]==6.0.0"
-# Or: uv tool install "kerykeion-cli==6.0.0"
+pip install "kerykeion[cli]==6.0.1"
+# Or: uv tool install "kerykeion-cli==6.0.1"
 ```
 
 ## Contents

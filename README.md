@@ -16,7 +16,7 @@
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 <p align="center">
-  <img src="docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
+  <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
 </p>
 
 Kerykeion is a comprehensive Python astrology library for calculations and SVG chart generation. It supports most major astrological traditions and techniques, from modern Western and traditional astrology to Vedic, Uranian, predictive, locational, and mundane work.
@@ -111,10 +111,10 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 
 Kerykeion requires **Python 3.12 or newer**.
 
-The current stable release is **6.0.0**:
+The current stable release is **6.0.1**:
 
 ```bash
-pip install --upgrade "kerykeion==6.0.0"
+pip install --upgrade "kerykeion==6.0.1"
 ```
 
 This installs the Python library only. It does not install a shell command. The optional CLI is a separate distribution described in the [Command-Line Interface](#command-line-interface) section.
@@ -696,16 +696,16 @@ See <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel=
 
 ## Command-Line Interface
 
-The core Kerykeion package is a Python library and does not install a shell command. The optional CLI is maintained and published separately as `kerykeion-cli`, with the same version as the library.
+The core Kerykeion package is a Python library and does not install a shell command. The optional CLI, **for AI agents and humans**, is maintained and published separately as `kerykeion-cli`, with the same version as the library.
 
 ### Install the CLI
 
 ```bash
 # Library and CLI in the current environment
-pip install "kerykeion[cli]==6.0.0"
+pip install "kerykeion[cli]==6.0.1"
 
 # Or install the CLI as an isolated tool
-uv tool install "kerykeion-cli==6.0.0"
+uv tool install "kerykeion-cli==6.0.1"
 ```
 
 ### CLI overview
@@ -742,7 +742,7 @@ For every commercial CLI workflow, use the <a href="https://rapidapi.com/gbattag
 Kerykeion uses **libephemeris 3.2.1** by default. To use the optional Swiss Ephemeris backend:
 
 ```bash
-pip install "kerykeion[swiss]==6.0.0"
+pip install "kerykeion[swiss]==6.0.1"
 python -m kerykeion.swisseph_setup
 export KERYKEION_BACKEND=swisseph
 export KERYKEION_EPHE_PATH=~/.kerykeion/sweph

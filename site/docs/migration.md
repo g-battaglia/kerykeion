@@ -10,13 +10,13 @@ order: 2
 
 This guide provides comprehensive instructions for migrating your code from Kerykeion v4 or v5 to v6. The v5 release introduced a factory-based architecture; v6 removes the v4 backward compatibility layer entirely and adds advanced calculation modules.
 
-The current v6 release is **6.0.0**, the first stable release. Use Python 3.12
+The current v6 release is **6.0.1**, a stable maintenance release. Use Python 3.12
 or newer:
 
 ```bash
-pip install --upgrade "kerykeion==6.0.0"
+pip install --upgrade "kerykeion==6.0.1"
 # Optional CLI, released with and pinned to the same library version:
-pip install --upgrade "kerykeion[cli]==6.0.0"
+pip install --upgrade "kerykeion[cli]==6.0.1"
 ```
 
 v6 uses `libephemeris==3.2.1` by default. Its bundled base data covers
