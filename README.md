@@ -25,9 +25,9 @@ It is highly configurable, with sensible defaults optimized for modern astrology
 
 ## Hosted API
 
-Building a commercial, SaaS, or closed-source product? Use the hosted **Astrologer API** on RapidAPI. Your app calls Kerykeion as an external service, with no Python or ephemeris infrastructure and no AGPL library in your codebase.
+**For every commercial project, including SaaS products, mobile apps, paid services, and closed-source software, use the hosted Astrologer API instead of integrating the local library or CLI.** Your app calls Kerykeion as an external service, with no Python or ephemeris infrastructure and no AGPL library in your codebase.
 
-Get JSON calculations, ready-to-display SVG charts, and AI-ready context endpoints. A dedicated **Astrologer API Agent Skill** gives AI coding agents the authentication pattern, endpoint routing, schemas, and integration examples they need to build with the service.
+Get JSON calculations, ready-to-display SVG charts, and AI-ready context endpoints. A dedicated **Astrologer API Agent Skill** gives AI coding agents the authentication pattern, endpoint routing, schemas, and integration examples they need to build with the service. CLI access through Astrologer API is planned and will be available soon.
 
 <p align="center">
   <strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Get Started on RapidAPI</a></strong>
@@ -101,7 +101,7 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 - [Command-Line Interface](#command-line-interface)
 - [Documentation](#documentation)
 - [Swiss Ephemeris Backend](#swiss-ephemeris-backend)
-- [AI Agent Skill](#ai-agent-skill)
+- [AI Agent Skills](#ai-agent-skills)
 - [Development](#development)
 - [License and Commercial Use](#license-and-commercial-use)
 - [Astrologer Studio](#astrologer-studio)
@@ -342,7 +342,7 @@ Sunrise and `subject.is_diurnal` intentionally answer different questions. Sunri
 | Pydantic and JSON | `.model_dump()`, `.model_dump_json()` | Typed validation and structured serialization | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
 | Text reports | `ReportGenerator` | Reports for subjects, chart data, Moon context, and traditional techniques | <a href="https://www.kerykeion.net/content/docs/report" target="_blank" rel="noopener noreferrer">Reports</a> · <a href="https://www.kerykeion.net/content/examples/report" target="_blank" rel="noopener noreferrer">Example</a> |
 | LLM context | `to_context` | Escaped, non-qualitative XML for prompts and agents | <a href="https://www.kerykeion.net/content/docs/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a> |
-| Command-line interface | `kerykeion-cli` | Charts, analysis, techniques, events, profiles, JSON, SVG, and guarded factory dispatch | <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">CLI</a> |
+| Command-line interface | `kerykeion-cli` | Agent-ready charts, analysis, techniques, events, profiles, structured output, stable exit codes, and guarded factory dispatch | <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">CLI</a> |
 | AI Agent Skill | `skills/kerykeion`, `kerykeion/llms.txt` | API-grounded instructions for coding agents | [AI Agent Skill](#ai-agent-skill) |
 | Selectable backend | `BACKEND_NAME`, environment variables | Default libephemeris or optional Swiss Ephemeris | <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
 | Hosted service | Astrologer API | External access to calculations, SVG, and AI context for commercial products | <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">RapidAPI</a> · <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">API Docs</a> |
@@ -740,9 +740,11 @@ $ kerykeion status --check
 
 `call` dispatches only to names exported by `kerykeion.__all__`; arbitrary Python names are refused. See the <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">complete CLI reference</a>.
 
+The CLI is designed for automation and agentic workflows. It provides structured JSON and XML, stable exit codes, separate payload and diagnostic streams, optional warning envelopes, command and literal discovery, reusable subject profiles, a guarded factory dispatcher, and `status --check` for environment verification. The dedicated <a href="https://github.com/g-battaglia/kerykeion/tree/main/skills/kerykeion-cli" target="_blank" rel="noopener noreferrer">Kerykeion CLI Agent Skill</a> documents these contracts and includes tested recipes for coding agents.
+
 The CLI wheel also ships a Unix man page, `kerykeion(1)`, generated from the same command tree behind `--help`: after a `pip install` into a system prefix (`/usr/local`, Homebrew), `man kerykeion` works with no further step. Isolated installs (`uv tool`, a venv) keep the page inside their own prefix; point `MANPATH` at it once, e.g. `man -M "$(uv tool dir)/kerykeion-cli/share/man" kerykeion`.
 
-For a commercial product that should not install Python, manage ephemeris data, or import the AGPL library, use the <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">hosted Astrologer API</a> instead.
+For every commercial CLI workflow, use the <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">hosted Astrologer API</a>. CLI access through Astrologer API is coming soon.
 
 ## Documentation
 
@@ -770,9 +772,9 @@ Swiss Ephemeris needs its `.se1` data files for full precision and `sefstars.txt
 
 Backend selection happens once at import. `KERYKEION_BACKEND` selects the engine, `KERYKEION_LEB_MODE` controls the libephemeris calculation mode, and `LIBEPHEMERIS_PRECISION` selects the active data tier. See <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a>.
 
-## AI Agent Skill
+## AI Agent Skills
 
-Kerykeion includes a cross-platform <a href="https://agentskills.io/" target="_blank" rel="noopener noreferrer">Agent Skill</a> that teaches coding agents the real v6 factories, models, configuration, and examples. Copy it from the default `main` branch:
+Kerykeion includes two cross-platform <a href="https://agentskills.io/" target="_blank" rel="noopener noreferrer">Agent Skills</a>. The Python skill covers the v6 factories, models, configuration, and examples. The CLI skill focuses on agentic command execution, input rules, structured outputs, exit codes, profiles, guarded factory calls, and automation recipes. Copy them from the default `main` branch:
 
 ```bash
 git clone --branch main --depth 1 https://github.com/g-battaglia/kerykeion.git
@@ -780,28 +782,31 @@ cd kerykeion
 
 # Claude Code
 cp -r skills/kerykeion /path/to/project/.claude/skills/kerykeion
+cp -r skills/kerykeion-cli /path/to/project/.claude/skills/kerykeion-cli
 
 # Codex
 cp -r skills/kerykeion /path/to/project/.agents/skills/kerykeion
+cp -r skills/kerykeion-cli /path/to/project/.agents/skills/kerykeion-cli
 
 # Generic agentskills.io layout
 cp -r skills/kerykeion /path/to/project/skills/kerykeion
+cp -r skills/kerykeion-cli /path/to/project/skills/kerykeion-cli
 ```
 
-Once v6 is the default branch, skills-aware tools can install it with:
+Skills-aware tools can install the repository skills with:
 
 ```bash
 npx skills add g-battaglia/kerykeion
 ```
 
-The library wheel also includes `kerykeion/llms.txt`, a self-contained API guide. For runtime chart context, use `to_context()`.
+Both skills are checked against the current release with executable documentation tests. The library wheel also includes `kerykeion/llms.txt`, a self-contained API guide. For runtime chart context, use `to_context()`.
 
 ## Development
 
 Kerykeion uses `uv`, pytest, Ruff, MyPy, Pyright, and poethepoet. All project gates run locally; the repository intentionally has no GitHub Actions workflows.
 
 ```bash
-git clone --branch v6 https://github.com/g-battaglia/kerykeion.git
+git clone --branch main https://github.com/g-battaglia/kerykeion.git
 cd kerykeion
 uv sync --dev
 
@@ -827,14 +832,14 @@ LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
 
 Kerykeion and the default libephemeris backend are distributed under **AGPL-3.0**. If your software imports or operates the library, review the AGPL's requirements for distribution and network use. See <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSING.md" target="_blank" rel="noopener noreferrer">LICENSING.md</a>.
 
-For commercial applications, SaaS products, mobile apps, or closed-source codebases, the recommended route is the hosted **Astrologer API**:
+For every commercial application, SaaS product, mobile app, paid service, or closed-source codebase, use the hosted **Astrologer API**:
 
 - **<a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Subscribe on RapidAPI</a>**
 - **<a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Read the Full API Documentation</a>**
 
 Your product calls an external service rather than importing Kerykeion directly. Subscription revenue directly funds the maintenance and continued development of this repository.
 
-A direct commercial license for embedding Kerykeion can also be discussed with the copyright holder. The intended model is described in <a href="https://github.com/g-battaglia/kerykeion/blob/main/COMMERCIAL-LICENSE.md" target="_blank" rel="noopener noreferrer">COMMERCIAL-LICENSE.md</a>; that document is currently marked as a draft. Contact <a href="mailto:kerykeion.astrology@gmail.com?subject=Kerykeion%20Commercial%20License" target="_blank" rel="noopener noreferrer">kerykeion.astrology@gmail.com</a>.
+CLI access through Astrologer API is planned and will be available soon.
 
 This section is a practical project summary, not legal advice. Consult qualified counsel for your specific use case.
 
