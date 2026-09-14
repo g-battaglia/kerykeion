@@ -3,13 +3,20 @@
 <div align="center">
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="GitHub stars"></a>
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="GitHub forks"></a>
-  <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/v/kerykeion?label=PyPI" alt="PyPI version"></a>
-  <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions"></a>
-  <a href="https://pepy.tech/project/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://static.pepy.tech/badge/kerykeion/month" alt="Monthly downloads"></a>
 </div>
+<div align="center">
+  <a href="https://pepy.tech/project/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://static.pepy.tech/badge/kerykeion/month" alt="Monthly downloads"></a>
+  <a href="https://pepy.tech/project/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://static.pepy.tech/badge/kerykeion/week" alt="Weekly downloads"></a>
+  <a href="https://pepy.tech/project/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://static.pepy.tech/personalized-badge/kerykeion?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads/total" alt="Total downloads"></a>
+</div>
+<div align="center">
+  <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version"></a>
+  <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions"></a>
+</div>
+<p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
+  <img src="docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
 </p>
 
 Kerykeion is a comprehensive Python astrology library for calculations and SVG chart generation. It supports most major astrological traditions and techniques, from modern Western and traditional astrology to Vedic, Uranian, predictive, locational, and mundane work.
