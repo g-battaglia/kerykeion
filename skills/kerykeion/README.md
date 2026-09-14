@@ -11,12 +11,10 @@ Gemini CLI, Windsurf, Cline, and others.
 ## Install
 
 The skill lives in the [kerykeion repository](https://github.com/g-battaglia/kerykeion),
-not in the PyPI package. **During the v6 prerelease cycle, take it from the `alpha/v6`
-branch**: the registry command resolves the repository's default branch, which
-still carries the v5-era skill.
+not in the PyPI package. Take it from the default `main` branch:
 
 ```bash
-git clone --branch alpha/v6 --depth 1 https://github.com/g-battaglia/kerykeion.git
+git clone --branch main --depth 1 https://github.com/g-battaglia/kerykeion.git
 cd kerykeion
 
 # Claude Code
@@ -29,7 +27,7 @@ cp -r skills/kerykeion /path/to/your-project/.agents/skills/kerykeion
 cp -r skills/kerykeion /path/to/your-project/skills/kerykeion
 ```
 
-Once v6 is the default branch, [skills.sh](https://skills.sh/) installs it in one step:
+[skills.sh](https://skills.sh/) installs it in one step:
 
 ```bash
 npx skills add g-battaglia/kerykeion

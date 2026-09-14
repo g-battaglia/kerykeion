@@ -27,6 +27,7 @@ name the city, or pass coordinates and `online=False`.
 **Solution:** Either provide city/nation or switch to offline mode:
 
 ```python
+# doc-snippet: no-run — option 1 requires your own GeoNames account (online)
 # Option 1: Use online mode with city/nation
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,

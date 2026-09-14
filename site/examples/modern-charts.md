@@ -34,7 +34,7 @@ output_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=output_dir, filename="lennon-modern-natal")
 ```
 
-![Modern Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
+![Modern Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
 
 ## Modern Synastry Chart
 
@@ -63,7 +63,7 @@ output_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=output_dir, filename="lennon-ono-modern-synastry")
 ```
 
-![Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
+![Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
 
 ## Modern Transit Chart
 
@@ -91,7 +91,7 @@ output_dir.mkdir(exist_ok=True)
 chart.save_svg(output_path=output_dir, filename="lennon-modern-transit")
 ```
 
-![Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
+![Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
 
 ## Modern Wheel Only
 
@@ -119,7 +119,7 @@ chart.save_wheel_only_svg_file(
 )
 ```
 
-![Modern Wheel Only](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Wheel%20Only.svg)
+![Modern Wheel Only](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Wheel%20Only.svg)
 
 ## Modern-Only Parameters
 

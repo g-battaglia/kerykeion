@@ -59,15 +59,15 @@ same default name and overwrite each other.
 
 ### Small
 
-![Modern natal chart, small glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Small.svg)
+![Modern natal chart, small glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Small.svg)
 
 ### Medium (default)
 
-![Modern natal chart, medium glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
+![Modern natal chart, medium glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
 
 ### Large
 
-![Modern natal chart, large glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Large.svg)
+![Modern natal chart, large glyphs](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Large.svg)
 
 ## Setting it once for a drawer
 

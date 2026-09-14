@@ -10,13 +10,13 @@ order: 2
 
 This guide provides comprehensive instructions for migrating your code from Kerykeion v4 or v5 to v6. The v5 release introduced a factory-based architecture; v6 removes the v4 backward compatibility layer entirely and adds advanced calculation modules.
 
-The current v6 release is **6.0.0rc1**, a release candidate. Use Python 3.12 or
-newer and select it explicitly:
+The current v6 release is **6.0.0**, the first stable release. Use Python 3.12
+or newer:
 
 ```bash
-pip install --upgrade "kerykeion==6.0.0rc1"
+pip install --upgrade "kerykeion==6.0.0"
 # Optional CLI, released with and pinned to the same library version:
-pip install --upgrade --pre "kerykeion[cli]==6.0.0rc1"
+pip install --upgrade "kerykeion[cli]==6.0.0"
 ```
 
 v6 uses `libephemeris==3.2.1` by default. Its bundled base data covers
@@ -483,7 +483,7 @@ echo "Migration complete. Review changes before committing."
 ## Migration Checklist
 
 - [ ] Update imports to use new module paths
-- [ ] Use Python 3.12+ and install the v6 release candidate explicitly
+- [ ] Use Python 3.12+ and install the stable v6 release
 - [ ] Provision the ephemeris tier needed for your date range
 - [ ] Review active points, aspect orbs, chart style and timezone behavior
 - [ ] Replace `AstrologicalSubject` with `AstrologicalSubjectFactory.from_birth_data()`
@@ -501,7 +501,7 @@ echo "Migration complete. Review changes before committing."
 | Version | Status |
 |:--------|:-------|
 | **v5.x** | Legacy - Backward compatibility was available |
-| **v6.0.0rc1** | Release candidate - The v4 compatibility layer and deprecated v5 aliases have been removed |
+| **v6.0.0** | Stable - The v4 compatibility layer and deprecated v5 aliases have been removed |
 
 ## Getting Help
 

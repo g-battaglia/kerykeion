@@ -40,7 +40,7 @@ drawer.save_svg(output_path=out_dir, filename="lennon-transit", style="classic")
 
 The output will be:
 
-![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart%20-%20Classic.svg)
+![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20All%20Active%20Points%20-%20Transit%20Chart%20-%20Classic.svg)
 
 ## Aspect Table Grid View
 

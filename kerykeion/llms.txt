@@ -2,9 +2,9 @@
 
 **Comprehensive reference for AI agents using the Kerykeion Astrological Library**
 
-Version: **6.0.0rc1**, Python 3.12+. Install with
-`pip install "kerykeion==6.0.0rc1"`; an unqualified install selects the stable
-release. This v6 guide includes APIs and defaults that differ from v5.
+Version: **6.0.0**, Python 3.12+. Install with
+`pip install "kerykeion==6.0.0"`. This v6 guide includes APIs and defaults that
+differ from v5.
 
 ## Quick Overview
 
@@ -49,8 +49,8 @@ no API key, offline-capable. The command lives in a separate package,
 defaults to text on a terminal and JSON in a pipe (`-f text|json|xml|svg`).
 
 ```bash
-pip install --pre "kerykeion[cli]==6.0.0rc1"
-# Or: uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
+pip install "kerykeion[cli]==6.0.0"
+# Or: uv tool install "kerykeion-cli==6.0.0"
 ```
 
 ```console
@@ -82,6 +82,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 ### Online Mode (Requires GeoNames)
 
 ```python
+# doc-snippet: no-run — requires your own GeoNames account (online)
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Jane Doe",
     year=1990, month=6, day=15,

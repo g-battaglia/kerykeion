@@ -27,6 +27,7 @@ The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creat
 Creates a subject from standard civil birth details.
 
 ```python
+# doc-snippet: no-run — requires your own GeoNames account (online)
 from kerykeion import AstrologicalSubjectFactory
 
 # Online mode (requires GeoNames username)
@@ -83,6 +84,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 Creates a subject from a UTC ISO 8601 timestamp, useful for event charts or standardized data.
 
 ```python
+# doc-snippet: no-run — requires your own GeoNames account (online)
 subject = AstrologicalSubjectFactory.from_iso_utc_time(
     name="Event Chart",
     iso_utc_time="2023-06-21T12:00:00Z",
@@ -126,6 +128,7 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 Creates a subject for the current moment ("Now"), useful for Horary astrology or transits. Uses the system clock -- does **not** accept `year`/`month`/`day`/`hour`/`minute` parameters.
 
 ```python
+# doc-snippet: no-run — requires your own GeoNames account (online)
 now_chart = AstrologicalSubjectFactory.from_current_time(
     name="Current Transits",
     city="Tokyo", nation="JP",
@@ -319,8 +322,7 @@ fast_chart = AstrologicalSubjectFactory.from_birth_data(
     name="Research Point",
     year=2000, month=1, day=1,
     hour=12, minute=0,
-    city="London", nation="GB",
-    geonames_username="your_username",
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
     # Only calculate luminaries and angles
     active_points=["Sun", "Moon", "Ascendant", "Medium_Coeli"]
 )

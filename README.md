@@ -52,15 +52,15 @@ Kerykeion includes two complete SVG chart styles, **Modern** and **Classic**, an
   </tr>
   <tr>
     <th>Modern style</th>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_classic_natal.svg" width="250" alt="Modern chart with the classic theme"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_dark_natal.svg" width="250" alt="Modern chart with the dark theme"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_black_and_white_natal.svg" width="250" alt="Modern chart with the black-and-white theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/modern_classic_natal.svg" width="250" alt="Modern chart with the classic theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/modern_dark_natal.svg" width="250" alt="Modern chart with the dark theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/modern_black_and_white_natal.svg" width="250" alt="Modern chart with the black-and-white theme"></td>
   </tr>
   <tr>
     <th>Classic style</th>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/classic_default_natal.svg" width="250" alt="Classic chart with the classic theme"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/classic_dark_natal.svg" width="250" alt="Classic chart with the dark theme"></td>
-    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/classic_black_and_white_natal.svg" width="250" alt="Classic chart with the black-and-white theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/classic_default_natal.svg" width="250" alt="Classic chart with the classic theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/classic_dark_natal.svg" width="250" alt="Classic chart with the dark theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/classic_black_and_white_natal.svg" width="250" alt="Classic chart with the black-and-white theme"></td>
   </tr>
 </table>
 
@@ -111,20 +111,20 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 
 Kerykeion requires **Python 3.12 or newer**.
 
-This branch documents **6.0.0rc1**, the first v6 release candidate. Select the prerelease explicitly:
+The current stable release is **6.0.0**:
 
 ```bash
 # Library only
-pip install --upgrade "kerykeion==6.0.0rc1"
+pip install --upgrade "kerykeion==6.0.0"
 
 # Library plus the command-line interface
-pip install --upgrade --pre "kerykeion[cli]==6.0.0rc1"
+pip install --upgrade "kerykeion[cli]==6.0.0"
 
 # Library, CLI, and optional Swiss Ephemeris backend
-pip install --upgrade --pre "kerykeion[all]==6.0.0rc1"
+pip install --upgrade "kerykeion[all]==6.0.0"
 ```
 
-An unqualified `pip install kerykeion` selects the latest stable release. Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/v6/release_notes/v6.0.0rc1.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/content/docs/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
+Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/content/docs/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
 
 A plain library installation intentionally provides no shell command. The `kerykeion` command belongs to the separate `kerykeion-cli` distribution, installed by the `cli` extra.
 
@@ -708,9 +708,9 @@ See <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel=
 The CLI is a separate distribution, `kerykeion-cli`. It uses only the Python standard library beyond Kerykeion itself.
 
 ```bash
-pip install --pre "kerykeion[cli]==6.0.0rc1"
+pip install "kerykeion[cli]==6.0.0"
 # Or install it as an isolated tool:
-uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
+uv tool install "kerykeion-cli==6.0.0"
 ```
 
 Save a subject profile and reuse it:
@@ -760,7 +760,7 @@ For a commercial product that should not install Python, manage ephemeris data, 
 Kerykeion uses **libephemeris 3.2.1** by default. To use the optional Swiss Ephemeris backend:
 
 ```bash
-pip install --pre "kerykeion[swiss]==6.0.0rc1"
+pip install "kerykeion[swiss]==6.0.0"
 python -m kerykeion.swisseph_setup
 export KERYKEION_BACKEND=swisseph
 export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
@@ -772,10 +772,10 @@ Backend selection happens once at import. `KERYKEION_BACKEND` selects the engine
 
 ## AI Agent Skill
 
-Kerykeion includes a cross-platform <a href="https://agentskills.io/" target="_blank" rel="noopener noreferrer">Agent Skill</a> that teaches coding agents the real v6 factories, models, configuration, and examples. During the v6 prerelease cycle, copy it from the current `v6` branch:
+Kerykeion includes a cross-platform <a href="https://agentskills.io/" target="_blank" rel="noopener noreferrer">Agent Skill</a> that teaches coding agents the real v6 factories, models, configuration, and examples. Copy it from the default `main` branch:
 
 ```bash
-git clone --branch v6 --depth 1 https://github.com/g-battaglia/kerykeion.git
+git clone --branch main --depth 1 https://github.com/g-battaglia/kerykeion.git
 cd kerykeion
 
 # Claude Code
@@ -818,14 +818,14 @@ Test tiers correspond to installed ephemeris coverage. To run the full-range sui
 LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
 ```
 
-- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/DEVELOPMENT.md" target="_blank" rel="noopener noreferrer">Development Guide</a>
-- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/TEST.md" target="_blank" rel="noopener noreferrer">Test Guide</a>
-- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing Guide</a>
-- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/main/DEVELOPMENT.md" target="_blank" rel="noopener noreferrer">Development Guide</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/main/TEST.md" target="_blank" rel="noopener noreferrer">Test Guide</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing Guide</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
 
 ## License and Commercial Use
 
-Kerykeion and the default libephemeris backend are distributed under **AGPL-3.0**. If your software imports or operates the library, review the AGPL's requirements for distribution and network use. See <a href="https://github.com/g-battaglia/kerykeion/blob/v6/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/v6/LICENSING.md" target="_blank" rel="noopener noreferrer">LICENSING.md</a>.
+Kerykeion and the default libephemeris backend are distributed under **AGPL-3.0**. If your software imports or operates the library, review the AGPL's requirements for distribution and network use. See <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSING.md" target="_blank" rel="noopener noreferrer">LICENSING.md</a>.
 
 For commercial applications, SaaS products, mobile apps, or closed-source codebases, the recommended route is the hosted **Astrologer API**:
 
@@ -834,7 +834,7 @@ For commercial applications, SaaS products, mobile apps, or closed-source codeba
 
 Your product calls an external service rather than importing Kerykeion directly. Subscription revenue directly funds the maintenance and continued development of this repository.
 
-A direct commercial license for embedding Kerykeion can also be discussed with the copyright holder. The intended model is described in <a href="https://github.com/g-battaglia/kerykeion/blob/v6/COMMERCIAL-LICENSE.md" target="_blank" rel="noopener noreferrer">COMMERCIAL-LICENSE.md</a>; that document is currently marked as a draft. Contact <a href="mailto:kerykeion.astrology@gmail.com?subject=Kerykeion%20Commercial%20License" target="_blank" rel="noopener noreferrer">kerykeion.astrology@gmail.com</a>.
+A direct commercial license for embedding Kerykeion can also be discussed with the copyright holder. The intended model is described in <a href="https://github.com/g-battaglia/kerykeion/blob/main/COMMERCIAL-LICENSE.md" target="_blank" rel="noopener noreferrer">COMMERCIAL-LICENSE.md</a>; that document is currently marked as a draft. Contact <a href="mailto:kerykeion.astrology@gmail.com?subject=Kerykeion%20Commercial%20License" target="_blank" rel="noopener noreferrer">kerykeion.astrology@gmail.com</a>.
 
 This section is a practical project summary, not legal advice. Consult qualified counsel for your specific use case.
 
@@ -848,7 +848,7 @@ This section is a practical project summary, not legal advice. Consult qualified
 
 ## Contributing and Citation
 
-Contributions are welcome. Open an issue or discussion before substantial work and follow the local gates in <a href="https://github.com/g-battaglia/kerykeion/blob/v6/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">CONTRIBUTING.md</a>. Contributions are accepted under the copyright-assignment terms documented there; authorship remains visible in project history and release notes.
+Contributions are welcome. Open an issue or discussion before substantial work and follow the local gates in <a href="https://github.com/g-battaglia/kerykeion/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">CONTRIBUTING.md</a>. Contributions are accepted under the copyright-assignment terms documented there; authorship remains visible in project history and release notes.
 
 For academic or published work, cite:
 

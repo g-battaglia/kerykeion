@@ -89,7 +89,7 @@ Mars: Vir 24.51°
 
 The chart will be:
 
-![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart%20-%20Classic.svg)
+![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart%20-%20Classic.svg)
 
 > **Note:** Heliocentric charts still compute houses and the angles — the
 > Ascendant and MC come from the observer's clock and place, which the subject

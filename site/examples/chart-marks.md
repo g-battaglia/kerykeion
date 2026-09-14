@@ -77,12 +77,12 @@ stationary_retrograde
 True
 ```
 
-![Marks on a wheel with a station and an out-of-bounds planet](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_modern.svg)
+![Marks on a wheel with a station and an out-of-bounds planet](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/marks_wheel_modern.svg)
 
 The same chart in the classic style, which writes the station letters at the
 foot of the glyph where its `℞` sits:
 
-![The same marks in the classic style](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_wheel_classic.svg)
+![The same marks in the classic style](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/marks_wheel_classic.svg)
 
 ## The ayanamsa value
 
@@ -103,7 +103,7 @@ ChartDrawer(
 ).save_svg(output_path=output_dir, filename="marks-sidereal")
 ```
 
-![A sidereal chart with the ayanamsa value on the zodiac line](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_sidereal_modern.svg)
+![A sidereal chart with the ayanamsa value on the zodiac line](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/marks_sidereal_modern.svg)
 
 ## The polar fallback note
 
@@ -131,7 +131,7 @@ ChartDrawer(
 O
 ```
 
-![A polar chart whose domification line admits the substitution](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_polar_modern.svg)
+![A polar chart whose domification line admits the substitution](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/marks_polar_modern.svg)
 
 ## The relationship score
 
@@ -157,7 +157,7 @@ ChartDrawer(
 ).save_svg(output_path=output_dir, filename="marks-synastry")
 ```
 
-![A synastry chart with the relationship score in the info panel](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/docs/charts/marks_synastry_modern.svg)
+![A synastry chart with the relationship score in the info panel](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/marks_synastry_modern.svg)
 
 ## The state is in the SVG either way
 

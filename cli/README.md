@@ -22,14 +22,14 @@ time series — plus a guarded `call` that reaches any public factory.
 ## Install
 
 ```bash
-pip install --pre "kerykeion[cli]==6.0.0rc1"  # the library plus this package
+pip install "kerykeion[cli]==6.0.0"  # the library plus this package
 # or, as a standalone tool:
-uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
+uv tool install "kerykeion-cli==6.0.0"
 ```
 
 Python 3.12+. `pip install kerykeion` alone installs the library without the
-command; `python -m kerykeion_cli` reaches the same entry point. This is the
-first v6 release candidate; the CLI pins the matching library version exactly.
+command; `python -m kerykeion_cli` reaches the same entry point. This is the first stable v6 release; the CLI pins the matching library version
+exactly.
 
 ## Use
 

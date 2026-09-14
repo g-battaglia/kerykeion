@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-09-14
+
+The first stable Kerykeion 6 release. Both `kerykeion` and the separate
+`kerykeion-cli` distribution use `6.0.0`. See the
+[release notes](release_notes/v6.0.0.md) for installation, migration guidance,
+validation results and the publication checklist.
+
+### Changed
+
+- Graduate both distributions from release candidate to stable while retaining
+  the verified `libephemeris==3.2.1` dependency and Python 3.12+ requirement.
+- Make `main` the canonical branch for package metadata, documentation, chart
+  assets and the bundled agent skills.
+
 ### Added
 
 - The `kerykeion-cli` wheel now ships a Unix man page, `kerykeion(1)`, generated
@@ -24,6 +38,8 @@
   content widths, removing the French and Italian OOB/cusp-label overlap.
 - Base-tier test runs now skip only cases that explicitly require at least the
   medium ephemeris kernel, while medium and extended runs continue to execute them.
+- Online GeoNames examples are explicitly excluded from the offline documentation
+  snippet gate, so release validation no longer depends on the shared API quota.
 
 ## [6.0.0rc1] - 2026-09-07
 

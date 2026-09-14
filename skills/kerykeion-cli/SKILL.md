@@ -19,7 +19,7 @@ license: AGPL-3.0
 
 # Driving Kerykeion from the terminal
 
-Verified against **kerykeion 6.0.0rc1**, Python 3.12+.
+Verified against **kerykeion 6.0.0**, Python 3.12+.
 
 The CLI ships as an optional extra. Everything the library computes is reachable
 from the shell: about fifty curated commands, plus `kerykeion call` as a guarded
@@ -35,8 +35,8 @@ those instead of guessing; the tables are large (48 ayanamsas, 23 house systems,
 
 ```bash
 # gate: skip
-pip install --pre "kerykeion[cli]==6.0.0rc1"
-# Or: uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
+pip install "kerykeion[cli]==6.0.0"
+# Or: uv tool install "kerykeion-cli==6.0.0"
 ```
 
 The command lives in its own package, `kerykeion-cli`, which the extra installs;

@@ -73,7 +73,7 @@ ChartDrawer(chart_data).save_svg(
 )
 ```
 
-![Midpoint composite chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart%20-%20Modern.svg)
+![Midpoint composite chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart%20-%20Modern.svg)
 
 ## Davison composite
 
