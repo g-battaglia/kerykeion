@@ -17,6 +17,7 @@ A map of the sky at the exact moment and location of birth. Shows the positions 
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 ```
 
@@ -50,6 +51,7 @@ The zodiac sign rising on the eastern horizon at the time of birth. Determines t
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.first_house.sign)  # The Ascendant sign
 print(subject.ascendant.position)  # Exact degree
 ```
@@ -59,6 +61,7 @@ The highest point in the chart, representing career and public image. The cusp o
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.tenth_house.sign)
 print(subject.medium_coeli.position)
 ```
@@ -79,7 +82,7 @@ In astrology, "planets" includes the Sun and Moon (called "luminaries"), plus Me
 | Planet | Represents | Orbit |
 |:-------|:-----------|:------|
 | **Sun** | Core identity, ego, vitality | 1 year |
-| **Moon** | Emotions, instincts, habits | 28 days |
+| **Moon** | Emotions, instincts, habits | 27.3 days sidereal / 29.5 days synodic |
 | **Mercury** | Communication, thinking | 88 days |
 | **Venus** | Love, beauty, values | 225 days |
 | **Mars** | Action, energy, desire | 2 years |
@@ -97,6 +100,7 @@ The points where the Moon's orbit crosses the ecliptic. Related to karmic themes
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 # True nodes (oscillating)
 print(subject.true_north_lunar_node)
 print(subject.true_south_lunar_node)
@@ -114,6 +118,11 @@ The lunar apogee, associated with shadow self and repressed desires.
 
 - **Mean Lilith**: Averaged position
 - **True Lilith**: Oscillating position
+
+### Perigee / Apogee
+The two ends of the Moon's orbit around the Earth: the perigee is the point nearest the Earth, the apogee the point farthest from it. They are the Moon's **apsides**. The names *perihelion* and *aphelion* mean the same two ends of an orbit around the **Sun**, which is what the eight planets go round — so they are wrong for the Moon, and the apogee is precisely the point the tradition calls the Black Moon Lilith.
+
+> **In Kerykeion:** `PlanetaryNodesFactory` reports both ends of every orbit as `periapsis` / `apoapsis`, with `apsis_kind` saying which body they are measured against (`"geocentric"` for the Moon alone). The Moon's `apoapsis` equals `mean_lilith` with `method="mean"` and `true_lilith` with `method="osculating"`. The older `perihelion` / `aphelion` fields are deprecated but still populated.
 
 ### Asteroids
 Minor bodies in the asteroid belt:
@@ -159,6 +168,7 @@ The tolerance in degrees for an aspect to be considered active. A conjunction wi
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 # Aspect data includes orb
 aspect.orbit  # The actual deviation from exact
 ```
@@ -166,6 +176,12 @@ aspect.orbit  # The actual deviation from exact
 ### Applying vs Separating
 - **Applying**: Planets moving toward exact aspect (considered stronger)
 - **Separating**: Planets moving away from exact aspect
+- **Static**: Neither — the pair's relative speed is too small to say which way
+  the aspect is going, which happens between two slow outer planets or when one
+  of them is at a station
+
+`AspectModel.aspect_movement` is `Literal["Applying", "Separating", "Static"]`,
+so a consumer must handle all three.
 
 ---
 
@@ -201,33 +217,103 @@ When a planet appears to move backward through the zodiac due to relative orbita
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 if subject.mercury.retrograde:
     print("Mercury is retrograde")
 ```
+
+`retrograde` is the bare sign of the speed. `motion_state` grades it against the
+body's own mean daily motion: `retrograde`, `stationary`,
+`stationary_retrograde`, `stationary_direct`, `slow`, `average`, `fast`. The two
+station values name which turn the planet is making — the sign of the speed
+cannot tell them apart, since both stations are approached from one side of zero
+and left on the other.
 
 ### Declination
 A planet's angular distance north or south of the celestial equator. Planets with the same declination are "in parallel."
 
 ### Ephemeris
-Tables showing planetary positions for each day. Kerykeion uses the Swiss Ephemeris for high-precision calculations.
+Tables showing planetary positions for each day. Kerykeion uses libephemeris (based on NASA JPL ephemerides) for high-precision calculations by default, with the Swiss Ephemeris available as an opt-in backend.
 
 ### Julian Day
 A continuous count of days since January 1, 4713 BCE. Used internally for astronomical calculations.
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.julian_day)
 ```
 
 ### Void-of-Course Moon
 The period after the Moon makes its last major aspect in a sign and before it enters the next sign. Traditionally considered an unfavorable time for initiating new actions. Duration varies from minutes to over a day.
 
-> **Note:** Kerykeion does not calculate void-of-course periods directly, but you can determine them by analyzing Moon aspects and sign ingresses using `EphemerisDataFactory` and `AspectsFactory`.
+> **In Kerykeion:** Use `VoidOfCourseMoonFactory` to compute the void-of-course state for any moment — it returns the void window, the current/next sign, and the framing last/next aspects:
+
+```python
+from kerykeion import VoidOfCourseMoonFactory
+
+voc = VoidOfCourseMoonFactory.from_datetime(2026, 6, 1, 9, 0, tz_str="Europe/Rome")
+print(voc.is_void_of_course, voc.moon_sign, voc.next_sign)  # True Sag Cap
+```
 
 ### Progressed Chart
 A forecasting technique where each day after birth corresponds to one year of life (secondary progressions). For example, the planetary positions 30 days after birth represent the progressed chart for age 30.
 
-> **Note:** Kerykeion does not currently implement progressions. For progressed charts, calculate the date offset manually and create an `AstrologicalSubjectFactory` for that date.
+> **Note:** Kerykeion implements secondary progressions via `SecondaryProgressionFactory` and solar arc directions via `SolarArcFactory`. Both are available from `from kerykeion import SecondaryProgressionFactory, SolarArcFactory`.
+
+### Midpoint
+The zodiacal longitude exactly halfway between two planets on the shorter arc. Central to cosmobiology (Ebertin) and Uranian/Hamburg-school astrology. When a third planet sits on a midpoint, it "activates" the pair.
+
+> **In Kerykeion:** Use `MidpointFactory.compute(subject)` to calculate all pairwise midpoints with aspect activations.
+
+### Primary Directions
+The oldest predictive technique in Western astrology. Measures the arc a promissor planet travels along the equator to reach the position of a significator. Each degree of arc equals approximately one year of life (Ptolemy's key).
+
+> **In Kerykeion:** Use `PrimaryDirectionsFactory.compute(subject, max_years=80)`.
+
+### Heliacal Rising
+The first morning a celestial body becomes visible above the eastern horizon just before sunrise after a period of invisibility (hidden by the Sun's glare). Heliacal settings are the opposite: the last evening visibility before the body disappears into the Sun's glare.
+
+> **In Kerykeion:** Use `HeliacalFactory().next_heliacal_rising(jd, planet, geopos)`.
+
+### Cazimi, Combust, Under the Beams
+Three classical names for how near the Sun a body stands, read as a condition of visibility rather than as a number of degrees. From the closest outwards:
+
+| Term | Meaning | Default cut-off |
+|:-----|:--------|:----------------|
+| **Cazimi** | In the heart of the Sun | within 0.2833° (17 arcminutes) |
+| **Combust** | Burnt; invisible in the glare | within 8.5° |
+| **Under the Beams** | Still inside the Sun's rays | within 17° |
+| **Free** | Far enough to be seen in a dark sky | 17° or more |
+
+The cut-offs are conventions, not measurements, and the schools disagree on all three — some read the beams at 15°, some scale combustion by planet.
+
+> **In Kerykeion:** every `PlanetaryPhenomenaModel` carries `solar_phase` (`"cazimi"` / `"combust"` / `"under_the_beams"` / `"free"`), read against the collection's `solar_phase_thresholds`, which you may replace. Note that `is_morning_star` / `is_evening_star` are purely geometric — which side of the Sun the planet stands on — and say nothing about visibility.
+
+### Major Phase (Moon)
+The nearest of the Moon's four syzygy/quadrature events — New Moon, First Quarter, Full Moon, Last Quarter — to a given moment. The eight-name phase (`Waxing Crescent`, `Waning Gibbous`, …) says where in the cycle the Moon is; the major phase says which of the four turning points it is closest to, and `stage` says whether it is `"waxing"` or `"waning"`.
+
+> **In Kerykeion:** `subject.lunar_phase.major_phase` / `.stage`, and the same two fields on `MoonPhaseDetailsFactory`'s `overview.moon`.
+
+### Occultation
+An event where the Moon passes in front of a planet or star as seen from Earth, temporarily hiding it from view. Similar to an eclipse, but involving a body other than the Sun.
+
+> **In Kerykeion:** Use `OccultationFactory().search_global(jd, planet_id)`.
+
+### Astro-Cartography (ACG)
+A mapping technique showing where each planet's angular lines (ASC, DSC, MC, IC) fall across the globe. Used for relocation astrology: living near a planet's line activates its themes.
+
+> **In Kerykeion:** Use `AstroCartographyFactory.compute(subject)`.
+
+### Eclipse
+The alignment of Sun, Moon, and Earth. Solar eclipses occur at New Moon (Moon between Sun and Earth); lunar eclipses at Full Moon (Earth between Sun and Moon). Eclipses near natal points are considered powerful triggers.
+
+> **In Kerykeion:** Use `EclipseFactory.search_global()` or `EclipseFactory.search_from_location()`.
+
+### Parallel / Contra-Parallel
+Declination-based aspects. A parallel is when two planets have the same declination (both north or both south of the equator); a contra-parallel is when they have equal declination but opposite signs (one north, one south). Parallels act like conjunctions, contra-parallels like oppositions.
+
+> **In Kerykeion:** Use `AspectsFactory.single_chart_declination_aspects(subject)`.
 
 ---
 
@@ -237,6 +323,7 @@ A forecasting technique where each day after birth corresponds to one year of li
 Overlays two natal charts to analyze relationship compatibility. Shows how one person's planets aspect the other's.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 synastry_data = ChartDataFactory.create_synastry_chart_data(person1, person2)
 ```
 
@@ -244,6 +331,7 @@ synastry_data = ChartDataFactory.create_synastry_chart_data(person1, person2)
 Creates a single chart from the midpoints of two people's charts. Represents the relationship itself as an entity.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 composite = CompositeSubjectFactory(person1, person2).get_midpoint_composite_subject_model()
 ```
 
@@ -251,6 +339,7 @@ composite = CompositeSubjectFactory(person1, person2).get_midpoint_composite_sub
 Compares current planetary positions to a natal chart. Used for timing and prediction.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, transit_subject)
 ```
 
@@ -258,6 +347,7 @@ transit_data = ChartDataFactory.create_transit_chart_data(natal_subject, transit
 The chart for the moment the Sun returns to its exact natal position each year. Used for annual forecasts.
 
 ```python
+# doc-snippet: no-run — illustrative fragment
 return_subject = PlanetaryReturnFactory(natal, ...).next_return_from_date(2024, 1, 1, return_type="Solar")
 ```
 
@@ -289,6 +379,7 @@ Three modes describing how signs express energy:
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(chart_data.element_distribution.fire_percentage)
 print(chart_data.quality_distribution.cardinal_percentage)
 ```
@@ -310,6 +401,7 @@ print(chart_data.quality_distribution.cardinal_percentage)
 
 **In Kerykeion:**
 ```python
+# doc-snippet: no-run — illustrative fragment
 print(subject.lunar_phase.moon_phase_name)
 print(subject.lunar_phase.moon_emoji)
 ```

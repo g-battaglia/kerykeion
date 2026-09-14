@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "5.12.9"
+version = "6.0.0rc1"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -25,17 +25,16 @@ keywords = [
     "astronomical algorithms"
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development",
@@ -44,43 +43,92 @@ classifiers = [
     "Topic :: Religion",
     "Typing :: Typed",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
-    "pyswisseph>=2.10.3.2",
+    # Keep the exact backend version introduced in a93 for the RC. Golden
+    # fixtures and source/coverage contracts are verified against this release;
+    # the dependency pin gives PyPI installs the same backend as the lockfile.
+    # A backend upgrade requires rechecking the extended suite and fixtures.
+    "libephemeris==3.2.1",
     "pydantic>=2.5",
-    "scour>=0.38.2",
+    "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
     "requests>=2.33.0",
     "simple-ascii-tables>=1.0.0",
-    "pytz>=2024.2",
+    # HARD runtime dependency, not a convenience: the stdlib `zoneinfo` searches
+    # TZPATH (the HOST's tz database) first and falls back to this package only
+    # when a zone is not found there. Without it, an image that ships no tz
+    # database — Alpine, Windows, most slim containers — raises on every zone
+    # lookup instead of casting a chart. It is a FLOOR, not a pin: where a system
+    # database exists it still wins, so this does not by itself make two hosts
+    # agree about a zone whose rules changed recently. Forcing agreement would
+    # mean clearing TZPATH at import, which would silently override the tz
+    # database an operator deliberately maintains.
+    "tzdata>=2025.2",
     "typing-extensions>=4.12.2",
 ]
+
+[project.optional-dependencies]
+swiss = ["pyswisseph>=2.10.3.1"]
+# The command-line interface is its own distribution, in ``cli/``: it owns the
+# ``kerykeion`` console script, so a plain ``pip install kerykeion`` has no
+# command and this extra is what really brings one. Unpinned on purpose — the
+# CLI pins the library exactly, and a pin here would be a fourth number to bump.
+cli = ["kerykeion-cli"]
+# ``all`` includes ``cli`` on purpose: a name that says "all" but omits an extra
+# is a lie in the name. Self-referencing the other extras (PEP 508, supported by
+# every resolver this project targets) keeps the version floors defined once —
+# re-listing them here made the same pins live in three hand-synced places.
+all = ["kerykeion[swiss]", "kerykeion[cli]"]
 
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
 Repository = "https://github.com/g-battaglia/kerykeion"
+Documentation = "https://www.kerykeion.net/content/docs/"
+Changelog = "https://github.com/g-battaglia/kerykeion/blob/alpha/v6/CHANGELOG.md"
+Issues = "https://github.com/g-battaglia/kerykeion/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# The CLI is a second distribution in this repository: one lockfile, one venv,
+# one version. `uv build --all-packages` builds both wheels into dist/.
+[tool.uv.workspace]
+members = ["cli"]
+
+[tool.uv.sources]
+kerykeion-cli = { workspace = true }
+
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
+
+# Ship the third-party notices with the wheel: the templates embed glyph outlines
+# derived from Noto Sans Symbols 2 and from Noto Sans (both SIL OFL 1.1), whose
+# licenses must accompany them. Every file the NOTICE points at has to be here:
+# the sdist gets them from its own "/licenses" include, so a repo checkout hides
+# a missing entry and only a pip-installed tree shows the dangling reference.
+[tool.hatch.build.targets.wheel.force-include]
+"NOTICE" = "kerykeion/NOTICE"
+"licenses/NotoSans-OFL.txt" = "kerykeion/licenses/NotoSans-OFL.txt"
+"licenses/NotoSansSymbols2-OFL.txt" = "kerykeion/licenses/NotoSansSymbols2-OFL.txt"
 
 [tool.hatch.build.targets.sdist]
 include = [
     "/kerykeion",
     "/README.md",
     "/LICENSE",
+    "/NOTICE",
+    "/licenses",
     "/pyproject.toml",
-    "/MANIFEST.in",
 ]
 
 # MyPy Static Analysis
 [tool.mypy]
 ignore_missing_imports = true
-mypy_path = "kerykeion"
-files = "kerykeion"
+# No mypy_path: adding "kerykeion" here would also resolve `utilities`, `report`,
+# `schemas` as top-level modules, masking imports written without the package prefix.
+files = ["kerykeion", "cli/kerykeion_cli"]
 
 # PyTest Automated Testing
 [tool.pytest.ini_options]
@@ -90,13 +138,15 @@ testpaths = "tests"
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
-addopts = "-n 8"
+addopts = "-n auto --dist loadgroup"
 markers = [
     "online: tests requiring network access (GeoNames API)",
     "core: hand-written essential tests with known values",
     "base: DE440s tier (1849-2150)",
     "medium: DE440 tier (1550-2650, cumulative)",
     "extended: DE441 tier (full range, cumulative)",
+    "cli: command-line interface tests",
+    "reference_backend_only: golden comparison the two ephemerides genuinely disagree on (deep antiquity); skipped off the baseline backend with a reason",
 ]
 
 # Coverage Configuration
@@ -106,10 +156,8 @@ omit = [
     "*/tests/*",
     "*/test_*",
     "*/__pycache__/*",
-    "*/sweph/*",  # Swiss Ephemeris library files
+
     "setup.py",
-    "**/draw_planets_legacy.py",  # Legacy code, not used
-    "kerykeion/charts/draw_planets_legacy.py",  # Legacy code, not used
 ]
 
 [tool.coverage.report]
@@ -131,34 +179,132 @@ precision = 2
 
 [tool.coverage.html]
 directory = "htmlcov"
+title = "Kerykeion Test Coverage Report"
 
 # Task Runner
 [tool.poe.tasks]
-# Test — 4 levels, hierarchy: core < base < medium < extended
-"test:core" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
-"test:base" = "pytest tests/ --tier=base -m 'not online'"
-"test:medium" = "pytest tests/ --tier=medium -m 'not online'"
-"test:extended" = "pytest tests/ -m 'not online'"
 
-# Coverage — same tiers with coverage report (terminal + HTML in htmlcov/)
-"test:core:cov" = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
-"test:base:cov" = "pytest tests/ --tier=base -m 'not online' --cov --cov-report=term-missing --cov-report=html"
-"test:medium:cov" = "pytest tests/ --tier=medium -m 'not online' --cov --cov-report=term-missing --cov-report=html"
-"test:extended:cov" = "pytest tests/ -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+# ── Test suites (4 tiers: core < base < medium < extended) ──
+[tool.poe.tasks."test:core"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+help = "Run core hand-written tests (fastest, default backend)"
 
-# Code Quality
-lint = "ruff check"
-format = "ruff format"
-"format:all" = "ruff format kerykeion tests"
-analyze = "mypy"
-typecheck = "pyright"
+[tool.poe.tasks."test:base"]
+cmd = "pytest tests/ --tier=base -m 'not online'"
+help = "Run base-tier tests (core + parametrized basics)"
+
+[tool.poe.tasks."test:medium"]
+cmd = "pytest tests/ --tier=medium -m 'not online'"
+help = "Run medium-tier tests (base + house/planetary positions)"
+
+[tool.poe.tasks."test:extended"]
+cmd = "pytest tests/ -m 'not online'"
+help = "Run extended-tier tests (all offline tests)"
+
+[tool.poe.tasks."test:all"]
+cmd = "pytest tests/ -m 'not online'"
+help = "Run all tests (alias for test:extended)"
+
+[tool.poe.tasks."test:all:cov"]
+cmd = "pytest tests/ -m 'not online' --cov=kerykeion --cov-report=term-missing --cov-report=html"
+help = "Run all tests with coverage report (terminal + htmlcov/)"
+
+# ── Backend-specific test suites (identical tests, different ephemeris engine) ──
+[tool.poe.tasks."test:lib"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_backend_comparison.py --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+help = "Run core tests forced on libephemeris (KERYKEION_BACKEND=libephemeris)"
+[tool.poe.tasks."test:lib".env]
+KERYKEION_BACKEND = "libephemeris"
+
+[tool.poe.tasks."test:swe"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_backend_comparison.py --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py"
+help = "Run core tests forced on swisseph (KERYKEION_BACKEND=swisseph)"
+[tool.poe.tasks."test:swe".env]
+KERYKEION_BACKEND = "swisseph"
+
+[tool.poe.tasks."test:compare"]
+cmd = "pytest tests/core/test_backend_comparison.py -v"
+help = "Compare libephemeris vs swisseph (both must be installed via pip install kerykeion[all])"
+
+# ── Command-line interface ──
+[tool.poe.tasks."test:cli"]
+cmd = "pytest tests/ -m 'cli and not online'"
+help = "Run the command-line interface tests"
+
+[tool.poe.tasks."cli:smoke"]
+cmd = "python scripts/cli_smoke_check.py"
+help = "Smoke the entry point from the checkout: --version, --help, and that import kerykeion never imports the CLI"
+
+[tool.poe.tasks."man:generate"]
+cmd = "python scripts/generate_cli_manpage.py"
+help = "Regenerate cli/man/man1/kerykeion.1 from the CLI's argparse tree (the file ships in the kerykeion-cli wheel)"
+
+[tool.poe.tasks."man:check"]
+cmd = "python scripts/generate_cli_manpage.py --check"
+help = "Fail when the committed kerykeion(1) man page no longer matches the argparse tree"
+
+# ── Coverage ──
+[tool.poe.tasks."test:core:cov"]
+cmd = "pytest tests/core/ -m 'not online' --ignore=tests/core/test_houses_positions.py --ignore=tests/core/test_planetary_positions.py --ignore=tests/core/test_moon_phase_historical_verification.py --ignore=tests/core/test_subject_factory_parametrized.py --ignore=tests/core/test_chart_parametrized.py --cov --cov-report=term-missing --cov-report=html"
+help = "Core tests with coverage report"
+
+[tool.poe.tasks."test:base:cov"]
+cmd = "pytest tests/ --tier=base -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+help = "Base-tier tests with coverage report"
+
+[tool.poe.tasks."test:medium:cov"]
+cmd = "pytest tests/ --tier=medium -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+help = "Medium-tier tests with coverage report"
+
+[tool.poe.tasks."test:extended:cov"]
+cmd = "pytest tests/ -m 'not online' --cov --cov-report=term-missing --cov-report=html"
+help = "Extended-tier tests with coverage report"
+
+# ── Code Quality ──
+[tool.poe.tasks.lint]
+cmd = "ruff check"
+help = "Lint code with ruff"
+
+[tool.poe.tasks.format]
+cmd = "ruff format"
+help = "Format code with ruff"
+
+[tool.poe.tasks."format:all"]
+cmd = "ruff format kerykeion cli tests"
+help = "Format all code (kerykeion + tests)"
+
+[tool.poe.tasks.analyze]
+cmd = "mypy"
+help = "Static type analysis with mypy"
+
+[tool.poe.tasks.typecheck]
+cmd = "pyright"
+help = "Static type checking with pyright"
+
+[tool.poe.tasks.imports]
+cmd = "python scripts/check_import_graph.py --paths --patch-targets --loggers"
+help = "Check module paths, patch targets and logger names outside kerykeion/"
+
+[tool.poe.tasks."imports:fresh"]
+cmd = "python scripts/check_import_graph.py --fresh-imports"
+help = "Import every module in a cold interpreter (catches leaf-first cycles)"
+
+[tool.poe.tasks."test:gates:extended"]
+cmd = "pytest tests/core/test_every_baseline_has_a_reader.py tests/core/test_golden_charts_are_hermetic.py tests/core/test_baseline_freshness.py -p no:randomly"
+help = "The baseline gates on the full-range kernel: on the default tier the reader gate cannot see a lost reader for the extended-tier subjects' baselines"
+
+[tool.poe.tasks."test:gates:extended".env]
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks.check]
-sequence = ["lint", "analyze", "typecheck", "test:core"]
-help = "Run all quality checks (lint, analyze, typecheck, test:core)"
+sequence = ["lint", "analyze", "typecheck", "imports", "imports:fresh", "test:core", "test:gates:extended", "cli:smoke", "skill:cli:smoke", "man:check"]
+help = "Run all quality checks (lint, analyze, typecheck, test:core, the baseline gates on the extended kernel, cli:smoke, skill:cli:smoke, man:check)"
 
+# cmd, not `script = "...:main"`: poethepoet 0.40.0 discards a script function's
+# int return, so a `script` task exits 0 even when the checks fail — the gate
+# would pass silently. Running the file propagates its `sys.exit(main())` code.
 [tool.poe.tasks.quality]
-script = "scripts.quality_check:main"
+cmd = "python scripts/quality_check.py"
 help = "Run quality check script"
 
 # Documentation
@@ -174,10 +320,39 @@ help = "Audit documentation coverage"
 cmd = "python scripts/test_markdown_snippets.py"
 help = "Test Python snippets in markdown files"
 
+[tool.poe.tasks."docs:snippets:skill"]
+cmd = "python scripts/test_markdown_snippets.py --skill"
+help = "Test the agent skill's snippets standalone (no import prelude, no shared page context)"
+
+# The CLI skill's examples are shell, which the python snippet runner ignores.
+# Without this they would ship unverified into third-party repositories.
+[tool.poe.tasks."skill:cli:smoke"]
+cmd = "python scripts/test_skill_cli_snippets.py"
+help = "Run every bash block in skills/kerykeion-cli against a sandboxed profile store"
+
 # Regenerate Golden Standards — one command per category
+[tool.poe.tasks."regenerate:glyph-widths"]
+help = "Re-measure the info panel's glyph-width tables from the reference fonts (macOS only)"
+cmd = "python scripts/regenerate_glyph_widths.py"
+
+[tool.poe.tasks."regenerate:glyph-ink"]
+help = "Re-measure modern wheel symbol ink extents in a browser and rewrite glyph_ink_metrics.py (interactive: opens a page)"
+cmd = "python scripts/measure_modern_separation.py --mode dump-ink"
+
 [tool.poe.tasks."regenerate:svg"]
-sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern"]
+sequence = ["regenerate:svg:base", "regenerate:svg:extended", "regenerate:svg:modern", "regenerate:svg:test-owned"]
 help = "Regenerate all SVG chart baselines (tests/data/svg/)"
+
+[tool.poe.tasks."regenerate:svg".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:svg:test-owned"]
+cmd = "pytest tests/core/test_chart_drawer.py::TestProgressionChart tests/core/test_chart_drawer.py::TestNatalChart::test_minified_transit_chart tests/core/test_chart_drawer.py::TestNatalChart::test_minified_synastry_chart tests/core/test_bce_dates.py::TestBCEChartSVG::test_progression_chart_baseline tests/core/test_bce_dates.py::TestBCEChartSVG::test_synastry_chart_baseline tests/core/test_bce_dates.py::TestBCEChartSVG::test_transit_chart_baseline tests/core/test_bce_dates.py::TestBCEPairWithAModernPartner -p no:randomly -q"
+help = "The eleven baselines no script casts — progressions, the minified pair, the BCE pairs — rewritten by the tests that own them"
+
+[tool.poe.tasks."regenerate:svg:test-owned".env]
+KERYKEION_REGEN_BASELINES = "1"
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:svg:base"]
 cmd = "python scripts/regenerate_test_charts.py"
@@ -188,9 +363,54 @@ cmd = "python scripts/regenerate_test_charts_extended.py"
 [tool.poe.tasks."regenerate:svg:modern"]
 cmd = "python scripts/generate_modern_baselines.py"
 
+# The three below produce committed SVGs too, and each had no task at all. That
+# is why they went stale: `regenerate:all` did not reach them, so a template
+# change refreshed tests/data/svg and left the README's own showcase images
+# drawing a glyph set the library no longer had.
+[tool.poe.tasks."regenerate:docs-charts"]
+cmd = "python scripts/regenerate_docs_charts.py"
+help = "Regenerate the documentation charts (docs/charts/) — the README's showcase images"
+
+[tool.poe.tasks."regenerate:docs-charts".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:gallery-v6"]
+cmd = "python scripts/generate_v6_test_gallery.py"
+help = "Regenerate the v6 feature gallery (tests/data/v6_gallery/)"
+
+[tool.poe.tasks."regenerate:gallery-v6".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."regenerate:glyph-gallery"]
+cmd = "python scripts/generate_glyph_gallery.py"
+help = "Regenerate the published glyph poster and page (site/docs/chart-glyphs.md)"
+
+[tool.poe.tasks.gallery]
+cmd = "python scripts/generate_svg_validation_gallery.py"
+help = "Render the whole SVG surface into svg_validation_gallery/ for visual review"
+
+[tool.poe.tasks.gallery.env]
+# Charts before ~1600 fall outside the default ephemeris tier and would be
+# drawn as failure cards; the sweep deliberately includes them.
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks.playground]
+cmd = "python scripts/generate_glyph_playground.py"
+help = "Rebuild scripts/glyph_playground.html — the modern-cluster tuning page"
+
+[tool.poe.tasks.playground.env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks."gallery:index"]
+cmd = "python scripts/generate_svg_validation_gallery.py --index-only"
+help = "Rewrite the gallery page from cards.json, without re-rendering the charts"
+
 [tool.poe.tasks."regenerate:reports"]
 sequence = ["regenerate:reports:snapshots", "regenerate:reports:output"]
 help = "Regenerate all report golden files (tests/fixtures/)"
+
+[tool.poe.tasks."regenerate:reports".env]
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:reports:snapshots"]
 cmd = "python scripts/regenerate_report_snapshots.py"
@@ -202,9 +422,15 @@ cmd = "python scripts/regenerate_test_output.py"
 cmd = "python scripts/regenerate_all.py --positions --subjects"
 help = "Regenerate expected positions and subjects (tests/data/expected_positions.py, expected_astrological_subjects.py)"
 
+[tool.poe.tasks."regenerate:positions".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
 [tool.poe.tasks."regenerate:aspects"]
-sequence = ["regenerate:aspects:natal", "regenerate:aspects:synastry", "regenerate:aspects:matrix"]
+sequence = ["regenerate:aspects:natal", "regenerate:aspects:synastry"]
 help = "Regenerate all expected aspects (tests/data/expected_*_aspects.py)"
+
+[tool.poe.tasks."regenerate:aspects".env]
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:aspects:natal"]
 cmd = "python scripts/regenerate_expected_aspects.py"
@@ -212,14 +438,35 @@ cmd = "python scripts/regenerate_expected_aspects.py"
 [tool.poe.tasks."regenerate:aspects:synastry"]
 cmd = "python scripts/regenerate_synastry_aspects.py"
 
-[tool.poe.tasks."regenerate:aspects:matrix"]
-cmd = "python scripts/regenerate_all.py --aspects"
+[tool.poe.tasks."regenerate:configurations"]
+cmd = "python scripts/regenerate_all.py --configurations"
+help = "Regenerate all configuration-specific fixtures (house-systems, sidereal-modes, perspectives, returns, composite, ephemeris, arabic-parts)"
+
+[tool.poe.tasks."regenerate:configurations".env]
+LIBEPHEMERIS_PRECISION = "extended"
 
 [tool.poe.tasks."regenerate:all"]
-sequence = ["regenerate:svg", "regenerate:reports", "regenerate:positions", "regenerate:aspects"]
+sequence = ["regenerate:svg", "regenerate:docs-charts", "regenerate:gallery-v6", "regenerate:glyph-gallery", "regenerate:reports", "regenerate:positions", "regenerate:aspects", "regenerate:configurations"]
 help = "Regenerate all golden standards"
+# Baselines must regenerate at the extended (DE441) tier so ancient/BCE subjects
+# (year 100 AD, etc.) resolve on-disk instead of falling back, and so the long-range
+# subjects aren't silently dropped (41 vs 32). Per memory baseline-regeneration-tier.
+[tool.poe.tasks."regenerate:all".env]
+LIBEPHEMERIS_PRECISION = "extended"
+
+[tool.poe.tasks.benchmark]
+cmd = "python scripts/benchmark.py"
+help = "Run performance benchmarks (subject creation, aspects, SVG rendering)"
 
 # Utilities
+[tool.poe.tasks."build:smoke"]
+shell = """
+rm -rf dist && uv build --all-packages -o dist &&
+uv run --isolated --no-project --with dist/kerykeion-*.whl python scripts/build_smoke_check.py &&
+uv run --isolated --no-project --with dist/kerykeion-*.whl --with dist/kerykeion_cli-*.whl python scripts/build_smoke_check_cli.py
+"""
+help = "Build both distributions, then in ISOLATED envs verify: the library wheel alone imports, renders a chart and carries no command; library + CLI wheels serve the kerykeion command end to end. Catches missing packaged data and a broken split before publishing."
+
 [tool.poe.tasks.clean]
 cmd = "rm -rf dist build *.egg-info htmlcov .coverage .coverage.* coverage.xml .pytest_cache .mypy_cache .ruff_cache"
 help = "Clean build artifacts and caches"
@@ -233,6 +480,9 @@ select = [
     "F",      # Pyflakes - logic errors, undefined names, unused imports
     "E",      # pycodestyle errors
     "W",      # pycodestyle warnings
+    "INP",    # flake8-no-pep420 - a package dir missing __init__.py still imports
+              # fine as a PEP 420 namespace package, so this is the only thing that
+              # catches one that was forgotten. Scoped to kerykeion/ below.
 ]
 
 # Ignore rules that conflict with project structure
@@ -243,44 +493,27 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# Backward compatibility module uses import * intentionally
-"kerykeion/backword.py" = ["F405", "F403", "F401"]
 # Settings re-exports symbols intentionally
 "kerykeion/settings/__init__.py" = ["F401", "F403"]
 # Schemas re-exports for public API
 "kerykeion/schemas/__init__.py" = ["F401", "F403"]
-# Types re-exports for public API
-"kerykeion/kr_types/__init__.py" = ["F405", "F403", "F401"]
+# Utilities is a flat facade: it also re-exports semi-private names that other
+# modules import, which by design stay out of __all__.
+"kerykeion/utilities/__init__.py" = ["F401"]
+# INP001 only guards the shipped package; these trees are scripts, not packages.
+"scripts/*" = ["INP001"]
+"examples/*" = ["INP001"]
+"tests/*" = ["INP001"]
+"workspace/*" = ["INP001"]
 
 # Pyright Static Type Checking
-[tool.pyright]
-include = ["kerykeion"]
-exclude = [
-    "tests",
-    "examples",
-    "workspace",
-    "scripts",
-    "**/__pycache__",
-    ".venv",
-    "dist",
-    "build",
-    "*.egg-info"
-]
-typeCheckingMode = "basic"
-pythonVersion = "3.9"
-pythonPlatform = "All"
-venvPath = "."
-venv = ".venv"
-reportOptionalMemberAccess = "none"
-reportIncompatibleVariableOverride = "none"
-reportArgumentType = "none"
-reportInvalidTypeForm = "error"
-reportAttributeAccessIssue = "error"
-reportGeneralTypeIssues = "none"
+# Pyright is configured in pyrightconfig.json, which takes precedence over a
+# [tool.pyright] table here. Keeping both invites edits to the ignored copy.
 
 [dependency-groups]
 dev = [
     "coverage>=7.6.0",
+    "fonttools>=4.50",  # used by scripts/build_chart_glyphs.py to extract glyph outlines
     "mypy>=1.17.1",
     "pdoc>=15.0.4",
     "poethepoet>=0.36.0",
@@ -288,7 +521,11 @@ dev = [
     "pytest>=8.4.1",
     "pytest-cov>=6.0.0",
     "pytest-xdist>=3.5.0",
+    "pytest-sugar>=1.1.1",
     "ruff>=0.12.9",
-    "types-pytz>=2025.2.0.20250516",
     "types-requests>=2.32.4.20250611",
+    "pyswisseph>=2.10.3.2",
+    # The checkout's CLI, installed editable: `uv sync` does not install extras,
+    # and `skill:cli:smoke` needs the `kerykeion` command on .venv/bin.
+    "kerykeion-cli",
 ]

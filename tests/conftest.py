@@ -15,14 +15,23 @@ Tier filtering:
     pytest tests/ --tier=base     # DE440s: 1849-2150 (11 subjects)
     pytest tests/ --tier=medium   # DE440: 1550-2650 (16 subjects, cumulative)
     pytest tests/ --tier=extended # DE441: full range (25 subjects, cumulative)
+
+    Without --tier, the tier is auto-detected by probing the loaded ephemeris,
+    so a plain ``pytest`` run is green on any kernel: out-of-range temporal
+    subjects and the BCE/ancient-date test modules are skipped (with reasons)
+    instead of failing. Pass --tier=extended explicitly to force-run everything
+    (requires the full-range DE441 kernel).
 """
 
+import os
+import re
+
 import pytest
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.aspects.aspects_factory import AspectsFactory
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.aspects.factory import AspectsFactory
 
 from tests.data.test_subjects_matrix import (
     TEMPORAL_SUBJECTS,
@@ -36,8 +45,6 @@ from tests.data.test_subjects_matrix import (
     ANGLES,
     HOUSES,
     ALL_POINTS,
-    get_subject_by_id,
-    get_primary_test_subjects,
     get_subjects_for_tier,
 )
 
@@ -57,22 +64,145 @@ def pytest_addoption(parser):
     )
 
 
+def pytest_sessionstart(session):
+    """Fail fast when the suite is forced onto swisseph without SE data files.
+
+    Golden values are generated against full-precision JPL ephemeris; on the
+    Moshier fallback (no ``.se1`` files) hundreds of tests fail with confusing
+    precision and availability errors. Exit upfront with the fix instead.
+    """
+    from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH
+
+    if BACKEND_NAME != "swisseph":
+        return
+    try:
+        has_se1 = any(f.lower().endswith(".se1") for f in os.listdir(EPHE_DATA_PATH))
+    except OSError:
+        has_se1 = False
+    if not has_se1:
+        pytest.exit(
+            "KERYKEION_BACKEND=swisseph needs Swiss Ephemeris data files (.se1); "
+            "the built-in Moshier fallback fails the golden-value tests.\n"
+            "Download them (auto-detected from ~/.kerykeion/sweph) and rerun:\n"
+            "    uv run python -m kerykeion.swisseph_setup\n"
+            "    uv run poe test:swe",
+            returncode=4,
+        )
+
+
+def _detect_ephemeris_tier() -> str:
+    """Probe the loaded ephemeris and return the widest tier it can serve.
+
+    Computes the Sun at probe dates chosen inside one tier's range but outside
+    the next narrower one: year 1000 is covered only by DE441 (extended),
+    year 1700 by DE440 (medium) but not DE440s (base, 1849+).
+    """
+    from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+    def _sun_computes(year: int) -> bool:
+        # The primary (libephemeris) backend raises for out-of-range dates, so a
+        # bare success/raise cleanly distinguishes whether the date is served.
+        try:
+            with ephemeris_session() as iflag:
+                ephe.calc_ut(ephe.julday(year, 1, 1, 12.0), 0, iflag)
+            return True
+        except Exception:
+            return False
+
+    if _sun_computes(1000):
+        return "extended"
+    if _sun_computes(1700):
+        return "medium"
+    return "base"
+
+
+# Tests that need the full-range (extended) kernel but are not parametrized with
+# temporal-subject ids, so the subject-tier filter below cannot catch them.
+#
+# These carry an explicit ``@pytest.mark.extended``. This used to be a bare
+# substring match on the lowercased node id ("bce", "ancient_rome",
+# "historical_date"), which silently skipped 25 tests that need no ephemeris at
+# all — every ``test_jd_to_iso_bce_year`` (pure string formatting), the whole of
+# ``TestAncientISOFormat`` (including ``test_year_zero``), and the BCE sampling-gap
+# tests. No substring or regex on the node id can separate them: the defect is
+# that a test's *name* says "bce" while its *body* never leaves the civil range.
+# Intent has to be declared, not inferred.
+
+# Tests exercising the full point set (TNOs and other extra bodies). On the
+# swisseph backend these need per-body asteroid `.se1` files that the setup
+# helper cannot auto-download (manual mirror only); skip them when the backend
+# cannot compute a probe TNO instead of failing dozens of snapshot tests.
+# The city-named snapshots are the golden reports generated with
+# ALL_ACTIVE_POINTS whose node ids don't carry an all-points marker.
+# NOTE: matched as a delimiter-bounded regex, not a bare substring — a bare
+# "tno" would also hit camelCase joins like TestNOrmalize/TesTNOnInt once
+# lowercased, silently skipping ~40 unrelated tests.
+_TNO_NODE_REGEX = re.compile(
+    r"(?:^|[^a-z0-9])(?:"
+    r"all_active_points|all_points|tnos?|has_extra_bodies|all_32pts|"
+    r"einstein_snapshot|tokyo_snapshot|quito_snapshot|"
+    r"buenos_aires_snapshot|ancient_rome_snapshot|future_2050_snapshot"
+    r")(?:[^a-z0-9]|$)"
+)
+
+
+def _tnos_available() -> bool:
+    """Probe whether the loaded ephemeris can compute a TNO (Eris)."""
+    from kerykeion.astrological_subject.factory import TNO_PLANETS
+    from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+    try:
+        with ephemeris_session() as iflag:
+            ephe.calc_ut(ephe.julday(2020, 1, 1, 12.0), TNO_PLANETS["Eris"], iflag)
+        return True
+    except Exception:
+        return False
+
+
 def pytest_collection_modifyitems(config, items):
     tier = config.getoption("--tier")
-    if tier is None:
-        return
+    auto_detected = tier is None
+    if auto_detected:
+        tier = _detect_ephemeris_tier()
 
     allowed_ids = set(get_subjects_for_tier(tier).keys())
 
     # Build full set of all temporal subject IDs for checking
     all_subject_ids = {s["id"] for s in TEMPORAL_SUBJECTS}
 
-    skip = pytest.mark.skip(reason=f"Subject not in tier '{tier}'")
+    detected_note = " (auto-detected from the loaded ephemeris)" if auto_detected else ""
+    skip_subject = pytest.mark.skip(reason=f"Subject not in tier '{tier}'{detected_note}")
+    skip_range = pytest.mark.skip(
+        reason=f"Requires the full-range (extended) ephemeris kernel; current tier is '{tier}'{detected_note}"
+    )
+
+    from kerykeion.ephemeris_backend import BACKEND_NAME
+
+    tnos_missing = BACKEND_NAME == "swisseph" and not _tnos_available()
+    skip_tno = pytest.mark.skip(
+        reason="Full-point-set test needs TNO ephemeris files the swisseph setup "
+        "cannot auto-download (manual mirror only)."
+    )
+
     for item in items:
         node_id = item.nodeid
+        node_id_lower = node_id.lower()
+        if tnos_missing and _TNO_NODE_REGEX.search(node_id_lower):
+            item.add_marker(skip_tno)
+            continue
+        if tier != "extended" and item.get_closest_marker("extended") is not None:
+            item.add_marker(skip_range)
+            continue
+        if tier == "base" and item.get_closest_marker("medium") is not None:
+            item.add_marker(
+                pytest.mark.skip(
+                    reason=f"Requires at least the medium ephemeris kernel; current tier is '{tier}'{detected_note}"
+                )
+            )
+            continue
         for subject_id in all_subject_ids:
             if subject_id in node_id and subject_id not in allowed_ids:
-                item.add_marker(skip)
+                item.add_marker(skip_subject)
                 break
 
 
@@ -135,7 +265,7 @@ def john_lennon():
     """
     Standard John Lennon subject - PRIMARY TEST SUBJECT.
 
-    Birth data: October 9, 1940, 18:30, Liverpool, GB
+    Birth data: October 9, 1940, 18:30, Liverpool, GB (53.4084, -2.9916)
     Used as the reference subject throughout the test suite.
     """
     return AstrologicalSubjectFactory.from_birth_data(
@@ -145,8 +275,10 @@ def john_lennon():
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -156,8 +288,12 @@ def paul_mccartney():
     """
     Standard Paul McCartney subject.
 
-    Birth data: June 18, 1942, 15:30, Liverpool, GB
+    Birth data: June 18, 1942, 15:30, Liverpool, GB (53.4084, -2.9916)
     Used for synastry testing with John Lennon.
+
+    NOTE: 15:30 matches the canonical ``paul_mccartney_1942`` matrix subject, but
+    tests/core/conftest.py defines a *different* 14:00 chart under the same fixture
+    name, which shadows this one for everything under tests/core/. See that file.
     """
     return AstrologicalSubjectFactory.from_birth_data(
         "Paul McCartney",
@@ -166,8 +302,10 @@ def paul_mccartney():
         18,
         15,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -177,7 +315,7 @@ def johnny_depp():
     """
     Standard Johnny Depp subject - LEGACY TEST SUBJECT.
 
-    Birth data: June 9, 1963, 00:00, Owensboro, US
+    Birth data: June 9, 1963, 00:00, Owensboro, US (37.7742, -87.1133)
     Used for backward compatibility with existing test data.
     """
     return AstrologicalSubjectFactory.from_birth_data(
@@ -187,8 +325,10 @@ def johnny_depp():
         9,
         0,
         0,
-        "Owensboro",
-        "US",
+        lat=37.7742,
+        lng=-87.1133,
+        tz_str="America/Chicago",
+        online=False,
         suppress_geonames_warning=True,
     )
 
@@ -303,8 +443,10 @@ def subject_with_house_system(house_system, john_lennon):
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         houses_system_identifier=house_system,
         suppress_geonames_warning=True,
     )
@@ -317,7 +459,12 @@ def subject_with_house_system(house_system, john_lennon):
 
 @pytest.fixture(params=SIDEREAL_MODES, ids=lambda m: f"sidereal_{m}")
 def sidereal_mode(request) -> str:
-    """Parametrized fixture for all sidereal modes (ayanamsas)."""
+    """Parametrized fixture over a chosen twenty of the ayanamsas.
+
+    Not all of them: the library defines forty-eight, and the fixture list is a
+    deliberate spread across the families. Said here because the docstring used
+    to claim "all", which reads as coverage the suite does not have.
+    """
     return request.param
 
 
@@ -333,8 +480,10 @@ def sidereal_subject(sidereal_mode):
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         zodiac_type="Sidereal",
         sidereal_mode=sidereal_mode,
         suppress_geonames_warning=True,
@@ -348,7 +497,11 @@ def sidereal_subject(sidereal_mode):
 
 @pytest.fixture(params=PERSPECTIVE_TYPES, ids=lambda p: p.replace(" ", "_").lower())
 def perspective_type(request) -> str:
-    """Parametrized fixture for all perspective types."""
+    """Parametrized fixture over the four terrestrial perspectives.
+
+    The library defines eleven; the seven planetocentric and barycentric ones
+    have no fixture coverage. Said here rather than claimed away.
+    """
     return request.param
 
 
@@ -364,8 +517,10 @@ def subject_with_perspective(perspective_type):
         9,
         18,
         30,
-        "Liverpool",
-        "GB",
+        lat=53.4084,
+        lng=-2.9916,
+        tz_str="Europe/London",
+        online=False,
         perspective_type=perspective_type,
         suppress_geonames_warning=True,
     )

@@ -26,7 +26,21 @@ def main() -> int:
         ("lint", ["ruff", "check"]),
         ("analyze", ["mypy"]),
         ("typecheck", ["pyright"]),
-        ("test", ["pytest", "--tb=no", "-q"]),
+        # -m "not online": every poe test:* task excludes the network-bound
+        # geonames tests, but pytest's addopts do not — without this the local
+        # quality gate silently depends on GeoNames being reachable.
+        ("test", ["pytest", "--tb=no", "-q", "-m", "not online"]),
+        # The CLI is an optional extra; this proves the entry point still works
+        # from the dev checkout and that ``import kerykeion`` never imports the CLI.
+        ("cli", ["python", "scripts/cli_smoke_check.py"]),
+        # The CLI skill's examples are shell, which the python snippet runner
+        # and pytest both ignore; without this a broken example would ship
+        # verified-by-nothing into third-party repositories.
+        ("skill-cli", ["python", "scripts/test_skill_cli_snippets.py"]),
+        # The man page is generated from the argparse tree and shipped in the
+        # wheel; a renamed or added command must reach it, or `man kerykeion`
+        # would document a tree that no longer exists.
+        ("man", ["python", "scripts/generate_cli_manpage.py", "--check"]),
     ]
 
     results = []

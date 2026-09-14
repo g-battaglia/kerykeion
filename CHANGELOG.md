@@ -1,19 +1,4956 @@
 # Changelog
 
-## 5.12.9
+## [Unreleased]
+
+### Added
+
+- The `kerykeion-cli` wheel now ships a Unix man page, `kerykeion(1)`, generated
+  from the CLI's own argparse tree (`scripts/generate_cli_manpage.py`, kept in
+  step by `poe man:check` and the CLI test suite). A `pip install` into a
+  prefix whose `share/man` is indexed gives `man kerykeion` with no further
+  step; isolated installs (`uv tool`, a venv) keep the page inside their own
+  prefix, and the docs show the one-line `MANPATH`/`man -M` addition for those.
+
+### Fixed
+
+- Relocated sidereal charts now compute their house ring directly in the subject's
+  configured frame. Whole Sign and fixed-reference-frame charts therefore keep
+  their cusp construction and planet houses when relocated onto the birthplace.
+- Topocentric Solar and Lunar returns now search from the return location and
+  altitude, matching the observer used to cast the returned subject.
+- Historical ephemeris series and single subjects now share one synthetic-LMT
+  policy, so the same local wall time and longitude resolve to the same UTC instant.
+- Localized biwheel point and house tables are positioned from their measured
+  content widths, removing the French and Italian OOB/cusp-label overlap.
+- Base-tier test runs now skip only cases that explicitly require at least the
+  medium ephemeris kernel, while medium and extended runs continue to execute them.
+
+## [6.0.0rc1] - 2026-09-07
+
+The first release candidate for Kerykeion 6. Both `kerykeion` and the separate
+`kerykeion-cli` distribution use `6.0.0rc1`. See the
+[release notes](release_notes/v6.0.0rc1.md) for installation, v5 migration,
+known limitations and the publication checklist.
+
+### Changed
+
+- Move both distributions from alpha to release candidate, retaining the
+  verified `libephemeris==3.2.1` dependency and Python 3.12+ requirement.
+- Document explicit RC installation commands, the library-first publication
+  order, and the distinction between the RC and the stable v5 release.
+
+### Fixed
+
+- **Solar arc directed motion uses the directed frame.** Every directed point
+  now receives the progressed Sun's speed divided by the tropical-year length
+  (degrees per real-time day), a matching retrograde flag, and no inherited
+  natal `motion_state`. Retrograde natal planets therefore no longer retain
+  natal motion metadata on a forward-directed chart. The arc is computed once.
+- **Heliacal count-limited searches stop at the requested event.** After
+  collecting the last requested result, the factory no longer searches for
+  another event and risks an unnecessary error at the ephemeris boundary.
+- **CLI sequence parameters preserve structure.** `call --param` accepts JSON
+  arrays for nested sequences and model lists, validates them against the
+  declared type, and reports malformed input as exit 4. Scalar sequences still
+  accept CSV, including literal values starting with `[` that are not JSON.
+- Correct the dependency-policy comment and FAQ to match the existing exact
+  ephemeris pin, and point the CLI package's changelog URL at the v6 branch.
+- Refresh the ancient-Rome report baseline for the pinned backend's fitted
+  apsides window. `Interpolated_Lilith` and `Interpolated_Perigee` are omitted
+  at year 100 and reported in `ephemeris_warnings`; their old extrapolated
+  positions and dependent aspects no longer belong in this fixture. The
+  temporal regression now checks these omissions and warnings explicitly.
+- Correct backend-specific test assumptions: CLI tests keep pytest's live
+  logging from replacing their captured streams; cusp continuity follows the
+  rendered angles; glyph-ceiling and wheel-height fixtures account for Swiss
+  positions and optional data. The osculating lunar-apsis test checks exact
+  backend forwarding and the small Swiss difference from its true-Lilith path.
+
+## [6.0.0a93] - 2026-09-05
+
+### Changed
+
+- Pin the default backend to `libephemeris==3.2.1`.
+- **The CLI is its own distribution, `kerykeion-cli`.** The command-line
+  interface moved out of the library package into `cli/` (import name
+  `kerykeion_cli`), a second distribution built from this repository, and it
+  owns the `kerykeion` console script. A plain `pip install kerykeion` now
+  installs the library and **no command**; `pip install "kerykeion[cli]"` — the
+  documented line, unchanged — installs both, and `uv tool install kerykeion-cli`
+  serves the command on its own. The two are released together and share one
+  version, which the CLI pins exactly. `python -m kerykeion` is gone;
+  `python -m kerykeion_cli` reaches the same entry point.
+- **No third-party package behind the CLI.** typer and rich are gone; the
+  interface is argparse over the library, so kerykeion is the whole dependency
+  of `kerykeion-cli` and the NOTICE no longer lists a CLI stack. With no
+  dependency to miss there is no install hint and no exit `3`: wherever the
+  command exists, every command works. Help is argparse's, one line per
+  command, `-h` everywhere; `--major-aspects-only` (the default) is gone,
+  `--all-aspects` stays. `technique stars` (heliacal risings and settings) is
+  renamed `technique heliacal`: next to `fixed-stars` the old name said the
+  opposite of what it did.
+
+- **One flag vocabulary for the agents that drive the CLI.** `--json` is gone
+  from `status` and `call --list`/`--explain`: `-f json` is the one format flag,
+  and `status` follows the same rule as every command (text on a terminal,
+  JSON when piped; `xml` and `svg` are refused as invalid input). `--envelope`,
+  which carries provenance and the warnings inside the JSON for a consumer
+  that only reads stdout, was a chart-command flag; every command that
+  produces a payload now takes it, `status` included.
+
+- **Three things the CLI no longer does.** `subject save --snapshot` (a cache
+  of the computed subject, with provenance checks and four `verify` states)
+  is gone: a subject computes in about 40 ms against a second of library
+  start-up, so the cache saved nothing a user could notice while adding a way
+  for a profile to go stale; a profile written by an earlier version still loads. The pre-flight sample count of `ephemeris` and
+  `transits` is gone too: the library counts the samples in its constructor
+  before building anything, so the CLI now only rewords that refusal as exit
+  8 with the flags to change. And `doctor` is `status --check`: the same
+  probes, the same verdict, one command less to learn.
+
+### Added
+
+- **Transit moments can carry the transiting subject.**
+  `TransitsTimeRangeFactory.get_transit_moments(include_subjects=True)` attaches
+  the full `AstrologicalSubjectModel` of each ephemeris sample to its
+  `TransitMomentModel.subject` — positions, signs, lunar phase, motion state
+  and, when the series was built with the new
+  `EphemerisDataFactory(..., calculate_dignities=True)`, essential dignities —
+  for consumers that need per-sample positions next to the aspects. Both
+  flags default to off, so existing calls and default payloads are unchanged.
+  The curated CLI exposes the same path with `transits --include-subjects` and
+  `--calculate-dignities`; `ephemeris --calculate-dignities` adds dignities to
+  its sampled positions too.
+- `kerykeion sky ingresses --periods` and `kerykeion sky stations --periods`
+  reach the a92 span queries — contiguous sign stays and retrograde spans,
+  clipped to the range — instead of the event lists.
+
+### Fixed
+
+- **The `call` dispatcher preserves structured payloads and warning policy.**
+  Pydantic models nested inside dictionary results now remain JSON objects;
+  `none` and `null` bind correctly to nullable parameters; and warnings carried
+  by dictionary results reach stderr, `--envelope`, and
+  `--warnings-as-errors` (exit 9).
+
+## [6.0.0a92] - 2026-08-29
+
+### Added
+
+- **Sign periods and retrograde periods.** Two range queries that answer
+  "where is every planet, and who is retrograde, across these dates" without
+  the caller stitching events together:
+  `SignIngressFactory.sign_periods_from_iso_range` / `_from_julian_day` return
+  contiguous, non-overlapping sign stays per planet (`SignPeriodModel`, in
+  `SignPeriodsCollectionModel`), and
+  `RetrogradeStationFactory.retrograde_periods_from_iso_range` /
+  `_from_julian_day` return retrograde spans (`RetrogradePeriodModel`, in
+  `RetrogradePeriodsCollectionModel`). Both are clipped to the range and flag
+  each clipped bound (`start_clipped` / `end_clipped`), so a stay that began
+  before the range or a retrograde that outlives it is reported honestly
+  instead of being invisible — the state at the range start is read in the
+  same ephemeris session (same zodiac frame) as the scan that follows it,
+  with a probe a solver's resolution (50 ms) past either bound so a boundary
+  sitting exactly on a range edge is recognised (a stay entered on the start, or left on the
+  end, is not clipped there; a station on the start decides the motion
+  state, one on the end closes the span).
+  See `release_notes/v6.0.0a92.md`.
+- **Chiron stations, opt-in.** `RetrogradeStationFactory` accepts `"Chiron"`
+  in `planets`; the default set (and its baselines) is unchanged.
+
+### Changed
+
+- `SignIngressFactory.from_iso_range` parses its bounds through a shared
+  helper (`_iso_range_to_jd`); behaviour is unchanged.
+
+## [6.0.0a91] - 2026-08-29
+
+Five defects that reached the screen of a downstream client as data that
+contradicted itself, each fixed where the semantics live. Nothing in the
+drawing changed except the words of the lunar phase.
+
+### Fixed
+
+- **The lunar phase name is centred on the event.** `calculate_moon_phase`
+  quantised the Sun–Moon separation into 28 bins and then handed the four
+  major phases bins that sat entirely to one side of the exact instant — Full
+  Moon covered [167.14°, 180.00°), so one minute after the true opposition a
+  chart read "Waning Gibbous" while the illumination read 100%. The names now
+  come from windows centred on the syzygy or quadrature with the widths they
+  always had (New and Full Moon ±6.4286°, the quarters ±19.2857°, the four
+  intermediate phases filling the rest). The 365 historical syzygies pinned in
+  `test_moon_phase_historical_verification.py` are all named correctly — 95
+  were not, and the test used to accept the wrong neighbour. The 1–28
+  `moon_phase` index (the "lunation day") is unchanged; `LunarPhaseModel`
+  gains `major_phase` (nearest of the four) and `stage` (`"waxing"` /
+  `"waning"`), the same two fields `MoonPhaseDetailsFactory` already exposed,
+  now computed by one definition for both. 14.29% of the circle changes name;
+  24 SVG baselines and one report fixture changed by exactly their phase line.
+
+- **Nakshatras on a tropical chart are the nakshatras the sky has.**
+  `calculate_nakshatra=True` used to run the 27-fold division on tropical
+  longitudes as they were — ~24° off, about two mansions — and log a warning
+  nobody downstream could see. The factory now rotates the longitudes by an
+  ayanamsa for the division only (`nakshatra_ayanamsa`, default `"LAHIRI"`,
+  any `SiderealMode` incl. `"USER"`), leaving the chart tropical; the subject
+  records `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Sidereal charts
+  are untouched. `nakshatra_ayanamsa=None` restores the uncorrected values,
+  still with the warning. Returns, progressions and Davison composites inherit
+  the setting, and `PlanetaryReturnFactory` takes it as a keyword of its own,
+  where an explicit value outranks the natal — and for `"USER"` the definition
+  (`custom_ayanamsa_t0` / `custom_ayanamsa_ayan_t0`) travels with the name,
+  which alone is not an ayanamsa. A chart that asks for no nakshatras is never asked for one either.
+
+- **`moonrise` / `moonset` are populated.** The four fields on
+  `MoonPhaseMoonSummaryModel` existed, the XML serialiser printed them, and
+  no producer had ever filled them. `MoonPhaseDetailsFactory` now computes
+  them for the subject's civil day (ISO-8601 in the subject's zone plus the
+  Unix instant), `None` on the roughly one day in thirty when the Moon does
+  not rise, or does not set. `compute_rise_set_ephe(body=…)` generalises the
+  Sun-only routine; `compute_sun_rise_set_ephe` stays as an alias and is
+  pinned byte-identical. The day's opening and closing midnights are resolved
+  by one shared rule, so a zone that changes its offset at 00:00 gets a 25- or
+  23-hour day that encloses exactly its own hours: a fall-back fold opens the
+  day at the FIRST occurrence of midnight, a spring-forward gap at the first
+  instant past it.
+
+- **A planet one degree from the Sun is no longer just "an evening star".**
+  `is_morning_star` / `is_evening_star` were, and remain, pure geometry
+  (which side of the Sun), with no visibility threshold. Every
+  `PlanetaryPhenomenaModel` now also carries `solar_phase` — `"cazimi"`,
+  `"combust"`, `"under_the_beams"`, `"free"` — read from the published
+  `elongation` against `SolarPhaseThresholdsModel` (defaults 17′ / 8°30′ /
+  17°, parametric, echoed on the collection). `classify_solar_phase` is
+  public.
+
+- **The Moon has an apogee, not an aphelion.** `PlanetaryNodeModel` named
+  the Moon's apsides with the heliocentric words; the far one is, to the
+  decimal, the mean (or true) Black Moon Lilith. The model gains
+  `periapsis` / `apoapsis` and `apsis_kind` (`"geocentric"` for the Moon
+  alone); `perihelion` / `aphelion` are kept, populated with the same
+  objects, and deprecated in the docs.
+
+### Notes
+
+- `moon_phase_name` on existing charts can change for separations within
+  6.43° of a syzygy or quadrature boundary — that is the fix. `major_phase`
+  is the field to key display logic on.
+- A `LunarPhaseModel` payload produced by a90 or earlier — without
+  `major_phase` and `stage` — still validates: the two fields are derived from
+  `degrees_between_s_m` when absent, so stored charts and cached JSON load
+  unchanged.
+
+## [6.0.0a90] - 2026-08-26
+
+### Added
+
+- **Three sizes for the modern wheel's planet cluster.** A new `glyph_size`
+  option — `"small"`, `"medium"` (default), `"large"` — on `ChartDrawer`, as a
+  constructor default and a per-render override on all four render methods,
+  exported as `KerykeionGlyphSize` from `kerykeion.schemas`. Medium IS the
+  existing drawing: the default render is asserted string-identical to an
+  explicit `"medium"` render, and the whole pre-existing baseline suite
+  passes untouched. The classic style ignores the option in silence, exactly
+  as it ignores the zodiac background ring.
+
+- **Small is the medium cluster at 90%** — a pure homothety: the five element
+  sizes (planet glyph, degrees, sign, minutes, ℞), the air between the rows and
+  the tether's own tab all scale together, so the cluster keeps exactly the
+  proportions it was tuned to.
+
+- **Large is classic parity, and the air pays for it.** The planet glyph draws
+  at the classic engine's own size — 24px on a single wheel at the default
+  480px page, 19.2px on a dual — written as the expression
+  `classic_scale / (0.92 · 4.8)` so the parity is exact rather than a rounded
+  decimal. Two qualifiers, stated rather than implied: parity is exact for
+  glyphs at optical weight 1.0 (the per-glyph map stays applied — the Sun
+  draws 10% over, the ×0.95 bodies 5% under, as they always have relative to
+  their row), and it is a default-configuration contract — with
+  `show_zodiac_background_ring=False` the whole modern wheel, cluster
+  included, draws 1/0.92 larger at every size, so the large glyph lands at
+  26.09px against classic's 24 (pinned by test as stated behaviour).
+
+- **On the dual rings, parity belongs to the glyph alone.** The dual cluster
+  is text-heavy by construction — its reading stands at 0.67 of its glyph
+  against the natal 0.51 — and one factor for everything made the dual degree
+  numerals at large larger than the single wheel's (12.9px against 12.3).
+  Chosen on a rendered four-way comparison (×1.372 shared, ×1.248 the single
+  wheel's ramp, ×1.12, ×1.0): at large the dual glyph takes its parity factor
+  (×1.372) while the reading — degrees, sign, minutes, ℞ — **stays at the
+  medium size**, the one every wheel already trains the eye on; even the
+  single wheel's ramp read oversized in the dual rings' packed context. The
+  single wheel splits the same way one step down: at large its degrees keep
+  the ×1.248 ramp while minutes and ℞ stay at the medium size — the coda
+  was what crowded, not the ramp. That
+  choice also hands the air back: the single ring affords large at 76% of its
+  medium air, the dual rings at 79% (outer) and 73% (inner), with the inner
+  gaps at 3.4–4.6px — against the 1.0–1.3px the shared parity factor left
+  them. The bands cannot deepen — below them there is only the aspect web,
+  and taking a third of its radius was considered and refused.
+
+- **The profiles are derived, not guessed.** A new
+  `scripts/derive_modern_cluster_profiles.py` lays every ring out under one
+  rule — sizes ×k, every quantity of air ×a = min(k, fit), rows top-down from
+  the tether's end, tab floored at a quarter unit — anchored on the glyph's
+  CORNER reach because the tether meets the box on the diagonal. The rule is a
+  fixed point at k=1 (the script proves it reproduces the shipped medium on
+  every run), the pasted literals are pinned to the derivation by test, and at
+  large the tether shortens with the air — without that the tab would end
+  inside the Sun's glyph box at 45°, the exact defect a88 fixed. On top of
+  the rule, every derived cluster slides 0.3 units OUTWARD toward its
+  indicator (the END tab absorbing the slide, floored and capped so it
+  never reaches the glyph's ink, while the VISIBLE dash — the straight
+  tether's body and the arc's mark at the true position — keeps its rule
+  length via a new start_tick_length, so the mark never degrades to a
+  stray dot): the ℞ row steps off the ring's inner edge on every chart
+  type, and medium, the byte-identity anchor, does not move.
+
+- **The separation ceilings are measured, per size.** The collision harness
+  (`scripts/measure_modern_separation.py`) learned `--glyph-size` and now
+  builds its rings from the same profiles the renderer reads; its sweep
+  extends to 14°. The policy was already written in the shipped constants —
+  every ceiling sits half a degree above its measured touch — and the new
+  ceilings apply it to their own measured floors: small 6.75 / 5.00 / 8.00,
+  large 9.50 / 7.50 / 11.50 (touch at 6.25 / 4.50 / 7.25 and
+  9.00 / 7.00 / 10.50). Adversarial mode
+  passes at every size against the 0.2-unit daylight gate. An all-points
+  wheel at large over-subscribes by design; the resolver compresses and logs
+  it, and a test pins the log line so the degradation stays a stated
+  behaviour.
+
+- **Non-default sizes stamp `kr:glyphsize` on the modern root**, so a consumer
+  holding only the SVG can tell which profile drew it. Medium is unstamped on
+  purpose: the attribute's absence IS the default.
+
+### Changed
+
+- **The cluster's sign glyph steps down 8%** (natal 0.10309 → 0.09484, dual
+  0.062 → 0.05704). At its a87 size it crowded the numerals either side and
+  the cluster read with almost no hierarchy — judged on the rendered wheel:
+  a visible step down, half the raise that had brought it up, without
+  swinging back to the undersized mark that raise was correcting. It sits in
+  the middle of the block, so the change moves only the air between the rows.
+
+### Fixed
+
+- **The classic theme's zodiac wedges are opaque now.** They were the element
+  colours at `fill-opacity: 0.5` — a pastel only because white paper sat
+  underneath. On a host that shows through the chart (Studio's glass) the
+  backdrop bled into the ring. The theme now ships the exact per-channel
+  composites of those colours over white (#ffb880, #b59e80, #b4d6f8,
+  #95a4b8) at opacity 1: the same tone the theme always had, on any host.
+  The dark theme was already opaque and is untouched.
+
+- **A dimmed cusp stretch is a solid tone, not an opacity.** Where a reading
+  crosses a cusp line, the line dimmed via `stroke-opacity: 0.35` — and on a
+  see-through host the whole stretch washed out, so the axes of a dual wheel
+  appeared to stop mid-air (the As axis lost eleven units of its inner-ring
+  run behind its own reading). The dim is now a SOLID pre-composited tone,
+  per ring and per theme (`--kerykeion-modern-cusp-dim`,
+  `--kerykeion-modern-cusp-dim-outer`), numerically identical to what the
+  opacity produced over each ring's own fill.
+
+- **Dual house lines start at the ruler.** They hung 1.15 units short of it
+  (y 6.5, where the natal lines and every tether anchor at 5.348), which
+  read as axes not reaching the wheel's edge on every dual chart.
+
+## [6.0.0a89] - 2026-08-26
+
+### Fixed
+
+- **A return instant this library reported could not seed the search for the
+  next one.** Return instants are reported truncated to the whole second (the
+  chart is rebuilt from an integer `seconds` field), so the exact crossing of a
+  return reported at `T` lies in `[T, T + 1s)` — a fraction of a second AFTER the
+  value the caller holds. A forward search seeded with that value asked the
+  ephemeris for the first crossing at or after it and got the same return back;
+  a backward search happened to work, because the truncated seed lands before
+  the crossing. A client stepping through the sequence of returns with the
+  instants it was given never advanced — for solar, lunar, heliocentric and node
+  crossing alike. Ordering between a seed and a return is now decided at the
+  resolution the factory reports at: a forward search starts from the whole
+  second after the seed's, a backward one from the seed's own whole second
+  (the backend's backward searches are strictly past, so a crossing inside
+  that second is excluded and one in the second before is found), in one
+  helper (`_search_start_jd`) behind all three `*_from_iso_formatted_time`
+  entry points. The backend's solvers do not reach that resolution on their
+  own — their at-crossing dead band is ~90 ms for the Sun, and their 0.001″
+  tolerance is six seconds of Pluto's motion, so a seed one second past a
+  slow body's crossing came back as its own answer — so every supported ISO search is
+  held to the contract (`_settled`): heliocentric crossings are settled to a
+  millisecond by bisection around the solver's answer, a crossing inside the
+  second before a backward seed is looked for explicitly, and a result that
+  has not moved past the seed's second restarts from outside the solver's
+  basin. The contract is pinned for the Sun, the Moon, the lunar nodes and the
+  heliocentric bodies from Mercury to Pluto plus Chiron: `next(reported(N))`
+  is `N + 1`, `previous(reported(N))` is `N − 1`, `previous(next(r))` is `r`
+  instant for instant, `previous` from the second after a reported instant
+  finds it (twenty consecutive solar returns, dead band included), and a walk
+  of steps lands on each return exactly once. One limit is the ephemeris'
+  own: a crossing within a tenth of a millisecond of a whole second cannot
+  be told from a crossing at that second, and is treated as one — the natal
+  instant, a crossing by construction, being the case that matters: seeded
+  with it, `previous` finds the cycle before birth, never a return a second
+  before the birth itself. Outside the contract, as before: the heliocentric
+  search for the lunar nodes and the Liliths, which are not heliocentric
+  bodies. Solar, lunar and node instants are reported as they were;
+  heliocentric instants settle onto the crossing itself, which moves the
+  reported second of about half the Uranus–Pluto crossings, by up to the
+  solver's tolerance — some 2 s for Uranus, 4 s for Neptune, 9 s for Pluto.
+  The date and year wrappers keep their inclusive
+  midnight seed, so a return in the first second of a date is still that
+  date's return. The one visible
+  consequence: a seed inside the same second as a crossing now selects the
+  following return — so a search seeded from the natal instant itself yields the
+  first return rather than the birth moment (four report fixtures that pinned
+  that degenerate chart are regenerated). Seeds at the edge of
+  the civil range — forward from 9999-12-31T23:59:59, backward from
+  0001-01-01T00:00:00 — used to overflow `datetime` and now refuse with
+  `KerykeionException`. Two calendar facts are pinned alongside, as the reason a
+  return is identified by its instant and never by a period: a leap year can
+  hold two solar returns (born 1 January: 1 January and 31 December 2024), and a
+  month can hold two lunar returns (2 and 29 August 2026).
+  See [release_notes/v6.0.0a89.md](release_notes/v6.0.0a89.md).
+## [6.0.0a88] - 2026-08-25
+
+### Fixed
+
+- **Two factories let a raw error out at the end of the civil range.** On the
+  full-range kernel (DE441, to the year 17191) 9999-12-31 is computable, and it is
+  the day AFTER it that does not exist: the planetary day beginning at that
+  evening's sunrise needs a sunrise on 10000-01-01 and overflowed `date`
+  arithmetic with a bare `OverflowError`; the void-of-course Moon walking to its
+  next ingress past the year's end surfaced a bare `ValueError` from the Julian
+  Day conversion. Both refuse with `KerykeionException` now, naming the civil
+  range rather than the ephemeris. The test that guards this had asserted that
+  9999-12-31 itself must fail — true on the base and medium kernels, where the
+  coverage check refuses first, and false on the extended one, where it never
+  reached the two lines that would have caught the real defect. It says the
+  truth at every tier now, and an extended-only test pins the asymmetry: before
+  that day's sunrise the planetary hours work (yesterday exists), after it they
+  cannot.
+
+- **A sidereal Sunshine `i` relocated onto its own birthplace was a different
+  chart.** The reference implementation casts a sidereal `i` (Makransky) as `I`
+  (Treindl) — libephemeris matches it — except in the fixed-epoch modes; the
+  natal chart got that ring by asking with the sidereal flag, while the relocated
+  chart asks tropically and applies the subject's ayanamsa afterwards, so it asked
+  for `i` and got Makransky: at sixty degrees north the two constructions are
+  tens of degrees apart, and inside the polar circle the tropical `i` is refused
+  and substituted with Porphyry where the natal has a crowded Sunshine ring. The
+  relocation asks for the system the reference would cast, with the fixed-epoch
+  modes left on Makransky as the reference leaves them. Nothing to change
+  upstream: both backends behave the same way, and that way is Swiss Ephemeris'.
+
+- **An angle could be filed in the wrong house, and twelve numbers could not say
+  otherwise.** Where a house system brings several cusps onto one longitude —
+  Sunshine at 74.25 degrees north puts the second through the sixth on
+  316.971024 — the shared reader answers with the lowest-numbered of them, so an
+  Imum Coeli that IS the fourth cusp came back in the third, in the model, the
+  report and the context alike. The nearest-cusp rule added in a87 settles a crowd
+  whose members differ by a fraction of a nanodegree; it cannot settle one whose
+  members are the same float, because they are all equally near.
+
+  The answer is not in the twelve numbers. It is in what the point IS, which the
+  ephemeris knows at the moment it returns the cusps and the angles from one call.
+  `angle_house_identities` in `kerykeion/utilities/core.py` states that once, and
+  it is applied where the cusps are made: in the natal factory through
+  `houses_ring_with_polar_fallback`, and in the relocated chart, which shifts the
+  ring by the ayanamsa first and then asks the same question of the shifted ring.
+  (A third copy of the houses call, kept in the factory "for the Arabic Parts",
+  turned out to be unreachable — the houses are always cast first — and is gone.)
+  No consumer of `get_planet_house` changed, and `get_planet_house` itself
+  behaves exactly as before: the roughly twenty other callers project a point into
+  a ring that is not its own, where no identity exists.
+
+  Whole sign, Vehlow and Morinus charts claim no identity and read as they always
+  have — there the angle is a point of its own and may legitimately fall in a
+  neighbouring house; equal houses claim the Ascendant and Descendant only, and
+  meridian and equal-from-MC charts the Midheaven and Imum Coeli only. Measured
+  across 5,520 charts (23 systems, 15
+  latitudes, 8 hours, 2 minutes) one angle was misfiled before and none is now; at
+  a quarter of an hour's resolution over the eight systems that crowd their cusps
+  and fourteen latitudes beyond 66 degrees, some 10,700 charts, the same. Davison
+  composites inherit the fix by being cast as ordinary charts.
+
+  **The cusps themselves are unchanged.** pyswisseph returns the same crowded ring
+  for that chart, so repairing it would diverge from the implementation this
+  library is validated against. What is new is that the chart says so: see
+  `coincident_house_cusps` below.
+
+- **The SVG golden comparison could not fail.** `compare_svg_lines` returned
+  WITHOUT asserting whenever a line's count of numbers or its non-numeric skeleton
+  differed, `compare_chart_svg` abandoned the whole file for a ±5% length ratio
+  when the line count changed, a missing baseline skipped, and what was left was
+  compared at `rel_tol=0.5` — fifty per cent, ±150 units on a coordinate of 300.
+  Three further copies of the comparison lived in the test tree with three further
+  tolerances, one of them with no callers at all.
+
+  There is one comparison now, in `tests/data/compare_svg_lines.py`. Structure is
+  fatal on every backend: line count, count of numbers in a line, and the line
+  with its numbers blanked out. Numbers are compared with `rel_tol=0.0,
+  abs_tol=1e-4` and only on the backend the baselines were generated with; on
+  another the structural assertions still run and the test then reports SKIPPED,
+  naming the backend, because the two compute different charts rather than less
+  precise ones. A handful of charts cast two millennia back differ structurally
+  between the backends and carry `@pytest.mark.reference_backend_only`, one at a
+  time and with a reason.
+
+- **The golden charts asked a remote service where they were cast.**
+  `from_birth_data` defaults to `online=True`, and both the tests and the
+  regeneration scripts passed a bare city name — so a regeneration baked one day's
+  GeoNames answer into 346 files while a test run compared against another day's.
+  Running the comparison at four tolerances over one afternoon on one unchanged
+  tree gave 2, 6, 63 and 69 failures. The coordinates are frozen in
+  `tests/data/golden_places.py` and `test_golden_charts_are_hermetic.py` fails if a
+  golden chart reaches for the network.
+
+  Every golden place is pinned, in all five golden modules and all four
+  regeneration scripts. The guard drives every golden test, every parametrized
+  case, through `tests/data/golden_drive.py` with a comparison that records and
+  raises nothing, closes both GeoNames doors (the city lookup and the timezone-
+  for-coordinates lookup), reports every test it cannot call against a named
+  allowlist of tests that compare no baseline, and demands that every stored
+  baseline within this kernel's and backend's reach was actually handed to the
+  comparison — without that last demand a suite that failed before casting any
+  chart would pass by never getting as far as the network.
+
+- **Twenty baselines were read by nothing.** The charts demonstrating the
+  optional marks — the station glyph, the out-of-bounds badge, the separating
+  aspects, the ayanamsa offset, the polar substitution note, the relationship
+  score — seventeen of them, plus three plain natal charts, were generated,
+  committed and compared by no test. They have readers now, and
+  `tests/core/test_every_baseline_has_a_reader.py` fails if a stored baseline
+  loses one.
+
+  Inside the golden modules the only witness is the driver; elsewhere a source
+  line counts only where its tokens compare or open the file, so a mention in a
+  docstring, a comment, or another gate's exemption table is not a reader. The
+  one reader that runs only on the full-range kernel is declared, and the
+  extended run of the gate — `poe check` runs it as `test:gates:extended`, and
+  refuses to run it on a narrower kernel than it asked for — checks the
+  declaration. Proven by deleting `TestProgressionChart` from the source and by
+  emptying a reader's body: the gate names the files both times.
+
+  Three of the new optional-mark tests asserted a word the chart carried anyway
+  — "Relationship Score" is in the subject's name, `kr:motionstate` is on every
+  chart — so a mark that silently stopped drawing would have passed. Each now
+  asserts something only the mark draws, found by rendering with and without it.
+
+- **Two charts wrote the same baseline file.** `save_svg` builds its default name
+  from the subject's name, so a subject named "John Lennon - Relationship Score"
+  collided with the explicitly-named file for that same variation and silently
+  overwrote it. The comparison test then reproduced the loser: it rendered a chart
+  with two EMPTY panel rows against a baseline showing "Relationship Score: 12",
+  and passed. The regeneration refuses to overwrite its own output now.
+
+- **The regeneration scripts could draw with another checkout's library.** An
+  editable install resolves to the path it was installed from, so running a
+  regeneration from a git worktree of the same repository uses the ORIGINAL tree's
+  code — including its uncommitted work — while writing into the worktree. Sixty-four
+  baselines were produced that way while this branch was being written, looked like
+  months of accumulated staleness, and were wrong. The scripts check before they
+  write — and they check the backend too: a regeneration on swisseph would have
+  written swisseph charts under a constant that declares them libephemeris, and
+  the comparator's own regeneration path refuses both the same way.
+
+- **Nine baselines were months stale, and nine were listed as unregenerable.** Four
+  progression charts, the Ptolemaic BCE pair, the 500 BC progression, and two
+  baselines — "Ancient Greece 500BC - Synastry Chart" and its transit twin — that
+  no test read and that `test_baseline_freshness.py` exempted as "second subject
+  not recorded". Their panels record both subjects: 15 June 500 BC at noon in
+  Athens, and a "Transit Partner" cast on 1 January 1970. They have readers in
+  `test_bce_dates.py` now; the BCE natal and progression readers there, which
+  compared a ±5% line count and skipped on a missing file, go through the single
+  comparator; and `CANNOT_REGENERATE_HERE` is empty, because every one of its
+  nine entries is read by a test that refreshes it under
+  `KERYKEION_REGEN_BASELINES` — and `poe regenerate:svg` now ends by running those
+  tests with the variable set, because a fourth review pass found it refreshing
+  335 files and leaving eleven stale while its own failure message recommended
+  it. The refreshed files carry what the drawer has
+  changed since they were written — the accessibility attributes, the palette,
+  the modern glyph scale and the house-sector arcs — which is what a strict
+  comparator is for.
+
+- **The house comparison refiled an angle with the reader.** `house_comparison`
+  recomputed a point's house in its own chart from the twelve cusps instead of
+  reading the house the model already carries, so on the crowded ring the
+  synastry and transit tables said Third where the model said Fourth. It reads
+  `point.house` now, and asks the reader only for a point that has none. The
+  solar-arc direction did the same for a directed angle at an arc of zero — the
+  natal angle, still its cusp — and keeps that house now; at any other arc the
+  angle has left its cusp and is read as before.
+
+- **`poe check` never reached its test steps.** The sequence stopped at a pyright
+  error in the report generator (`_model_kind` assigned through a tuple the
+  checker widened to `str`), so the new baseline gates would not have run from
+  the maintainer's command; the generator indexes the matched entry instead.
+
+- **A midpoint composite declared no coincident cusps** even when both parents stood
+  on the crowded ring and its midpoints did too; the Davison, cast as an ordinary
+  chart, declared them. The composite factory computes the groups on its own ring
+  now, so the field's promise — empty only when the twelve cusps are distinct —
+  holds for every model that carries it.
+
+- **`coincident_house_cusps` accepted what it promised not to hold**, and kept a
+  promise it could not: any `list[list[int]]` validated, `[[0, 13]]` included, and
+  a pre-a88 payload of a crowded chart came back declaring `[]`. A group now names
+  at least two existing houses, ascending, none twice; and a payload without the
+  field has its groups read off the twelve cusps it does carry — a payload that
+  names the field, even as `[]`, is taken at its word.
+
+- **A hex colour read as a number** in the comparator: `#000e10` against `#000e20`
+  passed as zero times ten to the tenth, and `#1e9999` failed against itself as an
+  infinity. Latent — no colour in the palette hits either — and closed: hex digits
+  are rewritten as letters before the numbers are read, so a colour is compared as
+  text, exactly.
+
+- **The moon disc was not next to the line that names it.** The disc was placed
+  by chart type — the natal panel above the block, every other panel ten pixels
+  under the block's *last* line — while the row naming it sat third or fourth
+  from the end. A transit put the picture 24 pixels and two rows from its own
+  caption, a return 38 and three: 95 charts drawing a moon that appeared to
+  belong to the diurnality line under it. The phase row now closes the block on
+  every panel that draws a disc, so the disc beneath it has nothing else it
+  could be captioning. The row moved rather than the disc because the wheel's
+  chord narrows going up — 147px of clear width on the first row against 229 on
+  the last — and a dual panel's phase line carries the wheel's name too. Of 400
+  combinations (ten languages, five wheel contexts, eight phases, measured in
+  the reference fonts' advances), 304 would overrun the top row's 134px, 98
+  overran in the rows the line used to occupy, and 21 at the bottom's 229.
+
+- **A composite drew a moon it never named.** That panel spends its six rows on
+  the zodiac, the houses, the perspective, the composite method and the
+  diurnality, and has never written a phase line — but it drew the disc anyway,
+  18 charts carrying a picture that said nothing about what it depicted. It is
+  omitted now, as the synastry panel, equally short of room, has always done.
+  The phase itself remains on the model for any caller who wants it.
+
+- **A dual return chart read the nativity's moon, not the return's.** It took
+  the phase from the natal subject and labelled it with a bare "Lunar phase"
+  while the row beside it named the two wheels apart — so the nativity's moon
+  read as the return's. It takes the return moment now and says whose it is
+  ("Solar Return Lunar phase"), the way the transit and progression panels, in
+  this same row, always have.
+
+- **The phase row had never been trimmed to fit.** Measured in Times, Helvetica
+  and Arial advances, a Russian return line reaches 287px against the 229 its
+  row clears — 21 of the same 400 combinations run past the graphics, fourteen
+  Russian, six French, one Spanish. It is trimmed now to the room its own row
+  has, like the house and relationship-score rows beside it, and the wheel's
+  name is what pays: the phase keeps its own words, following the rule the
+  diurnality row already states.
+
+- **A panel that draws no moon stopped short of the page.** The disc holds 30px
+  under the block — the 10px gap it keeps below the last line, plus its own 20px
+  of height — so a synastry, which names no phase, and a midpoint composite,
+  which has no moment to have one, ended 30px above where every other panel
+  ends, with a strip of empty page under the last line. The block takes that
+  room now and closes where a disc's foot would have been: the panel has one
+  bottom edge whether or not there is a moon to draw. The natal panel is
+  unaffected — its disc rides above the block, so its absence frees nothing
+  below.
+
+- **The dual-wheel diurnality row was budgeted against the wrong row.** It is
+  allocated by measuring the space the wheel leaves, and that space depends on
+  which row the line lands in — the chord narrows going up, 200px on row 4
+  against 229 on row 5. The builder assumed row 5 whatever the panel did with
+  it. Now the row it lands on is the row it is measured against.
+
+- **The trim read Hindi at over twice its width and amputated rows that fit.**
+  `estimate_text_width` had no measurements for Devanagari, so every code point
+  of a Hindi row paid the block ceiling of 1.04 em — matras and viramas
+  included, glyphs that shaping renders at zero advance. A 159px Hindi return
+  line was read as 342 and cut to "चंद्र चरण: शुक्ल पक्ष प्…", the wheel
+  qualifier dropped and the phase name severed mid-word, in a slot it fit with
+  70px to spare — on every Hindi transit, progression and return, the moment
+  the trim above began to exist. Devanagari sits in the measured table now,
+  like Cyrillic before it: 104 characters at the widest advance the reference
+  fonts declare, combining marks at their true zero, the soft hyphen at its
+  real 0.34. The estimator reads those rows within 2% of the reference
+  advances, and the natal panel's Hindi lines and the point grid's Hindi names,
+  clipped and abbreviated by the same over-charge, come back whole with it.
+
+- **The perspective row moved up a slot, and it was the one row with no width
+  fitting.** The reshuffle above put it on row 3, where the chord clears 179px,
+  and `build_perspective_info` never measured itself: the Russian
+  apparent-geocentric line, 198px, ran 19px under the wheel graphics on every
+  Russian dual return — and always had on transits, from that same slot. It is
+  fitted now like every other row, and to the slot it *lands* on at the height
+  the block actually sits: a midpoint composite draws the row two slots below
+  the one it is written in, the blank rows having migrated to the top, and the
+  synastry and composite blocks — which never draw a disc — take the disc's
+  30px and put their rows on a wider chord. A fit taken against the authored
+  slot, or against the template height, measures a chord the row is never
+  drawn at: the first cut the Italian composite line, the second the Russian
+  synastry line, each in a slot that held it whole.
+
+### Added
+
+- `coincident_house_cusps` on `AstrologicalSubjectModel` and its siblings: the
+  groups of house numbers whose cusps stand on one longitude, so the houses between
+  them have no width and no point can ever be in them. Empty for every ordinary
+  chart, so an a87 payload validates unchanged. The report prints it as a "Cusps On
+  One Longitude" row and the context emits `<coincident_house_cusps>`.
+- `houses_ring_with_polar_fallback` and `HouseRing` in
+  `kerykeion.ephemeris_backend`: the cusps, the angles, the polar-fallback record,
+  the angle-to-house identities and the coincident groups from one call. The two
+  tuple-returning siblings keep their signatures.
+- `angle_house_identities` and `coincident_cusp_groups` in `kerykeion.utilities`;
+  the predicates and constants behind them — `ANGLE_CUSP_INDEX`,
+  `ON_CUSP_TOLERANCE_DEGREES`, `angle_is_its_cusp`, `angular_separation`,
+  `cusps_are_a_house_division` — live in `kerykeion.utilities.core`. Two of them
+  replace private copies inside the composite factory (`_angle_is_its_cusp`,
+  `_cusp_ring_winds_once`); there is one of each now.
+
+## [6.0.0a87] - 2026-08-25
+
+### Fixed
+
+- **Six house systems draw their houses backwards, and the wheel did not know.**
+  Above roughly 68 degrees Campanus, Regiomontanus, Sunshine, Polich/Page and APC
+  return descending cusps, and the horizon system does it on the equator. Read
+  forwards, a six-degree house measured 354: the twelve transparent hit-wedges
+  were each painted as a near-complete ring, stacked, so a click anywhere on the
+  chart was answered by whichever was drawn last, and every house number sat on
+  the far side of the wheel from the house it names. Direction is now read from
+  all twelve at once — twelve widths cover the circle exactly once whichever way
+  the houses run, so the total tells them apart.
+
+- **A house too thin to draw could not be clicked.** Two cusps inside one whole
+  degree collapse onto one offset when the classic ring is quantised, and an arc
+  whose endpoints coincide is dropped by the SVG specification, leaving a path of
+  no area that still declares `pointer-events: all`. The boundaries are separated
+  in house order now, so they stay shared, and where the cusps genuinely cross —
+  Polich/Page and Sunshine/alt inside the polar circle — each wedge keeps at least
+  a degree by moving only its own end.
+
+- **The composite chart's twelve cusps were not always a house division.** About
+  one couple in sixteen produced twelve arcs totalling 1080 degrees instead of
+  360, with the house numbers out of order and the Midheaven below the horizon.
+  The repair follows the practice the field documents: one angle keeps its near
+  midpoint and the others move onto their far one. The new `house_anchor`
+  argument chooses which — `auto` (the default), `ascendant` or `midheaven` —
+  and is recorded on the resulting model.
+
+- **The composite kept a private copy of the library's house reader**, and the
+  copy was the old one: on a descending cusp ring it filed ten points out of ten
+  in the wrong house, while the same model's house-comparison field, which used
+  the shared function, disagreed with it.
+
+- **House numbers were sized against the wrong ring.** Their reach was measured
+  at the radius where the cusp line ends rather than where the number is drawn,
+  making every extent 1.6 times too large on a natal wheel and 1.95 on a dual
+  chart's inner ring. Two related mismatches are closed with it: the inner ring
+  mixed a truncated base with an exact span, which on a crowded chart printed 10
+  before 9 and 4 before 3; the outer ring of a dual chart labelled exact lines
+  with truncated numbers.
+
+- **`% 360` where the library meant `normalize_degree`**, in four more files. For
+  a hair-negative angle Python's modulo answers exactly 360.0, which is outside
+  the range the callers promise. `normalize_degree` and `house_spans` now live in
+  `kerykeion.utilities.core`, where calculation code can reach them without
+  importing the charts package — which is why those copies existed. Both remain
+  importable from `kerykeion.charts.utils`.
+
+- **`poe regenerate:glyph-gallery` had been dead** since the theme removal: it
+  named a stylesheet that went with the themes, so `regenerate:all` died on it.
+
+- **The default fixed-star lists spelled Deneb Algedi with a space**, the one
+  form that is neither in `AstrologicalPoint` nor in the translations.
+
+- **The modern engine drew the Gauquelin ring off its own wheel.** Those
+  thirty-six cusps descend by construction; the span was corrected for that and
+  both sweep flags were left as the ascending case set them, which is the one
+  combination that moves an arc onto the mirrored circle SVG puts through any two
+  points. The wedges sat on circles up to 92 units from a wheel of radius 50.
+
+- **A point exactly on a cusp was filed by the first cusp inside the tolerance,
+  not the cusp it is on.** Above the polar circle several systems crowd cusps
+  together — Sunshine at 89S puts the eighth, the ninth and the tenth within
+  6.6e-11 degrees — and the Midheaven, bit-identical to the tenth, was filed in
+  the eighth. `get_planet_house` takes the nearest cusp now, and where the
+  twelve are a house division it reads containment from `house_spans` rather
+  than choosing the shorter arc pair by pair. Across 3,685 real charts this
+  moves 35 assignments, every one of them a Midheaven returning to the tenth
+  house.
+
+- **`scripts/regenerate_test_charts_extended.py` reported success whatever
+  happened.** Twelve handlers printed their errors and carried on, and the run
+  exited 0, so a baseline that could not be drawn stayed stale while the suite
+  compared against it in green. Failures are recorded and the run exits
+  non-zero, naming them — which immediately surfaced that the two ancient-date
+  baselines cannot be drawn at all on an ephemeris that covers 1550 onwards.
+
+- **The text report and `to_context` dropped house information the library
+  records.** A chart asked for in Placidus above the polar circle is cast in
+  Porphyry and both said only "Porphyry"; the composite's `house_anchor`, which
+  can turn the whole house frame by half a turn, reached neither. Degrees printed
+  beside a sign were bounded at 360 rather than at that sign's ceiling, so a point
+  a hundredth short of a cusp printed as the first degree of the next sign.
+
+### Changed
+
+- `AstrologicalSubjectFactory` writes its log lines to its own module logger
+  rather than the root logger, so a host that silences `kerykeion.*` now does.
+- `CompositeSubjectModel` gains `house_anchor` and `house_frame`: the angle the
+  caller asked to hold, and what became of it — `anchored` when the ring stands
+  on that frame, `midpoints` when no frame spans the two charts and the plain
+  midpoints are kept, `gapped` when the twelve are not a house division at all.
+  Both `None` on a Davison chart, which is cast as an ordinary chart. A model
+  may carry both or neither, never one alone; an a86 payload, which carries
+  neither, still validates.
+- `normalize_degree` and `house_spans` moved to `kerykeion.utilities.core`, and
+  are still importable from `kerykeion.charts.utils`.
+- **Kerykeion no longer installs a handler on the root logger.** a86 called
+  `logging.warning` at module level, which runs `basicConfig()` as a side effect;
+  an application that never configured logging saw formatted output because of
+  that and now sees only Python's last-resort handler. Configure the `kerykeion`
+  logger to get INFO-level lines back.
+- The modern wheel-only template paints its background like the other three; pass
+  `transparent_background=True` to composite it over your own surface.
+- An inverted hours range in `EphemerisDataFactory` raises instead of returning
+  one sample outside the window.
+- **Midpoint composites read differently where a86 was wrong.** On one grid of
+  random pairs (four house systems, the same pairs for both versions, three
+  anchors on a87), cusp rings that are not a division of the circle into twelve
+  houses fall from 7.7% to none at latitudes up to 65 degrees and from 34.0% to
+  21.7% between the polar circle and 89 degrees; a Midheaven that both parents
+  put on their own tenth cusp is filed outside the tenth house by a86 above the
+  polar circle and never by a87 — zero in a 13,440-composite polar sweep. A
+  stored a86 composite re-rendered on a87 can read a planet in the opposite
+  house; the two are distinguishable because a87 records `house_anchor`.
+
+## [6.0.0a86] - 2026-08-21
+
+### Fixed
+
+- **Every mark a reader has to read now carries the contrast it needs.** The
+  three shipped themes were measured against the surface each mark is actually
+  drawn on — not against the page — and where a point's colour doubles as text
+  it is held to 7:1 rather than 3:1. House cusp lines got a variable of their
+  own, `--kerykeion-modern-cusp`, because a boundary is information and was
+  being drawn at the weight of decoration. Every chart also declares
+  `role="img"` and names itself through `<title>` and a new `<desc>`, so a
+  screen reader announces the subject, the date, the place and the house system
+  instead of "graphic".
+
+- **A cusp line no longer prints through the reading that sits on it.** An
+  angle's cluster is written across its own line by construction, so "As 19º ♈
+  45'" always had a 0.6-wide stroke running through the words. Where a reading
+  crosses a line the line drops to 0.35 for exactly the span of that reading —
+  all of it or none, because a line dimmed under some rows and solid under the
+  others reads as damage. The trigger is geometric, never "this point is that
+  axis": a planet within a degree of a cusp covers the line just as squarely.
+
+- **The outer ring of a dual wheel had no visible indicators.** Not missing:
+  misplaced. Both rings anchored their tether at the boundary between them,
+  which is the inner ring's outer edge and the outer ring's *inner* edge — so
+  every outer tether was drawn twelve units from the planet it points at,
+  pointing outward at nothing. The boundary then carried two families of
+  identical brackets back to back, which is why the inner ring's own tether
+  looked as though it pointed the wrong way. It never did.
+
+- **The chart angles are placed like any other point.** The four angles had a
+  radius of their own, further out than the two the points alternate between,
+  but the code that recognised one did it by index in a fixed list and the v6
+  catalog moved them off those indices. For years that outer lane went to Ceres,
+  Pallas, Juno and Vesta while the angles alternated with everything else.
+  Repairing the classification sent the angles into the zodiac ring, so the lane
+  is removed rather than restored: an angle is a point.
+
+- **A lunar disc no longer hangs halfway up a tall page.** On a Natal chart
+  taller than the usual 580 the glyph followed the blank rows inside its text
+  block but not the offset of the block itself, so on a chart with every point
+  active it stayed 500 pixels above the lines it captions.
+
+- **A long point name no longer runs into the column beside it.** Grid names are
+  capped by inked width — ten Latin characters and ten CJK ones are not the same
+  amount of room — and any trailing marker survives the cut, because dropping
+  the "(T)" would print the true lunar node under the mean node's label.
+
+### Changed
+
+- **The modern wheel grows on a canvas that has room for it.** A chart with
+  every point active is drawn twice as tall, because the aspect grid is a
+  pyramid; the wheel was a fixed 480 regardless, so it occupied 13% of the page
+  with glyphs the size of a chart a quarter as large. It now takes a scale on
+  the two canvas shapes that have margin — measured by an ink-overlap sweep, not
+  assumed — and none at all below that, where ordinary charts stay byte for byte
+  what they were.
+
+- **The cluster reads at the size the ring can afford.** The cusp ring is as
+  thick as the zodiac band beside it, the planet cluster is 12% larger with the
+  room that freed, the sign glyph is 18% larger again because a thin outline
+  beside solid figures reads smaller than it measures, and the aspect web —
+  lines and the marks that name them — is heavier so it survives being read at a
+  glance. Each row is also centred on its own ink rather than on its anchor: a
+  middle-anchored string centres its advance width while the ink sits a tenth of
+  the font size high, and the cluster read as a crooked skewer.
+
+- **The bottom-left panel is ordered longest-last.** The wheel's chord limits
+  those rows and stops narrowing them towards the bottom, so the house system
+  moved down next to last and the zodiac line goes last of all when it carries
+  an ayanamsa. The lunation day is gone: the phase already says where in the
+  cycle the moon is, in the words a reader thinks in, and the disc beside it
+  says the same in a picture.
+
+### Removed
+
+- **Three of the six chart themes are gone: `light`, `strawberry` and
+  `dark-high-contrast`.** They were the three the accessibility pass never
+  covered, and measuring them says why: against the surface each mark is drawn
+  on, `light` had 66 marks under threshold, `strawberry` 72, `dark-high-contrast`
+  19 — while `classic`, `dark` and `black-and-white` have none. The worst of them
+  was the one called `light`, which is the first name anyone tries for a pale
+  chart: its Ascendant sat at 1.51:1, yellow on white.
+
+  What ships now: **`classic`** (the light rainbow theme, still the default),
+  **`dark`**, **`black-and-white`**, and `theme=None` for a drawing that takes
+  its colours from the document hosting it. Passing a removed name raises
+  `KerykeionException`, as any unknown name always has — there is no silent
+  fallback to a theme the caller did not ask for.
+
+  The 40 committed baselines that verified the removed themes are deleted with
+  them; the remaining 338 cover the three that ship. The theming guide is rewritten
+  around the mechanism — how to override the properties, and what each family of
+  names paints — rather than around a list of themes.
+
+
+### Changed
+
+- **A rendered chart needs no fonts, and every glyph carries the same weight.**
+  All 80 `<symbol>` definitions are geometry. The six lettered marks (As/Mc/Ds/Ic,
+  Vx, Av) were live `<text>` and rendered in whatever face the *viewer* happened
+  to have, at whatever width; they are traced to outlines now like everything
+  else. Fonts are still used at build time — Symbola, Noto Sans Symbols 2 and
+  Noto Sans, downloaded to a git-ignored cache and never redistributed — but
+  nothing a reader loads depends on one.
+
+  The weight is measured rather than chosen. Filled silhouettes cannot be
+  re-weighted (their stem is baked into the contour, so a `stroke-width` has
+  nothing to act on), so they are the fixed point: their stem is 7.41% of their
+  ink at the median across all 45 of them, and the drawn glyphs are stroked to
+  land there. Seven unrelated widths were in use before, and the aspects — drawn
+  in a 10-unit box — reached 16% of their own ink, better than twice the
+  silhouettes. The Sun read thinner than the Moon beside it.
+
+  Jupiter, the four lunar nodes, both centaurs, Eris, both Priapus points, the
+  White Moon and the Interpolated Perigee are drawn rather than traced. The
+  redraws are visible: a chart rendered with 6.0.0a85 does not match one rendered
+  before it pixel for pixel.
+
+- **The six lunar-apside points are told apart by colour, not by six shapes.**
+  Mean, True and Interpolated Lilith share one crescent; Mean Priapus, True
+  Priapus and the Interpolated Perigee share its opposite. The glyph says which
+  end of the apsidal line a point is, the colour says which method computed it.
+  White Moon keeps a mark of its own — it is a different point, not a third way
+  of finding the same one.
+
+### Fixed
+
+- **Four points drew their glyph in one colour and their degree in another.**
+  A point's colour is written in two places: the `var()` inside its `<symbol>`,
+  which paints the mark, and `DEFAULT_CELESTIAL_POINTS_SETTINGS["color"]`, which
+  paints the degree text and the pointer line. True Lilith, Interpolated Lilith,
+  True Priapus and the Interpolated Perigee had the second still set to the mean
+  apogee's colour, so each rendered in two colours at once. **Visible change:**
+  the degree readout and pointer for those four points now match their glyph.
+  White Moon no longer borrows the mean apogee's colour at all.
+
+- **The published glyph gallery was missing five symbols and three months old.**
+  `site/docs/chart-glyphs.md` and its poster carried their own section table and
+  their own copy of the box rule, and had drifted: Interpolated Lilith, Mean and
+  True Priapus, White Moon and the Interpolated Perigee appeared nowhere. Both
+  are generated from `scripts/glyph_catalog.py` now, the same list the templates
+  are built from, and the poster resolves the light theme's real colours instead
+  of flattening every `var()` to one ink — without which the six apside points
+  would print as two shapes repeated three times each.
+
+- **Seventy-three committed SVGs drew a glyph set the library no longer had**,
+  nineteen of them the documentation charts the README serves by raw URL. Three
+  generators produced committed output and had no task, so `regenerate:all` never
+  reached them; they have one now (`regenerate:docs-charts`, `regenerate:gallery-v6`,
+  `regenerate:glyph-gallery`) and are part of that sequence. Five baselines that
+  no script produced at all — three natal charts and the two paired-BCE charts —
+  are reproducible now too.
+
+- **Every rendered chart credits the fonts its glyphs come from.** The header
+  line named two sources; Noto Sans became the third when the lettered marks were
+  traced, and was recorded in `NOTICE` but not in the output.
+
+- **An over-subscribed modern wheel now spends its air before its ink.** Each
+  adjacent pair of clusters asks for the arc its own ink needs plus
+  `DEFAULT_CLUSTER_CLEARANCE` of daylight, and on a very full wheel those asks
+  can sum past what a circle has. The only answer was to scale every separation
+  down together, which compresses the ink reservations — so clusters overlap
+  *and* land further from their true degrees. The clearance is the cheaper thing
+  to give up: it is air, and the ink is the reading. Past the budget the
+  affordable clearance is now solved by bisection, down to none if that is what
+  it takes, and only what remains falls back to the old uniform compression. On a
+  54-cluster stress fixture the worst ink overrun halves.
+
+  Dormant on everything that ships today: the default fourteen points ask for
+  about a quarter of the budget, no committed baseline changed, and the reduction
+  is logged at INFO when it happens rather than being applied silently.
+
+### Added
+
+- **`--kerykeion-chart-color-white-moon`**, in all six themes. White Moon shared
+  the mean apogee's variable, which made the colour axis say it was a way of
+  computing the Black Moon. It keeps the family's hue at low saturation instead —
+  pale where the three method colours are vivid.
+- **`--kerykeion-chart-color-interpolated-lilith`**, in all six themes, for the
+  third rung of the apside ladder.
+
+### Changed
+
+- **`kr:angularity` carries every angle a point stands on, and
+  `kr:angularitydistance` is gone.** The value is now a space-separated list of
+  `Angle:distance` pairs, closest first — `Ascendant:0.8991 Medium_Coeli:4.3156`.
+  Near the poles the Ascendant and the Midheaven close on each other and a
+  planet can sit within orb of both, which a scalar pair of attributes could
+  only express by repeating the attribute names — invalid XML. `ChartPointTag`
+  exposes the pairs already split as `angularities`.
+
+### Changed
+
+- **The stationary band is symmetric, and the two stations are named.**
+  `MotionState` gains `"stationary_retrograde"` and `"stationary_direct"`. The
+  band of < 5% of mean daily motion now brackets zero on both sides and is
+  tested **before** the sign of the speed; previously a negative speed answered
+  `"retrograde"` one branch earlier, so only the forward half of the band could
+  ever report a station. A planet creeping backwards at a hundredth of its mean
+  motion was reported as plainly retrograde, hiding the very event the reader
+  was looking for.
+
+  Which station it is comes from the trend, not the sign: both stations are
+  approached from one side of zero and left on the other. `classify_motion_state`
+  takes an optional `speed_sampler` and, for a body already inside the band,
+  asks it for the speed one day later — falling through the band opens the
+  retrograde phase (`"stationary_retrograde"`), rising through it closes the
+  phase (`"stationary_direct"`). Without a usable second sample the generic
+  `"stationary"` stands, which is an absence of a claim rather than a guess. The
+  subject factory supplies the sampler as a closure over the same ephemeris
+  flags, so the extra call is only ever spent on a body already stationary.
+
+  **This is a behavioural change with two edges for downstream code.** A chart
+  cast within the band of a station now reports a different `motion_state` than
+  it did before — `"stationary_retrograde"` where it said `"retrograde"`, and
+  either named station where it said `"stationary"`. And any consumer that
+  matches the literal exhaustively — a `match` statement, a dict keyed by every
+  value, a mirrored TypeScript union — must be extended before it meets one of
+  the new values.
+
+### Added
+
+- **Point state and chart analyses in the `kr:` SVG metadata.** Every rendered
+  ChartPoint now carries `kr:motionstate`, `kr:speed`, `kr:declination` and
+  `kr:oob`, plus `kr:magnitude`, `kr:nearpoint` and `kr:orb` on fixed stars.
+  Angularity and stelliums are annotated onto the finished markup as
+  `kr:angularity` with `kr:angularitydistance`, and `kr:stellium`; in a dual
+  wheel each ring is annotated from its own subject's analysis. A consumer
+  reading the SVG no longer has to re-fetch the JSON to say what the wheel
+  already knows.
+
+  These are unconditional — no rendering flag gates them, in either style and in
+  full or wheel-only output — because an attribute only some serializers emit
+  leaves a consumer unable to tell a body that has no such state from a style
+  that forgot to say so. An attribute is **absent** when the model does not
+  carry the value, so silence means "this chart does not compute it" rather than
+  zero or false; `kr:oob` follows `kr:retrograde` and marks only the exception.
+  Attribute names are lowercase letters with no separators, since consumers
+  rewrite the namespace with a general pattern and a name carrying an underscore
+  would be dropped in silence. The emitter, `point_state_attributes`, lives in
+  `kerykeion.charts.svg_metadata` beside the parser.
+
+- **Six opt-in marks on `ChartDrawer`**, each drawing something the chart data
+  already carried and the wheel never showed. All default to `False`: passing
+  every one of them its own default reproduces the previous SVG byte for byte,
+  in both styles. Each is silent where it has no referent.
+
+  | Parameter | Draws |
+  | :-- | :-- |
+  | `show_motion_state` | `SR`/`SD` at a station — modern recolours the cluster and reuses the row that holds `RX`, classic writes the letters at the foot of the glyph |
+  | `show_out_of_bounds` | An `OOB` badge in the point tables; in the Gauquelin grid, off the declination column |
+  | `show_aspect_movement` | A dashed line for a separating aspect |
+  | `show_relationship_score` | The synastry score in the info panel (needs a score on the chart data) |
+  | `show_ayanamsa_value` | The ayanamsa offset in degrees and minutes, after the mode name |
+  | `show_polar_fallback_note` | A note on the domification line when the requested house system was substituted |
+
+  Nine language keys across all ten languages (`relationship_score` and its six
+  bands, `polar_fallback`), each with an English default on the model so a
+  language pack written before this release still validates, and a new
+  `--kerykeion-modern-stationary` CSS variable in the six themes.
+
+- `examples/svg_extended_example.py`: all six marks, each on a subject that
+  genuinely has its referent — Mercury at its August 1990 station (with Uranus
+  out of bounds), a Longyearbyen chart whose Placidus request could not be
+  honoured, a sidereal Lahiri chart, and a synastry pair. Runs offline.
+
+## [6.0.0a85] - 2026-08-12
+
+### Added
+
+- **Optional command-line interface (`kerykeion[cli]`).** A new extra exposes the
+  whole library from the terminal: charts (`natal`, `synastry`, `transit`,
+  `composite`, `return`, `progression`), analytical techniques (`technique …`),
+  astronomical events (`sky …`), time series (`ephemeris`, `transits`), subject
+  profiles (`subject …`) and a guarded `call` dispatcher over `__all__`. Output
+  is text on a TTY and JSON in a pipe (`-f text|json|xml|svg`), warnings stay on
+  stderr, and every error is a clean classified exit (0–9, 130) — never a
+  traceback. New `cli`, `test:cli` and `cli:smoke` poe tasks, plus a
+  `build:smoke` CLI environment. Dependencies are typer & rich (MIT — see
+  NOTICE); no Apache-2.0 was added.
+- **Useful command without the extra.** `pip install kerykeion` (no extras)
+  installs the `kerykeion` command for everyone (the script is static metadata),
+  and it is no longer a dead end: a stdlib-only core serves `kerykeion status`
+  (active backend, LEB calc mode, ephemeris data files, environment knobs; `--json`
+  for machine-readable output), `--version`/`-V` and `--help`/`-h`. Any other
+  subcommand prints an install hint and exits `3`. `import kerykeion` stays free
+  of `typer`; `--version`/`--help` do not even import the library (instant).
+
+### Fixed
+
+A pre-merge review of the CLI hardened every silent-wrong-output and
+exit-code-classification path it could reach:
+
+- A date-only `natal` (no `--time`) now requires `--time` (exit 4). The factory
+  fills `hour`/`minute` from `datetime.now()`, which made two runs a minute apart
+  produce different Ascendants/houses with no warning.
+- `--no-online` overrides a profile saved with `online=True` (a falsy flag is an
+  explicit choice); `transit` and `return` forward `--offline`/`--online` to the
+  natal subject, not only to the transit/return moment.
+- `--set` is whitelisted against the profile recipe shape, not the raw factory
+  signature, so `--set year=…`/`--set hour=…` is rejected instead of colliding as
+  a duplicate keyword (`materialize`) or breaking `subject save` (`extra=forbid`).
+- `--step 0` is rejected (was silently rewritten to 1); `--year 0` and
+  `--target-year 0` are accepted (were falsy-rejected); `--time 24:00` is
+  rejected (off-by-one; the factory caps the hour at 23).
+- `transit --to-time` without `--to-date` is rejected (the time was silently
+  dropped and the transit cast for the current moment).
+- `-o` on a directory or read-only path is now exit 4, not exit 1 with a
+  traceback (`OSError` is classified as invalid input).
+- `typer.Exit` (a `RuntimeError`, not `SystemExit`) propagates through the error
+  boundary instead of being misclassified as exit 1.
+- Warnings are emitted in a `finally`, so they survive a render failure and
+  `--warnings-as-errors` (exit 9) is not silently bypassed.
+- The ephemeris pre-flight sample count is DST-aware for hours/minutes (counts in
+  UTC, matching the library), so a series across a DST boundary no longer slips
+  past the ceiling into the wrong exit code.
+- A typoed `call --param` is rejected up front (was silently dropped for
+  instance-method targets, running the factory with defaults).
+- A second review pass closed a further round of CLI correctness gaps:
+  - `call -s` now binds a `Union`-typed subject parameter (every
+    `AspectsFactory` method, and any `AstrologicalSubjectModel | …` param),
+    which was misclassified and rejected as "has no subject parameter".
+  - `transit -s <profile>` defaults the transit moment to the natal birthplace
+    (offline) instead of going online with an empty location query; `--to-date`
+    without `--to-time` is now a clean exit 4 (was a misleading "use `kerykeion
+    now`"), and the `--to-date` help no longer references a nonexistent `--now`.
+  - `--set active_points=sun,moon` (and `active_fixed_stars`) is coerced to a
+    list, matching `--points`/`--param`, instead of failing recipe validation.
+  - `sky eclipses` with only one of `--lat`/`--lng` is rejected, not silently
+    routed to a global search that ignores the coordinate.
+  - `call --list` no longer advertises Pydantic-model methods (`model_validate`,
+    `model_dump`, …) it refuses to dispatch.
+  - `--warnings-as-errors` is honoured even when the renderer itself crashes
+    (the render error is held; exit 9 still fires when warnings are present).
+  - `-o` files and saved profiles are written UTF-8 with LF endings on every
+    platform (no cp1252 `UnicodeEncodeError` on non-ASCII names; no CRLF
+    corruption of byte-exact JSON/SVG), and `created_at` is now UTC-aware.
+  - libephemeris coverage/data errors (`EphemerisRangeError`, `DataNotFoundError`)
+    map to exit 6 (ephemeris), not 5/4.
+  - `transits` no longer swallows a missing/unreadable profile behind a bare
+    `except` (clean exit 4 up front); `main(argv)` honours an explicit `argv`
+    on the Typer path, not only on the no-extra path.
+- A third review pass closed a further round of CLI correctness gaps:
+  - `--houses porphyry` no longer silently builds Alcabitius (coded `"B"`, should
+    be `"O"`); `--houses apc` no longer always fails (coded `"n"`, not even a
+    valid code; APC is `"Y"`). An unknown house-system letter is now rejected at
+    the flag instead of as a confusing factory literal error.
+  - `technique directions` no longer advertises a `--planets` flag that always
+    crashed (primary directions have no planet filter; it was bound to the
+    factory's `aspects` parameter). It is now `--aspects`, validated.
+  - The transit wheel now inherits the natal frame (zodiac, sidereal mode,
+    houses, perspective), so a Sidereal natal no longer pairs with a Tropical
+    transit ring (`create_transit_chart_data` does not re-frame).
+  - An offset-bearing `sky --from` (e.g. `…T12:30:00Z`) is now honoured: the
+    instant is converted into `--tz` before the wall-clock parts are extracted,
+    instead of being re-read verbatim (a multi-hour shift).
+  - `transits --refine` without `--events` is rejected (it was a silent no-op);
+    a typoed `call Factory.method` is exit 4, not exit 1 with a traceback; a
+    dict `--param` is parsed as JSON instead of forwarded as a literal string.
+  - `emit_warnings` resolves `sys.stderr` at call time (the import-time default
+    arg defeated CliRunner/capsys redirection); `subject show|list|verify` route
+    through the warnings funnel, and `verify` collects from the materialised
+    subject so `--warnings-as-errors` engages there too.
+  - `-o` into a new directory now creates the parent (matching `subject save`);
+    a `-s` lookup miss no longer creates the profile store as a side effect; the
+    `--traceback`/`--warnings-as-errors` knobs are reset between in-process test
+    runs so the suite is no longer order-dependent.
+- A fourth review pass (extra-high effort) closed a further round of CLI gaps:
+  - The sampling pre-flight now matches `EphemerisDataFactory` to the sample:
+    hours/minutes bounds localise via the public `kerykeion.utilities.localize_naive`
+    (`is_dst=False`, the factory's own default) and aware bounds are converted to
+    local-naive before counting days — so exit 8 fires exactly when the library's
+    own ceiling would. This overturns a third-pass deferral (`localize_naive` is
+    public, so the coupling is sound). `transits` materialises the natal before the
+    pre-flight so online/city profiles (whose recipe `tz_str` is `None`) get a
+    DST-aware count; `--no-limit` no longer skips range validation; mixed
+    offset-aware/naive `--from`/`--to` raise a clean error.
+  - A relocated `transit`/`return` with only `--lat`/`--lng` (no `--tz`) is a clean
+    exit 4 instead of silently localising at the natal timezone; inline
+    `--lat`/`--lng`/`--tz` override the profile in `sky` (an explicit value wins);
+    `sky voc --from … --to …` honours `--tz`/`-s` (`from_iso_range` is UTC-only);
+    `--warnings-as-errors` is no longer bypassed for relationship scores (the
+    plural `subjects` list is now recursed).
+  - `--zodiac` is case-insensitive (matching `normalize_zodiac_type`); a non-string
+    `Literal` parameter coerces by value and type; PEP 604 `X | Y` unions classify
+    like `typing.Union`; an aware `--from` on a DST fall-back's second reading is
+    surfaced as an error; an explicit `--seconds 0` is forwarded; `--param x=none`
+    maps to `None` (matching `--set`).
+- A fifth pass reviewed the finished CLI end-to-end and closed fifteen more gaps:
+  - `call --param` can now pass a `Sequence[str]` parameter (nine params across
+    `MidpointFactory`, `SolarArcFactory`, `SecondaryProgressionFactory` and
+    `HeliacalFactory`): the abstract origin was unhandled, so the raw string
+    reached the factory and was refused, and `--explain` mislabelled them
+    `json-only`.
+  - House-system letters keep their case when already valid: `i` (Sunshine/alt.)
+    and `I` (Sunshine) are different systems, but every letter was upper-cased —
+    making `--houses i` unreachable and casting a `transit` ring with `I` when the
+    natal used `i`.
+  - `--no-online` now exists (it was documented and implemented in the resolver,
+    but declared without a secondary flag, so typer never generated it).
+  - `subject save` is atomic (temp file + `os.replace`): it truncated the existing
+    profile before writing, so an interruption left a zero-byte or half-written
+    recipe — destroying stored birth data with no backup.
+  - The app config directory is created `0700` like the `subjects/` store;
+    `ensure_profile_store()` promised it but had no callers.
+  - Bare `@app.command` (no parentheses) registered nothing and rebound the
+    decorated name to typer's decorator, silently.
+  - The enum-style flags (`--lot`, `--rate`, `--method`, `--type`) are
+    case-insensitive like `--zodiac`/`--houses`/`--points`, so `--lot Fortune`
+    and `--type solar` no longer fail.
+  - NOTICE no longer states that Typer's vendored Click is carried "under Typer's
+    MIT": bundling does not relicense it, and it remains BSD-3-Clause.
+
+- **The CLI reaches the whole library now.** A measured audit of the finished
+  feature found the computation fully covered but the *presentation* not: 
+  `ChartDrawer`'s 20 parameters were unreachable (`svg_out` built it with
+  defaults only, and no `call` path could supply its chart-data argument), the
+  report knobs were never wired, `--snapshot` was documented but did not exist,
+  and nothing could list the values the flags validate against. Closed:
+  - **Chart appearance from the terminal**: `--theme` (6), `--chart-language`
+    (10), `--style`, `--custom-title`, `--padding`, `--transparent-background`,
+    the visibility toggles in `--x/--no-x` form, `--aspect-grid-type`,
+    `--svg-variant full|wheel|aspect-grid`, and `--chart-settings file.json`
+    for palettes and point/aspect tables (mapping sections merge over the
+    library defaults, so one colour can be overridden alone). Plus
+    `--no-aspects`/`--max-aspects` for text reports and `--envelope` to carry
+    provenance and warnings in-band for consumers that cannot read stderr.
+  - **Ten more curated commands**, so every public factory has one: `aspects`,
+    `dominants`, `moon`, `relationship-score`, `technique house-comparison`,
+    `technique solar-arc`, `technique fixed-stars`, `sky mundane`,
+    `sky phenomena`, `sky occultations`. The tree goes from 34 commands to 50.
+  - **`info` and `doctor`**: `info literals|points|stars|houses|methods` lists
+    what the flags accept, derived at runtime from the library (27 enum tables,
+    including the 48 ayanamsas and 23 house systems); `doctor` runs the
+    environment checks plus a real calculation and exits 6 when broken, where
+    `status` only reports.
+  - **`--snapshot` is real**: `subject save --snapshot` caches the computed
+    subject and later reads reuse it, dropped automatically when the kerykeion
+    version or backend changes; `subject verify` reports
+    absent/matches/stale/drifted.
+  - `--aspects` has one meaning everywhere (`name` or `name:orb`), parsed once
+    and refused where a per-aspect orb has nowhere to go.
+
+### Changed
+
+- **CLI internal consolidation, no behavior change.** The `_emit`/`_split_csv`/
+  `_parse_dt` helpers copied verbatim across the command modules now live in a
+  single leaf module `cli/commands/_shared.py` (a behaviour change — e.g. a newly
+  accepted datetime form — now lands in one place, not five); `series._STEP_TYPES`
+  is derived from the `StepType` `Literal` instead of restating its values;
+  `registry.public_names()` is cached (built once; every caller reads it); and the
+  dead `cli/context.py` (`was_given`/`kk()` had no callers) was removed, with the
+  stale `options.py` docstring that referenced `was_given`. As a side effect the
+  `--from`/`--to` parse error in `ephemeris`/`transits` now reads identically to
+  `sky`'s.
+- `subject_resolver._kwargs_for` computes each factory signature at most once per
+  mode: `dict.setdefault` evaluated its default (`inspect.signature(...)`) on every
+  call, defeating the intended cache (the result was always correct, just wasteful).
+- **CLI cleanup hardened after review.** `registry.public_names()` now returns a
+  read-only `types.MappingProxyType`: it is `@functools.cache`d and shared by every
+  caller (`resolve_target`, `call --list`, `--explain`), so the map must be
+  immutable — a mutation would leak across the process. `subject_resolver`'s
+  signature cache converges to the same pattern (`@functools.cache` returning an
+  immutable `frozenset`), replacing the hand-rolled `_FACTORY_PARAMS` global. The
+  consolidation was also finished: `subject show`/`list` now use the shared `_emit`
+  (only `verify`, which passes `warning_source=`, stays inline), the ceremony-only
+  `_emit as _emit_chart` alias in `charts` was dropped, and the `--from` help text
+  matches the parse-error wording.
+- **Dead code and duplicated sources of truth removed (fifth pass).** A family of
+  `emit_*` helpers (`emit`, `emit_json`, `emit_text`, `emit_xml`, `emit_svg`) wrote
+  straight to `sys.stdout`, bypassing `-o` file handling and the warnings funnel;
+  they had no callers and are gone, leaving `render` + `write_output` as the single
+  funnel. Also removed: `profiles.as_json`, `config.config_file`/`CONFIG_FILENAME`
+  and `config.DEFAULT_ONLINE` (whose comment contradicted the real default computed
+  in `merge_inputs`). `sky --zodiac` delegates to the library's own
+  `normalize_zodiac_type` instead of re-implementing its spelling table; `sky` no
+  longer materialises a subject it discards when every coordinate is inline;
+  `technique stars` uses the shared `CountOpt`; and the `all` extra self-references
+  `kerykeion[cli,swiss]` rather than restating their version floors a third time.
+- The `kerykeion.cli` docstrings no longer claim `--version`/`--help` skip the
+  backend init. They cannot: the entry point is a submodule, so importing it
+  imports `kerykeion/__init__.py` first (~1.3 s). The **typer** isolation that
+  module does provide is real and test-gated; making the startup claim true is a
+  separate change to `kerykeion/__init__.py` (PEP 562).
+
+## 6.0.0a84 - 2026-08-12
+
+Structural release. No calculation changed and no public name moved:
+`kerykeion.__all__` exports exactly what a83 exported, and the JSON schema of
+every Pydantic model among them is byte-identical to a83.
+
+### Changed
+
+- **One package per domain.** `kerykeion/__init__.py` is now the only `.py` file
+  in the package root. The 16 single-file modules became packages
+  (`astrological_subject/factory.py`, `report/generator.py`,
+  `geonames/fetcher.py`, `utilities/core.py`, `ephemeris_backend/backend.py`, …),
+  and 23 files inside existing packages lost the prefix that repeated their
+  directory (`eclipses/eclipse_factory.py` → `eclipses/factory.py`).
+  Imports of the form `from kerykeion import X` are unaffected; direct module
+  imports may need updating — see the v5 → v6 table in the migration guide.
+- **`schemas/` dropped the legacy `kr_` prefix**: `kr_models` → `models`,
+  `kr_literals` → `literals`, `kerykeion_exception` → `exceptions`.
+- `kerykeion.report`, `kerykeion.utilities`, `kerykeion.ephemeris_backend`,
+  `kerykeion.motion` and `kerykeion.swisseph_setup` became packages under the
+  same name, keeping their existing imports valid.
+- The removed-v5-name `ImportError` now also names the defaults that changed in
+  v6, since porting the call alone does not reproduce v5 output.
+
+### Added
+
+- `scripts/check_import_graph.py`, a structural gate wired into `poe check`,
+  covering module paths in `tests/`, `scripts/` and `examples/` — including the
+  ones written inside strings — plus patch targets, logger names and cold
+  leaf-first imports, none of which mypy or pyright can see.
+- `kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS`: the 18 points v5 activated by
+  default, for callers who need numerical continuity. A frozen historical
+  record, not a maintained preset.
+- `DEFAULT_ACTIVE_POINTS`, `DEFAULT_ACTIVE_ASPECTS` and `ALL_ACTIVE_POINTS` are
+  re-exported from `kerykeion.settings`.
+- `SIGN_CODES` is exported from `kerykeion.schemas`.
+- A "What changes in the results" section in the migration guide, documenting
+  the four v5 → v6 behavioural changes (active points, aspect orbs, predictive
+  orb routing, chart style) with runnable examples for restoring v5 behaviour.
+
+### Removed
+
+- `kerykeion/kr_types/`, the v4-era compatibility shim deprecated throughout v5.
+- `setup.cfg`: flake8 configuration, unused by the project's gates, naming a
+  file that no longer exists.
+
+### Fixed
+
+- The composite polar-fallback documentation example referenced two subjects
+  that were never defined; the snippet now runs.
+
+## 6.0.0a83 - 2026-08-11
+
+### Added
+
+- **Annual profections** (`ProfectionsFactory.from_subject`): the Hellenistic
+  year-lord technique. Age advances on the birthday anniversary in the
+  subject's own timezone; the profected house is `(age % 12) + 1`, its sign is
+  read from the subject's own house cusps (whole-sign charts profect through
+  whole signs by construction), and the Lord of the Year is the sign's
+  traditional ruler. Returns the current year plus a configurable window
+  (`years_before`/`years_after`).
+- **Firdaria** (`FirdariaFactory.from_subject`): the Persian time-lord
+  technique, two levels. Day charts open with the Sun, night charts with the
+  Moon; the 75-year cycle repeats up to `life_cap_years`; planetary periods
+  subdivide into seven sub-periods opening with their own lord, the node
+  periods stay undivided. Years are Julian (365.25 days). Boundaries are
+  local ISO **datetimes** at second resolution (they fall at the birth time
+  of day, not midnight), and `current`/`current_sub` selection runs on the
+  same whole-second grid, so a serialized boundary fed back as
+  `target_date` agrees with the timeline. A subject without a boolean
+  `is_diurnal` (midpoint composite) is refused, never guessed.
+- **Mutual receptions** (`MutualReceptionsFactory.from_subject`): domicile and
+  exaltation receptions among the seven classical planets. Non-terrestrial
+  perspectives are refused: reception is a dignity technique on sign
+  placements as seen from Earth.
+- **Horary indicators** (`HoraryIndicatorsFactory.from_subject`): querent/
+  quesited significators via classical rulership, the considerations before
+  judgment as stable keys (wording belongs to the consuming product), and the
+  chart's mutual receptions. The Ascendant degree is read from the true
+  Ascendant point, not the first-house cusp (Whole Sign safe). Non-terrestrial
+  perspectives (heliocentric, barycentric, selenocentric, planetocentric) are
+  refused with a clear error: cusps, angles and rulership placements only
+  exist in an Earth frame, and mixing frames would produce plausible but
+  invalid indicators.
+- **Shared rulership lookups** (`kerykeion.dignities.get_domicile_ruler` /
+  `get_exaltation_ruler`): single public source over the dignity tables.
+  Zodiacal releasing's private `TRADITIONAL_RULERS` copy now derives from it.
+- **Per-point `motion_state`** on `KerykeionPointModel`: the speed classified
+  against the body's mean daily motion (retrograde/stationary/slow/average/
+  fast, thresholds 5%/80%/120%) for the ten planets, Earth-centred
+  perspectives only. Tables and classifier in the new `kerykeion.motion`.
+- **`progressed_points` with `sign_changed`** on
+  `SecondaryProgressionsResultModel` (`ProgressedPointModel`): natal-vs-
+  progressed sign comparison per active point — the secondary-progressions
+  counterpart of the solar-arc flag, so consumers stop re-deriving ingresses
+  by comparing sign strings.
+- **`age_days_precise`** on `MoonPhaseMoonSummaryModel`: the unrounded lunar
+  age the integer `age_days` was already rounded from.
+- **`constellation`** on `FixedStarMetadataModel`: full IAU constellation
+  name derived from the Bayer/Flamsteed nomenclature suffix (component-letter
+  designations included).
+- **Angularity and stellium analysis on chart data**: `angularities` and
+  `stelliums` on `SingleChartDataModel`, per-subject variants on
+  `DualChartDataModel` (classical planets vs the four angles, 8° default orb;
+  three-planet stellium threshold). Angularities report EVERY (planet, angle)
+  pair within the orb — not just each planet's nearest angle — so consumers
+  can filter by angle without losing entries; both analyses honour the
+  chart's effective `active_points` (an excluded planet never appears). On
+  synastry the per-subject analyses honour the COMMON set the chart
+  serializes (the two subjects' intersection); transit-like charts keep
+  each subject's own set, mirroring their distribution convention.
+- **Subject helpers** in `kerykeion.utilities`:
+  `resolve_subject_birth_datetime` (shared split-components/ISO fallback,
+  now also used by zodiacal releasing), `resolve_subject_local_now`, and the
+  BCE-safe civil-date kit (`resolve_subject_local_moment`, `civil_jd`,
+  `jd_to_iso_date`, `format_astronomical_iso_date`,
+  `parse_astronomical_iso_moment`): profections and firdaria run their date
+  arithmetic on Julian Days, so deep-antiquity births (astronomical year ≤ 0)
+  build timelines instead of hitting Python's ``datetime`` year-1 floor. The
+  kit follows the subject factory's calendar convention (Julian calendar for
+  year < 1, proleptic Gregorian from 1 CE), accepts astronomical-year
+  `target_date` values (which the factories themselves emit), keeps birth
+  seconds in the hour fraction, and the angularity/stellium analyses stay
+  silent for non-terrestrial perspectives (heliocentric/barycentric/
+  planetocentric longitudes don't share the angles' Earth frame).
+  `MotionState` is re-exported from `kerykeion.schemas` like every other
+  public literal.
+
+## 6.0.0a82 - 2026-08-11
+
+### Added
+
+- **Aspect-keyed per-point orb adjustments (the orb matrix).** A
+  `point_orb_adjustments` entry can now vary by aspect: instead of a single
+  number, a point may carry a mapping of aspect name → additive delta, with
+  `"*"` as the default for aspects not listed
+  (`{"Sun": {"*": 1.5, "conjunction": 3.0}}` applies 3.0° to Sun conjunctions
+  and 1.5° to every other Sun aspect). `number` and `{"*": number}` are
+  equivalent, so every existing table is valid unchanged and resolves
+  identically. The explicit-only rule carries over per aspect: without `"*"`,
+  a point is *unconfigured* (not `0.0`) for the aspects it does not list, so
+  negative adjustments on the other endpoint keep tightening — and the
+  equivalence extends to the error contract (e.g. a `sum` overflow raises
+  identically on both forms). Supported end to end: `AspectsFactory` (single
+  and dual charts), `ChartDataFactory`,
+  `SecondaryProgressionFactory.compute_full` and `SolarArcFactory.compute`.
+  The solar-arc self-conjunction guard sizes itself to the conjunction's own
+  delta — resolved independently of the aspect filter, only for same-name
+  pairs, with the whole sum clamped at zero exactly like detection. Both
+  predictive entry points now validate the full adjustment table up front,
+  like the `AspectsFactory` entry points always did. The combination
+  strategies (`max_explicit`/`min_explicit`/`sum`/`none`) operate on the
+  per-aspect resolved values. New helpers in `kerykeion.aspects.orb_utils`:
+  `lookup_point_adjustment`, `has_aspect_keyed_adjustments`,
+  `resolve_pair_orb_adjustments_for_aspects`; `resolve_pair_orb_adjustment`
+  gains a keyword-only `aspect_name` parameter (default `None` = legacy
+  behavior, `"*"` only). `get_aspect_from_two_points` accepts a per-aspect
+  `extra_orb` mapping; the scalar path is byte-identical to before. Unknown
+  aspect names in a mapping log a warning (never an error), mirroring
+  `active_aspects`; non-finite leaves are rejected up front.
+
+## 6.0.0a81 - 2026-08-11
+
+### Changed
+
+- **libephemeris floor raised to 3.1.0** (closes the warning flood in
+  issue #240). Sealed `leb` mode no longer logs a WARNING for every
+  Uranian/fictitious-body calculation — routing those bodies to their
+  runtime analytical models is by-design source selection, now signalled
+  with a typed dispatch and logged at DEBUG. Upstream also retired the
+  `uranians` LEB companion: the Hamburg bodies (Cupido–Poseidon) and the
+  White Moon are always computed from their analytical models, so their
+  provenance is the invariant `source="Analytical"` /
+  `precision_class="analytical"` instead of flipping to `"LEB"` when a
+  companion file happened to be on disk. Positions move by at most the
+  retired file's fit residual (~1e-9°): every golden fixture — reports,
+  SVG baselines, gallery — passes unchanged, so none were regenerated.
+
+### Documentation
+
+- New FAQ entry: why libephemeris log lines appear, why sealed mode is
+  the normal state, and how to quiet the logger
+  (`logging.getLogger("libephemeris")`). The backend guide no longer
+  tells users to install a uranians companion group; Uranian points and
+  the White Moon need no data files at any tier.
+
+## 6.0.0a80 - 2026-08-07
+
+### Changed
+
+- **Modern decluttering is now measured, displacement-optimal, and
+  content-aware.** One overhaul of `draw_modern._resolve_planet_collisions`,
+  landed in stages on this branch and summarized here once, with the final
+  figures. Classic output is untouched; it has its own, unrelated spacing code.
+  - **Measured separations instead of guessed ones.** The old spacing was 8° in
+    the natal ring and a hardcoded 10° in *both* dual rings. The ceilings are
+    now `PLANET_MIN_SEPARATION` 7.25°, `SYN_OUTER_MIN_SEPARATION` 5.75° and
+    `SYN_INNER_MIN_SEPARATION` 7.5°, derived with
+    `scripts/measure_modern_separation.py`: it renders the worst cluster the
+    renderer can be asked to draw — every glyph it knows, all at 29º59' and
+    retrograde, jammed to exactly the separation under test, across eight
+    wheel orientations — and reads the real ink boxes back out of a browser.
+    Measured in the wheel's pinned font stack, ink first touches at 6.25°
+    (natal), 5.00° (dual outer) and 6.25° (dual inner); the slack each ceiling
+    keeps above its floor doubles as headroom for platforms whose fallback
+    sans inks wider than the measured stack.
+  - **Least-squares placement instead of a forward walk.** The old algorithm
+    anchored the first planet of a cramped run and pushed everyone else
+    forward, so the last planet of a big cluster drifted far from its true
+    longitude even with free space behind — up to 30° on an all-points natal
+    and 43° in the synastry inner ring. The resolver is now an isotonic
+    regression (pool-adjacent-violators on separation-deflated coordinates):
+    provably the minimum total squared displacement that preserves zodiacal
+    order and pairwise separations, with cramped runs centered on their true
+    center of mass and a wraparound guard for layouts where the optimum would
+    close the gap the circle was cut at. Refinement that cannot converge
+    (bounded at 32 rounds) now logs a warning instead of shipping silently.
+  - **Separations sized by what each pair actually draws, where it draws it.**
+    Each adjacent pair reserves the arc its own ink needs — measured glyph
+    artwork, the exact degree/minute strings, an `rx` row only when the point
+    is retrograde — evaluated at the pair's actual wheel orientation (top of
+    wheel: widths bind; sides: only the much smaller text heights bind) and
+    solved to a fixed point with a ratcheted refinement loop. The measured
+    ceilings above cap every pair, so no layout can regress. Net effect on the
+    fixtures `scripts/report_modern_displacement.py` prints: worst-case
+    displacement 7.4°→2.7° (stellium), 30.0°→14.3° (all-points natal),
+    43.4°→13.0° (synastry outer ring); means roughly a third of what they were.
+  - **Modern charts now declare their text font** —
+    `font-family="Arial, Helvetica, 'Liberation Sans', sans-serif"` on the
+    wheel root and, for full charts, on the whole `Main_Chart` group (title,
+    panels and aspect grid included). No text node ever declared one, so the
+    same chart rendered serif standalone and picked up whatever font any
+    embedding page used — no spacing model can reserve room for an unknown
+    font, and the adversarial harness caught its own probe page's monospace
+    bleeding into the SVG under test. The three named fonts are
+    metric-compatible, so the measured ink tables hold across platforms.
+    Standalone modern charts change appearance: text is now consistently
+    sans-serif.
+  - The ink comes from `kerykeion/charts/glyph_ink_metrics.py`, a generated
+    module measured by rasterizing every symbol and every text string a
+    cluster can draw in a browser under the pinned font stack
+    (`poe regenerate:glyph-ink`): getBBox-style APIs exclude stroke widths and
+    half the glyphs are stroke-only, while text layout boxes overstate ink
+    vertically and reference-font advance tables miss what the actual font
+    rasterizes at wheel sizes. The regeneration endpoint validates its
+    payload against the script's own glyph/text catalog before writing the
+    module.
+  - Validated adversarially before shipping: mixed narrow/wide,
+    retrograde/direct clusters at eight wheel orientations, rendered by the
+    actual drawing code and pixel-measured in a browser with stroke-aware
+    glyph boxes (`scripts/measure_modern_separation.py --mode adversarial`).
+    The gate fails any pair with less than 0.2 wheel units of daylight; the
+    shipped state measures 0.32+ everywhere, engineered worst cases included.
+    `tests/core/test_modern_decluttering.py` grew optimality tests (block
+    centering, an independent PAVA cross-check, perturbation/KKT,
+    displacement-regression pins) alongside the existing order/gap
+    invariants, and verifies rendered dual-ring spacing against the same
+    `_pair_required_separation` the resolver uses.
+  - Modern SVG baselines, the v6 gallery and the README charts were
+    regenerated.
+
+- **BREAKING: the default chart style is now `"modern"`.** `ChartDrawer`'s
+  `style` parameter defaults to `"modern"` instead of `"classic"`, so every
+  render call without an explicit `style=` argument — `generate_svg_string()`,
+  `save_svg()`, `generate_wheel_only_svg_string()`, `save_wheel_only_svg_file()`
+  — now produces the modern concentric-ring layout. Pass `style="classic"`
+  (constructor or per render) to keep the traditional wheel.
+  - **Default filenames now spell the style out for both wheels.** `save_svg()`
+    without a `filename` writes `"{name} - {chart type} Chart - Modern.svg"` and,
+    with `style="classic"`, `"... - Classic.svg"` (previously the classic file
+    had no suffix). Wheel-only output follows suit: `" - Modern Wheel Only"` /
+    `" - Classic Wheel Only"` (previously `" - Wheel Only"` for classic). No
+    default name is ambiguous anymore: classic and modern output of the same
+    chart can never shadow each other. Aspect-grid-only filenames are unchanged
+    (the grid is style-independent).
+  - **Classic-only options now warn when the modern style ignores them.**
+    `external_view=True`, `show_degree_indicators=False` and
+    `show_aspect_icons=False` only take effect with `style="classic"`; rendering
+    modern with any of them set logs a `logger.warning` naming the option
+    instead of dropping it silently. The render still succeeds. Each option
+    warns once per drawer: the condition belongs to the instance, not to the
+    call, so repeating it would bury a batch job in identical lines.
+  - **The `ExternalNatal` filename alias is now limited to the outputs that
+    actually honour `external_view`** — the classic wheel-only and the aspect
+    grid. The modern wheel ignores `external_view`, so calling its file
+    `ExternalNatal` had the filename claim a layout the drawing did not have,
+    which with modern as the default is what a caller who merely set
+    `external_view=True` would have got.
+  - The committed classic SVG baselines were renamed to the new default names
+    (`" - Classic"` / `" - Classic Wheel Only"`); the regeneration scripts pin
+    `style="classic"` explicitly and the README's showcase now leads with the
+    modern style.
+
+## 6.0.0a79 - 2026-08-05
+
+### Fixed
+
+- **`solar_noon` is now the meridian transit, which is what it always claimed to
+  be.** It was the midpoint between sunrise and sunset. The two coincide only
+  while the Sun's declination is stationary, so the old value was right at the
+  solstices and on the equator — where anyone spot-checking it would look — and
+  wrong everywhere else: measured against two national observatories, +21.5 s at
+  Rome on the equinox, +33.5 s at Ushuaia, +62.4 s at Reykjavík. Worse, when the
+  rise/set pair straddles local midnight the midpoint lands on the wrong civil
+  day entirely, which is what Singapore did. Nothing in the library consumed the
+  field — it is printed in the report, serialised into the AI context and
+  returned to callers — so the correction is visible rather than structural.
+  - `solar_noon` is now also reported on **polar days and polar nights**, where
+    it previously had to be `None`. A transit is a meridian crossing, not a
+    horizon crossing: the Sun culminates on a day it never rises. `day_length`
+    stays `None` there, since there is no pair to measure.
+  - `MoonPhaseSunInfoModel.solar_noon` moved with it, and stays in the subject's
+    local timezone as before.
+  - **New contract, stated because it is a real regression for one case class.**
+    The transit is now searched independently from local midnight instead of
+    being derived from the pair, so `sunrise < solar_noon < sunset` is no longer
+    guaranteed. It holds for every location whose timezone matches its longitude
+    (0 violations in 300 matched city/zone samples), and fails when they do not:
+    65 of 300 random lat/lon/zone triples, 75 of 300 with `tz_str="UTC"` at
+    arbitrary longitudes. Measured worst case: 62.71 N / 121.43 E under UTC
+    reports a solar noon 15 hours BEFORE its sunrise, because the two belong to
+    different solar days. The old midpoint was inside the window by construction
+    and was, for this class alone, better. Both the library API and
+    `/api/v6/sun-times` accept latitude, longitude and timezone as an
+    unvalidated triple, so it is reachable — pass a timezone that belongs to the
+    longitude and it cannot occur.
+
+### Added
+
+- **Sunrise, sunset and solar noon are now anchored to published data we did not
+  produce.** `tests/core/test_sun_times_anchors.py` carries values transcribed by
+  hand from the US Naval Observatory and from IMCCE (Observatoire de Paris) for
+  the same UTC civil day, with the capture date recorded. No script regenerates
+  them: a golden snapshot proves constancy, an anchor proves truth, and only the
+  second kind survives a bad engine bump followed by a blind regeneration.
+  - The tolerances are shaped by what the sources actually do rather than by what
+    would be convenient. The two agree on sunrise and transit, so those are held
+    to 45 s of USNO; they disagree by about two minutes on sunset (a horizon
+    convention), so every event is additionally required to lie inside the span
+    the two of them bracket. Above 60° latitude no time-domain claim is made at
+    all — the Sun grazes the horizon there and clock time stops being a
+    well-conditioned way to state an error, which the sources demonstrate
+    themselves by differing by 10 and 11 minutes at Tromsø. A test asserts that
+    divergence, so the cut-off is earned rather than assumed.
+- **An angle-based check that does not degrade with latitude.**
+  `tests/core/test_sun_times_altitude_invariant.py` never compares times: it takes
+  the instant we return and asks Skyfield — a separate position pipeline — where
+  the Sun was. Across ten sites and four seasons the true upper limb sits at
+  −33.59′ with a spread of 2.5″, solar noon has an hour angle under 0.1 s, and
+  `is_diurnal` flips within a second of the geometric centre crossing zero.
+  - The documented gap between sunrise and diurnality (3.3 min at the equator,
+    4.4 at Rome, 8.2 at Reykjavík) is pinned there too, so the prose cannot drift
+    away from the code.
+
+### Changed
+
+- `libephemeris` floor raised to **>=3.0.0,<4** (from the exact `==3.0.0rc15`).
+  Validated rather than assumed, and the evidence is worth stating precisely
+  because a first draft of this entry overstated it.
+
+  The cross-engine parity campaign, run against a file-backed reference before
+  and after, returned **identical per-domain counts over 5213 compared
+  quantities** and no divergence appearing or disappearing. Note the verdict it
+  returns is RED in both runs — the pre-existing sidereal-ayanamsa and
+  deep-time offenders — so "identical" means unchanged, not clean. The campaign
+  was also run under kerykeion `6.0.0a75`, the version its lockfile pins.
+
+  Two further measurements come from ad-hoc scripts rather than from that
+  campaign, and are reproducible but not archived in any repository: a
+  value-by-value diff of 16337 quantities found 16267 bit-identical, and the
+  eight Uranian points move from a ±20″ scatter against the reference to a
+  uniform +2..3″ bias (8 of 9 improve, Kronos by 20″). The parity grid does not
+  cover the Uranian family at all, which is exactly why those bodies could move
+  36″ and pass 5213 comparisons unseen.
+
+  What the fixtures show directly: **exactly eleven points changed position** —
+  the eight Uranian points, White Moon, mean Lilith and mean Priapus, every one
+  analytically modelled. No planet, angle or cusp changed POSITION.
+
+  SPEEDS did, and this is where a first correction of this entry was itself
+  wrong — it said 80 cells, which is the number of (fixture, angle) pairs, not
+  of table cells; dual charts carry the same angle two or three times per file.
+  Counted properly: **104 angle-speed cells** (Ascendant 37, Medium Coeli 37,
+  Descendant 15, Imum Coeli 15) across 28 fixtures, plus **122 non-angle speed
+  cells** — the Uranian points and, not previously named anywhere,
+  True Lilith 12, True Priapus 12 and Interpolated Perigee 11 — and
+  **19 declination cells** (Mean Lilith 8, Mean Priapus 8, Hades 1, White
+  Moon 1, Admetos 1 — a first count said 17, having taken the dual-return
+  fixture's Lilith and Priapus rows once when that file carries them in both
+  its tables: the very duplicate-cell trap this paragraph warns about).
+  `ascmc_speed` comes from `houses_ex2`; the parity
+  front excludes cusp and angle speed by design, so the campaign could not have
+  seen any of it.
+
+  Magnitudes: the scale-free figure is **five parts per million** (5.15–5.74 over
+  all 104 cells). In absolute terms the MC and IC move about 0.002 °/day; the
+  Ascendant's median is 0.0016 with a worst case of 0.0046, so "about 0.002" is
+  right for two of the four angles and loose for the other two.
+
+  Two knock-on effects worth naming rather than leaving to be discovered: one
+  report gains an aspect row (`Pallas sesquiquadrate Poseidon`, an orb-boundary
+  crossing) and three Zeus aspects flip their Movement column to `Static` as its
+  speed crosses the 0.001 °/day display floor.
+
+### Documentation
+
+- The rise/set horizon convention is now stated where callers will meet it: the
+  apparent upper limb, a semidiameter taken from the real distance rather than a
+  fixed 16′, standard-atmosphere refraction, and a level sea horizon at any
+  elevation. Both the README and the model docstrings say plainly that sunrise
+  and `is_diurnal` answer different questions and must never be derived from one
+  another.
+- `_APPARENT_UPPER_LIMB_HORIZON_DEGREES` now explains why the polar
+  discriminator's textbook −0.833° differs from the −0.827° the search itself
+  implies, and why closing that 0.006° gap would buy nothing.
+
+## 6.0.0a78 - 2026-08-05
+
+### Added
+
+- Charts now report their **diurnality** — whether the Sun stood above the
+  horizon or below it — on a sixth line of the bottom-left info panel, reading
+  `Diurnality: Diurnal` or `Diurnality: Nocturnal`. The value has always been on
+  the subject as `is_diurnal`, computed from the Sun's true geometric altitude
+  and therefore correct for sidereal and heliocentric charts and at polar
+  latitudes; until now nothing drew it. The same line was added to the text
+  report. The wording is deliberately descriptive rather than doctrinal: where
+  the Sun was is an observation every tradition shares, while "sect" is one
+  tradition's name for what follows from it and does not belong in a neutral
+  info panel.
+  - Two-wheel charts report both wheels, because diurnality belongs to a single
+    chart and the same placement reads differently under each: a transit shows
+    `Natal Nocturnal · Transit Diurnal`, a synastry names both subjects
+    (shortened, like every other name in that panel). A bare value on a biwheel
+    would be worse than no line, since the reader could not tell which chart it
+    described. That row carries no `Diurnality:` heading. The reason is the
+    budget rather than the total: the row has about 228px of clear width, the
+    values and separator are fixed, and what is left is shared between the two
+    wheel names — so a heading would not overflow the row, it would come
+    straight out of the names. (Measured with `estimate_text_width`, the headed
+    English form is 196px and fits; nine of the ten shipped languages do, Hindi
+    being the exception at 314px. An earlier draft of this entry said it did not
+    fit, which was checkably wrong.) The names are cut to that width rather than to
+    a character count, since eight ideographs are twice the width of eight Latin
+    letters: `kerykeion.charts.glyph_metrics.estimate_text_width` is the public
+    entry point (re-exported from `chart_drawer` for convenience). Note this is
+    *not* what sizes the planet grid, the legend or the auto-size canvas —
+    `ChartDrawer._estimate_text_width` still uses its own 0.7-of-the-em average
+    there. Pointing that at the measured table is a layout change (28 baselines
+    move — 27 under `tests/data/svg` plus the gallery's transit chart, and none
+    under `docs/charts` — one canvas from 1244px to 1177px) and belongs in a change about grid
+    geometry, not in this one. It charges each character the widest advance that character has
+    across Times, Helvetica and Arial Unicode, rounded up, so it reads at or
+    above what those three render. Regenerate the table with
+    `poe regenerate:glyph-widths` if the reference set changes. Known residual,
+    since the panel names no font-family: under a CJK system font the
+    Ambiguous-width characters — Cyrillic, Greek, the middot — render full-width,
+    wider than any of the three reference faces.
+  - The line is omitted, not guessed, on every perspective not cast from the
+    Earth — eight of the eleven, of which seven draw a Sun that is not the one
+    measured and one (heliocentric) draws none at all. `is_diurnal` comes from a tropical *geocentric*
+    Sun, so a Marscentric or Selenocentric chart draws a Sun that is not the one
+    measured: on a Liverpool nativity the measured Sun is at 196° while the
+    Marscentric wheel draws 354°, and the panel was asserting "Nocturnal" one row
+    under `Perspective: Marscentric`. Apparent Geocentric, True Geocentric and
+    Topocentric keep the line — they differ by parallax and aberration, never by
+    a hemisphere.
+  - The line is omitted, not guessed, where it has no referent: a heliocentric
+    chart excludes the Sun (it is the centre body), and a midpoint composite
+    represents no single sky (`is_diurnal` is `None`). Note a heliocentric chart
+    does still have an Ascendant and houses — the objection is the missing Sun,
+    not a missing horizon. Note that `resolve_sect_is_diurnal`
+    defaults a missing value to day, which is right for calculations that must
+    pick a branch but would mislabel a composite here.
+  - `ChartDrawer(..., show_diurnality=False)` omits it entirely. Nothing shifts
+    to accommodate the line — the rows below the wheel's centre get wider the
+    lower they sit, and the new one lands in the widest band of the six. Only the
+    moon glyph moves, dropping 14px out of its way, and only when a line was
+    actually produced. Heliocentric charts and midpoint composites therefore keep
+    the previous layout too, as does any caller who opts out.
+  - New translation keys `diurnality`, `diurnal` and `nocturnal` in all ten
+    shipped languages, plus `heliocentric_return` and `node_return` for the
+    mislabelled return types under *Fixed* — five keys, all with English
+    defaults so an older third-party pack still validates.
+
+### Changed
+
+- **Breaking for direct constructors of `ChartTemplateModel`:** the new panel row
+  adds a required field, `bottom_left_5`. The model is public, so code building
+  one by hand now raises a pydantic `missing` error until it supplies the key.
+  Required rather than defaulted on purpose, and the opposite call from the
+  language keys above: a language pack is written by a third party against a
+  released version and cannot be fixed retroactively, whereas this model is
+  filled in by a renderer in this repository — a renderer that forgets the row
+  should fail loudly at validation rather than silently draw a chart with a
+  blank line where the value belongs. Callers using `ChartDrawer` are unaffected.
+- `uv.lock` no longer carries `[options] prerelease-mode = "allow"`. Not a
+  deliberate policy change: the block came from a `--prerelease` flag passed at
+  lock time, `pyproject.toml` declares no `[tool.uv]` section, and current uv
+  writes the lock without it — which is also what makes `uv lock --check` pass
+  here and fail on the previous release. Verified inert: the lock resolves the
+  same 58 packages at the same versions, the only difference being kerykeion's
+  own bump. The `libephemeris==3.0.0rc15` pin is explicit, so the default
+  `if-necessary-or-explicit` mode still admits it.
+
+### Fixed
+
+- Heliocentric returns and lunar node crossings announced themselves as **"Lunar
+  Return"** in the chart's Type line — and, once the diurnality row shipped, on
+  that row too — contradicting the `return_type` in the same response. The label
+  was a Solar/else-Lunar binary written when those two return types did not
+  exist; it is now a map over all four — and over every heading and filename,
+  not just the Type line: the chart title, the dual chart's outer planet grid and its
+  house-comparison width estimators were four further copies of the same binary,
+  so a heliocentric return read `Type: Heliocentric Return` under a title ending
+  "Lunar Return". Two more turned up after that: the default filename suffix,
+  where a heliocentric and a node return for one subject collided on the same
+  name and the second overwrote the first, and the Italian `return_aspects`
+  heading, which hardcoded "Ritorno Solare" on the aspect grid of every return
+  type — nine of the ten packs were already generic, so an English-only check
+  could not see it. The text report reuses the same mapping now too, rather than
+  deriving "Lunar Node Crossing" where the chart says "Node Return". Two of the four `ReturnType` values
+  carried the wrong label — which downstream is most of what gets asked for:
+  Astrologer Studio's return picker offers eight bodies, six of which route to
+  one of those two. The mapping reads `return_type` by duck-typing: an
+  `isinstance` gate on `PlanetReturnModel` had reinstated the very binary this
+  entry describes, discarding the declared type of anything else and labelling it
+  Lunar — reachable through `kerykeion.report`, which reads subjects with
+  `getattr` by design. A type the map does not know now yields the neutral
+  `Return` — the key every pack already ships (`Ritorno`, `Rückkehr`, `回归`) and
+  which the house-comparison grid already renders — rather than borrowing the
+  lunar label. An unhashable `return_type` is treated as absent instead of
+  raising: widening the read to duck-typed subjects had made a list or a dict a
+  `TypeError` where the old code returned a label. Caught from the lookup rather
+  than screened with `isinstance(str)`, so a `UserString` or a lazy-translation
+  proxy — which hash and compare equal to `str` without subclassing it — still
+  match the map. (A `str`-mixin enum resolves too, but it always did: it is a
+  `str` subclass, so it satisfied the screen as readily as the fix.)
+- Never shipped in this state, recorded because the reasoning is worth keeping:
+  the five new translation keys were first declared **required** on
+  `KerykeionLanguageModel`, which would have rejected every third-party language
+  pack written against an earlier release with a pydantic `missing` error, and
+  its author could not have fixed a release already out. All five carry English
+  defaults, as the sixteen keys added before them do.
+
+## 6.0.0a77 - 2026-07-21
+
+### Fixed
+
+- Births before 1902 no longer fail in the minutes around a zone's adoption of
+  mean or standard time. Those adoptions move a clock once and permanently, and
+  the tz database records them in the same shape as a summer-time change, so
+  6.0.0a76 rejected the skipped or repeated wall times as ambiguous and told the
+  caller to answer with `is_dst` — a question about daylight saving, which did
+  not exist yet. `Europe/Rome` on 1893-10-31 between 23:49:56 and midnight,
+  `America/New_York` in the four minutes noon struck twice on 1883-11-18,
+  `Australia/Adelaide` in the half hour it skipped on 1899-05-01: 264 of the 598
+  zones carry at least one such window. Below 1902-01-01 a non-unique wall time
+  now resolves to the offset in force before the change and logs at INFO instead
+  of raising. The date is what decides, because nothing else can: the earliest
+  seasonal transition anywhere in the database is from 1916, and the `dst()` flag
+  that would otherwise tell an adoption apart from a summer-time fold is encoded
+  with opposite signs by different builds of the database. The modern contract is
+  unchanged — an ambiguous or non-existent time from 1902 onwards still raises.
+- A midpoint composite no longer overwrites the requested house system with the
+  substituted one. Two subjects inside the polar circle who both asked for
+  Placidus hold Porphyry cusps, and 6.0.0a76 reported `houses_system_identifier`
+  as `"O"` on the composite — so relocating that relationship to a temperate
+  latitude carried a substitution forced by somewhere else, with nothing left to
+  say why. The requested pair is kept, the parents' own `polar_house_fallbacks`
+  records travel with the composite, and `effective_houses_system_identifier`
+  reports Porphyry as it does on a subject. Composing parents whose cusps came
+  from *different* divisions still raises: each composite cusp is the circular
+  mean of the two same-numbered cusps, so averaging across systems would produce
+  a boundary belonging to neither.
+
+### Changed
+
+- The two transition error messages now name the wall time and the zone, offer
+  both possible causes rather than asserting daylight saving, and define `is_dst`
+  by the offset it selects. Their `"Ambiguous time error!"` and
+  `"Non-existent time error!"` prefixes are unchanged, so callers matching on
+  those keep working.
+
+### Corrected notes for 6.0.0a76
+
+The points below were wrong or missing when 6.0.0a76 shipped. They have been
+corrected in place in its own section, and are recorded here so the change is
+visible rather than a silent rewrite of a published release.
+
+- The historical-charts line described the change as recorded city mean times
+  reaching the chart "with their seconds intact". That is a real effect and a
+  negligible one. The effect that actually moves charts went unstated: for a date
+  between a zone's adoption of a recorded civil time and 1901-12-13, the previous
+  backend's truncated table did not know the adoption had happened, so the chart
+  fell back to a mean time derived from the birth longitude. It now uses the
+  record the zone actually kept. Measured at 1900 Amsterdam that is 19m35s, or
+  4.90° of Ascendant; 1895 Tokyo 18m46s (4.69°); 1875 Milan 13m10s (3.29°).
+  Minutes and degrees, not seconds.
+- Nothing was said about `is_dst` changing which side of a fold it selects in
+  zones whose tz build records daylight saving as a negative offset — Ireland,
+  Morocco and Namibia among them. `Europe/Dublin` on 2023-10-29 at 01:30 with
+  `is_dst=True` resolved to 01:30Z before and resolves to 00:30Z now, about 10°
+  of Ascendant. The new answer is the intended one: `is_dst=True` means the
+  larger UTC offset, which is the summer reading whichever way the database
+  books the flag. The count of affected zones is deliberately not stated — it
+  depends on which build of the tz database the host ships.
+- Nothing was said about the composite at all, though 6.0.0a76 both introduced
+  the overwrite corrected above and began refusing parents whose cusps came from
+  different divisions, with a new message.
+
+## 6.0.0a76 - 2026-07-20
+
+### Fixed
+
+- Timezone offsets are now resolved with the standard library's `zoneinfo`
+  instead of `pytz`. `pytz` builds its transition table bounded by 32-bit
+  `time_t`, so for any date after ~2037 or before 1901-12-13 it froze the offset
+  at the nearest known transition: northern zones stayed on standard time,
+  southern zones stayed on DST, and every affected chart was up to an hour off.
+  Because the Ascendant advances ~15°/hour, that surfaced as an Ascendant wrong
+  by up to ~12° — for example a 2100 New York chart was cast on EST instead of
+  EDT.
+- Charts before 1902 now use the civil time the zone actually kept. Between a
+  zone's adoption of a recorded mean or standard time and 1901-12-13, the old
+  transition table did not know the adoption had happened, so the chart fell back
+  to a mean time derived from the birth longitude — a sundial reading standing in
+  for a clock that existed and was documented. Measured at 1900 Amsterdam the
+  correction is 19m35s, or 4.90° of Ascendant; 1895 Tokyo 18m46s (4.69°); 1875
+  Milan 13m10s (3.29°). Separately, and much smaller, the old table rounded
+  pre-standardization offsets to whole minutes, so those records now also reach
+  the chart with their seconds intact — worth up to ~30 seconds.
+- `is_dst=True` now selects the larger UTC offset in every zone, including those
+  whose tz build records daylight saving as a negative offset (Ireland, Morocco,
+  Namibia among them). There the old rule keyed on a non-zero `dst()`, which in
+  that encoding is the WINTER side, so the selection was inverted:
+  `Europe/Dublin` on 2023-10-29 at 01:30 with `is_dst=True` resolved to 01:30Z
+  and now resolves to 00:30Z, about 10° of Ascendant. The larger offset is the
+  summer reading whichever way the database books the flag, which is why the rule
+  no longer consults it. How many zones this touches depends on which build of
+  the tz database the host ships, so no count is given.
+- The polar house fallback no longer corrupts the Ascendant. House systems that
+  are undefined inside the polar circle used to be retried at a latitude clamped
+  to ±66°, and the angles from that retry were reported as the subject's own —
+  so the same place and instant yielded a different Ascendant depending on the
+  house system, which cannot be true of a horizon intersection. Those systems
+  now fall back to Porphyry at the real latitude: cusps stay quadrant-based with
+  the first cusp exactly on the Ascendant, and the angles are exact. The
+  substitution is declared rather than silent (see below). The clamp survives
+  only for Gauquelin sectors, whose 36-cusp output shape admits no substitute.
+- Solar noon in the moon-phase details is computed in instant space. The prior
+  wall-clock arithmetic relied on a fixed-offset tzinfo and would have shifted
+  the result by an hour across a DST transition under a live tzinfo.
+
+### Added
+
+- `AstrologicalSubjectModel.polar_house_fallbacks`: a list of
+  `PolarHouseFallbackModel` records naming the requested and substituted house
+  system, the real and used latitude, and the backend-reported polar threshold.
+  A chart can carry more than one (a main-system substitution and a Gauquelin
+  clamp), so it is a list. Empty for every chart outside the polar circle.
+- Fixed stars now declare `source` and `precision_class` like every other point,
+  on both the requested-star and discovery paths. Per-body coverage and reviewed
+  status stay `None`: the backend keys its coverage inventory by body id and has
+  no star entries, so reporting a window would be an unbacked claim.
+
+### Changed
+
+- `tzdata` is now a hard runtime dependency and `pytz` is gone. `zoneinfo`
+  searches `TZPATH` (the host's own database) first and falls back to the
+  `tzdata` package only when a zone is not found there, so the dependency is a
+  floor rather than a pin: it guarantees every zone resolves on hosts that ship
+  no system database — Alpine, Windows, slim containers — where the library
+  would otherwise raise. It does **not** override a differently-aged system
+  database, so two hosts can still disagree about a zone whose rules changed
+  recently. Pinning outright would require clearing `TZPATH` at import, which
+  would override the deliberate choices of anyone who maintains their own.
+- A local time of year 9999 east of UTC now resolves instead of raising. The old
+  failure was an artifact of `pytz` probing ±1 day around the requested instant,
+  not a real limit.
+- **Output shape:** every `EphemerisDataFactory.get_ephemeris_data()` sample now
+  carries a `polar_house_fallbacks` key in both the plain-dict and
+  `as_model=True` forms. It is a list of the sample's structured fallback
+  records, empty when no polar substitution was needed. Consumers that validate
+  plain-dict keys strictly must accept the new always-present key.
+- A midpoint composite now refuses two subjects whose cusps came from different
+  house divisions, with a new message naming both. Matching *requests* is no
+  longer enough: inside the polar circle two subjects that both asked for
+  Placidus can hold Placidus cusps and Porphyry cusps, and each composite cusp is
+  the circular mean of the two same-numbered ones. A Davison composite is
+  unaffected — it recasts a new chart rather than averaging existing cusps.
+  (6.0.0a76 also overwrote the composite's requested house system with the
+  substituted one; that was a defect and is fixed in 6.0.0a77.)
+
+## 6.0.0a75 - 2026-07-18
+
+### Added
+
+- Ephemeris-backed points calculated through libephemeris can now expose their
+  selected `source`, `precision_class`, reviewed status and backend-reported
+  coverage window. Tracing is collected independently of DEBUG logging and
+  survives normal model serialization.
+- Geometrically derived points inherit provenance from their primaries on the
+  libephemeris backend (like all provenance metadata, this is not populated on
+  the pyswisseph backend): besides the opposite-point antipodes (South Nodes,
+  Priapus variants, Descendant, Imum Coeli, Anti-Vertex), Arabic Parts / Lots
+  are now labelled `source="Derived"` with precision, coverage window and
+  reviewed status inherited from the ephemeris-backed points in their formula
+  (distinct precision classes collapse to `mixed`; coverage is the
+  intersection). Relocated charts preserve the inherited lot provenance.
+  Points computed directly from house geometry (Ascendant, Medium Coeli,
+  Vertex, house cusps) and fixed stars intentionally carry no per-body
+  coverage metadata.
+- `EphemerisDataFactory` accepts `active_fixed_stars`: requested stars are
+  calculated on every generated subject and, when the list is non-empty, each
+  `get_ephemeris_data` sample carries a `fixed_stars` key with the star point
+  models (same shape as `subject.fixed_stars`); subjects returned by
+  `get_ephemeris_data_as_astrological_subjects` expose them via
+  `subject.fixed_stars`. With no stars requested no `fixed_stars` key is added
+  to the plain-dict samples; `as_model=True` serialization gains an empty
+  `fixed_stars` list on every sample (like `ephemeris_warnings` in this same
+  alpha cycle).
+- Subjects expose structured `ephemeris_warnings` for optional points omitted
+  after neither the selected ephemeris nor a permitted local model produced a
+  value. Backend exception details remain in logs rather than public payloads.
+
+### Changed
+
+- **Output shape:** every `EphemerisDataFactory.get_ephemeris_data()` sample now
+  carries an `ephemeris_warnings` key — a list, empty when nothing was omitted —
+  in both the plain-dict and `as_model=True` forms. The plain-dict sample is
+  therefore **not** key-identical to pre-a75 releases even when no stars are
+  requested; the keys are now `date`, `planets`, `houses`, `ephemeris_warnings`
+  (plus `fixed_stars` only when `active_fixed_stars` is non-empty). Consumers
+  that validate keys strictly, golden-diff the raw dict, or serialize
+  `sample.items()` into a pinned payload must accept the new key.
+- A point's `precision_class` is no longer defaulted to `ephemeris` for source
+  labels the coarse mapping does not recognize. Only the tabulated-ephemeris
+  labels (`LEB`, `SPK`, `Skyfield`) map to `ephemeris`; `Keplerian*` and
+  `Analytical*` keep `approximate` / `analytical`, and anything else — notably
+  `ASSIST`, libephemeris' live n-body integration fallback, which libephemeris
+  itself classifies as `numerical-model` — now reports `numerical-model` rather
+  than overstating the point as ephemeris-grade.
+- LEB mode now enforces libephemeris' sealed network policy and delegates
+  source selection to libephemeris. For a configured maximum tier, the
+  highest-priority manifest-pinned LEB artifact covering each body and date is
+  preferred; an explicitly supported local model remains available and is
+  labelled with its actual source. Only a point for which no permitted source
+  succeeds is omitted from `active_points` and reported through
+  `ephemeris_warnings`.
+- Planetocentric failures are no longer replaced with geocentric coordinates.
+  In particular, a Sun or Moon failure now aborts the subject instead of
+  returning a mislabeled frame; swisseph installations therefore need the
+  corresponding planetary ephemeris files for those perspectives.
+- The dependency advances to libephemeris 3.0.0rc14, which supplies the pinned
+  data-v3 modular set, sealed-network gate, best-by-date tier routing and
+  coverage inventory.
+- Tier range shorthands ("1550–2650" for medium) are upper-bound exclusive:
+  the medium LEB core covers `[1550-01-01, 2650-01-01)` — JD `[2287185.5,
+  2688952.5)`. Dates at or beyond the boundary now raise the typed
+  `EphemerisRangeError` (wrapped in `KerykeionException` for luminaries)
+  instead of being served by a silently substituted lower-precision source
+  as in rc12.
+
+## 6.0.0a73 - 2026-07-16
+
+### Fixed
+
+- **Nested ephemeris sessions can no longer corrupt an outer calculation.**
+  `ephemeris_session()` now rejects same-thread nesting before the inner call
+  mutates process-global sidereal/topocentric state. Previously the inner
+  cleanup reset the still-active outer session; a LAHIRI calculation could
+  silently continue with tropical/default state.
+- **Predictive Julian-Day range APIs reject non-finite bounds consistently.**
+  Lunation, retrograde-station, sign-ingress, and mundane-aspect searches now
+  raise `ValueError` for `NaN` or infinite bounds instead of returning a
+  plausible empty model, serializing `null`, or leaking a later overflow.
+- **Eclipse and occultation searches reject negative event counts.** `count=0`
+  remains an explicit empty search; negative counts now raise `ValueError`
+  rather than succeeding vacuously.
+- **Void-of-course backend error normalization is statically typed.** Backend
+  exception classes are resolved and validated once, preserving the documented
+  `KerykeionException` boundary while restoring a clean mypy gate.
+- **ISO range endpoints preserve every separator accepted by Python.** The five
+  timing range factories now distinguish date-only bounds by parsing them as
+  dates. Datetimes using valid non-`T` separators such as `_` are no longer
+  mistaken for dates and widened through the end of the day.
+- **Orb and astrocartography numeric contracts reject non-finite values.**
+  Aspect-axis limits, declination orbs, fixed-star discovery orbs, and ACG
+  latitude steps now reject `NaN` and infinities. ACG latitude bounds must also
+  be finite, ordered, and contained within the geographic -90..+90 range.
+- **Low-level ephemeris and predictive inputs now fail fast.** Unknown zodiac
+  or perspective session values, non-finite USER ayanamsha/topocentric values,
+  non-finite single Julian Days, and invalid eclipse/occultation longitudes no
+  longer select defaults, bypass work through empty requests, or persist
+  invalid model fields.
+- **Primary directions validate their calculation contract.** Unknown rate
+  keys, invalid horizons, malformed or unknown aspect filters, duplicate
+  aspect names, and non-finite subject geometry are rejected or normalized
+  before calculation instead of returning plausible empty/corrupt/duplicated
+  directions.
+- **Primary-direction coordinates now preserve the subject's reference frame.**
+  Planetocentric specula use the requested center-body vector, sidereal labels
+  no longer leak into physical equatorial coordinates, and Topocentric subjects
+  retain and reuse their observer altitude.
+- **Fast paths no longer bypass subject and filter validation.** Fixed-star
+  discovery rejects non-finite subject Julian Days before catalog shortcuts
+  (raising the factory's documented `KerykeionException`); astro-cartography
+  also rejects non-finite Julian Days, malformed or unknown planet filters,
+  and projected grids above 1,000,000 line points (generous enough for
+  step=0.01 high-resolution maps with all ten planets).
+- **Per-point aspect adjustments reject corrupt numeric input.** Non-string
+  keys and non-finite adjustment values now fail before single-, dual-,
+  progression-, or solar-arc aspect calculation. Boolean values are rejected
+  wherever numeric coordinates, orbs, steps, or backend tuples are validated
+  (`True`/`False` pass `isinstance(..., Real)` but are always caller
+  mistakes).
+- **Heliacal and occultation searches reject physically invalid requests.**
+  Heliacal coordinates, event types, counts, atmosphere/observer tuples, and
+  Julian Days are validated even for empty searches. Raw occultation body IDs
+  now obey the same real-body restriction as named bodies.
+- **Dual-chart SVG baselines include the a70 projected-house attributes.** The
+  eleven affected synastry/transit goldens now match the additive metadata
+  contract instead of failing the base-tier suite.
+
+### Documentation
+
+- Added complete guides for mundane aspects, Sun times, planetary hours, and
+  void-of-course Moon windows; updated timing, eclipse, heliacal, planetary
+  return, SVG metadata, public-model, development, and test-suite references.
+- Rebuilt the documentation coverage audit around the explicit 102-name
+  package-root export contract. It now scans README, the AI guide, site docs,
+  and examples and exits non-zero for real omissions; current coverage is 100%.
+- The Markdown snippet gate now includes site examples by default, no longer
+  skips all docs when the optional `swisseph` package is absent, and uses a
+  fast page-level pass with cumulative replay only for diagnostics. All 380
+  maintained runnable snippets pass.
+- Development/test counts and Markdown EOF hygiene were aligned with the
+  current tree, and the primary-directions guide documents the public
+  `compute_speculum()` helper.
+- Corrected backend license assignments, active-point/fixed-star configuration
+  guidance, and the all-points example; added the backend precision guide to
+  navigation. README chart/license resources now use verified absolute URLs so
+  they render from wheel metadata on PyPI.
+
+### Removed
+
+- **Hosted CI removed again (no-CI policy).** The GitHub Actions workflow that
+  crept back in during the review rounds is deleted; the project deliberately
+  has no hosted CI. Every gate runs locally through `poe`: `quality` (ruff,
+  mypy, pyright, full pytest suite), `docs:check`, `docs:snippets`, and
+  `build:smoke` for the isolated wheel smoke test.
+
+## 6.0.0a72 - 2026-07-15
+
+### Changed (6.0.0a72 — libephemeris 3.0.0rc11 repin)
+
+- **Repins libephemeris to 3.0.0rc11.** rc11 refines the computed position of
+  the mean lunar apogee — the **White Moon (Selena)** — by roughly 0.2° versus
+  rc10 (the natal sample subject moves from 26.26° to 26.44° Cancer, for
+  example), with the corresponding shift in every aspect orb that references
+  that point. No zodiac framing, public API, or model field changed; the 13
+  affected `*_report.txt` snapshots were regenerated to match. Tropical
+  longitudes, house cusps, the ascendant, and all other points are unaffected.
+
+## 6.0.0a70 - 2026-07-13
+
+### Added (6.0.0a70 — dual-chart projected-house SVG metadata)
+
+- **Dual-chart `ChartPoint` nodes now expose both house meanings.** Existing
+  `kr:house` remains the point owner's own house, preserving the SVG contract
+  for consumers that display both subjects' domifications. New
+  `kr:projectedhouse` reports the same point in the other subject's house
+  system, while `kr:projectedhoroscope` identifies that target ring (`0` or
+  `1`). The metadata is emitted for both rings of every dual chart type:
+  Transit, Synastry, DualReturnChart (including solar and lunar returns), and
+  Progression. It is present in classic and modern wheels, full and wheel-only
+  SVGs, and is calculated directly from the reciprocal cusps even when optional
+  house-comparison tables are disabled. No visual geometry or existing
+  attribute changed.
+
+## 6.0.0a69 - 2026-07-12
+
+### Added (6.0.0a69 — sidereal mundane event finders)
+
+- **Sidereal support for the mundane event finders** — `SignIngressFactory`,
+  `LunationFinderFactory`, `RetrogradeStationFactory` and `EclipseFactory` now
+  accept `zodiac_type` (`"Tropical"` default / `"Sidereal"`) and `sidereal_mode`
+  keyword arguments on their public entry points (`from_iso_range` /
+  `from_julian_day`, and `search_global` / `search_from_location` for eclipses),
+  mirroring the already-zodiac-aware `MundaneAspectFactory` and
+  `VoidOfCourseMoonFactory`. Each factory runs its scan inside
+  `ephemeris_session(zodiac_type=…, sidereal_mode=…)` so `calc_ut` reports
+  longitudes in the requested frame — an astro-calendar can now render
+  consistently in a single zodiac. Frame-independent event TIMES stay identical
+  (lunation phase = Sun-Moon elongation; station = speed zero, found in the
+  tropical frame; eclipse maximum = shadow geometry); only the reported SIGN
+  labels shift. Sign-ingress TIMES legitimately shift (the sidereal boundary is
+  ~24° away). `season_marker` stays **tropical-only** — a sidereal cardinal
+  crossing is not the equinox/solstice, so it is `None` on every sidereal
+  ingress. All additive: the two new kwargs default to the previous tropical
+  behavior, and no existing signature or model field changed.
+
+### Changed (6.0.0a69 — void-of-course range normalization)
+
+- **`VoidOfCourseMoonFactory.from_iso_range` now normalizes civil-range
+  overflow to `KerykeionException`.** Near the year-1 boundary the sign-by-sign
+  Moon walk can step before 1 CE, where `julian_day_to_utc` raises a bare
+  `OverflowError`/`ValueError` (Python's `datetime` has no BCE support) that the
+  previous `except getattr(ephe, "Error", ())` did not catch — leaking a 500
+  downstream. The range scan now also catches `OverflowError`/`ValueError` and
+  normalizes them to `KerykeionException` with the same "narrow the date range"
+  message the single-moment `from_datetime` path already uses.
+
+## 6.0.0a68 - 2026-07-11
+
+### Added (astrological calendar primitives)
+
+- **Mundane aspectarian** — new `MundaneAspectFactory`
+  (`kerykeion/mundane_aspects/`): every exact transiting-to-transiting aspect
+  within a date range, the content of a printed astrological calendar's
+  aspectarian. Uniform 6-hour sampling of the signed pairwise separation with
+  bisection refinement (unconditionally convergent — Newton diverges on slow
+  mutual pairs near stations), midpoint splitting for relative-motion reversals
+  inside a step, and a branch-cut guard against antipode wraps. Default scan
+  set is Sun..Pluto with the five Ptolemaic aspects; the Moon is opt-in (its
+  ~75 events/month are noise for most consumers); the full minor-aspect
+  vocabulary from the chart defaults is accepted. Aspect instants are
+  zodiac-independent (verified by a sidereal-invariance test); reported
+  longitudes/signs follow the requested zodiac. Returns
+  `MundaneAspectsCollectionModel` with per-event longitudes, signs and
+  retrograde flags.
+- **Void-of-course windows over a range** — new
+  `VoidOfCourseMoonFactory.from_iso_range`: walks the Moon sign by sign and
+  returns every VoC window intersecting the range (unclipped), each framed by
+  its opening aspect and closing ingress, as
+  `VoidOfCourseWindowsCollectionModel`. Reuses the shipped single-moment
+  Newton machinery unchanged; whole-sign voids (no aspect in the sign) are
+  reported with `last_aspect: null`.
+- **Season markers on Sun ingresses** — `IngressModel.season_marker`
+  (optional): Sun ingresses at the cardinal boundaries now carry
+  `march_equinox` / `june_solstice` / `september_equinox` /
+  `december_solstice`. Hemisphere-neutral month-based names; `None` on all
+  other ingresses. Additive and backward compatible.
+
+### Changed (6.0.0a68 — backend repinned rc3 → rc6, golden fixtures regenerated)
+
+Default backend repinned `libephemeris==3.0.0rc3` → `==3.0.0rc6` (the tagged
+`6.0.0a67` intermediate pin to `rc5` is superseded; `rc5` and `rc6` are
+numerically identical — `rc6` is a provenance/independence release — so the
+effective trajectory is `rc3 → rc6`). No public API change; both upstream test
+backends green at 16024 each.
+
+- **Reference-frame transforms refined ~1.5″ across rc3 → rc6.** Sidereal
+  fixed-reference modes (`J1900`/`J2000`/`B1950`) and the heliocentric /
+  topocentric / true-geocentric perspectives moved closer to Swiss Ephemeris.
+  Spot-check, John Lennon Moon sidereal `J2000`: `rc6` 304.37271839 is 0.17″
+  off Swiss; the previous rc3 fixture 304.37313858 was 1.69″ off — `rc6` is
+  ~10× closer, the fixture carried the *less* accurate value.
+- **Golden position fixtures regenerated on rc6.** All 41 sidereal-mode and 3
+  non-default-perspective expected-position fixtures (23 files). The 8
+  tolerance failures the repin surfaced (Moon/Mercury/Pluto, frame-transform
+  paths, sub-arcsecond) are resolved; suite green at 9689 passed.
+- **SVG chart baselines unchanged.** A ~1.5″ shift is far below rendering
+  precision, so every chart baseline is byte-identical and all chart tests
+  stay green without regeneration.
+
+### Fixed (6.0.0a68)
+
+- **`test_defaults_to_current_time_when_none` compared against the wrong
+  timezone.** `AstrologicalSubjectFactory.from_birth_data` resolves "now" in
+  the subject's own timezone (`Etc/GMT` = UTC for the test subject); the
+  assertion used naive `datetime.now()` (local), so it failed whenever the
+  local day differed from the UTC day near midnight in a non-UTC timezone —
+  silently green on UTC CI. It now compares against `datetime.now(timezone.utc)`.
+
+### Fixed (fresh full-codebase review, round 48)
+
+A from-scratch review that deliberately ignored every previous round's "clean"
+verdict. 48 finders, three adversarial skeptics per finding, then an execution
+proof for each survivor: a reproduction script, or a mutation test showing the
+suite stayed green without it. Findings that could not be reproduced were
+dropped, including two raised by the reviewer itself.
+
+- **Rendering regressions were silently skipped, not failed.** Five
+  baseline-comparison tests in `test_chart_parametrized.py` wrapped the
+  comparison in `except Exception -> pytest.skip`. `AssertionError` inherits
+  from `Exception`, so any SVG mismatch was reported as a skip and the suite
+  stayed green. The same swallow hid a violated backwards-search invariant in
+  `test_heliocentric_returns.py`.
+- **The tier filter skipped 25 tests that need no ephemeris.** Extended-kernel
+  tests were selected by matching `"bce"`, `"ancient_rome"` and
+  `"historical_date"` as bare substrings of the node id, so pure string-formatting
+  tests (`test_jd_to_iso_bce_year` in three modules, all of `TestAncientISOFormat`
+  including `test_year_zero`, the BCE sampling-gap tests) never ran on the default
+  tier. No regex can separate them — a test's *name* says "bce" while its body
+  never leaves the civil range — so intent is now declared with an explicit
+  `@pytest.mark.extended` marker on the 40 tests that genuinely need DE441.
+- **`test_chart_drawer_save_svg_method` never tested `save_svg`.** It passed a
+  file path where the method expects a directory, so every call raised, and the
+  `except Exception: assert hasattr(chart, "save_svg")` fallback made the test
+  pass regardless. It now asserts the file is written and non-empty.
+- **Coverage config was silently ignored.** `.coveragerc` took precedence over
+  `pyproject.toml`, so `source = ["kerykeion"]` and the whole `omit` list never
+  applied — while `.coveragerc`'s own comment claimed "the main configuration is
+  in pyproject.toml". Removed; `pyproject.toml` now takes effect.
+- **Fixed stars received none of the point enrichments.** They live in a list
+  under `calc_data["fixed_stars"]`, not as `KerykeionPointModel` values, so the
+  loops that iterate `point_keys` skipped them: Algol (declination +40.9°, plainly
+  out of bounds) returned `azimuth`, `altitude_above_horizon`, `gauquelin_sector`,
+  `is_out_of_bounds` and `nakshatra` all `None` while the Moon was fully populated.
+  The frame-independent enrichments now reach them. Essential dignities stay
+  point-only: rulership is not defined for stars.
+- **Almuten Figuris ignored `include_score_breakdown=False`.** The essential-dignity
+  loop guarded its appends with the flag; `_add_accidental_dignities` appended
+  unconditionally, so `include_accidental_dignities=True` populated the audit trail
+  the caller had opted out of. Scores were always correct and are unchanged.
+- **Astronomical year 0 rendered as `-0000`.** Both formatters in
+  `SecondaryProgressionFactory` tested `year > 0`, sending year 0 down the negative
+  branch and emitting malformed ISO 8601, inconsistent with
+  `_predictive_utils.jd_to_iso_utc`, which tests `year < 0`.
+- **Cusp-in-house report table showed `First_House`.** The projected house name
+  skipped the `_humanize()` call that the adjacent cell uses. Report snapshots
+  under `tests/fixtures/` regenerated accordingly.
+- **`draw_planets` indicator helpers could raise `IndexError`.** Both iterated
+  `range(len(points_settings))` while indexing `points_abs_positions`; every
+  sibling helper bounds the loop with `min(...)`. Not reachable through the
+  shipped `ChartDrawer`, which re-aligns the two lists, so this is hardening.
+- **Untested guards.** The `phase < 1` lower bound in `_get_lunar_phase_index` and
+  the non-finite/negative orb validation in `build_aspect_settings` had no test at
+  all: deleting either left the suite green. Both are now covered, verified by
+  mutation.
+
+### Documentation (fresh full-codebase review, round 48)
+
+- **`libephemeris` is AGPL-3.0-only.** `LICENSING.md`, `COMMERCIAL-LICENSE.md`
+  and `NOTICE` describe the default backend as AGPL-3.0-only. It is authored by the
+  same maintainer as Kerykeion, so the commercial edition covers `libephemeris`
+  through its own commercial license alongside Kerykeion's grant; redistributions
+  must preserve its copyright and attribution notices, including its `NOTICE` file.
+- **`SolarEclipseModel.duration_minutes` was documented as its own opposite.** The
+  field description and the `_solar_gamma_duration` docstring said the value is the
+  global span of the shadow path across the Earth and explicitly "not the totality
+  duration at any single place"; the backend returns exactly that local
+  totality/annularity duration at the point of greatest eclipse (verified: 6.42 min
+  for the 2027-08-02 total eclipse, against its published 6m23s maximum).
+- **`PlanetaryReturnFactory.altitude` was documented as inert.** "Reserved for future
+  astronomical calculations" — but it is forwarded to the topocentric observer setup
+  and does move positions (~0.56″ at 8848 m).
+- The module and class docstrings of `PlanetaryReturnFactory` claimed the Swiss
+  Ephemeris library, while the default runtime uses `libephemeris` and never imports
+  `pyswisseph`.
+- `CompositeSubjectFactory` docstrings described house sorting; the implementation
+  deliberately does not sort (a comment in the body says so, because sorting would
+  swap the composite MC and IC).
+- `download_swisseph_data` documented an `asteroids` key of downloaded paths that is
+  always empty — asteroid files are only detected, never downloaded.
+- Four `charts_utils` grid docstrings stated `x_position` defaults of 620/870/720/970
+  against real defaults of 645/910/750/1015.
+- `site/docs/eclipse_factory.md` typed `magnitude`/`obscuration` as `float`; both are
+  `Optional[float]` defaulting to `None`.
+- The `--ai-guide` flag advertised `AI_AGENT_GUIDE.md`; it scans `kerykeion/llms.txt`.
+- Snapshot-regeneration instructions named two different commands, one of which
+  (`poe regenerate:report-snapshots`) does not exist; unified on `poe regenerate:reports`.
+  The SVG baseline message named `poe regenerate:charts`, also nonexistent.
+- `scripts/quality_check.py` ran `pytest` without `-m "not online"`, so the local
+  quality gate depended on GeoNames being reachable.
+- Removed the duplicate `[tool.pyright]` table shadowed by `pyrightconfig.json`, and
+  the stale generated pdoc tree under `docs/` (12 of its pages documented modules
+  deleted in v6). It is regenerated on demand with `poe docs` and is now git-ignored.
+
+## 6.0.0a67 - 2026-07-10
+
+### Changed (6.0.0a67 — libephemeris 3.0.0rc5)
+
+- **Bumped the `libephemeris` pin to `==3.0.0rc5`** (from `==3.0.0rc3`), pulling
+  in the upstream release-candidate fixes since rc3. No kerykeion computation
+  code changed; the commit only advances the dependency floor. The pin will move
+  to the stable `3.0.0` at the 6.0.0 tag (see the `TODO` in `pyproject.toml`).
+
+## 6.0.0a66 - 2026-07-10
+
+### Added (6.0.0a66 — astrological calendar primitives)
+
+- **Mundane aspectarian** — new `MundaneAspectFactory`
+  (`kerykeion/mundane_aspects/`): every exact transiting-to-transiting aspect
+  within a date range, the content of a printed astrological calendar's
+  aspectarian. Uniform 6-hour sampling of the signed pairwise separation with
+  bisection refinement (unconditionally convergent — Newton diverges on slow
+  mutual pairs near stations), midpoint splitting for relative-motion reversals
+  inside a step, and a branch-cut guard against antipode wraps. Default scan
+  set is Sun..Pluto with the five Ptolemaic aspects; the Moon is opt-in (its
+  ~75 events/month are noise for most consumers); the full minor-aspect
+  vocabulary from the chart defaults is accepted. Aspect instants are
+  zodiac-independent (verified by a sidereal-invariance test); reported
+  longitudes/signs follow the requested zodiac. Returns
+  `MundaneAspectsCollectionModel` with per-event longitudes, signs and
+  retrograde flags.
+- **Void-of-course windows over a range** — new
+  `VoidOfCourseMoonFactory.from_iso_range`: walks the Moon sign by sign and
+  returns every VoC window intersecting the range (unclipped), each framed by
+  its opening aspect and closing ingress, as
+  `VoidOfCourseWindowsCollectionModel`. Reuses the shipped single-moment
+  Newton machinery unchanged; whole-sign voids (no aspect in the sign) are
+  reported with `last_aspect: null`.
+- **Season markers on Sun ingresses** — `IngressModel.season_marker`
+  (optional): Sun ingresses at the cardinal boundaries now carry
+  `march_equinox` / `june_solstice` / `september_equinox` /
+  `december_solstice`. Hemisphere-neutral month-based names; `None` on all
+  other ingresses. Additive and backward compatible.
+
+
+## 6.0.0a65 - 2026-07-10
+
+### Fixed (6.0.0a65 — zero-bug review campaign, rounds 36–47)
+
+Twelve further review rounds, each rotating a fresh runtime-reproduced lens, and
+each round adversarially re-reviewing the previous round's own diff. Rounds 45,
+46 and 47 closed with zero findings. Every fix below was reproduced by execution
+before being applied and is covered by a regression test.
+
+- **Golden baselines regenerated on the pinned engine.** `6.0.0a63` regenerated
+  the baselines with libephemeris `3.0.0rc1` while the same commit pinned
+  `==3.0.0rc3`, whose upstream speed-model fixes shift speeds by ~1e-4 °/day —
+  enough to fail 58 tests on tolerance and flip near-threshold aspect-movement
+  labels in the report snapshots. All expected-position/aspect/subject data and
+  report fixtures were regenerated on rc3 at the `extended` (DE441) tier, which
+  also restored the previously unregenerable `natal_ancient_rome` fixture.
+- **BCE event splitting.** `TransitsTimeRangeFactory` computed sampling gaps with
+  `datetime.fromisoformat`, which raises on extended-year ISO strings; the
+  `except` mapped that to "gap 0", silently merging every recurrence of an aspect
+  in a BCE range into a single event (`applying_start`/`separating_end`/`orb_rate`
+  all `None`). Both call sites now use the module's BCE-safe day arithmetic.
+- **Pre-1 CE progression window.** A progressed Julian Day landing in the ~2-day
+  window before 1 CE Jan 1 (proleptic Gregorian) decomposed to Julian year 1,
+  which `from_birth_data` reinterpreted as Gregorian — building the progressed
+  chart exactly two days late, silently. Clamped with a warning, mirroring the
+  Davison composite guard.
+- **Civil-range edges.** `pytz.localize` probes the surrounding day to resolve
+  DST, so the first and last civil days (`0001-01-01`, `9999-12-31`) crashed with
+  a raw `OverflowError` in `SunTimesFactory`, `PlanetaryHoursFactory` and
+  `VoidOfCourseMoonFactory` instead of the documented `KerykeionException`.
+- **Transits to non-default points.** `EphemerisDataFactory` accepted no
+  `active_points`, so every ephemeris subject carried only the defaults and
+  transits to asteroids/TNOs on the natal chart silently produced zero events
+  while the parameter was advertised. The factory now forwards an optional
+  `active_points` list, and `TransitsTimeRangeFactory` warns when a requested
+  point is missing from the natal side, the ephemeris side, or both (points the
+  subject factory drops by design for the chart's frame stay silent).
+- **Sect (`is_diurnal`) lost at the model boundary.** The value was computed by
+  the return and Davison factories but silently dropped by pydantic (field
+  undeclared on `PlanetReturnModel` / `CompositeSubjectModel`), so sect-aware
+  consumers — dominants, almuten, zodiacal releasing — treated every night return
+  as a day chart. Both models now declare `is_diurnal: Optional[bool]`, and the
+  new `utilities.resolve_sect_is_diurnal` coalesces the midpoint composite's
+  `None` ("no single sky") back to the historical day-chart default.
+- **`Interpolated_Perigee` phantom.** `SE_INTP_PERG` was missing from the
+  geocentric-only exclusion, so in non-geocentric frames libephemeris echoed the
+  geocentric value while swisseph returned a 0° Aries phantom — the exact silent
+  backend disagreement the exclusion exists to prevent.
+- **Geocentric-only points dropped silently.** Explicitly requesting lunar nodes
+  or Lilith/apogee variants in a non-geocentric chart removed them with no log at
+  any level (the analogous center-body drop warns), and a list containing *only*
+  such points returned a silent EMPTY chart. Both now warn and raise respectively.
+- **`active_points` contract.** Unknown names (a typo such as `"Sunn"`) were
+  silently dropped from the chart; an explicit empty list inverted into a FULL
+  default chart. Both now raise `KerykeionException`; fixed-star names still
+  redirect to `active_fixed_stars` with a warning.
+- **Error contracts hardened.** `CompositeSubjectFactory` /
+  `RelationshipScoreFactory` raised raw `AttributeError` on non-subject inputs
+  (and `require_same_frame` let two frameless inputs through, sentinel ==
+  sentinel); `create_chart_data` answered an unknown `chart_type` with a
+  misleading "second subject is required" message; `PlanetaryHoursFactory`
+  accepted out-of-range latitude/longitude; `ChartDrawer` silently fell back on
+  an unknown `chart_language` (to EN) or `double_chart_aspect_grid_type` (to
+  table); `TransitsTimeRangeFactory` validated `axis_orb_limit` only deep inside
+  `get_transit_moments`. All now fail up front with actionable messages. A
+  `language_pack` still legitimizes a custom `chart_language` code.
+- **Fixed-star discovery on composites.** `find_prominent_stars` fed a `None`
+  Julian Day to `fixstar_ut`, which returns NaN positions on libephemeris, so
+  every orb comparison was false and the caller silently received `[]`. It now
+  raises like the sibling planetary-nodes factory.
+- **Zodiacal releasing on returns and Davison charts.** `from_subject` crashed
+  with a raw `AttributeError` on `PlanetReturnModel` / `CompositeSubjectModel`
+  (no split `year`/`month`/`day` fields) — the very models that carry sect for
+  it. Both now anchor on their ISO timestamp; midpoint composites, which have no
+  single moment in time, raise a clear `KerykeionException`.
+- **Nakshatra pada boundaries.** The pada was computed from the remainder against
+  the span constant, inheriting its floating-point error: exactly representable
+  boundaries (20.0°, 30.0°, 60.0°, 70.0°, …) landed in the *previous* pada while
+  the nakshatra itself was correct. Both values now derive from a single global
+  108-quarter index.
+- **Swiss Ephemeris backend suite restored to green.** The backend itself proved
+  healthy (sub-arcsecond parity with libephemeris, worst 0.25″ on Chiron); the
+  failures were test-side: a Lilith reference calc forced the Moshier fallback
+  by resetting the ephemeris path outside the lock; `test_barycentric` asserted
+  the barycentric Sun sits within 0.05° of the geocentric one (physically wrong —
+  both backends agree it is ~25° away); backward return searches are a documented
+  libephemeris-only feature; TNO-dependent tests now auto-skip when the swisseph
+  install lacks the manual-download asteroid files. Kernel-edge tests are gated on
+  the detected ephemeris tier.
+- **Documentation.** ~140 verified corrections across `site/docs`, `site/examples`,
+  `README.md` and `kerykeion/llms.txt`: wrong API names (`swe` → `ephe`, Equal
+  house code `"A"`), wrong defaults and types, crashing or undefined-variable
+  snippets, and stale example outputs — every snippet re-executed and its printed
+  output pasted from the real run. The snippet harness itself was rehabilitated:
+  it pointed at long-gone directories, and once fixed, three interacting defects
+  (joint dedent, a geonames mask that swallowed tracebacks, and masked passes
+  feeding the page context) were producing ~16% false passes.
+
+## 6.0.0a64 - 2026-07-09
+
+### Added (6.0.0a64 — modern SVG focus-mode contract parity)
+
+The `kr:*` SVG attribute vocabulary the modern (`style="modern"`) charts emit
+now matches the classic engine, so downstream focus/highlight code (which
+selects nodes via `kr:node` and matches related nodes by STRING equality of
+`kr:absoluteposition` / `kr:horoscope`) works identically on both styles.
+All changes are SVG metadata only — no astrological computation moved.
+
+- **Modern house-focus owner attributes.** `Cusp` and `HouseNumber` nodes now
+  carry `kr:horoscope="0"` (single and dual charts, mirroring classic);
+  `HouseSector` wedges carry `kr:horoscope="0"` in dual charts (single charts
+  stay bare, mirroring classic).
+- **Indicator ownership (both styles).** Every degree-tick `Indicator` node now
+  carries `kr:absoluteposition`, interpolated from the SAME float object as its
+  owning `ChartPoint`, so the two attribute strings are guaranteed identical.
+  Dual charts also carry `kr:horoscope` (`"0"` inner ring / `"1"` outer ring).
+  In classic dual charts the second subject's tick line + degree text — which
+  previously rendered unwrapped — are now wrapped in a proper
+  `<g kr:node="Indicator" kr:slug kr:absoluteposition kr:horoscope="1">` group.
+  `ConnectingLine` nodes (external natal) carry `kr:absoluteposition` too.
+- **Modern Gauquelin metadata.** Modern `ChartPoint` nodes now carry
+  `kr:gauquelinsector` like classic ones.
+- **`kr:cx` / `kr:cy` normalized to SVG-root user space in every output.**
+  Previously the values were wheel-local: classic outputs were off by the
+  `Full_Wheel` translate (100, 50/offset) and the modern full-chart output by
+  the composed scale+translate, so consumers converting them via `getCTM()`
+  got displaced glyph centers everywhere except the modern wheel-only output.
+  A single rebase pass in `ChartDrawer` now rewrites the values per template,
+  honoring the documented contract ("glyph center in chart SVG root coords").
+  Consumers that already treated them as root coords need no change and become
+  correct; anything that compensated manually must drop the compensation.
+- New structural test suite `tests/core/test_svg_focus_contract.py` pins the
+  contract (owner attributes, Indicator↔ChartPoint string equality, aspect
+  endpoint formatting, root-space glyph centers, Gauquelin metadata) for both
+  styles; all SVG golden baselines regenerated.
+
+## 6.0.0a63 - 2026-07-08
+
+### Changed (6.0.0a63 — golden-baseline regeneration on the DE441 extended kernel)
+
+Regenerated every test golden baseline on the `extended` (DE441) precision tier
+with libephemeris `3.0.0rc1`, restoring the nine pre-1550 historical subjects a
+prior `medium`-tier regeneration had silently dropped (41 subjects again, not 32).
+No kerykeion computation bug was involved; the diff decomposes into:
+
+- **Stale-baseline fixes now captured.** The previous baselines predated two
+  house-ring fixes (composite MC/IC no longer swapped by re-sorting non-monotone
+  cusps; `get_planet_house` resolves non-monotone rings via the shortest arc — e.g.
+  Horizon houses at the equator). The regenerated fixtures encode the corrected
+  (invariant-satisfying) values: composite 10th cusp == MC, and equatorial-Horizon
+  planets distributed across houses instead of collapsed into the 1st.
+- **libephemeris behavioural updates (documented upstream).** `houses_ex2` now
+  reports true time-derivative cusp speeds, so sign-locked systems (Whole Sign,
+  Aries, Krusinski) carry the guiding-point (Asc/MC) rate instead of `0`; the
+  Interpolated-Lilith/osculating-apogee position drifted ~0.02–0.06° after the
+  upstream apogee fixes. Report snapshots (which track the shipped base/medium
+  kernel) were regenerated accordingly.
+- **Heliocentric charts** no longer carry geocentric lunar nodes.
+- **Test fix.** `TestDavisonBCE` derived the era from `davison.year`, but
+  `CompositeSubjectModel` exposes only ISO datetimes; it now parses the
+  extended-year ISO string. These BCE tests only run on the extended kernel, so the
+  latent failure was invisible to the default-tier CI.
+
+## 6.0.0a62 - 2026-07-08
+
+### Fixed (pre-6.0.0 zero-bug review campaign, rounds 26–35)
+
+Ten further review rounds, each rotating a fresh runtime-reproduced lens. Every
+finding below was reproduced offline before fixing and covered by a regression
+test; the fixes are error-contract / validation / display-consistency hardening
+with no change to any correct computed value.
+
+- **Error contract at the ephemeris/date boundary.** `from_iso_utc_time` wrapped a
+  raw `OverflowError`/`OSError` for an instant near `datetime.max/min` whose local
+  wall time overflows during the UTC→local conversion (round 26). The
+  `PlanetaryReturnFactory` crossing searches (`solcross_ut`/`mooncross_ut` and the
+  sibling `helio_cross_ut`/`mooncross_node_ut`, forward **and** backward) leaked a
+  raw `libephemeris` error when the search stepped off the loaded ephemeris range;
+  all are now normalized to `KerykeionException` like every sibling event factory
+  (rounds 31–32). `RelocatedChartFactory` leaked the same `astimezone` overflow for
+  an extended-kernel extreme-year subject (round 27).
+- **Year 0 / BCE calendrical & ISO.** Year 0 (1 BCE) stored as the ISO-8601 unsigned
+  `"0000"` crashed chart rendering because two display helpers
+  (`format_datetime_with_timezone`, `format_iso_display`) routed it to
+  `datetime.fromisoformat` (min year 1); both now take the manual branch (round 27).
+  BCE subjects rendered the local ISO's LMT offset at minute resolution while
+  deriving the Julian Day / UTC ISO from the exact offset, so the two ISO fields of
+  one subject disagreed about the instant by up to ~30 s; the offset is now quantized
+  to the whole second (matching the CE LMT path) and rendered `+HH:MM:SS` (round 34).
+- **Serialization / display consistency.** The text and LLM-context serializers
+  rendered a within-~0.005°-of-cusp `position`/`abs_pos` as the impossible `"30.00"`
+  / out-of-range `"360.00"`; a shared `format_degrees_below_bound` now clamps just
+  below the cusp (round 27). `dominants.zodiac_breakdown` raised `IndexError` on a
+  tiny-negative input; a fold-back guard mirrors `get_kerykeion_point_from_degree`
+  (round 27).
+- **Input validation.** `EclipseFactory.search_from_location` and
+  `OccultationFactory.search_local` accepted an impossible latitude (`|lat|>90`,
+  reachable via a lat/lng swap) and returned a bogus "visible" event; both now
+  `validate_latitude`. Occultation search accepted non-physical calculated points
+  (nodes, Lilith, Uranian hypotheticals) and fabricated events; it is now restricted
+  to an occultable-body allowlist (round 35).
+- **Documentation & type-contract accuracy.** `KerykeionPointModel.dignity_score`
+  documented range corrected to its true `[-9, +11]` net-sum span (round 28); the
+  four Solar/Lunar `PlanetaryReturnFactory` methods narrowed `return_type` from the
+  4-member `ReturnType` to `Literal["Solar","Lunar"]` (the accepted set); several
+  `Raises:`/parameter docstrings aligned to the actual `KerykeionException` contract
+  (rounds 31, 34); stale example output values in the SunTimes docstring and the
+  README Moon-phase examples refreshed (round 33).
+
+Lenses that ran fully **clean** across these rounds (extensive runtime evidence, no
+defect): algebraic/property invariants, aliasing/shared-mutable-state, concurrency &
+shared-cache thread-safety, resource lifecycle/long-run stability, cross-field model
+internal-consistency, model serialization round-trip (all types), SVG rendering at
+degenerate/extreme configs, two-subject techniques (composite/Davison/synastry/score),
+transit-series & chart-data assembly, predictive-technique arithmetic (progressions/
+returns/directions/zodiacal-releasing), perspective & coordinate transforms, peripheral
+reference values (Arabic parts/fixed stars/nodes/ACG/eclipses/nutation), settings &
+translation completeness (10 languages), configurable-input correctness & public-API
+integrity. The southern-polar quadrant-house MC behavior flagged in round 29 was
+confirmed upstream (libephemeris#46) as intended Swiss Ephemeris parity, not a defect —
+see Known limitations.
+
+### Fixed (pre-6.0.0 invariants + calendrical + doc-contract review, round 25)
+
+- **BCE dates reject an impossible day-of-month instead of silently rolling it
+  over.** The year-<1 (Julian-calendar) path validated only `1 ≤ day ≤ 31`, so
+  e.g. a `2 BCE Feb 29` (non-leap) or `100 BCE Apr 31` was silently normalized by
+  `ephe.julday` to the following month — computing a wrong Julian Day and a
+  `iso_formatted_utc_datetime` that disagreed with the stored
+  `iso_formatted_local_datetime` (off by 1–3 days). The BCE path now validates
+  the day against the proleptic-Julian month length (leap when `year % 4 == 0`),
+  matching the rejection the CE path already got from `datetime()`.
+- **Year 0 (1 BCE) is formatted as ISO-8601-conformant `0000`.** Ancient ISO
+  strings rendered astronomical year 0 as the non-standard `-0000` (the minus
+  sign is reserved for years ≤ −1); a standards-conformant external parser would
+  reject or misread it. Year 0 now formats as the unsigned `0000`, and
+  `extract_year_from_iso` parses both `0000` and the legacy `-0000` to 0.
+- **Docs**: removed the unsupported `Gonggong` from the TNO list in the LLM guide
+  (`llms.txt`) — only the seven TNOs in the `AstrologicalPoint` type are listed;
+  refreshed the README Moon-phase report example (it was stale and disagreed with
+  its own adjacent JSON block) and the `model_dump_json()` output comment (v6
+  adds ~25 fields after `retrograde`).
+
+This round added three fresh lenses. **Algebraic/property-based invariants**
+(aspect reciprocity, longitude algebra, house partition, midpoint/composite/
+relationship symmetry, return fixed-points, JD round-trips, event monotonicity)
+were verified across thousands of randomized inputs — all hold. The
+**documentation-vs-behavior** lens found no code defects (every house-system and
+perspective literal, default, deprecation, and README example matches runtime);
+only the three doc drifts above.
+
+### Fixed (pre-6.0.0 security + performance + backend-differential review, round 24)
+
+- **`EphemerisDataFactory` enforces its size cap before building the series.**
+  Each step-type branch built the full `dates_list` and only then checked it
+  against `max_days`/`max_hours`/`max_minutes`, so an over-cap range paid the
+  full allocation (~66 MB / ~13 s at 2.2× over the minute cap; unbounded for a
+  wider range — a single-call resource exhaustion) before raising. The projected
+  count is now checked in O(1) and the `ValueError` is raised before any list is
+  materialized (over-cap now rejected in well under a second with negligible
+  memory; in-cap output unchanged).
+- **Passing `active_points` no longer triggers a 1447-entry catalog scan.**
+  Detecting v5-style fixed-star names in an explicit `active_points` list ran a
+  linear `FixedStarCatalog.find()` per point — so a subject built with
+  `active_points` (a documented performance optimization) took ~2.5× as long as
+  one without. Replaced with an O(1) cached-set membership check
+  (`FixedStarCatalog.is_known_name`), byte-for-byte equivalent to the old
+  detection; the optimization now actually speeds builds up.
+- **Reports sanitize untrusted subject strings.** A birth `name`/`city`/`nation`
+  containing control or ANSI-escape characters flowed verbatim into the
+  plain-text report (terminal title/screen manipulation when an operator views a
+  report of user-submitted data). The report now strips XML-illegal control
+  characters from those fields, matching the existing `context_serializer`
+  behavior (the shared sanitizer was factored into `utilities`). Normal text is
+  unchanged.
+
+Security lens: path traversal (`save`/SVG output), GeoNames-response poisoning,
+SVG/LLM-context injection, ReDoS, and deserialization were all re-probed and
+hold. Performance lens: ephemeris generation, aspect grids, and date-range scans
+are dominated by inherent astronomy (single hoisted session, no per-step churn).
+Backend-differential lens: for the supported configuration `libephemeris` and
+`swisseph` agree within documented tolerances across core positions, the full
+house matrix (including the polar fallback), Gauquelin sectors, sidereal
+ayanamsas, and every event factory except heliacal (a visibility-model
+difference now documented under Known limitations); the remaining divergences
+trace to `swisseph` running on its Moshier fallback without `.se1` data files.
+
+### Fixed (pre-6.0.0 error-contract + R22-diff review, round 23)
+
+- **Heliacal search no longer swallows backend errors as "no event".**
+  `HeliacalFactory.search_events` returned an empty list — indistinguishable
+  from a genuine "no events in window" — when the backend raised an
+  out-of-range / unknown-body / bad-config error (a mistyped planet name, or a
+  window at the edge of the ephemeris). Those hard errors now surface as
+  `KerykeionException`; only a genuine no-solution result still yields `[]`.
+  `search_events` also validates its `planets` argument against the supported
+  set up front. (The single-event entry points that accept a fixed-star name —
+  e.g. `next_heliacal_rising` — still return the correct exception *type* for an
+  unrecognized body but a less precise message; full star-name validation is
+  tracked as a mandatory evolution.)
+- **Gauquelin sector cusps are preserved at polar latitudes.** With
+  `calculate_gauquelin=True` above the polar circle, the `b"G"` house call
+  raised `PolarCircleError`, which was swallowed, leaving `gauquelin_sector_cusps`
+  `None` — and three consumers (secondary progressions, planetary returns,
+  composite charts) infer "gauquelin disabled" from that, so the sectors
+  vanished downstream too. The call now routes through the same polar fallback
+  as the main house cusps (clamped to ±66° with a warning).
+- **`MoonPhaseDetailsFactory` and `VoidOfCourseMoonFactory` honor their
+  documented error contracts near the ephemeris edge.** Their "expected: date
+  out of range → degrade gracefully" handlers caught `RuntimeError`, which no
+  backend raises, so a date within ~one synodic month of the range end leaked a
+  raw backend `EphemerisRangeError`. Moon-phase details now return a model with
+  `None` fields; void-of-course now raises `KerykeionException` (its documented
+  type).
+- **`from_birth_data` normalizes non-integer date/time components.** A string or
+  float component (e.g. `month="06"` from JSON/form data), and a non-int `year`,
+  raised a raw `TypeError`; both now raise `KerykeionException` like the
+  existing out-of-range-component contract.
+- **Aspects signal dropped `active_points` names.** A requested point that
+  resolves to nothing is still dropped, but now logs a `WARNING` for an
+  unrecognized name (typo) or `DEBUG` for a known point simply absent from the
+  subject — instead of vanishing silently.
+- **Polar-fallback diagnostics corrected.** The fallback warning now states that
+  the clamp affects "house cusps and angles" (the returned Ascendant/MC/Vertex
+  also come from the clamped retry, not just the cusps); on the swisseph
+  backend, a non-polar houses failure no longer emits a spurious polar warning
+  or masks the original error behind the clamped retry.
+
+This round completed two coverage-gap lenses (numeric precision — clean, no
+findings — and error-swallowing / error-contract) plus an adversarial re-review
+of the round-22 diff (polar clamp + frame validation), which held.
+
+### Fixed (pre-6.0.0 convergence review, round 20)
+
+- **`from_iso_utc_time(None)` (or any non-string) raises `KerykeionException`.**
+  The `.replace("Z", …)` call is now inside the guarded block, so a non-string
+  timestamp surfaces as the library's exception instead of a raw
+  `AttributeError` — completing the ISO error-contract consistency from round 19.
+
+This round was primarily a convergence check: an adversarial re-review of the
+round-19 diff, a thread-safety sweep (300 concurrent tasks across 32 workers —
+all bit-identical to sequential references, thread-local session-depth counter
+correctly isolated, TTL-segregated cache safe under concurrent creation), and a
+data-table audit (fixed stars, Arabic Parts day/night formulas, Vimshottari
+nakshatra lords, exaltation degrees, aspect-degree maps, sign element/quality
+tables) — all verified correct with no changes needed beyond the fix above.
+
+### Fixed (pre-6.0.0 cross-cutting review, round 19)
+
+- **Malformed ISO timestamps raise `KerykeionException`, not a raw
+  `ValueError`.** `AstrologicalSubjectFactory.from_iso_utc_time` and the three
+  `PlanetaryReturnFactory.*_from_iso_formatted_time` entry points wrapped
+  `datetime.fromisoformat`, so an empty/garbage/out-of-range timestamp
+  (`""`, `"not-a-date"`, `"2023-06-15T25:00:00Z"`) now fails with the library's
+  own exception — matching `from_birth_data` and the `from_iso_range` timing
+  factories. (`EphemerisDataFactory` keeps its documented, tested `ValueError`
+  contract.)
+
+### Fixed (pre-6.0.0 cross-cutting review, round 18)
+
+- **GeoNames request cache is segregated by TTL.** requests-cache stamps each
+  entry's expiry at write time and every instance shared one sqlite store, so a
+  caller asking for a 1-day `cache_expire_after_days` could be served a 30-day
+  entry another instance wrote. The store filename now carries the TTL suffix.
+- **`FetchGeonames` releases its session** via a new `close()` and context-
+  manager protocol; every internal lookup now uses `with FetchGeonames(...)`,
+  so the sqlite-backed session's file descriptors are freed deterministically
+  instead of at GC time.
+- **Nested `ephemeris_session` calls now warn.** The lock is re-entrant, but an
+  inner session's cleanup resets the sidereal/topocentric state the outer one
+  configured (a silent ~0.88° shift). No internal path nests; the warning
+  guards raw callers.
+- **Chart-data `active_points` metadata lists the fixed stars actually
+  aspected.** `SingleChartDataModel`/`DualChartDataModel` now source
+  `active_points` and `active_aspects` from the aspects model, so catalog stars
+  appear and ignored declination aspects (`parallel`/`contra-parallel`) do not —
+  the serialized metadata describes the real calculation.
+- **Aspects models drop uncomputed declination aspects from `active_aspects`.**
+  A `parallel`/`contra-parallel` entry the longitudinal engine ignores no
+  longer appears in the serialized `active_aspects`.
+- **`to_context([])` fails with an actionable message.** An empty list is
+  ambiguous (empty midpoints vs empty aspects); the `TypeError` now points at
+  `midpoints_to_context([])` for an intentionally empty midpoints set (this also
+  restores a clear path for `MidpointFactory.compute` returning `[]`).
+- **Docs/examples**: `ChartDataFactory` class docstring enables
+  `include_relationship_score`; `settings.md` marks `load_settings_mapping`
+  deprecated; `aspects.md` uses `DEFAULT_CELESTIAL_POINTS_SETTINGS` instead of
+  undefined placeholders; the transit examples use a 4-hour ephemeris step
+  (no sub-sampling warning); the pandas cookbook recipe notes its prerequisite.
+
+### Known limitations
+
+- **DST-zone charts after 2037 use a frozen offset.** Local↔UTC conversion for
+  named IANA timezones goes through `pytz`, whose compiled transition tables
+  end around 2037. For a birth/event date past the last compiled transition in
+  a DST zone (e.g. a summer 2038+ `America/New_York` chart), `pytz` freezes the
+  offset at the last known entry instead of applying the zone's perpetual DST
+  rule, so the resolved instant can be off by one hour (Moon ≈ 0.55°, angles up
+  to ~15°). `from_iso_utc_time` is unaffected (it starts from the UTC instant).
+  Dates within the mainstream range (through ~2037) are exact; a `zoneinfo`-based
+  resolution that honors perpetual rules is planned for a future release.
+- **Converse primary directions are approximate.** `PrimaryDirectionsFactory`
+  computes the converse arc as the arithmetic complement of the direct arc
+  (`360 - direct`), not the classical converse method (swap significator and
+  promissor, recompute the oblique ascension under the promissor's pole).
+  Converse (`is_converse=True`) timings should not be relied on for precise
+  work; a proper implementation is planned for a future release. Direct
+  directions are unaffected.
+- **BCE event timestamps use the proleptic Gregorian calendar** (as ISO 8601
+  mandates), while BCE *natal chart* dates use the Julian calendar (the
+  astro.com convention). For the same ancient instant, an event ISO timestamp
+  and a chart date differ by the Julian/Gregorian gap (~2 days near year 0).
+  This is a deliberate split: ISO strings stay standards-conformant, chart
+  dates stay astrological.
+- **Minor bodies degrade silently to a Keplerian approximation near the date
+  range edges.** For birth years roughly outside ~1600–2450 (the SPK coverage
+  of the bundled asteroid kernels), the default `libephemeris` backend returns
+  an unperturbed two-body position for Chiron, the asteroids and TNOs (error up
+  to several degrees), with the same success flag as an accurate value — so
+  kerykeion cannot detect it and the body is not dropped. The Sun, Moon and
+  main planets stay accurate across the loaded ephemeris' whole date range (the
+  default `DE440s` install covers 1849–2150; the `medium` tier extends the
+  planet range to 1550–2650 — see the supported-date-range note in the README),
+  and mainstream modern charts (1900–2100) are unaffected. Install the wider SPK
+  kernels (or enable auto-download) for accurate minor-body positions at extreme
+  dates; libephemeris logs a `source=Keplerian (fallback)` warning to stderr
+  when this happens.
+- **Intermediate house-cusp speeds are backend-dependent.** Only the four
+  angular cusps (1st/ASC, 4th/IC, 7th/DSC, 10th/MC) carry a physically
+  meaningful diurnal speed. The `speed` of the eight intermediate cusps is a
+  house-system construction artefact with no standard astrological meaning, and
+  the `libephemeris` and `swisseph` backends disagree on it by up to several
+  deg/day. The cusp longitudes themselves are identical across backends; only
+  the intermediate-cusp `speed` field differs.
+- **Heliacal event dates are backend-dependent (visibility-model difference).**
+  `HeliacalFactory` passes identical arguments to each backend's `heliacal_ut`,
+  but the two backends use different visibility models — `libephemeris` routes
+  the computation through Skyfield, `swisseph` uses its native arcus-visionis
+  algorithm — so a heliacal rising/setting date can differ by up to ~9 days
+  between backends (the underlying planet positions feeding the search agree to
+  arcseconds; only the visibility threshold differs). The planetary positions,
+  house matrix (including the polar fallback), Gauquelin sectors, sidereal
+  ayanamsas, and every other event factory agree across backends within the
+  documented ~0.2° / few-second tolerances; heliacal is the one technique whose
+  *output date* is materially model-dependent.
+- **Secondary progressions are rebuilt through a whole-second ISO round-trip.**
+  `SecondaryProgressionFactory` derives the progressed instant as a float Julian
+  Day but rebuilds the chart via an ISO-8601 UTC string (`from_iso_utc_time`),
+  which is second-precision, so the progressed Julian Day is rounded to the
+  nearest second (≤ ~0.5 s error). Fast bodies deviate from the exact-float-JD
+  ephemeris by up to ~0.3 arcsecond (~8e-5° for the Moon) — sub-arcsecond and
+  astrologically negligible (far inside the day-for-a-year technique's own
+  precision), but not bit-exact against a raw `ephe.calc_ut` at the float JD.
+- **Quadrant house systems flip the MC and reverse their cusps inside the polar
+  circle (Swiss Ephemeris convention).** For latitudes inside the polar circle
+  (onset ~66.5°, depending on ARMC), Campanus (`C`), Regiomontanus (`R`),
+  Polich-Page (`T`), APC (`Y`) and Sunshine (`I`) return a Medium Coeli on the
+  `RA = ARMC + 180°` branch (the *above-horizon* meridian∩ecliptic point) and a
+  correspondingly reversed cusp ring (the 12 `abs_pos` gaps sum to ~3960° rather
+  than 360°); `Sunshine` (`I`) further collapses several cusps onto one longitude
+  when the Sun is circumpolar, in both hemispheres. This is **not a defect**: it
+  is the reference Swiss Ephemeris convention (inside the polar circle the
+  quadrant MC is redefined as the above-horizon meridian point), reproduced by
+  `libephemeris` for bit-for-bit parity — verified 0 mismatches vs the reference
+  across an 800-case grid, and documented upstream as working-as-intended
+  (libephemeris#46, `known-differences` §2.4). The *astronomical* MC — a function
+  of RAMC only — is what the latitude-independent systems Whole Sign (`W`), Equal
+  (`A`), Porphyry (`O`) and Meridian (`X`) return, unflipped, at every latitude;
+  the Ascendant is never flipped either. Placidus (`P`) and Koch (`K`) instead
+  raise `PolarCircleError` inside the polar circle, which kerykeion catches and
+  clamps to the ±66° limit with a warning. Real-world impact is nil (no Antarctic
+  births). Callers who need forward-partitioning cusps at polar latitudes should
+  use `W`/`A`/`O`/`X`, or validate that the 12 cusp gaps sum to 360°. An opt-in
+  polar-safe mode (astronomical MC + forward cusps, or a raise) may be offered in
+  a future release, mirroring the upstream v4 opt-in flag.
+
+### Changed (breaking, pre-6.0.0 full-codebase review, third pass)
+
+- **`AspectName` literal: `"contra_parallel"` renamed to `"contra-parallel"`**,
+  aligning the separator with every other multi-word aspect name
+  (`"semi-sextile"`, `"semi-square"`). The old underscore spelling is gone from
+  the literal, the aspects factory output and the report glyph table; update
+  any stored configuration or JSON consumers before upgrading.
+- **Single-chart aspects skip mean×true lunar-node artifact pairs.** With both
+  node variants active, every chart used to report a permanent ≤1.75°-orb
+  Mean×True conjunction (and near-opposition with the opposite end) — a
+  configuration artifact, not an aspect. Cross-chart (synastry/transit) node
+  pairs are unaffected. Golden report fixtures were regenerated.
+- **Declination aspect methods now share the longitudinal contract**:
+  `single_chart_declination_aspects` / `dual_chart_declination_aspects`
+  intersect the caller's `active_points` with each subject's own
+  `active_points` (they previously replaced them) and reject a negative `orb`
+  with `KerykeionException`.
+- **Uniform error contract: `KerykeionException` replaces `ValueError`** in
+  `AspectsFactory` (`axis_orb_limit`), fixed-star discovery (negative `orb`),
+  and `SignIngressFactory.from_iso_range` / `RetrogradeStationFactory.
+  from_iso_range` (malformed ISO input, matching the lunation factory).
+- **`to_context([])` raises the documented `TypeError`** instead of silently
+  serializing any empty list as a zero-count midpoints analysis
+  (`midpoints_to_context([])` remains available for an intentional empty set).
+- **`RelocatedChartFactory.relocate` rejects Topocentric subjects** with
+  `KerykeionException`: planets would keep the natal observer's parallax (up
+  to ~1-2° for the Moon), producing an internally inconsistent chart.
+  Recreate the subject at the new coordinates instead.
+- **`from_iso_utc_time` no longer overwrites explicit coordinates**: passing
+  `lat`/`lng` skips the GeoNames lookup entirely (same semantics as
+  `from_birth_data`); the fetched city centroid only fills in what is missing.
+- **BCE dates are validated**: the `year < 1` path used to pass raw fields to
+  `julday`, silently extrapolating impossible dates (month 13, day 32) into a
+  different chart; it now raises `KerykeionException` like the CE path.
+- **GeoNames is reached over HTTPS** (`secure.geonames.org`) and the request
+  cache default moved from the CWD-relative `cache/` to the per-user
+  `~/.kerykeion/cache/` (a read-only CWD no longer breaks online charts).
+  With explicit `lat`/`lng` but no `tz_str` and no `city`, `from_birth_data`
+  now resolves the timezone from the coordinates (timezoneJSON) instead of
+  silently using the default city's timezone (Tokyo coordinates no longer get
+  Greenwich time, ~9 h off).
+- **`MoonPhaseDetailsFactory`: malformed/empty subject timestamps raise**
+  `KerykeionException` instead of silently computing the phase for "now".
+- **`EclipseFactory.search_global`/`search_local` default `start_year`** is now
+  the current UTC year instead of the hardcoded 2025.
+- **Dominants**: the `modern` strategy's aspect channel always sees all four
+  angles, so the ranking no longer changes with the subject's `active_points`
+  configuration; the `elemental` strategy treats an explicit `active_points=[]`
+  as a real empty filter (zero totals), matching the factory convention above.
+- **`kerykeion.settings.__all__` drops `load_settings_mapping`** (deprecated at
+  birth, "removed in 7.0.0"); it stays importable from
+  `kerykeion.settings.kerykeion_settings` for the v6 cycle. The sibling
+  `load_language_pair` is now re-exported as its `__all__` promised.
+
+### Fixed (pre-6.0.0 full-codebase review, third pass)
+
+- **Dual-wheel charts: the second subject's glyphs are always drawn.**
+  `show_degree_indicators=False` used to remove the entire outer ring of
+  transit/partner planets (glyphs included); the flag now gates only tick
+  lines and degree labels.
+- **Glyph anti-collision works across 0°/360°**: the overlap scan is now
+  circular (it starts after the widest gap), so a conjunction straddling the
+  Aries point (29°58' Pisces + 0°10' Aries) is spread like any other pair
+  instead of overlapping. Dense stelliums that exceed the available space now
+  get a proportional partial spread instead of no spread at all.
+- **Arc-seconds render correctly in chart grids**: the degree formatter emits
+  `&quot;` so the SVG quote-replace pass can't corrupt `24°05'23"` into
+  `24°05'23'` (previously wrong on every rendered chart, declination column
+  included).
+- **Transit chart "table" aspect grid no longer clips**: it uses the same
+  (550, 450) anchor as Synastry/DualReturn — the hardcoded (600, 520) pushed
+  the glyph header row past the viewBox bottom on every table-mode Transit.
+- **Declination aspects can't masquerade as conjunctions**: both aspect grids
+  and the modern wheel's aspect core skip aspects that have no entry in
+  `aspects_settings` (a hand-built `parallel` aspect used to render the
+  conjunction glyph / a longitude chord).
+- **Dual-chart aspect models honor `*_subject_is_fixed` for axis-axis pairs**:
+  the speed override now applies before the axis-axis branch, so fixed charts
+  no longer persist synthetic cusp speeds (~360°/day) on those pairs.
+- **Composite factories: `hash(CompositeSubjectFactory)` works** (it hashed
+  unhashable pydantic models — every call raised `TypeError`); missing
+  `julian_day` on composite subjects is now caught with a clear
+  `KerykeionException` in `PlanetaryNodesFactory`, `PlanetaryPhenomenaFactory`
+  and `next_heliocentric_return` instead of a raw backend `TypeError`.
+- **Transit refinement works on BCE ranges**: `_sampling_gaps_days` parses
+  extended-year ISO timestamps (the same ones `_iso_chronological_key`
+  supports), so per-pass splitting/refinement no longer silently degrades;
+  flat orb plateaus of any width dedupe to a single exactness event.
+- **`inline_css_variables_in_svg` can't hang**: self-referential CSS variables
+  in a custom theme now hit an iteration cap (with a warning) instead of
+  looping forever.
+- **Partial-date defaults use the subject's timezone**: `from_birth_data`
+  without a date used to capture the host machine's naive wall clock and
+  reinterpret it in the target timezone (off by the full host-target offset).
+- **Report/serializer parity**: `ReportGenerator` accepts raw
+  `CompositeSubjectModel`/`PlanetReturnModel` like `to_context` always did.
+- **Models**: the midpoints, primary-directions, astro-cartography,
+  secondary-progressions and fixed-star-catalog models are subscriptable like
+  every other public model; `SingleChartDataModel.active_points` /
+  `DualChartDataModel.active_points` accept catalog star names (matching the
+  aspects models); `PointInHouseModel`'s owner-house fields are optional with
+  `None` defaults; `kr_models` imports its literals directly from
+  `kr_literals` (removing a fragile import-order dependency).
+
+### Added (pre-6.0.0 full-codebase review, third pass)
+
+- **GitHub Actions CI** (`.github/workflows/ci.yml`): ruff + mypy + pyright and
+  the base-tier offline test suite on Python 3.12/3.13, with ephemeris-kernel
+  caching and a build smoke check.
+- **`OccultationFactory` accepts planet names** (`"Venus"`) in addition to raw
+  Swiss Ephemeris integer ids; **`HeliacalFactory` accepts `lat=`/`lng=`/
+  `altitude=` keywords** as a safer alternative to the `geopos` tuple
+  (longitude first — the tuple order is now documented).
+- **`FetchGeonames.get_timezone_for_coordinates(lat, lng)`**: coordinate-based
+  timezone resolution over the same cached session.
+- **`CHART_TYPE_PROGRESSION` constant** completes the `ChartType` coverage in
+  `kerykeion.settings.config_constants`.
+
+### Changed (breaking)
+
+- **`ChartDataFactory` now treats an explicit `active_points=[]` as a real
+  (empty) filter**, not as "use the subject's own points" — `None` is the
+  documented sentinel for the latter. A chart requested with `active_points=[]`
+  therefore has no active points (no aspects, element/quality distributions all
+  0.0). This aligns with the timing factories' convention, but is the *opposite*
+  of `AstrologicalSubjectFactory`, where an emptied list still means "no filter →
+  all points"; pass `None` (or omit the argument) to get the subject's points.
+
+### Fixed (pre-6.0.0 full-package review, second pass)
+
+- **Fixed stars in `pure_count` distributions count as 1**, not 0.2: the
+  weighted-mode star table weight leaked into `pure_count`, breaking its integer
+  semantics (a Sun+Moon+Regulus count read 2.2). `DominantsFactory`'s elemental
+  school also opts into fixed stars so its numbers keep matching the chart's
+  element/quality distributions for a star-bearing subject.
+
+- **Online GeoNames gating**: PlanetaryReturnFactory fetches when ANY of
+  tz_str/lat/lng is missing (an AND gate crashed callers passing only tz_str);
+  explicit lat/lng/nation/tz are never overwritten by the fetched city
+  centroid; `from_current_time` resolves the target timezone BEFORE capturing
+  the instant (the naive host wall clock shifted the "current moment" by the
+  full host-city offset); `from_iso_utc_time` raises `KerykeionException`
+  instead of a bare `KeyError` on failed lookups.
+- **Chart rendering**: ASC/MC/DSC/IC get their dedicated radius via NAME
+  classification (the fossil index window pointed at Ceres/Pallas/Juno/Vesta
+  and shifted with filtering); dual charts no longer paint two spurious ticks
+  at the last natal planet's angle; degree-indicator grouping is
+  circular-aware; exact full/new moons render bright/dark instead of inverted;
+  a reduced `aspects_settings` no longer breaks every render on missing
+  `orb_color_*`; unknown-aspect rows no longer emit `xlink:href="#orbNone"`.
+- **Aspects**: applying/separating no longer flips for tight aspects to
+  fast movers (adaptive lookahead step; axes carry ~300 deg/day synthetic
+  speeds); `AspectModel.diff` wraps at 0/360; overlapping user orbs classify
+  by the closest aspect.
+- **Time series**: EphemerisDataFactory steps in UTC — the naive wall-clock
+  series duplicated samples across DST spring-forward and corrupted transit
+  detection.
+- **Returns/report/XML**: Heliocentric and node-crossing returns are titled
+  by their actual type (was always "Lunar Return"); the AI-context XML emits
+  positions for every active point (TNOs, Uranian points, mean nodes, Arabic
+  parts were referenced by <aspects> but never serialized); the transit
+  subject has one consistent name in house overlays.
+- **Factories**: RelationshipScoreFactory raises `KerykeionException` when a
+  subject lacks the Sun; relocation applies the natal polar clamp; midnight-sun
+  days re-pair sunrise/sunset (day_length was negative at Reykjavik in June);
+  heliacal scans skip backend "no event" signals from BOTH backends (pyswisseph
+  errors aborted the scan; libephemeris jd=0.0 sentinels emitted fake events
+  dated -4713); `PlanetaryNodesFactory` validates `method` ('Mean' silently
+  selected osculating data labeled with the caller's string).
+- **Edge cases**: polar day/night at exactly ±90° respects the -0.833°
+  apparent-horizon threshold; the ACG latitude grid reaches the requested
+  edge (float accumulation dropped 66.0 at step=0.1); infinitesimally negative
+  longitudes no longer wrap to exactly 360.0 and crash; an explicit empty
+  `active_points` list on ChartDataFactory is a real filter (None remains the
+  "subject's own points" sentinel); a station exactly on the range's first
+  sample is counted; `applying_start=None` semantics documented (truncation OR
+  undersampled fast pass).
+- **Deprecations**: `natal_aspects`/`synastry_aspects` emit a real
+  DeprecationWarning (removal 7.0.0); `next_return_from_month_and_year` names
+  its removal version; `load_settings_mapping` is deprecated in favor of the
+  cached `translations.load_language_settings`. Docs snippet gate is green
+  (75/75); `llms.txt` performance tips show kwargs on their actual factories.
+
+### Fixed
+
+- **`PlanetaryNodesFactory` passed `method`/`flags` to `nod_aps_ut` in swapped
+  positions**, so every `method="mean"` request silently returned *osculating*
+  nodes/apsides on both backends (Moon mean ascending node came back ~123.95°
+  instead of ~125.04° at J2000). The regression test made the same swapped call
+  and agreed on the wrong answer; a new test locks `mean != osculating`.
+- **Gauquelin sector rendering assumed ascending cusps** while `houses_ex2(b'G')`
+  returns *descending* (diurnal) ones: classic sector labels landed exactly 180°
+  away in the opposite sector, the classic fallback grid was anchored at 0° Aries
+  instead of the ASC, the clickable sector wedges rendered as mirrored-center
+  lens shapes, and the modern overlay rotated with `rotate(+angle)` (mirror image
+  of every other chart element). All drawers now share the descending,
+  ASC-anchored convention.
+- **BCE Davison composites were cast days away from the true time midpoint**
+  (~74 h at year −100, lng 30E): the midpoint JD was decomposed proleptic-Gregorian
+  while the BCE birth path re-encodes components in the Julian calendar with a
+  longitude-LMT offset. Ante-CE midpoints now decompose as the exact inverse of
+  that path (round-trip < 1 s).
+- **Planetocentric charts stored the center body's geocentric position under a
+  planetocentric label** (e.g. a Marscentric chart carried the geocentric Mars in
+  aspects and houses). The center body is now excluded from the active points
+  with a warning, including via Arabic-Part prerequisite auto-activation;
+  `lunar_phase` is `None` for Selenocentric subjects. An explicit
+  `active_points` list containing *only* the center body raises
+  `KerykeionException` (an emptied list would otherwise mean "no filter" and
+  silently invert into a full chart).
+- With `KERYKEION_BACKEND=swisseph` and no `KERYKEION_EPHE_PATH`, the backend now
+  **auto-detects the default download directory of
+  `python -m kerykeion.swisseph_setup` (`~/.kerykeion/sweph`)** before falling
+  back to Moshier — previously the downloaded files were silently ignored unless
+  the env var was also exported (dropping Chiron and fixed stars).
+- Ante-CE `day_of_week` is computed from the local-mean-time date (like the
+  CE path) instead of the UT julian day; heliacal BCE datestamps format as
+  `-0049`, not `-049`; heliocentric-return and node-crossing charts keep the
+  solver's sub-second precision instead of flooring to the second.
+- The five v6 Lilith/Priapus/apse points (`Interpolated_Lilith`,
+  `Mean_Priapus`, `True_Priapus`, `Interpolated_Perigee`, `White_Moon`) render
+  with **dedicated glyphs** in all chart styles instead of the generic
+  fixed-star symbol, and the latter two weigh 0.5 (not the 1.0 fallback) in
+  element/quality distributions.
+- **Fixed stars count toward element/quality distributions again** (weight 0.2
+  for every star unless the table overrides it): v6 moved stars to
+  `subject.fixed_stars`, which made the star weight-table entries unreachable.
+  Star inclusion is opt-in via `include_fixed_stars=True` on the element/quality
+  helpers — single-subject *and* synastry (the chart data factory opts in for
+  both) — so callers naming an explicit point subset get exactly those points;
+  star names go through the shared catalog slugger.
+- `DualReturnChart` without secondary points now raises `KerykeionException`
+  like every other dual chart type instead of silently rendering a bi-wheel
+  with the outer return wheel missing.
+
+### Performance
+
+- **Sign-ingress and retrograde-station scans are ~8-10x faster** with
+  identical results: sampling steps are sized per planet from station
+  acceleration (Mercury keeps the half-day step; the Pluto tier moves to 7
+  days) and bisection stops at the output's 1-second granularity instead of
+  40 fixed iterations. Verified event-identical (timestamps within 10 ms)
+  against the previous implementation on a 1980–2100 full-planet scan.
+
+### Internal
+
+- Consolidated duplicated helpers ahead of the API freeze: one shared
+  `jd_to_iso_utc` (was five private copies with two divergent day-boundary
+  behaviors), one `utilities.wrap_180` (was four wrap-to-±180 variants with
+  two boundary conventions), planet-name→ephemeris-id maps derived from the
+  canonical `POINT_NUMBER_MAP`, and `MidpointFactory._shorter_arc_midpoint`
+  delegating to `utilities.circular_mean`.
+
+### Removed
+
+- **The deprecated pre-6.0.0b1 alias names were removed**, as their
+  `DeprecationWarning` promised ("removed in kerykeion 6.0.0 stable"):
+  `ProgressedToNatalAspect`, `SecondaryProgressionsResult`,
+  `SolarArcDirectedAspect`, `SolarArcDirectedPoint` (from `kerykeion`),
+  `ACGLine`, `ACGLinePoint` (astro_cartography), `SpeculumEntry`
+  (primary_directions) and `FixedStarMetadata` (fixed_stars), together with the
+  internal `kerykeion._deprecation` helper. Use the corresponding `*Model` names.
+
+### Changed
+
+- **`libephemeris` dependency relaxed from the exact `==3.0.0rc1` pin to
+  `>=3.0.0rc1,<4`** so the stable release does not conflict with other
+  constraints; the README now documents the bundled data range (1849–2150,
+  DE440s) and how to install the wider `medium`/`extended` tiers.
+- `next_return_from_year`'s deprecation message now states the removal target
+  (kerykeion 7.0.0), consistent with the package's other deprecations.
+- Note for feature-detection code: accessing removed v5 names such as
+  `kerykeion.AstrologicalSubject` raises `ImportError` with migration guidance —
+  this also applies to `hasattr()`/`getattr(..., default)`; use
+  `try/except ImportError` instead.
+
+- **BREAKING (alpha):** the chart geometry/time helpers in
+  `kerykeion.charts.charts_utils` were renamed to PEP8 `snake_case` with **no
+  compatibility aliases**: `sliceToX`→`wheel_x`, `sliceToY`→`wheel_y`,
+  `decHourJoin`→`hms_to_decimal_hours`, `offsetToTz`→`timedelta_to_decimal_hours`,
+  `degreeDiff`→`degree_difference`, `degreeSum`→`degree_sum`,
+  `normalizeDegree`→`normalize_degree`, `makeLunarPhase`→`make_lunar_phase`. Code
+  importing the old names directly must update its imports. Pure refactor —
+  numerically identical output. The template-dict key `"makeLunarPhase"` is
+  intentionally left unchanged.
+
+### Documentation
+
+- **Documentation completeness, accuracy & navigation pass** (no code or public-API
+  changes — only docs and one model docstring). Documented previously-undocumented
+  public features in the README and the `site/docs/` set: chart **Dominants**
+  (`DominantsFactory`), **Zodiacal Releasing / aphesis** (`ZodiacalReleasingFactory`),
+  the date-range event finders **Lunation / Retrograde-station / Sign-ingress**
+  (`LunationFinderFactory`, `RetrogradeStationFactory`, `SignIngressFactory`),
+  **House Comparison** (`HouseComparisonFactory`) and the **Arabic Parts / Lots**
+  (`Pars_Fortunae`/`Pars_Spiritus`/`Pars_Amoris`/`Pars_Fidei`); added five new
+  `site/docs/` pages and README sections + TOC entries. Corrected stale figures to
+  match the code: `DEFAULT_ACTIVE_POINTS` is **14 points** (not 18), the default
+  aspect set is the **five majors** (Quintile is not active by default),
+  `PerspectiveType` has **11 values**, and the libephemeris pin in the a60 note is
+  `3.0.0a6`. Reframed the backend wording to "libephemeris by default, optional
+  Swiss Ephemeris", fixed broken README links and a TOC ampersand, removed CI
+  references (no-CI policy) from `TEST.md`/`DEVELOPMENT.md`, retitled the root
+  migration stub to "v4/v5 → v6", reduced `RELEASE_NOTES.md` to a pointer at this
+  changelog, marked `REFACTORY.md` as an internal/historical note, and expanded the
+  `AstrologicalBaseModel` docstring to describe the computed celestial/house fields.
+- **Second documentation review — expansion & corrections** (docs only). Documented
+  the `PlanetaryReturnFactory` **heliocentric returns** and **lunar-node crossings**
+  (8 entrypoints the page previously advertised but did not cover) and added
+  `Heliocentric` / `Lunar_Node_Crossing` to the `ReturnType` reference; documented the
+  **Davison** time-space composite on the Composite Subject Factory page and
+  `SolarArcFactory.compute_directed_subject` (biwheel-ready directed chart); added
+  per-point custom-orb docs (`point_orb_adjustments`) and a runnable custom-aspects
+  README example; documented `DominantsFactory.available_methods()`. Filled out the
+  result-model field tables for the Lunation/Retrograde/Sign-ingress finders and the
+  Dominants/Zodiacal-Releasing models. Fixed regressions from the first pass:
+  `station_type` values are **`"SR"`/`"SD"`** (not "retrograde"/"direct"), removed the
+  leftover Quintile from the default-aspect listing in `constants.md`/`settings.md`,
+  and corrected the README "Timing Factories" count (six, not three). Reframed
+  remaining "Swiss Ephemeris"-as-engine wording (eclipse/occultation/planetary-return)
+  to backend-neutral, and surfaced the Swiss Ephemeris configuration page in the docs
+  nav.
+
+## 6.0.0a60
+
+_2026-06-24_
+
+### Changed
+
+- **Bumped `libephemeris` pin to `3.0.0a6`** and **regenerated all golden
+  baselines on the full-range DE441 extended kernel (±8000+).** Positions, SVG
+  charts, report fixtures and configuration goldens now reflect DE441 across the
+  whole supported range, so ancient/far-future subjects (e.g. 500 BCE, 3000 CE)
+  are computed accurately instead of falling back at the short-range kernel edge.
+  Modern charts are unchanged beyond sub-arcsecond ephemeris-version drift
+  (libephemeris a4→a6, ≤ ~3.5″ on far-future points only).
+  Verified vs Swiss Ephemeris: at matched ΔT the engines agree to < 0.1″ on all
+  bodies; the remaining far-epoch differences are the ΔT-extrapolation model
+  (documented in libephemeris, benign). Full suite on the extended kernel:
+  10617 passed · 0 failed.
+
+### Fixed
+
+- `test_ancient_rome_has_fewer_points_due_to_ephemeris` is now kernel-aware: the
+  "fewer points due to ephemeris" behaviour only holds on the short-range default
+  kernel; with the full-range kernel the ancient TNOs are computable, so the test
+  skips (with reason) instead of failing.
+
+## 6.0.0a59
+
+_2026-06-24_
+
+### Changed (breaking)
+
+- **`MoonPhaseSunInfoModel` sun-timing fields are now native date/time types** —
+  `sunrise` and `sunset` change from an integer epoch timestamp to a
+  timezone-aware `datetime`; `solar_noon` changes from `str` to `datetime`; and
+  `day_length` changes from `str` to `timedelta`. The two convenience string
+  fields `sunrise_timestamp` and `sunset_timestamp` (previously `"HH:MM"`
+  strings) are removed with no alias. The serialized JSON shape changes
+  accordingly (ISO-8601 datetimes/duration instead of integers/strings).
+  Migration: derive the old `"HH:MM"` value via `sun.sunrise.strftime("%H:%M")`
+  instead of reading `sun.sunrise_timestamp`, and treat `sun.sunrise` as a
+  `datetime` rather than an epoch integer. `get_type_hints()` on the public API
+  is unaffected.
+- **`axis_orb_limit` now also filters dual-chart aspects** — previously the
+  axis-specific orb limit was applied to single-chart aspects only and was a
+  documented no-op for synastry/transit/composite (dual-chart) calculations.
+  It is now applied uniformly: when a non-`None` `axis_orb_limit` is passed to
+  `AspectsFactory.dual_chart_aspects` (and through `TransitsTimeRangeFactory`
+  and `RelationshipScoreFactory`), aspects involving a chart axis
+  (Ascendant, Medium_Coeli, Descendant, Imum_Coeli) on either subject are kept
+  only when their orb is below the limit. Callers that previously relied on the
+  value being ignored for dual charts will see fewer axis aspects (and, for
+  relationship scoring, possibly a different score). The default remains `None`
+  (no axis filtering), so callers that never set `axis_orb_limit` are unaffected.
+
+### Fixed
+
+_Follow-up pass addressing the CodeRabbit review on PR #224._
+
+- **`house_position` chart label was a duplicate of `natal_house`** — the new
+  `house_position` field (the "house position" comparison-grid column header for
+  transit/return charts) shipped with the `natal_house` value ("Natal House" and
+  its translations) in all 10 languages, the model default, and the three
+  `chart_drawer` fallbacks. It now renders the correct, distinct label
+  ("House Position", "Posizione in casa", "Position en maison", "宫位", …). The
+  affected English golden SVG fixtures were updated accordingly.
+- **`MoonPhaseSunInfoModel.solar_noon` could carry the wrong local offset on
+  DST-transition days** — the midpoint was computed with raw `pytz` arithmetic,
+  which keeps sunrise's offset; the instant was correct but the serialized
+  wall-clock offset could be off by the DST shift. The midpoint is now
+  normalized back through the timezone.
+- **`format_timedelta_hhmm` used banker's rounding** — exact half-minute
+  durations (e.g. `0:30`) rounded to the nearest *even* minute. It now rounds
+  half-up, so report and LLM-context durations are consistent at the boundary.
+- **`AspectsFactory` axis filtering rejects non-positive `axis_orb_limit`** — a
+  `0` or negative value silently dropped every axis aspect; it now raises
+  `ValueError`.
+- **`MoonPhaseSunInfoModel` enforces timezone-aware sun times** — `sunrise`,
+  `sunset` and `solar_noon` now reject naive `datetime` values via a validator,
+  matching the documented local-time contract. The field annotations are
+  unchanged, so `get_type_hints()` on the public API is unaffected.
+
+### Documentation
+
+- `ephemeris_session()` now documents the shared `DEFAULT_SIDEREAL_MODE` fallback
+  instead of a hardcoded `"FAGAN_BRADLEY"`; the `TransitsTimeRangeFactory`
+  `axis_orb_limit` docstrings now list all four axial points.
+
+## 6.0.0a57
+
+_2026-06-16_
+
+### Fixed
+
+- **Fixed-star discovery no longer drops bright stars to a position collision** —
+  `FixedStarDiscoveryFactory.find_prominent_stars` deduplicated candidates by
+  ecliptic longitude rounded to two decimals (`round(deg, 2)`). With the small
+  curated catalog this was harmless, but libephemeris 3's 1447-star catalog packs
+  many physically distinct stars within 0.01° of longitude, so the second star in
+  catalog order was silently discarded — and catalog order is not magnitude order.
+  This suppressed astrologically relevant bright stars in favour of faint
+  neighbours (e.g. Nunki, σ Sgr mag 2.02, lost to Beta Scuti mag 4.22, both at
+  282.26°). Deduplication is now by star identity (`entry.name`) instead of
+  position, so every distinct star within orb is reported. Discovery results grow
+  accordingly (more conjunct stars returned for a given orb).
+
+## 6.0.0a56
+
+_2026-06-16_
+
+Rebased on **libephemeris 3** (`3.0.0a3`), the first major release of the
+ephemeris backend. The dependency pin moves from `>=2.0.2,<3.0.0` to
+`==3.0.0a3`. Two backend behaviour changes propagate into chart output; the
+affected report and SVG golden fixtures were regenerated.
+
+### Changed (breaking)
+
+- **Ephemeris backend handle renamed `swe` → `ephe`** — the unified backend
+  object exposed by `kerykeion.ephemeris_backend` is now `ephe`
+  (`from kerykeion.ephemeris_backend import ephe`). The old `swe` name is
+  removed with no alias: it implied Swiss Ephemeris is the engine, but
+  libephemeris is the primary backend and swisseph is a legacy fallback. Update
+  any `from kerykeion.ephemeris_backend import swe` import to `ephe`. The
+  internal helper `compute_sun_rise_set_swe` is likewise `compute_sun_rise_set_ephe`.
+
+### Changed
+
+- **Dependency: libephemeris `2.x` → `3.0.0a3`** — bumped to the new major
+  series and pinned exactly while it is in alpha. libephemeris 3 ships the
+  four-backend architecture (Skyfield, the LEB fast path, JPL Horizons, and an
+  adaptive `auto` mode) behind the same `calc_ut()` interface; core planetary
+  positions are unchanged within tolerance.
+
+### Changed (ephemeris output)
+
+- **White Moon / Selena repositioned** — libephemeris 3 computes Selena
+  (body 56) on a ~7-year period (≈ `+0.1408°/d`) instead of the previous
+  ~8.8-year period (≈ `+0.1120°/d`), shifting the point by up to a full sign in
+  every chart that includes it. White Moon is part of `ALL_ACTIVE_POINTS` (not
+  the default point set), so default charts are unaffected; all-points reports
+  and SVGs change their White Moon placement, element/quality distribution, and
+  aspect list.
+- **Out-of-SPK-range bodies fall back to a Keplerian approximation** — for dates
+  outside the SPK kernel coverage (≈ 1900–2100), asteroids and TNOs that were
+  previously dropped now return a degraded two-body position (~1–2°) instead of
+  raising, so historical and far-future all-points charts list more points
+  (e.g. the 1879 Einstein natal report grows from 45 to 53 active points).
+
+## 6.0.0a55
+
+_2026-06-11_
+
+Stabilization pass: process-wide thread safety for
+ephemeris access, sidereal-zodiac correctness across every search and
+refinement path, aspect and SVG-rendering fixes, hardened event finders,
+packaging cleanup — followed by a five-round review with a final
+hardening pass (below).
+
+### Added (hardening)
+
+- **Public model export parity** — every public Pydantic model (87) is now
+  importable from `kerykeion.schemas`, the canonical home the `kr_types`
+  deprecation message points to (37 were previously reachable only from the
+  deprecated path or deep module paths). Feature subpackages (`eclipses`,
+  `astro_cartography`, `primary_directions`, `planetary_nodes`) now export
+  their result models, and top-level `kerykeion` exports every model returned
+  by a public factory (`AstrologicalSubjectModel`, `TransitEventsTimeRangeModel`,
+  `SolarEclipseModel`, ...). A new regression test
+  (`tests/core/test_public_api_surface.py`) locks the policy: schemas parity,
+  subpackage exports, factory-return exports, `typing.get_type_hints` on every
+  public model, and `*Model` naming.
+- **`kerykeion.__version__`** — the installed package version, read from
+  package metadata at import time.
+
+- **v5 migration errors** — importing the removed v5 entry points
+  (`AstrologicalSubject`, `KerykeionChartSVG`, `NatalAspects`,
+  `SynastryAspects`) now raises an `ImportError` naming the v6 replacement and
+  the migration guide; `ChartDrawer` rejects non-`ChartDataFactory` input with
+  the two-step example instead of an opaque pydantic `AttributeError`.
+- **Ephemeris tier auto-detection** — a plain `pytest` run probes the loaded
+  kernel and skips out-of-range tests with explicit reasons instead of failing
+  (pass `--tier=extended` to force-run everything); forcing
+  `KERYKEION_BACKEND=swisseph` without `.se1` data files now exits upfront
+  with download instructions instead of failing hundreds of golden tests.
+- **`poe build:smoke`** — builds sdist+wheel, then imports the wheel and
+  renders a natal chart offline in an isolated environment, so missing
+  packaged data files (templates, themes) are caught before publishing.
+
+### Changed (hardening)
+
+- **Model naming normalized to `*Model`** — eight new-in-v6 classes renamed
+  for consistency with the rest of the public models:
+  `SecondaryProgressionsResult` → `SecondaryProgressionsResultModel`,
+  `ProgressedToNatalAspect` → `ProgressedToNatalAspectModel`,
+  `SolarArcDirectedAspect` → `SolarArcDirectedAspectModel`,
+  `SolarArcDirectedPoint` → `SolarArcDirectedPointModel`,
+  `ACGLine` → `ACGLineModel`, `ACGLinePoint` → `ACGLinePointModel`,
+  `SpeculumEntry` → `SpeculumEntryModel`,
+  `FixedStarMetadata` → `FixedStarMetadataModel`. The old names keep working
+  as deprecated aliases (emitting `DeprecationWarning`) and will be removed in
+  6.0.0 stable.
+- **Quality gates green** — mypy (103 source files), pyright and ruff all pass;
+  annotation-only fixes, no behavior changes.
+- **README** — all 68 embedded code snippets now validated against the real
+  API (six were stale: fixed-star access via `active_fixed_stars` +
+  `find_fixed_star()`, planetary-phenomena/nodes iteration, field renames
+  `nutation_longitude` and `altitude_above_horizon`).
+
+### Fixed
+
+- **Sidereal correctness** — planetary returns (the crossing search now runs in
+  the subject's zodiac frame), transit refinement, relocation house cusps,
+  fixed-star discovery, astrocartography and planetary nodes all honor the
+  active sidereal mode instead of mixing tropical longitudes into sidereal
+  charts.
+- **Aspects** — the South Node's speed is no longer negated, fixing
+  applying/separating classification; geometric opposite pairs
+  (Vertex/Anti-Vertex, Lilith/Priapus) and star–star pairs no longer emit fake
+  aspects, on both the longitude and the declination paths.
+- **Charts** — user-provided strings are XML-escaped in SVG output (XSS / parse
+  fix); chart filenames are sanitized; exactly-conjunct planets no longer lose
+  a glyph (previously one of two points at the same degree was silently
+  dropped); biquintile aspects get their glyph in the modern wheel (the icon
+  map used a hyphenated key); the classic theme defines its base palette
+  variables, so Uranian-planet colors no longer inline to empty `fill` values,
+  and now also the shared General tokens (`neutral-content`, `base-*`,
+  `info`/`success`/`error`, `black`/`white`) every other theme defines — the
+  house/cusp comparison-grid text referenced an undefined variable in the
+  default theme (empty `fill` when CSS variables are inlined);
+  SVG minification keeps the optimizer's output intact and applies the
+  string-based quote/whitespace fallback only when the optimizer fails.
+- **Transits** — `get_transit_events` splits recurring/retrograde passes into
+  separate events instead of merging them; under-sampled fast bodies now emit a
+  warning; exact-moment refinement uses a true ternary search — the previous
+  quartile probing could discard the actual minimum on asymmetric orb curves
+  (e.g. near a station) and converge to a slightly wrong moment — and
+  `refinement_iterations` now defaults to 21 ternary steps (precision ≥ the
+  previously documented 12 halvings).
+- **Primary directions** — corrected Placidian pole computation, ecliptic
+  aspect-point conversion and the horizon test; directions are labeled
+  direct/converse.
+- **Events** — DST-gap midnights are resolved for sun times and planetary
+  hours; eclipse/lunation backend errors now raise instead of silently
+  truncating the scan; BCE timestamps fixed; lunation range parsing accepts
+  lowercase-`t` ISO strings.
+- **Zodiacal releasing** — peak periods are measured from the Lot of Fortune
+  for all released lots.
+- **Core** — an out-of-range Sun or Moon raises `KerykeionException` instead of
+  silently degrading the subject (note: bulk scans such as
+  `EphemerisDataFactory` ranges now fail loudly at the first out-of-range step
+  rather than yielding partially gutted subjects); Julian conversions use the
+  proleptic Gregorian calendar (pre-1582 dates round-trip); star names passed
+  to `active_points` redirect to `active_fixed_stars` with a warning;
+  `from_current_time` gains the v6 calc flags and an altitude parameter;
+  offset-less ISO timestamps are treated as UTC; a failed planetocentric
+  calculation logs a warning before falling back to geocentric positions
+  instead of substituting them silently; the swisseph White Moon fallback
+  re-activates the point even when it was the only active point requested.
+
+### Changed
+
+- **Thread safety** — a shared `ephemeris_session` context manager in
+  `kerykeion.ephemeris_backend` now serializes ephemeris access for all
+  factories; `swe.close()` is never called directly, and the pinned
+  libephemeris calc mode survives session resets.
+- **SVG test baselines re-generated** — the committed baselines predated the
+  XML-escape and base-palette fixes above, which silently downgraded their
+  comparisons to the lenient line-count path; regenerating restores strict
+  per-line comparison. `regenerate:svg` now skips its out-of-kernel 1500 CE
+  subject (keeping that baseline stale, like the extended script's ancient
+  subjects) instead of aborting, so regeneration completes on short ephemeris
+  kernels.
+
+### Changed (breaking — alpha channel)
+
+- **`NatalAspectsModel` / `SynastryAspectsModel` removed** (retroactive note:
+  these v5 aliases of `SingleChartAspectsModel` / `DualChartAspectsModel` were
+  dropped earlier in the v6 alpha line without a changelog entry). Use
+  `SingleChartAspectsModel` / `DualChartAspectsModel` instead.
+
+### Packaging
+
+- **`libephemeris` installed from PyPI** — the local-path `[tool.uv.sources]`
+  entry is gone and the pin is relaxed to `>=2.0.2,<3.0.0`.
+- **`MANIFEST.in` removed** — dead config under hatchling (which ignores it);
+  sdist contents are governed by `[tool.hatch.build.targets.sdist]`. Wheel and
+  sdist were inspected to confirm all data files (templates, themes,
+  `llms.txt`) ship.
+- **No hosted CI** — a GitHub Actions workflow briefly added during the alpha
+  line was removed before release; verification is local (`poe check`, tiered
+  `pytest`, `poe build:smoke`).
+
+## 6.0.0a54
+
+_2026-06-05_
+
+Adds two sky-event finders: planetary retrograde/direct stations and zodiac
+sign ingresses, each scanning a date or Julian-Day range.
+
+### Added
+
+- **`RetrogradeStationFactory`** (`kerykeion.retrograde_stations`) — finds
+  planetary retrograde and direct stations (the moments a planet's apparent
+  longitudinal motion reverses) across a date or Julian-Day range
+  (`from_iso_range` / `from_julian_day`). Backend-agnostic: samples the
+  `swe.calc_ut` longitudinal speed and bisects each sign change to the zero
+  crossing, like `LunationFinderFactory`. Returns a
+  `RetrogradeStationsCollectionModel` whose `StationModel` items carry the
+  planet, station type (`SR`/`SD`), UTC timestamp, Julian Day and zodiac
+  position. The Sun and Moon are excluded (they never station). Re-exported from
+  the package root (`RetrogradeStationFactory`, `StationModel`,
+  `RetrogradeStationsCollectionModel`).
+- **`SignIngressFactory`** (`kerykeion.sign_ingresses`) — finds zodiac sign
+  ingresses (a body crossing a 30° boundary) across a date or Julian-Day range.
+  Its `IngressModel` items carry the planet, from/to signs, a retrograde flag for
+  re-entries, UTC timestamp and Julian Day. Detects multiple crossings within a
+  single sampling interval (a retrograde re-entry near a station) via a recursive
+  midpoint probe. The Moon is opt-in. Re-exported from the package root
+  (`SignIngressFactory`, `IngressModel`, `SignIngressesCollectionModel`).
+
+Both validate against known anchors (the 2026 Mercury retrograde windows, the
+solar equinoxes/solstices, and the 2023–2024 Pluto Capricorn↔Aquarius ingress
+dance) and support BCE ranges via `from_julian_day`.
+
+## 6.0.0a52
+
+_2026-06-03_
+
+Adds a lunation-calendar finder and enriches eclipse search with zodiac
+position plus Saros/Inex/gamma/duration metadata. Raises the libephemeris
+floor to 2.0.2.
+
+### Added
+
+- **`LunationFinderFactory`** (`kerykeion.lunations`) — finds New Moon, First
+  Quarter, Full Moon and Last Quarter across a date or Julian-Day range
+  (`from_iso_range` / `from_julian_day`) via `compute_lunar_phase_jd`, iterating
+  each phase independently at a half-synodic step so the binary-search solver
+  never degenerates on adjacent phases. Returns a `LunationsCollectionModel`
+  whose items carry the phase name, UTC timestamp, Julian Day and the Sun/Moon
+  `KerykeionPointModel`. Re-exported from the package root
+  (`LunationFinderFactory`, `LunationModel`, `LunationsCollectionModel`).
+- **Eclipse zodiac + physical metadata** — `SolarEclipseModel` /
+  `LunarEclipseModel` gain optional `ecliptic_longitude`, `sign`, `sign_num`
+  and `degree` of the luminary at maximum, plus `saros` / `inex` (and, for
+  solar eclipses, `gamma` and `duration_minutes`). The values come from the
+  libephemeris extensions, guarded with `hasattr`, so they are `None` on the
+  swisseph backend — additive and backward compatible.
+
+### Changed
+
+- **`libephemeris` pinned to `==2.0.2`** — picks up the fix for global
+  lunar-occultation search under the `extended` (DE441) precision tier
+  (`lun_occult_when_glob` previously clamped post-1969 searches to the DE441
+  segment split and returned no events).
+
+## 6.0.0a51
+
+_2026-05-29_
+
+Fix the Void-of-Course Moon's `next_aspect`: it is now the Moon's first exact
+aspect *after* the sign ingress (the aspect that ends the void lull), instead of
+being re-picked from the current sign — which made it duplicate `last_aspect`
+whenever the queried moment fell before the last in-sign aspect.
+
+### Fixed
+
+- **`VoidOfCourseMoonModel.next_aspect`** — `compute_void_of_course` now scans the
+  *next* sign for `next_aspect` (a second `_aspects_in_window` pass between the
+  ingress and the following cusp), so it is always a distinct event from
+  `last_aspect`. Previously both were drawn from the current sign's aspect list,
+  so `next_aspect` duplicated `last_aspect` when the queried moment preceded the
+  last in-sign aspect.
+
+### Changed
+
+- **`next_aspect` semantics** — it now reports the first aspect in the next sign
+  (no longer `None` while the Moon is void). The field stays `Optional` with the
+  same type; `last_aspect`, the void window and `is_void_of_course` are unchanged.
+
+## 6.0.0a50
+
+_2026-05-29_
+
+`SunTimesFactory` now also reports civil, nautical and astronomical twilight.
+
+### Added
+
+- **Twilight on `SunTimesModel`** — six new optional fields: `civil_dawn` /
+  `civil_dusk` (Sun at -6°), `nautical_dawn` / `nautical_dusk` (-12°) and
+  `astronomical_dawn` / `astronomical_dusk` (-18°). Computed by
+  `compute_twilight_events` via the active ephemeris backend's `rise_trans`
+  twilight bits (geometric, no refraction); each is `None` when that twilight
+  does not occur on the civil day (polar / high-latitude geometry).
+
+## 6.0.0a49
+
+_2026-05-29_
+
+New **dominants calculator** — the dominant planet, sign, element, modality and
+house of a chart — offering several interchangeable calculation "schools" behind
+a Strategy pattern, plus a first-class custom-strategy extension point.
+
+### Added
+
+- **`DominantsFactory`** (`kerykeion/dominants/`). Computes a chart's dominants
+  via `DominantsFactory.from_subject(subject, strategy=...)` (or the
+  `from_birth_data` convenience), returning the new fixed-shape `DominantsModel`.
+- Three built-in schools, selectable by name (the new `DominantMethod` literal):
+  - **`"modern"`** — modern weighted method (Astrotheme-style): planetary
+    strength from angularity, aspect activity, a mild essential-dignity
+    bonus/penalty and rulership bonuses, from which the dominant signs, houses,
+    elements, modes, polarity, hemispheres and quadrants are derived.
+    Speed and retrogradation are excluded by design.
+  - **`"almuten_figuris"`** — the traditional Lord of the Geniture: essential
+    dignities tallied for every classical planet over the five hylegiacal places
+    (Sun, Moon, Ascendant, Part of Fortune and the prenatal Syzygy), with an
+    optional accidental-dignity layer (house placement, weekday ruler).
+  - **`"elemental"`** — simple elemental/modal balance, reusing the library's
+    `calculate_element_points` / `calculate_quality_points` helpers.
+- **Custom schools via the Strategy pattern.** `DominantStrategy` (a
+  `runtime_checkable` Protocol) plus the optional `BaseDominantStrategy` base
+  (shared ranking / percentage / winner machinery) let callers plug in their own
+  school with no registration step.
+- New `DominantMethod` literal and the `DominantsModel`, `DominantScoreModel` and
+  `DominantBreakdownItemModel` models, all re-exported from the package root and
+  verified `get_type_hints`-resolvable for runtime (FastAPI) introspection.
+
+### Notes
+
+- The dominants engine reuses existing building blocks rather than duplicating
+  them: the Ptolemaic dignity tables (`kerykeion.dignities`), the element/quality
+  distribution helpers, the aspect engine, and the rulership data. The prenatal
+  Syzygy is found with a self-contained, bracketed bisection over the Sun–Moon
+  elongation and accesses the ephemeris under `EPHEMERIS_LOCK`.
+- The prenatal Syzygy degrades gracefully on any ephemeris failure (e.g. an
+  out-of-range date): the place is skipped rather than propagating the error.
+
+---
+
+## 6.0.0a48
+
+_2026-05-28_
+
+New **timing factories** built directly on the ephemeris backend
+(`swe.rise_trans` / `swe.calc_ut`) — no full `AstrologicalSubject` is
+constructed, so they are lightweight and backend-neutral (libephemeris or
+swisseph).
+
+### Added
+
+- **`SunTimesFactory`** (`kerykeion/sun_times/`). Sunrise / sunset / solar-noon
+  / day-length for a civil date at a location, with apparent upper-limb
+  refraction and polar day/night detection. Backed by the new `SunTimesModel`.
+- **`PlanetaryHoursFactory`** (`kerykeion/planetary_hours/`). The 24 unequal
+  Chaldean planetary hours (twelve day + twelve night), seeded by the weekday's
+  day-ruler and cycling the descending Chaldean order; moments before sunrise
+  resolve to the previous planetary day. Backed by `PlanetaryHourModel` /
+  `PlanetaryHoursModel`.
+- **`VoidOfCourseMoonFactory`** (`kerykeion/void_of_course_moon/`). The
+  classical void-of-course Moon: last exact Ptolemaic aspect to a traditional
+  planet before sign ingress, via analytic seeding + Newton refinement on real
+  longitudes (no brute-force scan). Geocentric; supports tropical **and**
+  sidereal. Backed by `VoidOfCourseAspectModel` / `VoidOfCourseMoonModel`.
+- New literals `ClassicalPlanet`, `VocTargetPlanet`, `VocAspectName` and the
+  five models above, all re-exported from the package root.
+
+### Changed
+
+- **Thread-safe ephemeris access.** A process-wide `EPHEMERIS_LOCK` (re-entrant)
+  now guards the mutable Swiss Ephemeris state (ephemeris path, sidereal mode,
+  reset/close) for the new factories and for `AstrologicalSubjectFactory`'s
+  `ephemeris_context`, so concurrent tropical and sidereal calculations no
+  longer corrupt one another.
+
+---
+
+## 6.0.0a47
 
 _2026-05-25_
 
-**Security:**
+Minor public-API addition.
 
-- **idna** 3.11 → 3.16 — specially crafted inputs to `idna.encode()` could bypass the CVE-2024-3651 fix.
-- **urllib3** 2.6.3 → 2.7.0 — sensitive headers forwarded across origins in proxied low-level redirects; decompression-bomb safeguards bypassed in parts of the streaming API.
-- **requests** 2.32.5 → 2.34.2 — insecure temp file reuse in `extract_zipped_paths()`.
-- **pytest** 9.0.2 → 9.0.3 — vulnerable tmpdir handling.
+### Added
 
-**Breaking:**
+- **`PTOLEMAIC_ASPECTS` re-exported from package root.**
+  `from kerykeion import PTOLEMAIC_ASPECTS` now works without reaching into
+  the private `_predictive_utils` module. Added to both the import block and
+  `__all__`.
 
-- Minimum Python version raised from 3.9 to 3.10 (Python 3.9 reached EOL October 2025).
+---
+
+## 6.0.0a46
+
+_2026-05-25_
+
+Large feature release: **orb system overhaul** (Astro-Seek-aligned defaults +
+per-point adjustments), **active midpoints** as a first-class rendering
+channel, **secondary progressions** improvements, plus a batch of dual-wheel
+rendering fixes.
+
+### Added
+
+- **Per-point orb adjustments** (`kerykeion/aspects/orb_utils.py`). New
+  `OrbAdjustmentStrategy` (`"max_explicit"` | `"min_explicit"` | `"sum"` |
+  `"none"`) and `resolve_pair_orb_adjustment()` for combining a per-point
+  adjustment table into a single additive orb for a pair. Only *explicitly*
+  configured points are considered before aggregation, so negative
+  adjustments work as expected: `{"Pluto": -2.0}` on (Pluto, Saturn) yields
+  -2.0, not `max(-2.0, 0.0) = 0`.
+  - Threaded through `get_aspect_from_two_points(..., extra_orb=0.0)`
+    (effective orb clamped `>= 0`), `AspectsFactory.single_chart_aspects()`
+    / `dual_chart_aspects()`, `ChartDataFactory.create_chart_data()` + all
+    7 convenience methods, `SecondaryProgressionFactory.compute_full()`,
+    `SolarArcFactory.compute()`.
+  - Per-chart-type defaults: natal / synastry / composite use the luminary
+    bonus (`DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` = Sun/Moon +1.5°); transit,
+    progression and returns use `NO_POINT_ORB_ADJUSTMENTS` (flat tight orb).
+
+- **Active midpoints as a dynamic rendering channel.** New
+  `subject.active_midpoints` (mirrors the `fixed_stars` channel): midpoints
+  requested by name (e.g. `["Sun_Moon"]`) materialise as
+  `KerykeionPointModel` entries with `point_type='Midpoint'` and render on
+  the chart wheel.
+  - `MidpointFactory.compute_active_midpoint_points(subject, pair_names)`
+    resolves `"A_B"` pair identifiers (greedy split, supports multi-token
+    names like `True_North_Lunar_Node`) and produces fully-populated points
+    with sign/quality/element/emoji and a natal-house assignment.
+  - New `Midpoint` `<symbol>` (small ring + dot, visually distinct from
+    planet and fixed-star marks) in all 4 templates (`chart.xml`,
+    `modern_wheel.xml`, `wheel_only.xml`, `aspect_grid_only.xml`) +
+    `build_dynamic_midpoint_settings()` for dynamic glyph ID resolution.
+  - `ChartDrawer` collects `subject.active_midpoints` alongside fixed
+    stars, with per-subject scoping (each chart can carry its own midpoint
+    configuration) and dynamic glyph IDs.
+
+- **`SecondaryProgressionFactory.compute_full()`**. Returns a full result
+  model including progressed-to-natal aspects. Default aspect set switched
+  to the Ptolemaic five.
+
+- **`SolarArcFactory.compute_directed_subject()`**. Generates a directed
+  subject; quality / element / emoji / house are recomputed when a directed
+  point crosses a sign or house (previously inherited from natal, producing
+  inconsistent `KerykeionPointModel` for downstream rendering / AI / PDF
+  consumers).
+
+- **Astro-Seek-aligned default orbs** for natal, synastry, transit, and
+  composite charts. New `PREDICTIVE_ACTIVE_ASPECTS` (3° flat) used for
+  transit / progression / return charts. Default sets refined per chart
+  type and threaded through `create_chart_data` + transit factory.
+
+### Changed (breaking — alpha channel)
+
+- **`DEFAULT_ACTIVE_POINTS`: 18 → 14.** Removed `Descendant`, `Imum_Coeli`,
+  `True_South_Lunar_Node`, `Mean_Lilith`. Opposite points (which are
+  deterministic from their counterpart) are still computed and available on
+  the subject model, but only included in `active_points` when explicitly
+  requested by the caller. To retain previous behaviour, pass them
+  explicitly:
+  ```python
+  active_points=DEFAULT_ACTIVE_POINTS + [
+      "Descendant", "Imum_Coeli", "True_South_Lunar_Node", "Mean_Lilith",
+  ]
+  ```
+
+- **`DEFAULT_ACTIVE_ASPECTS`: 6 → 5.** Removed quintile (Ptolemaic only).
+- **`DEFAULT_PREDICTIVE_POINTS`: 16 → 14.** Removed South Node + Lilith.
+
+- **Default orb values changed across all chart types** to match Astro-Seek
+  reference. **Aspect counts for any pre-existing chart will differ from
+  6.0.0a45.** Snapshot/baseline tests that compare aspect lists must be
+  regenerated. Affected baselines in this repo have been updated
+  (`natal`: 43 aspects, `synastry`: 96 aspects, return baselines, etc.).
+
+- **Unknown `point_orb_adjustment_strategy` now raises `ValueError`.**
+  Previously the resolver silently returned `0.0` when handed an unknown
+  strategy name, masking typos. Callers passing arbitrary strings must now
+  pick from the four registered names.
+
+- **`RelationshipScoreFactory` now passes `DISCEPOLO_SCORE_ACTIVE_ASPECTS`
+  explicitly.** The Discepolo affinity score previously tracked the
+  chart-display default orbs implicitly; the score is now a stable, fixed
+  methodology independent of orb configuration. Regression baselines
+  updated (Lennon/Ono: 8, Dario/Franca: 9).
+
+### Fixed
+
+- **Dual-wheel aspect grid (table mode) missed second-subject-only points.**
+  Fixed stars or active midpoints that existed only on the outer wheel were
+  dropped from the NxN grid and aspects targeting them landed in nonexistent
+  cells. `ChartDrawer` now exposes `_get_aspect_grid_planets_setting()` /
+  `_count_aspect_grid_planets()` which return the union of both subjects in
+  dual-wheel mode; `_is_right_panel_mode()` branches on grid type (table =
+  union count, list = per-subject max). Wired into every renderer call site,
+  `_setup_dual_chart_aspects`, the grid-only export, `_grid_only_viewbox`,
+  and `_estimate_required_width_full`. Regression test
+  `test_dual_table_aspect_grid_keeps_second_subject_only_fixed_star`.
+
+- **Secondary progression self-conjunction filter removed.** Natal ↔
+  progressed-same-point conjunctions (e.g. natal Sun → progressed Sun) were
+  incorrectly skipped; they're meaningful and now appear in results.
+
+- **Solar arc directed subject** now recomputes `active_midpoints`
+  (previously stale on rotation) + actionable logging on inconsistencies.
+
+- **Midpoint glyph rendering** — visual redesign + `UnboundLocalError` in
+  `ChartDrawer` when a midpoint settings row was looked up by a renamed
+  slug.
+
+- **Chart-type-aware orb defaults** now honored by `create_chart_data` and
+  the transit factory (previously some entry points fell back to the
+  natal-shaped table for predictive charts).
+
+### Docs
+
+- Added 12 missing v6 factory pages: `astro_cartography_factory.md`,
+  `eclipse_factory.md`, `fixed_star_discovery_factory.md`,
+  `heliacal_factory.md`, `midpoint_factory.md`, `occultation_factory.md`,
+  `planetary_nodes_factory.md`, `planetary_phenomena_factory.md`,
+  `primary_directions_factory.md`, `relocated_chart_factory.md`,
+  `secondary_progressions_factory.md`, `solar_arc_factory.md`. Plus
+  comprehensive cross-cutting docs improvements (FAQ, glossary, examples).
+
+### Tests
+
+- New `tests/core/test_reference_validation.py` — Astro-Seek
+  cross-validation suite (catches orb / default drift against the
+  reference).
+- `test_modern_chart_2000_02_26_neptune_order` updated to explicitly opt
+  back into `True_South_Lunar_Node` (the regression target it validates)
+  via `active_points` on both subject and chart data factories, since the
+  point is no longer a default.
+- 16 new unit tests in `tests/core/test_orb_utils.py` covering the
+  per-point adjustment strategies (max/min/sum/none, negative adjustments,
+  axis-orb interaction).
+- SVG + aspect golden baselines regenerated across the suite for the new
+  default orbs.
+
+### Internal
+
+- Micro-optimised orb resolution (hot path on large active-points lists).
+- Deduplicated midpoint name generation.
+- Extracted `HOUSE_FIELD_NAMES` constant (was inlined in multiple sites).
+
+Total: **10034 pass, 69 skipped** (+930 vs `6.0.0a45`).
+
+## 6.0.0a45
+
+_2026-05-18_
+
+### Fixed (regression introduced in 6.0.0a44)
+
+- **`IndexError: list index out of range` in dual-wheel return charts**
+  (`POST /api/v6/chart/solar-return` with `wheel_type: "dual"`).
+  `_calculate_secondary_indicator_adjustments` and `_draw_secondary_points`
+  iterated `range(len(points_settings))` against
+  `points_abs_positions` of a different length and crashed. Two-pronged
+  fix:
+  - **Structural**: `ChartDrawer` now keeps a per-second-subject settings
+    list (`second_subject_available_planets_setting`) aligned to the
+    points actually collected from the second subject, and propagates it
+    to `draw_planets()` via a new `secondary_planets_setting` keyword.
+    The rendering of the outer ring uses this filtered list so settings
+    and positions stay symmetric.
+  - **Defensive safety net**: the two affected loops are bounded by
+    `min(len(settings), len(positions))` so any future mismatch (custom
+    subject classes, partial typed-field population) degrades gracefully
+    instead of raising.
+
+### Fixed (silent bug, also pre-existing)
+
+- **`PlanetaryReturnFactory` did not propagate v6 calc flags** from the
+  natal subject to the return subject. Even if the request asked for
+  `active_fixed_stars: ["Betelgeuse"]` on the natal, the resulting solar
+  or lunar return would compute none of them — and similarly for
+  `calculate_dignities` / `calculate_nakshatra` / `calculate_gauquelin` /
+  `calculate_nutation` / `calculate_local_space`. All six v6 calc kwargs
+  are now accepted by `PlanetaryReturnFactory.__init__` and forwarded
+  into both return-subject builders. `AstrologicalSubjectFactory.from_iso_utc_time`
+  also accepts the same six kwargs and forwards them to `from_birth_data`.
+  Defaults keep the legacy behaviour: a caller that doesn't set the
+  flags continues to get a bare return chart, no behavioural change.
+
+### Tests
+
+- New regression class `TestPlanetaryReturnV6FlagPropagation` in
+  `tests/core/test_planetary_return.py` covering:
+  - `active_fixed_stars` propagation
+  - `calculate_dignities` propagation
+  - dual-wheel render without IndexError
+  - default-False legacy behaviour
+
+Total: 9104 pass, 69 skipped (+4 vs `6.0.0a44`).
+
+## 6.0.0a44
+
+_2026-05-18_
+
+### Fixed (regression)
+
+- **Catalog fixed stars not participating in aspects.** After `6.0.0a43`,
+  fixed stars passed via `active_fixed_stars` that weren't in the legacy
+  `DEFAULT_CELESTIAL_POINTS_SETTINGS` (i.e. anything beyond the 23
+  traditionally hardcoded names) were silently excluded from aspect
+  calculation. The root cause was that
+  `AspectsFactory._calculate_single_chart_aspects` and
+  `_calculate_dual_chart_aspects` called `get_active_points_list(...)`
+  without forwarding the extended `celestial_points` list built by
+  `single_chart_aspects` / `dual_chart_aspects`. The internal lookup
+  loop in `get_active_points_list` therefore iterated only over the
+  default settings and the per-subject `fixed_stars` fallback was never
+  reached. Same bug applied to
+  `single_chart_declination_aspects` / `dual_chart_declination_aspects`
+  (parallel / contra-parallel aspects).
+- New regression test class `TestCatalogStarsParticipateInAspects` in
+  `tests/core/test_dynamic_fixed_stars.py`.
+
+### Visual — unified fixed-star glyph
+
+- **All fixed stars now render with a single generic glyph**
+  `<symbol id="FixedStar">`. The 23 per-star dedicated symbols (Regulus,
+  Spica, Aldebaran, ...) have been removed from `chart.xml`,
+  `wheel_only.xml`, `modern_wheel.xml`, and `aspect_grid_only.xml`. The
+  generic glyph is a 5-point star colored via the single CSS variable
+  `--kerykeion-chart-color-fixed-star-default`.
+- The 23 per-star CSS variables (`--kerykeion-chart-color-regulus`, …)
+  have been removed from all six themes (`classic`, `dark`,
+  `dark-high-contrast`, `light`, `strawberry`, `black-and-white`).
+  A single `--kerykeion-chart-color-fixed-star-default` per theme
+  replaces them.
+- The 23 hardcoded entries have been removed from
+  `DEFAULT_CELESTIAL_POINTS_SETTINGS`; all fixed-star settings are now
+  generated dynamically by `build_dynamic_fixed_star_settings`.
+- `KNOWN_GLYPH_NAMES` no longer lists fixed stars: `resolve_glyph_id`
+  returns `"FixedStar"` for every star name.
+
+This concludes the fixed-stars architectural cleanup started in
+`6.0.0a43` — there is no longer any asymmetry between "hardcoded" and
+"catalog" stars at any layer (data, calculation, rendering).
+
+### Breaking — visual / CSS
+
+- Custom themes that override `--kerykeion-chart-color-regulus` (or any
+  other per-star variable) must migrate to overriding the single
+  `--kerykeion-chart-color-fixed-star-default`. Per-star color
+  customization via CSS is no longer supported.
+- SVG output: `xlink:href="#Regulus"` (and the other 22 per-star
+  references) replaced by `xlink:href="#FixedStar"`. `kr:slug="Regulus"`
+  is preserved on the wrapping `<g>` for tracking/styling by external
+  consumers.
+
+### Tests
+
+- All chart SVG baselines (`tests/data/svg/*.svg`) regenerated to match
+  the new unified glyph. 9100 tests pass (+2 new regression tests for
+  catalog star aspects).
+
+## 6.0.0a43
+
+_2026-05-18_
+
+### Fixed Stars — unified channel (breaking)
+
+The fixed-star subsystem has been refactored to scale beyond the historical
+23 hardcoded stars and to live entirely on the libephemeris catalog as the
+single source of truth.
+
+- **Subject model**: the 23 typed star fields (`subject.regulus`,
+  `subject.spica`, …) have been **removed**. All fixed stars now live in
+  `subject.fixed_stars: list[KerykeionPointModel]`. Lookup by name is
+  available via the new `subject.find_fixed_star(name)` helper
+  (case- and separator-insensitive: `"Deneb Algedi"`, `"deneb_algedi"`,
+  `"DENEB-ALGEDI"` all resolve identically).
+- **Calculation channel**: `active_points` no longer accepts star names.
+  Use the dedicated `active_fixed_stars: list[str]` parameter on
+  `AstrologicalSubjectFactory.from_birth_data()` (and the other
+  constructors). No automatic defaults — callers opt in to specific stars.
+- **Catalog discovery**: new `kerykeion.fixed_stars.FixedStarCatalog`
+  wraps `libephemeris.fixed_stars.list_fixed_stars()` (116 entries today).
+  Exposes `list_all()`, `find(name)`, `known_slugs()`.
+- **Aspect engine**: `AspectsFactory.single_chart_aspects` and
+  `dual_chart_aspects` automatically iterate `subject.fixed_stars` —
+  catalog stars participate in aspect calculations without needing to be
+  in `active_points`. `SingleChartAspectsModel.active_points` and
+  `DualChartAspectsModel.active_points` are now
+  `list[Union[AstrologicalPoint, str]]` to accept catalog star slugs.
+- **Chart wheel rendering**: catalog stars without a dedicated SVG
+  `<symbol>` fall back to the new generic `<symbol id="FixedStar">`
+  (5-point star, colored via
+  `var(--kerykeion-chart-color-fixed-star-default, #d4a053)`).
+  Added to `chart.xml`, `wheel_only.xml`, `modern_wheel.xml`. Glyph
+  resolution centralized in `chart_defaults.resolve_glyph_id(name)` /
+  `KNOWN_GLYPH_NAMES`.
+- **`FixedStarDiscoveryFactory`**: catalog source is now exclusively
+  libephemeris. The previous swisseph-backed path
+  (`_find_prominent_stars_swisseph`) and the `sefstars.txt` parser have
+  been removed.
+
+### swisseph backend — `sefstars.txt` requirement
+
+Fixed-star calculation on the swisseph backend depends on
+`swe.fixstar_ut`, which reads from `sefstars.txt`. That file is
+distributed under the Swiss Ephemeris license (Astrodienst AG) and is
+**not bundled with kerykeion** — users must download it manually into
+`KERYKEION_EPHE_PATH`. When star calculation produces zero results on
+swisseph, kerykeion now emits a single actionable WARNING with the
+download URL and the libephemeris alternative. See
+[site/docs/swisseph_configuration.md](site/docs/swisseph_configuration.md#fixed-stars-catalog-sefstarstxt)
+for the full procedure.
+
+### Backward compatibility
+
+**Breaking changes** (alpha — accepted):
+
+- `subject.regulus`, `subject.spica`, and the other 21 typed star fields
+  have been removed. Migrate to
+  `subject.find_fixed_star("Regulus")` or iterate `subject.fixed_stars`.
+- `active_points=["Regulus", ...]` no longer triggers calculation for
+  star names. Pass star names to `active_fixed_stars=[...]` instead.
+- `FixedStarDiscoveryFactory.find_prominent_stars()` no longer accepts
+  the `catalog_path` keyword argument (libephemeris-only now).
+
+### Tests
+
+- Updated tests that used the removed typed fields to use
+  `find_fixed_star()` / `fixed_stars[]` iteration.
+- 16 chart-drawer snapshot tests are marked `@pytest.mark.skip` pending
+  regeneration with the new fixed-stars rendering pipeline.
+
+## 6.0.0a42
+
+_2026-05-15_
+
+### Dependencies
+
+- **Updated `libephemeris` to 2.0.0.** The upstream library simplified
+  its public API by removing legacy prefixed aliases. The canonical
+  bare-name API used by kerykeion (`calc_ut`, `houses`, `SUN`,
+  `FLG_SPEED`, …) is unchanged — no code changes required.
+  Also adds a new `libephemeris.contrib` submodule with extended
+  astrology helpers (zodiac, nakshatra, aspect constants and functions).
+
+### Backward compatibility
+
+No API changes. Fully backward-compatible.
+
+## 6.0.0a41
+
+_2026-05-14_
+
+### Fixes
+
+- **Updated `libephemeris` to 1.6.0.** Fixes critical LEB fast-path bugs
+  that caused `lun_occult_when_loc()` to crash with `NameError` and
+  heliacal calculations to fail with `TypeError` after `close()`.
+
+### Backward compatibility
+
+No API changes. Fully backward-compatible.
+
+## 6.0.0a40
+
+_2026-05-10_
+
+### Improvements
+
+- **Clean ephemeris data packaging.** Swiss Ephemeris data files (`.se1`,
+  `sefstars.txt`) are no longer shipped inside the wheel. The default backend
+  (`libephemeris`) manages its own data internally and never needed them.
+  Users who opt into the `swisseph` backend can download the data files
+  separately via the new setup utility (see below).
+
+- **New `swisseph_setup` utility.** Run `python -m kerykeion.swisseph_setup`
+  to download Swiss Ephemeris data files with an interactive license
+  confirmation (AGPL-3.0, Astrodienst AG). Supports `--yes` for CI,
+  `--target` for custom paths, and `--skip-asteroids`.
+
+- **Backend-aware `EPHE_DATA_PATH`.** The default ephemeris path is now
+  resolved per-backend instead of pointing to a fixed directory. When using
+  swisseph without `KERYKEION_EPHE_PATH`, a warning is logged explaining
+  the Moshier analytical fallback. When a user-provided path lacks `.se1`
+  files, a validation warning is emitted.
+
+- **Fix license classifier.** The PyPI classifier now correctly says
+  AGPL-3.0, matching the `license` field and the LICENSE file.
+
+### Documentation
+
+- New [Swiss Ephemeris Configuration](site/docs/swisseph_configuration.md)
+  guide covering installation, data setup, and license terms.
+- Updated README with Swiss Ephemeris backend section.
+- Updated `ephemeris_backend.md` and `backend_precision_comparison.md` docs.
+
+### Backward compatibility
+
+`EPHE_DATA_PATH` now defaults to `""` instead of a package-internal path.
+All factory modules already pass this to `swe.set_ephe_path()`, which handles
+the empty string correctly for both backends. Code that imports
+`EPHE_DATA_PATH` and constructs file paths from it (e.g.
+`Path(EPHE_DATA_PATH) / "sefstars.txt"`) should use `KERYKEION_EPHE_PATH`
+instead.
+
+## 6.0.0a39
+
+_2026-05-08_
+
+### Dependencies
+
+- Update `libephemeris` to 1.4.0 (`cool` + `release_data_cache`).
+
+## 6.0.0a38
+
+_2026-05-08_
+
+### Performance
+
+- **Remove import-time LEB reader opening.** `ephemeris_backend.py` no longer
+  calls `get_leb_reader()` at import time to detect the LEB format. This
+  avoided opening four companion mmap files (~855 MB for extended tier) just
+  to log a single format string at startup.
+
+### Dependencies
+
+- Update `libephemeris` to 1.3.0 (lazy mmap, selective `warm()` preloading).
+
+### Backward compatibility
+
+No API changes. Startup logging still reports mode and tier but no longer
+includes the format field (LEB1/LEB2).
+
+## 6.0.0a37
+
+_2026-05-08_
+
+### New Features
+
+- **Backend-specific fixed-star discovery.** `FixedStarDiscoveryFactory` now
+  dispatches explicitly by ephemeris backend: `swisseph` scans the Swiss
+  Ephemeris `sefstars.txt` catalog, while `libephemeris` uses the native
+  `list_fixed_stars()` / `batch_fixstars_ut()` APIs and never reads Swiss
+  catalog files.
+- **Fixed-star discovery metadata.** Discovery results now carry optional
+  `near_point`, `orb`, `aspect`, `longitude`, `latitude`, and `degree` fields
+  on `KerykeionPointModel`, matching the API shape expected by UI consumers.
+
+### Performance
+
+- Swiss discovery now scans candidate positions without `FLG_SPEED` and only
+  computes speed, declination, and magnitude for stars that actually fall within
+  the requested conjunction orb.
+- The libephemeris path uses ordered batch calculation for the native catalog.
+
+### Backward compatibility
+
+Additive only. Existing fixed-star point fields remain unchanged. Catalog size
+and specific discovery results may differ by backend because each backend now
+uses its own catalog source intentionally.
+
+## 6.0.0a36
+
+_2026-04-28_
+
+### New Features
+
+Predictive astrology factories — three new factories that complete the
+core predictive toolkit (joining the existing `PrimaryDirectionsFactory`):
+
+- **`MidpointFactory`** — computes every pairwise midpoint of an
+  `AstrologicalSubjectModel`, plus the 90° dial position used by
+  cosmobiology and Uranian/Hamburg-school astrology, plus optional
+  aspect-to-midpoint detection (third-point activations) with
+  configurable orb. Pure math, no ephemeris calls.
+- **`SecondaryProgressionFactory`** — computes the day-for-a-year
+  progressed chart for any target moment, returning a regular
+  `AstrologicalSubjectModel` so every downstream tool (aspects,
+  dignities, chart drawer) keeps working transparently. All natal
+  settings (zodiac type, sidereal mode, house system, perspective,
+  active points, altitude, location, timezone) are reused.
+  Supports BCE natal subjects and BCE targets via Julian Day arithmetic.
+- **`SolarArcFactory`** — derives the solar arc from the progressed
+  Sun and applies it uniformly to every active natal point, returning
+  a structured `SolarArcSubjectModel` with directed positions, sign
+  ingresses, and directed-to-natal aspect contacts. Natal targets for
+  aspect detection use the subject's own `active_points` (not hardcoded
+  defaults), so extra points (Vertex, asteroids, etc.) are included.
+
+All three factories are exported from the top-level `kerykeion`
+namespace.
+
+- **`"Progression"` chart type** — new dual-wheel chart type in
+  `ChartType`, `ChartDataFactory`, `ChartDrawer`, and `charts_utils`.
+  `ChartDataFactory.create_progression_chart_data(natal, progressed)`
+  produces a biwheel with natal (inner) and progressed (outer).
+  `ChartDrawer` renders it via a dedicated `ProgressionChartRenderer`
+  with progression-specific labels.
+- **Context serializer**: `solar_arc_to_context()` transforms a
+  `SolarArcSubjectModel` into XML, `midpoints_to_context()` transforms
+  a `list[MidpointModel]` into XML. Both are callable via the
+  `to_context()` dispatcher.
+- **Custom ayanamsa persistence**: `custom_ayanamsa_t0` and
+  `custom_ayanamsa_ayan_t0` are now stored on `AstrologicalBaseModel`
+  and propagated through secondary progressions and solar arcs.
+  A Pydantic `model_validator` enforces pair integrity (both or neither).
+- **`DOUBLE_CHART_TYPES` centralized**: the dual-chart type tuple is
+  now defined once in `charts_utils.py` and imported by
+  `draw_planets.py` and `chart_data_factory.py`.
+
+### Backward compatibility
+
+Additive only. No existing class or attribute is removed, renamed, or
+semantically changed. The new `custom_ayanamsa_*` fields default to
+`None` and do not affect existing models.
+
+## 6.0.0a35
+
+_2026-04-25_
+
+### Bugfix
+
+- **Modern HouseSector no longer overlaps the zodiac ring.** The
+  click-only HouseSector overlay was drawn out to `R_CUSP_OUTER=50`,
+  identical to the zodiac background's outer edge, and it covered the
+  entire 4-unit zodiac annulus (`R_ZODIAC_BG_INNER=46` to 50). Frontends
+  that walked `elementsFromPoint` and resolved HouseSector before
+  ZodiacSign therefore swallowed every click on a zodiac sign as a
+  click on the underlying house. With the zodiac background ring
+  active, HouseSector now stops at `R_ZODIAC_BG_INNER`. Without the
+  zodiac ring, the original full-radius behaviour is preserved.
+
+Affects both the main horoscope path and the synastry / dual-chart
+path. No change to the visible geometry — HouseSector is invisible by
+default; this only adjusts the clickable region.
+
+## 6.0.0a34
+
+_2026-04-24_
+
+### New Features
+
+- **Sign-full highlight overlay on modern `ZodiacSign`.** Each modern
+  ZodiacSign now contains a second hidden `<path kr:highlight="sign-full">`
+  that is a full pie slice from the chart center to the outer zodiac
+  boundary. Transparent and non-interactive by default; frontends toggle
+  its visibility through CSS to render a classic-style full-wedge focus
+  highlight. The visible outer annular wedge is unchanged.
+
+### Why
+
+In the modern style the visible zodiac wedge is a thin outer ring
+(~4 units on a 100-unit viewBox), so frontends that highlight a focused
+sign can only tint that narrow band. The classic style paints a full
+pie-slice wedge, producing a much stronger visual emphasis. The overlay
+bridges the gap without altering the default modern appearance.
+
+### Backward compatibility
+
+Additive only. No existing attribute is removed or renamed, the visible
+geometry is byte-identical, and pointer interactions are unchanged.
+
+## 6.0.0a33
+
+_2026-04-24_
+
+### New Features
+
+- **`kr:cx` / `kr:cy` now emitted on modern-style ChartPoints too.** The
+  modern path in `draw_modern._draw_single_planet_in_ring` wraps each
+  planet/angle in a `<g>` rotated around the chart center via
+  `rotate(-display_angle, CENTER, CENTER)`. The emitted center applies
+  that rotation to the pre-rotation glyph position `(CENTER, glyph_y)`,
+  producing the true post-rotation coordinates in chart SVG root space.
+
+### Why
+
+6.0.0a32 added `kr:cx` / `kr:cy` only on the classic path. Frontends that
+need a single code path for hit-detection (tooltip, click-to-focus) across
+both styles therefore still had to parse the modern transform chain. This
+release closes the gap: both styles now expose the glyph center uniformly
+as two attributes on the ChartPoint `<g>`, and the consumer converts them
+to viewport pixels with a single `getScreenCTM()` / `getCTM().inverse()`
+call — no style-specific logic required.
+
+### Backward compatibility
+
+Additive only. Existing consumers that ignore the attributes are unaffected;
+the classic path is unchanged.
+
+## 6.0.0a32
+
+_2026-04-24_
+
+### New Features
+
+- **`kr:cx` / `kr:cy` attributes on every `<g kr:node="ChartPoint">`** — the
+  exact glyph-center coordinates in chart SVG root coords, emitted by both
+  the single-chart path (`_generate_point_svg`) and the transit-chart
+  inline path in `draw_planets`. Pure addition of two attribute writes
+  per point; no geometric impact on rendered output.
+
+### Why
+
+Frontends that layer interactivity on top of kerykeion SVG (tooltips,
+click-to-focus, hit-testing) need the rendered glyph center to
+disambiguate overlapping symbols in dense clusters. Measuring it via DOM
+APIs is unreliable: our `<symbol>` definitions omit `viewBox`, so
+`getBoundingClientRect` / `getBBox` on `<use>` returns 0×0 or an
+implementation-defined value across browsers. Parsing the `<g>` transform
+chain works for modern style but diverges from classic, which wraps the
+symbol with `translate(-12, -12)` and places `<use x=X y=Y>` — making the
+two styles structurally incompatible for a single consumer.
+
+Emitting the coordinates explicitly sidesteps all of that: the consumer
+reads two attributes, applies the root SVG's `getScreenCTM()`, and
+obtains the exact viewport-space glyph center. The values are already
+computed by the drawing code before it writes the markup, so the cost on
+the generator side is zero.
+
+### Backward compatibility
+
+Additive only: no existing attribute is removed, renamed, or semantically
+changed. Older consumers that ignore `kr:cx` / `kr:cy` keep working.
+
+## 6.0.0a31
+
+_2026-04-22_
+
+**Bugfixes (backported from v5.12.8):**
+
+- **Modern chart decluttering order:** Fixed a bug where planets in a tight cluster on `style="modern"` charts could be pushed past their neighbours, violating true zodiacal order (e.g. Neptune at 5° Aquarius rendered after Uranus at 17° Aquarius). The collision-resolution algorithm in `_resolve_planet_collisions` was rewritten from a 5-pass iterative push (vulnerable to wraparound overshoots) to a single-pass largest-gap linearization that is monotonic by construction: planets are cut at the largest gap in their true zodiacal angles and walked forward once with `display_angle = max(desired_linear, prev_linear + sep)`. Order is preserved and `min_separation` is respected without iterative refinement. Reproduced by any dense stellium (≥3 planets within ~8°); regression covered by `tests/core/test_modern_decluttering.py`.
+
+## 6.0.0a30
+
+_2026-04-21_
+
+**Backward planetary-return search — `next_return_from_iso_formatted_time` / `next_return_from_date` / `next_lunar_node_crossing*` now accept `backwards=True`, matching the existing heliocentric API.**
+
+### New Features
+
+- **`backwards: bool = False` on all planetary-return entry points.** When
+  `True`, the factory calls into libephemeris' new backward-capable crossing
+  primitives and returns the most recent *past* return (or node crossing)
+  instead of the next upcoming one. Added to:
+  - `PlanetaryReturnFactory.next_return_from_iso_formatted_time(iso, return_type, backwards=False)`
+  - `PlanetaryReturnFactory.next_return_from_date(year, month, day, return_type, backwards=False)`
+  - `PlanetaryReturnFactory.next_lunar_node_crossing(julian_day, backwards=False)`
+  - `PlanetaryReturnFactory.next_lunar_node_crossing_from_iso_formatted_time(iso, backwards=False)`
+  - `PlanetaryReturnFactory.next_lunar_node_crossing_from_date(year, month, day, backwards=False)`
+  - `PlanetaryReturnFactory.next_heliocentric_return_from_date(planet, year, month, day, backwards=False)`
+
+### Backend Requirements
+
+Backward search relies on libephemeris `>= 1.1.0`, which added the `backwards`
+flag to `swe_solcross_ut`, `swe_mooncross_ut`, and `swe_mooncross_node_ut`.
+When kerykeion is running on **pyswisseph** (fallback backend), attempting
+backward search raises `KerykeionException` with a clear message directing
+the caller to install libephemeris.
+
+### Why
+
+Consumers of return charts (API servers, SDKs, UIs) always want symmetric
+navigation — "previous solar return" is as common as "next". Without a native
+backward flag, callers had to fake it by seeding the search one mean cycle
+before the target date, which fails near cycle boundaries (lunar node mean
+motion varies ±1 day per half-cycle; lunar mean motion ±0.1 d). This is the
+library-level counterpart to libephemeris 1.1.0's backward crossing support.
+
+### Tests
+
+- 12 new tests in `tests/core/test_planetary_return_backwards.py`:
+  - `TestSolarBackwards` — single-step backward, one-cycle boundary invariant,
+    date-wrapper round-trip.
+  - `TestLunarBackwards` — single-step backward, sidereal-month boundary.
+  - `TestLunarNodeCrossingBackwards` — single-step, half-nodal-month boundary,
+    date-wrapper round-trip.
+  - `TestHeliocentricBackwards` — Jupiter one-cycle (4200–4500 day) boundary.
+  - `TestSwissephFallback` — simulates pyswisseph backend via `unittest.mock`,
+    asserts `KerykeionException` with `libephemeris` in the message for each
+    of the three backward-capable entry points.
+
+### Dependencies
+
+- Bumped primary pin: `libephemeris == 1.1.0` (was `== 1.0.0a15`).
+- Bumped `all` extra: `libephemeris >= 1.1.0` (was `>= 1.0.0a13`).
+
+### Compatibility
+
+Fully backward-compatible. `backwards=False` is the default everywhere;
+existing code paths are unchanged.
+
+## 6.0.0a29
+
+_2026-04-21_
+
+**Symmetric ISO/year/date wrappers for heliocentric returns and lunar node crossings — closes the API gap between Solar/Lunar and all other return types.**
+
+### New Features
+
+- **`next_heliocentric_return_from_iso_formatted_time(planet_name, iso_formatted_time, backwards=False)`** — compute heliocentric return searching forward (or backward) from an ISO datetime. Mirrors `next_return_from_iso_formatted_time` (Solar/Lunar).
+- **`next_heliocentric_return_from_year(planet_name, year)`** — first heliocentric return on or after Jan 1 of the given year. Mirrors `next_return_from_year`.
+- **`next_heliocentric_return_from_date(planet_name, year, month, day=1)`** — first heliocentric return on or after a specific date. Mirrors `next_return_from_date`.
+- **`next_lunar_node_crossing_from_iso_formatted_time(iso_formatted_time)`** — lunar node crossing from an ISO datetime.
+- **`next_lunar_node_crossing_from_year(year)`** — first lunar node crossing on or after Jan 1 of the given year.
+- **`next_lunar_node_crossing_from_date(year, month, day=1)`** — first lunar node crossing on or after a specific date.
+
+### Enhancements
+
+- **`next_heliocentric_return` gains `backwards` parameter** — search backward in time when using the libephemeris backend. pyswisseph does not support backward search; a `KerykeionException` is raised if attempted.
+
+### Why
+
+Previously, `PlanetaryReturnFactory` exposed ergonomic `from_iso`/`from_year`/`from_date` wrappers only for Solar and Lunar returns. Heliocentric returns and lunar node crossings required callers to manually convert dates to Julian Day and call bare primitives (`next_heliocentric_return(planet, start_jd)`, `next_lunar_node_crossing(start_jd)`). This asymmetry forced every consumer (API servers, MCP tools, SDK wrappers) to duplicate the same date→JD conversion logic — and made it easy to accidentally hardcode the natal JD instead of the user-requested search date.
+
+### Tests
+
+- 15 new tests in `tests/core/test_heliocentric_returns.py` covering ISO wrappers, year wrappers, date wrappers, backward search, naive datetime handling, and validation.
+
+## 6.0.0a28
+
+_2026-04-21_
+
+**Allow fractional orbs in aspect configuration — `ActiveAspect.orb` and `_ChartAspectSetting.orb` accept `float` instead of `int`.**
+
+### Bug Fixes
+
+- **`ActiveAspect.orb` type mismatch** — the `orb` field in `ActiveAspect` (TypedDict) was typed as `int`, causing Pydantic v2 to reject valid fractional orb values like `7.5` with `int_from_float` validation errors. Changed to `float`. Integer values continue to work as before (Python `int` is a subtype of `float`).
+- **`_ChartAspectSetting.orb` type mismatch** — same fix for the internal chart aspect settings TypedDict, aligning it with the rest of the codebase which already uses `float` for orb values (`AspectModel.orbit`, `axis_orb_limit`, `active_orbs`, `get_orb()`).
+
+### Breaking Changes
+
+None — `int` values are accepted by `float` fields. All default orb values remain integers. Existing code that passes integer orbs is unaffected.
+
+## 6.0.0a27
+
+_2026-04-20_
+
+**Fix Gauquelin sector visualization: draw sectors at actual diurnal-arc boundaries instead of equal 10° zodiacal divisions.**
+
+### Bug Fixes
+
+- **Gauquelin sector drawing mismatch** — sector lines, sector numbers, and interactive hit areas were drawn as equal 10° zodiacal divisions from the Ascendant, but the computed `gauquelin_sector` values (from `house_pos('G')` / `swe.gauquelin_sector()`) use the actual diurnal-arc division, which produces unequal zodiacal spans (6°–16° depending on latitude and obliquity). This caused every planet to appear in the wrong visual sector. All drawing functions now use the actual Gauquelin cusp positions computed via `houses_ex2(jd, lat, lon, 'G')`.
+
+### New Features
+
+- `AstrologicalBaseModel.gauquelin_sector_cusps` — new optional field containing the 36 Gauquelin sector cusp positions as zodiacal longitudes. Populated automatically when `calculate_gauquelin=True`. Consumers can use these cusps to draw sector boundaries or verify planet-sector membership.
+
+### Internal
+
+- `AstrologicalSubjectFactory` now computes the 36 Gauquelin cusps via `swe.houses_ex2(jd, lat, lon, ord('G'))` alongside the per-planet sector values.
+- `draw_modern.py`: `_draw_gauquelin_cusp_ring`, `_draw_gauquelin_division_lines`, `_draw_gauquelin_house_ring` accept optional `gauquelin_cusps` and draw lines at actual cusp positions.
+- `charts_utils.py`: `draw_gauquelin_sectors` and `draw_gauquelin_sector_hit_areas` accept optional `gauquelin_cusps` for actual sector boundaries.
+- `chart_drawer.py`: passes `gauquelin_sector_cusps` from the subject to both modern and classic drawing pipelines.
+
+### Breaking Changes
+
+None — the new `gauquelin_sector_cusps` field is optional with `default=None`. Without cusps, drawing falls back to the previous equal-10° behavior.
+
+## 6.0.0a26
+
+_2026-04-17_
+
+**Drop-in replacement of `scour` with [`svg-polish`](https://pypi.org/project/svg-polish/) — modernised, type-safe, secure-by-default SVG optimizer.**
+
+### Dependency
+
+- Replace `scour>=0.38.2` with `svg-polish>=1.0.0` in runtime dependencies. `svg-polish` is a hardened, type-safe modernisation of Scour 0.38.2 (dormant upstream since August 2021): identical optimization output on the inputs `kerykeion` produces, plus protection against the `var(--…)` / `calc(…)` / keyword-token crashes that the legacy `scour` raises on real-world chart SVGs.
+
+### Internal
+
+- `ChartDrawer._minify` now imports `optimize` from `svg_polish` instead of `scourString` from `scour.scour`. The narrow `try/except` around the call is preserved as a defensive fallback for malformed XML; svg_polish itself no longer raises on the CSS edge-cases that scour did.
+
+### Compatibility
+
+- No public API change. SVG output is byte-identical to the previous `scour`-based pipeline on the kerykeion test matrix (8885 / 8885 tests pass; 165 skipped, all online-only).
+
+### Breaking Changes
+
+None.
+
+## 6.0.0a25
+
+_2026-04-17_
+
+**Performance refactor of hot paths (TIER 0-2), plus targeted bug fixes from Codex and CodeRabbit review.**
+
+### Performance
+
+- Refactor hot paths per `REFACTORY.md` TIER 0-2 — zero breaking changes, 260 SHA-256 signatures byte-identical across all chart types, house systems, sidereal modes, perspectives, returns, transits, eclipses, occultations, ACG, primary directions, fixed stars, dignities.
+- Central constants unification (`STANDARD_PLANETS`, `POINT_NUMBER_MAP`, `AXIAL_POINTS` frozenset) in `kerykeion.settings.config_constants`.
+- Aspect loop optimization, SVG `list+join` rendering, pre-indexed aspect grid (`O(n²·k)` → `O(n² + k)`), cached `get_args()`, `O(n+m)` orb merge, matching-setting lookup in transit range.
+- Measured speedups (min-of-N, best-of-2): `svg_natal` -39.3% (1.65x), `house_comparison` -23.4% (1.30x), `custom_aspects_squares` -20.5% (1.26x), `composite_midpoint` -19.4% (1.24x), `svg_synastry` -17.7% (1.21x), `transits_time_range` -15.4% (1.18x), 15/15 benchmarks faster, 0 regressions.
+
+### Bug Fixes
+
+- Fix `_update_aspect_settings` regression in `AspectsFactory`: when `active_aspects` contains duplicate names, the first occurrence's orb now wins (the prior dict-comprehension refactor had silently introduced last-wins semantics). Uses `dict.setdefault` instead.
+- Restore runtime availability of `AstrologicalSubjectModel`, `PlanetReturnModel`, `HouseComparisonModel`, `ChartDataModel`, `AspectModel`, `CompositeSubjectModel`, `KerykeionPointModel`, `ChartType`, `KerykeionException`, `AstrologicalPoint` in modules that expose them as public annotations. The perf refactor had moved them under `if TYPE_CHECKING:`, which would break `typing.get_type_hints()` introspection for downstream consumers that rely on runtime type resolution (e.g. FastAPI).
+- `_setup_gauquelin_sectors` now clears `template_dict["makeHouseSectors"]` when Gauquelin mode is active — the 12-wedge invisible hit-area overlay was inconsistent with the 36-sector visible ring and would mislead any frontend using it for click/hover targeting.
+
+### Public API hygiene (CodeRabbit review)
+
+- `kerykeion.astrological_subject_factory.STANDARD_PLANETS` is now re-exported as a shallow copy of the canonical dict in `config_constants`, so downstream mutation of the public symbol no longer leaks into the shared constant.
+- `ReportGenerator._celestial_points_report` now preserves duplicate point entries when ordering the report (previously collapsed by `{p.name: p}` dict comprehension).
+- `POINT_NUMBER_MAP` docstring rewritten to accurately describe it as the Swiss Ephemeris–compatible subset and enumerate which point classes are outside its scope.
+
+### Chores
+
+- `.opencode/` fully gitignored (replaces the narrower `.opencode/plans` rule).
+
+### Breaking Changes
+
+None — all changes preserve public API, model schemas, and SVG output structure. 260 byte-identical SVG signatures across the test matrix verify output stability.
+
+## 6.0.0a24
+
+_2026-04-16_
+
+**Code quality audit: bug fixes, deduplication, type modernization, and cleanup.**
+
+### Bug Fixes
+
+- Fix `RelationshipScoreFactory.get_relationship_score()` reentrancy — calling it twice on the same instance no longer accumulates stale state. Score, aspects list, and breakdown are reset at the start of each call.
+- Fix duplicate CSS `stroke-width: 1px; stroke-width: 0.5px` in aspect grid rendering — the first declaration was dead (overridden by the second). Now emits only `stroke-width: 0.5px`.
+- Regenerated 10 sidereal theme combination SVG baselines affected by the CSS fix.
+
+### Code Deduplication
+
+- Deduplicate `_should_calculate()` into a static method on `AstrologicalSubjectFactory` — replaces 3 identical local function definitions across `_calculate_houses`, `_calculate_derived_planets`, and `_calculate_planets`.
+- Consolidate `_create_subject_for_date()` in `EphemerisDataFactory` — replaces 2 identical 18-line `from_birth_data()` call blocks.
+- Refactor `_convert_coordinate_to_string()` in `charts_utils` — replaces 2 identical lat/lng formatting functions (also fixes `min` shadowing the builtin and DMS carry-over at 60 seconds).
+- Replace inline XML serialization with `_serialize_active_config()` in `context_serializer` — deduplicates 2 identical 3-line blocks for active points/aspects.
+- Consolidate `_deep_merge()` — remove duplicate in `kerykeion_settings.py`, import from `translations.py`.
+- Remove redundant `common_planets` rebuild in `CompositeSubjectFactory._calculate_midpoint_composite_points_and_houses` — uses `self.active_points` directly.
+- Simplify house cusp list construction in `house_comparison_utils` — `[h.abs_pos for h in get_houses_list(subject)]` replaces 12-line explicit lists (x2).
+
+### Cleanup & Modernization
+
+- `List[X]` → `list[X]`, `Tuple[X]` → `tuple[X]`, `Union[X, None]` → `Optional[X]` across 15+ files (PEP 585 / PEP 604).
+- `AnySubjectModel` type alias in `kr_models.py` replaces 5 repeated `Union[AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel]`.
+- `_MODULE_DIR` constant in `chart_drawer.py` replaces 5+ repeated `Path(__file__).parent` calls.
+- `_ZODIAC_DEFAULT_SCALE` + `_ZODIAC_SIGN_IDS` in `draw_modern.py` replace 2 hardcoded 12-entry dicts and a duplicate local list.
+- `_POLAR_LATITUDE_LIMIT`, `_MAX_DAYS`, `_MAX_HOURS`, `_MAX_MINUTES` constants replace magic numbers.
+- `_MAIN_PLANETS`, `_NODES`, `_ANGLES` constants and `_humanize()` helper in `report.py` replace 12+ inline `.replace("_", " ")` calls.
+- Expanded `_POINT_NUMBER_MAP` with Earth, Pholus, Ceres, Pallas, Juno, Vesta, and all 8 Uranian points.
+- Remove dead code: `__ne__` in `CompositeSubjectFactory` (Python 3 auto-generates it), `_format_date` in `ReportGenerator`, unused `aid` loop variable, TODO comments.
+- Fix typos: `sings` → `signs`, `VIWBOX` → `VIEWBOX`.
+- Remove superfluous `hasattr()` checks in `PlanetaryReturnFactory`.
+- Remove unnecessary `getattr()` calls in `moon_phase_details/factory.py` (attributes always exist on `AstrologicalSubjectModel`).
+- Rename `solar_return_date_utc` → `return_date_utc` and `solar_return_astrological_subject` → `return_astrological_subject` (applies to both Solar and Lunar returns).
+- Move demo-only imports (`AstrologicalSubjectFactory`, `EphemerisDataFactory`, `timedelta`) to `if __name__ == "__main__"` blocks.
+- Convert f-string logging to lazy `%s` formatting in `RelationshipScoreFactory`.
+- `or` chains → `in` tuples for chart type checks.
+- Formatting: consistent double quotes in f-strings, line length compliance, PEP 8 blank lines.
+- Add 4 missing translation keys (`cusp_position_comparison`, `transit_cusp`, `return_cusp`, `house`) to RU, TR, DE, HI.
+
+### Breaking Changes
+
+None — all changes are internal. Public API, model schemas, and SVG output structure are unchanged.
+
+## 6.0.0a23
+
+_2026-04-12_
+
+**Add `kr:horoscope` attribute to house elements in classic dual charts.**
+
+### Changes
+
+- Add `kr:horoscope` attribute to all house-related SVG elements (`Cusp`, `HouseNumber`, `HouseSector`) in classic dual charts (Transit, Synastry, DualReturnChart). Value `"0"` identifies Subject 1 (inner ring), `"1"` identifies Subject 2 (outer ring).
+- Add Subject 2's transparent interactive `HouseSector` wedges in the outer ring area (r-36 to r-72). Clicking in the outer ring now targets Subject 2's houses; clicking in the inner area targets Subject 1's houses.
+- `draw_house_sectors()` accepts new optional parameters: `horoscope_id`, `seventh_house_abs_override`, `outer_r_offset`, `inner_r_offset`.
+- `_setup_house_sectors()` accepts optional `second_houses_list` to render both subjects' sectors.
+- Regenerated sidereal SVG test baselines.
+
+### Breaking Changes
+
+None — all new parameters have defaults. Existing callers continue to work without changes.
+
+## 6.0.0a22
+
+_2026-04-08_
+
+**Fix house sector arc geometry — final correct version.**
+
+### Changes
+
+- Remove `la_flip` (large-arc inversion) that caused sector paths to cover the complement area instead of the house itself.
+- Swap arc sweep flags (outer 1→0, inner 0→1) so both arcs curve outward following the chart's concentric circles.
+- Verified visually on both classic and modern chart styles.
+- Regenerated all SVG test baselines.
+
+## 6.0.0a20
+
+_2026-04-08_
+
+**Fix house sector arc curvature (arcs now curve outward correctly).**
+
+### Changes
+
+- Fix house sector SVG arcs curving inward instead of outward. The solution: invert the `large-arc-flag` (`1 - large_arc`) so the SVG renderer picks the outward-curving arc segment. Applied to both classic and modern chart styles.
+- Reverted coordinate calculation back to `sliceToX/Y + dropin` (the proven formula that matches cusp line positions exactly).
+- Regenerated all SVG test baselines.
+
+## 6.0.0a19
+
+_2026-04-07_
+
+**Fix house sector geometry: use visual center (r,r) for arc calculations.**
+
+### Changes
+
+- Compute house sector arc points from the visual chart center `(r, r)` using `r + R * cos(θ)` instead of `sliceToX(0, R, θ) + dropin`. The old formula placed inner/outer circles at different centers (`(c1,c1)` vs `(c3,c3)`), causing arcs to curve inward instead of following the chart's concentric circles.
+- Regenerated all SVG test baselines.
+
+## 6.0.0a18
+
+_2026-04-07_
+
+**Fix house sector arc geometry.**
+
+### Changes
+
+- Fix house sector arc sweep direction: reverse start/end points and use sweep=0 for outer arc, sweep=1 for inner arc. This produces correctly outward-curving arcs that cover the right house sector (both classic and modern chart styles).
+- Regenerated all SVG test baselines.
+
+## 6.0.0a17
+
+_2026-04-07_
+
+**Add transparent house sector wedges for interactive highlighting.**
+
+### Changes
+
+- Add `draw_house_sectors()` in `charts_utils.py` — generates 12 transparent annular wedge paths (`kr:node="HouseSector" kr:house="{n}"`) between house cusp boundaries.
+- Add `_draw_house_sectors_modern()` in `draw_modern.py` for modern chart style.
+- Add `makeHouseSectors` template variable and `$makeHouseSectors` placeholder in classic chart templates (chart.xml, wheel_only.xml).
+- Add `makeHouseSectors` field to `ChartTemplateModel`.
+- Sectors are invisible by default (`fill: transparent`) but have `pointer-events: all` so the frontend can attach click handlers and apply CSS highlighting.
+- Regenerated all SVG test baselines.
+
+## 6.0.0a16
+
+_2026-04-07_
+
+**Add kr: metadata to zodiac sign slices and modern chart indicators/house numbers.**
+
+### Changes
+
+- Wrap each zodiac sign slice in `<g kr:node="ZodiacSign" kr:sign="{sign}" kr:signnumber="{n}">` in both classic (`draw_zodiac_slice`) and modern (`_draw_zodiac_backgrounds`) charts.
+- Add `kr:slug` to modern chart indicators (`_draw_indicator_line`).
+- Wrap modern chart house numbers in `<g kr:node="HouseNumber" kr:house="{n}">`.
+- Regenerated all SVG test baselines.
+
+## 6.0.0a15
+
+_2026-04-07_
+
+**Enrich SVG chart metadata for frontend interactivity (focus mode, DataCards).**
+
+### Changes
+
+- Wrap degree indicators in `<g kr:node="Indicator" kr:slug="{planet}">` so they can be targeted by planet slug (both primary outer-ring and inner dual-chart indicators).
+- Add full `kr:` metadata to transit/secondary planet glyphs (`kr:node="ChartPoint"`, `kr:slug`, `kr:house`, `kr:sign`, `kr:absoluteposition`, `kr:signposition`) — previously only had `class="transit-planet-name"`.
+- Add `kr:house` attribute to `HouseNumber` elements (`<g kr:node="HouseNumber" kr:house="{n}">`) for direct querying without parsing text content.
+- Wrap external-view connecting lines in `<g kr:node="ConnectingLine" kr:slug="{planet}">`.
+- Fix typo: `kr:sing` → `kr:sign` on Cusp elements (both first and second subject).
+- Regenerated all SVG test baselines.
+
+## 6.0.0a14
+
+_2026-04-03_
+
+**Performance optimizations, benchmark tooling, and baseline regeneration.**
+
+### Changes
+
+- Cache SVG templates and CSS themes with `@lru_cache` (eliminates ~400KB disk I/O per render after first call).
+- Consolidate `model_copy()` calls in optional calculations: accumulate all updates per point, apply single `model_copy` at the end (reduces Pydantic model constructions from up to 345 to max 69).
+- Convert string concatenation (`output +=`) to list-join pattern in SVG drawing functions.
+- Cache `load_language_settings()` for the common no-overrides case.
+- Use `reset_session()` instead of `close()` in `ephemeris_context` to preserve LEB reader, Skyfield timescale, and LRU caches across consecutive calculations.
+- Added `poe benchmark` for measuring subject creation, aspects, and SVG rendering performance.
+- Added `poe regenerate:configurations` and included it in `poe regenerate:all`.
+- Regenerated all configuration-specific baselines (sidereal modes, perspectives, house systems, returns, composite, ephemeris, arabic parts) for libephemeris 1.0.0a15.
+- Relaxed Pluto-Chiron aspect movement test to accept both Static and Applying (boundary-sensitive with slow planets).
+
+## 6.0.0a13
+
+_2026-04-03_
+
+**Regenerate test baselines for libephemeris 1.0.0a15 and fix cross-backend test tolerances.**
+
+### Changes
+
+- Regenerated all SVG, report, and expected-data test baselines with libephemeris 1.0.0a15.
+- Fixed cross-backend test tolerances: baselines are now generated with libephemeris (not swisseph), so swisseph gets relaxed tolerances and libephemeris gets tight tolerances.
+- Increased position tolerance from 0.15° to 0.2° for swisseph cross-backend comparison to accommodate ancient date ΔT divergence (500 BC).
+- Skipped heliocentric synastry SVG test for swisseph (house comparison integers differ across backends).
+
+## 6.0.0a7
+
+_2026-04-01_
+
+**Ephemeris trace output now follows canonical planetary order instead of zodiac degree order.**
+
+This release makes the new DEBUG trace easier to scan during debugging sessions. The `Ephemeris trace` table now follows the stable astrological order of bodies (`Sun`, `Moon`, `Mercury`, `Venus`, `Mars`, ...) instead of reordering rows by absolute position in the zodiac for each chart.
+
+### Changes
+
+- Changed `AstrologicalSubjectFactory._calculate_planets()` trace ordering from absolute degree sorting to canonical point ordering based on the declared `STANDARD_PLANETS`, `White_Moon`, and `TNO_PLANETS` sequences.
+- Kept absolute degree as a displayed value in the table, but no longer use it as the primary sort key.
+
+## 6.0.0a6
+
+_2026-04-01_
+
+**DEBUG logging for backend tracing and chart layout is now concise, structured, and module-scoped.**
+
+This release cleans up the new ephemeris tracing logs introduced in `6.0.0a5`. Backend provenance is still available only in DEBUG mode, but the output is now grouped by concern: a compact ephemeris trace table during subject calculation, and overlap-group summaries during chart layout. Per-point rendering noise and root-logger output have been removed.
+
+### Changes
+
+- Replaced one-line-per-body backend trace logs with an ordered `Ephemeris trace` table showing point, absolute degree, and backend.
+- Removed noisy per-point `Planet index` and `distance_to_prev` / `distance_to_next` logs from `draw_planets.py`.
+- Added compact `Layout overlap groups` DEBUG logs that only report actual collision groups that require visual spreading.
+- Switched these debug paths to module loggers instead of `root`, so log output now identifies `kerykeion.astrological_subject_factory`, `kerykeion.charts.draw_planets`, and `kerykeion.aspects.aspects_factory` explicitly.
+
+## 6.0.0a5
+
+_2026-04-01_
+
+**Backend debug tracing stays out of the public model and is exposed only through DEBUG logs.**
+
+This release keeps `KerykeionPointModel` clean while still making ephemeris provenance visible during debugging. When `libephemeris` is the active backend and logging is set to DEBUG, kerykeion now logs which backend computed each body (for example `LEB`, `Skyfield`, `Horizons`, `SPK`, `ASSIST`, `Keplerian`) without adding any new public response fields.
+
+### Changes
+
+- Added DEBUG-only tracing logs in `AstrologicalSubjectFactory._calculate_planets()` using `libephemeris.start_tracing()` / `get_trace_results()`.
+- Improved chart rendering debug logs to include both point index and point name.
+- Pinned the core `libephemeris` dependency to `1.0.0a8`, which provides the tracing API required by this release.
+
+## 6.0.0a4
+
+_2026-03-31_
+
+**Remove `source` field from `KerykeionPointModel`.**
+
+The `source` field added in 6.0.0a3 (`"ephemeris"`, `"derived"`, `"formula"`) has been removed. It provided redundant information -- the provenance of every point is already obvious from its name and type (e.g. Descendant is always derived from ASC+180, Pars Fortunae is always a formula). The field added noise to every API response without aiding actual debugging.
+
+Ephemeris backend tracing (LEB vs Skyfield vs SPK vs Horizons) -- which is the genuinely useful debug information -- is handled at the API layer via an opt-in `X-Debug-Ephemeris` header that captures `libephemeris` log output. This keeps kerykeion clean and the debug infrastructure where it belongs.
+
+### Breaking Changes
+
+- **Removed `source` field** from `KerykeionPointModel`. Consumers that read `.source` on points will get an `AttributeError`. Since this field was only introduced in 6.0.0a3 (never in a stable release), the impact is minimal.
+- **Removed `source` parameter** from `get_kerykeion_point_from_degree()` in `utilities.py`.
+
+## 6.0.0a3
+
+_2026-03-31_
+
+**Ephemeris delegation refactor -- delegate derived/analytical points to backends, new celestial points.**
+
+This release refactors how kerykeion computes derived and analytical astrological points, following the principle: _"Astronomical calculations belong to the backend. Astrological logic belongs to Kerykeion."_
+
+### New Celestial Points
+
+- **Interpolated Perigee** (`SE_INTP_PERG = 22`) -- the interpolated lunar perigee (closest approach), computed natively by the ephemeris backend. Not the same as `Lilith + 180` -- the actual perigee can differ by ~25° from the geometric opposite of the apogee.
+
+- **White Moon / Selena** (`SE_WHITE_MOON = 56`) -- computed natively when the backend supports it; falls back to `Mean Lilith + 180` on backends that don't (e.g. swisseph). The fallback computes Mean Lilith locally without leaking it into the public model.
+
+### Breaking Changes
+
+- **Interpolated Lilith now uses `SE_INTP_APOG = 21`** instead of the previous naive `circular_mean(Mean, True)` formula. The new value is the astronomically correct interpolated apogee computed via the ELP2000-82B perturbation series (~50 terms). This is numerically different from the old formula and is no longer constrained to lie between Mean and True Lilith.
+
+### `OPPOSITE_PAIRS` Consolidation
+
+All `+180°` derived points are now declared in a single `OPPOSITE_PAIRS` dictionary and computed by one `_calculate_opposite_points()` method. This replaces ~7 separate inline blocks scattered across `_calculate_houses()` and `_calculate_planets()`.
+
+Consolidated pairs: Descendant (from ASC), Imum Coeli (from MC), Anti-Vertex (from Vertex), Mean/True South Lunar Node (from North Nodes), Mean/True Priapus (from Mean/True Lilith).
+
+### Bug Fixes
+
+- **`SE_JUL_CAL` → `JUL_CAL`** -- fixed cross-backend compatibility for BCE date support. `swisseph` exposes `JUL_CAL`, `libephemeris` exposes both. Using `JUL_CAL` for compatibility. This fixes all 38 `test_bce_dates.py` failures on the swisseph backend.
+
+- **Anti-Vertex with Vertex not requested** -- Vertex is now always computed and stored internally when either `Vertex` or `Anti_Vertex` is in `active_points`, so the opposite-pair derivation always has its primary available.
+
+- **Descendant / Imum Coeli with ASC/MC not requested** -- ASC and MC are now always stored in `data` (they are already computed at zero cost by `houses_ex2`), so `active_points=["Descendant"]` or `["Imum_Coeli"]` works correctly. Only added to `active_points` output when explicitly requested.
+
+- **White Moon fallback on swisseph** -- the fallback path now computes Mean Lilith locally via `swe.calc_ut(jd, 12, flags)` without writing it to the public model, preventing an unrequested `mean_lilith` field from leaking into the subject.
+
+### Internal Changes
+
+- Added `Interpolated_Perigee` and `White_Moon` to: `AstrologicalPoint` literal type, `AstrologicalBaseModel`, `KerykeionLanguageCelestialPointModel`, `DEFAULT_CELESTIAL_POINTS_SETTINGS`, `ALL_ACTIVE_POINTS`, and all 10 language translation dictionaries.
+- Updated `_POINT_NUMBER_MAP` in `utilities.py` with correct body IDs for `True_Lilith` (13), `Interpolated_Lilith` (21), `Interpolated_Perigee` (22), `White_Moon` (56).
+- Regenerated all modern SVG chart baselines to reflect new points.
+- Updated `test_lilith_variants.py` to reflect the new `SE_INTP_APOG` semantics.
+
+## 6.0.0a2
+
+_2026-03-30_
+
+**BCE date support -- historical charts for dates before 1 AD.**
+
+### BCE Date Support
+
+- **Dates before 1 AD are now fully supported.** Pass negative years (astronomical year numbering: 0 = 1 BCE, -1 = 2 BCE, etc.) to `AstrologicalSubjectFactory.from_birth_data()` and all chart types work: natal, transit, synastry, with any house system or sidereal mode.
+
+- **How it works:** For `year < 1`, Python's `datetime` is bypassed entirely. Julian Day is computed directly via `swe.julday()` with the Julian calendar (`SE_JUL_CAL`). Timezone offset uses Local Mean Time (LMT) based on longitude -- historically correct for dates predating standardized time zones.
+
+- **Both backends supported:** Works identically with libephemeris and swisseph. Julian Day agreement < 1e-6, Sun position agreement < 0.1°.
+
+- **Chart rendering:** SVG charts (natal, transit, synastry) render correctly for BCE dates. ISO 8601 extended year format (e.g. `-0500-03-21T12:00:00+01:35`) used throughout.
+
+- **New utility functions:** `format_ancient_iso()`, `format_iso_display()`, `extract_year_from_iso()` in `kerykeion.utilities` for BCE-safe date formatting.
+
+- **68 new tests** covering subject creation, Julian Day baselines, LMT offset, ISO formatting, day of week, planetary positions, SVG baselines (natal/transit/synastry), house systems, sidereal modes, backend comparison, report generation, and modern date regression.
+
+#### Example
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+# Spring equinox in Ancient Greece, 501 BCE
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Ancient Greece",
+    year=-500, month=3, day=21, hour=12, minute=0,
+    lat=37.9838, lng=23.7275, tz_str="Europe/Athens",
+    online=False,
+)
+print(subject.sun.sign)  # Pis
+print(subject.julian_day)  # 1538512.934...
+```
+
+## 6.0.0a1
+
+_2026-03-29_
+
+**First alpha release of Kerykeion v6 -- major feature release with 22 new astrological features, 8 new standalone factories, and 11 new celestial points.**
+
+All v6 features are **opt-in** -- existing code works unchanged with no breaking changes to the public API.
+
+### New Standalone Factories
+
+- **PrimaryDirectionsFactory** -- Placidus semi-arc primary directions with Ptolemy (1 deg = 1 year) and Naibod (0.9856 deg/year) rate keys. Computes speculum with equatorial coordinates, meridian distance, and semi-arc data.
+
+- **AstroCartographyFactory** -- Planetary line mapping (ACG). Computes MC, IC, ASC, DSC lines globally with configurable step size, geographic tolerance, and latitude range.
+
+- **EclipseFactory** -- Localized and global solar/lunar eclipse search. Returns eclipse type (total, annular, partial, penumbral), magnitude, obscuration, and sun altitude for visibility.
+
+- **PlanetaryPhenomenaFactory** -- Observational phenomena: phase angle, illumination, elongation, apparent diameter/magnitude, and morning/evening star detection for Mercury and Venus.
+
+- **PlanetaryNodesFactory** -- Ascending/descending nodes and perihelion/aphelion for all planets. Supports mean and osculating (instantaneous) calculation methods.
+
+- **HeliacalFactory** -- Heliacal rising, setting, evening first, and morning last events. Customizable atmospheric conditions (pressure, temperature, humidity, extinction) and observer parameters.
+
+- **OccultationFactory** -- Lunar occultation search (global and location-specific). Returns occultation type (total, partial, annular), maximum Julian Day, and datestamp.
+
+- **FixedStarDiscoveryFactory** -- Auto-discover fixed stars near natal planets beyond the default 23. Configurable orb tolerance, accesses the full Swiss Ephemeris star catalog.
+
+### New Chart Features
+
+- **Davison Composite Chart** -- New composite method that calculates the midpoint in both time and space (vs. existing zodiac-midpoint method). Available via `CompositeSubjectFactory.get_davison_composite_subject_model()`.
+
+- **Relocated Charts** (`RelocatedChartFactory`) -- Recalculate houses and angles for a different geographic location while keeping all planetary positions unchanged.
+
+### New Celestial Points
+
+- **8 Uranian / Hamburg School hypothetical planets:** Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon. Full SVG symbols, CSS color variables (all 6 themes), and chart default settings included.
+
+- **3 Lilith/Priapus variants:** Interpolated Lilith, Mean Priapus, and True Priapus (anti-Lilith points, opposite of Mean/True Lilith).
+
+### New Calculation Options
+
+All activated via `AstrologicalSubjectFactory.from_birth_data()` keyword arguments:
+
+- **`calculate_dignities=True`** -- Ptolemaic essential dignities. New fields: `decan_number`, `decan_ruler`, `term_ruler`, `essential_dignity` ("Domicile"/"Exaltation"/"Detriment"/"Fall"/"Peregrine"), `dignity_score` (-5 to +5).
+
+- **`calculate_nakshatra=True`** -- Vedic lunar mansions (27 Nakshatras). New fields: `nakshatra`, `nakshatra_number` (1-27), `nakshatra_pada` (1-4), `nakshatra_lord` (Vimsottari Dasha ruler).
+
+- **`calculate_gauquelin=True`** -- Gauquelin 36-sector system for statistical astrology. New field: `gauquelin_sector` (1.0-36.99). Full SVG rendering with sector lines replacing house cusps in both classic and modern chart styles.
+
+- **`calculate_local_space=True`** -- Horizon coordinates. New fields: `azimuth` (compass bearing 0-360) and `altitude_above_horizon` (degrees above/below horizon).
+
+- **`calculate_nutation=True`** -- Earth's nutation model. New model-level field: `nutation` (`NutationObliquityModel` with `true_obliquity`, `mean_obliquity`, `nutation_longitude`, `nutation_obliquity`).
+
+- **`active_fixed_stars=["Sirius", ...]`** -- Dynamically add fixed stars beyond the default 23-star catalog.
+
+### New Perspective Types
+
+- **Barycentric** perspective (solar system barycenter as origin). Added to the existing set: Apparent Geocentric, True Geocentric, Heliocentric, Topocentric, and 7 planetocentric variants (Seleno-, Mercury-, Venus-, Mars-, Jupiter-, Saturn-centric).
+
+### New Aspect Types
+
+- **Declination aspects:** `parallel` (same declination) and `contra_parallel` (opposite declination).
+
+### Enhanced Returns & Transits
+
+- **Heliocentric returns** and **Lunar Node Crossing** returns via `PlanetaryReturnFactory`.
+- **Transit exactness refinement** via bisection: `refine_exact_moments=True` with configurable `refinement_iterations` (default 12 = ~0.244s precision).
+
+### New Model Fields on KerykeionPointModel
+
+- `is_out_of_bounds: Optional[bool]` -- True when declination exceeds the Sun's maximum (~23.44°), indicating a planet operating outside normal boundaries. Always populated when declination is available.
+- All dignity, nakshatra, gauquelin, local space, and azimuth fields listed above.
+
+### Bug Fixes
+
+- **Modern style Gauquelin rendering:** Fixed three bugs that broke the modern chart wheel when Gauquelin sectors were active:
+  - House division lines (12 thick lines crossing the planet ring) were still drawn instead of 36 sector lines. Now correctly draws Gauquelin sector divisions through the planet ring.
+  - The inner house ring used wrong Y coordinates and inconsistent rotation sign, causing sector markers to render as a misplaced bar.
+  - Added new `_draw_gauquelin_division_lines()` function for sector lines in the planet ring.
+
+- **Multi-column grid headers:** When many active points cause the Gauquelin unified grid to split into multiple columns, the header row (Planet, Longitude, Decl., Sector) now appears on all columns instead of only the first.
+
+- **SVG height for many active points:** The triangular aspect grid grows by 14px per point but the SVG height was only growing by 8px per point. With 55+ active points, the aspect grid was clipped at the top. Height calculation now accounts for the aspect grid's actual growth rate.
+
+- **Aspect grid / planet grid overlap:** With multi-column Gauquelin layouts, the planet grid extends leftward and could overlap the aspect grid. The aspect grid X position now shifts rightward together with the planet grid.
+
+- **Gauquelin grid centering:** The unified Gauquelin grid (220px wide) now shifts 30px left for better visual symmetry.
+
+### Ephemeris Backend Abstraction
+
+- **Dual-backend architecture**: Kerykeion now supports two interchangeable ephemeris backends -- **libephemeris** (pure Python, AGPL-3.0, default) and **swisseph** (C bindings, GPL-2.0, optional). Both are 100% API-compatible; all features work identically on both.
+- **libephemeris** uses NASA JPL DE440/DE441 ephemeris data via Skyfield. No C compiler required. Installed by default with `pip install kerykeion`.
+- **swisseph** remains available via `pip install kerykeion[swiss]` for users who need maximum speed or have existing GPL workflows.
+- Backend selection: auto-detected (libephemeris preferred) or explicit via `KERYKEION_BACKEND=swisseph|libephemeris` environment variable.
+- **Barycentric precision**: libephemeris uses JPL DE440 native barycentric coordinates (N-body gravitational dynamics), making it the more accurate backend for barycentric work.
+- Planetary longitude agreement < 0.02 deg across backends; house cusps < 0.05 deg; retrograde status always identical. See `site/docs/backend_precision_comparison.md` for full details.
+- Three test suites: `poe test:swe` (swisseph, 8659 tests), `poe test:lib` (libephemeris, 2460+ tests), `poe test:compare` (cross-backend equivalence).
+
+### Internal / Deprecations
+
+- Removed v4 backward compatibility layer (`kr_types` module excluded from coverage, marked for deprecation).
+- Removed stale v6 planning docs (all features implemented and tested).
+- `SubscriptableBaseModel` added for dictionary-style field access on Pydantic models.
+- 8700+ tests passing across both backends, including 50+ dedicated v6 feature tests and factory coverage at 98-100%.
 
 ## 5.12.0
 

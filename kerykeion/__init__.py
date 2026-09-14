@@ -11,6 +11,9 @@ Kerykeion is a comprehensive astrology library that provides tools for:
 - **Planetary Returns**: Compute solar and lunar return charts
 - **Transit Analysis**: Track planetary transits over time ranges
 - **Composite Charts**: Generate midpoint composite charts
+- **Predictive Techniques**: Secondary progressions, solar arc, primary directions, midpoints
+- **Advanced Astronomy**: Eclipses, heliacal events, occultations, planetary phenomena
+- **Astro-Cartography**: Planetary angular lines across the globe
 
 Quick Start
 -----------
@@ -30,73 +33,180 @@ Quick Start
 Main Classes
 ------------
 - AstrologicalSubjectFactory: Create astrological subjects (recommended)
-- AstrologicalSubject: Legacy wrapper for backward compatibility
 - ChartDrawer: Generate SVG chart visualizations
 - AspectsFactory: Calculate planetary aspects
 - RelationshipScoreFactory: Calculate compatibility scores
 - CompositeSubjectFactory: Create composite charts
 - PlanetaryReturnFactory: Calculate solar/lunar returns
 - TransitsTimeRangeFactory: Track transits over time
+- SecondaryProgressionFactory: Day-for-a-year progressions
+- SolarArcFactory: Solar arc directions
+- PrimaryDirectionsFactory: Placidus semi-arc primary directions
+- MidpointFactory: Cosmobiology midpoint analysis
+- EclipseFactory: Solar and lunar eclipse search
+- AstroCartographyFactory: ACG planetary lines
 
 .. include:: ../README.md
 
-This is part of Kerykeion (C) 2025 Giacomo Battaglia
+This is part of Kerykeion (C) 2025-2026 Giacomo Battaglia
 """
+
+from importlib.metadata import PackageNotFoundError as _PackageNotFoundError
+from importlib.metadata import version as _package_version
+
+try:
+    __version__ = _package_version("kerykeion")
+except _PackageNotFoundError:  # running from a source tree without installation
+    __version__ = "0.0.0"
 
 # =============================================================================
 # CORE FACTORIES
 # =============================================================================
-from .astrological_subject_factory import AstrologicalSubjectFactory
-from .composite_subject_factory import CompositeSubjectFactory
-from .planetary_return_factory import PlanetaryReturnFactory
-from .chart_data_factory import ChartDataFactory
-from .ephemeris_data_factory import EphemerisDataFactory
-from .transits_time_range_factory import TransitsTimeRangeFactory
+from .astrological_subject import AstrologicalSubjectFactory
+from .composite_subject import CompositeSubjectFactory
+from .planetary_returns import PlanetaryReturnFactory
+from .chart_data import ChartDataFactory
+from .ephemeris_data import EphemerisDataFactory
+from .transits import TransitsTimeRangeFactory
 from .moon_phase_details import MoonPhaseDetailsFactory
+from .sun_times import SunTimesFactory
+from .planetary_hours import PlanetaryHoursFactory
+from .void_of_course_moon import VoidOfCourseMoonFactory
+
+# =============================================================================
+# STANDALONE FACTORIES
+# =============================================================================
+from .planetary_phenomena import PlanetaryPhenomenaFactory
+from .eclipses import (
+    EclipseFactory,
+    EclipseSearchResultModel,
+    LunarEclipseModel,
+    SolarEclipseModel,
+)
+from .lunations import LunationFinderFactory, LunationModel, LunationsCollectionModel
+from .retrograde_stations import (
+    RetrogradeStationFactory,
+    StationModel,
+    RetrogradePeriodModel,
+    RetrogradePeriodsCollectionModel,
+    RetrogradeStationsCollectionModel,
+)
+from .sign_ingresses import (
+    SignIngressFactory,
+    IngressModel,
+    SignPeriodModel,
+    SignPeriodsCollectionModel,
+    SignIngressesCollectionModel,
+)
+from .mundane_aspects import (
+    MundaneAspectFactory,
+    MundaneAspectModel,
+    MundaneAspectsCollectionModel,
+)
+from .planetary_nodes import PlanetaryNodesFactory, PlanetaryNodeModel, PlanetaryNodesCollectionModel
+from .heliacal import HeliacalFactory, HeliacalEventModel
+from .occultations import OccultationFactory, OccultationModel
+from .relocated_chart import RelocatedChartFactory
+from .fixed_stars import FixedStarDiscoveryFactory, FixedStarMetadataModel
+from .primary_directions import PrimaryDirectionsFactory, PrimaryDirectionModel, SpeculumEntryModel
+from .astro_cartography import AstroCartographyFactory, ACGLineModel, ACGLinePointModel
+from .midpoints import MidpointFactory, MidpointModel, MidpointAspectModel
+from .secondary_progressions import (
+    ProgressedPointModel,
+    ProgressedToNatalAspectModel,
+    SecondaryProgressionFactory,
+    SecondaryProgressionsResultModel,
+    SolarArcFactory,
+    SolarArcDirectedAspectModel,
+    SolarArcSubjectModel,
+    SolarArcDirectedPointModel,
+)
 
 # =============================================================================
 # ANALYSIS FACTORIES
 # =============================================================================
 from .aspects import AspectsFactory
-from .relationship_score_factory import RelationshipScoreFactory
-from .house_comparison.house_comparison_factory import HouseComparisonFactory
+from .relationship_score import RelationshipScoreFactory
+from .house_comparison import HouseComparisonFactory
+from .dominants import DominantsFactory, DominantStrategy, BaseDominantStrategy
+from .zodiacal_releasing import ZodiacalReleasingFactory
+from .profections import ProfectionsFactory
+from .firdaria import FirdariaFactory
+from .receptions import MutualReceptionsFactory
+from .horary import HoraryIndicatorsFactory
 
 # =============================================================================
 # VISUALIZATION
 # =============================================================================
-from .charts.chart_drawer import ChartDrawer
+from .charts import ChartDrawer
 from .report import ReportGenerator
 
 # =============================================================================
 # DATA MODELS
 # =============================================================================
 from .schemas import KerykeionException
-from .schemas.kr_models import (
+from .schemas.models import (
+    AstrologicalSubjectModel,
+    CompositeSubjectModel,
+    KerykeionPointModel,
+    EphemerisWarningModel,
+    AspectModel,
     MoonPhaseOverviewModel,
     ChartDataModel,
+    AngularityModel,
+    StelliumModel,
     SingleChartDataModel,
     DualChartDataModel,
+    SingleChartAspectsModel,
+    DualChartAspectsModel,
     ElementDistributionModel,
     QualityDistributionModel,
     HouseComparisonModel,
     PlanetReturnModel,
+    TransitEventModel,
+    TransitEventsTimeRangeModel,
+    TransitsTimeRangeModel,
+    PlanetaryPhenomenaModel,
+    PlanetaryPhenomenaCollectionModel,
+    SunTimesModel,
+    PlanetaryHourModel,
+    PlanetaryHoursModel,
+    VoidOfCourseAspectModel,
+    VoidOfCourseMoonModel,
+    VoidOfCourseWindowModel,
+    VoidOfCourseWindowsCollectionModel,
+    DominantsModel,
+    DominantScoreModel,
+    DominantBreakdownItemModel,
+    TriplicityLordsModel,
+    ZodiacalReleasingModel,
+    ZRPeriodModel,
+    ProfectionsModel,
+    ProfectionYearModel,
+    FirdariaModel,
+    FirdariaPeriodModel,
+    FirdariaSubPeriodModel,
+    MutualReceptionModel,
+    MutualReceptionsModel,
+    HoraryIndicatorsModel,
+    HorarySignificatorModel,
+    HoraryConsiderationModel,
+    RelationshipScoreModel,
+    EphemerisDictModel,
 )
+from .schemas.literals import DominantMethod
 
 # =============================================================================
 # SETTINGS AND UTILITIES
 # =============================================================================
 from .settings import KerykeionSettingsModel
-from .context_serializer import to_context
+from .context import to_context
+from .predictive import PTOLEMAIC_ASPECTS
 
 # =============================================================================
-# LEGACY API (v4 backward compatibility)
+# EPHEMERIS BACKEND
 # =============================================================================
-from .backword import (
-    AstrologicalSubject,  # Legacy wrapper for AstrologicalSubjectFactory
-    KerykeionChartSVG,  # Legacy wrapper for ChartDrawer
-    NatalAspects,  # Legacy wrapper for AspectsFactory (natal)
-    SynastryAspects,  # Legacy wrapper for AspectsFactory (synastry)
-)
+from .ephemeris_backend import BACKEND_NAME
 
 
 __all__ = [
@@ -108,29 +218,188 @@ __all__ = [
     "EphemerisDataFactory",
     "TransitsTimeRangeFactory",
     "MoonPhaseDetailsFactory",
+    "SunTimesFactory",
+    "PlanetaryHoursFactory",
+    "VoidOfCourseMoonFactory",
+    # Standalone Factories
+    "PlanetaryPhenomenaFactory",
+    "EclipseFactory",
+    "EclipseSearchResultModel",
+    "SolarEclipseModel",
+    "LunarEclipseModel",
+    "LunationFinderFactory",
+    "LunationModel",
+    "LunationsCollectionModel",
+    "RetrogradeStationFactory",
+    "StationModel",
+    "RetrogradePeriodModel",
+    "RetrogradePeriodsCollectionModel",
+    "RetrogradeStationsCollectionModel",
+    "SignIngressFactory",
+    "IngressModel",
+    "SignPeriodModel",
+    "SignPeriodsCollectionModel",
+    "SignIngressesCollectionModel",
+    "MundaneAspectFactory",
+    "MundaneAspectModel",
+    "MundaneAspectsCollectionModel",
+    "PlanetaryNodesFactory",
+    "PlanetaryNodeModel",
+    "PlanetaryNodesCollectionModel",
+    "HeliacalFactory",
+    "HeliacalEventModel",
+    "OccultationFactory",
+    "OccultationModel",
+    "RelocatedChartFactory",
+    "FixedStarDiscoveryFactory",
+    "FixedStarMetadataModel",
+    "PrimaryDirectionsFactory",
+    "PrimaryDirectionModel",
+    "SpeculumEntryModel",
+    "AstroCartographyFactory",
+    "ACGLineModel",
+    "ACGLinePointModel",
+    "MidpointFactory",
+    "MidpointModel",
+    "MidpointAspectModel",
+    "ProgressedPointModel",
+    "ProgressedToNatalAspectModel",
+    "SecondaryProgressionFactory",
+    "SecondaryProgressionsResultModel",
+    "SolarArcFactory",
+    "SolarArcDirectedAspectModel",
+    "SolarArcDirectedPointModel",
+    "SolarArcSubjectModel",
     # Analysis Factories
     "AspectsFactory",
     "RelationshipScoreFactory",
     "HouseComparisonFactory",
+    "DominantsFactory",
+    "DominantStrategy",
+    "BaseDominantStrategy",
+    "ZodiacalReleasingFactory",
+    "ProfectionsFactory",
+    "FirdariaFactory",
+    "MutualReceptionsFactory",
+    "HoraryIndicatorsFactory",
     # Visualization
     "ChartDrawer",
     "ReportGenerator",
     # Data Models
     "KerykeionException",
+    "AstrologicalSubjectModel",
+    "CompositeSubjectModel",
+    "KerykeionPointModel",
+    "EphemerisWarningModel",
+    "AspectModel",
     "ChartDataModel",
+    "AngularityModel",
+    "StelliumModel",
     "SingleChartDataModel",
     "DualChartDataModel",
+    "SingleChartAspectsModel",
+    "DualChartAspectsModel",
     "ElementDistributionModel",
     "QualityDistributionModel",
     "HouseComparisonModel",
     "PlanetReturnModel",
+    "TransitEventModel",
+    "TransitEventsTimeRangeModel",
+    "TransitsTimeRangeModel",
+    "PlanetaryPhenomenaModel",
+    "PlanetaryPhenomenaCollectionModel",
     "MoonPhaseOverviewModel",
+    "SunTimesModel",
+    "PlanetaryHourModel",
+    "PlanetaryHoursModel",
+    "VoidOfCourseAspectModel",
+    "VoidOfCourseMoonModel",
+    "VoidOfCourseWindowModel",
+    "VoidOfCourseWindowsCollectionModel",
+    "DominantsModel",
+    "TriplicityLordsModel",
+    "DominantScoreModel",
+    "DominantBreakdownItemModel",
+    "ZodiacalReleasingModel",
+    "ZRPeriodModel",
+    "ProfectionsModel",
+    "ProfectionYearModel",
+    "FirdariaModel",
+    "FirdariaPeriodModel",
+    "FirdariaSubPeriodModel",
+    "MutualReceptionModel",
+    "MutualReceptionsModel",
+    "HoraryIndicatorsModel",
+    "HorarySignificatorModel",
+    "HoraryConsiderationModel",
+    "RelationshipScoreModel",
+    "EphemerisDictModel",
+    "DominantMethod",
     # Settings and Utilities
     "KerykeionSettingsModel",
     "to_context",
-    # Legacy API (v4 backward compatibility)
-    "AstrologicalSubject",
-    "KerykeionChartSVG",
-    "NatalAspects",
-    "SynastryAspects",
+    "PTOLEMAIC_ASPECTS",
+    # Ephemeris Backend
+    "BACKEND_NAME",
 ]
+
+
+# =============================================================================
+# REMOVED v5 API — helpful migration errors (PEP 562)
+# =============================================================================
+_MIGRATION_GUIDE_URL = "https://www.kerykeion.net/content/docs/migration"
+
+# Appended to every removed-name message below. Rewriting the call is only half
+# the upgrade: v6 also changed defaults that alter the numbers, and those change
+# silently for code that already used the v5 factories correctly. This error is
+# the one moment we know the reader is looking, so it says both things.
+_BEHAVIOUR_CHANGES_NOTE = (
+    "\n\n"
+    "Note: v6 also changed defaults that affect RESULTS, not just imports:\n"
+    "  - active points: 18 -> 14 (Descendant, Imum_Coeli, True_South_Lunar_Node,\n"
+    "    Mean_Lilith are no longer active unless requested)\n"
+    "  - aspect orbs are narrower (conjunction/opposition 10 -> 6 degrees,\n"
+    "    quintile dropped), and transits/returns/progressions now use a flat\n"
+    "    3-degree orb, so expect FEWER aspects\n"
+    "  - chart style: 'classic' -> 'modern'\n"
+    "Porting the call above does not restore v5 output. See 'What changes in the\n"
+    "results' in the guide; kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS restores\n"
+    "the old point set, and the guide gives the v5 aspect list."
+)
+
+_V5_REMOVED_NAMES = {
+    "AstrologicalSubject": (
+        "'AstrologicalSubject' was removed in v6. Use the factory instead:\n"
+        "    from kerykeion import AstrologicalSubjectFactory\n"
+        "    subject = AstrologicalSubjectFactory.from_birth_data(...)"
+    ),
+    "KerykeionChartSVG": (
+        "'KerykeionChartSVG' was removed in v6. Compute chart data first, then draw it:\n"
+        "    from kerykeion import ChartDataFactory, ChartDrawer\n"
+        "    chart_data = ChartDataFactory.create_natal_chart_data(subject)\n"
+        "    svg = ChartDrawer(chart_data).generate_svg_string()"
+    ),
+    "NatalAspects": (
+        "'NatalAspects' was removed in v6. Use AspectsFactory instead:\n"
+        "    from kerykeion import AspectsFactory\n"
+        "    aspects = AspectsFactory.single_chart_aspects(subject)"
+    ),
+    "SynastryAspects": (
+        "'SynastryAspects' was removed in v6. Use AspectsFactory instead:\n"
+        "    from kerykeion import AspectsFactory\n"
+        "    aspects = AspectsFactory.dual_chart_aspects(first_subject, second_subject)"
+    ),
+}
+
+
+def __getattr__(name: str):
+    # ImportError (not AttributeError) so that `from kerykeion import AstrologicalSubject`
+    # surfaces this message verbatim instead of Python's generic "cannot import name".
+    # Trade-off: hasattr()/getattr(..., default) also raise for these names —
+    # feature-detect with try/except ImportError instead.
+    if name in _V5_REMOVED_NAMES:
+        raise ImportError(
+            f"{_V5_REMOVED_NAMES[name]}{_BEHAVIOUR_CHANGES_NOTE}"
+            f"\nMigration guide: {_MIGRATION_GUIDE_URL}"
+        )
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

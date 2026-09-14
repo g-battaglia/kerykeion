@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*-
+"""``kerykeion status`` — a thin wrapper over :mod:`kerykeion_cli.diagnostics`."""
+
+from __future__ import annotations
+
+from typing import Annotated
+
+from kerykeion_cli import diagnostics, rendering
+from kerykeion_cli.options import FormatOpt
+from kerykeion_cli.parser import Opt
+
+
+def status(
+    fmt: FormatOpt = None,
+    check: Annotated[
+        bool, Opt(("--check",), "Also run the install checks (a real calculation included); exit 6 if one fails.")
+    ] = False,
+) -> None:
+    """Backend, ephemeris data and calc mode in use; --check judges the install."""
+    code = diagnostics.render(rendering.resolve_format(fmt, None), check=check)
+    if code:
+        raise SystemExit(code)

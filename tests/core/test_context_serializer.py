@@ -5,9 +5,11 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 Test suite for context_serializer module (XML output)
 """
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.context_serializer import (
+from kerykeion.context.serializer import (
     to_context,
     kerykeion_point_to_context,
     lunar_phase_to_context,
@@ -19,7 +21,7 @@ from kerykeion.context_serializer import (
     dual_chart_data_to_context,
     moon_phase_overview_to_context,
 )
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion.chart_data.factory import ChartDataFactory
 from typing import get_args
 from kerykeion.schemas import AstrologicalPoint
 
@@ -487,8 +489,10 @@ class TestDualChartDataToContext:
 
         if dual_chart_with_score.relationship_score is not None:
             assert "<relationship_score " in context
-            assert 'max="44"' in context
             assert "value=" in context
+            # No hardcoded max: the score is an open-ended additive sum (a strong
+            # synastry exceeds the old 44 cap), so value/max would read >100%.
+            assert "max=" not in context
 
 
 class TestToContextDispatcher:
@@ -562,7 +566,7 @@ class TestToContextDispatcher:
 
     def test_dispatcher_with_moon_phase_overview(self):
         """Test dispatcher with MoonPhaseOverviewModel."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -662,7 +666,7 @@ class TestNonQualitativeOutput:
 
     def test_no_interpretive_language_moon_phase_overview(self):
         """Ensure no interpretive language in moon phase overview output."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             moon=MoonPhaseMoonSummaryModel(
@@ -774,7 +778,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_minimal_overview(self):
         """Test a minimal MoonPhaseOverviewModel (only required fields)."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -790,7 +794,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_moon_details(self):
         """Test MoonPhaseOverviewModel with moon summary fields."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -815,7 +819,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_sun_info(self):
         """Test MoonPhaseOverviewModel with sun info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseSunInfoModel,
@@ -826,22 +830,23 @@ class TestMoonPhaseOverviewToContext:
             datestamp="Thu, 10 Oct 1993 12:12:00 +0000",
             moon=MoonPhaseMoonSummaryModel(phase=0.5),
             sun=MoonPhaseSunInfoModel(
-                sunrise=1696921080,
-                sunrise_timestamp="06:58",
-                sunset=1696960680,
-                sunset_timestamp="17:58",
-                day_length="11h 00m",
+                sunrise=datetime(2023, 10, 10, 6, 58, tzinfo=timezone.utc),
+                sunset=datetime(2023, 10, 10, 17, 58, tzinfo=timezone.utc),
+                day_length=timedelta(hours=11),
             ),
         )
         context = moon_phase_overview_to_context(overview)
         assert "<sun>" in context
         assert "</sun>" in context
-        assert "<sunrise>" in context
-        assert "<day_length>11h 00m</day_length>" in context
+        assert "<sunrise>2023-10-10T06:58:00+00:00</sunrise>" in context
+        assert "<sunset>2023-10-10T17:58:00+00:00</sunset>" in context
+        # day_length renders as H:MM (shared format_timedelta_hhmm), consistent
+        # with the report surface — not str(timedelta)'s H:MM:SS.
+        assert "<day_length>11:00</day_length>" in context
 
     def test_overview_with_location(self):
         """Test MoonPhaseOverviewModel with location info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseLocationModel,
@@ -863,7 +868,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_upcoming_phases(self):
         """Test MoonPhaseOverviewModel with upcoming phases."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -898,7 +903,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_zodiac(self):
         """Test MoonPhaseOverviewModel with zodiac info."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseZodiacModel,
@@ -914,12 +919,14 @@ class TestMoonPhaseOverviewToContext:
         )
         context = moon_phase_overview_to_context(overview)
         assert "<zodiac " in context
-        assert 'sun_sign="Lib"' in context
-        assert 'moon_sign="Can"' in context
+        # The serializer expands the 3-letter sign code to the full sign name,
+        # consistent with every other converter (round-16 fix).
+        assert 'sun_sign="Libra"' in context
+        assert 'moon_sign="Cancer"' in context
 
     def test_overview_with_moonrise_moonset(self):
         """Test MoonPhaseOverviewModel with moonrise/moonset fields."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -938,9 +945,52 @@ class TestMoonPhaseOverviewToContext:
         assert "<moonset>06:15</moonset>" in context
         assert "<moonset_timestamp>1696917300</moonset_timestamp>" in context
 
+    def test_real_overview_reaches_the_serializer_with_its_moon_times(self):
+        """End to end, from a real subject: the four elements above were dead
+        lines for as long as the factory never wrote the fields, so a test that
+        hand-builds the model could not have noticed. This one goes through
+        MoonPhaseDetailsFactory, which is the only path that ever fills them.
+
+        2026-08-28 at Greenwich has both events, so both must print.
+        """
+        from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Greenwich Moon Times", 2026, 8, 28, 12, 0,
+            lng=0.0, lat=51.4779, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        overview = MoonPhaseDetailsFactory.from_subject(subject)
+        context = moon_phase_overview_to_context(overview)
+
+        assert f"<moonrise>{overview.moon.moonrise}</moonrise>" in context
+        assert f"<moonrise_timestamp>{overview.moon.moonrise_timestamp}</moonrise_timestamp>" in context
+        assert f"<moonset>{overview.moon.moonset}</moonset>" in context
+        assert f"<moonset_timestamp>{overview.moon.moonset_timestamp}</moonset_timestamp>" in context
+        assert "2026-08-28T18:56" in context
+        assert "2026-08-28T05:15" in context
+
+    def test_a_day_without_a_moonrise_prints_no_moonrise(self):
+        """The elements are omitted, not emptied: 2026-01-09 at Greenwich has a
+        moonset and no moonrise, and the XML must say exactly that."""
+        from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "No Moonrise", 2026, 1, 9, 12, 0,
+            lng=0.0, lat=51.4779, tz_str="Etc/UTC",
+            city="Greenwich", nation="GB", online=False,
+            suppress_geonames_warning=True,
+        )
+        context = moon_phase_overview_to_context(MoonPhaseDetailsFactory.from_subject(subject))
+
+        assert "<moonrise>" not in context
+        assert "<moonrise_timestamp>" not in context
+        assert "<moonset>" in context
+
     def test_overview_with_next_lunar_eclipse(self):
         """Test MoonPhaseOverviewModel with next lunar eclipse."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEclipseModel,
@@ -965,7 +1015,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_detailed_position(self):
         """Test MoonPhaseOverviewModel with detailed moon position."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1000,7 +1050,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_visibility_and_viewing_conditions(self):
         """Test MoonPhaseOverviewModel with visibility and viewing conditions."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1043,7 +1093,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_visibility_without_viewing_conditions(self):
         """Test MoonPhaseOverviewModel with visibility but no viewing conditions."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1071,7 +1121,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_illumination_details(self):
         """Test MoonPhaseOverviewModel with illumination details."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseMoonDetailedModel,
@@ -1100,7 +1150,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_events_and_optimal_viewing(self):
         """Test MoonPhaseOverviewModel with events and optimal viewing period."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEventsModel,
@@ -1136,7 +1186,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_events_without_optimal_viewing(self):
         """Test MoonPhaseOverviewModel with events but no optimal viewing period."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseEventsModel,
@@ -1160,7 +1210,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_sun_position_and_eclipse(self):
         """Test MoonPhaseOverviewModel with sun position and solar eclipse."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseSunInfoModel,
@@ -1173,7 +1223,7 @@ class TestMoonPhaseOverviewToContext:
             datestamp="Thu, 10 Oct 1993 12:12:00 +0000",
             moon=MoonPhaseMoonSummaryModel(phase=0.5),
             sun=MoonPhaseSunInfoModel(
-                solar_noon="12:30",
+                solar_noon=datetime(2023, 10, 10, 12, 30, tzinfo=timezone.utc),
                 position=MoonPhaseSunPositionModel(
                     altitude=45.00,
                     azimuth=180.00,
@@ -1188,7 +1238,7 @@ class TestMoonPhaseOverviewToContext:
             ),
         )
         context = moon_phase_overview_to_context(overview)
-        assert "<solar_noon>12:30</solar_noon>" in context
+        assert "<solar_noon>2023-10-10T12:30:00+00:00</solar_noon>" in context
         assert "<position " in context
         assert 'altitude="45.00"' in context
         assert "<next_solar_eclipse " in context
@@ -1197,7 +1247,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_overview_with_extended_location(self):
         """Test MoonPhaseOverviewModel with all location attributes."""
-        from kerykeion.schemas.kr_models import (
+        from kerykeion.schemas.models import (
             MoonPhaseOverviewModel,
             MoonPhaseMoonSummaryModel,
             MoonPhaseLocationModel,
@@ -1223,7 +1273,7 @@ class TestMoonPhaseOverviewToContext:
 
     def test_none_fields_omitted(self):
         """Test that None/optional fields are omitted from XML output."""
-        from kerykeion.schemas.kr_models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
+        from kerykeion.schemas.models import MoonPhaseOverviewModel, MoonPhaseMoonSummaryModel
 
         overview = MoonPhaseOverviewModel(
             timestamp=750081120,
@@ -1246,8 +1296,8 @@ class TestTransitMomentToContext:
     """Tests for transit_moment_to_context function."""
 
     def test_transit_moment_with_aspects(self):
-        from kerykeion.context_serializer import transit_moment_to_context
-        from kerykeion.schemas.kr_models import TransitMomentModel, AspectModel
+        from kerykeion.context.serializer import transit_moment_to_context
+        from kerykeion.schemas.models import TransitMomentModel, AspectModel
 
         aspect = AspectModel(
             p1_name="Sun",
@@ -1272,15 +1322,15 @@ class TestTransitMomentToContext:
         assert "2024-01-15" in result
 
     def test_transit_moment_no_aspects(self):
-        from kerykeion.context_serializer import transit_moment_to_context
-        from kerykeion.schemas.kr_models import TransitMomentModel
+        from kerykeion.context.serializer import transit_moment_to_context
+        from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         result = transit_moment_to_context(moment)
         assert "<transit_moment " in result
 
     def test_transit_moment_via_to_context(self):
-        from kerykeion.schemas.kr_models import TransitMomentModel
+        from kerykeion.schemas.models import TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         result = to_context(moment)
@@ -1307,8 +1357,8 @@ class TestTransitsTimeRangeToContext:
         )
 
     def test_time_range_with_subject(self, _subject):
-        from kerykeion.context_serializer import transits_time_range_to_context
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.context.serializer import transits_time_range_to_context
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(
@@ -1320,7 +1370,7 @@ class TestTransitsTimeRangeToContext:
         assert "<transit_analysis " in result
 
     def test_time_range_via_to_context(self, _subject):
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(
@@ -1332,8 +1382,8 @@ class TestTransitsTimeRangeToContext:
         assert "<transit_analysis " in result
 
     def test_time_range_no_subject(self):
-        from kerykeion.context_serializer import transits_time_range_to_context
-        from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
+        from kerykeion.context.serializer import transits_time_range_to_context
+        from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
 
         moment = TransitMomentModel(date="2024-01-15T12:00:00", aspects=[])
         tr = TransitsTimeRangeModel(subject=None, transits=[moment], dates=["2024-01-15T12:00:00"])
@@ -1375,7 +1425,7 @@ class TestHouseComparisonContext:
         return s1, s2
 
     def test_house_comparison_to_context(self, _subjects):
-        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.context.serializer import house_comparison_to_context
         from kerykeion.house_comparison import HouseComparisonFactory
 
         s1, s2 = _subjects
@@ -1385,7 +1435,7 @@ class TestHouseComparisonContext:
         assert "<house_overlay>" in result
 
     def test_house_comparison_transit_context(self, _subjects):
-        from kerykeion.context_serializer import house_comparison_to_context
+        from kerykeion.context.serializer import house_comparison_to_context
         from kerykeion.house_comparison import HouseComparisonFactory
 
         s1, s2 = _subjects
@@ -1415,11 +1465,374 @@ class TestHouseComparisonContext:
             assert "<point_in_house " in result
 
     def test_return_subject_to_context(self, _subjects):
-        from kerykeion.context_serializer import astrological_subject_to_context
-        from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+        from kerykeion.context.serializer import astrological_subject_to_context
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
         s1, _ = _subjects
         factory = PlanetaryReturnFactory(s1, lng=12.5, lat=41.9, tz_str="Europe/Rome", online=False)
         solar_return = factory.next_return_from_date(2024, 9, 1, return_type="Solar")
         result = astrological_subject_to_context(solar_return)
         assert '<return_info type="Solar"' in result
+
+    def test_solar_arc_to_context(self, _subjects):
+        from kerykeion.context.serializer import solar_arc_to_context, to_context
+        from kerykeion.secondary_progressions import SolarArcFactory
+
+        s1, _ = _subjects
+        sa = SolarArcFactory.compute(s1, target_iso_utc_datetime="2026-04-28T00:00:00Z")
+        result = solar_arc_to_context(sa)
+        assert "<solar_arc_analysis " in result
+        assert "<directed_points " in result
+        assert "</solar_arc_analysis>" in result
+        if sa.directed_to_natal_aspects:
+            assert "<directed_natal_aspects " in result
+        # Also via dispatcher
+        result2 = to_context(sa)
+        assert result == result2
+
+    def test_midpoints_to_context(self, _subjects):
+        from kerykeion.context.serializer import midpoints_to_context, to_context
+        from kerykeion.midpoints import MidpointFactory
+
+        s1, _ = _subjects
+        midpoints = MidpointFactory.compute(s1)
+        result = midpoints_to_context(midpoints)
+        assert "<midpoints_analysis " in result
+        assert "</midpoints_analysis>" in result
+        assert "<midpoint " in result
+        # Also via dispatcher
+        result2 = to_context(midpoints)
+        assert result == result2
+
+
+
+class TestMidpointsToContext:
+    """Tests for midpoint serialization edge cases."""
+
+    def test_midpoints_to_context_empty(self):
+        from kerykeion.context.serializer import midpoints_to_context
+
+        result = midpoints_to_context([])
+        assert 'count="0"' in result
+        assert 'activated="0"' in result
+
+    def test_to_context_empty_list_raises_type_error(self):
+        """An empty list carries no type information: dispatching it to the
+        midpoints serializer would silently mislabel any empty collection
+        (e.g. an empty aspects list) as a zero-count midpoints analysis.
+        The TypeError message points at the explicit entry point;
+        ``midpoints_to_context([])`` stays available for callers who mean
+        "no midpoints"."""
+        import pytest
+
+        from kerykeion.context.serializer import to_context
+
+        with pytest.raises(TypeError, match="midpoints_to_context"):
+            to_context([])
+
+
+class TestFixedStarsAndMidpointsInSubjectContext:
+    """The v6 ``fixed_stars`` / ``active_midpoints`` arrays must appear in subject XML."""
+
+    def setup_class(self):
+        self.star_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Star Context Subject",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+            active_fixed_stars=["Regulus", "Spica"],
+        )
+        self.plain_subject = AstrologicalSubjectFactory.from_birth_data(
+            "Plain Context Subject",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+
+    def test_fixed_stars_block_present(self):
+        context = to_context(self.star_subject)
+        assert "<fixed_stars>" in context
+        assert "</fixed_stars>" in context
+        assert 'name="Regulus"' in context
+        assert 'name="Spica"' in context
+
+    def test_fixed_stars_present_in_chart_data_context(self):
+        chart_data = ChartDataFactory.create_natal_chart_data(self.star_subject)
+        context = to_context(chart_data)
+        assert "<fixed_stars>" in context
+        assert 'name="Regulus"' in context
+
+    def test_active_midpoints_block_present(self):
+        from kerykeion.midpoints import MidpointFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Midpoint Context Subject",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            lng=0.0,
+            lat=51.5074,
+            tz_str="Etc/GMT",
+            online=False,
+            suppress_geonames_warning=True,
+        )
+        subject.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+            subject,
+            ["Sun_Moon"],
+        )
+        context = to_context(subject)
+        assert "<active_midpoints>" in context
+        assert "</active_midpoints>" in context
+        assert 'name="Sun_Moon_Midpoint"' in context
+
+    def test_default_subject_has_no_star_or_midpoint_blocks(self):
+        context = to_context(self.plain_subject)
+        assert "fixed_stars" not in context
+        assert "active_midpoints" not in context
+
+
+class TestRoundOneRegressions:
+    """Regressions caught by the deep-validation review round 1."""
+
+    def _subject(self, name="RegSubj"):
+        from kerykeion import AstrologicalSubjectFactory
+        return AstrologicalSubjectFactory.from_birth_data(
+            name, 1990, 6, 15, 10, 30, lng=12.48, lat=41.89,
+            tz_str="Europe/Rome", online=False, suppress_geonames_warning=True,
+        )
+
+    def test_axes_always_include_derived_points(self):
+        """Descendant / Imum_Coeli / True_South_Lunar_Node are derived opposites
+        absent from DEFAULT_ACTIVE_POINTS; the <axes> section must still emit
+        them (regression: the active_points-driven loop dropped them)."""
+        from kerykeion.context.serializer import astrological_subject_to_context
+        ctx = astrological_subject_to_context(self._subject())
+        for axis in ("Descendant", "Imum_Coeli", "True_South_Lunar_Node"):
+            assert axis in ctx, f"{axis} dropped from <axes>"
+
+    def test_transit_per_point_owner_substituted(self):
+        """In a transit chart the transit subject's real name must not leak into
+        per-point owners (only the substituted 'Transit' label)."""
+        from kerykeion.chart_data.factory import ChartDataFactory
+        from kerykeion.context.serializer import to_context
+        natal = self._subject("Alice")
+        transit = self._subject("BobTheTransit")
+        ctx = to_context(ChartDataFactory.create_transit_chart_data(natal, transit))
+        assert 'point_owner="BobTheTransit"' not in ctx
+        assert 'projected_house_owner="BobTheTransit"' not in ctx
+
+    def test_relationship_score_no_hardcoded_max(self):
+        """The relationship_score is an open-ended sum; it must not carry a
+        hardcoded max='44' (a strong synastry exceeds it -> >100%)."""
+        from kerykeion.chart_data.factory import ChartDataFactory
+        from kerykeion.context.serializer import to_context
+        s1 = self._subject("A")
+        s2 = self._subject("B")
+        cd = ChartDataFactory.create_synastry_chart_data(s1, s2, include_relationship_score=True)
+        ctx = to_context(cd)
+        if "<relationship_score" in ctx:
+            assert "max=" not in ctx
+
+
+# =============================================================================
+# HOUSE INFORMATION THE LIBRARY RECORDS AND THE DOCUMENT HAS TO CARRY
+# =============================================================================
+
+
+def _polar_subject():
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="P",
+    )
+
+
+def test_a_substituted_house_system_is_named_in_the_context():
+    """A chart asked for in Placidus at 70N is cast in Porphyry.
+
+    The subject records the substitution, with a message written for a reader.
+    Reporting only the system actually used has a model writing house sentences
+    about a division the user did not choose, with nothing to caveat it.
+    """
+    subject = _polar_subject()
+    assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
+
+    context = to_context(subject)
+    line = [row for row in context.splitlines() if "polar_house_fallback" in row]
+    assert line, context[:400]
+    assert 'requested="Placidus"' in line[0]
+    assert 'used="Porphyry"' in line[0]
+
+
+def test_a_chart_that_needed_no_substitution_says_nothing():
+    """The element is a fact about a chart, not a field every chart carries."""
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+    )
+    assert not ordinary.polar_house_fallbacks
+    assert "polar_house_fallback" not in to_context(ordinary)
+
+
+@pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
+def test_the_composite_context_carries_the_anchor(anchor):
+    """It can turn the whole house frame by half a turn, so a context without it
+    describes a chart that cannot be reproduced."""
+    from kerykeion.composite_subject.factory import CompositeSubjectFactory
+
+    kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
+                  online=False, suppress_geonames_warning=True)
+    first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
+    second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
+
+    model = CompositeSubjectFactory(
+        first, second, house_anchor=anchor
+    ).get_midpoint_composite_subject_model()
+    assert f'house_anchor="{anchor}"' in to_context(model)
+
+    davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+    assert "house_anchor" not in to_context(davison), "a Davison chart never needs one"
+
+
+def test_no_degree_contradicts_the_sign_printed_beside_it():
+    """29.99687 rounds to "30.00", which is zero degrees of the NEXT sign.
+
+    Every degree this document prints sits next to a sign label, so the boundary
+    that matters is the sign's ceiling — not 360, which is the only one a naive
+    guard catches. The report's own tables have always got this right.
+    """
+    import re
+
+    subjects = [
+        AstrologicalSubjectFactory.from_birth_data(
+            "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
+            lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+        )
+        for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20))
+    ]
+    for subject in subjects:
+        context = to_context(subject)
+        for attribute in ("position", "cusp"):
+            assert f'{attribute}="30.00"' not in context, f"{attribute} at 30 degrees"
+        for match in re.finditer(r'abs_pos="([0-9.]+)"', context):
+            value = float(match.group(1))
+            assert value % 30.0 != 0.0 or value == 0.0, (
+                f"abs_pos {value} sits exactly on a sign boundary it was rounded onto"
+            )
+
+
+def test_the_axes_are_listed_whatever_the_point_preset_is():
+    """A model reading this context can always see where the horizon and the
+    meridian are.
+
+    Four of the angles and nodes are 180-degree opposites of points that ARE in
+    the default preset, so they appear in no preset of their own. Driving this
+    section off `active_points` therefore dropped them from every default chart,
+    which is what it was fixed for — and narrowing it to "only when the
+    counterpart is active" empties the section altogether for a caller who asks
+    for five planets and no angles, which is a caller this library has.
+    """
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Narrow", 1990, 6, 15, 14, 37, city="X", nation="XX", lat=45.0, lng=9.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        active_points=["Sun", "Moon", "Mercury", "Venus", "Mars"],
+    )
+    context = to_context(subject)
+    assert "<axes" in context
+    for angle in ("Ascendant", "Descendant", "Medium_Coeli", "Imum_Coeli"):
+        assert f'name="{angle}"' in context, angle
+
+
+def test_a_clamped_polar_fallback_says_which_latitude_it_used():
+    """Requested and used name the same system, so the latitude is the whole story.
+
+    A polar Gauquelin ring is recomputed at a clamped latitude under its own
+    name: the element said "Gauquelin sectors" twice, printed the latitude that
+    was ASKED for, and left out both the strategy and the latitude actually used.
+    A model reading that cannot tell anything happened, let alone reproduce it.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="W", calculate_gauquelin=True,
+    )
+    clamped = next(
+        record for record in subject.polar_house_fallbacks
+        if record.strategy == "clamp_latitude"
+    )
+    assert clamped.used_latitude != clamped.latitude, "the fixture no longer clamps"
+
+    line = next(
+        line for line in astrological_subject_to_context(subject).splitlines()
+        if "polar_house_fallback" in line
+    )
+    assert 'strategy="clamp_latitude"' in line
+    assert f'latitude="{clamped.latitude:.4f}"' in line
+    assert f'used_latitude="{clamped.used_latitude:.4f}"' in line
+
+
+def test_the_gauquelin_fallback_does_not_claim_the_chart_angles_moved():
+    """The backend describes what ITS call produced; only part of it is kept.
+
+    A polar Gauquelin call is retried at a clamped latitude and returns cusps and
+    angles, so the record it files says `house_cusps,angles`. But the chart keeps
+    only the 36-sector ring from that call — its own cusps and its four angles
+    come from the houses call and are bit-identical with Gauquelin switched off.
+    Filed unchanged, the record has a reader believing the horizon moved when
+    nothing did.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.context.serializer import astrological_subject_to_context
+
+    shared = dict(
+        city="X", nation="XX", lat=78.0, lng=0.0, tz_str="UTC", online=False,
+        suppress_geonames_warning=True, houses_system_identifier="W",
+    )
+    plain = AstrologicalSubjectFactory.from_birth_data("N", 1990, 6, 15, 12, 0, **shared)
+    with_gauquelin = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0, **shared, calculate_gauquelin=True
+    )
+    for angle in ("ascendant", "medium_coeli", "descendant", "imum_coeli"):
+        assert getattr(plain, angle).abs_pos == getattr(with_gauquelin, angle).abs_pos, angle
+
+    record = next(
+        item for item in with_gauquelin.polar_house_fallbacks
+        if item.requested_house_system_identifier == "G"
+    )
+    assert "angles" not in record.affects
+    assert "house_cusps" not in record.affects
+    assert record.affects == ["gauquelin_sector_cusps", "gauquelin_sectors"]
+
+    line = next(
+        line for line in astrological_subject_to_context(with_gauquelin).splitlines()
+        if "polar_house_fallback" in line
+    )
+    assert "gauquelin_sector_cusps" in line
+
+    # And the prose travels with the scope. The backend writes about the call it
+    # made — "the cusps and the angles derived from this call are approximate" —
+    # and that sentence survives into `model_dump_json()` and anywhere else the
+    # record is read raw, still saying the horizon moved.
+    assert "the cusps and the angles derived from this call are approximate" not in record.message
+    assert "36-sector ring" in record.message
+    assert "angles" in record.message and "keep the real value" in record.message
+    assert f"{record.used_latitude:.4f}" in record.message

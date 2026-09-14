@@ -2,14 +2,19 @@
 
 **Comprehensive reference for AI agents using the Kerykeion Astrological Library**
 
+Version: **6.0.0rc1**, Python 3.12+. Install with
+`pip install "kerykeion==6.0.0rc1"`; an unqualified install selects the stable
+release. This v6 guide includes APIs and defaults that differ from v5.
+
 ## Quick Overview
 
-Kerykeion is a Python library for astrological calculations using Swiss Ephemeris. It provides:
+Kerykeion is a Python library for astrological calculations powered by the libephemeris backend by default (Swiss Ephemeris available as an opt-in extra). It provides:
 
 -   Planetary position calculations (tropical/sidereal)
 -   Chart generation (Natal, Synastry, Transit, Composite, Returns)
 -   Aspect analysis and element/quality distributions
 -   SVG chart visualization
+-   Calendar events, sun times, planetary hours, and void-of-course windows
 -   Multiple house systems and coordinate perspectives
 
 ## Core Architecture
@@ -34,6 +39,29 @@ from kerykeion import (
     to_context  # AI-readable XML serializer
 )
 ```
+
+## Command-Line Interface (Optional)
+
+Install with `pip install "kerykeion[cli]"` to get a `kerykeion` command that
+exposes the whole library locally — same in-process engine as the Python API,
+no API key, offline-capable. The command lives in a separate package,
+`kerykeion-cli`, which that extra installs; the library alone has none. Output
+defaults to text on a terminal and JSON in a pipe (`-f text|json|xml|svg`).
+
+```bash
+pip install --pre "kerykeion[cli]==6.0.0rc1"
+# Or: uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
+```
+
+```console
+$ kerykeion subject save ada --date 1990-07-15 --time 10:30 --lat 41.9 --lng 12.5 --tz Europe/Rome --offline
+$ kerykeion natal -s ada                  # ASCII report on a terminal
+$ kerykeion natal -s ada | jq .sun.sign   # JSON in a pipe, no extra flag
+$ kerykeion call ProfectionsFactory.from_subject -s ada
+```
+
+`call` dispatches only to names in `kerykeion.__all__` (so `call os.system` is
+refused). Full reference: [CLI docs](https://www.kerykeion.net/content/docs/cli).
 
 ## 1. Creating Astrological Subjects
 
@@ -134,7 +162,16 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 asc = subject.first_house  # Ascendant
 mc = subject.tenth_house   # Midheaven
 print(f"Ascendant: {asc.sign} {asc.abs_pos:.2f}°")
+print(subject.coincident_house_cusps)   # [] on every ordinary chart
 ```
+
+`coincident_house_cusps` holds the groups of house numbers (1-based) whose cusps
+stand on ONE longitude — houses with no width, which can never contain anything.
+It is `[]` for every ordinary chart and only fills at extreme latitudes under
+systems that crowd their cusps. An angle that IS such a cusp is filed in the
+house that cusp opens (`subject.imum_coeli.house == "Fourth_House"` when the IC
+is the fourth cusp), even where several cusps coincide: the identity is recorded
+at the house call, since twelve longitudes alone cannot answer it.
 
 ### Lunar Phase
 
@@ -148,6 +185,13 @@ if subject.lunar_phase:
     print(f"Phase: {phase.moon_phase_name}")
     print(f"Emoji: {phase.moon_emoji}")
 ```
+
+`moon_phase_name` and `moon_emoji` come from windows centred on the syzygies
+(New/Full ±6.4286°, the quarters ±19.2857°), so the name tracks the event rather
+than a bin boundary. `moon_phase` stays a 1-28 index; `major_phase` is the
+nearest of the four syzygy/quadrature events and `stage` is `"waxing"` or
+`"waning"`. The two `get_moon_*_from_phase_int` helpers see only the index and
+remain the older 28-bin approximation.
 
 ## 4. Chart Data Factory
 
@@ -218,7 +262,17 @@ person2 = AstrologicalSubjectFactory.from_birth_data(
 composite_factory = CompositeSubjectFactory(person1, person2)
 composite_subject = composite_factory.get_midpoint_composite_subject_model()
 composite_data = ChartDataFactory.create_composite_chart_data(composite_subject)
+print(composite_subject.house_anchor, composite_subject.house_frame)
 ```
+
+Where the two charts' angles are nearly opposed the twelve near midpoints stop
+running in order, and the cusp ring is repaired by holding one angle at its near
+midpoint and moving the others onto their far one. `house_anchor` picks which
+angle is held — `"auto"` (default), `"ascendant"` or `"midheaven"` — and
+`house_frame` on the model reports what actually happened: `"anchored"` (a frame
+was hung and the twelve cover the circle once), `"midpoints"` (no frame, but
+still a house division) or `"gapped"` (neither). It is a request, not a
+guarantee. Both fields are `None` on a Davison chart, which needs no frame.
 
 ### Custom Aspects
 
@@ -252,12 +306,19 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
 
-# Get SVG as string (recommended for web apps)
+# Get SVG as string (recommended for web apps).
+# The wheel style defaults to "modern"; pass style="classic" for the
+# traditional wheel (instance-level via ChartDrawer(..., style="classic")
+# or per render). The modern wheel's planet cluster comes in three sizes:
+# glyph_size="small" | "medium" (default) | "large" — large draws the planet
+# glyph at the classic style's own size (in the default configuration —
+# zodiac background ring active). Instance-level or per render.
 svg_string = drawer.generate_svg_string()
 
-# Or save to file
+# Or save to file. Default filenames carry the style suffix:
+# "... - Modern.svg" / "... - Classic.svg".
 from pathlib import Path
-output_dir = Path("charts")
+output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
 drawer.save_svg(output_path=output_dir)
 ```
@@ -272,7 +333,7 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(
     chart_data=chart_data,
-    theme="dark",  # "classic", "light", "strawberry", "dark-high-contrast"
+    theme="dark",  # "classic", "dark", "black-and-white", or None for no CSS
     chart_language="IT",  # "EN", "FR", "ES", "PT", "CN", "RU", "TR", "DE", "HI"
     transparent_background=True
 )
@@ -291,6 +352,305 @@ full_chart = drawer.generate_svg_string()  # Complete chart
 wheel_only = drawer.generate_wheel_only_svg_string()  # Just the wheel
 aspects_only = drawer.generate_aspect_grid_only_svg_string()  # Just aspects
 ```
+
+### Optional Marks
+
+Six constructor booleans draw facts the chart data already carries. All default
+to `False`, and each is silent where it has no referent (no station, no score,
+a tropical zodiac, a house system that was honoured), so turning one on never
+produces an empty claim.
+
+-   `show_motion_state`: mark a planet at a station, `SR` (retrograde phase
+    opening) or `SD` (closing). Modern recolours the cluster and reuses the row
+    that holds `RX`; classic writes the letters at the foot of the glyph.
+-   `show_out_of_bounds`: `OOB` badge in the point tables.
+-   `show_aspect_movement`: dash the separating aspect lines.
+-   `show_relationship_score`: synastry score in the info panel; needs a score
+    on the chart data (`create_synastry_chart_data` computes one by default).
+-   `show_ayanamsa_value`: ayanamsa offset in degrees and minutes on the zodiac
+    line of a sidereal chart.
+-   `show_polar_fallback_note`: mark the domification line when the requested
+    house system was substituted at a polar latitude.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+drawer = ChartDrawer(
+    chart_data,
+    show_motion_state=True,     # Mercury is stationary_retrograde here
+    show_out_of_bounds=True,    # Uranus is out of bounds here
+    show_aspect_movement=True,
+)
+svg = drawer.generate_svg_string()
+```
+
+### Dual-chart SVG house metadata
+
+Each `<g kr:node="ChartPoint">` keeps the owner placement in `kr:house` and
+the owner ring in `kr:horoscope`. In Transit, Synastry, DualReturnChart, and
+Progression wheels, `kr:projectedhouse` is the point's house in the other
+subject's cusp system and `kr:projectedhoroscope` identifies that target ring.
+The contract is identical in classic/modern and full/wheel-only output, even
+when house-comparison data is disabled.
+
+### SVG point state metadata
+
+Every ChartPoint also carries its physical state and the chart analyses it
+takes part in. No rendering option gates these — the marks above only decide
+whether they are drawn — and they are identical across classic/modern and
+full/wheel-only output.
+
+-   `kr:motionstate` — a `MotionState` literal
+-   `kr:speed` — degrees/day, 6 decimals
+-   `kr:declination` — degrees, 4 decimals
+-   `kr:oob` — `"true"`, only when the body IS out of bounds
+-   `kr:magnitude`, `kr:nearpoint`, `kr:orb` — fixed stars
+-   `kr:angularity` — every angle the point stands on, as space-separated
+    `Angle:distance` pairs, closest first (a point near the poles can stand on two)
+-   `kr:stellium` — the house of the stellium the point belongs to
+
+An attribute is absent when the model does not carry the value: silence means
+"this chart does not compute it", which differs from zero or false (a
+heliocentric chart has no motion state, a midpoint composite none at all).
+Attribute names are lowercase letters only, with no separators or digits —
+consumers rewrite `kr:name` with a general pattern, so `motion_state` would be
+dropped in silence. `kerykeion.charts.svg_metadata` holds both the emitter
+(`point_state_attributes`) and the parser (`parse_chart_points`).
+
+```python
+from kerykeion.charts.svg_metadata import parse_chart_points
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+svg = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject)).generate_svg_string()
+for point in parse_chart_points(svg):
+    print(point.slug, point.motion_state, point.speed, point.out_of_bounds)
+```
+
+## 5A. Calendar and Civil-Time Factories
+
+```python
+from kerykeion import (
+    MundaneAspectFactory,
+    PlanetaryHoursFactory,
+    SunTimesFactory,
+    VoidOfCourseMoonFactory,
+)
+
+# Civil solar events and the unequal Chaldean hours for Rome.
+sun_times = SunTimesFactory.from_date(
+    2026, 5, 28, latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome"
+)
+planetary_hours = PlanetaryHoursFactory.from_datetime(
+    2026, 5, 28, 11, 30,
+    latitude=41.9028, longitude=12.4964, tz_str="Europe/Rome",
+)
+
+# Geocentric timing primitives need no observer coordinates.
+void_state = VoidOfCourseMoonFactory.from_datetime(
+    2026, 6, 1, 9, 0, tz_str="Europe/Rome"
+)
+aspectarian = MundaneAspectFactory.from_iso_range(
+    "2020-12-01", "2020-12-31",
+    points=["Jupiter", "Saturn"], aspects=["conjunction"],
+)
+```
+
+`VoidOfCourseMoonFactory.from_iso_range()` returns complete, unclipped void
+windows intersecting a UTC range. `MundaneAspectFactory` defaults to Sun–Pluto
+(Moon opt-in) and the five Ptolemaic aspects; sidereal mode changes reported
+signs but not exact aspect times. Sun/planetary-hour datetimes are timezone-aware
+UTC values anchored to the requested civil timezone.
+
+## 5B. Traditional / Hellenistic Techniques
+
+```python
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    ProfectionsFactory,
+    FirdariaFactory,
+    MutualReceptionsFactory,
+    HoraryIndicatorsFactory,
+)
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+
+profections = ProfectionsFactory.from_subject(subject, target_date="2026-06-04")
+print(profections.current.age, profections.current.sign, profections.current.lord)
+
+firdaria = FirdariaFactory.from_subject(subject, target_date="2026-06-04")
+print(firdaria.is_diurnal, firdaria.current.lord if firdaria.current else None)
+
+receptions = MutualReceptionsFactory.from_subject(subject)
+print(len(receptions.receptions), "mutual receptions found")
+
+indicators = HoraryIndicatorsFactory.from_subject(subject)
+print(indicators.querent.ruler, indicators.quesited.ruler)
+```
+
+`ProfectionsFactory` computes annual profections from the subject's houses — age,
+activated house/sign, and the Lord of the Year via classical rulership. BCE births
+supported. `FirdariaFactory` builds the Persian time-lord sequence (diurnal or
+nocturnal) with seven-planet sub-periods; all arithmetic on Julian Days.
+`MutualReceptionsFactory` finds domicile and exaltation receptions among the
+classical planets. `HoraryIndicatorsFactory` assembles horary significators (1st/7th
+house), classical considerations (Ascendant degree, Saturn, Moon void), and
+receptions. All require terrestrial perspective.
+
+## 5C. Observational Phenomena, Apsides and Moonrise
+
+```python
+from kerykeion import (
+    AstrologicalSubjectFactory,
+    MoonPhaseDetailsFactory,
+    PlanetaryNodesFactory,
+    PlanetaryPhenomenaFactory,
+)
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+
+# Nearness to the Sun, named: cazimi / combust / under_the_beams / free.
+phenomena = PlanetaryPhenomenaFactory.from_subject(subject)
+mercury = next(p for p in phenomena.phenomena if p.name == "Mercury")
+print(mercury.solar_phase, round(mercury.elongation, 3))
+print(phenomena.solar_phase_thresholds.combust_deg)   # 8.5, replaceable
+
+# Apsides under generic names, with the frame they are measured in.
+nodes = PlanetaryNodesFactory.from_subject(subject, planets=["Moon", "Mars"])
+for entry in nodes.nodes:
+    print(entry.planet_name, entry.apsis_kind, round(entry.apoapsis.abs_pos, 4))
+
+# Moonrise and moonset for the subject's civil day.
+overview = MoonPhaseDetailsFactory.from_subject(subject)
+print(overview.moon.moonrise, overview.moon.moonset)
+print(overview.moon.moonrise_timestamp, overview.moon.moonset_timestamp)
+```
+
+`solar_phase` is read off the published `elongation` against the collection's
+`solar_phase_thresholds` (`SolarPhaseThresholdsModel` from `kerykeion.schemas`:
+0.2833° / 8.5° / 17°). Those cut-offs are conventions, so pass your own instance
+to either constructor; the one used is echoed on the collection.
+`is_morning_star` / `is_evening_star` are purely geometric — which side of the
+Sun the planet stands on — and say nothing about visibility.
+
+`periapsis` / `apoapsis` are the generic apsis names and are always right;
+`perihelion` / `aphelion` are deprecated (they name the Sun, wrong for the Moon)
+but still populated with the same objects. `apsis_kind` is `"geocentric"` for the
+Moon alone, whose apoapsis equals `mean_lilith` (`method="mean"`) or
+`true_lilith` (`method="osculating"`) to the decimal.
+
+`moonrise` / `moonset` are ISO-8601 strings in the subject's local zone, with
+`moonrise_timestamp` / `moonset_timestamp` the same instants as Unix seconds.
+Each is `None` when the subject's civil day has no such event: the Moon rises
+~50 minutes later each day, so about one day in thirty has no moonrise and
+another has no moonset.
+
+## 5D. Sign Periods and Retrograde Periods
+
+The ingress and station finders report what CHANGES inside a range. A planet
+that neither ingresses nor stations in a month leaves no trace in them, so a
+calendar cannot answer "which sign is Jupiter in on the 1st?" or "is Saturn
+retrograde right now?" from the events alone. Two more entry points report the
+SPANS themselves, with the same argument list.
+
+```python
+from kerykeion import SignIngressFactory, RetrogradeStationFactory
+
+# Per planet, the contiguous stays covering the whole range.
+stays = SignIngressFactory.sign_periods_from_iso_range(
+    "2026-03-01", "2026-03-31", planets=["Sun"]
+)
+for stay in stays.periods:
+    print(stay.planet, stay.sign, stay.start, "->", stay.end,
+          stay.start_clipped, stay.end_clipped)
+# Sun Pis 2026-03-01T00:00:00 -> 2026-03-20T14:45:58 True False
+# Sun Ari 2026-03-20T14:45:58 -> 2026-04-01T00:00:00 False True
+
+# Retrograde spans, clipped to the range.
+spans = RetrogradeStationFactory.retrograde_periods_from_iso_range(
+    "2025-03-01", "2025-03-31", planets=["Mercury"]
+)
+for span in spans.periods:
+    print(span.planet, span.start, "->", span.end, span.start_clipped, span.end_clipped)
+```
+
+`sign_periods_from_iso_range` / `sign_periods_from_julian_day` return a
+`SignPeriodsCollectionModel` of `SignPeriodModel` (`planet`, `sign`, `sign_num`,
+`start_jd`, `end_jd`, `start`, `end`, `start_clipped`, `end_clipped`). The stays
+are contiguous: one stay's `end` IS the next one's `start`, at the ingress
+instant. The sign at the range start is read inside the SAME ephemeris session
+as the scan, so a sidereal request yields sidereal stays bounded by sidereal
+ingress instants and the first stay can never disagree with the ingresses after
+it. The Moon is opt-in, as for ingresses.
+
+`retrograde_periods_from_iso_range` / `retrograde_periods_from_julian_day`
+return a `RetrogradePeriodsCollectionModel` of `RetrogradePeriodModel` (`planet`,
+`start_jd`, `end_jd`, `start`, `end`, `start_clipped`, `end_clipped`). A
+retrograde station opens a span, a direct station closes it, and the range edges
+clip: a planet already retrograde on the 1st is reported from the 1st with
+`start_clipped=True`. Periods carry no sign — station instants are
+zodiac-independent. Stations that do not alternate raise `KerykeionException`.
+`"Chiron"` is accepted opt-in by the station finder and the periods alike; the
+default set stays Mercury..Pluto.
+
+A clipped bound says where the RANGE cut the span, not where the real boundary
+is — nothing is searched outside the range beyond a 50 ms probe past either
+bound, which exists so that a bound which is itself an instant this library
+reported is recognised as the boundary it is (and left unclipped) rather than
+missed by a hair of bisection error.
+
+## 5E. Returns: reported instants are re-usable as seeds
+
+Return instants are reported truncated to the whole second, and ordering between
+a seed and a return is decided at that same resolution. Feed a reported instant
+back into any `*_from_iso_formatted_time` entry point and you step exactly one
+return — `next(reported(N)) == N + 1`, `previous(reported(N)) == N - 1`, and
+`previous(next(r)) == r` instant for instant. This holds for Solar, Lunar,
+heliocentric and lunar-node searches.
+
+```python
+from kerykeion import AstrologicalSubjectFactory, PlanetaryReturnFactory
+
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+factory = PlanetaryReturnFactory(
+    natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+)
+this_year = factory.next_return_from_date(2025, 1, 1, return_type="Solar")
+next_year = factory.next_return_from_iso_formatted_time(
+    this_year.iso_formatted_utc_datetime, "Solar"      # steps forward, never stalls
+)
+back = factory.next_return_from_iso_formatted_time(
+    next_year.iso_formatted_utc_datetime, "Solar", backwards=True
+)
+assert back.iso_formatted_utc_datetime == this_year.iso_formatted_utc_datetime
+```
+
+Two consequences: a seed inside the same second as a crossing selects the
+FOLLOWING return, so seeding a solar-return search with the natal instant itself
+returns the first birthday rather than the birth moment; and only the ISO entry
+points snap their seed — `next_return_from_date` and the `*_from_year` wrappers
+keep their inclusive midnight seed. A seed at the edge of the civil range
+refuses with `KerykeionException` naming the range (years 1 to 9999) instead of
+overflowing `datetime`; seeds are normalized to UTC before that check.
+
+Identify a return by its INSTANT, never by a period: born on 1 January, the 2024
+solar return falls on 1 January and the next on 31 December of the same year, so
+"the return of 2024" names two charts.
 
 ## 6. AI Context Serialization
 
@@ -327,7 +687,10 @@ structured data. Strictly non-qualitative/non-interpretive. Optional/None fields
 CompositeSubjectModel, PlanetReturnModel, AspectModel, SingleChartDataModel,
 DualChartDataModel, ElementDistributionModel, QualityDistributionModel,
 TransitMomentModel, TransitsTimeRangeModel, PointInHouseModel, HouseComparisonModel,
-MoonPhaseOverviewModel.
+MoonPhaseOverviewModel, SolarArcSubjectModel, and a non-empty `list[MidpointModel]`.
+Anything else raises `TypeError`. An EMPTY list also raises — it cannot be told
+from an empty aspects list — so call `midpoints_to_context([])` from
+`kerykeion.context` directly when you mean an empty midpoint set.
 
 ## 7. Complete Workflow Examples
 
@@ -389,16 +752,43 @@ transits = ChartDataFactory.create_transit_chart_data(natal, now)
 -   `DualChartDataModel`: Synastry/Transit chart data
 -   `ElementDistributionModel`: Element percentages
 -   `QualityDistributionModel`: Quality/mode percentages
+-   `SunTimesModel`: Sunrise, sunset, twilight, solar noon, and day length
+-   `PlanetaryHoursModel`: Planetary-day bounds and 24 `PlanetaryHourModel` entries
+-   `VoidOfCourseMoonModel`: Current void state; range searches return window models
+-   `MundaneAspectsCollectionModel`: Exact transiting-to-transiting aspect events
 
 ### Available Points
 
 Planets: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto
-Nodes: Mean_Node, True_Node, Mean_South_Node, True_South_Node
+Nodes: True_North_Lunar_Node, True_South_Lunar_Node, Mean_North_Lunar_Node, Mean_South_Lunar_Node
 Asteroids: Ceres, Pallas, Juno, Vesta, Chiron
 Angles: Ascendant, Medium_Coeli, Descendant, Imum_Coeli
 Arabic Parts: Pars_Fortunae, Pars_Spiritus, Pars_Amoris, Pars_Fidei
-Fixed Stars: Regulus, Spica
-Others: Mean_Lilith, True_Lilith, Earth, Vertex, Anti_Vertex
+Fixed Stars: 1,447 catalog names on the default libephemeris backend; `DEFAULT_FIXED_STARS` selects 23 common stars (Regulus, Spica, Sirius, Aldebaran, Antares, Fomalhaut, Algol, + 16 more). Configure them separately with `active_fixed_stars`.
+TNOs: Eris, Sedna, Makemake, Haumea, Quaoar, Orcus, Ixion
+Uranian: Cupido, Hades, Zeus, Kronos, Apollon, Admetos, Vulkanus, Poseidon
+Lilith variants: Mean_Lilith, True_Lilith, Interpolated_Lilith, Mean_Priapus, True_Priapus, Interpolated_Perigee
+Others: Earth, Pholus, White_Moon, Vertex, Anti_Vertex
+
+The full vocabulary is the `AstrologicalPoint` literal (76 values, of which 23
+are fixed-star names kept only for v5 type compatibility — put stars in
+`active_fixed_stars`, never in `active_points`).
+
+### Motion States
+
+`KerykeionPointModel.motion_state` (`MotionState` literal, the ten planets in
+Earth-centred perspectives; `None` elsewhere):
+
+`fast` (> 120% of mean daily motion), `average` (80-120%), `slow` (< 80%),
+`retrograde` (backward, outside the stationary band), `stationary` (inside the
+band of < 5% of mean motion, either direction, turn unknown),
+`stationary_retrograde` (inside the band, speed falling — the retrograde phase
+opens), `stationary_direct` (inside the band, speed rising — the phase closes).
+
+The band brackets zero and is tested before the sign, so a body creeping
+backwards inside it reports a station, not `retrograde`. The two stations are
+told apart by a second speed sample a day later, never by the sign. Code that
+matches this literal exhaustively must handle both stationary variants.
 
 ### Aspect Types
 
@@ -430,9 +820,17 @@ except Exception as e:
 2. **Limit active_points** for batch processing
 3. **Disable optional features** when not needed:
     ```python
-    calculate_lunar_phase=False
-    include_house_comparison=False
-    include_relationship_score=False
+    # doc-snippet: no-run — illustrative fragment (placeholder args, undefined first/second)
+    # On AstrologicalSubjectFactory constructors:
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        ..., calculate_lunar_phase=False,
+    )
+    # On ChartDataFactory dual-chart methods:
+    chart_data = ChartDataFactory.create_synastry_chart_data(
+        first, second,
+        include_house_comparison=False,
+        include_relationship_score=False,
+    )
     ```
 4. **Reuse chart_data objects** for multiple output formats
 
@@ -447,8 +845,31 @@ subject = AstrologicalSubjectFactory.from_birth_data(
     zodiac_type="Sidereal",
     sidereal_mode="LAHIRI",
     houses_system_identifier="W",  # Whole Sign
+    calculate_nakshatra=True,
     online=False
 )
+print(subject.moon.nakshatra, subject.moon.nakshatra_pada, subject.moon.nakshatra_lord)
+```
+
+### Nakshatras on a Tropical Chart
+
+Nakshatras divide the sidereal zodiac. A non-sidereal chart's longitudes are
+rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) for the 27-fold division
+only: the chart stays tropical, and its nakshatras match the sidereal chart cast
+in the same mode. On a sidereal chart the parameter is ignored.
+`nakshatra_ayanamsa=None` restores the pre-v6 uncorrected values and warns.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+tropical = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 6, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    calculate_nakshatra=True,
+)
+print(tropical.moon.sign, tropical.moon.nakshatra)     # Pis Purva Bhadrapada
+print(tropical.nakshatra_ayanamsa)                     # LAHIRI
+print(round(tropical.nakshatra_ayanamsa_value, 4))     # 23.7273
 ```
 
 ### Horary Question
@@ -511,16 +932,26 @@ ai_xml = to_context(chart_data)
 
 ## Dependencies
 
--   **Swiss Ephemeris**: Core astronomical calculations
--   **pytz**: Timezone handling
+-   **libephemeris** (default) or **Swiss Ephemeris** (optional): Core astronomical calculations
+-   **tzdata**: Fallback IANA timezone database for hosts without system zone data
 -   **GeoNames API**: Optional online location lookup (requires username)
--   **Python 3.8+**: Minimum version
+-   **Python 3.12+**: Minimum version
 
 ## Environment Variables
 
+Kerykeion reads exactly five:
+
 ```bash
+export KERYKEION_BACKEND="libephemeris"             # or "swisseph"; default: auto-detect
+export KERYKEION_LEB_MODE="leb"                     # leb (sealed, default) | auto | skyfield | horizons
+export KERYKEION_EPHE_PATH="/path/to/se1files"      # swisseph only; a no-op on libephemeris
 export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
+export KERYKEION_GEONAMES_CACHE_NAME="/path/to/db"  # Overrides the GeoNames HTTP-cache path
 ```
+
+An invalid `KERYKEION_BACKEND` or `KERYKEION_LEB_MODE` raises `ValueError` at
+import time. `LIBEPHEMERIS_PRECISION` is NOT a kerykeion variable and is never
+read by it.
 
 ## Quick Reference Table
 
@@ -534,9 +965,35 @@ export KERYKEION_GEONAMES_USERNAME="your_username"  # For online mode
 | Returns          | `PlanetaryReturnFactory`       | Planet type      |
 | SVG Chart        | `ChartDrawer`                  | chart_data       |
 | AI XML           | `to_context()`                 | Any model        |
+| Progressions     | `SecondaryProgressionFactory`  | Target date      |
+| Solar Arc        | `SolarArcFactory`              | Target date      |
+| Primary Dir.     | `PrimaryDirectionsFactory`     | Max years        |
+| Midpoints        | `MidpointFactory`              | Subject          |
+| Eclipses         | `EclipseFactory`               | Start year       |
+| Phenomena        | `PlanetaryPhenomenaFactory`    | Subject          |
+| Solar phase      | `PlanetaryPhenomenaFactory`    | `solar_phase_thresholds` |
+| Nodes/Apsides    | `PlanetaryNodesFactory`        | Subject/JD       |
+| Heliacal         | `HeliacalFactory`              | JD + geopos      |
+| Occultations     | `OccultationFactory`           | JD + planet      |
+| Relocated Chart  | `RelocatedChartFactory`        | Subject + coords |
+| Star Discovery   | `FixedStarDiscoveryFactory`    | Subject + orb    |
+| ACG Lines        | `AstroCartographyFactory`      | Subject          |
+| Mundane Aspects  | `MundaneAspectFactory`         | UTC date range   |
+| Sign ingresses   | `SignIngressFactory`           | UTC date range   |
+| Sign periods     | `SignIngressFactory.sign_periods_from_iso_range` | UTC date range |
+| Retrograde stations | `RetrogradeStationFactory`  | UTC date range   |
+| Retrograde periods | `RetrogradeStationFactory.retrograde_periods_from_iso_range` | UTC date range |
+| Lunations        | `LunationFinderFactory`        | UTC date range   |
+| Void-of-Course   | `VoidOfCourseMoonFactory`      | Moment/range     |
+| Sun Times        | `SunTimesFactory`              | Date + location  |
+| Planetary Hours  | `PlanetaryHoursFactory`        | Moment + location|
+| Profections      | `ProfectionsFactory`           | Subject          |
+| Firdaria         | `FirdariaFactory`              | Subject          |
+| Receptions       | `MutualReceptionsFactory`      | Subject          |
+| Horary           | `HoraryIndicatorsFactory`      | Subject          |
 
 ---
 
-**Version**: Kerykeion 5.x+  
-**Documentation**: https://github.com/g-battaglia/kerykeion  
+**Version**: Kerykeion 6.x
+**Documentation**: https://www.kerykeion.net/content/docs/
 **License**: AGPL-3.0

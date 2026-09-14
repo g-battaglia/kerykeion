@@ -8,7 +8,6 @@ It consolidates the functionality of multiple regeneration scripts into one.
 Usage:
     python scripts/regenerate_all.py --all              # Regenerate everything
     python scripts/regenerate_all.py --positions        # Regenerate expected positions
-    python scripts/regenerate_all.py --aspects          # Regenerate expected aspects
     python scripts/regenerate_all.py --charts           # Regenerate SVG charts
     python scripts/regenerate_all.py --subjects         # Regenerate subject data (legacy)
     python scripts/regenerate_all.py --validate         # Validate current data
@@ -44,17 +43,16 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 # Add project root to path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.aspects.aspects_factory import AspectsFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 
 # =============================================================================
@@ -80,55 +78,18 @@ try:
         ANGLES,
         HOUSES,
     )
-except ImportError:
-    # Fallback if running before module is set up
-    TEMPORAL_SUBJECTS = []
-    GEOGRAPHIC_SUBJECTS = []
-    SYNASTRY_PAIRS = []
-    HOUSE_SYSTEMS = ["P", "K", "W", "O", "R", "C", "A", "E", "V", "X", "H", "T", "B", "M", "U", "G"]
-    SIDEREAL_MODES = [
-        "FAGAN_BRADLEY",
-        "LAHIRI",
-        "DELUCE",
-        "RAMAN",
-        "USHASHASHI",
-        "KRISHNAMURTI",
-        "DJWHAL_KHUL",
-        "YUKTESHWAR",
-        "JN_BHASIN",
-        "BABYL_KUGLER1",
-        "BABYL_KUGLER2",
-        "BABYL_KUGLER3",
-        "BABYL_HUBER",
-        "BABYL_ETPSC",
-        "ALDEBARAN_15TAU",
-        "HIPPARCHOS",
-        "SASSANIAN",
-        "J1900",
-        "J2000",
-        "B1950",
-    ]
-    PERSPECTIVE_TYPES = ["Apparent Geocentric", "True Geocentric", "Heliocentric", "Topocentric"]
-    CORE_PLANETS = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]
-    LUNAR_NODES = ["mean_north_lunar_node", "true_north_lunar_node", "mean_south_lunar_node", "true_south_lunar_node"]
-    ANGLES = ["ascendant", "descendant", "medium_coeli", "imum_coeli"]
-    HOUSES = [
-        f"{n}_house"
-        for n in [
-            "first",
-            "second",
-            "third",
-            "fourth",
-            "fifth",
-            "sixth",
-            "seventh",
-            "eighth",
-            "ninth",
-            "tenth",
-            "eleventh",
-            "twelfth",
-        ]
-    ]
+except ImportError as error:  # pragma: no cover - the fixtures are part of the repo
+    # There used to be a hand-written fallback here: sixteen house systems, of
+    # which two ("E" and "G") this library rejects outright and nine of the real
+    # twenty-three were missing, plus its own copies of the sidereal modes and
+    # perspectives. A fallback that quietly regenerates the wrong set is worse
+    # than none — the caller cannot tell it happened. The fixtures live in this
+    # repository; if they cannot be imported, something is wrong that a stale
+    # list will not fix.
+    raise SystemExit(
+        f"cannot import the test fixtures ({error}). Run this from the repository "
+        f"root, or with the repository root on PYTHONPATH."
+    )
 
 # Key subjects for detailed testing (subset for faster regeneration)
 KEY_SUBJECT_IDS = ["john_lennon_1940", "johnny_depp_1963", "paul_mccartney_1942"]
@@ -196,27 +157,6 @@ def get_all_subjects_data() -> List[Dict[str, Any]]:
         all_subjects.append(full_data)
 
     return all_subjects
-
-
-def extract_aspect_data(aspect) -> Dict[str, Any]:
-    """Extract relevant data from an AspectModel."""
-    return {
-        "p1_name": aspect.p1_name,
-        "p1_owner": aspect.p1_owner,
-        "p1_abs_pos": aspect.p1_abs_pos,
-        "p2_name": aspect.p2_name,
-        "p2_owner": aspect.p2_owner,
-        "p2_abs_pos": aspect.p2_abs_pos,
-        "aspect": aspect.aspect,
-        "orbit": aspect.orbit,
-        "aspect_degrees": aspect.aspect_degrees,
-        "diff": aspect.diff,
-        "p1": aspect.p1,
-        "p2": aspect.p2,
-        "p1_speed": aspect.p1_speed,
-        "p2_speed": aspect.p2_speed,
-        "aspect_movement": aspect.aspect_movement,
-    }
 
 
 def extract_full_subject_positions(subject) -> Dict[str, Any]:
@@ -287,8 +227,14 @@ def write_fixture_file(
     data: Dict[str, Any],
     description: str,
     regenerate_command: str,
+    imports: Sequence[str] = (),
 ) -> None:
-    """Write a fixture file with standard header."""
+    """Write a fixture file with standard header.
+
+    ``imports`` lines are emitted after the docstring so fixtures whose data
+    embeds model reprs (e.g. ``KerykeionPointModel(...)``) stay importable.
+    """
+    imports_block = "\n".join(imports) + "\n\n" if imports else ""
     content = f'''"""
 {description}
 
@@ -298,7 +244,7 @@ DO NOT EDIT MANUALLY - regenerate using: python scripts/regenerate_all.py {regen
 Total entries: {len(data)}
 """
 
-{variable_name} = {pformat(data, width=100, sort_dicts=True)}
+{imports_block}{variable_name} = {pformat(data, width=100, sort_dicts=True)}
 '''
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(content)
@@ -498,79 +444,6 @@ def regenerate_arabic_parts() -> None:
         "Expected Arabic Parts positions for test validation.",
         "--arabic-parts",
     )
-
-
-def regenerate_aspects() -> None:
-    """Regenerate expected_aspects.py with aspect data for all test subjects."""
-    print("\n" + "=" * 60)
-    print("REGENERATING EXPECTED ASPECTS")
-    print("=" * 60)
-
-    natal_aspects: Dict[str, List[Dict[str, Any]]] = {}
-    synastry_aspects: Dict[str, List[Dict[str, Any]]] = {}
-
-    # Natal aspects for key subjects
-    print(f"\nGenerating natal aspects for {len(KEY_SUBJECT_IDS)} key subjects...")
-    for subject_id in KEY_SUBJECT_IDS:
-        subject_data = next((d for d in TEMPORAL_SUBJECTS if d["id"] == subject_id), None)
-        if not subject_data:
-            print(f"  - {subject_id}... NOT FOUND")
-            continue
-
-        print(f"  - {subject_id}...", end=" ")
-        subject = create_subject_from_data(subject_data)
-        if subject is None:
-            print("SKIPPED")
-            continue
-
-        aspects_result = AspectsFactory.single_chart_aspects(subject)
-        natal_aspects[subject_id] = [extract_aspect_data(a) for a in aspects_result.aspects]
-        print(f"OK ({len(natal_aspects[subject_id])} aspects)")
-
-    # Synastry aspects
-    print(f"\nGenerating synastry aspects for {len(SYNASTRY_PAIRS)} pairs...")
-    for first_id, second_id in SYNASTRY_PAIRS:
-        pair_key = f"{first_id}__x__{second_id}"
-        print(f"  - {first_id} x {second_id}...", end=" ")
-
-        first_data = next((d for d in TEMPORAL_SUBJECTS if d["id"] == first_id), None)
-        second_data = next((d for d in TEMPORAL_SUBJECTS if d["id"] == second_id), None)
-
-        if not first_data or not second_data:
-            print("NOT FOUND")
-            continue
-
-        first_subject = create_subject_from_data(first_data)
-        second_subject = create_subject_from_data(second_data)
-
-        if first_subject is None or second_subject is None:
-            print("SKIPPED")
-            continue
-
-        aspects_result = AspectsFactory.dual_chart_aspects(first_subject, second_subject)
-        synastry_aspects[pair_key] = [extract_aspect_data(a) for a in aspects_result.aspects]
-        print(f"OK ({len(synastry_aspects[pair_key])} aspects)")
-
-    # Write output file
-    output_path = OUTPUT_DIR / "expected_aspects.py"
-    content = f'''"""
-Expected aspects for test validation.
-
-This file is auto-generated by scripts/regenerate_all.py
-DO NOT EDIT MANUALLY - regenerate using: python scripts/regenerate_all.py --aspects
-
-Natal subjects: {len(natal_aspects)}
-Synastry pairs: {len(synastry_aspects)}
-"""
-
-# Natal aspects keyed by subject ID
-EXPECTED_NATAL_ASPECTS = {pformat(natal_aspects, width=100, sort_dicts=True)}
-
-# Synastry aspects keyed by "subject1__x__subject2"
-EXPECTED_SYNASTRY_ASPECTS = {pformat(synastry_aspects, width=100, sort_dicts=True)}
-'''
-    output_path.write_text(content)
-    print(f"\n✓ Written aspects to {output_path.relative_to(REPO_ROOT)}")
 
 
 def regenerate_charts() -> None:
@@ -1013,6 +886,7 @@ def regenerate_ephemeris() -> None:
         ephemeris_data,
         "Expected ephemeris data for various time ranges.",
         "--ephemeris",
+        imports=("from kerykeion.schemas.models import KerykeionPointModel",),
     )
 
 
@@ -1038,7 +912,7 @@ def validate_data() -> None:
 
     optional_files = [
         OUTPUT_DIR / "expected_positions.py",
-        OUTPUT_DIR / "expected_aspects.py",
+        OUTPUT_DIR / "expected_arabic_parts.py",
         OUTPUT_DIR / "expected_astrological_subjects.py",
     ]
 
@@ -1124,17 +998,12 @@ def main():
     parser.add_argument(
         "--all",
         action="store_true",
-        help="Regenerate all test data (positions, aspects, charts, subjects, configurations)",
+        help="Regenerate all test data (positions, charts, subjects, configurations, arabic-parts)",
     )
     parser.add_argument(
         "--positions",
         action="store_true",
         help="Regenerate expected_positions.py",
-    )
-    parser.add_argument(
-        "--aspects",
-        action="store_true",
-        help="Regenerate expected_aspects.py",
     )
     parser.add_argument(
         "--charts",
@@ -1200,7 +1069,6 @@ def main():
     all_options = [
         args.all,
         args.positions,
-        args.aspects,
         args.charts,
         args.subjects,
         args.validate,
@@ -1231,9 +1099,6 @@ def main():
     # Original regeneration
     if args.all or args.positions:
         regenerate_positions()
-
-    if args.all or args.aspects:
-        regenerate_aspects()
 
     if args.all or args.subjects:
         regenerate_subjects()

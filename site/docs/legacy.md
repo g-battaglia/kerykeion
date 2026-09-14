@@ -1,67 +1,45 @@
 ---
 title: 'Legacy API'
 category: 'Reference'
-description: 'Documentation for deprecated classes and backward compatibility layers.'
-tags: ['docs', 'legacy', 'v4', 'backwards-compatibility']
+description: 'Information about removed backward-compatibility classes and migration to v6.'
+tags: ['docs', 'legacy', 'v4', 'v5', 'migration']
 order: 23
 ---
 
-# Legacy API (Backward Compatibility)
+# Legacy API (Removed in v6)
 
-Kerykeion v5 introduces a new factory-based architecture. However, to support existing codebases, the library includes a backward compatibility layer defined in `kerykeion.backword`.
+Kerykeion v5 included a backward compatibility layer (via `kerykeion.backword`) that provided wrapper classes for the old v4 API. **This layer has been removed in v6.**
 
 > [!WARNING]
-> These classes are deprecated and may be removed in future versions (v6+). New projects should use the proper Factories (e.g., `AstrologicalSubjectFactory`).
+> The following classes no longer exist and will raise `ImportError` if imported. Migrate to the factory-based API described below.
 
-## `AstrologicalSubject` (Legacy Wrapper)
+## Removed Classes
 
-A wrapper class that emulates the behavior of the old `AstrologicalSubject` class.
+| Removed Class | v6 Replacement |
+|---------------|----------------|
+| `AstrologicalSubject(...)` | `AstrologicalSubjectFactory.from_birth_data(...)` |
+| `KerykeionChartSVG(subject)` | `ChartDataFactory.create_natal_chart_data(subject)` + `ChartDrawer(chart_data)` |
+| `NatalAspects(subject)` | `AspectsFactory.single_chart_aspects(subject)` |
+| `SynastryAspects(s1, s2)` | `AspectsFactory.dual_chart_aspects(s1, s2)` |
+
+## Migration Example
 
 ```python
-# Legacy usage (still works but issues warning)
-from kerykeion import AstrologicalSubject
+# v4/v5 (NO LONGER WORKS in v6):
+# from kerykeion import AstrologicalSubject
+# subject = AstrologicalSubject("Alice", 1990, 5, 15, 10, 30, city="London", nation="GB")
 
-subject = AstrologicalSubject(
+# v6 (correct):
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
     "Alice", 1990, 5, 15, 10, 30,
-    city="London", nation="GB"
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False
 )
-print(subject.sun["sign"])
 ```
 
-### Constructor
-
-The constructor signature attempts to match v4, forwarding arguments to `AstrologicalSubjectFactory.from_birth_data`.
-
--   `name` (str)
--   `year`, `month`, `day`, `hour`, `minute` (int)
--   `lng`, `lat` (float, optional)
--   `tz_str` (str, optional)
--   `city`, `nation` (str, optional)
--   `online` (bool)
-
-## `KerykeionChartSVG` (Legacy Wrapper)
-
-Wrapper for the chart generation logic, delegating to `ChartDrawer`.
-
-```python
-from kerykeion import KerykeionChartSVG
-
-chart = KerykeionChartSVG(subject)
-chart.makeSVG()
-print(chart.template)
-```
-
-## `NatalAspects` & `SynastryAspects`
-
-Wrappers for `AspectsFactory`.
-
-```python
-from kerykeion import NatalAspects
-
-aspects = NatalAspects(subject)
-for aspect in aspects.relevant_aspects:
-    print(aspect)
-```
+For full migration instructions, see the [Migration Guide](/content/docs/migration).
 
 ---
 

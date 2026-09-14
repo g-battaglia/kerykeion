@@ -5,7 +5,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from pydantic import Field
 from typing import Optional
-from kerykeion.schemas.kr_models import SubscriptableBaseModel
+from kerykeion.schemas.models import SubscriptableBaseModel
 
 
 class KerykeionSettingsCelestialPointModel(SubscriptableBaseModel):
@@ -68,6 +68,31 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
         title="Mean South Lunar Node", description="The name of Mean South Lunar Node in the chart, in the language"
     )
     True_Lilith: str = Field(title="True Lilith", description="The name of True Lilith in the chart, in the language")
+    Interpolated_Lilith: str = Field(
+        default="Interpolated Lilith",
+        title="Interpolated Lilith",
+        description="The name of Interpolated Lilith in the chart, in the language",
+    )
+    Mean_Priapus: str = Field(
+        default="Mean Priapus",
+        title="Mean Priapus",
+        description="The name of Mean Priapus in the chart, in the language",
+    )
+    True_Priapus: str = Field(
+        default="True Priapus",
+        title="True Priapus",
+        description="The name of True Priapus in the chart, in the language",
+    )
+    Interpolated_Perigee: str = Field(
+        default="Interpolated Perigee",
+        title="Interpolated Perigee",
+        description="The name of Interpolated Perigee (lunar perigee) in the chart, in the language",
+    )
+    White_Moon: str = Field(
+        default="White Moon",
+        title="White Moon",
+        description="The name of White Moon (Selena) in the chart, in the language",
+    )
     Earth: str = Field(title="Earth", description="The name of Earth in the chart, in the language")
     Pholus: str = Field(title="Pholus", description="The name of Pholus in the chart, in the language")
     Ceres: str = Field(title="Ceres", description="The name of Ceres in the chart, in the language")
@@ -81,6 +106,26 @@ class KerykeionLanguageCelestialPointModel(SubscriptableBaseModel):
     Ixion: str = Field(title="Ixion", description="The name of Ixion in the chart, in the language")
     Orcus: str = Field(title="Orcus", description="The name of Orcus in the chart, in the language")
     Quaoar: str = Field(title="Quaoar", description="The name of Quaoar in the chart, in the language")
+    Cupido: str = Field(
+        default="Cupido", title="Cupido", description="The name of Cupido in the chart, in the language"
+    )
+    Hades: str = Field(default="Hades", title="Hades", description="The name of Hades in the chart, in the language")
+    Zeus: str = Field(default="Zeus", title="Zeus", description="The name of Zeus in the chart, in the language")
+    Kronos: str = Field(
+        default="Kronos", title="Kronos", description="The name of Kronos in the chart, in the language"
+    )
+    Apollon: str = Field(
+        default="Apollon", title="Apollon", description="The name of Apollon in the chart, in the language"
+    )
+    Admetos: str = Field(
+        default="Admetos", title="Admetos", description="The name of Admetos in the chart, in the language"
+    )
+    Vulkanus: str = Field(
+        default="Vulkanus", title="Vulkanus", description="The name of Vulkanus in the chart, in the language"
+    )
+    Poseidon: str = Field(
+        default="Poseidon", title="Poseidon", description="The name of Poseidon in the chart, in the language"
+    )
     Regulus: str = Field(title="Regulus", description="The name of Regulus in the chart, in the language")
     Spica: str = Field(title="Spica", description="The name of Spica in the chart, in the language")
     Aldebaran: str = Field(
@@ -192,6 +237,76 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     transit_name: str = Field(title="Transit Name", description="The transit name label in the chart, in the language")
     lunar_phase: str = Field(title="Lunar Phase", description="The lunar phase label in the chart, in the language")
     lunation_day: str = Field(title="Lunation Day", description="The lunation day label in the chart, in the language")
+    # Defaulted, not required, so that a language pack written against an earlier
+    # release still validates — the same courtesy the sixteen keys added before
+    # these were given. Every call site already passes an English default, so the
+    # default here is what a pack that predates the diurnality line will show.
+    heliocentric_return: str = Field(
+        default="Heliocentric Return",
+        title="Heliocentric Return",
+        description="The heliocentric return label in the chart, in the language",
+    )
+    node_return: str = Field(
+        default="Node Return",
+        title="Node Return",
+        description="The lunar node crossing return label in the chart, in the language",
+    )
+    diurnality: str = Field(
+        default="Diurnality", title="Diurnality", description="The diurnality label in the chart, in the language"
+    )
+    diurnal: str = Field(
+        default="Diurnal",
+        title="Diurnal",
+        description="The 'Sun above the horizon' value in the chart, in the language",
+    )
+    nocturnal: str = Field(
+        default="Nocturnal",
+        title="Nocturnal",
+        description="The 'Sun below the horizon' value in the chart, in the language",
+    )
+    relationship_score: str = Field(
+        default="Relationship Score",
+        title="Relationship Score",
+        description="The relationship score label in the chart, in the language",
+    )
+    relationship_score_minimal: str = Field(
+        default="Minimal",
+        title="Relationship Score: Minimal",
+        description="The 'Minimal' relationship score band in the chart, in the language",
+    )
+    relationship_score_medium: str = Field(
+        default="Medium",
+        title="Relationship Score: Medium",
+        description="The 'Medium' relationship score band in the chart, in the language",
+    )
+    relationship_score_important: str = Field(
+        default="Important",
+        title="Relationship Score: Important",
+        description="The 'Important' relationship score band in the chart, in the language",
+    )
+    relationship_score_very_important: str = Field(
+        default="Very Important",
+        title="Relationship Score: Very Important",
+        description="The 'Very Important' relationship score band in the chart, in the language",
+    )
+    relationship_score_exceptional: str = Field(
+        default="Exceptional",
+        title="Relationship Score: Exceptional",
+        description="The 'Exceptional' relationship score band in the chart, in the language",
+    )
+    relationship_score_rare_exceptional: str = Field(
+        default="Rare Exceptional",
+        title="Relationship Score: Rare Exceptional",
+        description="The 'Rare Exceptional' relationship score band in the chart, in the language",
+    )
+    polar_fallback: str = Field(
+        default="polar fallback",
+        title="Polar Fallback",
+        description=(
+            "The parenthetical note appended to the house system label when a polar "
+            "latitude forced a substitute system, in the language"
+        ),
+    )
     day: str = Field(title="Day", description="The day label in the chart, in the language")
     celestial_points: KerykeionLanguageCelestialPointModel = Field(
         title="Celestial Points", description="The celestial points translations in the chart, in the language"
@@ -215,6 +330,60 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     topocentric: str = Field(title="Topocentric", description="The topocentric label in the chart, in the language")
     true_geocentric: str = Field(
         title="True Geocentric", description="The true geocentric label in the chart, in the language"
+    )
+    # The remaining seven members of PerspectiveType. Every value the literal
+    # admits needs a field here, or a chart cast in that perspective falls back
+    # to the raw English literal in every language and no language_pack can
+    # supply the missing string (extra keys are dropped before model_dump).
+    # tests/core/test_translation_coverage.py holds the two sides together.
+    #
+    # Each carries an English default, like every other key on this model: a new
+    # field without one is a required field, and a required field invalidates
+    # every third-party language pack written before it existed. See
+    # ``_KEYS_ADDED_HERE`` in tests/core/test_settings.py, which pins both halves
+    # of that promise — a pack may omit the key, a shipped pack may not.
+    selenocentric: str = Field(
+        default="Selenocentric",
+        title="Selenocentric",
+        description="The selenocentric label in the chart, in the language",
+    )
+    mercurycentric: str = Field(
+        default="Mercurycentric",
+        title="Mercurycentric",
+        description="The mercurycentric label in the chart, in the language",
+    )
+    venuscentric: str = Field(
+        default="Venuscentric",
+        title="Venuscentric",
+        description="The venuscentric label in the chart, in the language",
+    )
+    marscentric: str = Field(
+        default="Marscentric",
+        title="Marscentric",
+        description="The marscentric label in the chart, in the language",
+    )
+    jupitercentric: str = Field(
+        default="Jupitercentric",
+        title="Jupitercentric",
+        description="The jupitercentric label in the chart, in the language",
+    )
+    saturncentric: str = Field(
+        default="Saturncentric",
+        title="Saturncentric",
+        description="The saturncentric label in the chart, in the language",
+    )
+    barycentric: str = Field(
+        default="Barycentric",
+        title="Barycentric",
+        description="The barycentric label in the chart, in the language",
+    )
+    chart_contents: str = Field(
+        default="{points} points, {aspects} aspects",
+        title="Chart Contents",
+        description=(
+            "Accessibility summary of what the chart holds, read out by the SVG <desc>. "
+            "Takes {points} and {aspects} placeholders."
+        ),
     )
     new_moon: str = Field(title="New Moon", description="The new moon label in the chart, in the language")
     waxing_crescent: str = Field(
@@ -321,6 +490,26 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         title="House Position Comparison",
         description="The house position comparison label in the chart, in the language",
     )
+    cusp_position_comparison: str = Field(
+        default="Cusp Position Comparison",
+        title="Cusp Position Comparison",
+        description="The cusp position comparison label in the chart, in the language",
+    )
+    transit_cusp: str = Field(
+        default="Transit Cusp",
+        title="Transit Cusp",
+        description="The transit cusp label in the chart, in the language",
+    )
+    return_cusp: str = Field(
+        default="Return Cusp",
+        title="Return Cusp",
+        description="The return cusp label in the chart, in the language",
+    )
+    house: str = Field(
+        default="House",
+        title="House",
+        description="The house label in the chart, in the language",
+    )
     return_point: str = Field(title="Return Point", description="The return point label in the chart, in the language")
     natal: str = Field(title="Natal", description="The natal label in the chart, in the language")
     perspective_type: str = Field(
@@ -341,6 +530,61 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
     chart_info_transit_label: str = Field(
         title="Chart Info Transit Label",
         description="Short label for transit information panels",
+    )
+    point: str = Field(
+        default="Point",
+        title="Point",
+        description="The generic celestial point label in the chart, in the language",
+    )
+    transit: str = Field(
+        default="Transit",
+        title="Transit",
+        description="The transit label (single word) in the chart, in the language",
+    )
+    transit_point: str = Field(
+        default="Transit Point",
+        title="Transit Point",
+        description="The transit point label in the chart, in the language",
+    )
+    natal_house: str = Field(
+        default="Natal House",
+        title="Natal House",
+        description="The natal house label in the chart, in the language",
+    )
+    house_position: str = Field(
+        default="House Position",
+        title="House Position",
+        description="The natal house position label in the chart, in the language",
+    )
+    synastry_chart: str = Field(
+        default="Synastry",
+        title="Synastry Chart",
+        description="The synastry chart label in the chart, in the language",
+    )
+    progression: str = Field(
+        default="Progression",
+        title="Progression",
+        description="The progression label in the chart, in the language",
+    )
+    progression_aspects: str = Field(
+        default="Progression Aspects",
+        title="Progression Aspects",
+        description="The progression aspects label in the chart, in the language",
+    )
+    progressed_cusp: str = Field(
+        default="Progressed Cusp",
+        title="Progressed Cusp",
+        description="The progressed cusp label in the chart, in the language",
+    )
+    progressed_point: str = Field(
+        default="Progressed Point",
+        title="Progressed Point",
+        description="The progressed point label in the chart, in the language",
+    )
+    chart_info_progression_label: str = Field(
+        default="Progression",
+        title="Chart Info Progression Label",
+        description="Short label for progression information panels",
     )
     weekdays: Optional[dict[str, str]] = Field(
         default=None, title="Weekdays", description="Mapping of English weekday names to localized names"

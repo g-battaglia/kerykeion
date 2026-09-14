@@ -9,7 +9,7 @@ order: 9
 
 Kerykeion supports both **Tropical** (default) and **Sidereal** zodiac systems. When using the Sidereal zodiac, you must specify an **ayanamsa** (sidereal mode) that defines the starting point of the zodiac relative to the fixed stars.
 
-As of v5.12, Kerykeion supports **48 sidereal modes** (47 named + USER for custom definitions).
+Kerykeion supports **48 sidereal modes** (47 named + `USER` for custom definitions).
 
 ## Tropical vs Sidereal
 
@@ -47,7 +47,7 @@ Due to the precession of the equinoxes, the tropical and sidereal zodiacs differ
 | `BABYL_ETPSC` | Babylonian (ETPSC). | Historical |
 | `USHASHASHI` | Ushashashi ayanamsa. | India |
 
-### New in v5.12
+### Extended Modes
 
 | Mode | Description | Category |
 |:-----|:------------|:---------|
@@ -118,10 +118,17 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 
 print(f"Ayanamsa value: {subject.ayanamsa_value:.4f}°")
-# e.g. 23.7234° -- the tropical-sidereal offset for this date
+# e.g. 23.7273° -- the tropical-sidereal offset for this date
 ```
 
 > `ayanamsa_value` is `None` for tropical charts.
+
+A rendered chart names the ayanamsa mode but not its offset. Pass
+`show_ayanamsa_value=True` to `ChartDrawer` to append the value to that line —
+`Ayanamsa: Lahiri (23°43')`. The mode names the convention; the offset says
+where it actually put the zodiac for this date, which is what differs between
+two charts drawn under the same ayanamsa centuries apart. Degrees and minutes
+only, and nothing at all on a tropical chart.
 
 ## Examples
 
@@ -132,8 +139,8 @@ The most widely used ayanamsa for Vedic astrology:
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon Lahiri", 1940, 10, 9, 18, 30,
@@ -151,17 +158,17 @@ chart = ChartDrawer(data)
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir, filename="lennon-lahiri")
+chart.save_svg(output_path=out_dir, filename="lennon-lahiri", style="classic")
 ```
 
 **Output:**
 ```
-Sun (Lahiri): Vir 23.08°
+Sun (Lahiri): Vir 23.24°
 ```
 
 The chart output:
 
-![John Lennon Lahiri](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20Lahiri%20-%20Natal%20Chart.svg)
+![John Lennon Lahiri](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20Lahiri%20-%20Natal%20Chart%20-%20Classic.svg)
 
 ### Fagan-Bradley (Western Sidereal)
 
@@ -221,10 +228,10 @@ for mode in modes:
 
 **Output:**
 ```
-LAHIRI: Sun at Tau 29.85°
-FAGAN_BRADLEY: Sun at Gem 0.62°
-KRISHNAMURTI: Sun at Tau 29.78°
-RAMAN: Sun at Tau 28.25°
+LAHIRI: Sun at Gem 0.36°
+FAGAN_BRADLEY: Sun at Tau 29.48°
+KRISHNAMURTI: Sun at Gem 0.46°
+RAMAN: Sun at Gem 1.81°
 ```
 
 > **Note:** The differences between ayanamsas can be significant (up to a few degrees), which may change the sign a planet falls in, especially for planets near sign boundaries.
@@ -264,14 +271,14 @@ print(f"  Ascendant: {sidereal.first_house.sign} {sidereal.first_house.position:
 **Output:**
 ```
 Tropical positions:
-  Sun: Gem 24.05°
-  Moon: Sco 15.23°
-  Ascendant: Vir 24.52°
+  Sun: Gem 24.09°
+  Moon: Pis 14.80°
+  Ascendant: Vir 14.74°
 
 Sidereal (Lahiri) positions:
-  Sun: Tau 29.85°
-  Moon: Lib 21.03°
-  Ascendant: Leo 0.32°
+  Sun: Gem 0.36°
+  Moon: Aqu 21.07°
+  Ascendant: Leo 21.02°
 ```
 
 > **Important:** You cannot set a `sidereal_mode` when using `zodiac_type="Tropical"`. Attempting to do so will raise a `KerykeionException`.

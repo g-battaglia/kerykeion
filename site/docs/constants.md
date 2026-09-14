@@ -29,14 +29,20 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Neptune`
 -   `Pluto`
 
-### Lunar Nodes & Lilith
+### Lunar Nodes
 
 -   `Mean_North_Lunar_Node`
 -   `True_North_Lunar_Node`
 -   `Mean_South_Lunar_Node`
 -   `True_South_Lunar_Node`
--   `Mean_Lilith`
--   `True_Lilith`
+
+### Lilith & Priapus Variants
+
+-   `Mean_Lilith` (mean Black Moon Lilith, lunar apogee averaged)
+-   `True_Lilith` (oscillating Black Moon Lilith)
+-   `Interpolated_Lilith` (interpolated, smoothed between mean and true)
+-   `Mean_Priapus` (mean anti-Lilith, lunar perigee averaged)
+-   `True_Priapus` (oscillating anti-Lilith)
 
 ### Angles
 
@@ -66,6 +72,23 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Orcus`
 -   `Quaoar`
 
+### Uranian / Hamburg School (8)
+
+-   `Cupido` (relationships, family, art)
+-   `Hades` (hidden things, the past, research)
+-   `Zeus` (directed energy, leadership, fire)
+-   `Kronos` (authority, expertise, height)
+-   `Apollon` (expansion, commerce, science)
+-   `Admetos` (depth, concentration, beginnings/endings)
+-   `Vulkanus` (mighty force, intensity, power)
+-   `Poseidon` (idealism, spirituality, enlightenment)
+
+### Special Points
+
+-   `Earth` (meaningful in heliocentric perspective)
+-   `Interpolated_Perigee`
+-   `White_Moon` (Selena)
+
 ### Arabic Parts
 
 -   `Pars_Fortunae` (Part of Fortune)
@@ -75,7 +98,9 @@ When customizing `active_points`, you can use any of the following string identi
 
 ### Fixed Stars
 
-23 fixed stars including the 4 Royal Stars of Persia (which are a subset of the 15 Behenian stars).
+Fixed stars are **not** requested through `active_points`: pass them to the `active_fixed_stars` parameter of `AstrologicalSubjectFactory` instead, and read the results from `subject.fixed_stars`. (Star names passed to `active_points` are redirected to `active_fixed_stars` with a warning.) By default no stars are computed.
+
+The 23 names below make up the opt-in `DEFAULT_FIXED_STARS` preset (smaller presets: `ROYAL_FIXED_STARS`, `BEHENIAN_FIXED_STARS`), all importable from `kerykeion.settings.config_constants`. Use the names as spelled here, spaces included (e.g. `Deneb Algedi`). The set includes the 4 Royal Stars of Persia (which are a subset of the 15 Behenian stars).
 
 **Royal Stars:**
 
@@ -94,13 +119,13 @@ When customizing `active_points`, you can use any of the following string identi
 -   `Arcturus` (mag -0.05)
 -   `Algol` (mag +2.12)
 -   `Alphecca` (mag +2.22)
--   `Deneb_Algedi` (mag +2.83)
+-   `Deneb Algedi` (mag +2.83)
 -   `Alcyone` (mag +2.87)
 -   `Algorab` (mag +2.94)
--   `Alkaid` (mag +1.86)
 
 **Other Bright Stars:**
 
+-   `Alkaid` (mag +1.86)
 -   `Canopus` (mag -0.74)
 -   `Rigel` (mag +0.13)
 -   `Betelgeuse` (mag +0.42)
@@ -132,13 +157,24 @@ Identifiers for configuring `active_aspects`.
 -   `biquintile` (144°)
 -   `quincunx` (150°)
 
+### Declination Aspects
+
+-   `parallel` (equal declination, same side of the equator)
+-   `contra-parallel` (equal declination, opposite sides)
+
+These two are members of `AspectName`, but they are **not** requested through
+`active_aspects`: they compare declination rather than ecliptic longitude, so
+they come from `AspectsFactory.single_chart_declination_aspects()` and
+`AspectsFactory.dual_chart_declination_aspects()`. Passing either name in
+`active_aspects` logs a warning and is ignored by the longitude scan.
+
 ## Default Preset Constants
 
 These lists are available for quick configuration.
 
 ### `DEFAULT_ACTIVE_POINTS`
 
-Main planets, Chiron, Mean Lilith, Nodes, and Angles (18 points).
+Main planets, Chiron, the True North Node, and the Asc/MC angles (14 points).
 
 ### `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS`
 
@@ -146,17 +182,15 @@ Classical planets only plus nodes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Sat
 
 ### `ALL_ACTIVE_POINTS`
 
-Every point listed above plus `Earth` (63 total).
-
-> **Note:** `Earth` is only meaningful in Heliocentric perspective. It is included in `ALL_ACTIVE_POINTS` but omitted from the category lists above.
+Every point listed above (53 total). Dynamic fixed stars found via `FixedStarDiscoveryFactory` are added separately and are not part of this preset.
 
 ### `DEFAULT_ACTIVE_ASPECTS`
 
-Conjunction (orb: 10), Opposition (orb: 10), Trine (orb: 8), Sextile (orb: 6), Square (orb: 5), Quintile (orb: 1).
+Conjunction (orb: 6), Opposition (orb: 6), Trine (orb: 6), Square (orb: 6), Sextile (orb: 5). Luminary widening (+1.5° for Sun/Moon) is applied separately via per-point orb adjustments.
 
 ### `ALL_ACTIVE_ASPECTS`
 
-All major and minor aspects listed above, with minor aspects using 1° orbs.
+All major and minor aspects listed above, with minor aspects using 2° orbs.
 
 ### `DISCEPOLO_SCORE_ACTIVE_ASPECTS`
 

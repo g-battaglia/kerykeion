@@ -22,9 +22,14 @@ class _CelestialPointSettingRequired(TypedDict):
 
 
 class _CelestialPointSetting(_CelestialPointSettingRequired, total=False):
-    """Celestial point settings with optional is_active field."""
+    """Celestial point settings with optional is_active and glyph_id fields."""
 
     is_active: bool
+    # v6: when set, the SVG renderer uses this as the symbol reference
+    # (xlink:href="#{glyph_id}") instead of the point name. Used to make
+    # dynamic points fall back to their generic symbol when the template
+    # doesn't ship a per-point <symbol>.
+    glyph_id: str
 
 
 class _ChartAspectSettingRequired(TypedDict):
@@ -39,7 +44,7 @@ class _ChartAspectSettingRequired(TypedDict):
 class _ChartAspectSetting(_ChartAspectSettingRequired, total=False):
     """Chart aspect settings with optional orb field."""
 
-    orb: int
+    orb: float
 
 
 DEFAULT_CHART_COLORS: Final[dict[str, str]] = {
@@ -227,7 +232,7 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
     {
         "id": 20,
         "name": "True_Lilith",
-        "color": "var(--kerykeion-chart-color-mean-lilith)",
+        "color": "var(--kerykeion-chart-color-true-lilith)",
         "element_points": 0,
         "label": "True_Lilith",
     },
@@ -323,20 +328,6 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "label": "Quaoar",
     },
     {
-        "id": 34,
-        "name": "Regulus",
-        "color": "var(--kerykeion-chart-color-regulus)",
-        "element_points": 0,
-        "label": "Regulus",
-    },
-    {
-        "id": 35,
-        "name": "Spica",
-        "color": "var(--kerykeion-chart-color-spica)",
-        "element_points": 0,
-        "label": "Spica",
-    },
-    {
         "id": 36,
         "name": "Pars_Fortunae",
         "color": "var(--kerykeion-chart-color-pars-fortunae)",
@@ -379,152 +370,99 @@ DEFAULT_CELESTIAL_POINTS_SETTINGS: Final[list[_CelestialPointSetting]] = [
         "label": "Anti_Vertex",
     },
     # Fixed Stars (v5.12 additions -- IDs 42-56)
+    # Lilith/Priapus variants (v6.0)
     {
-        "id": 42,
-        "name": "Aldebaran",
-        "color": "var(--kerykeion-chart-color-aldebaran)",
+        "id": 63,
+        "name": "Interpolated_Lilith",
+        "color": "var(--kerykeion-chart-color-interpolated-lilith)",
         "element_points": 0,
-        "label": "Aldebaran",
+        "label": "Interp_Lilith",
     },
     {
-        "id": 43,
-        "name": "Antares",
-        "color": "var(--kerykeion-chart-color-antares)",
+        "id": 64,
+        "name": "Mean_Priapus",
+        "color": "var(--kerykeion-chart-color-mean-lilith)",
         "element_points": 0,
-        "label": "Antares",
+        "label": "Mean_Priapus",
     },
     {
-        "id": 44,
-        "name": "Sirius",
-        "color": "var(--kerykeion-chart-color-sirius)",
+        "id": 65,
+        "name": "True_Priapus",
+        "color": "var(--kerykeion-chart-color-true-lilith)",
         "element_points": 0,
-        "label": "Sirius",
+        "label": "True_Priapus",
+    },
+    # Lunar apse points (v6.0)
+    {
+        "id": 74,
+        "name": "Interpolated_Perigee",
+        "color": "var(--kerykeion-chart-color-interpolated-lilith)",
+        "element_points": 0,
+        "label": "Interp_Perigee",
     },
     {
-        "id": 45,
-        "name": "Fomalhaut",
-        "color": "var(--kerykeion-chart-color-fomalhaut)",
+        "id": 75,
+        "name": "White_Moon",
+        "color": "var(--kerykeion-chart-color-white-moon)",
         "element_points": 0,
-        "label": "Fomalhaut",
+        "label": "White_Moon",
+    },
+    # Uranian / Hamburg School hypothetical planets
+    {
+        "id": 66,
+        "name": "Cupido",
+        "color": "var(--kerykeion-chart-color-cupido)",
+        "element_points": 0,
+        "label": "Cupido",
     },
     {
-        "id": 46,
-        "name": "Algol",
-        "color": "var(--kerykeion-chart-color-algol)",
+        "id": 67,
+        "name": "Hades",
+        "color": "var(--kerykeion-chart-color-hades)",
         "element_points": 0,
-        "label": "Algol",
+        "label": "Hades",
     },
     {
-        "id": 47,
-        "name": "Betelgeuse",
-        "color": "var(--kerykeion-chart-color-betelgeuse)",
+        "id": 68,
+        "name": "Zeus",
+        "color": "var(--kerykeion-chart-color-zeus)",
         "element_points": 0,
-        "label": "Betelgeuse",
+        "label": "Zeus",
     },
     {
-        "id": 48,
-        "name": "Canopus",
-        "color": "var(--kerykeion-chart-color-canopus)",
+        "id": 69,
+        "name": "Kronos",
+        "color": "var(--kerykeion-chart-color-kronos)",
         "element_points": 0,
-        "label": "Canopus",
+        "label": "Kronos",
     },
     {
-        "id": 49,
-        "name": "Procyon",
-        "color": "var(--kerykeion-chart-color-procyon)",
+        "id": 70,
+        "name": "Apollon",
+        "color": "var(--kerykeion-chart-color-apollon)",
         "element_points": 0,
-        "label": "Procyon",
+        "label": "Apollon",
     },
     {
-        "id": 50,
-        "name": "Arcturus",
-        "color": "var(--kerykeion-chart-color-arcturus)",
+        "id": 71,
+        "name": "Admetos",
+        "color": "var(--kerykeion-chart-color-admetos)",
         "element_points": 0,
-        "label": "Arcturus",
+        "label": "Admetos",
     },
     {
-        "id": 51,
-        "name": "Pollux",
-        "color": "var(--kerykeion-chart-color-pollux)",
+        "id": 72,
+        "name": "Vulkanus",
+        "color": "var(--kerykeion-chart-color-vulkanus)",
         "element_points": 0,
-        "label": "Pollux",
+        "label": "Vulkanus",
     },
     {
-        "id": 52,
-        "name": "Deneb",
-        "color": "var(--kerykeion-chart-color-deneb)",
+        "id": 73,
+        "name": "Poseidon",
+        "color": "var(--kerykeion-chart-color-poseidon)",
         "element_points": 0,
-        "label": "Deneb",
-    },
-    {
-        "id": 53,
-        "name": "Altair",
-        "color": "var(--kerykeion-chart-color-altair)",
-        "element_points": 0,
-        "label": "Altair",
-    },
-    {
-        "id": 54,
-        "name": "Rigel",
-        "color": "var(--kerykeion-chart-color-rigel)",
-        "element_points": 0,
-        "label": "Rigel",
-    },
-    {
-        "id": 55,
-        "name": "Achernar",
-        "color": "var(--kerykeion-chart-color-achernar)",
-        "element_points": 0,
-        "label": "Achernar",
-    },
-    {
-        "id": 56,
-        "name": "Capella",
-        "color": "var(--kerykeion-chart-color-capella)",
-        "element_points": 0,
-        "label": "Capella",
-    },
-    {
-        "id": 57,
-        "name": "Vega",
-        "color": "var(--kerykeion-chart-color-vega)",
-        "element_points": 0,
-        "label": "Vega",
-    },
-    {
-        "id": 58,
-        "name": "Alcyone",
-        "color": "var(--kerykeion-chart-color-alcyone)",
-        "element_points": 0,
-        "label": "Alcyone",
-    },
-    {
-        "id": 59,
-        "name": "Alphecca",
-        "color": "var(--kerykeion-chart-color-alphecca)",
-        "element_points": 0,
-        "label": "Alphecca",
-    },
-    {
-        "id": 60,
-        "name": "Algorab",
-        "color": "var(--kerykeion-chart-color-algorab)",
-        "element_points": 0,
-        "label": "Algorab",
-    },
-    {
-        "id": 61,
-        "name": "Deneb_Algedi",
-        "color": "var(--kerykeion-chart-color-deneb_algedi)",
-        "element_points": 0,
-        "label": "Deneb Algedi",
-    },
-    {
-        "id": 62,
-        "name": "Alkaid",
-        "color": "var(--kerykeion-chart-color-alkaid)",
-        "element_points": 0,
-        "label": "Alkaid",
+        "label": "Poseidon",
     },
 ]
 
@@ -599,8 +537,178 @@ DEFAULT_CHART_ASPECTS_SETTINGS: Final[list[_ChartAspectSetting]] = [
 ]
 
 
+# =============================================================================
+# Dynamic fixed-star settings (v6)
+# =============================================================================
+# Catalog fixed stars passed via ``active_fixed_stars`` may not have a dedicated
+# entry in ``DEFAULT_CELESTIAL_POINTS_SETTINGS``. The chart drawer extends
+# its settings list at runtime with synthetic entries produced here, so any
+# star from the libephemeris catalog can render on the wheel with a fallback
+# glyph and a default color.
+
+DYNAMIC_FIXED_STAR_SETTING_ID_BASE: Final[int] = 1000
+"""Base ID for synthetic fixed-star settings. Chosen well above the highest
+static ID in DEFAULT_CELESTIAL_POINTS_SETTINGS (~75)."""
+
+
+DEFAULT_FIXED_STAR_COLOR: Final[str] = "var(--kerykeion-chart-color-fixed-star-default, #d4a053)"
+"""Fallback color for dynamic fixed stars without a dedicated CSS variable."""
+
+
+#: Names that ship with their own ``<symbol id="...">`` in the SVG templates.
+#: Anything not in this set falls back to the generic ``#FixedStar`` glyph.
+KNOWN_GLYPH_NAMES: Final[frozenset[str]] = frozenset({
+    # Planets
+    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+    "Uranus", "Neptune", "Pluto",
+    # Lunar nodes
+    "Mean_North_Lunar_Node", "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node", "True_South_Lunar_Node",
+    # Centaurs / Lilith / minor bodies
+    "Chiron", "Pholus", "Mean_Lilith", "True_Lilith", "Earth",
+    # Lilith/Priapus variants and lunar apse points (v6.0)
+    "Interpolated_Lilith", "Mean_Priapus", "True_Priapus",
+    "Interpolated_Perigee", "White_Moon",
+    # Asteroids
+    "Ceres", "Pallas", "Juno", "Vesta",
+    # TNOs
+    "Eris", "Sedna", "Haumea", "Makemake", "Ixion", "Orcus", "Quaoar",
+    # Fixed stars: no per-star dedicated glyphs anymore (v6.0.0a44).
+    # ``resolve_glyph_id`` returns "FixedStar" for any name not in this set,
+    # which now matches every fixed star — including the 23 traditionally
+    # hardcoded ones. The unified ``<symbol id="FixedStar">`` ships in every
+    # SVG template; colors are controlled by the single CSS variable
+    # ``--kerykeion-chart-color-fixed-star-default``.
+    # Synthetic midpoint glyph (single shared symbol)
+    "Midpoint",
+    # Arabic parts
+    "Pars_Fortunae", "Pars_Spiritus", "Pars_Amoris", "Pars_Fidei",
+    # Axes / extras
+    "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
+    "Vertex", "Anti_Vertex", "East_Point",
+    # Uranian hypotheticals
+    "Cupido", "Hades", "Zeus", "Kronos", "Apollon", "Admetos",
+    "Vulkanus", "Poseidon",
+})
+
+
+def resolve_glyph_id(name: str) -> str:
+    """Resolve the SVG ``<symbol>`` id for a given point name.
+
+    Pair-specific midpoint names share the generic ``"Midpoint"`` glyph.
+    Other known glyphs return the name itself; unknown names fall back to
+    ``"FixedStar"`` for catalog fixed stars and future dynamic points that
+    don't ship a dedicated symbol in the templates.
+    """
+    if not isinstance(name, str):
+        return str(name)
+    if name == "Midpoint" or name.endswith("_Midpoint"):
+        return "Midpoint"
+    return name if name in KNOWN_GLYPH_NAMES else "FixedStar"
+
+
+def build_dynamic_fixed_star_settings(
+    star_names: "list[str]",
+    existing_settings: "list | tuple",
+) -> "list[_CelestialPointSetting]":
+    """Build per-star ``_CelestialPointSetting`` entries for dynamic catalog stars.
+
+    Skips names that already appear in ``existing_settings`` (e.g. the 23
+    hardcoded entries) so they keep their dedicated colors and labels.
+
+    Args:
+        star_names: Catalog star names (IAU canonical, with spaces). The
+            resulting setting uses the same string for both ``name`` and
+            ``label`` and tags ``glyph_id="FixedStar"`` for the generic glyph.
+        existing_settings: Current celestial-point settings list; entries
+            with matching names are skipped.
+    """
+    existing_names = {body.get("name") for body in existing_settings}
+    extras: list[_CelestialPointSetting] = []
+    for i, name in enumerate(star_names):
+        if name in existing_names:
+            continue
+        entry: _CelestialPointSetting = {
+            "id": DYNAMIC_FIXED_STAR_SETTING_ID_BASE + i,
+            "name": name,
+            "color": DEFAULT_FIXED_STAR_COLOR,
+            "element_points": 0,
+            "label": name.replace("_", " "),
+            "glyph_id": "FixedStar",
+        }
+        extras.append(entry)
+    return extras
+
+
+#: Numeric ID base for dynamic midpoint settings (avoid collision with planets
+#: at 0-99 and dynamic fixed stars at 1000+).
+DYNAMIC_MIDPOINT_SETTING_ID_BASE: Final[int] = 2000
+
+#: Fallback color for midpoint glyphs rendered on the wheel.
+DEFAULT_MIDPOINT_COLOR: Final[str] = "var(--kerykeion-chart-color-midpoint-default, #b58bff)"
+
+
+def build_dynamic_midpoint_settings(
+    midpoint_names: "list[str]",
+    existing_settings: "list | tuple",
+) -> "list[_CelestialPointSetting]":
+    """Build per-midpoint ``_CelestialPointSetting`` entries.
+
+    Args:
+        midpoint_names: Synthetic point names like ``"Sun_Moon_Midpoint"``.
+            The label drops the trailing "Midpoint" and replaces underscores
+            with slashes (``"Sun/Moon"``) so the chart legend stays compact.
+        existing_settings: Current celestial-point settings list; entries
+            with matching names are skipped to avoid duplicates.
+    """
+    existing_names = {body.get("name") for body in existing_settings}
+    extras: list[_CelestialPointSetting] = []
+    for i, name in enumerate(midpoint_names):
+        if name in existing_names:
+            continue
+        label = name.removesuffix("_Midpoint").replace("_", "/")
+        entry: _CelestialPointSetting = {
+            "id": DYNAMIC_MIDPOINT_SETTING_ID_BASE + i,
+            "name": name,
+            "color": DEFAULT_MIDPOINT_COLOR,
+            "element_points": 0,
+            "label": label,
+            "glyph_id": "Midpoint",
+        }
+        extras.append(entry)
+    return extras
+
+
+#: Default active points for predictive factories (midpoints, solar arcs, etc.).
+DEFAULT_PREDICTIVE_POINTS: Final[tuple[str, ...]] = (
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "True_North_Lunar_Node",
+    "Chiron",
+    "Ascendant",
+    "Medium_Coeli",
+)
+
+
 __all__ = [
     "DEFAULT_CHART_COLORS",
     "DEFAULT_CELESTIAL_POINTS_SETTINGS",
     "DEFAULT_CHART_ASPECTS_SETTINGS",
+    "DEFAULT_PREDICTIVE_POINTS",
+    "DYNAMIC_FIXED_STAR_SETTING_ID_BASE",
+    "DYNAMIC_MIDPOINT_SETTING_ID_BASE",
+    "DEFAULT_MIDPOINT_COLOR",
+    "build_dynamic_midpoint_settings",
+    "DEFAULT_FIXED_STAR_COLOR",
+    "build_dynamic_fixed_star_settings",
+    "KNOWN_GLYPH_NAMES",
+    "resolve_glyph_id",
 ]

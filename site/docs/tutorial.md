@@ -21,16 +21,16 @@ This tutorial walks you through building a complete astrology application using 
 
 ## Prerequisites
 
-- Python 3.9 or higher
+- Python 3.12 or higher
 - Basic Python knowledge
 - No astrology knowledge required (we'll explain concepts as we go)
 
 ## Setup
 
-Install Kerykeion:
+Install the v6 release candidate used by this tutorial:
 
 ```bash
-pip install kerykeion
+pip install "kerykeion==6.0.0rc1"
 ```
 
 Create a project directory:
@@ -87,12 +87,12 @@ print(f"Ascendant: {subject.first_house.sign}")
 
 **Output:**
 ```
-Sun: Can at 22.54°
-  House: Eleventh_House
+Sun: Can at 22.65°
+  House: Tenth_House
   Retrograde: False
-Moon: Sco at 15.32°
-  Element: Water
-  Quality: Fixed
+Moon: Ari at 21.80°
+  Element: Fire
+  Quality: Cardinal
 Ascendant: Vir
 ```
 
@@ -101,7 +101,7 @@ Ascendant: Vir
 ```python
 from pathlib import Path
 from kerykeion import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Calculate chart data
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
@@ -143,11 +143,11 @@ for aspect in aspects_result.aspects[:5]:
 
 **Output:**
 ```
-Sun conjunction Mercury
-  Orb: 2.34° (Separating)
+Sun square Moon
+  Orb: 0.85° (Applying)
 
-Moon trine Mars
-  Orb: 1.87° (Applying)
+Sun conjunction Jupiter
+  Orb: 0.12° (Separating)
 ...
 ```
 
@@ -225,7 +225,7 @@ drawer.save_svg(output_path=Path("charts_output"), filename="alice-bob-synastry"
 Kerykeion can calculate a compatibility score using Ciro Discepolo's method.
 
 ```python
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # Calculate compatibility
 score_factory = RelationshipScoreFactory(alice, bob)
@@ -256,7 +256,7 @@ for item in result.score_breakdown[:5]:
 A **Solar Return** is the chart for the moment the Sun returns to its natal position each year. It's used for annual forecasts.
 
 ```python
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 # Create the return factory
 return_factory = PlanetaryReturnFactory(
@@ -332,8 +332,8 @@ for aspect in transit_aspects.aspects[:10]:
 ### Time-Range Transit Analysis
 
 ```python
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
+from kerykeion.transits.factory import TransitsTimeRangeFactory
 from datetime import datetime
 
 # Generate ephemeris data for a date range
@@ -384,8 +384,9 @@ report = ReportGenerator(natal_data)
 report_text = report.generate_report(max_aspects=10)
 
 # Save to file
-with open("alice_report.txt", "w") as f:
-    f.write(report_text)
+report_dir = Path("charts_output")
+report_dir.mkdir(exist_ok=True)
+(report_dir / "alice_report.txt").write_text(report_text, encoding="utf-8")
 ```
 
 ### Element and Quality Distribution
@@ -458,9 +459,9 @@ from kerykeion import (
     ReportGenerator,
     to_context
 )
-from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.charts.drawer import ChartDrawer
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 # Setup
 output_dir = Path("charts_output")
@@ -528,6 +529,15 @@ Now that you've completed the tutorial, explore:
 - [Theming Guide](/content/examples/theming) - Customize chart appearance
 - [House Systems](/content/examples/houses-systems) - All 23 house systems
 - [Sidereal Modes](/content/examples/sidereal-modes) - Vedic astrology support
+
+### Advanced & Predictive Techniques
+
+- [Secondary Progressions](/content/docs/secondary_progressions_factory) - Day-for-a-year progressed charts
+- [Solar Arc Directions](/content/docs/solar_arc_factory) - Uniform solar arc applied to all natal points
+- [Primary Directions](/content/docs/primary_directions_factory) - Placidus semi-arc classical method
+- [Midpoints](/content/docs/midpoint_factory) - Cosmobiology 90-degree dial analysis
+- [Eclipse Factory](/content/docs/eclipse_factory) - Solar and lunar eclipse search
+- [Astro-Cartography](/content/docs/astro_cartography_factory) - ACG planetary lines
 
 ---
 

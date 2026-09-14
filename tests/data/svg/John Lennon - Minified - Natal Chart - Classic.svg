@@ -1,0 +1,1308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--- This file is part of Kerykeion. Chart glyphs: Symbola (public domain) + Noto Sans Symbols 2 (SIL OFL 1.1) + Noto Sans (SIL OFL 1.1) + Kerykeion clean-room originals. See the NOTICE file. -->
+<svg font-family="Arial, Helvetica, Liberation Sans, sans-serif" style="background-color:var(--kerykeion-chart-color-paper-1)" aria-labelledby="kerykeion-chart-title kerykeion-chart-desc" preserveAspectRatio="xMidYMid" role="img" viewBox="0 -15 890 580" xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <title id="kerykeion-chart-title">John Lennon - Minified - Birth Chart</title>
+ <desc id="kerykeion-chart-desc">John Lennon - Minified - Birth Chart. 1940-10-09 18:30. Liverpool, GB. Placidus. 14 points, 20 aspects.</desc>
+ <!-- Colors -->
+ <style kr:node="Theme_Colors_Tag">:root {
+    /* Main Colors */
+    --kerykeion-chart-color-paper-0: #000000;
+    --kerykeion-chart-color-paper-1: #ffffff;
+
+    /* Base Palette (referenced by the Uranian planet colors below) */
+    --kerykeion-color-primary: #06537f;
+    --kerykeion-color-secondary: #400052;
+    --kerykeion-color-accent: #6f0766;
+    --kerykeion-color-warning: #984b00;
+
+    /* -------- */
+    /* General */
+    /* ------- */
+    --kerykeion-color-black: #000000;
+    --kerykeion-color-white: #ffffff;
+
+    --kerykeion-color-neutral-content: #000000;
+    --kerykeion-color-base-content: #000000;
+    --kerykeion-color-neutral: #333333;
+    --kerykeion-color-base-100: #ffffff;
+    --kerykeion-color-info: #06537f;
+    --kerykeion-color-info-content: #ffffff;
+    --kerykeion-color-success: #36d100;
+    --kerykeion-color-error: #dc0000;
+
+    /* Zodiac */
+    --kerykeion-color-base-200: #f4f4f5;
+    --kerykeion-color-base-300: #e4e4e7;
+
+    /* Modern Chart */
+    --kerykeion-modern-planet-ring: #f4f4f5;
+    --kerykeion-modern-planet-ring-outer: #e8e8ed;
+    --kerykeion-modern-house-ring: #e4e4e7;
+    --kerykeion-modern-stroke: #d4d4d8;
+    /* A house boundary is information, not decoration: it carries the 3:1 a
+       graphic object needs, while --kerykeion-modern-stroke keeps outlining the
+       rings at whatever weight the palette likes. */
+    --kerykeion-modern-cusp: #81818d;
+    /* Solid dim tones for the stretch of a cusp behind a reading: the exact
+       0.35-alpha composite of the cusp colour over each ring's fill. Solid so
+       a host that shows through the chart cannot wash the axis out. */
+    --kerykeion-modern-cusp-dim: #ccccd1;
+    --kerykeion-modern-cusp-dim-outer: #c4c4cb;
+    --kerykeion-modern-retrograde: #b03030;
+    --kerykeion-modern-stationary: #8a5a12;
+    --kerykeion-modern-indicator: #8a8278;
+    /* Opaque pastels: the exact per-channel composite of the old element
+       colors at 0.5 over white paper. Same tone the theme always had, but a
+       host that shows through the chart (Studio's glass) no longer bleeds
+       into the wedges. The dark theme was already opaque. */
+    --kerykeion-modern-zodiac-bg-0: #ffb880;
+    --kerykeion-modern-zodiac-bg-1: #b59e80;
+    --kerykeion-modern-zodiac-bg-2: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-3: #95a4b8;
+    --kerykeion-modern-zodiac-bg-4: #ffb880;
+    --kerykeion-modern-zodiac-bg-5: #b59e80;
+    --kerykeion-modern-zodiac-bg-6: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-7: #95a4b8;
+    --kerykeion-modern-zodiac-bg-8: #ffb880;
+    --kerykeion-modern-zodiac-bg-9: #b59e80;
+    --kerykeion-modern-zodiac-bg-10: #b4d6f8;
+    --kerykeion-modern-zodiac-bg-11: #95a4b8;
+    --kerykeion-modern-zodiac-bg-opacity: 1;
+    --kerykeion-chart-color-zodiac-bg-0: #ff7200;
+    --kerykeion-chart-color-zodiac-bg-1: #6b3d00;
+    --kerykeion-chart-color-zodiac-bg-2: #69acf1;
+    --kerykeion-chart-color-zodiac-bg-3: #2b4972;
+    --kerykeion-chart-color-zodiac-bg-4: #ff7200;
+    --kerykeion-chart-color-zodiac-bg-5: #6b3d00;
+    --kerykeion-chart-color-zodiac-bg-6: #69acf1;
+    --kerykeion-chart-color-zodiac-bg-7: #2b4972;
+    --kerykeion-chart-color-zodiac-bg-8: #ff7200;
+    --kerykeion-chart-color-zodiac-bg-9: #6b3d00;
+    --kerykeion-chart-color-zodiac-bg-10: #69acf1;
+    --kerykeion-chart-color-zodiac-bg-11: #2b4972;
+    --kerykeion-chart-color-zodiac-icon-0: #b25000;
+    --kerykeion-chart-color-zodiac-icon-1: #6b3d00;
+    --kerykeion-chart-color-zodiac-icon-2: #1473d6;
+    --kerykeion-chart-color-zodiac-icon-3: #2b4972;
+    --kerykeion-chart-color-zodiac-icon-4: #b25000;
+    --kerykeion-chart-color-zodiac-icon-5: #6b3d00;
+    --kerykeion-chart-color-zodiac-icon-6: #1473d6;
+    --kerykeion-chart-color-zodiac-icon-7: #2b4972;
+    --kerykeion-chart-color-zodiac-icon-8: #b25000;
+    --kerykeion-chart-color-zodiac-icon-9: #6b3d00;
+    --kerykeion-chart-color-zodiac-icon-10: #1473d6;
+    --kerykeion-chart-color-zodiac-icon-11: #2b4972;
+    --kerykeion-chart-color-zodiac-radix-ring-0: #ff0000;
+    --kerykeion-chart-color-zodiac-radix-ring-1: #ff0000;
+    --kerykeion-chart-color-zodiac-radix-ring-2: #ff0000;
+    --kerykeion-chart-color-zodiac-transit-ring-0: #ff0000;
+    --kerykeion-chart-color-zodiac-transit-ring-1: #ff0000;
+    --kerykeion-chart-color-zodiac-transit-ring-2: #0000ff;
+    --kerykeion-chart-color-zodiac-transit-ring-3: #0000ff;
+    --kerykeion-chart-color-houses-radix-line: #ff0000;
+    --kerykeion-chart-color-houses-transit-line: #0000ff;
+    --kerykeion-chart-color-lunar-phase-0: #000000;
+    --kerykeion-chart-color-lunar-phase-1: #ffffff;
+
+    /* Aspects */
+    --kerykeion-chart-color-conjunction: #5757e2;
+    --kerykeion-chart-color-semi-sextile: #810757;
+    --kerykeion-chart-color-semi-square: #b14e58;
+    --kerykeion-chart-color-sextile: #bb8b23;
+    --kerykeion-chart-color-quintile: #1f99b3;
+    --kerykeion-chart-color-square: #dc0000;
+    --kerykeion-chart-color-trine: #2ba800;
+    --kerykeion-chart-color-sesquiquadrate: #985a10;
+    --kerykeion-chart-color-biquintile: #7a9810;
+    --kerykeion-chart-color-quincunx: #20a0b1;
+    --kerykeion-chart-color-opposition: #510060;
+
+    /* Planets */
+    --kerykeion-chart-color-sun: #7e3e00;
+    --kerykeion-chart-color-moon: #150052;
+    --kerykeion-chart-color-mercury: #520800;
+    --kerykeion-chart-color-venus: #400052;
+    --kerykeion-chart-color-mars: #540000;
+    --kerykeion-chart-color-jupiter: #47133d;
+    --kerykeion-chart-color-saturn: #124500;
+    --kerykeion-chart-color-uranus: #6f0766;
+    --kerykeion-chart-color-neptune: #06537f;
+    --kerykeion-chart-color-pluto: #713f04;
+    --kerykeion-chart-color-mean-node: #4c1541;
+    --kerykeion-chart-color-true-node: #4c1541;
+    --kerykeion-chart-color-chiron: #505705;
+    --kerykeion-chart-color-first-house: #7f3f00;
+    --kerykeion-chart-color-tenth-house: #a80000;
+    --kerykeion-chart-color-seventh-house: #0000ff;
+    --kerykeion-chart-color-fourth-house: #000000;
+    --kerykeion-chart-color-mean-lilith: #000000;
+    --kerykeion-chart-color-true-lilith: #333333;
+    --kerykeion-chart-color-interpolated-lilith: #525252;
+    --kerykeion-chart-color-white-moon: #45545d;
+    --kerykeion-chart-color-ceres: #265206;
+    --kerykeion-chart-color-pallas: #004952;
+    --kerykeion-chart-color-juno: #591f52;
+    --kerykeion-chart-color-vesta: #913009;
+    --kerykeion-chart-color-pars-fortunae: #095242;
+    --kerykeion-chart-color-vertex: #52064e;
+    --kerykeion-chart-color-east-point: #482b7f;
+    --kerykeion-chart-color-eris: #800000;
+    --kerykeion-chart-color-earth: #6a2d04;
+    --kerykeion-chart-color-pholus: #525252;
+    --kerykeion-chart-color-sedna: #6b4e07;
+    --kerykeion-chart-color-haumea: #824112;
+    --kerykeion-chart-color-makemake: #804224;
+    --kerykeion-chart-color-ixion: #475927;
+    --kerykeion-chart-color-orcus: #2f4f4f;
+    --kerykeion-chart-color-quaoar: #731bc4;
+    --kerykeion-chart-color-cupido: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-hades: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-zeus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-kronos: var(--kerykeion-color-warning);
+    --kerykeion-chart-color-apollon: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-admetos: var(--kerykeion-color-accent);
+    --kerykeion-chart-color-vulkanus: var(--kerykeion-color-primary);
+    --kerykeion-chart-color-poseidon: var(--kerykeion-color-secondary);
+    --kerykeion-chart-color-anti-vertex: #4b0082;
+
+    /* Arab Parts */
+    --kerykeion-chart-color-pars-spiritus: #095242;
+    --kerykeion-chart-color-pars-amoris: #7f0c52;
+    --kerykeion-chart-color-pars-fortunae: #095242;
+    --kerykeion-chart-color-pars-fidei: #095242;
+
+    /* Elements Percentage */
+    --kerykeion-chart-color-air-percentage: #414ac2;
+    --kerykeion-chart-color-earth-percentage: #6a2d04;
+    --kerykeion-chart-color-fire-percentage: #943b00;
+    --kerykeion-chart-color-water-percentage: #630e73;
+
+    /* Modalities Percentage */
+    --kerykeion-chart-color-cardinal-percentage: #943b00;
+    --kerykeion-chart-color-fixed-percentage: var(
+        --kerykeion-chart-color-earth-percentage
+    );
+    --kerykeion-chart-color-mutable-percentage: var(
+        --kerykeion-chart-color-water-percentage
+    );
+
+    /* Other */
+    --kerykeion-chart-color-house-number: #990000;
+    --kerykeion-chart-color-fixed-star-default: #bb822f;
+    --kerykeion-chart-color-midpoint-default: #8b65d0;
+
+}</style>
+ <!---
+    Main Chart -->
+ <g kr:node="Main_Chart">
+  <g transform="translate(0)" fill="var(--kerykeion-chart-color-paper-0)" kr:node="Top_Left_Text">
+   <text x="20" y="22" font-size="24px" kr:node="Chart_Title">John Lennon - Minified - Birth Chart</text>
+   <text x="20" y="58" font-size="10px" kr:node="Top_Left_Text_0">Location:</text>
+   <text x="20" y="70" font-size="10px" kr:node="Top_Left_Text_1">Liverpool, GB</text>
+   <text x="20" y="82" font-size="10px" kr:node="Top_Left_Text_2">Latitude: 53°24'38" North</text>
+   <text x="20" y="94" font-size="10px" kr:node="Top_Left_Text_3">Longitude: 2°58'41" West</text>
+   <text x="20" y="106" font-size="10px" kr:node="Top_Left_Text_4">1940-10-09 18:30 [+01:00]</text>
+   <text x="20" y="118" font-size="10px" kr:node="Top_Left_Text_5">Day of Week: Wednesday</text>
+  </g>
+  <!-- Elements -->
+  <g transform="translate(0)" font-size="10px" kr:node="Elements_Percentages">
+   <text x="20" y="138" fill="var(--kerykeion-chart-color-paper-0)" kr:node="Elements_Text">Elements:</text>
+   <text x="20" y="152" fill="var(--kerykeion-chart-color-fire-percentage)" kr:node="Fire_Text">Fire 19%</text>
+   <text x="20" y="164" fill="var(--kerykeion-chart-color-earth-percentage)" kr:node="Earth_Text">Earth 36%</text>
+   <text x="20" y="176" fill="var(--kerykeion-chart-color-air-percentage)" kr:node="Air_Text">Air 36%</text>
+   <text x="20" y="188" fill="var(--kerykeion-chart-color-water-percentage)" kr:node="Water_Text">Water 9%</text>
+  </g>
+  <!-- Qualities -->
+  <g transform="translate(0)" font-size="10px" kr:node="Qualities_Percentages">
+   <text x="20" y="208" fill="var(--kerykeion-chart-color-paper-0)" kr:node="Qualities_Text">Qualities:</text>
+   <text x="20" y="222" fill="var(--kerykeion-chart-color-cardinal-percentage)" kr:node="Cardinal_Text">Cardinal 45%</text>
+   <text x="20" y="234" fill="var(--kerykeion-chart-color-fixed-percentage)" kr:node="Fixed_Text">Fixed 43%</text>
+   <text x="20" y="246" fill="var(--kerykeion-chart-color-mutable-percentage)" kr:node="Mutable_Text">Mutable 12%</text>
+  </g>
+  <g transform="translate(0,7)" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" kr:node="Bottom_Left_Text">
+   <text x="20" y="452" kr:node="Bottom_Left_Text_0"/>
+   <text x="20" y="466" kr:node="Bottom_Left_Text_1">Lunar phase: First Quarter</text>
+   <text x="20" y="480" kr:node="Bottom_Left_Text_2">Zodiac: Tropical</text>
+   <text x="20" y="494" kr:node="Bottom_Left_Text_3">Diurnality: Nocturnal</text>
+   <text x="20" y="508" kr:node="Bottom_Left_Text_4">Domification: Placidus</text>
+   <text x="20" y="522" kr:node="Bottom_Left_Text_5">Perspective: Apparent Geocentric</text>
+  </g>
+  <!-- Lunar Phase -->
+  <g transform="translate(10,438)" kr:node="Lunar_Phase">
+   <g transform="rotate(0 20 10)">
+    <defs>
+     <clipPath id="moonPhaseCutOffCircle">
+      <circle cx="20" cy="10" r="10"/>
+     </clipPath>
+    </defs>
+    <circle cx="20" cy="10" r="10" fill="var(--kerykeion-chart-color-lunar-phase-0)"/>
+    <path d="m20 0a10 10 0 0 1 0 20 2.9702 10 0 0 1 0-20z" clip-path="url(#moonPhaseCutOffCircle)" fill="var(--kerykeion-chart-color-lunar-phase-1)"/>
+    <circle cx="20" cy="10" r="10" fill="none" stroke="var(--kerykeion-chart-color-lunar-phase-0)" stroke-opacity=".5" stroke-width=".5px"/>
+   </g>
+  </g>
+  <!-- Full Wheel -->
+  <g transform="translate(100,50)" kr:node="Full_Wheel">
+   <!-- Background Circle -->
+   <g kr:node="Background_Circle">
+    <circle cx="240" cy="240" r="240" fill="var(--kerykeion-chart-color-paper-1)" stroke="var(--kerykeion-chart-color-paper-1)" stroke-width="1px"/>
+   </g>
+   <!-- Zodiac -->
+   <g kr:node="Zodiac">
+    <g kr:node="ZodiacSign" kr:sign="Ari" kr:signnumber="0">
+     <path d="m240 240-225.89-81.087a240 240 0 0 0-10.281 123.81z" fill="var(--kerykeion-chart-color-zodiac-bg-0)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="18.76142154804242" y="221.6290608689427" xlink:href="#Ari"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Tau" kr:signnumber="1">
+     <path d="m240 240-236.17 42.72a240 240 0 0 0 53 112.36z" fill="var(--kerykeion-chart-color-zodiac-bg-1)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="39.21630119791956" y="334.7095892471055" xlink:href="#Tau"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Gem" kr:signnumber="2">
+     <path d="m240 240-183.17 155.08a240 240 0 0 0 102.08 70.807z" fill="var(--kerykeion-chart-color-zodiac-bg-2)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="113.471010795148" y="422.41275967102314" xlink:href="#Gem"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Can" kr:signnumber="3">
+     <path d="m240 240-81.087 225.89a240 240 0 0 0 123.81 10.281z" fill="var(--kerykeion-chart-color-zodiac-bg-3)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="221.62906086894262" y="461.23857845195755" xlink:href="#Can"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Leo" kr:signnumber="4">
+     <path d="m240 240 42.72 236.17a240 240 0 0 0 112.36-53z" fill="var(--kerykeion-chart-color-zodiac-bg-4)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="334.7095892471055" y="440.7836988020804" xlink:href="#Leo"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Vir" kr:signnumber="5">
+     <path d="m240 240 155.08 183.17a240 240 0 0 0 70.807-102.08z" fill="var(--kerykeion-chart-color-zodiac-bg-5)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="422.41275967102314" y="366.528989204852" xlink:href="#Vir"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Lib" kr:signnumber="6">
+     <path d="m240 240 225.89 81.087a240 240 0 0 0 10.281-123.81z" fill="var(--kerykeion-chart-color-zodiac-bg-6)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="461.23857845195755" y="258.3709391310574" xlink:href="#Lib"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Sco" kr:signnumber="7">
+     <path d="m240 240 236.17-42.72a240 240 0 0 0-53-112.36z" fill="var(--kerykeion-chart-color-zodiac-bg-7)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="440.7836988020804" y="145.2904107528945" xlink:href="#Sco"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Sag" kr:signnumber="8">
+     <path d="m240 240 183.17-155.08a240 240 0 0 0-102.08-70.807z" fill="var(--kerykeion-chart-color-zodiac-bg-8)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="366.52898920485205" y="57.58724032897686" xlink:href="#Sag"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Cap" kr:signnumber="9">
+     <path d="m240 240 81.087-225.89a240 240 0 0 0-123.81-10.281z" fill="var(--kerykeion-chart-color-zodiac-bg-9)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="258.3709391310574" y="18.761421548042442" xlink:href="#Cap"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Aqu" kr:signnumber="10">
+     <path d="m240 240-42.72-236.17a240 240 0 0 0-112.36 53z" fill="var(--kerykeion-chart-color-zodiac-bg-10)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="145.29041075289467" y="39.21630119791947" xlink:href="#Aqu"/>
+     </g>
+    </g>
+    <g kr:node="ZodiacSign" kr:sign="Pis" kr:signnumber="11">
+     <path d="m240 240-155.08-183.17a240 240 0 0 0-70.807 102.08z" fill="var(--kerykeion-chart-color-zodiac-bg-11)" fill-opacity=".5"/>
+     <g transform="translate(-16,-16)">
+      <use x="57.58724032897688" y="113.47101079514798" xlink:href="#Pis"/>
+     </g>
+    </g>
+   </g>
+   <!-- First Circle -->
+   <g kr:node="First_Circle">
+    <circle cx="240" cy="240" r="240" fill="none" stroke="var(--kerykeion-chart-color-zodiac-radix-ring-2)" stroke-width="1px"/>
+   </g>
+   <!-- Second Circle -->
+   <g kr:node="Second_Circle">
+    <circle cx="240" cy="240" r="204" fill="var(--kerykeion-chart-color-paper-1)" fill-opacity=".2" stroke="var(--kerykeion-chart-color-zodiac-radix-ring-1)" stroke-opacity=".4" stroke-width="1px"/>
+   </g>
+   <!-- Third Circle -->
+   <g kr:node="Third_Circle">
+    <circle cx="240" cy="240" r="120" fill="var(--kerykeion-chart-color-paper-1)" fill-opacity=".8" stroke="var(--kerykeion-chart-color-zodiac-radix-ring-0)" stroke-width="1px"/>
+   </g>
+   <!-- Transit_Ring -->
+   <!-- Degree Ring -->
+   <g kr:node="Degree_Ring">
+    <g id="degreeRing" stroke="var(--kerykeion-chart-color-paper-0)" stroke-opacity=".9" stroke-width="1px">
+     <line x1="14.113" x2="12.231" y1="158.91" y2="158.24"/>
+     <line x1="7.9055" x2="5.9714" y1="178.91" y2="178.4"/>
+     <line x1="3.4643" x2="1.4931" y1="199.37" y2="199.03"/>
+     <line x1=".82316" x2="-1.17" y1="220.14" y2="219.97"/>
+     <line x1=".0023441" x2="-1.9976" y1="241.06" y2="241.07"/>
+     <line x1="1.0081" x2="-.98354" y1="261.97" y2="262.16"/>
+     <line x1="3.8326" x2="1.8646" y1="282.72" y2="283.08"/>
+     <line x1="8.4546" x2="6.5251" y1="303.14" y2="303.67"/>
+     <line x1="14.839" x2="12.962" y1="323.08" y2="323.77"/>
+     <line x1="22.937" x2="21.128" y1="342.39" y2="343.24"/>
+     <line x1="32.686" x2="30.959" y1="360.92" y2="361.93"/>
+     <line x1="44.014" x2="42.381" y1="378.53" y2="379.68"/>
+     <line x1="56.833" x2="55.307" y1="395.08" y2="396.37"/>
+     <line x1="71.046" x2="69.638" y1="410.45" y2="411.87"/>
+     <line x1="86.545" x2="85.266" y1="424.53" y2="426.07"/>
+     <line x1="103.21" x2="102.07" y1="437.2" y2="438.85"/>
+     <line x1="120.92" x2="119.93" y1="448.37" y2="450.11"/>
+     <line x1="139.53" x2="138.7" y1="457.96" y2="459.78"/>
+     <line x1="158.91" x2="158.24" y1="465.89" y2="467.77"/>
+     <line x1="178.91" x2="178.4" y1="472.09" y2="474.03"/>
+     <line x1="199.37" x2="199.03" y1="476.54" y2="478.51"/>
+     <line x1="220.14" x2="219.97" y1="479.18" y2="481.17"/>
+     <line x1="241.06" x2="241.07" y1="480" y2="482"/>
+     <line x1="261.97" x2="262.16" y1="478.99" y2="480.98"/>
+     <line x1="282.72" x2="283.08" y1="476.17" y2="478.14"/>
+     <line x1="303.14" x2="303.67" y1="471.55" y2="473.47"/>
+     <line x1="323.08" x2="323.77" y1="465.16" y2="467.04"/>
+     <line x1="342.39" x2="343.24" y1="457.06" y2="458.87"/>
+     <line x1="360.92" x2="361.93" y1="447.31" y2="449.04"/>
+     <line x1="378.53" x2="379.68" y1="435.99" y2="437.62"/>
+     <line x1="395.08" x2="396.37" y1="423.17" y2="424.69"/>
+     <line x1="410.45" x2="411.87" y1="408.95" y2="410.36"/>
+     <line x1="424.53" x2="426.07" y1="393.45" y2="394.73"/>
+     <line x1="437.2" x2="438.85" y1="376.79" y2="377.93"/>
+     <line x1="448.37" x2="450.11" y1="359.08" y2="360.07"/>
+     <line x1="457.96" x2="459.78" y1="340.47" y2="341.3"/>
+     <line x1="465.89" x2="467.77" y1="321.09" y2="321.76"/>
+     <line x1="472.09" x2="474.03" y1="301.09" y2="301.6"/>
+     <line x1="476.54" x2="478.51" y1="280.63" y2="280.97"/>
+     <line x1="479.18" x2="481.17" y1="259.86" y2="260.03"/>
+     <line x1="480" x2="482" y1="238.94" y2="238.93"/>
+     <line x1="478.99" x2="480.98" y1="218.03" y2="217.84"/>
+     <line x1="476.17" x2="478.14" y1="197.28" y2="196.92"/>
+     <line x1="471.55" x2="473.47" y1="176.86" y2="176.33"/>
+     <line x1="465.16" x2="467.04" y1="156.92" y2="156.23"/>
+     <line x1="457.06" x2="458.87" y1="137.61" y2="136.76"/>
+     <line x1="447.31" x2="449.04" y1="119.08" y2="118.07"/>
+     <line x1="435.99" x2="437.62" y1="101.47" y2="100.32"/>
+     <line x1="423.17" x2="424.69" y1="84.92" y2="83.628"/>
+     <line x1="408.95" x2="410.36" y1="69.546" y2="68.126"/>
+     <line x1="393.45" x2="394.73" y1="55.469" y2="53.932"/>
+     <line x1="376.79" x2="377.93" y1="42.797" y2="41.154"/>
+     <line x1="359.08" x2="360.07" y1="31.626" y2="29.889"/>
+     <line x1="340.47" x2="341.3" y1="22.04" y2="20.224"/>
+     <line x1="321.09" x2="321.76" y1="14.113" y2="12.231"/>
+     <line x1="301.09" x2="301.6" y1="7.9055" y2="5.9714"/>
+     <line x1="280.63" x2="280.97" y1="3.4643" y2="1.4931"/>
+     <line x1="259.86" x2="260.03" y1=".82316" y2="-1.17"/>
+     <line x1="238.94" x2="238.93" y1=".0023441" y2="-1.9976"/>
+     <line x1="218.03" x2="217.84" y1="1.0081" y2="-.98354"/>
+     <line x1="197.28" x2="196.92" y1="3.8326" y2="1.8646"/>
+     <line x1="176.86" x2="176.33" y1="8.4546" y2="6.5251"/>
+     <line x1="156.92" x2="156.23" y1="14.839" y2="12.962"/>
+     <line x1="137.61" x2="136.76" y1="22.937" y2="21.128"/>
+     <line x1="119.08" x2="118.07" y1="32.686" y2="30.959"/>
+     <line x1="101.47" x2="100.32" y1="44.014" y2="42.381"/>
+     <line x1="84.92" x2="83.628" y1="56.833" y2="55.307"/>
+     <line x1="69.546" x2="68.126" y1="71.046" y2="69.638"/>
+     <line x1="55.469" x2="53.932" y1="86.545" y2="85.266"/>
+     <line x1="42.797" x2="41.154" y1="103.21" y2="102.07"/>
+     <line x1="31.626" x2="29.889" y1="120.92" y2="119.93"/>
+     <line x1="22.04" x2="20.224" y1="139.53" y2="138.7"/>
+    </g>
+   </g>
+   <!-- House Sectors (transparent, for interactive highlighting) -->
+   <g kr:node="House_Sectors">
+    <g kr:house="1" kr:node="HouseSector">
+     <path d="m0 240a240 240 0 0 0 56.149 154.27l91.925-77.135a120 120 0 0 1-28.075-77.135z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="2" kr:node="HouseSector">
+     <path d="m56.149 394.27a240 240 0 0 0 67.496 55.64l58.177-104.95a120 120 0 0 1-33.748-27.82z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="3" kr:node="HouseSector">
+     <path d="m123.65 449.91a240 240 0 0 0 66.456 24.847l24.949-117.38a120 120 0 0 1-33.228-12.423z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="4" kr:node="HouseSector">
+     <path d="m190.1 474.76a240 240 0 0 0 74.986 3.9298l-12.543-119.34a120 120 0 0 1-37.493-1.9649z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="5" kr:node="HouseSector">
+     <path d="m265.09 478.69a240 240 0 0 0 105.63-37.404l-65.357-100.64a120 120 0 0 1-52.813 18.702z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="6" kr:node="HouseSector">
+     <path d="m370.71 441.28a240 240 0 0 0 109.29-201.28h-120a120 120 0 0 1-54.643 100.64z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="7" kr:node="HouseSector">
+     <path d="m480 240a240 240 0 0 0-56.149-154.27l-91.925 77.135a120 120 0 0 1 28.075 77.135z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="8" kr:node="HouseSector">
+     <path d="m423.85 85.731a240 240 0 0 0-67.496-55.64l-58.177 104.95a120 120 0 0 1 33.748 27.82z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="9" kr:node="HouseSector">
+     <path d="m356.35 30.091a240 240 0 0 0-66.456-24.847l-24.949 117.38a120 120 0 0 1 33.228 12.423z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="10" kr:node="HouseSector">
+     <path d="m289.9 5.2446a240 240 0 0 0-74.986-3.9298l12.543 119.34a120 120 0 0 1 37.493 1.9649z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="11" kr:node="HouseSector">
+     <path d="m214.91 1.3147a240 240 0 0 0-105.63 37.404l65.357 100.64a120 120 0 0 1 52.813-18.702z" fill="transparent" pointer-events="all"/>
+    </g>
+    <g kr:house="12" kr:node="HouseSector">
+     <path d="m109.29 38.719a240 240 0 0 0-109.29 201.28l120-3e-14a120 120 0 0 1 54.643-100.64z" fill="transparent" pointer-events="all"/>
+    </g>
+   </g>
+   <!-- Houses -->
+   <g kr:node="Houses_Wheel">
+    <g kr:absoluteposition="19.74676719464139" kr:horoscope="0" kr:node="Cusp" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="First_House">
+     <line x1="120" y1="240" y2="240" stroke="var(--kerykeion-chart-color-first-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="1" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="56.57901680910558" y="308.6678675185284">1</tspan></text>
+    </g>
+    <g kr:absoluteposition="59.539355319478915" kr:horoscope="0" kr:node="Cusp" kr:sign="Tau" kr:signposition="29.539355319478915" kr:slug="Second_House">
+     <line x1="148.07" x2="56.149" y1="317.13" y2="394.27" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="2" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="114.87298170666935" y="391.15192001044227">2</tspan></text>
+    </g>
+    <g kr:absoluteposition="80.23902557714422" kr:horoscope="0" kr:node="Cusp" kr:sign="Gem" kr:signposition="20.23902557714422" kr:slug="Third_House">
+     <line x1="181.82" x2="123.65" y1="344.95" y2="449.91" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="3" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="169.76018279818223" y="422.8410603356923">3</tspan></text>
+    </g>
+    <g kr:absoluteposition="97.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="7.070979233059859" kr:slug="Fourth_House">
+     <line x1="215.05" x2="190.1" y1="357.38" y2="474.76" stroke="var(--kerykeion-chart-color-fourth-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="4" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="226.9514964013547" y="434.7368706728781">4</tspan></text>
+    </g>
+    <g kr:absoluteposition="115.31371115556101" kr:horoscope="0" kr:node="Cusp" kr:sign="Can" kr:signposition="25.31371115556101" kr:slug="Fifth_House">
+     <line x1="252.54" x2="265.09" y1="359.34" y2="478.69" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="5" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="301.090916972884" y="423.9871662896983">5</tspan></text>
+    </g>
+    <g kr:absoluteposition="142.10542080689618" kr:horoscope="0" kr:node="Cusp" kr:sign="Leo" kr:signposition="22.105420806896177" kr:slug="Sixth_House">
+     <line x1="305.36" x2="370.71" y1="340.64" y2="441.28" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="6" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="405.73288563109736" y="334.61448196984486">6</tspan></text>
+    </g>
+    <g kr:absoluteposition="199.7467671946414" kr:horoscope="0" kr:node="Cusp" kr:sign="Lib" kr:signposition="19.746767194641393" kr:slug="Seventh_House">
+     <line x1="360" x2="480" y1="240" y2="240" stroke="var(--kerykeion-chart-color-seventh-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="7" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="417.4209831908944" y="177.3321324814716">7</tspan></text>
+    </g>
+    <g kr:absoluteposition="239.53935531947891" kr:horoscope="0" kr:node="Cusp" kr:sign="Sco" kr:signposition="29.539355319478915" kr:slug="Eighth_House">
+     <line x1="331.93" x2="423.85" y1="162.87" y2="85.731" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="8" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="359.1270182933307" y="94.84807998955776">8</tspan></text>
+    </g>
+    <g kr:absoluteposition="260.2390255771442" kr:horoscope="0" kr:node="Cusp" kr:sign="Sag" kr:signposition="20.23902557714422" kr:slug="Ninth_House">
+     <line x1="298.18" x2="356.35" y1="135.05" y2="30.091" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="9" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="304.23981720181774" y="63.15893966430767">9</tspan></text>
+    </g>
+    <g kr:absoluteposition="277.07097923305986" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Tenth_House">
+     <line x1="264.95" x2="289.9" y1="122.62" y2="5.2446" stroke="var(--kerykeion-chart-color-tenth-house)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="10" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="247.04850359864525" y="51.263129327121824">10</tspan></text>
+    </g>
+    <g kr:absoluteposition="295.313711155561" kr:horoscope="0" kr:node="Cusp" kr:sign="Cap" kr:signposition="25.31371115556101" kr:slug="Eleventh_House">
+     <line x1="227.46" x2="214.91" y1="120.66" y2="1.3147" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="11" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="172.90908302711597" y="62.01283371030176">11</tspan></text>
+    </g>
+    <g kr:absoluteposition="322.1054208068962" kr:horoscope="0" kr:node="Cusp" kr:sign="Aqu" kr:signposition="22.105420806896177" kr:slug="Twelfth_House">
+     <line x1="174.64" x2="109.29" y1="139.36" y2="38.719" stroke="var(--kerykeion-chart-color-houses-radix-line)" stroke-dasharray="3,2" stroke-opacity=".4" stroke-width="1px"/>
+    </g>
+    <g kr:horoscope="0" kr:house="12" kr:node="HouseNumber">
+     <text fill="var(--kerykeion-chart-color-house-number)" fill-opacity=".6" font-size="14px"><tspan x="68.26711436890267" y="151.38551803015514">12</tspan></text>
+    </g>
+   </g>
+   <!-- Gauquelin Sectors Overlay -->
+   <!-- Planets -->
+   <g kr:node="Planets_Wheel">
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="19.74676719464139" kr:cx="194.0" kr:cy="290.0" kr:house="First_House" kr:node="ChartPoint" kr:sign="Ari" kr:signposition="19.74676719464139" kr:slug="Ascendant" kr:speed="886.832442">
+     <use x="94.0" y="240.00000000000003" xlink:href="#Ascendant"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.21501423317537" kr:cx="186.08748014191332" kr:cy="352.1846945070414" kr:declination="13.2969" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.215014233175367" kr:slug="Saturn" kr:speed="-0.066938">
+     <use x="86.0874801419133" y="302.1846945070414" xlink:href="#Saturn"/>
+     <g transform="translate(108.09 320.18) scale(.55)">
+      <use xlink:href="#retrograde"/>
+     </g>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="43.69186967968114" kr:cx="208.77606924032162" kr:cy="354.0021874312053" kr:declination="14.6101" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="13.69186967968114" kr:slug="Jupiter" kr:speed="-0.10691">
+     <use x="108.77606924032162" y="304.0021874312053" xlink:href="#Jupiter"/>
+     <g transform="translate(130.78 322) scale(.55)">
+      <use xlink:href="#retrograde"/>
+     </g>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="55.55201631118552" kr:cx="205.70317893375875" kr:cy="387.57235188055057" kr:declination="18.8846" kr:house="First_House" kr:motionstate="retrograde" kr:node="ChartPoint" kr:retrograde="true" kr:sign="Tau" kr:signposition="25.55201631118552" kr:slug="Uranus" kr:speed="-0.029366">
+     <use x="105.70317893375875" y="337.57235188055057" xlink:href="#Uranus"/>
+     <g transform="translate(127.7 355.57) scale(.55)">
+      <use xlink:href="#retrograde"/>
+     </g>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="120.56821722799918" kr:cx="367.85811332497553" kr:cy="433.3175687833589" kr:declination="13.4146" kr:house="Fifth_House" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="0.5682172279991846" kr:slug="Chiron" kr:speed="0.05292">
+     <use x="267.85811332497553" y="383.3175687833589" xlink:href="#Chiron"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="124.18808813451612" kr:cx="382.9639614870184" kr:cy="450.3436871639853" kr:declination="23.1195" kr:house="Fifth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Leo" kr:signposition="4.188088134516121" kr:slug="Pluto" kr:speed="0.011365">
+     <use x="282.9639614870184" y="400.3436871639853" xlink:href="#Pluto"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="153.21541744281757" kr:cx="441.4201220870136" kr:cy="395.02361084944306" kr:declination="10.5716" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="3.215417442817568" kr:slug="Venus" kr:speed="1.133712" kr:stellium="6">
+     <use x="341.4201220870136" y="345.02361084944306" xlink:href="#Venus"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="176.03011967681334" kr:cx="492.8038056731051" kr:cy="354.86136732921943" kr:declination="2.6814" kr:house="Sixth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Vir" kr:signposition="26.030119676813342" kr:slug="Neptune" kr:speed="0.035317">
+     <use x="392.8038056731051" y="304.86136732921943" xlink:href="#Neptune"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="182.66253120510896" kr:cx="479.6204943706032" kr:cy="332.68626888951957" kr:declination="-0.1807" kr:house="Sixth_House" kr:motionstate="fast" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="2.6625312051089622" kr:slug="Mars" kr:speed="0.644941" kr:stellium="6">
+     <use x="379.6204943706032" y="282.68626888951957" xlink:href="#Mars"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="191.024247807456" kr:cx="504.3844994111007" kr:cy="313.10273475937083" kr:declination="-4.3633" kr:house="Sixth_House" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="11.024247807455993" kr:slug="True_North_Lunar_Node" kr:speed="0.005933">
+     <use x="404.3844994111007" y="263.10273475937083" xlink:href="#True_North_Lunar_Node"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="196.2678943501122" kr:angularity="Descendant:3.4789" kr:cx="485.79991207416776" kr:cy="297.6410496114698" kr:declination="-6.3989" kr:house="Sixth_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Lib" kr:signposition="16.267894350112186" kr:slug="Sun" kr:speed="0.988482" kr:stellium="6">
+     <use x="385.79991207416776" y="247.64104961146978" xlink:href="#Sun"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="218.55823263691192" kr:cx="496.9560835494866" kr:cy="235.955686360112" kr:declination="-16.233" kr:house="Seventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Sco" kr:signposition="8.558232636911924" kr:slug="Mercury" kr:speed="1.319465">
+     <use x="396.9560835494866" y="185.955686360112" xlink:href="#Mercury"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="277.07097923305986" kr:cx="370.3551068593929" kr:cy="147.1904502928644" kr:house="Tenth_House" kr:node="ChartPoint" kr:sign="Cap" kr:signposition="7.070979233059859" kr:slug="Medium_Coeli" kr:speed="332.128397">
+     <use x="270.3551068593929" y="97.19045029286438" xlink:href="#Medium_Coeli"/>
+    </g>
+    <g transform="translate(-12 -12) scale(1)" kr:absoluteposition="303.5466251977386" kr:cx="299.84096533045516" kr:cy="128.93090943818459" kr:declination="-14.5969" kr:house="Eleventh_House" kr:motionstate="average" kr:node="ChartPoint" kr:sign="Aqu" kr:signposition="3.5466251977385923" kr:slug="Moon" kr:speed="12.529073">
+     <use x="199.84096533045516" y="78.93090943818459" xlink:href="#Moon"/>
+    </g>
+    <g kr:absoluteposition="196.2678943501122" kr:node="Indicator" kr:slug="Sun">
+     <line class="planet-degree-line" x1="483.55" x2="475.57" y1="254.81" y2="254.32" stroke="var(--kerykeion-chart-color-sun)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(489.54 255.17)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-sun)" font-size="10px" text-anchor="middle">16°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="303.5466251977386" kr:node="Indicator" kr:slug="Moon">
+     <line class="planet-degree-line" x1="181.8" x2="183.71" y1="3.0431" y2="10.812" stroke="var(--kerykeion-chart-color-moon)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(180.37 -2.7837)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-moon)" font-size="10px" text-anchor="middle">3°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="218.55823263691192" kr:node="Indicator" kr:slug="Mercury">
+     <line class="planet-degree-line" x1="470.97" x2="463.39" y1="161.32" y2="163.9" stroke="var(--kerykeion-chart-color-mercury)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(476.65 159.39)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-mercury)" font-size="10px" text-anchor="middle">8°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="153.21541744281757" kr:node="Indicator" kr:slug="Venus">
+     <line class="planet-degree-line" x1="407.86" x2="402.36" y1="417.08" y2="411.28" stroke="var(--kerykeion-chart-color-venus)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(411.99 421.44)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-venus)" font-size="10px" text-anchor="middle">3°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="182.66253120510896" kr:node="Indicator" kr:slug="Mars">
+     <line class="planet-degree-line" x1="473.23" x2="465.59" y1="311.68" y2="309.33" stroke="var(--kerykeion-chart-color-mars)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(478.97 313.44)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-mars)" font-size="10px" text-anchor="middle">2°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="43.69186967968114" kr:node="Indicator" kr:slug="Jupiter">
+     <line class="planet-degree-line" x1="17" x2="24.311" y1="339.03" y2="335.78" stroke="var(--kerykeion-chart-color-jupiter)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(14.251 347.41)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-jupiter)" font-size="10px" text-anchor="middle">13°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="43.21501423317537" kr:node="Indicator" kr:slug="Saturn">
+     <line class="planet-degree-line" x1="16.183" x2="23.522" y1="337.17" y2="333.98" stroke="var(--kerykeion-chart-color-saturn)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(8.1522 333.52)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-saturn)" font-size="10px" text-anchor="middle">13°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="55.55201631118552" kr:node="Indicator" kr:slug="Uranus">
+     <line class="planet-degree-line" x1="42.114" x2="48.602" y1="382.75" y2="378.07" stroke="var(--kerykeion-chart-color-uranus)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(37.247 386.26)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-uranus)" font-size="10px" text-anchor="middle">25°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="176.03011967681334" kr:node="Indicator" kr:slug="Neptune">
+     <line class="planet-degree-line" x1="463.39" x2="456.07" y1="338.14" y2="334.92" stroke="var(--kerykeion-chart-color-neptune)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(468.89 340.55)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-neptune)" font-size="10px" text-anchor="middle">26°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="124.18808813451612" kr:node="Indicator" kr:slug="Pluto">
+     <line class="planet-degree-line" x1="300.85" x2="298.86" y1="476.29" y2="468.54" stroke="var(--kerykeion-chart-color-pluto)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(302.35 482.1)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-pluto)" font-size="10px" text-anchor="middle">4°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="191.024247807456" kr:node="Indicator" kr:slug="True_North_Lunar_Node">
+     <line class="planet-degree-line" x1="481.18" x2="473.27" y1="277" y2="275.79" stroke="var(--kerykeion-chart-color-true-node)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(487.11 277.91)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-true-node)" font-size="10px" text-anchor="middle">11°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="120.56821722799918" kr:node="Indicator" kr:slug="Chiron">
+     <line class="planet-degree-line" x1="285.81" x2="284.31" y1="479.66" y2="471.8" stroke="var(--kerykeion-chart-color-chiron)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(286.94 485.55)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-chiron)" font-size="10px" text-anchor="middle">0°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="19.74676719464139" kr:node="Indicator" kr:slug="Ascendant">
+     <line class="planet-degree-line" x1="-4" x2="4" y1="240" y2="240" stroke="var(--kerykeion-chart-color-first-house)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(-10 240)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-first-house)" font-size="10px" text-anchor="middle">19°</text>
+     </g>
+    </g>
+    <g kr:absoluteposition="277.07097923305986" kr:node="Indicator" kr:slug="Medium_Coeli">
+     <line class="planet-degree-line" x1="293.54" x2="291.79" y1="1.9469" y2="9.7519" stroke="var(--kerykeion-chart-color-tenth-house)" stroke-opacity=".8" stroke-width="1px"/>
+     <g transform="translate(294.86 -3.9068)">
+      <text dominant-baseline="middle" fill="var(--kerykeion-chart-color-tenth-house)" font-size="10px" text-anchor="middle">7°</text>
+     </g>
+    </g>
+   </g>
+   <!-- Aspects -->
+   <g kr:node="Aspects_Wheel">
+    <g kr:aspectdegrees="0" kr:aspectmovement="Separating" kr:aspectname="conjunction" kr:from="True_North_Lunar_Node" kr:fromoriginaldegrees="191.024247807456" kr:node="Aspect" kr:orb="5.243646542656194" kr:planetsdiff="5.243646542656194" kr:to="Sun" kr:tooriginaldegrees="196.2678943501122">
+     <line class="aspect" x1="359.84" x2="358.83" y1="246.28" y2="256.7" stroke="var(--kerykeion-chart-color-conjunction)" stroke-opacity=".9"/>
+     <use x="357.4590269968784" y="245.570162184864" xlink:href="#orb0"/>
+    </g>
+    <g kr:aspectdegrees="180" kr:aspectmovement="Separating" kr:aspectname="opposition" kr:from="Ascendant" kr:fromoriginaldegrees="19.74676719464139" kr:node="Aspect" kr:orb="3.4788728445292065" kr:planetsdiff="176.5211271554708" kr:to="Sun" kr:tooriginaldegrees="196.2678943501122">
+     <line class="aspect" x1="359.84" x2="120" y1="246.28" y2="240" stroke="var(--kerykeion-chart-color-opposition)" stroke-opacity=".9"/>
+     <use x="233.9177720852744" y="237.14015737457663" xlink:href="#orb180"/>
+    </g>
+    <g kr:aspectdegrees="90" kr:aspectmovement="Applying" kr:aspectname="square" kr:from="Mercury" kr:fromoriginaldegrees="218.55823263691192" kr:node="Aspect" kr:orb="5.011607439173332" kr:planetsdiff="84.98839256082667" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
+     <line class="aspect" x1="210.97" x2="353.46" y1="123.56" y2="200.93" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
+     <use x="276.215800799979" y="156.2481671560108" xlink:href="#orb90"/>
+    </g>
+    <g kr:aspectdegrees="120" kr:aspectmovement="Separating" kr:aspectname="trine" kr:from="Mars" kr:fromoriginaldegrees="182.66253120510896" kr:node="Aspect" kr:orb="0.8840939926296301" kr:planetsdiff="120.88409399262963" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
+     <line class="aspect" x1="210.97" x2="354.76" y1="123.56" y2="275.08" stroke="var(--kerykeion-chart-color-trine)" stroke-opacity=".9"/>
+     <use x="276.8629716218021" y="193.32455870680442" xlink:href="#orb120"/>
+    </g>
+    <g kr:aspectdegrees="180" kr:aspectmovement="Applying" kr:aspectname="opposition" kr:from="Pluto" kr:fromoriginaldegrees="124.18808813451612" kr:node="Aspect" kr:orb="0.6414629367775433" kr:planetsdiff="179.35853706322246" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
+     <line class="aspect" x1="210.97" x2="271.06" y1="123.56" y2="355.91" stroke="var(--kerykeion-chart-color-opposition)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="120" kr:aspectmovement="Applying" kr:aspectname="trine" kr:from="True_North_Lunar_Node" kr:fromoriginaldegrees="191.024247807456" kr:node="Aspect" kr:orb="7.4776226097174" kr:planetsdiff="112.5223773902826" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
+     <line class="aspect" x1="210.97" x2="358.83" y1="123.56" y2="256.7" stroke="var(--kerykeion-chart-color-trine)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="180" kr:aspectmovement="Separating" kr:aspectname="opposition" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="2.9784079697394077" kr:planetsdiff="177.0215920302606" kr:to="Moon" kr:tooriginaldegrees="303.5466251977386">
+     <line class="aspect" x1="210.97" x2="262.9" y1="123.56" y2="357.8" stroke="var(--kerykeion-chart-color-opposition)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="180" kr:aspectmovement="Applying" kr:aspectname="opposition" kr:from="Jupiter" kr:fromoriginaldegrees="43.69186967968114" kr:node="Aspect" kr:orb="5.133637042769209" kr:planetsdiff="174.8663629572308" kr:to="Mercury" kr:tooriginaldegrees="218.55823263691192">
+     <line class="aspect" x1="353.46" x2="130.37" y1="200.93" y2="288.81" stroke="var(--kerykeion-chart-color-opposition)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="180" kr:aspectmovement="Applying" kr:aspectname="opposition" kr:from="Saturn" kr:fromoriginaldegrees="43.21501423317537" kr:node="Aspect" kr:orb="4.656781596263443" kr:planetsdiff="175.34321840373656" kr:to="Mercury" kr:tooriginaldegrees="218.55823263691192">
+     <line class="aspect" x1="353.46" x2="130.37" y1="200.93" y2="288.81" stroke="var(--kerykeion-chart-color-opposition)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="90" kr:aspectmovement="Separating" kr:aspectname="square" kr:from="Pluto" kr:fromoriginaldegrees="124.18808813451612" kr:node="Aspect" kr:orb="4.370144502395803" kr:planetsdiff="94.3701445023958" kr:to="Mercury" kr:tooriginaldegrees="218.55823263691192">
+     <line class="aspect" x1="353.46" x2="271.06" y1="200.93" y2="355.91" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
+     <use x="306.26025724211024" y="272.42146030991466" xlink:href="#orb90"/>
+    </g>
+    <g kr:aspectdegrees="60" kr:aspectmovement="Applying" kr:aspectname="sextile" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="1.487253403852037" kr:planetsdiff="58.51274659614796" kr:to="Mercury" kr:tooriginaldegrees="218.55823263691192">
+     <line class="aspect" x1="353.46" x2="264.95" y1="200.93" y2="122.62" stroke="var(--kerykeion-chart-color-sextile)" stroke-opacity=".9"/>
+     <use x="303.20581598502457" y="155.77705468854225" xlink:href="#orb60"/>
+    </g>
+    <g kr:aspectdegrees="120" kr:aspectmovement="Separating" kr:aspectname="trine" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="3.855561790242291" kr:planetsdiff="123.85556179024229" kr:to="Venus" kr:tooriginaldegrees="153.21541744281757">
+     <line class="aspect" x1="323.36" x2="264.95" y1="326.32" y2="122.62" stroke="var(--kerykeion-chart-color-trine)" stroke-opacity=".9"/>
+     <use x="288.1542036766054" y="218.47153197629072" xlink:href="#orb120"/>
+    </g>
+    <g kr:aspectdegrees="60" kr:aspectmovement="Applying" kr:aspectname="sextile" kr:from="Pluto" kr:fromoriginaldegrees="124.18808813451612" kr:node="Aspect" kr:orb="1.5255569294071591" kr:planetsdiff="58.47444307059284" kr:to="Mars" kr:tooriginaldegrees="182.66253120510896">
+     <line class="aspect" x1="354.76" x2="271.06" y1="275.08" y2="355.91" stroke="var(--kerykeion-chart-color-sextile)" stroke-opacity=".9"/>
+     <use x="306.90742806393337" y="309.4978518607083" xlink:href="#orb60"/>
+    </g>
+    <g kr:aspectdegrees="60" kr:aspectmovement="Separating" kr:aspectname="sextile" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="2.0943139771097776" kr:planetsdiff="62.09431397710978" kr:to="Mars" kr:tooriginaldegrees="182.66253120510896">
+     <line class="aspect" x1="354.76" x2="262.9" y1="275.08" y2="357.8" stroke="var(--kerykeion-chart-color-sextile)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="90" kr:aspectmovement="Separating" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="4.408448027950897" kr:planetsdiff="94.4084480279509" kr:to="Mars" kr:tooriginaldegrees="182.66253120510896">
+     <line class="aspect" x1="354.76" x2="264.95" y1="275.08" y2="122.62" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
+     <use x="303.8529868068477" y="192.85344623933588" xlink:href="#orb90"/>
+    </g>
+    <g kr:aspectdegrees="0" kr:aspectmovement="Applying" kr:aspectname="conjunction" kr:from="Saturn" kr:fromoriginaldegrees="43.21501423317537" kr:node="Aspect" kr:orb="0.4768554465057733" kr:planetsdiff="0.4768554465057733" kr:to="Jupiter" kr:tooriginaldegrees="43.69186967968114">
+     <line class="aspect" x1="130.37" x2="130.37" y1="288.81" y2="288.81" stroke="var(--kerykeion-chart-color-conjunction)" stroke-opacity=".9"/>
+     <use x="121.12305463719754" y="285.3302562390147" xlink:href="#orb0"/>
+    </g>
+    <g kr:aspectdegrees="120" kr:aspectmovement="Separating" kr:aspectname="trine" kr:from="Neptune" kr:fromoriginaldegrees="176.03011967681334" kr:node="Aspect" kr:orb="0.47810336562781686" kr:planetsdiff="120.47810336562782" kr:to="Uranus" kr:tooriginaldegrees="55.55201631118552">
+     <line class="aspect" x1="142.92" x2="350.46" y1="310.53" y2="286.89" stroke="var(--kerykeion-chart-color-trine)" stroke-opacity=".9"/>
+     <use x="240.68927154464959" y="292.7109828469048" xlink:href="#orb120"/>
+    </g>
+    <g kr:aspectdegrees="60" kr:aspectmovement="Separating" kr:aspectname="sextile" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="4.538097551185842" kr:planetsdiff="55.46190244881416" kr:to="Neptune" kr:tooriginaldegrees="176.03011967681334">
+     <line class="aspect" x1="350.46" x2="262.9" y1="286.89" y2="357.8" stroke="var(--kerykeion-chart-color-sextile)" stroke-opacity=".9"/>
+    </g>
+    <g kr:aspectdegrees="0" kr:aspectmovement="Applying" kr:aspectname="conjunction" kr:from="Chiron" kr:fromoriginaldegrees="120.56821722799918" kr:node="Aspect" kr:orb="3.6198709065169368" kr:planetsdiff="3.6198709065169368" kr:to="Pluto" kr:tooriginaldegrees="124.18808813451612">
+     <line class="aspect" x1="271.06" x2="262.9" y1="355.91" y2="357.8" stroke="var(--kerykeion-chart-color-conjunction)" stroke-opacity=".9"/>
+     <use x="262.6907430122944" y="354.63515766725084" xlink:href="#orb0"/>
+    </g>
+    <g kr:aspectdegrees="90" kr:aspectmovement="Applying" kr:aspectname="square" kr:from="Medium_Coeli" kr:fromoriginaldegrees="277.07097923305986" kr:node="Aspect" kr:orb="3.9532685743961338" kr:planetsdiff="86.04673142560387" kr:to="True_North_Lunar_Node" kr:tooriginaldegrees="191.024247807456">
+     <line class="aspect" x1="358.83" x2="264.95" y1="256.7" y2="122.62" stroke="var(--kerykeion-chart-color-square)" stroke-opacity=".9"/>
+    </g>
+   </g>
+  </g>
+  <!-- Houses_And_Planets_Grid -->
+  <g transform="translate(20)" kr:node="Houses_And_Planets_Grid">
+   <!-- Main Subject Grid -->
+   <g kr:node="Main_Planet_Grid">
+    <g transform="translate(645)">
+     <g transform="translate(0,40)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Sun</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Sun"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">16°16'04"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Lib"/>
+      </g>
+     </g>
+     <g transform="translate(0,54)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Moon</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Moon"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">3°32'47"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Aqu"/>
+      </g>
+     </g>
+     <g transform="translate(0,68)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Mercury</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Mercury"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">8°33'29"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Sco"/>
+      </g>
+     </g>
+     <g transform="translate(0,82)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Venus</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Venus"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">3°12'55"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Vir"/>
+      </g>
+     </g>
+     <g transform="translate(0,96)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Mars</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Mars"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">2°39'45"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Lib"/>
+      </g>
+     </g>
+     <g transform="translate(0,110)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Jupiter</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Jupiter"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">13°41'30"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Tau"/>
+      </g>
+      <g transform="translate(74,-6)">
+       <use transform="scale(.5)" xlink:href="#retrograde"/>
+      </g>
+     </g>
+     <g transform="translate(0,124)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Saturn</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Saturn"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">13°12'54"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Tau"/>
+      </g>
+      <g transform="translate(74,-6)">
+       <use transform="scale(.5)" xlink:href="#retrograde"/>
+      </g>
+     </g>
+     <g transform="translate(0,138)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Uranus</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Uranus"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">25°33'07"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Tau"/>
+      </g>
+      <g transform="translate(74,-6)">
+       <use transform="scale(.5)" xlink:href="#retrograde"/>
+      </g>
+     </g>
+     <g transform="translate(0,152)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Neptune</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Neptune"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">26°01'48"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Vir"/>
+      </g>
+     </g>
+     <g transform="translate(0,166)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Pluto</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Pluto"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">4°11'17"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Leo"/>
+      </g>
+     </g>
+     <g transform="translate(0,180)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">N. Node (T)</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#True_North_Lunar_Node"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">11°01'27"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Lib"/>
+      </g>
+     </g>
+     <g transform="translate(0,194)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Chiron</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Chiron"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">0°34'05"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Leo"/>
+      </g>
+     </g>
+     <g transform="translate(0,208)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Asc</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Ascendant"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">19°44'48"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Ari"/>
+      </g>
+     </g>
+     <g transform="translate(0,222)">
+      <text fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Mc</text>
+      <g transform="translate(5,-8)">
+       <use transform="scale(.4)" xlink:href="#Medium_Coeli"/>
+      </g>
+      <text x="61" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">7°04'15"</text>
+      <g transform="translate(63,-8)">
+       <use transform="scale(.3)" xlink:href="#Cap"/>
+      </g>
+     </g>
+    </g>
+   </g>
+   <g kr:node="Main_Houses_Grid">
+    <g transform="translate(750,30)">
+     <g transform="translate(0,10)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   1:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Ari"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">19°44'48"</text>
+     </g>
+     <g transform="translate(0,24)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   2:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Tau"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">29°32'21"</text>
+     </g>
+     <g transform="translate(0,38)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   3:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Gem"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">20°14'20"</text>
+     </g>
+     <g transform="translate(0,52)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   4:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Can"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">7°04'15"</text>
+     </g>
+     <g transform="translate(0,66)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   5:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Can"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">25°18'49"</text>
+     </g>
+     <g transform="translate(0,80)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   6:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Leo"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">22°06'19"</text>
+     </g>
+     <g transform="translate(0,94)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   7:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Lib"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">19°44'48"</text>
+     </g>
+     <g transform="translate(0,108)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   8:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Sco"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">29°32'21"</text>
+     </g>
+     <g transform="translate(0,122)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp   9:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Sag"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">20°14'20"</text>
+     </g>
+     <g transform="translate(0,136)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp 10:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Cap"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">7°04'15"</text>
+     </g>
+     <g transform="translate(0,150)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp 11:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Cap"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">25°18'49"</text>
+     </g>
+     <g transform="translate(0,164)">
+      <text x="40" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px" text-anchor="end">Cusp 12:</text>
+      <g transform="translate(40,-8)">
+       <use transform="scale(.3)" xlink:href="#Aqu"/>
+      </g>
+      <text x="53" fill="var(--kerykeion-chart-color-paper-0)" font-size="10px">22°06'19"</text>
+     </g>
+    </g>
+   </g>
+   <!-- House Comparison Grid -->
+  </g>
+  <!-- Single Chart Aspect -->
+  <g transform="translate(35,50)" kr:node="Aspect_Grid">
+   <rect x="510" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1280.0" y="1172.5" xlink:href="#Medium_Coeli"/>
+   <rect x="524" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="538" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="552" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="553" y="469" xlink:href="#orb90"/>
+   <rect x="566" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="580" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="594" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="608" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="637" y="469" xlink:href="#orb90"/>
+   <rect x="650" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="651" y="469" xlink:href="#orb120"/>
+   <rect x="664" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="665" y="469" xlink:href="#orb60"/>
+   <rect x="678" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="468" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="524" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1315.0" y="1137.5" xlink:href="#Ascendant"/>
+   <rect x="538" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="552" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="566" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="580" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="594" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="608" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="454" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="693" y="455" xlink:href="#orb180"/>
+   <rect x="538" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1350.0" y="1102.5" xlink:href="#Chiron"/>
+   <rect x="552" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="566" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="567" y="441" xlink:href="#orb0"/>
+   <rect x="580" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="581" y="441" xlink:href="#orb60"/>
+   <rect x="594" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="608" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="637" y="441" xlink:href="#orb60"/>
+   <rect x="650" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="679" y="441" xlink:href="#orb180"/>
+   <rect x="692" y="440" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="552" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1385.0" y="1067.5" xlink:href="#True_North_Lunar_Node"/>
+   <rect x="566" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="580" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="594" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="608" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="679" y="427" xlink:href="#orb120"/>
+   <rect x="692" y="426" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="693" y="427" xlink:href="#orb0"/>
+   <rect x="566" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1420.0" y="1032.5" xlink:href="#Pluto"/>
+   <rect x="580" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="594" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="608" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="637" y="413" xlink:href="#orb60"/>
+   <rect x="650" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="665" y="413" xlink:href="#orb90"/>
+   <rect x="678" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="679" y="413" xlink:href="#orb180"/>
+   <rect x="692" y="412" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="580" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1455.0" y="997.5" xlink:href="#Neptune"/>
+   <rect x="594" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="595" y="399" xlink:href="#orb120"/>
+   <rect x="608" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="398" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="594" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1490.0" y="962.5" xlink:href="#Uranus"/>
+   <rect x="608" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="384" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="608" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1525.0" y="927.5" xlink:href="#Saturn"/>
+   <rect x="622" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="623" y="371" xlink:href="#orb0"/>
+   <rect x="636" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="665" y="371" xlink:href="#orb180"/>
+   <rect x="678" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="370" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="622" y="356" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1560.0" y="892.5" xlink:href="#Jupiter"/>
+   <rect x="636" y="356" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="356" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="356" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="665" y="357" xlink:href="#orb180"/>
+   <rect x="678" y="356" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="356" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="636" y="342" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1595.0" y="857.5" xlink:href="#Mars"/>
+   <rect x="650" y="342" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="342" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="342" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="679" y="343" xlink:href="#orb120"/>
+   <rect x="692" y="342" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="650" y="328" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1630.0" y="822.5" xlink:href="#Venus"/>
+   <rect x="664" y="328" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="328" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="328" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="664" y="314" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1665.0" y="787.5" xlink:href="#Mercury"/>
+   <rect x="678" y="314" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use x="679" y="315" xlink:href="#orb90"/>
+   <rect x="692" y="314" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="678" y="300" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1700.0" y="752.5" xlink:href="#Moon"/>
+   <rect x="692" y="300" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <rect x="692" y="286" width="14" height="14" fill="none" stroke="var(--kerykeion-chart-color-paper-0)" stroke-width=".5px" kr:node="AspectsGridRect"/>
+   <use transform="scale(.4)" x="1735.0" y="717.5" xlink:href="#Sun"/>
+  </g>
+  <!-- Double Chart Chart Aspects -->
+ </g>
+ <!-- Symbols Definitions -->
+ <defs>
+  <!-- Planets (24x24) -->
+  <!-- GLYPHS:BEGIN (generated by scripts/build_chart_glyphs.py — do not edit by hand) -->
+  <!-- Planets -->
+  <symbol id="Sun">
+   <circle cx="12" cy="12" r="9" fill="none" stroke="var(--kerykeion-chart-color-sun)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="12" cy="12" r="1.9" fill="var(--kerykeion-chart-color-sun)"/>
+  </symbol>
+  <symbol id="Moon">
+   <g transform="translate(3.745 1.92) scale(.01276 -.01276) translate(-123 -1530)">
+    <path d="m1417 740q0-332-231.5-561t-564.5-229q-120 0-248 42-133 44-222 116-28 23-28 47 0 45 51 45 6 0 16-2 60-12 181-37 60-12 62-12 245 0 416.5 173t171.5 418q0 242-170 416.5t-411 174.5q-4 0-65-12.5t-185-37.5q-10-2-16-2-51 0-51 45 0 25 30 48 207 158 474 158 329 0 559.5-230.5t230.5-559.5zm-100 0q0 288-201 489t-489 201q-49 0-96-6 254-36 422-231.5t168-452.5q0-256-168-452t-421-232q44-6 89-6 291 0 493.5 199.5t202.5 490.5z" fill="var(--kerykeion-chart-color-moon)"/>
+   </g>
+  </symbol>
+  <symbol id="Mercury">
+   <g transform="translate(6.746 1.92) scale(.00986 -.00986) translate(-80 -1605)">
+    <path d="m1146 750q0-205-134.5-355.5t-335.5-173.5v-266h281v-125h-281v-270h-125v270h-281v125h281v265q-201 23-336 173.5t-135 356.5q0 154 80 283 78 126 209 193-183 114-212 379h61q73-321 395-321t395 321h62q-29-265-213-379 131-67 209-193 80-129 80-283zm-125 0q0 171-118.5 290t-289.5 119-289.5-119-118.5-290 118.5-289.5 289.5-118.5 289.5 118.5 118.5 289.5z" fill="var(--kerykeion-chart-color-mercury)"/>
+   </g>
+  </symbol>
+  <symbol id="Venus">
+   <g transform="translate(5.379 1.92) scale(.01007 -.01007) translate(-80 -1592)">
+    <path d="m1395 934q0-256-170-441t-425-213v-280h296v-125h-296v-285h-125v285h-296v125h296v280q-255 28-425 213t-170 441q0 274 191.5 466t465.5 192 466-192 192-466zm-125 0q0 222-155.5 377.5t-377.5 155.5-377-155.5-155-377.5 155-377 377-155 377.5 155 155.5 377z" fill="var(--kerykeion-chart-color-venus)"/>
+   </g>
+  </symbol>
+  <symbol id="Mars">
+   <g transform="translate(1.926 1.92) scale(.01229 -.01229) translate(-80 -1492)">
+    <path d="m1720 852h-125v426l-350-349q150-182 150-420 0-274-192-466t-466-192-465.5 192-191.5 466 191.5 466 465.5 192q238 0 420-150l349 349h-426v126h576l64-64zm-450-343q0 222-155.5 377.5t-377.5 155.5-377-155.5-155-377.5 155-377.5 377-155.5 377.5 155.5 155.5 377.5z" fill="var(--kerykeion-chart-color-mars)"/>
+   </g>
+  </symbol>
+  <symbol id="Jupiter">
+   <path d="m5.1 7.6c0-3.4 5.93-4.4 7.33-0.7 1.1 2.9-1.9 5.5-8.19 10.84h15.51" fill="none" stroke="var(--kerykeion-chart-color-jupiter)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m15.72 2.667v18.666" fill="none" stroke="var(--kerykeion-chart-color-jupiter)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+  </symbol>
+  <symbol id="Saturn">
+   <g transform="translate(5.768 1.92) scale(.01117 -.01117) translate(-50 -1492)">
+    <path d="m1166 571q0-136-111-363.5t-111-337.5q0-44 55-55 16-3 90-3v-125h-62q-87 0-145 47-63 51-63 136 0 134 111 361.5t111 339.5q0 214-228 214-217 0-445-289v-696h-125v1350h-193v125h193v217h125v-217h351v-125h-351v-465q223 225 445 225 157 0 254-90 99-93 99-249z" fill="var(--kerykeion-chart-color-saturn)"/>
+   </g>
+  </symbol>
+  <symbol id="Uranus">
+   <path d="m3.4 2.667a7.428 7.428 0 0 1 0 14.233" fill="none" stroke="var(--kerykeion-chart-color-uranus)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m20.6 2.667a7.428 7.428 0 0 0 0 14.233" fill="none" stroke="var(--kerykeion-chart-color-uranus)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="8.7" x2="15.3" y1="9.784" y2="9.784" fill="none" stroke="var(--kerykeion-chart-color-uranus)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="12" x2="12" y1="2.667" y2="16.533" fill="none" stroke="var(--kerykeion-chart-color-uranus)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <circle cx="12" cy="18.933" r="2.4" fill="none" stroke="var(--kerykeion-chart-color-uranus)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+  </symbol>
+  <symbol id="Neptune">
+   <g transform="translate(1.92 2.746) scale(.01094 -.01094) translate(-50 -1492)">
+    <path d="m1893 1121-87-90-131 126q-19-353-153-520-146-182-488-229v-228h200v-125h-200v-255h-125v255h-200v125h200v226q-337 37-487 229-135 173-154 522l-131-126-87 90 233 224h87l233-224-87-90-123 118q15-292 120-426 115-147 396-189v766l-127-122-87 90 233 224h87l233-224-87-90-127 122v-768q276 33 396 190 105 139 120 427l-123-118-87 90 233 224h87z" fill="var(--kerykeion-chart-color-neptune)"/>
+   </g>
+  </symbol>
+  <symbol id="Pluto">
+   <circle cx="12" cy="7.3" r="3.8" fill="none" stroke="var(--kerykeion-chart-color-pluto)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m5.6 8a6.4 6.4 0 0 0 12.8 0" fill="none" stroke="var(--kerykeion-chart-color-pluto)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="12" x2="12" y1="14.4" y2="21.5" fill="none" stroke="var(--kerykeion-chart-color-pluto)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <line x1="8.4" x2="15.6" y1="18" y2="18" fill="none" stroke="var(--kerykeion-chart-color-pluto)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+  </symbol>
+  <!-- Lunar nodes -->
+  <symbol id="True_North_Lunar_Node">
+   <path d="m6.7574 15.321a6.4 6.4 0 1 1 10.485 0" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="4.9553" cy="16.583" r="2.2" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
+   <circle cx="19.045" cy="16.583" r="2.2" fill="none" stroke="var(--kerykeion-chart-color-true-node)" stroke-linecap="round" stroke-width="1.494"/>
+  </symbol>
+  <!-- Lunar apsides -->
+  <!-- Centaurs -->
+  <symbol id="Chiron">
+   <circle cx="10.5" cy="17.533" r="3.8" fill="none" stroke="var(--kerykeion-chart-color-chiron)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m10.5 2.667v11.066" fill="none" stroke="var(--kerykeion-chart-color-chiron)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+   <path d="m16.9 3.1-6.4 3.9 6.8 4.3" fill="none" stroke="var(--kerykeion-chart-color-chiron)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.494"/>
+  </symbol>
+  <!-- Asteroids -->
+  <!-- Trans-Neptunian objects -->
+  <!-- Uranian points -->
+  <!-- Arabic parts -->
+  <!-- Angles -->
+  <symbol id="Ascendant">
+   <g transform="translate(.458 19.605) scale(.02151 -.02151)" fill="var(--kerykeion-chart-color-first-house)">
+    <path d="m545 0-86 221h-283l-85-221h-91l279 717h81l278-717zm-193 517q-3 8-10 29t-13.5 43.5-10.5 34.5q-7-31-16-60.5t-15-46.5l-81-216h226z"/>
+    <path transform="translate(639)" d="m434 148q0-78-58-118t-156-40q-56 0-96.5 9t-71.5 25v80q32-16 77.5-29.5t92.5-13.5q67 0 97 21.5t30 57.5q0 20-11 36t-39.5 32-81.5 36q-52 20-89 40t-57 48-20 72q0 68 55.5 105t145.5 37q49 0 91.5-9.5t79.5-26.5l-30-70q-34 14-71 24t-76 10q-54 0-82.5-17.5t-28.5-47.5q0-22 13-37.5t43.5-30 81.5-34.5q51-19 87-39t55-48.5 19-71.5z"/>
+   </g>
+  </symbol>
+  <symbol id="Medium_Coeli">
+   <g transform="translate(-1.852 18.721) scale(.01909 -.01909)" fill="var(--kerykeion-chart-color-tenth-house)">
+    <path d="m412 0-235 626h-4q3-31 5-83.5t2-109.5v-433h-83v714h133l220-585h4l224 585h132v-714h-89v439q0 52 2.5 103t4.5 83h-4l-238-625z"/>
+    <path transform="translate(907)" d="m300-10q-71 0-126.5 29t-87 90-31.5 156q0 99 33 161t89.5 91 128.5 29q41 0 79-8.5t62-20.5l-27-73q-24 9-56 17t-60 8q-158 0-158-203 0-97 38.5-148.5t114.5-51.5q44 0 77.5 9t61.5 22v-78q-27-14-59.5-21.5t-78.5-7.5z"/>
+   </g>
+  </symbol>
+  <!-- Axes and other points -->
+  <!-- Signs -->
+  <symbol id="Ari">
+   <g transform="translate(2.56 3.291) scale(.01329 -.01329) translate(-173 -1518)">
+    <path d="m2196 1110q0-172-107-370h-151q110 196 110 360 0 115-46 195-56 99-162 99-200 0-373-445-95-245-154-616-54-344-54-635v-93h-148v99q0 276-52 608-56 356-144 592-179 478-386 478-105 0-161-97-47-80-47-193 0-170 110-352h-150q-108 196-108 367 0 168 94 285 100 126 264 126 311 0 490-489 117-322 151-741h25q28 411 151 742 180 488 491 488 164 0 264-125 93-115 93-283z" fill="var(--kerykeion-chart-color-zodiac-icon-0)"/>
+   </g>
+  </symbol>
+  <symbol id="Tau">
+   <g transform="translate(3.169 2.56) scale(.01415 -.01415) translate(-173 -1480)">
+    <path d="m1986 1369h-26q-138 0-247-195l-59-106q-67-120-119-176-69-74-175-116 355-196 355-565 0-257-188.5-443.5t-446.5-186.5q-257 0-446.5 186.5t-189.5 443.5q0 181 98 332 92 142 257 233-106 42-175 116-52 56-119 176l-59 106q-109 195-246 195h-27v111h73q196 0 353-274l81-141q77-133 161-189 93-62 239-62t239 62q84 56 161 189l81 141q157 274 352 274h73zm-419-1161q0 203-142 343t-345 140-345.5-140-142.5-343q0-201 143.5-340t344.5-139 344 139.5 143 339.5z" fill="var(--kerykeion-chart-color-zodiac-icon-1)"/>
+   </g>
+  </symbol>
+  <symbol id="Gem">
+   <g transform="translate(2.898 2.56) scale(.01609 -.01609) translate(-173 -1572)">
+    <path d="m1802-99q-378 99-815 99t-814-99v123q206 55 382 76v1275q-190 18-382 73v124q332-92 814-92 483 0 815 92v-124q-192-55-383-73v-1275q176-21 383-76zm-531 208v1256q-114-8-284-8t-284 8v-1256q127 14 284 14t284-14z" fill="var(--kerykeion-chart-color-zodiac-icon-2)"/>
+   </g>
+  </symbol>
+  <symbol id="Can">
+   <g transform="translate(2.56 5.457) scale(.01424 -.01424) translate(-173 -1481)">
+    <path d="m2061 1120q-465 213-899 213-284 0-463-75 227-113 227-351 0-157-111-267t-268-110q-156 0-265 109.5t-109 265.5q0 302 403 459 299 117 655 117 394 0 830-200zm0-545q0-301-403-459-299-116-655-116-393 0-830 199v161q465-212 899-212 284 0 462 74-226 116-226 351 0 156 111.5 266.5t267.5 110.5 265-109.5 109-265.5zm-99-5q0 117-79.5 199t-196.5 82-198-81-81-198q0-114 83-195t197-81q115 0 195 79.5t80 194.5zm-1135 338q0 115-83 195.5t-198 80.5q-116 0-195-79t-79-195 80-198.5 196-82.5q117 0 198 81t81 198z" fill="var(--kerykeion-chart-color-zodiac-icon-3)"/>
+   </g>
+  </symbol>
+  <symbol id="Leo">
+   <g transform="translate(5.49 2.56) scale(.01329 -.01329) translate(-173 -1604)">
+    <path d="m1755-260q-173-159-332-159-136 0-230.5 90.5t-94.5 226.5q0 178 188 578l96 204q111 236 111 384 0 186-106 299-109 117-293 117-168 0-273-100.5t-105-267.5q0-152 98-356l39-81q97-201 97-296 0-156-115.5-267.5t-272.5-111.5q-163 0-276 114t-113 277q0 158 111 272t268 114q56 0 124-21-108 207-108 366 0 216 157 352 149 130 368 130 247 0 396-142 152-145 152-390 0-132-41-254-21-64-102-240l-69-150q-184-400-184-515 0-83 50.5-140t132.5-57q105 0 240 119zm-928 648q0 117-78 197.5t-195 80.5q-114 0-192-81t-78-195q0-117 78-198t194-81q115 0 193 81t78 196z" fill="var(--kerykeion-chart-color-zodiac-icon-4)"/>
+   </g>
+  </symbol>
+  <symbol id="Vir">
+   <g transform="translate(4.934 2.56) scale(.01413 -.01413) translate(-173 -1507)">
+    <path d="m1739 652q0-428-378-752 18-130 153-295h-174q-63 80-112 212-139-79-340-111v127q190 39 311 111-15 96-15 193v900q0 220-64 332-157-169-232-476v-893h-149v987q0 275-65 382-153-178-231-441v-928h-148v1075q0 223-122 405h156q83-114 114-293 75 185 174 293l145 27q100-128 126-340 51 160 181 313l143 27q120-167 120-369v-282q60 170 127 266l122 45q158-245 158-515zm-148-8q0 178-78 345-110-136-181-363v-587q259 263 259 605z" fill="var(--kerykeion-chart-color-zodiac-icon-5)"/>
+   </g>
+  </symbol>
+  <symbol id="Lib">
+   <g transform="translate(2.56 4.748) scale(.0169 -.0169) translate(-173 -1480)">
+    <path d="m1764 592h-629v138q161 104 161 279 0 134-96.5 228.5t-230.5 94.5-230.5-94.5-96.5-228.5q0-175 160-279v-138h-629v148h441q-120 123-120 276 0 193 141 328.5t334 135.5q194 0 334.5-135.5t140.5-328.5q0-153-120-276h440zm0-444h-1591v148h1591z" fill="var(--kerykeion-chart-color-zodiac-icon-6)"/>
+   </g>
+  </symbol>
+  <symbol id="Sco">
+   <g transform="translate(3.755 2.56) scale(.01397 -.01397) translate(-173 -1509)">
+    <path d="m1926-211-234-204v144h-136q-204 0-292 115-78 101-78 313v892q0 225-65 323-166-191-231-478v-894h-148v996q0 269-65 376-159-179-231-445v-927h-148v1056q0 264-125 424h159q84-128 114-291 70 174 174 291l143 29q100-117 127-336 55 157 179 307l146 29q119-162 119-383v-921q0-122 3-150 10-91 52-136 63-67 212-67h91v148z" fill="var(--kerykeion-chart-color-zodiac-icon-7)"/>
+   </g>
+  </symbol>
+  <symbol id="Sag">
+   <g transform="translate(2.56 2.577) scale(.01728 -.01728) translate(-173 -1517)">
+    <path d="m1729 686-146-23-75 531-667-668 314-314-105-104-314 314-461-459-102 102 461 459-314 314 104 105 314-314 668 667-531 75 23 146 729-102z" fill="var(--kerykeion-chart-color-zodiac-icon-8)"/>
+   </g>
+  </symbol>
+  <symbol id="Cap">
+   <g transform="translate(2.56 3.168) scale(.01415 -.01415) translate(-173 -1518)">
+    <path d="m2073 383q0-158-106.5-270.5t-264.5-112.5q-211 0-369 164-100-261-159-333-106-127-324-127h-134v123h63q152 0 238 64 72 53 122 170 4 10 84 246-54 95-76 194-7 36-30 210l-37 283q-36 279-86 385-129-152-220-405.5t-91-455.5v-80h-147v52q0 133-45 385-49 272-99 367-61 116-191 116h-28v122h111q155 0 215-122 71-145 129-487 84 376 280 609l195 38q71-158 120-489l27-181q11-75 18-135 19-164 45-245 143 273 395 273 153 0 259-103t106-255zm-123-2q0 104-69.5 176t-172.5 72q-218 0-342-340 161-178 325-178 114 0 186.5 78t72.5 192z" fill="var(--kerykeion-chart-color-zodiac-icon-9)"/>
+   </g>
+  </symbol>
+  <symbol id="Aqu">
+   <g transform="translate(2.56 6.967) scale(.01464 -.01464) translate(-173 -1357)">
+    <path d="m2009 939-115-51-119 284-433-284-120 284-428-284-120 284-432-284-68 102 555 367 122-284 430 284 120-284 430 284zm-1-765-115-51-119 284-432-284-120 284-428-284-121 284-432-284-68 102 555 367 122-284 430 284 120-284 430 284z" fill="var(--kerykeion-chart-color-zodiac-icon-10)"/>
+   </g>
+  </symbol>
+  <symbol id="Pis">
+   <g transform="translate(5.172 2.56) scale(.0173 -.0173) translate(-173 -1517)">
+    <path d="m1425-37h-161q-136 155-220 351-92 211-92 402h-306q0-193-91-403-84-193-221-350h-161q326 344 326 753h-315v111h315q-20 355-326 690h153q280-300 320-690h306q40 390 320 690h153q-306-335-326-690h315v-111h-315q0-409 326-753z" fill="var(--kerykeion-chart-color-zodiac-icon-11)"/>
+   </g>
+  </symbol>
+  <!-- Aspects -->
+  <symbol id="orb0">
+   <circle cx="4" cy="6" r="2.6" fill="none" stroke="var(--kerykeion-chart-color-conjunction)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+   <line x1="5.9" x2="9" y1="4.1" y2="1.2" fill="none" stroke="var(--kerykeion-chart-color-conjunction)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+  </symbol>
+  <symbol id="orb60">
+   <path d="m1.3 1.3 7.4 7.4m-7.4 0 7.4-7.4m-7.7 3.7h8" fill="none" stroke="var(--kerykeion-chart-color-sextile)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+  </symbol>
+  <symbol id="orb90">
+   <rect x="1.3" y="1.3" width="7.4" height="7.4" fill="none" stroke="var(--kerykeion-chart-color-square)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+  </symbol>
+  <symbol id="orb120">
+   <path d="m5 1.2 4 7.8h-8z" fill="none" stroke="var(--kerykeion-chart-color-trine)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+  </symbol>
+  <symbol id="orb180">
+   <circle cx="3" cy="3" r="1.9" fill="none" stroke="var(--kerykeion-chart-color-opposition)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+   <circle cx="7" cy="7" r="1.9" fill="none" stroke="var(--kerykeion-chart-color-opposition)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+   <line x1="4.35" x2="5.65" y1="4.35" y2="5.65" fill="none" stroke="var(--kerykeion-chart-color-opposition)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".622"/>
+  </symbol>
+  <!-- Retrograde -->
+  <symbol id="retrograde">
+   <g transform="translate(.96 1.394) scale(.00683 -.00683) translate(-68 -1343)">
+    <path d="m1544-6q-81 5-175 5-44 0-195-5v66q63 2 63 38 0 10-165 225-151-173-151-214 0-45 51-49v-66q-121 5-170.5 5t-144 3.5-141.5 3.5h-326q-50 0-122-6v61q73-1 55-1 122 0 140 38 7 15 7 48v1051q0 32-7 48-18 41-195 36v62h695q174 0 311-94 154-106 154-272 0-112-78-201-71-79-185-122 10-27 144-195l105 131q26 32 26 58 0 45-52 47v68q95-7 173-7 60 0 151 7v-68q-127-2-210-87-25-26-159-196l233-299q30-39 77-48 24-5 91-5zm-520 983q0 161-75.5 232.5t-237.5 71.5h-186q-53 0-67-12-19-14-19-67v-532h272q313 0 313 307zm12-608-196 254q-31-4-61-4h-335v-467q0-32 7-48 20-44 198-44 133 0 226 103 5 6 161 206z" fill="var(--kerykeion-chart-color-paper-0)"/>
+   </g>
+  </symbol>
+  <!-- GLYPHS:END -->
+ </defs>
+</svg>

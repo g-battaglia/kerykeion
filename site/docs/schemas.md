@@ -14,27 +14,30 @@ This section documents the core data structures, Pydantic models, and type defin
 
 The `kerykeion.schemas` package contains all the data definitions:
 
--   **`kr_models`**: Pydantic models for astrological subjects, charts, and points.
--   **`kr_literals`**: String literals for strict type hinting (Zodiac signs, Planets, Houses, etc.).
+-   **`models`**: Pydantic models for astrological subjects, charts, and points.
+-   **`literals`**: String literals for strict type hinting (Zodiac signs, Planets, Houses, etc.).
 -   **`settings_models`**: Configuration models for library settings.
 -   **`chart_template_model`**: Models for SVG chart generation.
--   **`kerykeion_exception`**: Standard exception class for the library.
+-   **`exceptions`**: Standard exception class for the library.
 
 ### Subscriptable Models
 
 All Kerykeion models inherit from `SubscriptableBaseModel`, allowing dictionary-like access to fields in addition to dot notation.
 
 ```python
-subject = AstrologicalSubjectFactory(...)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
 # Access as object
 print(subject.name)
 # Access as dict
 print(subject["name"])
 ```
 
-## Core Models (`kr_models`)
+## Core Models (`models`)
 
-Import from: `kerykeion.schemas.kr_models`
+Import from: `kerykeion.schemas.models`
 
 ### AstrologicalSubjectModel
 
@@ -48,10 +51,13 @@ Represents a person or event to be analyzed.
 | `city`                 | `str`          | Location city                         |
 | `nation`               | `str`          | Country code                          |
 | `lng`, `lat`           | `float`        | Coordinates                           |
+| `altitude`             | `float \| None` | Observer altitude in meters; used by Topocentric calculations |
 | `tz_str`               | `str`          | Timezone string (e.g., "Europe/Rome") |
 | `zodiac_type`          | `ZodiacType`   | "Tropical" or "Sidereal"              |
 | `sidereal_mode`        | `SiderealMode \| None` | Specific Ayanamsa if Sidereal         |
 | `ayanamsa_value`       | `float \| None`| Ayanamsa offset in degrees (sidereal only) |
+| `nakshatra_ayanamsa`   | `SiderealMode \| None` | Ayanamsa used to place the nakshatras on a non-sidereal chart. `None` on a sidereal chart, on a chart with no nakshatras, and when the legacy uncorrected behaviour was requested |
+| `nakshatra_ayanamsa_value` | `float \| None` | Degrees actually subtracted before the 27-fold division. `None` exactly when `nakshatra_ayanamsa` is |
 | `is_diurnal`           | `bool`         | Whether the chart is diurnal (Sun above horizon) |
 
 ### KerykeionPointModel
@@ -74,6 +80,45 @@ Detailed information about a celestial body or house cusp.
 | `speed`      | `float \| None`                   | Daily motion in degrees/day                  |
 | `declination`| `float \| None`                   | Equatorial declination in degrees            |
 | `magnitude`  | `float \| None`                   | Apparent visual magnitude (fixed stars only) |
+| `is_out_of_bounds` | `bool \| None`             | True if declination exceeds the Sun's maximum (~23.44°) |
+| `essential_dignity` | `str \| None`              | Ptolemaic dignity (Domicile, Exaltation, etc.). Requires `calculate_dignities=True` |
+| `nakshatra`  | `str \| None`                     | Vedic lunar mansion name. Requires `calculate_nakshatra=True`; on a non-sidereal chart the longitude is rotated by `nakshatra_ayanamsa` first |
+| `nakshatra_pada` | `int \| None`                 | Nakshatra pada/quarter (1-4). Requires `calculate_nakshatra=True` |
+| `nakshatra_lord` | `str \| None`                 | Vimsottari Dasha lord planet. Requires `calculate_nakshatra=True` |
+| `gauquelin_sector` | `float \| None`             | Gauquelin 36-sector position. Requires `calculate_gauquelin=True` |
+| `motion_state` | `MotionState \| None`           | Speed classification (`retrograde`/`stationary`/`stationary_retrograde`/`stationary_direct`/`slow`/`average`/`fast`). Populated for the ten planets in Earth-centred perspectives. |
+| `azimuth`    | `float \| None`                   | Azimuth angle in degrees. Requires `calculate_local_space=True` |
+| `altitude_above_horizon` | `float \| None`       | Altitude above horizon. Requires `calculate_local_space=True` |
+| `ecliptic_latitude` | `float \| None`            | Ecliptic latitude in degrees north (+) or south (-) of the ecliptic plane |
+| `decan_number` | `int \| None`                  | Decan (1-3) within the sign, each spanning 10° |
+| `decan_ruler`  | `str \| None`                  | Ruling planet of the Chaldean decan |
+| `term_ruler`   | `str \| None`                  | Ruling planet of the Egyptian term (bound) |
+| `dignity_score` | `int \| None`                 | Net Ptolemaic dignity score: the sum of every applicable dignity (domicile +5, exaltation +4, triplicity +3, term +2, face +1) and debility (detriment -5, fall -4) |
+| `nakshatra_number` | `int \| None`              | Nakshatra number (1-27). Requires `calculate_nakshatra=True` |
+
+**Provenance fields.** Every point records where its numbers came from:
+
+| Field | Type | Description |
+| :---- | :--- | :---------- |
+| `source` | `str \| None` | Ephemeris or derivation source selected for this point (`LEB`, `SPK`, `Skyfield`, `Analytical`, `Derived`, ...) |
+| `precision_class` | `str \| None` | Machine-readable source class: `ephemeris`, `analytical`, `numerical-model`, `approximate`, `mixed`, `unverified-local` |
+| `source_reviewed` | `bool \| None` | Whether the active source artifact passed the backend's pinned review gate |
+| `ephemeris_coverage_start_jd` | `float \| None` | First Julian Day covered by the selected source, when the backend reports it |
+| `ephemeris_coverage_end_jd` | `float \| None` | Last Julian Day covered by the selected source, when the backend reports it |
+
+**Fixed-star discovery fields.** Populated on the points returned by
+[`FixedStarDiscoveryFactory`](/content/docs/fixed_star_discovery_factory) and
+left `None` everywhere else:
+
+| Field | Type | Description |
+| :---- | :--- | :---------- |
+| `near_point` | `str \| None` | Nearest chart point that surfaced this star |
+| `aspect` | `str \| None` | Aspect name for the contact, usually `"conjunction"` |
+| `orb` | `float \| None` | Orb from `near_point` in degrees |
+| `longitude` | `float \| None` | Ecliptic longitude for discovery consumers; mirrors `abs_pos` |
+| `latitude` | `float \| None` | Ecliptic latitude for discovery results |
+| `degree` | `float \| None` | Degree within the sign for discovery consumers; mirrors `position` |
+
 
 ### SingleChartDataModel
 
@@ -86,6 +131,8 @@ The complete data structure for a calculated single chart (Natal, Return, etc.).
 | `aspects`              | `List[AspectModel]`        | List of internal aspects                    |
 | `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element          |
 | `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality          |
+| `angularities`         | `List[AngularityModel]`    | Classical planets conjunct the four angles (within orb) |
+| `stelliums`            | `List[StelliumModel]`      | Houses with three or more classical planets |
 | `active_points`        | `List[AstrologicalPoint]`  | Points used in calculation                  |
 | `active_aspects`       | `List[ActiveAspect]`       | Aspect configuration used                   |
 
@@ -95,7 +142,7 @@ Data structure for comparing two charts (Synastry, Transits).
 
 | Field                  | Type                       | Description                             |
 | :--------------------- | :------------------------- | :-------------------------------------- |
-| `chart_type`           | `Literal`                  | `"Transit"`, `"Synastry"`, or `"DualReturnChart"` |
+| `chart_type`           | `Literal`                  | `"Transit"`, `"Synastry"`, `"DualReturnChart"`, or `"Progression"` |
 | `first_subject`        | `AstrologicalSubjectModel \| CompositeSubjectModel \| PlanetReturnModel` | The primary subject (e.g., Natal) |
 | `second_subject`       | `AstrologicalSubjectModel \| PlanetReturnModel` | The secondary subject (e.g., Transit) |
 | `aspects`              | `List[AspectModel]`        | Inter-chart aspects                     |
@@ -103,8 +150,31 @@ Data structure for comparing two charts (Synastry, Transits).
 | `relationship_score`   | `RelationshipScoreModel \| None` | Compatibility scoring (optional, synastry only) |
 | `element_distribution` | `ElementDistributionModel` | Points/Percentage for each element      |
 | `quality_distribution` | `QualityDistributionModel` | Points/Percentage for each quality      |
+| `first_subject_angularities` | `List[AngularityModel]` | Angularities for the first subject    |
+| `first_subject_stelliums` | `List[StelliumModel]`     | Stelliums for the first subject       |
+| `second_subject_angularities` | `List[AngularityModel]` | Angularities for the second subject  |
+| `second_subject_stelliums` | `List[StelliumModel]`    | Stelliums for the second subject      |
 | `active_points`        | `List[AstrologicalPoint]`  | Points used in calculation              |
 | `active_aspects`       | `List[ActiveAspect]`       | Aspect configuration used               |
+
+### AngularityModel
+
+A classical planet conjunct one of the four chart angles.
+
+| Field      | Type    | Description                                                        |
+| :--------- | :------ | :----------------------------------------------------------------- |
+| `point`    | `str`   | The planet's name.                                                 |
+| `angle`    | `str`   | Which angle (`Ascendant`, `Medium_Coeli`, `Descendant`, `Imum_Coeli`). |
+| `distance` | `float` | Shortest ecliptic arc between planet and angle, in degrees.        |
+
+### StelliumModel
+
+A concentration of classical planets in one house.
+
+| Field    | Type         | Description                                  |
+| :------- | :----------- | :------------------------------------------- |
+| `house`  | `int`        | House number (1-12).                         |
+| `points` | `list[str]`  | Names of the planets gathered there.         |
 
 ### AspectModel
 
@@ -133,16 +203,18 @@ Represents a composite chart derived from two subjects.
 | `first_subject`        | `AstrologicalSubjectModel` | First source subject.              |
 | `second_subject`       | `AstrologicalSubjectModel` | Second source subject.             |
 | `composite_chart_type` | `str`                      | Type of composite (e.g. Midpoint). |
+| `is_diurnal`           | `bool \| None`             | Sect of the chart. Real boolean for Davison charts; `None` for midpoint composites (no single sky). Sect-aware consumers treat `None` as a day chart. |
 
 Inherits all celestial point fields from `AstrologicalBaseModel`.
 
 ### PlanetReturnModel
 
-Represents a Solar or Lunar return chart.
+Represents a planetary return chart.
 
 | Field         | Type         | Description             |
 | :------------ | :----------- | :---------------------- |
-| `return_type` | `ReturnType` | `"Solar"` or `"Lunar"`. |
+| `return_type` | `ReturnType` | `"Solar"`, `"Lunar"`, `"Heliocentric"`, or `"Lunar_Node_Crossing"`. |
+| `is_diurnal`  | `bool \| None` | Sect of the return moment (Sun above/below the horizon). Populated by `PlanetaryReturnFactory`. |
 
 Inherits all celestial point fields from `AstrologicalBaseModel`.
 
@@ -150,9 +222,26 @@ Inherits all celestial point fields from `AstrologicalBaseModel`.
 
 Base model for all astrological subjects. Contains common fields for location, time, and all celestial points.
 
-Key fields: `name`, `city`, `nation`, `lng`, `lat`, `tz_str`, `zodiac_type`, `houses_system_identifier`, `sun`, `moon`, `mercury`..., `first_house`..., `ascendant`, etc.
+Key fields: `name`, `city`, `nation`, `lng`, `lat`, `altitude`, `tz_str`,
+`zodiac_type`, `houses_system_identifier`, `perspective_type`, `sun`, `moon`,
+`mercury`..., `first_house`..., `ascendant`, `polar_house_fallbacks`,
+`effective_houses_system_identifier`, `effective_houses_system_name`, etc.
+`altitude` is the observer height in meters retained for Topocentric
+calculations.
 
-New in v5.12: `ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
+`houses_system_identifier` (and its `houses_system_name`) always report the
+**requested** system, even when the cusps did not come from it. Inside the polar
+circle a quadrant system is undefined and the cusps are recomputed with a system
+that is defined everywhere; the request survives untouched so that a relocation
+or a re-cast starts from what the caller asked for rather than inheriting the
+substitute.
+
+- `polar_house_fallbacks` (`list[PolarHouseFallbackModel]`, empty when nothing was substituted) records each substitution: the requested and used systems, the real latitude, the latitude the successful call ran at, the epoch's polar threshold and obliquity, and which chart products changed.
+- `effective_houses_system_identifier` / `effective_houses_system_name` are derived from that list and report the division the cusps really came from. With no fallback they equal the requested pair.
+
+`ayanamsa_value` (`float | None`) -- the computed ayanamsa offset in degrees for sidereal charts (`None` for tropical).
+
+`nakshatra_ayanamsa` (`SiderealMode | None`) and `nakshatra_ayanamsa_value` (`float | None`) -- the ayanamsa a **non-sidereal** chart rotated its longitudes by to derive the nakshatras, and the offset in degrees it actually subtracted. Both are `None` on a sidereal chart (its own `sidereal_mode`/`ayanamsa_value` apply), on a chart that computed no nakshatras, and when `nakshatra_ayanamsa=None` selected the legacy uncorrected behaviour.
 
 ### EphemerisDictModel
 
@@ -163,6 +252,9 @@ Snapshot of planetary positions for a specific date.
 | `date`    | `str`                       | ISO 8601 formatted date |
 | `planets` | `List[KerykeionPointModel]` | Planet positions        |
 | `houses`  | `List[KerykeionPointModel]` | House cusps             |
+| `fixed_stars` | `List[KerykeionPointModel]` | Fixed star positions. Empty unless the producing factory requested stars via `active_fixed_stars`. |
+| `ephemeris_warnings` | `List[EphemerisWarningModel]` | Requested optional points omitted at this sample because no permitted ephemeris or local model produced a value. Empty when nothing was dropped. |
+| `polar_house_fallbacks` | `List[PolarHouseFallbackModel]` | House systems substituted at this sample because the requested one is undefined at the sample's latitude. Empty at temperate latitudes. |
 
 ### LunarPhaseModel
 
@@ -171,15 +263,24 @@ Compact lunar phase information attached to every `AstrologicalSubjectModel` (vi
 | Field                 | Type              | Description                                              |
 | :-------------------- | :---------------- | :------------------------------------------------------- |
 | `degrees_between_s_m` | `float \| int`    | Angular separation between the Sun and Moon in degrees.  |
-| `moon_phase`          | `int`             | Phase index (0-7, matching `LunarPhaseName` order).      |
+| `moon_phase`          | `int`             | Lunation day (1-28), the 1/28th bin the angle falls in. A counter, not the name's source. |
 | `moon_emoji`          | `LunarPhaseEmoji` | Emoji representation of the phase (e.g. `"🌕"`).        |
-| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`).    |
+| `moon_phase_name`     | `LunarPhaseName`  | Text name (e.g. `"Full Moon"`, `"Waxing Crescent"`), from a window centred on the event it names. |
+| `major_phase`         | `LunarPhaseName`  | Nearest of the four major phases: `"New Moon"`, `"First Quarter"`, `"Full Moon"`, `"Last Quarter"`. |
+| `stage`               | `LunarPhaseStage` | `"waxing"` before the opposition, `"waning"` after it.   |
+
+The name comes from the separation, through eight windows centred on the events: New and Full Moon span 12.857° each (±6.4286° around 0° and 180°), the two quarters 38.571° each (±19.2857° around 90° and 270°), and the four intermediate names fill the rest. So a minute either side of an exact syzygy reads the same, and agrees with the illumination percentage. The lunation day is a different partition of the same circle — its bins begin at the conjunction rather than straddling it — and it is deliberately unchanged.
 
 ```python
-subject = AstrologicalSubjectFactory.from_birth_data(...)
-print(subject.lunar_phase.moon_phase_name)   # "Waxing Gibbous"
-print(subject.lunar_phase.moon_emoji)         # "🌔"
-print(subject.lunar_phase.degrees_between_s_m)  # 135.7
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+print(subject.lunar_phase.moon_phase_name)   # e.g. "Waxing Gibbous"
+print(subject.lunar_phase.moon_emoji)         # e.g. "🌔"
+print(subject.lunar_phase.degrees_between_s_m)  # e.g. 135.7
+print(subject.lunar_phase.major_phase)        # e.g. "First Quarter"
+print(subject.lunar_phase.stage)              # e.g. "waxing"
 ```
 
 ### MoonPhaseOverviewModel
@@ -191,7 +292,7 @@ Top-level model returned by `MoonPhaseDetailsFactory`. Groups timestamp, Sun sum
 | `timestamp` | `int`                             | Unix timestamp of the observation moment.                  |
 | `datestamp`  | `str`                             | ISO 8601 formatted date string.                            |
 | `sun`       | `MoonPhaseSunInfoModel \| None`   | Sun rise/set times, position, next solar eclipse info.     |
-| `moon`      | `MoonPhaseMoonSummaryModel`       | Phase name, illumination, zodiac signs, moonrise/set, etc. |
+| `moon`      | `MoonPhaseMoonSummaryModel`       | Phase name, illumination, zodiac signs, moonrise/moonset, etc. |
 | `location`  | `MoonPhaseLocationModel \| None`  | Latitude, longitude, and precision metadata.               |
 
 **Nested models** (all fields optional unless noted):
@@ -200,7 +301,7 @@ Top-level model returned by `MoonPhaseDetailsFactory`. Groups timestamp, Sun sum
 | :--------------------------------- | :------------------------------------------------------------------------------ |
 | `MoonPhaseSunInfoModel`            | `sunrise`, `sunset`, `solar_noon`, `day_length`, `position`, `next_solar_eclipse` |
 | `MoonPhaseSunPositionModel`        | `altitude`, `azimuth`, `distance`                                               |
-| `MoonPhaseMoonSummaryModel`        | `phase`, `phase_name`, `major_phase`, `stage`, `illumination`, `age_days`, `emoji`, `zodiac`, `moonrise`, `moonset`, `detailed`, `events` |
+| `MoonPhaseMoonSummaryModel`        | `phase`, `phase_name`, `major_phase`, `stage`, `illumination`, `age_days`, `emoji`, `zodiac`, `moonrise`, `moonrise_timestamp`, `moonset`, `moonset_timestamp`, `detailed`, `events` |
 | `MoonPhaseMoonPositionModel`       | `altitude`, `azimuth`, `distance`, `parallactic_angle`, `phase_angle`           |
 | `MoonPhaseMoonDetailedModel`       | `position`, `visibility`, `upcoming_phases`, `illumination_details`             |
 | `MoonPhaseUpcomingPhasesModel`     | `new_moon`, `first_quarter`, `full_moon`, `last_quarter` (each a `MoonPhaseMajorPhaseWindowModel`) |
@@ -262,7 +363,7 @@ TypedDict for configuring aspect orbs.
 | Field  | Type         | Description     |
 | :----- | :----------- | :-------------- |
 | `name` | `AspectName` | e.g. "trine".   |
-| `orb`  | `int`        | Orb in degrees. |
+| `orb`  | `float`      | Orb in degrees. |
 
 ### TransitMomentModel
 
@@ -344,8 +445,6 @@ Quality/modality distribution in a chart.
 
 Aspects within a single chart (Natal, Composite, Return).
 
-_Alias:_ `NatalAspectsModel`
-
 | Field | Type | Description |
 | :--------------- | :------------------------- | :-------------------------- |
 | `subject` | Subject Model | The chart subject (`AstrologicalSubjectModel`, `CompositeSubjectModel`, or `PlanetReturnModel`). |
@@ -356,8 +455,6 @@ _Alias:_ `NatalAspectsModel`
 ### DualChartAspectsModel
 
 Aspects between two charts (Synastry, Transit).
-
-_Alias:_ `SynastryAspectsModel`
 
 | Field | Type | Description |
 | :--------------- | :------------------------- | :-------------------- |
@@ -373,11 +470,139 @@ Type alias: `Union[SingleChartDataModel, DualChartDataModel]`. Represents any ch
 
 ---
 
-## Literals & Constants (`kr_literals`)
+## V6 Advanced Models
 
-Import from: `kerykeion.schemas.kr_literals`
+These models are returned by the v6 advanced calculation factories. Each factory's documentation page has the full field reference.
+
+### Predictive Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `SecondaryProgressionsResultModel` | [`SecondaryProgressionFactory`](/content/docs/secondary_progressions_factory) | Progressed subject + progressed-to-natal aspects |
+| `ProgressedToNatalAspectModel` | `SecondaryProgressionFactory` | A single progressed-to-natal aspect contact |
+| `SolarArcSubjectModel` | [`SolarArcFactory`](/content/docs/solar_arc_factory) | Solar arc, directed points, directed-to-natal aspects |
+| `SolarArcDirectedPointModel` | `SolarArcFactory` | A natal point after applying the solar-arc shift |
+| `SolarArcDirectedAspectModel` | `SolarArcFactory` | A directed-to-natal aspect |
+| `PrimaryDirectionModel` | [`PrimaryDirectionsFactory`](/content/docs/primary_directions_factory) | A single primary direction result (arc, years) |
+| `SpeculumEntryModel` | `PrimaryDirectionsFactory` | Speculum coordinate table entry |
+| `MidpointModel` | [`MidpointFactory`](/content/docs/midpoint_factory) | Midpoint of two points + aspect activations |
+| `MidpointAspectModel` | `MidpointFactory` | An aspect formed between a midpoint and a third point |
+
+### Astronomical Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `EclipseSearchResultModel` | [`EclipseFactory`](/content/docs/eclipse_factory) | Container for solar + lunar eclipse search results |
+| `SolarEclipseModel` | `EclipseFactory` | A single solar eclipse event |
+| `LunarEclipseModel` | `EclipseFactory` | A single lunar eclipse event |
+| `PlanetaryPhenomenaCollectionModel` | [`PlanetaryPhenomenaFactory`](/content/docs/planetary_phenomena_factory) | Collection of planetary phenomena |
+| `PlanetaryPhenomenaModel` | `PlanetaryPhenomenaFactory` | Phenomena for a single planet, including `solar_phase` |
+| `SolarPhaseThresholdsModel` | `PlanetaryPhenomenaFactory` | The three elongation cut-offs a collection's `solar_phase` labels were read against |
+| `PlanetaryNodesCollectionModel` | [`PlanetaryNodesFactory`](/content/docs/planetary_nodes_factory) | Collection of orbital nodes/apsides |
+| `PlanetaryNodeModel` | `PlanetaryNodesFactory` | Nodes and apsides for one planet (`periapsis`/`apoapsis`/`apsis_kind`; `perihelion`/`aphelion` deprecated) |
+| `HeliacalEventModel` | [`HeliacalFactory`](/content/docs/heliacal_factory) | A single heliacal visibility event |
+| `OccultationModel` | [`OccultationFactory`](/content/docs/occultation_factory) | A single lunar occultation event |
+| `ACGLineModel` | [`AstroCartographyFactory`](/content/docs/astro_cartography_factory) | A planetary line on the ACG map |
+| `ACGLinePointModel` | `AstroCartographyFactory` | A geographic coordinate on an ACG line |
+| `FixedStarMetadataModel` | [`FixedStarCatalog`](/content/docs/fixed_star_discovery_factory) | One catalog entry: `name`, `slug`, `hip_number`, `nomenclature`, `magnitude`, `constellation` |
+
+### Traditional / Hellenistic Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `ProfectionsModel` | [`ProfectionsFactory`](/content/docs/profections_factory) | Annual profection timeline with activated houses |
+| `ProfectionYearModel` | `ProfectionsFactory` | A single profection year |
+| `FirdariaModel` | [`FirdariaFactory`](/content/docs/firdaria_factory) | Firdaria planetary period timeline |
+| `FirdariaPeriodModel` | `FirdariaFactory` | A major firdaria period |
+| `FirdariaSubPeriodModel` | `FirdariaFactory` | A sub-period within a major firdaria |
+| `MutualReceptionModel` | [`MutualReceptionsFactory`](/content/docs/receptions_factory) | A single mutual reception pair |
+| `MutualReceptionsModel` | `MutualReceptionsFactory` | Collection of mutual receptions in a chart |
+| `HoraryIndicatorsModel` | [`HoraryIndicatorsFactory`](/content/docs/horary_factory) | Horary chart analysis with significators and considerations |
+| `HorarySignificatorModel` | `HoraryIndicatorsFactory` | A horary significator planet |
+| `HoraryConsiderationModel` | `HoraryIndicatorsFactory` | A horary consideration before judgment |
+| `DominantsModel` | [`DominantsFactory`](/content/docs/dominants_factory) | Full dominants result: per-category score tables plus the winning planet/sign/element/quality/house and the score breakdown |
+| `DominantScoreModel` | `DominantsFactory` | One scored entry (`name`, `score`, `percentage`, `rank`, `is_dominant`) |
+| `DominantBreakdownItemModel` | `DominantsFactory` | One audit row explaining where a score came from (`category`, `target`, `rule`, `points`, `detail`) |
+| `ZodiacalReleasingModel` | [`ZodiacalReleasingFactory`](/content/docs/zodiacal_releasing_factory) | Aphesis timeline from the Lot of Fortune or Spirit, plus the current path |
+| `ZRPeriodModel` | `ZodiacalReleasingFactory` | One releasing period, with `is_angular`, `is_loosing_the_bond` and nested `subperiods` |
+| `TriplicityLordsModel` | `kerykeion.dignities.get_triplicity_lords` | Primary, secondary and participating triplicity lords for an element and sect |
+
+### Calendar / Event Models
+
+Returned by the factories that scan a date range for discrete moments. Every
+collection carries the requested `start_jd` / `end_jd` alongside its results,
+and every instant is a timezone-aware UTC datetime unless the field name says
+Julian Day.
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `LunationModel` | [`LunationFinderFactory`](/content/docs/lunation_factory) | One New/First-Quarter/Full/Last-Quarter Moon, with the Sun and Moon positions at that instant |
+| `LunationsCollectionModel` | `LunationFinderFactory` | `lunations` over the requested range |
+| `StationModel` | [`RetrogradeStationFactory`](/content/docs/retrograde_station_factory) | One retrograde or direct station: `planet`, `station_type`, instant, sign and longitude |
+| `RetrogradeStationsCollectionModel` | `RetrogradeStationFactory` | `stations` over the requested range |
+| `RetrogradePeriodModel` | `RetrogradeStationFactory` | A complete retrograde arc (`start`/`end`), with `start_clipped` / `end_clipped` when the range cut it |
+| `RetrogradePeriodsCollectionModel` | `RetrogradeStationFactory` | `periods` over the requested range |
+| `IngressModel` | [`SignIngressFactory`](/content/docs/sign_ingress_factory) | One sign change: `from_sign` to `sign`, `retrograde`, and `season_marker` for the solstice/equinox ingresses |
+| `SignIngressesCollectionModel` | `SignIngressFactory` | `ingresses` over the requested range |
+| `SignPeriodModel` | `SignIngressFactory` | The stay of one planet in one sign, with the same clip flags |
+| `SignPeriodsCollectionModel` | `SignIngressFactory` | `periods` over the requested range |
+| `MundaneAspectModel` | [`MundaneAspectFactory`](/content/docs/mundane_aspects_factory) | One exact transiting-to-transiting aspect, with both points' longitude, sign and retrograde state |
+| `MundaneAspectsCollectionModel` | `MundaneAspectFactory` | `aspects` over the requested range |
+| `TransitEventModel` | [`TransitsTimeRangeFactory`](/content/docs/transits_time_range_factory) | One transit contact grouped into an event: `applying_start`, `exact_moment`, `separating_end`, `min_orb`, `orb_rate` |
+| `TransitEventsTimeRangeModel` | `TransitsTimeRangeFactory` | Chronological `events` plus the natal `subject` they were measured against |
+| `VoidOfCourseMoonModel` | [`VoidOfCourseMoonFactory`](/content/docs/void_of_course_moon_factory) | Void state at one moment: `is_void_of_course`, the window, and the aspects that bound it |
+| `VoidOfCourseWindowModel` | `VoidOfCourseMoonFactory` | One complete void window with its `duration_minutes` |
+| `VoidOfCourseWindowsCollectionModel` | `VoidOfCourseMoonFactory` | Non-overlapping `windows` over the requested range |
+| `VoidOfCourseAspectModel` | `VoidOfCourseMoonFactory` | The `planet`, `aspect`, `aspect_degrees` and `exact_time` of a bounding aspect |
+| `SunTimesModel` | [`SunTimesFactory`](/content/docs/sun_times_factory) | Sunrise, sunset, solar noon, day length, the three twilights, and the polar day/night flags |
+| `PlanetaryHoursModel` | [`PlanetaryHoursFactory`](/content/docs/planetary_hours_factory) | The planetary day: `day_ruler`, `current_index`, `current_ruler`, its three bounding solar events, and all 24 `hours` |
+| `PlanetaryHourModel` | `PlanetaryHoursFactory` | One unequal hour: `index`, `ruler`, `is_diurnal`, `start`, `end` |
+
+### Chart Analysis Models
+
+| Model | Factory | Description |
+| :---- | :------ | :---------- |
+| `AngularityModel` | [`ChartDataFactory`](/content/docs/chart_data_factory) | A planet conjunct a chart angle (within orb) |
+| `StelliumModel` | `ChartDataFactory` | A house concentration of three or more planets |
+| `ProgressedPointModel` | [`SecondaryProgressionFactory`](/content/docs/secondary_progressions_factory) | Per-point natal-vs-progressed comparison with sign-change flag |
+
+---
+
+## Literals & Constants (`literals`)
+
+Import from: `kerykeion.schemas.literals`
 
 These Literal types define the allowed string values for various model fields, providing strict type checking and autocompletion in your IDE.
+
+---
+
+### `MotionState`
+
+Classification of a celestial body's speed relative to its mean daily motion. Populated on `KerykeionPointModel.motion_state` for the ten planets in Earth-centred perspectives; `None` elsewhere.
+
+| Value                     | Description                                                                    |
+| :------------------------ | :------------------------------------------------------------------------------ |
+| `"retrograde"`            | Moving backward, outside the stationary band.                                   |
+| `"stationary"`            | Inside the stationary band (< 5% of mean motion, either direction), turn unknown. |
+| `"stationary_retrograde"` | Inside the band with the speed still falling: the retrograde phase is opening.   |
+| `"stationary_direct"`     | Inside the band with the speed rising: the retrograde phase is closing.          |
+| `"slow"`                  | Below 80% of mean daily motion.                                                  |
+| `"average"`               | Between 80% and 120% of mean daily motion.                                       |
+| `"fast"`                  | Above 120% of mean daily motion.                                                 |
+
+The band brackets zero on both sides and is tested before the sign of the speed,
+so a body creeping backwards at a hundredth of its mean motion reports a station
+rather than a plain `"retrograde"`. The two stations are read differently and the
+sign of the speed cannot separate them — both are approached from one side of
+zero and left on the other — so they are told apart by the trend: a second speed
+sample a day later, falling or rising through the band. Without a usable second
+sample the generic `"stationary"` stands, which is an absence of a claim rather
+than a guess.
+
+> **Downstream matching.** `"stationary_retrograde"` and `"stationary_direct"`
+> are new values on this literal. Code that matches `motion_state` exhaustively —
+> a `match` statement, a dict keyed by every value, a TypeScript union mirrored
+> from the schema — must be extended before it sees a chart cast at a station.
 
 ---
 
@@ -455,7 +680,10 @@ Comprehensive literal for all supported celestial points.
 `"Mean_North_Lunar_Node"`, `"True_North_Lunar_Node"`, `"Mean_South_Lunar_Node"`, `"True_South_Lunar_Node"`
 
 **Special Points:**
-`"Chiron"`, `"Mean_Lilith"`, `"True_Lilith"`, `"Earth"`, `"Pholus"`, `"Vertex"`, `"Anti_Vertex"`
+`"Chiron"`, `"Mean_Lilith"`, `"True_Lilith"`, `"Interpolated_Lilith"`, `"Mean_Priapus"`, `"True_Priapus"`, `"Earth"`, `"Pholus"`, `"Vertex"`, `"Anti_Vertex"`, `"Interpolated_Perigee"`, `"White_Moon"`
+
+**Uranian / Hamburg School:**
+`"Cupido"`, `"Hades"`, `"Zeus"`, `"Kronos"`, `"Apollon"`, `"Admetos"`, `"Vulkanus"`, `"Poseidon"`
 
 **Asteroids:**
 `"Ceres"`, `"Pallas"`, `"Juno"`, `"Vesta"`
@@ -471,10 +699,6 @@ Comprehensive literal for all supported celestial points.
 
 **Axial Cusps (Angles):**
 `"Ascendant"`, `"Medium_Coeli"` (MC/Midheaven), `"Descendant"`, `"Imum_Coeli"` (IC)
-
-### AxialCusps (Angles)
-
-_Deprecated alias for `AstrologicalPoint`. Will be removed in v6.0 -- use `AstrologicalPoint` instead._
 
 ---
 
@@ -517,6 +741,7 @@ Defines the type of chart being generated.
 | `"Composite"`         | A single chart derived from the midpoints of two charts.  |
 | `"SingleReturnChart"` | A Solar or Lunar return chart viewed alone.               |
 | `"DualReturnChart"`   | A return chart overlaid on the natal chart.               |
+| `"Progression"`       | A secondary progression chart overlaid on the natal chart. |
 
 ---
 
@@ -537,6 +762,8 @@ The names of all supported aspects.
 | `"biquintile"`     | 144°    | Creative aspect.                                    |
 | `"quincunx"`       | 150°    | Inconjunct; requires adjustment.                    |
 | `"opposition"`     | 180°    | Major hard aspect; polarity and awareness.          |
+| `"parallel"`       | —       | Declination aspect (v6): same declination, same side of the equator. |
+| `"contra-parallel"`| —       | Declination aspect (v6): same declination, opposite sides of the equator. |
 
 ---
 
@@ -558,7 +785,7 @@ The Ayanamsa (precession mode) used for Sidereal calculations.
 
 48 modes total: 47 named + USER for custom ayanamsa definitions.
 
-**Classic modes (pre-v5.12):**
+**Classic modes:**
 
 | Value               | Description                                                  |
 | :------------------ | :----------------------------------------------------------- |
@@ -583,7 +810,7 @@ The Ayanamsa (precession mode) used for Sidereal calculations.
 | `"J1900"`           | Julian epoch J1900.0 reference frame.                        |
 | `"B1950"`           | Besselian epoch B1950.0 reference frame.                     |
 
-**New in v5.12:**
+**Extended modes:**
 
 | Value                       | Category           | Description                                          |
 | :-------------------------- | :----------------- | :--------------------------------------------------- |
@@ -660,6 +887,13 @@ Defines the viewpoint for calculations.
 | `"True Geocentric"`     | Earth-centered, without light-time correction.                                             |
 | `"Heliocentric"`        | Sun-centered. Used for some esoteric techniques.                                           |
 | `"Topocentric"`         | Observer's exact location on Earth's surface. Most accurate for Moon position.             |
+| `"Selenocentric"`       | Moon-centered.                                                                              |
+| `"Mercurycentric"`      | Mercury-centered.                                                                          |
+| `"Venuscentric"`        | Venus-centered.                                                                            |
+| `"Marscentric"`         | Mars-centered.                                                                             |
+| `"Jupitercentric"`      | Jupiter-centered.                                                                          |
+| `"Saturncentric"`       | Saturn-centered.                                                                           |
+| `"Barycentric"`         | Centered on the Solar System barycenter.                                                   |
 
 ---
 
@@ -697,6 +931,34 @@ Emojis corresponding to the lunar phases.
 
 ---
 
+### `SolarPhase`
+
+How near the Sun a body is, named as a condition of visibility. Set on every `PlanetaryPhenomenaModel`.
+
+| Value               | Meaning                                                  |
+| :------------------ | :------------------------------------------------------- |
+| `"cazimi"`          | In the heart of the Sun; the narrowest of the four.       |
+| `"combust"`         | Burnt — close enough that the body cannot be seen at all. |
+| `"under_the_beams"` | Within the Sun's rays; not yet out of the twilight.       |
+| `"free"`            | Far enough from the Sun to be seen in a dark sky.         |
+
+The three cut-offs that separate them are conventions, not constants of nature, and the schools disagree on all three. They live in `SolarPhaseThresholdsModel` (`cazimi_deg` 0.2833, `combust_deg` 8.5, `under_beams_deg` 17.0), which every phenomena collection echoes back and any caller may replace. The quantity compared is the true angular separation from the Sun (latitude included), not the difference in ecliptic longitude.
+
+---
+
+### `ApsisKind`
+
+Which body the apsides of an orbit are measured against. Set on every `PlanetaryNodeModel`.
+
+| Value             | Meaning                                        |
+| :---------------- | :--------------------------------------------- |
+| `"heliocentric"`  | Apsides about the Sun — every planet.           |
+| `"geocentric"`    | Apsides about the Earth — the Moon alone.       |
+
+The generic `periapsis`/`apoapsis` fields are correct under either reading; this literal says which one is in force. The older `perihelion`/`aphelion` name the Sun and are deprecated for that reason.
+
+---
+
 ### `KerykeionChartTheme`
 
 Available visual themes for chart rendering.
@@ -704,10 +966,7 @@ Available visual themes for chart rendering.
 | Value                  | Description                                         |
 | :--------------------- | :-------------------------------------------------- |
 | `"classic"`            | Traditional white background, standard colors.      |
-| `"light"`              | Minimalist light mode with soft tones.              |
 | `"dark"`               | Modern dark mode for reduced eye strain.            |
-| `"dark-high-contrast"` | Dark mode with enhanced contrast for accessibility. |
-| `"strawberry"`         | Pink/red color palette, playful aesthetic.          |
 | `"black-and-white"`    | High contrast monochrome for print output.          |
 
 ---
@@ -735,10 +994,12 @@ Supported language codes for chart labels.
 
 Types of planetary returns supported.
 
-| Value     | Description                                           |
-| :-------- | :---------------------------------------------------- |
-| `"Solar"` | Sun returns to natal position; annual birthday chart. |
-| `"Lunar"` | Moon returns to natal position; monthly cycle chart.  |
+| Value                   | Description                                                              |
+| :---------------------- | :--------------------------------------------------------------------- |
+| `"Solar"`               | Sun returns to natal position; annual birthday chart.                  |
+| `"Lunar"`               | Moon returns to natal position; monthly cycle chart.                   |
+| `"Heliocentric"`        | A planet returns to its natal heliocentric longitude (not Sun/Moon).   |
+| `"Lunar_Node_Crossing"` | The Moon crosses its own node (ecliptic latitude = 0).                 |
 
 ---
 
@@ -749,17 +1010,19 @@ Types of composite charts.
 | Value        | Description                                       |
 | :----------- | :------------------------------------------------ |
 | `"Midpoint"` | Chart created from midpoints of two natal charts. |
+| `"Davison"`  | Chart cast for the midpoint in time and space between two births. |
 
 ---
 
 ### `PointType`
 
-Distinguishes between celestial bodies and house cusps.
+Distinguishes between celestial bodies, house cusps, and midpoints.
 
 | Value                 | Description                           |
 | :-------------------- | :------------------------------------ |
 | `"AstrologicalPoint"` | Planets, asteroids, angles, etc.      |
 | `"House"`             | House cusps (1st through 12th house). |
+| `"Midpoint"`          | Midpoint between two points (see `MidpointFactory`). |
 
 ---
 
@@ -818,9 +1081,9 @@ Defines all the string labels used in chart generation and reports. Planet/point
 
 ---
 
-## Exceptions (`kerykeion_exception`)
+## Exceptions (`exceptions`)
 
-Import from: `kerykeion.schemas.kerykeion_exception`
+Import from: `kerykeion.schemas.exceptions`
 
 ### `KerykeionException`
 
@@ -846,20 +1109,20 @@ These models are used internally for SVG generation but exposed for advanced cus
 
 ### `ChartTemplateModel`
 
-Variables passed to the Jinja2 template for rendering the SVG.
+Variables passed to the XML `string.Template` for rendering the SVG.
 
-| Field                         | Type                                         | Description                             |
-| :---------------------------- | :------------------------------------------- | :-------------------------------------- |
-| `viewBox`                     | `str`                                        | SVG viewbox string.                     |
-| `chart_width`, `chart_height` | `int`                                        | Dimensions of the chart.                |
-| `cx`, `cy`                    | `float`                                      | Center coordinates.                     |
-| `outer_radius`                | `int`                                        | Radius of the outer rim.                |
-| `inner_radius`                | `int`                                        | Radius of the inner wheel.              |
-| `planets_settings`            | `List[KerykeionSettingsCelestialPointModel]` | Configuration for each planet.          |
-| `paper_color_0`               | `str`                                        | Background color.                       |
-| `chart_name`                  | `str`                                        | Title of the chart.                     |
-| `chart_first_subject`         | `str`                                        | Name of the primary subject.            |
-| `makeLunarPhase`              | `str`                                        | SVG path data for the lunar phase icon. |
+| Field                                  | Type    | Description                                            |
+| :------------------------------------- | :------ | :----------------------------------------------------- |
+| `viewbox`                              | `str`   | SVG viewBox attribute value.                           |
+| `chart_width`, `chart_height`          | `float` | Dimensions of the chart in pixels.                     |
+| `stringTitle`                          | `str`   | Chart title string.                                    |
+| `paper_color_0`                        | `str`   | Font color.                                            |
+| `background_color`                     | `str`   | Dynamic background color (theme color or transparent). |
+| `planets_color_0` ... `planets_color_61` | `str` | Per-point colors (index 0 = Sun, 1 = Moon, ...).       |
+| `zodiac_color_0` ... `zodiac_color_11` | `str`   | Per-sign colors (index 0 = Aries).                     |
+| `orb_color_0` ... `orb_color_180`      | `str`   | Aspect colors keyed by aspect degrees.                 |
+| `makeZodiac`, `makeHouses`, `makePlanets`, `makeAspects` | `str` | SVG markup fragments for each chart layer. |
+| `makeLunarPhase`                       | `str`   | SVG markup for the lunar phase.                        |
 
 _(And many more styling variables)_
 

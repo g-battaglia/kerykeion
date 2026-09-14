@@ -27,7 +27,18 @@ print("EXAMPLE 1: NATAL CHART")
 print("=" * 80)
 
 subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30, "Liverpool", "GB", suppress_geonames_warning=True
+    "John Lennon",
+    1940,
+    10,
+    9,
+    18,
+    30,
+    "Liverpool",
+    "GB",
+    lng=-2.9916,
+    lat=53.4084,
+    tz_str="Europe/London",
+    online=False,
 )
 
 natal_context = to_context(subject)
@@ -48,7 +59,18 @@ print("EXAMPLE 3: SYNASTRY CHART")
 print("=" * 80)
 
 subject2 = AstrologicalSubjectFactory.from_birth_data(
-    "Yoko Ono", 1933, 2, 18, 20, 30, "Tokyo", "JP", suppress_geonames_warning=True
+    "Yoko Ono",
+    1933,
+    2,
+    18,
+    20,
+    30,
+    "Tokyo",
+    "JP",
+    lng=139.6503,
+    lat=35.6762,
+    tz_str="Asia/Tokyo",
+    online=False,
 )
 
 synastry_data = ChartDataFactory.create_synastry_chart_data(first_subject=subject, second_subject=subject2)
@@ -101,7 +123,18 @@ print("(Using the historic date when John Lennon met Paul McCartney: July 6, 195
 
 # Create a transit moment for when John Lennon met Paul McCartney
 transit_moment = AstrologicalSubjectFactory.from_birth_data(
-    "Transit - Lennon meets McCartney", 1957, 7, 6, 18, 0, "Liverpool", "GB", suppress_geonames_warning=True
+    "Transit - Lennon meets McCartney",
+    1957,
+    7,
+    6,
+    18,
+    0,
+    "Liverpool",
+    "GB",
+    lng=-2.9916,
+    lat=53.4084,
+    tz_str="Europe/London",
+    online=False,
 )
 
 transit_data = ChartDataFactory.create_transit_chart_data(natal_subject=subject, transit_subject=transit_moment)

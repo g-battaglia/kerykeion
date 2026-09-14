@@ -1,0 +1,582 @@
+# -*- coding: utf-8 -*-
+"""
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
+"""
+
+from typing import Literal
+from typing_extensions import TypeAlias
+
+
+ZodiacType: TypeAlias = Literal["Tropical", "Sidereal"]
+"""Literal type for Zodiac Types"""
+
+
+Sign: TypeAlias = Literal["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+"""Literal type for Zodiac Signs"""
+
+SIGN_CODES: tuple[Sign, ...] = ("Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis")
+"""Ordered tuple of the 12 three-letter zodiac sign codes (Aries → Pisces)."""
+
+
+ClassicalPlanet: TypeAlias = Literal["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
+"""The seven classical (visible) planets.
+
+These are the bodies used by traditional timing techniques such as the planetary
+(Chaldean) hours and the classical void-of-course Moon. Their descending Chaldean
+speed order is Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon.
+"""
+
+
+VocTargetPlanet: TypeAlias = Literal["Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
+"""Traditional planets the Moon can aspect before becoming void of course."""
+
+
+VocAspectName: TypeAlias = Literal["conjunction", "sextile", "square", "trine", "opposition"]
+"""Ptolemaic aspects considered by the void-of-course Moon algorithm."""
+
+
+SignNumbers: TypeAlias = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+"""Literal type for Zodiac Sign Numbers, the signs are numbered in order starting from Aries (0) to Pis (11)"""
+
+
+MotionState: TypeAlias = Literal[
+    "retrograde",
+    "stationary",
+    "stationary_retrograde",
+    "stationary_direct",
+    "slow",
+    "average",
+    "fast",
+]
+"""Literal type for a body's motion state relative to its mean daily motion.
+
+``stationary_retrograde`` and ``stationary_direct`` name the two stations —
+the turn into the retrograde phase and the turn out of it. Plain
+``stationary`` remains for a station whose direction could not be resolved.
+"""
+
+AspectMovementType: TypeAlias = Literal["Applying", "Separating", "Static"]
+"""Literal type for Aspect Movement.
+
+Values:
+    - "Applying": planets are moving toward the exact aspect (orb decreasing).
+    - "Separating": planets are moving away from the exact aspect (orb increasing).
+    - "Static": both points are effectively motionless relative to one another, so the orb does not change over time.
+"""
+
+
+Houses: TypeAlias = Literal[
+    "First_House",
+    "Second_House",
+    "Third_House",
+    "Fourth_House",
+    "Fifth_House",
+    "Sixth_House",
+    "Seventh_House",
+    "Eighth_House",
+    "Ninth_House",
+    "Tenth_House",
+    "Eleventh_House",
+    "Twelfth_House",
+]
+"""Literal type for Houses"""
+
+
+HouseNumbers: TypeAlias = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+"""Literal type for House Numbers, starting from the First House (1) to the Twelfth House (12)"""
+
+
+AstrologicalPoint: TypeAlias = Literal[
+    # Main Planets
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    # Lunar Nodes
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node",
+    "True_South_Lunar_Node",
+    # Special Points
+    "Chiron",
+    "Mean_Lilith",
+    "True_Lilith",
+    "Interpolated_Lilith",
+    "Mean_Priapus",
+    "True_Priapus",
+    "Interpolated_Perigee",
+    "White_Moon",
+    "Earth",
+    "Pholus",
+    # Asteroids
+    "Ceres",
+    "Pallas",
+    "Juno",
+    "Vesta",
+    # Trans-Neptunian Objects
+    "Eris",
+    "Sedna",
+    "Haumea",
+    "Makemake",
+    "Ixion",
+    "Orcus",
+    "Quaoar",
+    # Fixed Stars
+    "Regulus",
+    "Spica",
+    "Aldebaran",
+    "Antares",
+    "Sirius",
+    "Fomalhaut",
+    "Algol",
+    "Betelgeuse",
+    "Canopus",
+    "Procyon",
+    "Arcturus",
+    "Pollux",
+    "Deneb",
+    "Altair",
+    "Rigel",
+    "Achernar",
+    "Capella",
+    "Vega",
+    "Alcyone",
+    "Alphecca",
+    "Algorab",
+    "Deneb_Algedi",
+    "Alkaid",
+    # Uranian / Hamburg School hypothetical planets
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
+    # Arabic Parts
+    "Pars_Fortunae",
+    "Pars_Spiritus",
+    "Pars_Amoris",
+    "Pars_Fidei",
+    # Special Points
+    "Vertex",
+    "Anti_Vertex",
+    # Axial Cusps
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+]
+
+"""Literal type for all astrological points supported by Kerykeion.
+
+Includes planets, lunar nodes, special points, asteroids, trans-Neptunian objects,
+fixed stars, Arabic parts (lots), angular points, and axial cusps.
+
+Fixed Stars (23 total, expanded in v5.12 from 2):
+    The original pair (Regulus, Spica) are joined by 21 additional stars
+    chosen for their traditional astrological significance. The set includes
+    all 15 Behenian stars of the medieval/Hermetic tradition.
+
+    Royal Stars (Watchers of the sky in Persian/Hellenistic astrology):
+        - Regulus (alpha Leonis) -- Watcher of the North, mag 1.35
+        - Aldebaran (alpha Tauri) -- Watcher of the East, mag 0.87
+        - Antares (alpha Scorpii) -- Watcher of the West, mag 1.06
+        - Fomalhaut (alpha Piscis Austrini) -- Watcher of the South, mag 1.16
+
+    Behenian stars (not listed above; the 4 Royal Stars complete the 15):
+        - Algol (beta Persei), Sirius (alpha Canis Majoris),
+          Procyon (alpha Canis Minoris), Capella (alpha Aurigae),
+          Spica (alpha Virginis), Arcturus (alpha Bootis),
+          Vega (alpha Lyrae), Alcyone (eta Tauri),
+          Alphecca (alpha Coronae Borealis), Algorab (delta Corvi),
+          Deneb Algedi (delta Capricorni)
+
+    Other prominent fixed stars:
+        - Alkaid (eta Ursae Majoris), Betelgeuse (alpha Orionis),
+          Canopus (alpha Carinae), Pollux (beta Geminorum),
+          Deneb (alpha Cygni), Altair (alpha Aquilae),
+          Rigel (beta Orionis), Achernar (alpha Eridani)
+"""
+
+
+Element: TypeAlias = Literal["Air", "Fire", "Earth", "Water"]
+"""Literal type for Elements"""
+
+
+Quality: TypeAlias = Literal["Cardinal", "Fixed", "Mutable"]
+"""Literal type for Qualities"""
+
+
+ChartType: TypeAlias = Literal[
+    "Natal", "Synastry", "Transit", "Composite", "DualReturnChart", "SingleReturnChart", "Progression"
+]
+"""Literal type for Chart Types"""
+
+
+PointType: TypeAlias = Literal["AstrologicalPoint", "House", "Midpoint"]
+"""Literal type for Point Types"""
+
+
+LunarPhaseEmoji: TypeAlias = Literal["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]
+"""Literal type for Lunar Phases Emoji"""
+
+
+LunarPhaseName: TypeAlias = Literal[
+    "New Moon",
+    "Waxing Crescent",
+    "First Quarter",
+    "Waxing Gibbous",
+    "Full Moon",
+    "Waning Gibbous",
+    "Last Quarter",
+    "Waning Crescent",
+]
+"""Literal type for Lunar Phases Name"""
+
+
+LunarPhaseStage: TypeAlias = Literal["waxing", "waning"]
+"""Literal type for the Moon's stage: waxing while the separation grows from the
+conjunction to the opposition, waning while it returns from the opposition to the
+conjunction."""
+
+
+SiderealMode: TypeAlias = Literal[
+    "FAGAN_BRADLEY",
+    "LAHIRI",
+    "DELUCE",
+    "RAMAN",
+    "USHASHASHI",
+    "KRISHNAMURTI",
+    "DJWHAL_KHUL",
+    "YUKTESHWAR",
+    "JN_BHASIN",
+    "BABYL_KUGLER1",
+    "BABYL_KUGLER2",
+    "BABYL_KUGLER3",
+    "BABYL_HUBER",
+    "BABYL_ETPSC",
+    "ALDEBARAN_15TAU",
+    "HIPPARCHOS",
+    "SASSANIAN",
+    "J2000",
+    "J1900",
+    "B1950",
+    # v5.12 additions
+    "ARYABHATA",
+    "ARYABHATA_522",
+    "ARYABHATA_MSUN",
+    "GALCENT_0SAG",
+    "GALCENT_COCHRANE",
+    "GALCENT_MULA_WILHELM",
+    "GALCENT_RGILBRAND",
+    "GALEQU_FIORENZA",
+    "GALEQU_IAU1958",
+    "GALEQU_MULA",
+    "GALEQU_TRUE",
+    "GALALIGN_MARDYKS",
+    "KRISHNAMURTI_VP291",
+    "LAHIRI_1940",
+    "LAHIRI_ICRC",
+    "LAHIRI_VP285",
+    "SURYASIDDHANTA",
+    "SURYASIDDHANTA_MSUN",
+    "SS_CITRA",
+    "SS_REVATI",
+    "TRUE_CITRA",
+    "TRUE_MULA",
+    "TRUE_PUSHYA",
+    "TRUE_REVATI",
+    "TRUE_SHEORAN",
+    "BABYL_BRITTON",
+    "VALENS_MOON",
+    # User-defined ayanamsa (requires custom_ayanamsa_t0 and custom_ayanamsa_ayan_t0)
+    "USER",
+]
+"""Literal type for sidereal modes, also known as ayanamsa systems.
+
+What is Ayanamsa?
+    Ayanamsa (Sanskrit: ayanamsha) is the angular difference between the tropical
+    zodiac (anchored to the vernal equinox) and the sidereal zodiac (anchored to
+    fixed star positions). Due to the precession of the equinoxes (~50.3 arcseconds
+    per year), the two zodiacs slowly diverge. Different ayanamsa systems disagree
+    on the exact offset because they use different reference stars or epochs to
+    define sidereal 0 Aries. As of 2025, most systems place the offset at roughly
+    23-25 degrees.
+
+Expanded in v5.12 from 20 to 47 named modes + USER (custom ayanamsa), 48 total.
+
+Mode families:
+
+    Indian / Vedic:
+        LAHIRI (Indian government standard, ~23.85 deg in 2025),
+        LAHIRI_1940, LAHIRI_ICRC, LAHIRI_VP285,
+        KRISHNAMURTI (KP system, ~23.76 deg), KRISHNAMURTI_VP291,
+        RAMAN, USHASHASHI, JN_BHASIN, YUKTESHWAR,
+        ARYABHATA, ARYABHATA_522, ARYABHATA_MSUN,
+        SURYASIDDHANTA, SURYASIDDHANTA_MSUN, SS_CITRA, SS_REVATI,
+        TRUE_CITRA, TRUE_MULA, TRUE_PUSHYA, TRUE_REVATI, TRUE_SHEORAN
+
+    Western sidereal:
+        FAGAN_BRADLEY (default, ~24.74 deg in 2025 -- Cyril Fagan / Donald Bradley),
+        DELUCE, DJWHAL_KHUL, HIPPARCHOS, SASSANIAN
+
+    Babylonian:
+        BABYL_KUGLER1, BABYL_KUGLER2, BABYL_KUGLER3,
+        BABYL_HUBER, BABYL_ETPSC, BABYL_BRITTON
+
+    Galactic alignment:
+        GALCENT_0SAG, GALCENT_COCHRANE, GALCENT_MULA_WILHELM, GALCENT_RGILBRAND,
+        GALEQU_FIORENZA, GALEQU_IAU1958, GALEQU_MULA, GALEQU_TRUE,
+        GALALIGN_MARDYKS
+
+    Reference frames:
+        J2000, J1900, B1950
+
+    Astronomical:
+        ALDEBARAN_15TAU (fixes Aldebaran at 15 Taurus), VALENS_MOON
+
+    User-defined:
+        USER -- define a custom ayanamsa by specifying ``custom_ayanamsa_t0``
+        (Julian Day of the reference epoch when tropical and sidereal zodiacs
+        coincide) and ``custom_ayanamsa_ayan_t0`` (the ayanamsa offset in
+        degrees at that epoch). The Swiss Ephemeris extrapolates for other
+        dates using its precession model.
+"""
+
+
+HousesSystemIdentifier: TypeAlias = Literal[
+    "A", "B", "C", "D", "F", "H", "I", "i", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"
+]
+"""
+Literal type for Houses Systems:
+
+A = equal
+B = Alcabitius
+C = Campanus
+D = equal (MC)
+F = Carter poli-equ.
+H = horizon/azimut
+I = Sunshine
+i = Sunshine/alt.
+K = Koch
+L = Pullen SD
+M = Morinus
+N = equal/1=Aries
+O = Porphyry
+P = Placidus
+Q = Pullen SR
+R = Regiomontanus
+S = Sripati
+T = Polich/Page
+U = Krusinski-Pisa-Goelzer
+V = equal/Vehlow
+W = equal/whole sign
+X = axial rotation system/Meridian houses
+Y = APC houses
+
+Usually the standard is Placidus (P)
+"""
+
+
+PerspectiveType: TypeAlias = Literal[
+    "Apparent Geocentric",
+    "Heliocentric",
+    "Topocentric",
+    "True Geocentric",
+    "Selenocentric",
+    "Mercurycentric",
+    "Venuscentric",
+    "Marscentric",
+    "Jupitercentric",
+    "Saturncentric",
+    # v6.0 addition
+    "Barycentric",
+]
+"""
+Literal type for perspective types.
+- "Apparent Geocentric": Earth-centered, apparent positions.
+- "Heliocentric": Sun-centered.
+- "Topocentric": Observer's location on Earth's surface.
+- "True Geocentric": Earth-centered, true positions.
+- "Barycentric": Solar-system barycenter. Used in financial astrology (v6.0).
+
+Usually the standard is "Apparent Geocentric"
+"""
+
+
+SignsEmoji: TypeAlias = Literal["♈️", "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️"]
+"""Literal type for Zodiac Signs Emoji"""
+
+KerykeionChartTheme: TypeAlias = Literal["classic", "dark", "black-and-white"]
+"""Literal type for Kerykeion Chart Themes"""
+
+
+KerykeionChartStyle: TypeAlias = Literal["classic", "modern"]
+"""Literal type for Kerykeion Chart Styles"""
+
+
+KerykeionGlyphSize: TypeAlias = Literal["small", "medium", "large"]
+"""Literal type for the modern wheel's planet-cluster size"""
+
+
+KerykeionChartLanguage: TypeAlias = Literal["EN", "FR", "PT", "IT", "CN", "ES", "RU", "TR", "DE", "HI"]
+"""Literal type for Kerykeion Chart Languages"""
+
+
+RelationshipScoreDescription: TypeAlias = Literal[
+    "Minimal", "Medium", "Important", "Very Important", "Exceptional", "Rare Exceptional"
+]
+"""Literal type for Relationship Score Description"""
+
+
+CompositeChartType: TypeAlias = Literal["Midpoint", "Davison"]
+"""Literal type for Composite Chart Types"""
+
+CompositeHouseFrame: TypeAlias = Literal["anchored", "midpoints", "gapped"]
+"""What the composite's twelve cusps actually are, once the ring has been built.
+
+``house_anchor`` records which angle a caller ASKED to hold. It is not always
+possible to hold one: where the two charts' houses admit no common frame — two
+rings running opposite ways, or a parent whose own cusps are not ordered — the
+requested anchor decides nothing, and every position falls back to its own near
+midpoint. With one exception, and it is not a small one: a cusp the parents put
+exactly opposite another is kept opposite it, which is the far midpoint for one
+of the pair. Without that the fourth cusp and the tenth come out on the same
+longitude, because two points half a circle apart are the same unordered pair
+either way round and a symmetric mean cannot tell them apart. A chart that reports only the request describes a construction that did
+not happen, and all three anchors then return the same ring.
+
+- ``"anchored"``: a frame was hung from the requested angle and the twelve cover
+  the circle exactly once. The anchor was held.
+- ``"midpoints"``: no frame spans the two charts, so every position is its own
+  near midpoint — but the twelve are still a house division.
+- ``"gapped"``: as ``"midpoints"``, and the twelve are NOT a house division: they
+  leave gaps, and a longitude falling in one is named for the house whose cusp it
+  last passed. Every house name on such a chart is that reading, not a
+  containment.
+
+``None`` on a Davison chart, which is cast as an ordinary chart and has no frame
+to speak of.
+"""
+
+
+CompositeHouseAnchor: TypeAlias = Literal["auto", "ascendant", "midheaven"]
+"""Which composite cusp keeps its short-arc midpoint when the ring has to be repaired.
+
+Between two cusps there are two midpoints, half a circle apart, and taking the
+nearer one for each of the twelve independently breaks down when the two charts'
+angles are nearly opposed: some cusps take one side and some the other, and the
+twelve stop being a house division at all. The trade the profession settles on is
+to keep one angle fixed and move the rest onto their far midpoint as needed.
+
+- ``auto``: whichever of the Ascendant and the Midheaven has its two base cusps
+  closer together, that being the better determined of the two midpoints. The
+  default here, and in Solar Fire and Astro Gold.
+- ``ascendant``: the Ascendant never moves. Kepler and Sirius call this
+  "Asc Midpoint".
+- ``midheaven``: the Midheaven never moves. Kepler and Sirius call this
+  "MC Midpoint".
+
+None of the three does anything to a chart whose short-arc midpoints already run
+in order, which is most of them.
+"""
+
+AspectName: TypeAlias = Literal[
+    "conjunction",
+    "semi-sextile",
+    "semi-square",
+    "sextile",
+    "quintile",
+    "square",
+    "trine",
+    "sesquiquadrate",
+    "biquintile",
+    "quincunx",
+    "opposition",
+    # Declination-based aspects (v6.0)
+    "parallel",
+    "contra-parallel",
+]
+"""Literal type for all the available aspects names.
+
+Ecliptic aspects (conjunction through opposition) are measured along the zodiac.
+Declination aspects (parallel, contra-parallel) compare celestial latitude
+north/south of the equator and are added in v6.0.
+"""
+
+ReturnType: TypeAlias = Literal["Lunar", "Solar", "Heliocentric", "Lunar_Node_Crossing"]
+"""Literal type for Return Types"""
+
+
+DominantMethod: TypeAlias = Literal["modern", "almuten_figuris", "elemental"]
+"""Literal type for the built-in dominant-calculation schools (methods).
+
+Each value selects a different, citable astrological "school" for computing the
+dominants of a chart. A custom strategy may be supplied instead of one of these
+names (see ``DominantsFactory``), in which case the resulting model reports
+``method=None``.
+
+Values:
+    - "modern": Modern weighted method (Astrotheme-style). Planetary strength is
+      accumulated from angularity, aspect activity, essential dignity and
+      rulership bonuses; the dominant signs, houses, elements, modes, polarity,
+      hemispheres and quadrants are then derived from those planetary scores.
+    - "almuten_figuris": Traditional/medieval "Lord of the Geniture". Essential
+      dignities are tallied for every classical planet over the five hylegiacal
+      places (Sun, Moon, Ascendant, Part of Fortune, prenatal Syzygy); the
+      planet with the highest total is the Almuten Figuris.
+    - "elemental": Simple elemental and modal balance, by weighted or pure count
+      of the chart's points.
+"""
+
+
+SolarPhase: TypeAlias = Literal["cazimi", "combust", "under_the_beams", "free"]
+"""How near the Sun a body is, named as a condition of visibility.
+
+The classical tradition reads nearness to the Sun as a state of the body, not as
+a mere number of degrees, and gives that state four names. They are ordered from
+the closest outwards:
+
+- ``"cazimi"``: in the heart of the Sun. The narrowest of the four (a 17-arcminute
+  half-width is the usual reading of "within 16 minutes of the Sun's centre").
+- ``"combust"``: burnt. Close enough that the body cannot be seen at all.
+- ``"under_the_beams"``: within the Sun's rays. Not yet risen out of the twilight.
+- ``"free"``: far enough from the Sun to be seen in a dark sky.
+
+The three cut-offs that separate them are not a constant of nature and are not
+agreed across schools, so they are parameters:
+:class:`~kerykeion.schemas.models.SolarPhaseThresholdsModel` carries the values a
+given result was computed with, and the caller may replace them.
+
+The quantity compared against the cut-offs is the true angular separation from
+the Sun (the elongation the ephemeris reports, latitude included), NOT the
+difference in ecliptic longitude alone. The two agree only for a body on the
+ecliptic, and the difference is the reason a body may sit at the same longitude
+as the Sun and still be several degrees away from it in the sky.
+"""
+
+
+ApsisKind: TypeAlias = Literal["heliocentric", "geocentric"]
+"""Which body the apsides of an orbit are measured against.
+
+An apsis is the nearest or farthest point of an orbit from the body being
+orbited, and the classical names carry that body inside them: *peri-helion* and
+*ap-helion* say "the Sun". They are right for the planets, which orbit the Sun,
+and wrong for the Moon, which orbits the Earth — its apsides are the perigee and
+the apogee, and the astrological tradition knows the far one by yet another name,
+the Black Moon Lilith.
+
+- ``"heliocentric"``: apsides about the Sun (every planet).
+- ``"geocentric"``: apsides about the Earth (the Moon).
+
+The generic ``periapsis``/``apoapsis`` fields are correct under either reading;
+this field says which one is in force.
+"""

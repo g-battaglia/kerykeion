@@ -16,7 +16,7 @@ The **Astrologer API** is a production-ready REST API that provides all Kerykeio
 
 | Feature | Kerykeion Library | Astrologer API |
 |---------|-------------------|----------------|
-| **Setup Time** | Install Python, dependencies, Swiss Ephemeris | Get API key, start calling |
+| **Setup Time** | Install Python and dependencies (ephemeris included via libephemeris) | Get API key, start calling |
 | **Infrastructure** | You manage servers | Cloud-hosted, 99.9% uptime |
 | **Licensing** | AGPL-3.0 (copyleft required) | Commercial-friendly |
 | **Updates** | Manual pip upgrades | Automatic, zero downtime |
@@ -67,6 +67,7 @@ The API returns JSON with:
 ### Python
 
 ```python
+# doc-snippet: no-run — external service call (requires RapidAPI key)
 import requests
 
 API_KEY = "your_rapidapi_key"

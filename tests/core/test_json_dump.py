@@ -101,4 +101,13 @@ class TestJsonDump:
         assert self.dictionary["twelfth_house"]["name"] == "Twelfth_House"
 
     def test_lunar_phase(self):
-        assert self.dictionary["lunar_phase"]["moon_emoji"] == "🌘"
+        # 1993-10-10 12:12 London: the Sun-Moon separation is ~290.65°, a little
+        # past the last quarter, so this stays a Waning Crescent under the
+        # event-centred windows — the last quarter's window ends at 289.286°.
+        lunar = self.dictionary["lunar_phase"]
+        assert round(lunar["degrees_between_s_m"], 2) == 290.65
+        assert lunar["moon_emoji"] == "🌘"
+        assert lunar["moon_phase_name"] == "Waning Crescent"
+        assert lunar["moon_phase"] == 23
+        assert lunar["major_phase"] == "Last Quarter"
+        assert lunar["stage"] == "waning"

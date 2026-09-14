@@ -8,11 +8,14 @@ order: 2
 
 # Astrological Subject Factory
 
-The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creating `AstrologicalSubject` instances. It handles the complex astronomical calculations required to generate a chart, supporting widely used zodiacs, house systems, and coordinate perspectives.
+The `AstrologicalSubjectFactory` is the central mechanism in Kerykeion for creating `AstrologicalSubjectModel` instances. It handles the complex astronomical calculations required to generate a chart, supporting widely used zodiacs, house systems, and coordinate perspectives.
 
 ## Key Features
 
-- **Precision**: Uses the Swiss Ephemeris (via `pyswisseph`) for high-accuracy calculations.
+- **Precision**: Uses libephemeris by default. A fresh install bundles DE440s
+  coverage for 1849–2150; wider medium/extended data tiers (including the full
+  DE441 range) must be downloaded separately. An optional Swiss Ephemeris
+  (`pyswisseph`) backend is also available.
 - **Flexibility**: Supports Tropical/Sidereal zodiacs, multiple House systems (Placidus, Whole Sign, etc.), and various coordinate (Geocentric/Heliocentric) perspectives.
 - **Optimization**: The `active_points` argument allows you to calculate only what you need, saving resources.
 - **Online/Offline**: Can resolve locations automatically via GeoNames (Online) or accept raw coordinates (Offline).
@@ -48,7 +51,7 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `name`                     | `str`                    | `"Now"`         | Name or identifier for the subject.                                    |
 | `year`, `month`, `day`     | `Optional[int]`          | `None`          | Date components. Defaults to current date if omitted.                  |
 | `hour`, `minute`           | `Optional[int]`          | `None`          | Time components. Defaults to current time if omitted.                  |
-| `seconds`                  | `int`                    | `0`             | Seconds component of the time.                                         |
+| `seconds`                  | `int`                    | `0`             | Seconds component of the time. Keyword-only.                           |
 | `city`                     | `Optional[str]`          | `None`          | City name (used with `online=True`).                                   |
 | `nation`                   | `Optional[str]`          | `None`          | ISO Country code (e.g., "GB").                                         |
 | `lng`, `lat`               | `Optional[float]`        | `None`          | Coordinates (used with `online=False` or as override).                 |
@@ -56,17 +59,24 @@ print(f"Ascendant: {subject.ascendant.sign} {subject.ascendant.abs_pos:.2f}°")
 | `geonames_username`        | `Optional[str]`          | `None`          | GeoNames username (required for `online=True`). Can also be set via `KERYKEION_GEONAMES_USERNAME` env var. |
 | `online`                   | `bool`                   | `True`          | Whether to fetch location/timezone data from GeoNames API.             |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`    | "Tropical" or "Sidereal".                                              |
-| `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g., "LAHIRI"). Required if `zodiac_type="Sidereal"`. |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`          | Ayanamsha mode (e.g. `"LAHIRI"`). Defaults to `FAGAN_BRADLEY` when `zodiac_type="Sidereal"`; setting it with a Tropical zodiac raises `KerykeionException`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`           | House system code (e.g., "P" for Placidus, "W" for Whole Sign).        |
-| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | `"Apparent Geocentric"`, `"True Geocentric"`, `"Heliocentric"`, or `"Topocentric"`. |
-| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (18 points).  |
-| `is_dst`                   | `Optional[bool]`         | `None`          | Explicitly set DST for ambiguous times (see [FAQ](/content/docs/faq)).              |
+| `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | 11 options including Geocentric, Heliocentric, Topocentric, Barycentric, and Planetocentric variants. |
+| `active_points`            | `Optional[List[str]]`    | `None`          | List of points to calculate. If `None`, uses `DEFAULT_ACTIVE_POINTS` (14 points).  |
+| `is_dst`                   | `Optional[bool]`         | `None`          | Which UTC offset to take when a transition makes the wall time non-unique: `True` = the larger, `False` = the smaller, `None` = raise (see [FAQ](/content/docs/faq)).              |
 | `cache_expire_after_days`  | `int`                    | `30`            | Days to cache online location lookups.                                              |
 | `calculate_lunar_phase`    | `bool`                   | `True`          | Whether to calculate lunar phase details.                                           |
 | `altitude`                 | `Optional[float]`        | `None`          | Altitude in meters (used with Topocentric perspective).                              |
 | `suppress_geonames_warning`| `bool`                   | `False`         | Suppress the warning about using the default shared GeoNames username. Keyword-only.|
 | `custom_ayanamsa_t0`      | `Optional[float]`        | `None`          | Reference epoch (Julian Day) for USER sidereal mode.                                |
 | `custom_ayanamsa_ayan_t0` | `Optional[float]`        | `None`          | Ayanamsa offset in degrees at the reference epoch. Required with USER.              |
+| `calculate_dignities`      | `bool`                   | `False`         | Compute essential dignity scores for each planet.                                    |
+| `calculate_nakshatra`      | `bool`                   | `False`         | Compute Vedic nakshatra, pada, and dasha lord for each point.                       |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | `"LAHIRI"`      | Ayanamsa used to place the nakshatras on a non-sidereal chart. Ignored when the chart is Sidereal. `None` restores the pre-v6 uncorrected values. |
+| `calculate_gauquelin`      | `bool`                   | `False`         | Compute Gauquelin sector (1-36) for each point.                                     |
+| `calculate_nutation`       | `bool`                   | `False`         | Compute nutation in longitude and obliquity.                                        |
+| `calculate_local_space`    | `bool`                   | `False`         | Compute azimuth and altitude for each point.                                        |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`          | Fixed star names to compute (e.g., `["Regulus"]`). Access via `find_fixed_star()`.  |
 
 ### 2. `from_iso_utc_time`
 
@@ -87,13 +97,13 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | :------------------------- | :----------------------- | :---------------------- | :--------------------------------------------------------------------- |
 | `name`                     | `str`                    | **Required**            | Name or identifier for the subject.                                    |
 | `iso_utc_time`             | `str`                    | **Required**            | UTC timestamp in ISO 8601 format (e.g., `"2023-06-21T12:00:00Z"`).    |
-| `city`                     | `str`                    | `"Greenwich"`           | City name.                                                             |
-| `nation`                   | `str`                    | `"GB"`                  | ISO Country code.                                                      |
+| `city`                     | `Optional[str]`          | `None`                  | City used for online lookup; omitted locations fall back to Greenwich. |
+| `nation`                   | `Optional[str]`          | `None`                  | ISO country code used for online lookup; omitted locations fall back to `"GB"`. |
 | `tz_str`                   | `str`                    | `"Etc/GMT"`             | Timezone string.                                                       |
-| `lng`, `lat`               | `float`                  | `0.0`, `51.5074`        | Coordinates (defaults to Greenwich).                                   |
+| `lng`, `lat`               | `Optional[float]`        | `None`                  | Explicit coordinates override lookup values. Missing values are looked up online or fall back to `0.0`, `51.5074` offline. |
 | `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
-| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode (e.g. `"LAHIRI"`). Defaults to `FAGAN_BRADLEY` when `zodiac_type="Sidereal"`; setting it with a Tropical zodiac raises `KerykeionException`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`                   | House system code.                                                     |
 | `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | Calculation perspective.                                               |
 | `active_points`            | `Optional[List[str]]`    | `None`                  | Points to calculate.                                                   |
@@ -102,7 +112,16 @@ subject = AstrologicalSubjectFactory.from_iso_utc_time(
 | `calculate_lunar_phase`    | `bool`                   | `True`                  | Whether to calculate lunar phase data.                                 |
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
-| `geonames_username`        | `str`                    | `"century.boy"`         | GeoNames API username.                                                 |
+| `geonames_username`        | `str`                    | `DEFAULT_GEONAMES_USERNAME` | GeoNames API username.                                              |
+| `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
+| `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord.                             |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | `"LAHIRI"`              | Ayanamsa for the nakshatras on a non-sidereal chart; `None` = pre-v6 behaviour. |
+| `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
+| `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
+| `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Fixed stars to compute into `subject.fixed_stars`. Default `None` computes none; `DEFAULT_FIXED_STARS` is an opt-in 23-star preset. |
+
+### 3. `from_current_time`
 
 Creates a subject for the current moment ("Now"), useful for Horary astrology or transits. Uses the system clock -- does **not** accept `year`/`month`/`day`/`hour`/`minute` parameters.
 
@@ -125,7 +144,7 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 | `tz_str`                   | `Optional[str]`          | `None`                  | Timezone string. Required if `online=False`.                           |
 | `online`                   | `bool`                   | `True`                  | Whether to resolve location via GeoNames API.                          |
 | `zodiac_type`              | `ZodiacType`             | `"Tropical"`            | `"Tropical"` or `"Sidereal"`.                                          |
-| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode. Required if `zodiac_type="Sidereal"`.                  |
+| `sidereal_mode`            | `Optional[SiderealMode]` | `None`                  | Ayanamsha mode (e.g. `"LAHIRI"`). Defaults to `FAGAN_BRADLEY` when `zodiac_type="Sidereal"`; setting it with a Tropical zodiac raises `KerykeionException`. |
 | `houses_system_identifier` | `HousesSystemIdentifier` | `"P"`                   | House system code.                                                     |
 | `perspective_type`         | `PerspectiveType`        | `"Apparent Geocentric"` | Calculation perspective.                                               |
 | `active_points`            | `Optional[List[str]]`    | `None`                  | Points to calculate.                                                   |
@@ -134,6 +153,14 @@ now_chart = AstrologicalSubjectFactory.from_current_time(
 | `calculate_lunar_phase`    | `bool`                   | `True`                  | Whether to calculate lunar phase data.                                 |
 | `custom_ayanamsa_t0`       | `Optional[float]`        | `None`                  | Julian Day epoch for custom ayanamsa (requires `sidereal_mode="USER"`). |
 | `custom_ayanamsa_ayan_t0`  | `Optional[float]`        | `None`                  | Ayanamsa degrees at epoch (requires `sidereal_mode="USER"`).           |
+| `altitude`                 | `Optional[float]`        | `None`                  | Observer altitude in meters (used by Topocentric calculations).        |
+| `active_fixed_stars`       | `Optional[List[str]]`    | `None`                  | Fixed-star catalog names to compute into `subject.fixed_stars`.         |
+| `calculate_dignities`      | `bool`                   | `False`                 | Calculate essential dignities for each point.                          |
+| `calculate_nakshatra`      | `bool`                   | `False`                 | Calculate Vedic Nakshatra/Pada/Dasha lord data.                        |
+| `nakshatra_ayanamsa`       | `Optional[SiderealMode]` | `"LAHIRI"`              | Ayanamsa for the nakshatras on a non-sidereal chart; `None` = pre-v6 behaviour. |
+| `calculate_gauquelin`      | `bool`                   | `False`                 | Calculate Gauquelin 36-sector positions.                               |
+| `calculate_nutation`       | `bool`                   | `False`                 | Include true/mean obliquity and nutation data.                         |
+| `calculate_local_space`    | `bool`                   | `False`                 | Calculate azimuth and altitude for each point.                         |
 
 ## Understanding Position Fields
 
@@ -156,8 +183,15 @@ Use `position` for display purposes and `abs_pos` for calculations (aspect detec
 | **"K"**    | Koch          | Time-based, often used in German schools.                                 |
 | **"W"**    | Whole Sign    | Each house is exactly 30°, matching signs. Standard in Hellenistic/Vedic. |
 | **"R"**    | Regiomontanus | Standard for Horary astrology.                                            |
-| **"E"**    | Equal         | Equal 30° houses starting from Ascendant.                                 |
+| **"A"**    | Equal         | Equal 30° houses starting from Ascendant.                                 |
 | **"M"**    | Morinus       | Space-based system.                                                       |
+
+`subject.coincident_house_cusps` (`list[list[int]]`) groups the house numbers
+whose cusps fall on the same longitude, leaving the houses between them with no
+width. It is empty for every chart whose twelve cusps are twelve distinct
+points, which is every ordinary chart; some systems crowd cusps together at
+extreme latitudes, and the cusps are reported as computed rather than repaired,
+so this field is where that shows.
 
 ### Zodiac Types
 
@@ -174,6 +208,106 @@ Use `position` for display purposes and `abs_pos` for calculations (aspect detec
 - **True Geocentric**: Earth-centered, geometric position only.
 - **Heliocentric**: Sun-centered. Earth becomes a planet.
 - **Topocentric**: Observer-centered (surface of Earth), accounts for parallax.
+- **Barycentric**: Solar system barycenter.
+- **Selenocentric**: Moon-centered.
+- **Mercurycentric**, **Venuscentric**, **Marscentric**, **Jupitercentric**, **Saturncentric**: Planet-centered.
+
+## V6 Optional Enrichments
+
+These opt-in features add extra data to the subject model. All are disabled by default and have zero overhead when not enabled.
+
+### Essential Dignities (`calculate_dignities=True`)
+
+Adds five fields to each point: `essential_dignity` (the strongest dignity
+held: `"Domicile"`, `"Exaltation"`, `"Triplicity"`, `"Term"`, `"Face"`, or,
+when only a debility applies, `"Detriment"` or `"Fall"`, and `"Peregrine"` when
+none applies), `dignity_score` (the summed Ptolemaic weights), `term_ruler`,
+`decan_ruler`, and `decan_number`.
+
+```python
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_dignities=True
+)
+print(subject.sun.essential_dignity)  # e.g. "Domicile"
+```
+
+### Vedic Nakshatras (`calculate_nakshatra=True`)
+
+Adds `nakshatra`, `nakshatra_number`, `nakshatra_pada`, and `nakshatra_lord` fields to every point.
+
+The nakshatras divide the **sidereal** zodiac. A sidereal chart supplies those longitudes itself. Any other chart does not, so its longitudes are rotated by `nakshatra_ayanamsa` (default `"LAHIRI"` — the ayanamsa Jyotish uses, not the `FAGAN_BRADLEY` default of `sidereal_mode`) for the 27-fold division only: the chart stays tropical, and its nakshatras match the sidereal chart cast in the same mode exactly.
+
+The subject records what was used, in `nakshatra_ayanamsa` and `nakshatra_ayanamsa_value`. Both are `None` on a sidereal chart — where the parameter is ignored and `sidereal_mode` / `ayanamsa_value` are the answer — and on a chart that computed no nakshatras.
+
+`nakshatra_ayanamsa=None` restores the pre-v6 behaviour: tropical longitudes fed straight to the sidereal division, every value about two nakshatras off, and one warning per subject. It exists only to reproduce values computed by earlier versions.
+
+```python
+tropical = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_nakshatra=True
+)
+sidereal = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    zodiac_type="Sidereal", sidereal_mode="LAHIRI",
+    calculate_nakshatra=True
+)
+print(f"{tropical.moon.nakshatra}, pada {tropical.moon.nakshatra_pada}")
+print(tropical.nakshatra_ayanamsa, round(tropical.nakshatra_ayanamsa_value, 4))
+print(tropical.moon.nakshatra == sidereal.moon.nakshatra)   # True
+```
+
+Derived charts inherit the setting: `PlanetaryReturnFactory` (which also accepts `nakshatra_ayanamsa` of its own — an explicit value outranks the natal, `None` included) and `SecondaryProgressionFactory` copy the natal's `nakshatra_ayanamsa`, and a Davison composite adopts it only when both parents agree — otherwise it warns and falls back to the default. For `"USER"`, agreeing means agreeing on the definition (`custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0`), which the composite carries over with the mode: the name alone is not an ayanamsa. What is inherited is a mode that was actually used: a natal that computed no nakshatras also records `None`, and that `None` is not the legacy opt-out. `PlanetaryReturnFactory(..., calculate_nakshatra=True)` on such a natal therefore starts from the `"LAHIRI"` default, exactly as casting the same instant directly would.
+
+### Gauquelin Sectors (`calculate_gauquelin=True`)
+
+Adds `gauquelin_sector` (`Optional[float]`, 1-36, fractional within the sector) to each point, plus `gauquelin_sector_cusps` on the subject.
+
+### Nutation (`calculate_nutation=True`)
+
+Adds `subject.nutation` with `true_obliquity`, `mean_obliquity`, `nutation_longitude`, and `nutation_obliquity`.
+
+### Local Space (`calculate_local_space=True`)
+
+Adds `azimuth` and `altitude_above_horizon` fields for each point. Useful for astro-locality work.
+
+### Motion State
+
+Always computed for the ten planets (Sun through Pluto) in Earth-centred perspectives. Access via `subject.sun.motion_state`. Returns a `MotionState` literal: `"stationary_retrograde"`, `"stationary_direct"` or `"stationary"` (inside the band of < 5% of mean motion, either direction), `"retrograde"` (backward, outside that band), `"slow"` (< 80%), `"average"` (80-120%), or `"fast"` (> 120%). `None` for nodes, asteroids, fixed stars, and non-geocentric perspectives.
+
+The stationary band brackets zero speed and is tested before the sign, so a
+planet edging backwards at a hundredth of its mean motion is reported as a
+station instead of a plain retrograde. Which station it is comes from the trend
+rather than the sign: the factory samples the speed again a day later, and a
+speed falling through the band opens the retrograde phase
+(`"stationary_retrograde"`) while a speed rising through it closes the phase
+(`"stationary_direct"`). The extra sample is only ever spent on a body already
+inside the band; where it is unavailable the generic `"stationary"` stands.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mercury Station", 1990, 8, 25, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+    online=False, suppress_geonames_warning=True,
+)
+print(subject.mercury.motion_state)  # stationary_retrograde
+print(subject.mercury.speed)         # 0.0123... — still forward, already turning
+```
+
+For the instants of the stations themselves rather than the state of one chart, see [Retrograde Stations](/content/docs/retrograde_station_factory), which reports the same two events as `SR` and `SD`.
+
+### Declination & Out-of-Bounds
+
+Always computed. Access via `subject.sun.declination` and `subject.sun.is_out_of_bounds`. A planet is out-of-bounds when its declination exceeds the Sun's maximum (~23.44°).
+
+### Lilith Variants & Priapus
+
+Enable via `active_points`: `"Mean_Lilith"`, `"True_Lilith"`, `"Interpolated_Lilith"`, `"Mean_Priapus"`, `"True_Priapus"`. None of these are in `DEFAULT_ACTIVE_POINTS` — every Lilith/Priapus variant is opt-in.
 
 ## Performance & Optimization
 
@@ -199,7 +333,7 @@ These `@dataclass` structures are used internally but are exposed for reference.
 #### `ChartConfiguration`
 
 Dataclass holding chart calculation settings.
-Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`.
+Fields: `zodiac_type`, `sidereal_mode`, `houses_system_identifier`, `perspective_type`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0`, `calculate_dignities`, `calculate_nakshatra`, `nakshatra_ayanamsa`, `calculate_gauquelin`, `calculate_nutation`, `calculate_local_space`, `active_fixed_stars`.
 
 #### `LocationData`
 
@@ -208,7 +342,7 @@ Fields: `city`, `nation`, `lng`, `lat`, `tz_str`, `altitude`, `city_data`.
 
 #### `ephemeris_context`
 
-Helper context manager for thread-safe Swisseph calculations.
+Helper context manager for thread-safe ephemeris calculations.
 **Not intended for public use.**
 
 **Memory Usage**:
@@ -218,7 +352,7 @@ Helper context manager for thread-safe Swisseph calculations.
 
 ## Thread Safety Note
 
-The underlying Swiss Ephemeris library is **not thread-safe** by default. If using Kerykeion in a multi-threaded web server (like Gunicorn/Uvicorn workers), ensure `AstrologicalSubjectFactory` usage is process-isolated or appropriately locked if sharing state (though Kerykeion objects themselves are generally self-contained).
+Kerykeion serializes all ephemeris access internally through a process-wide lock, so `AstrologicalSubjectFactory` is safe to call from multiple threads (e.g., Gunicorn/Uvicorn workers). The lock does mean concurrent calculations within one process run sequentially; for CPU-bound throughput, prefer multiple worker processes. Kerykeion result objects are self-contained and can be shared freely once created.
 
 ---
 

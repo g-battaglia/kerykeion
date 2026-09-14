@@ -1,0 +1,176 @@
+# -*- coding: utf-8 -*-
+"""Tests for ephemeris backend path resolution (EPHE_DATA_PATH).
+
+Since ephemeris_backend.py resolves EPHE_DATA_PATH at import time,
+these tests run in subprocesses with controlled environment variables.
+"""
+
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+KERYKEION_ROOT = Path(__file__).resolve().parent.parent.parent
+
+
+def _run_backend_probe(env_overrides: dict) -> dict:
+    """Run a subprocess that imports ephemeris_backend and reports its state."""
+    env = os.environ.copy()
+    env.pop("KERYKEION_EPHE_PATH", None)
+    env.pop("KERYKEION_BACKEND", None)
+    env.update(env_overrides)
+
+    code = (
+        "import json; "
+        "from kerykeion.ephemeris_backend import BACKEND_NAME, EPHE_DATA_PATH; "
+        "print(json.dumps({'backend': BACKEND_NAME, 'ephe_path': EPHE_DATA_PATH}))"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=str(KERYKEION_ROOT),
+        timeout=90,
+    )
+    if result.returncode != 0:
+        pytest.fail(f"Subprocess failed:\nstderr: {result.stderr}")
+    return json.loads(result.stdout.strip())
+
+
+class TestEpheDataPathDefaults:
+    """EPHE_DATA_PATH defaults to empty string when KERYKEION_EPHE_PATH is unset."""
+
+    def test_default_path_is_empty_string(self):
+        info = _run_backend_probe({})
+        assert info["ephe_path"] == ""
+
+    def test_user_path_is_respected(self, tmp_path):
+        info = _run_backend_probe({"KERYKEION_EPHE_PATH": str(tmp_path)})
+        assert info["ephe_path"] == str(tmp_path)
+
+    def test_whitespace_only_path_treated_as_unset(self):
+        info = _run_backend_probe({"KERYKEION_EPHE_PATH": "   "})
+        assert info["ephe_path"] == ""
+
+
+class TestSwephDirectoryRemoved:
+    """The bundled kerykeion/sweph/ directory must not exist."""
+
+    def test_sweph_directory_does_not_exist(self):
+        sweph_dir = KERYKEION_ROOT / "kerykeion" / "sweph"
+        assert not sweph_dir.exists(), (
+            "kerykeion/sweph/ still exists — Swiss Ephemeris data must not be bundled"
+        )
+
+    def test_no_se1_files_in_package(self):
+        se1_files = list((KERYKEION_ROOT / "kerykeion").rglob("*.se1"))
+        assert se1_files == [], (
+            f"Found .se1 files in kerykeion/: {[str(f) for f in se1_files]}"
+        )
+
+    def test_no_sefstars_in_package(self):
+        sefstars = list((KERYKEION_ROOT / "kerykeion").rglob("sefstars.txt"))
+        assert sefstars == [], (
+            f"Found sefstars.txt in kerykeion/: {[str(f) for f in sefstars]}"
+        )
+
+
+class TestSwissephPathValidation:
+    """When swisseph is active and KERYKEION_EPHE_PATH is set, warn if no .se1 files."""
+
+    @pytest.fixture
+    def _require_swisseph(self):
+        try:
+            import swisseph  # noqa: F401
+        except ImportError:
+            pytest.skip("pyswisseph not installed")
+
+    def test_warns_on_empty_directory(self, tmp_path, _require_swisseph):
+        env = {
+            "KERYKEION_BACKEND": "swisseph",
+            "KERYKEION_EPHE_PATH": str(tmp_path),
+        }
+        result = subprocess.run(
+            [sys.executable, "-W", "all", "-c",
+             "import logging; logging.basicConfig(level=logging.WARNING); "
+             "from kerykeion.ephemeris_backend import EPHE_DATA_PATH"],
+            capture_output=True, text=True, timeout=90,
+            env={**os.environ, **env},
+            cwd=str(KERYKEION_ROOT),
+        )
+        assert "does not contain readable .se1 files" in result.stderr
+
+    def test_no_warning_when_se1_present(self, tmp_path, _require_swisseph):
+        (tmp_path / "test.se1").write_bytes(b"dummy")
+        env = {
+            "KERYKEION_BACKEND": "swisseph",
+            "KERYKEION_EPHE_PATH": str(tmp_path),
+        }
+        result = subprocess.run(
+            [sys.executable, "-W", "all", "-c",
+             "import logging; logging.basicConfig(level=logging.WARNING); "
+             "from kerykeion.ephemeris_backend import EPHE_DATA_PATH"],
+            capture_output=True, text=True, timeout=90,
+            env={**os.environ, **env},
+            cwd=str(KERYKEION_ROOT),
+        )
+        # Assert the import actually succeeded first: this check is negative, so a
+        # subprocess dying of ImportError would produce a traceback that does not
+        # contain the string either, and the test would pass while proving nothing.
+        assert result.returncode == 0, result.stderr
+        assert "does not contain readable .se1 files" not in result.stderr
+
+
+class TestSwephAutoDetect:
+    """Without KERYKEION_EPHE_PATH, the swisseph backend auto-detects the
+    default download directory of `python -m kerykeion.swisseph_setup`
+    (~/.kerykeion/sweph) when it contains .se1 files."""
+
+    @pytest.fixture
+    def _require_swisseph(self):
+        try:
+            import swisseph  # noqa: F401
+        except ImportError:
+            pytest.skip("pyswisseph not installed")
+
+    def _fake_home(self, tmp_path, with_se1: bool) -> Path:
+        sweph_dir = tmp_path / ".kerykeion" / "sweph"
+        sweph_dir.mkdir(parents=True)
+        if with_se1:
+            (sweph_dir / "seas_18.se1").write_bytes(b"\x00")
+        return tmp_path
+
+    def test_auto_detects_default_download_dir(self, tmp_path, _require_swisseph):
+        home = self._fake_home(tmp_path, with_se1=True)
+        info = _run_backend_probe({"KERYKEION_BACKEND": "swisseph", "HOME": str(home)})
+        assert info["ephe_path"] == str(home / ".kerykeion" / "sweph")
+
+    def test_env_var_takes_precedence_over_auto_detect(self, tmp_path, _require_swisseph):
+        home = self._fake_home(tmp_path, with_se1=True)
+        explicit = tmp_path / "explicit"
+        explicit.mkdir()
+        (explicit / "sepl_18.se1").write_bytes(b"\x00")
+        info = _run_backend_probe({
+            "KERYKEION_BACKEND": "swisseph",
+            "KERYKEION_EPHE_PATH": str(explicit),
+            "HOME": str(home),
+        })
+        assert info["ephe_path"] == str(explicit)
+
+    def test_empty_download_dir_falls_back_to_moshier(self, tmp_path, _require_swisseph):
+        home = self._fake_home(tmp_path, with_se1=False)
+        info = _run_backend_probe({"KERYKEION_BACKEND": "swisseph", "HOME": str(home)})
+        assert info["ephe_path"] == ""
+
+    def test_setup_script_targets_the_autodetected_dir(self):
+        # Deliberately the package path, not the submodule: backend.py re-exports
+        # this constant "for backward compatibility", so this import is the
+        # contract, and testing it through .backend would hide a regression.
+        from kerykeion.ephemeris_backend import DEFAULT_SWEPH_DOWNLOAD_DIR
+        from kerykeion.swisseph_setup.download import _DEFAULT_TARGET
+
+        assert str(_DEFAULT_TARGET) == DEFAULT_SWEPH_DOWNLOAD_DIR

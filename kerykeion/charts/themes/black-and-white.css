@@ -18,7 +18,15 @@
     --kerykeion-modern-planet-ring-outer: #d8d8d8;
     --kerykeion-modern-house-ring: #d0d0d0;
     --kerykeion-modern-stroke: #a0a0a0;
+    /* See classic.css: the cusp is read, the ring outline is only seen. */
+    --kerykeion-modern-cusp: #727272;
+    /* Solid dim tones for the stretch of a cusp behind a reading: the exact
+       0.35-alpha composite of the cusp colour over each ring's fill. Solid so
+       a host that shows through the chart cannot wash the axis out. */
+    --kerykeion-modern-cusp-dim: #bfbfbf;
+    --kerykeion-modern-cusp-dim-outer: #b4b4b4;
     --kerykeion-modern-retrograde: #444444;
+    --kerykeion-modern-stationary: #6e6e6e;
     --kerykeion-modern-indicator: #808080;
     --kerykeion-modern-zodiac-bg-0: #f0f0f0;
     --kerykeion-modern-zodiac-bg-1: #d9d9d9;
@@ -113,6 +121,8 @@
     --kerykeion-chart-color-fourth-house: #000000;
     --kerykeion-chart-color-mean-lilith: #000000;
     --kerykeion-chart-color-true-lilith: #000000;
+    --kerykeion-chart-color-interpolated-lilith: #000000;
+    --kerykeion-chart-color-white-moon: #000000;
     --kerykeion-chart-color-ceres: #000000;
     --kerykeion-chart-color-pallas: #000000;
     --kerykeion-chart-color-juno: #000000;
@@ -129,28 +139,14 @@
     --kerykeion-chart-color-ixion: #000000;
     --kerykeion-chart-color-orcus: #000000;
     --kerykeion-chart-color-quaoar: #000000;
-    --kerykeion-chart-color-regulus: #000000;
-    --kerykeion-chart-color-spica: #000000;
-    --kerykeion-chart-color-aldebaran: #000000;
-    --kerykeion-chart-color-antares: #000000;
-    --kerykeion-chart-color-sirius: #000000;
-    --kerykeion-chart-color-fomalhaut: #000000;
-    --kerykeion-chart-color-algol: #000000;
-    --kerykeion-chart-color-betelgeuse: #000000;
-    --kerykeion-chart-color-canopus: #000000;
-    --kerykeion-chart-color-procyon: #000000;
-    --kerykeion-chart-color-arcturus: #000000;
-    --kerykeion-chart-color-pollux: #000000;
-    --kerykeion-chart-color-deneb: #000000;
-    --kerykeion-chart-color-altair: #000000;
-    --kerykeion-chart-color-rigel: #000000;
-    --kerykeion-chart-color-achernar: #000000;
-    --kerykeion-chart-color-capella: #000000;
-    --kerykeion-chart-color-vega: #000000;
-    --kerykeion-chart-color-alcyone: #000000;
-    --kerykeion-chart-color-alphecca: #000000;
-    --kerykeion-chart-color-algorab: #000000;
-    --kerykeion-chart-color-deneb_algedi: #000000;
+    --kerykeion-chart-color-cupido: #000000;
+    --kerykeion-chart-color-hades: #000000;
+    --kerykeion-chart-color-zeus: #000000;
+    --kerykeion-chart-color-kronos: #000000;
+    --kerykeion-chart-color-apollon: #000000;
+    --kerykeion-chart-color-admetos: #000000;
+    --kerykeion-chart-color-vulkanus: #000000;
+    --kerykeion-chart-color-poseidon: #000000;
     --kerykeion-chart-color-anti-vertex: #000000;
 
     /* Arab Parts */
@@ -177,12 +173,12 @@
     --kerykeion-chart-color-air-percentage: #111111;
     --kerykeion-chart-color-earth-percentage: #333333;
     --kerykeion-chart-color-fire-percentage: #555555;
-    --kerykeion-chart-color-water-percentage: #777777;
+    --kerykeion-chart-color-water-percentage: #585858;
 
     /* Modalities Percentage */
     --kerykeion-chart-color-cardinal-percentage: #222222;
     --kerykeion-chart-color-fixed-percentage: #444444;
-    --kerykeion-chart-color-mutable-percentage: #666666;
+    --kerykeion-chart-color-mutable-percentage: #595959;
 
     /* Aspects */
     --kerykeion-chart-color-lunar-phase-0: var(--kerykeion-color-black);
@@ -190,4 +186,7 @@
 
     /* Houses Numbers */
     --kerykeion-chart-color-house-number: #000000;
+    --kerykeion-chart-color-fixed-star-default: #000000;
+    --kerykeion-chart-color-midpoint-default: #000000;
+
 }

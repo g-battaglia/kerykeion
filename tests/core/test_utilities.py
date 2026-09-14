@@ -33,7 +33,19 @@ from kerykeion.utilities import (
     normalize_zodiac_type,
     get_house_name,
     get_house_number,
+    format_ancient_iso,
+    format_degrees_below_bound,
+    format_iso_display,
+    format_timedelta_hhmm,
+    extract_year_from_iso,
+    civil_jd,
+    civil_leap_year,
+    jd_to_iso_date,
+    jd_to_iso_datetime,
+    parse_astronomical_iso_moment,
+    resolve_subject_local_moment,
 )
+from kerykeion.charts.utils import convert_decimal_to_degree_string, format_datetime_with_timezone
 
 
 # =============================================================================
@@ -82,13 +94,21 @@ class TestGetKerykeionPointFromDegree:
         assert point.abs_pos == 330
         assert point.sign == "Pis"
 
-    def test_degree_360_raises_kerykeion_exception(self):
-        with pytest.raises(KerykeionException, match="Error in calculating positions"):
-            get_kerykeion_point_from_degree(360.0, "Test", point_type="Natal")
+    def test_degree_360_wraps_to_aries_zero(self):
+        # A positive exactly 360.0 (from swe_degnorm rounding on a
+        # non-pre-normalized point) must wrap to 0° Aries, not abort the chart.
+        point = get_kerykeion_point_from_degree(360.0, "Sun", point_type="AstrologicalPoint")
+        assert point.sign == "Ari"
+        assert point.abs_pos == pytest.approx(0.0)
 
-    def test_degree_above_360_raises_kerykeion_exception(self):
-        with pytest.raises(KerykeionException):
-            get_kerykeion_point_from_degree(400.0, "Test", point_type="Natal")
+    def test_degree_above_360_wraps(self):
+        point = get_kerykeion_point_from_degree(400.0, "Sun", point_type="AstrologicalPoint")
+        assert point.abs_pos == pytest.approx(40.0)
+        assert point.sign == "Tau"
+
+    def test_degree_non_finite_raises_kerykeion_exception(self):
+        with pytest.raises(KerykeionException, match="Error in calculating positions"):
+            get_kerykeion_point_from_degree(float("nan"), "Sun", point_type="AstrologicalPoint")
 
     def test_zero_degrees_is_aries(self):
         point = get_kerykeion_point_from_degree(0, "Sun", "AstrologicalPoint")
@@ -142,6 +162,12 @@ class TestIsPointBetween:
     def test_span_over_180_raises(self):
         with pytest.raises(KerykeionException):
             is_point_between(0, 200, 50)
+
+    def test_reflex_span_allowed_with_flag(self):
+        """allow_reflex=True accepts arcs > 180° instead of raising."""
+        # 0 -> 200 is a 200° clockwise arc; 50 lies on it, 250 does not.
+        assert is_point_between(0, 200, 50, allow_reflex=True) is True
+        assert is_point_between(0, 200, 250, allow_reflex=True) is False
 
     def test_floating_point_boundary_regression(self):
         """Regression: planet longitude nearly equal to cusp due to float rounding.
@@ -220,6 +246,26 @@ class TestGetPlanetHouse:
         result = get_planet_house(planet, houses)
         assert result == "Seventh_House"
 
+    def test_clockwise_decreasing_cusps(self):
+        """Some systems (e.g. 'H' Horizon near the equator) return cusps in
+        DECREASING (clockwise) longitude. Each real house still spans < 180°;
+        the planet must resolve by the correct clockwise arc direction rather
+        than a spurious reflex arc that would swallow every planet into house 1."""
+        # 12 cusps decreasing by 30° each: cusp[i] = (360 - i*30) % 360.
+        houses = [(360 - i * 30) % 360 for i in range(12)]  # [0,330,300,...,30]
+        # Point at 345 lies clockwise between cusp[0]=0 and cusp[1]=330 -> house 1.
+        assert get_planet_house(345, houses) == "First_House"
+        # Point at 315 lies between cusp[1]=330 and cusp[2]=300 -> house 2.
+        assert get_planet_house(315, houses) == "Second_House"
+        # A point exactly on a cusp opens that house.
+        assert get_planet_house(300, houses) == "Third_House"
+
+    def test_planet_exactly_on_cusp_is_start_inclusive(self):
+        """A planet exactly on a cusp falls into the house that cusp opens."""
+        houses = [i * 30 for i in range(12)]
+        assert get_planet_house(30, houses) == "Second_House"
+        assert get_planet_house(0, houses) == "First_House"
+
 
 # =============================================================================
 # TestCircularMean
@@ -235,9 +281,49 @@ class TestCircularMean:
 
     def test_wraparound_near_zero(self):
         result = circular_mean(350, 10)
-        assert 0 <= result <= 360
+        assert 0 <= result < 360
         # Expect result near 0/360
         assert result < 10 or result > 350
+
+    def test_wraparound_returns_zero_not_360(self):
+        """Float rounding of 360 - 4.6e-15 used to return exactly 360.0,
+        which get_kerykeion_point_from_degree rejects (degree >= 360)."""
+        result = circular_mean(350.0, 10.0)
+        assert result == 0.0
+
+    def test_result_always_below_360(self):
+        for first, second in [(350.0, 10.0), (359.9, 0.1), (355.5, 4.5), (180.0, 180.0)]:
+            result = circular_mean(first, second)
+            assert 0.0 <= result < 360.0
+
+    def test_antipodal_tie_break_is_deterministic(self):
+        """Exactly antipodal inputs have no unique mean; the tie-break is
+        the plain average of the normalized positions."""
+        assert circular_mean(10.0, 190.0) == 100.0
+        assert circular_mean(190.0, 10.0) == 100.0
+        assert circular_mean(0.0, 180.0) == 90.0
+
+    def test_antipodal_matches_midpoint_factory_convention(self):
+        from kerykeion.midpoints.factory import MidpointFactory
+
+        for first, second in [(10.0, 190.0), (0.0, 180.0), (350.0, 170.0)]:
+            assert circular_mean(first, second) == MidpointFactory._shorter_arc_midpoint(first, second)
+
+    def test_near_antipodal_stays_on_regular_path(self):
+        """Inputs just shy of antipodal must not snap to the tie-break."""
+        result = circular_mean(10.0, 189.999999)
+        assert math.isclose(result, 99.9999995, abs_tol=1e-5)
+
+    def test_mean_feeds_get_kerykeion_point_from_degree(self):
+        """Mirror-symmetric positions around 0° Aries (the composite-chart
+        crash case): the mean must be accepted by the point builder."""
+        for first, second in [(350.0, 10.0), (359.9, 0.1), (355.5, 4.5)]:
+            point = get_kerykeion_point_from_degree(
+                circular_mean(first, second), "Sun", "AstrologicalPoint"
+            )
+            # Circular distance from 0° Aries (float noise may land the mean
+            # on either side of the 0°/360° seam).
+            assert min(point.abs_pos, 360.0 - point.abs_pos) < 1e-6
 
 
 # =============================================================================
@@ -272,7 +358,13 @@ class TestCircularSort:
 
 
 class TestMoonPhaseHelpers:
-    """Tests for get_moon_emoji_from_phase_int and get_moon_phase_name_from_phase_int."""
+    """Tests for get_moon_emoji_from_phase_int and get_moon_phase_name_from_phase_int.
+
+    These two read the 1-28 lunation day, whose bins are offset from the events
+    they are named after — they are kept for callers that hold the integer and
+    nothing else, and no longer name a chart's phase. The windows that do are in
+    tests/core/test_lunar_phase_windows.py.
+    """
 
     def test_emoji_from_phase_1(self):
         emoji = get_moon_emoji_from_phase_int(1)
@@ -400,17 +492,36 @@ class TestCalculateMoonPhase:
         assert hasattr(phase, "moon_phase")
         assert hasattr(phase, "moon_emoji")
         assert hasattr(phase, "moon_phase_name")
+        assert hasattr(phase, "major_phase")
+        assert hasattr(phase, "stage")
 
     def test_new_moon_near_zero_apart(self):
         phase = calculate_moon_phase(0, 0)
         assert phase.moon_phase == 1
-        assert phase.moon_phase_name
+        assert phase.moon_phase_name == "New Moon"
+        assert phase.moon_emoji == "🌑"
+        assert phase.major_phase == "New Moon"
+        assert phase.stage == "waxing"
 
     def test_full_moon_near_180_apart(self):
+        # No "or phase == 14" escape hatch: at the opposition the name IS
+        # Full Moon, and it was the disjunction that let the name be wrong.
         phase = calculate_moon_phase(180, 0)
-        # degrees_between should be ~180
-        assert 170 <= phase.degrees_between_s_m <= 190
-        assert "Full" in phase.moon_phase_name or phase.moon_phase == 14
+        assert phase.degrees_between_s_m == pytest.approx(180.0)
+        assert phase.moon_phase_name == "Full Moon"
+        assert phase.moon_emoji == "🌕"
+        assert phase.major_phase == "Full Moon"
+
+    def test_name_holds_a_degree_past_the_opposition(self):
+        """One degree past the exact opposition is still a full moon.
+
+        The 28-bin lookup ended "Full Moon" AT 180°, so this returned "Waning
+        Gibbous" while the illumination formula still read 100%.
+        """
+        phase = calculate_moon_phase(181, 0)
+        assert phase.moon_phase_name == "Full Moon"
+        assert phase.moon_emoji == "🌕"
+        assert phase.stage == "waning"
 
 
 # =============================================================================
@@ -443,6 +554,31 @@ class TestInlineCssVariables:
         """
         result = inline_css_variables_in_svg(svg)
         assert "blue" in result
+
+    def test_nested_var_fallback_is_consumed_whole(self):
+        """``var(--a, var(--b, #hex))`` must resolve to one value with no
+        trailing ``)``: the modern wheel's cusp colour is written this way, and
+        the README's inlined charts carried ``stroke='#81818d)'`` — an invalid
+        colour the browser drops — while the fallback was matched up to the
+        first ``)`` only."""
+        svg = """
+        <style>:root { --cusp: #81818d; }</style>
+        <line stroke="var(--cusp, var(--stroke, #000000))" />
+        <line stroke="var(--missing, var(--stroke, #123456))" />
+        <line stroke="var(--missing, var(--also-missing, #abcdef))" />
+        """
+        result = inline_css_variables_in_svg(svg)
+        assert 'stroke="#81818d"' in result
+        assert 'stroke="#abcdef"' in result
+        assert ")" not in result.replace("var(", "").replace("<style>", "")
+        assert "var(" not in result
+
+    def test_parenthesised_fallback_is_consumed_whole(self):
+        """A fallback such as ``rgba(...)`` closes its own parenthesis; the
+        outer ``)`` belongs to ``var`` and must go with it."""
+        svg = '<rect fill="var(--missing, rgba(0, 0, 0, 0.5))" stroke="var(--missing, rgba(1,2,3,.4))" />'
+        result = inline_css_variables_in_svg(svg)
+        assert result == '<rect fill="rgba(0, 0, 0, 0.5)" stroke="rgba(1,2,3,.4)" />'
 
     def test_multiple_variables(self):
         svg = """
@@ -578,41 +714,80 @@ class TestChartsUtilsInternalFunctions:
     """Tests for internal functions in charts_utils module."""
 
     def test_degree_sum_exact_360(self):
-        from kerykeion.charts.charts_utils import degreeSum
+        from kerykeion.charts.utils import degree_sum
 
-        assert degreeSum(180, 180) == 0.0
+        assert degree_sum(180, 180) == 0.0
 
     def test_normalize_degree_360(self):
-        from kerykeion.charts.charts_utils import normalizeDegree
+        from kerykeion.charts.utils import normalize_degree
 
-        assert normalizeDegree(360) == 0.0
+        assert normalize_degree(360) == 0.0
 
     def test_normalize_degree_negative(self):
-        from kerykeion.charts.charts_utils import normalizeDegree
+        from kerykeion.charts.utils import normalize_degree
 
-        assert normalizeDegree(-90) == 270.0
+        assert normalize_degree(-90) == 270.0
+
+    @pytest.mark.parametrize("angle", [-1e-15, -1e-18, -1e-300])
+    def test_normalize_degree_stays_below_360_for_tiny_negatives(self, angle):
+        """``[0, 360)`` is half-open, and plain ``% 360.0`` does not honour that.
+
+        Python's float modulo returns exactly 360.0 for a tiny negative input, so
+        a guard written as ``x % 360 != 0`` reads it as "non-zero, therefore
+        fine" and passes it through. The reader that pays for it is
+        ``draw_modern``'s house-sector span: two cusps coinciding to within float
+        noise produced a 360° sector painted over the whole chart.
+        """
+        from kerykeion.charts.utils import normalize_degree
+
+        assert normalize_degree(angle) == 0.0
+
+    @pytest.mark.parametrize("angle", [float("nan"), float("inf"), float("-inf")])
+    def test_normalize_degree_propagates_non_finite_input(self, angle):
+        """NaN must survive, not become 0° Aries.
+
+        NaN fails ``< 360.0`` exactly as 360.0 does, so the guard above turns it
+        into 0.0 unless it is checked for. A NaN longitude — an out-of-coverage
+        body, a failed interpolation — then renders as a plausible chart with a
+        point silently placed at the start of the zodiac, where before it reached
+        the SVG as a visible ``nan``. ``inf % 360`` is NaN too.
+        """
+        from kerykeion.charts.utils import normalize_degree
+
+        assert math.isnan(normalize_degree(angle))
+
+    @pytest.mark.parametrize("angle", [float("nan"), float("inf")])
+    def test_degree_sum_propagates_non_finite_input(self, angle):
+        """The twin, which delegates — so it inherits the guard rather than repeating it."""
+        from kerykeion.charts.utils import degree_sum
+
+        assert math.isnan(degree_sum(angle, 1.0))
+
+    def test_degree_sum_stays_below_360_for_a_tiny_negative_sum(self):
+        from kerykeion.charts.utils import degree_sum
+
+        assert degree_sum(-1e-15, 0.0) == 0.0
 
     def test_dec_hour_join(self):
-        from kerykeion.charts.charts_utils import decHourJoin
+        from kerykeion.charts.utils import hms_to_decimal_hours
 
-        assert decHourJoin(12, 30, 0) == pytest.approx(12.5, abs=0.001)
+        assert hms_to_decimal_hours(12, 30, 0) == pytest.approx(12.5, abs=0.001)
 
     def test_offset_to_tz_none_raises(self):
-        from kerykeion.charts.charts_utils import offsetToTz
+        from kerykeion.charts.utils import timedelta_to_decimal_hours
 
-        with pytest.raises(Exception):
-            offsetToTz(None)
+        with pytest.raises(KerykeionException):
+            timedelta_to_decimal_hours(None)
 
     def test_offset_to_tz_valid(self):
         from datetime import timedelta
-        from kerykeion.charts.charts_utils import offsetToTz
+        from kerykeion.charts.utils import timedelta_to_decimal_hours
 
-        assert offsetToTz(timedelta(hours=2)) == 2.0
+        assert timedelta_to_decimal_hours(timedelta(hours=2)) == 2.0
 
     def test_get_decoded_celestial_point_unknown_raises(self):
-        from kerykeion.charts.charts_utils import get_decoded_kerykeion_celestial_point_name
+        from kerykeion.charts.utils import get_decoded_kerykeion_celestial_point_name
         from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel
-        from kerykeion.schemas import KerykeionException
 
         lang_model = KerykeionLanguageCelestialPointModel(
             Sun="Sun",
@@ -678,15 +853,20 @@ class TestChartsUtilsInternalFunctions:
             Descendant="Descendant",
             Imum_Coeli="Imum Coeli",
         )
-        with pytest.raises(KerykeionException):
-            get_decoded_kerykeion_celestial_point_name("NonExistentPoint", lang_model)
+        # v6: unknown points no longer raise — they fall back to a slugified
+        # version of the input so catalog fixed stars (Vindemiatrix, Polaris,
+        # etc.) can render without a language entry.
+        result = get_decoded_kerykeion_celestial_point_name("Vindemiatrix", lang_model)
+        assert result == "Vindemiatrix"
+        result = get_decoded_kerykeion_celestial_point_name("Asellus_Australis", lang_model)
+        assert result == "Asellus Australis"
 
 
 class TestPlanetGridLayout:
     """Tests for _planet_grid_layout_position."""
 
     def test_fourth_column_layout(self):
-        from kerykeion.charts.charts_utils import _planet_grid_layout_position
+        from kerykeion.charts.utils import _planet_grid_layout_position
 
         offset, row = _planet_grid_layout_position(40)
         assert row == 4  # 40 - 36 = 4
@@ -697,7 +877,7 @@ class TestChartsUtilsDistributionEdgeCases:
     """Tests for element distribution calculation edge cases."""
 
     def test_distribution_skips_missing_point(self):
-        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.charts.utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 
@@ -724,7 +904,7 @@ class TestChartsUtilsDistributionEdgeCases:
         assert len(dist) == 4  # Fire, Earth, Air, Water
 
     def test_distribution_with_custom_weights(self):
-        from kerykeion.charts.charts_utils import calculate_element_points
+        from kerykeion.charts.utils import calculate_element_points
         from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
         from kerykeion import AstrologicalSubjectFactory
 
@@ -750,6 +930,140 @@ class TestChartsUtilsDistributionEdgeCases:
         )
         assert dist is not None
 
+    def test_distribution_counts_fixed_stars_when_opted_in(self):
+        """v6 regression: stars live in subject.fixed_stars (not as
+        attributes), so the star weight-table entries were unreachable and
+        active stars silently dropped out of element distributions. Star
+        inclusion is opt-in (include_fixed_stars=True, as the chart data
+        factory does) so callers naming an explicit point subset are not
+        polluted, and every star weighs 0.2 unless the table says otherwise."""
+        from kerykeion.charts.utils import calculate_element_points
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        kwargs = dict(
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun"],
+        )
+        without_star = AstrologicalSubjectFactory.from_birth_data(name="NoStar", **kwargs)
+        with_star = AstrologicalSubjectFactory.from_birth_data(
+            name="Star", **kwargs, active_fixed_stars=["Regulus"],
+        )
+        base = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], without_star, method="weighted",
+        )
+        with_regulus = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="weighted",
+            include_fixed_stars=True,
+        )
+        regulus_sign_group = ["fire", "earth", "air", "water"][
+            with_star.fixed_stars[0].sign_num % 4
+        ]
+        # Regulus (weight 0.2 in the star table) must add to its element.
+        assert with_regulus[regulus_sign_group] == pytest.approx(
+            base[regulus_sign_group] + 0.2
+        )
+
+        # Default (no opt-in): the caller's named subset is exactly what
+        # counts — three active stars must not inflate a ["sun"] total.
+        default_totals = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], with_star, method="pure_count",
+        )
+        assert sum(default_totals.values()) == pytest.approx(1.0)
+
+    def test_distribution_star_weight_never_planet_grade(self):
+        """A catalog star missing from the weight table weighs 0.2 (the star
+        fallback), never the generic 1.0 point fallback; slugs go through the
+        shared catalog slugger (strip + spaces/hyphens -> underscores)."""
+        from kerykeion.charts.utils import (
+            _FIXED_STAR_FALLBACK_WEIGHT,
+            calculate_element_points,
+        )
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        assert _FIXED_STAR_FALLBACK_WEIGHT == 0.2
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Star Slug", year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun"], active_fixed_stars=[" Spica "],
+        )
+        assert len(subject.fixed_stars) == 1
+        base = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], subject, method="weighted",
+        )
+        with_star = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], subject, method="weighted",
+            include_fixed_stars=True,
+        )
+        # ' Spica ' must slug to 'spica' (table weight 0.2), not '_spica_'
+        # (which would silently take a planet-grade fallback weight).
+        assert sum(with_star.values()) == pytest.approx(sum(base.values()) + 0.2)
+
+    def test_synastry_distribution_counts_fixed_stars_when_opted_in(self):
+        """The include_fixed_stars flag must reach the synastry helpers too:
+        both subjects' active stars contribute, off by default."""
+        from kerykeion.charts.utils import calculate_synastry_element_points
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        kwargs = dict(
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun"],
+        )
+        s1 = AstrologicalSubjectFactory.from_birth_data(
+            name="Syn A", **kwargs, active_fixed_stars=["Regulus"],
+        )
+        s2 = AstrologicalSubjectFactory.from_birth_data(
+            name="Syn B", **kwargs, active_fixed_stars=["Spica"],
+        )
+        default = calculate_synastry_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], s1, s2, method="pure_count",
+        )
+        with_stars = calculate_synastry_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun"], s1, s2, method="pure_count",
+            include_fixed_stars=True,
+        )
+        # Percentages, so the two must differ once the two stars are counted
+        # (unless they happened to fall in the same elements as both Suns — the
+        # chosen stars do not).
+        assert default != with_stars
+
+    def test_pure_count_fixed_star_counts_as_one(self):
+        """In pure_count every counted item contributes exactly 1 — a fixed
+        star must NOT keep its 0.2 weighted-mode table weight, or the integer
+        semantics of the count break (Sun+Moon+Regulus must total 3, not 2.2)."""
+        from kerykeion.charts.utils import calculate_element_points
+        from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
+        from kerykeion import AstrologicalSubjectFactory
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            name="Pure", year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Sun", "Moon"], active_fixed_stars=["Regulus"],
+        )
+        totals = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject,
+            method="pure_count", include_fixed_stars=True,
+        )
+        assert sum(totals.values()) == pytest.approx(3.0)
+        # Weighted mode keeps the 0.2 table weight for the star.
+        base = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject, method="weighted",
+        )
+        weighted = calculate_element_points(
+            DEFAULT_CELESTIAL_POINTS_SETTINGS, ["sun", "moon"], subject,
+            method="weighted", include_fixed_stars=True,
+        )
+        assert sum(weighted.values()) == pytest.approx(sum(base.values()) + 0.2)
+
 
 # ---------------------------------------------------------------------------
 # Missing edge-case tests (migrated from tests/edge_cases/test_edge_cases.py)
@@ -770,3 +1084,767 @@ class TestInlineCssEdgeCases:
         svg = '<rect fill="var(--unknown-color)" />'
         result = inline_css_variables_in_svg(svg)
         assert 'fill=""' in result or "var" not in result
+
+    def test_inline_css_self_referential_variable_terminates(self):
+        """A self-referential CSS variable (--a: var(--a)) must not loop
+        forever: the substitution reaches a fixed point and exits."""
+        svg = '<svg><style>:root { --a: var(--a); }</style><rect fill="var(--a)" /></svg>'
+        result = inline_css_variables_in_svg(svg)
+        assert "<style>" not in result
+
+    def test_inline_css_mutually_referential_variables_hit_pass_limit(self, caplog):
+        """Mutually recursive variables (--a: var(--b); --b: var(--a)) swap
+        forever without converging: the pass limit must stop the loop, log a
+        warning, and return the current (partially inlined) state."""
+        import logging as _logging
+
+        svg = '<svg><style>:root { --a: var(--b); --b: var(--a); }</style><rect fill="var(--a)" /></svg>'
+        with caplog.at_level(_logging.WARNING, logger="kerykeion.utilities"):
+            result = inline_css_variables_in_svg(svg)
+        assert "<style>" not in result
+        assert any("substitution pass limit" in record.getMessage() for record in caplog.records)
+
+
+# =============================================================================
+# TestConvertDecimalToDegreeString
+# =============================================================================
+
+
+class TestConvertDecimalToDegreeString:
+    """Tests for convert_decimal_to_degree_string (charts_utils)."""
+
+    def test_basic_dms(self):
+        # The arc-seconds mark is emitted as &quot; so the SVG quote-replace
+        # post-processing pass can't corrupt it into an apostrophe.
+        assert convert_decimal_to_degree_string(10.5, "3") == "10°30'00&quot;"
+
+    def test_degree_and_minute_formats_floor(self):
+        assert convert_decimal_to_degree_string(10.99, "1") == "10°"
+        assert convert_decimal_to_degree_string(10.99, "2") == "10°59'"
+
+    def test_format_three_floors_without_overshooting(self):
+        """Format "3" floors to the second: it never emits an invalid 60\" and
+        never overshoots the sign boundary (consistent with format "1"/"2")."""
+        # Just under a whole degree: floors down, no carry into the next degree.
+        result = convert_decimal_to_degree_string(10.99997, "3")
+        assert result == "10°59'59&quot;"
+        assert "60&quot;" not in result
+
+    def test_format_three_stays_within_sign_at_boundary(self):
+        """A within-sign position just below 30° must read "29°59'59\"", not the
+        out-of-sign "30°00'00\"" the old rounding produced — and must agree with
+        format "1" which floors to "29°"."""
+        assert convert_decimal_to_degree_string(29.9999, "3") == "29°59'59&quot;"
+        assert convert_decimal_to_degree_string(29.9999, "1") == "29°"
+
+    def test_no_invalid_sixty_across_sampled_boundaries(self):
+        for deg in (9, 14, 29, 59):
+            for frac in (0.99997, 0.999999):
+                out = convert_decimal_to_degree_string(deg + frac, "3")
+                assert "'60&quot;" not in out
+                assert "60'" not in out
+
+    def test_negative_inputs_consistent_and_not_malformed(self):
+        """Regression: a negative value (e.g. a southern declination) must not
+        produce a malformed negative-minute field like "-5°-30'", and all three
+        formats must agree on the floored representation."""
+        assert convert_decimal_to_degree_string(-5.5, "1") == "-6°"
+        assert convert_decimal_to_degree_string(-5.5, "2") == "-6°30'"
+        assert convert_decimal_to_degree_string(-5.5, "3") == "-6°30'00&quot;"
+        for fmt in ("1", "2", "3"):
+            out = convert_decimal_to_degree_string(-5.5, fmt)
+            assert "-30" not in out, f"format {fmt} emitted a malformed negative field: {out}"
+
+
+# =============================================================================
+# TestFormatTimedeltaHhmm
+# =============================================================================
+
+
+class TestFormatTimedeltaHhmm:
+    """Tests for format_timedelta_hhmm."""
+
+    def test_rounds_to_whole_minutes(self):
+        from datetime import timedelta
+
+        assert format_timedelta_hhmm(timedelta(hours=11, minutes=30, seconds=40)) == "11:31"
+        assert format_timedelta_hhmm(timedelta(hours=8, minutes=5)) == "8:05"
+        assert format_timedelta_hhmm(timedelta(hours=0, minutes=0)) == "0:00"
+
+
+# =============================================================================
+# TestFormatAncientIso
+# =============================================================================
+
+
+class TestFormatAncientIso:
+    """Tests for format_ancient_iso, focused on the midnight-rollover carry."""
+
+    def test_midnight_rollover_carries_to_next_day(self):
+        """A decimal hour within float-noise of 24:00:00 must roll to 00:00:00
+        of the following day, not clamp to 23:59:59 of the same day."""
+        result = format_ancient_iso(-500, 3, 21, 23.9999999, 0.0)
+        assert result == "-0500-03-22T00:00:00+00:00"
+
+    def test_month_boundary_rollover(self):
+        """Rollover across a month boundary increments the month."""
+        result = format_ancient_iso(-44, 1, 31, 23.9999999, 0.0)
+        assert result.startswith("-0044-02-01T00:00:00")
+
+    def test_no_rollover_for_normal_hour(self):
+        result = format_ancient_iso(-500, 3, 21, 11.5, 0.0)
+        assert result == "-0500-03-21T11:30:00+00:00"
+
+    def test_offset_rendered_at_second_resolution(self):
+        """Round 34: a sub-minute LMT offset must render at whole-second resolution
+        (HH:MM:SS), not rounded to the minute — otherwise the local ISO string and
+        the exact-offset UTC string/JD disagree by up to ~30s. Athens lng 23.7275
+        -> +01:34:55 exactly (minute-rounding would show the wrong +01:35)."""
+        offset_hours = 23.7275 / 15.0
+        result = format_ancient_iso(-500, 3, 21, 12.0, offset_hours)
+        assert result == "-0500-03-21T12:00:00+01:34:55"
+        # A whole-minute offset stays HH:MM (no trailing :00 seconds field), matching
+        # Python's datetime.isoformat convention.
+        assert format_ancient_iso(-500, 3, 21, 12.0, 1.5) == "-0500-03-21T12:00:00+01:30"
+
+    def test_negative_year_local_and_utc_iso_describe_the_same_instant(self):
+        """Round 34 regression: for a year<1 subject, local_time minus the displayed
+        offset must equal the UTC time exactly (they used to disagree by up to 30s
+        because the offset was minute-rounded for display but exact for the JD/UTC)."""
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, LocationData
+
+        for lng in (7.6869, 23.7275, 62.624, -47.3):
+            loc = LocationData(city="X", lng=lng, lat=45.0, tz_str="UTC", nation="XX")
+            data = dict(year=-100, month=6, day=15, hour=12, minute=0, seconds=0, lng=lng)
+            AstrologicalSubjectFactory._calculate_time_conversions_bce(data, loc)
+            local = data["iso_formatted_local_datetime"]
+            utc = data["iso_formatted_utc_datetime"]
+            # Parse "T12:00:00" and the offset from the local string; subtract offset.
+            time_part = local.split("T")[1]
+            hms = time_part[:8]
+            lh, lm, ls = (int(x) for x in hms.split(":"))
+            off = time_part[8:]  # e.g. "+00:30:45" or "+01:30"
+            oparts = [int(x) for x in off[1:].split(":")]
+            off_sec = (oparts[0] * 3600 + oparts[1] * 60 + (oparts[2] if len(oparts) > 2 else 0))
+            off_sec = off_sec if off[0] == "+" else -off_sec
+            local_sec = lh * 3600 + lm * 60 + ls
+            derived_utc_sec = (local_sec - off_sec) % 86400
+            uh, um, us = (int(x) for x in utc.split("T")[1][:8].split(":"))
+            utc_sec = uh * 3600 + um * 60 + us
+            assert derived_utc_sec == utc_sec, f"lng={lng}: {local} vs {utc}"
+
+
+class TestYearZeroIsoConformance:
+    """Year 0 (= 1 BCE) must be the ISO 8601 unsigned ``0000``, never ``-0000``
+    (the minus sign is reserved for years <= -1). The formatter and parser are
+    coupled, so both are checked here plus a full round-trip."""
+
+    def test_year_zero_formats_unsigned(self):
+        result = format_ancient_iso(0, 6, 15, 12.0, 0.0)
+        assert result.startswith("0000-06-15")
+        assert not result.startswith("-0000")
+
+    def test_parser_maps_unsigned_year_zero(self):
+        assert extract_year_from_iso("0000-06-15T12:00:00+00:00") == 0
+
+    def test_year_zero_round_trip(self):
+        assert extract_year_from_iso(format_ancient_iso(0, 6, 15, 12.0, 0.0)) == 0
+
+    def test_adjacent_years_unaffected(self):
+        # year -1 -> "-0001..." -> -1
+        neg = format_ancient_iso(-1, 6, 15, 12.0, 0.0)
+        assert neg.startswith("-0001")
+        assert extract_year_from_iso(neg) == -1
+        # year 1 -> "0001..." -> 1
+        pos = format_ancient_iso(1, 6, 15, 12.0, 0.0)
+        assert pos.startswith("0001")
+        assert extract_year_from_iso(pos) == 1
+
+    def test_legacy_minus_zero_still_parses(self):
+        # Backward compatibility: older stored strings used "-0000".
+        assert extract_year_from_iso("-0000-06-15T12:00:00+00:00") == 0
+
+    def test_display_helpers_handle_unsigned_year_zero(self):
+        # Round 27 regression: once year 0 stores as unsigned "0000-..." the two
+        # display consumers must not fall through to datetime.fromisoformat (min
+        # year 1) and raise "year must be in 1..9999, not 0" — which crashed chart
+        # rendering. Both take the manual branch and format the ISO year 0000.
+        iso = "0000-06-15T12:00:00+00:00"
+        assert format_iso_display(iso, "%Y-%m-%d %H:%M") == "0000-06-15 12:00"
+        assert format_iso_display(iso, "%Y") == "0000"
+        assert format_datetime_with_timezone(iso) == "0000-06-15 12:00 [+00:00]"
+        # Adjacent years still route correctly (BCE manual, CE via fromisoformat).
+        assert format_iso_display("-0001-06-15T12:00:00+00:00", "%Y") == "-0001"
+        assert format_iso_display("0001-06-15T12:00:00+00:00", "%Y-%m-%d") == "0001-06-15"
+
+
+class TestFormatDegreesBelowBound:
+    """Round 27: a within-sign position in [0,30) or abs_pos in [0,360) sitting
+    within ~0.005° of the upper cusp must never render as the impossible "30.00"
+    (= 0° of the next sign) or the out-of-range "360.00"; it clamps just below."""
+
+    def test_position_near_cusp_clamped(self):
+        # 29.9997° Pisces must not print "30.00" (which reads as 0° Aries).
+        assert format_degrees_below_bound(29.999722, 30.0) == "29.99"
+
+    def test_abs_pos_near_full_circle_clamped(self):
+        # abs_pos 359.9997 must stay in [0,360); never "360.00".
+        assert format_degrees_below_bound(359.9997, 360.0) == "359.99"
+
+    def test_mid_sign_value_unchanged_vs_naive_format(self):
+        # Non-overshoot values keep their ordinary rounded 2-decimal rendering.
+        for v, bound in [(12.345, 30.0), (0.0, 30.0), (15.674, 30.0), (123.82, 360.0)]:
+            assert format_degrees_below_bound(v, bound) == f"{round(v, 2):.2f}"
+
+    def test_result_is_always_below_bound(self):
+        for v in [29.9999999, 30.0, 359.99999, 360.0]:
+            bound = 30.0 if v < 40 else 360.0
+            assert float(format_degrees_below_bound(v, bound)) < bound
+
+
+class TestHorizonSystemHouseAssignmentRound6:
+    """Round-6 regression: the 'H' Horizon system returns decreasing cusps near
+    the equator; planets must spread across houses, not all collapse to House 1."""
+
+    def test_horizon_system_not_all_first_house(self):
+        from kerykeion import AstrologicalSubjectFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "SG", 1985, 3, 10, 1, 0, lng=103.82, lat=1.35,
+            tz_str="Asia/Singapore", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="H")
+        houses = {getattr(s, p).house for p in
+                  ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]}
+        assert len(houses) > 1, "H-system collapsed every planet into one house"
+
+
+# =============================================================================
+# BCE-safe civil-date helpers (time-lord techniques)
+# =============================================================================
+
+
+class TestParseAstronomicalIsoMoment:
+    """parse_astronomical_iso_moment: the BCE-safe target-date parser."""
+
+    def test_plain_date(self):
+        assert parse_astronomical_iso_moment("2026-06-04") == (2026, 6, 4, 0.0)
+
+    def test_datetime_keeps_seconds_in_the_hour_fraction(self):
+        year, month, day, hour = parse_astronomical_iso_moment("2026-06-04T12:30:30.5")
+        assert (year, month, day) == (2026, 6, 4)
+        assert hour == pytest.approx(12 + 30 / 60 + 30.5 / 3600)
+
+    def test_negative_astronomical_year(self):
+        assert parse_astronomical_iso_moment("-0550-10-07") == (-550, 10, 7, 0.0)
+
+    def test_timezone_aware_rejected(self):
+        for value in ("2026-06-04T12:00:00+02:00", "2026-06-04T12:00:00Z"):
+            with pytest.raises(KerykeionException, match="timezone-naive"):
+                parse_astronomical_iso_moment(value)
+
+    def test_garbage_and_out_of_range_rejected(self):
+        for value in ("not-a-date", "2026-13-01", "2026-06-04T25:00", "2026-06-04junk"):
+            with pytest.raises(KerykeionException, match="Invalid target_date"):
+                parse_astronomical_iso_moment(value)
+
+    def test_impossible_calendar_days_rejected(self):
+        """2026-02-31 must not silently normalize into another date; the
+        leap rule follows the calendar convention (Julian below 1 CE)."""
+        for value in ("2026-02-31", "2025-02-29", "1900-02-29", "2026-04-31"):
+            with pytest.raises(KerykeionException, match="Invalid target_date"):
+                parse_astronomical_iso_moment(value)
+        # Real leap days parse: Gregorian 2024, Julian century year -100.
+        assert parse_astronomical_iso_moment("2024-02-29")[:3] == (2024, 2, 29)
+        assert parse_astronomical_iso_moment("-0100-02-29")[:3] == (-100, 2, 29)
+
+    def test_civil_leap_year_convention(self):
+        assert civil_leap_year(2024) and not civil_leap_year(1900) and civil_leap_year(2000)
+        # BCE is Julian: every fourth astronomical year, centuries included.
+        assert civil_leap_year(-100) and civil_leap_year(0) and not civil_leap_year(-99)
+
+
+class TestCivilJdCalendarConvention:
+    """civil_jd / jd_to_iso_date mirror the subject factory's calendar split:
+    Julian for year < 1, proleptic Gregorian from 1 CE on."""
+
+    def test_bce_uses_julian_calendar(self):
+        from kerykeion.ephemeris_backend import ephe
+
+        assert civil_jd(-562, 10, 7, 6.5) == pytest.approx(
+            ephe.julday(-562, 10, 7, 6.5, ephe.JUL_CAL)
+        )
+
+    def test_ce_uses_gregorian_calendar(self):
+        from kerykeion.ephemeris_backend import ephe
+
+        assert civil_jd(1940, 10, 9, 18.5) == pytest.approx(
+            ephe.julday(1940, 10, 9, 18.5, ephe.GREG_CAL)
+        )
+
+    def test_round_trip_both_eras(self):
+        assert jd_to_iso_date(civil_jd(-562, 10, 7, 6.5)) == "-0562-10-07"
+        assert jd_to_iso_date(civil_jd(1940, 10, 9, 18.5)) == "1940-10-09"
+
+    def test_datetime_round_trip_keeps_the_time_of_day(self):
+        assert jd_to_iso_datetime(civil_jd(1940, 10, 9, 18.5)) == "1940-10-09T18:30:00"
+        assert jd_to_iso_datetime(civil_jd(-562, 10, 7, 6.5)) == "-0562-10-07T06:30:00"
+        # Half-day steps (the 365.25-day firdaria year) stay exact.
+        assert jd_to_iso_datetime(civil_jd(2000, 1, 1, 18.0) + 3652.5) == "2010-01-01T06:00:00"
+        # Rounding at midnight rolls the date instead of printing 24:00:00.
+        assert jd_to_iso_datetime(civil_jd(2000, 1, 2, 0.0) - 0.4 / 86400.0) == "2000-01-02T00:00:00"
+
+
+class TestResolveSubjectLocalMomentSeconds:
+    """Birth seconds must survive into the hour fraction: the model has no
+    split seconds field, but the local ISO timestamp retains them."""
+
+    def test_split_seconds_attribute_wins(self):
+        from types import SimpleNamespace
+
+        subject = SimpleNamespace(year=1990, month=6, day=15, hour=12, minute=30, seconds=45)
+        assert resolve_subject_local_moment(subject)[3] == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+    def test_seconds_recovered_from_local_iso(self):
+        from types import SimpleNamespace
+
+        subject = SimpleNamespace(
+            year=1990, month=6, day=15, hour=12, minute=30,
+            iso_formatted_local_datetime="1990-06-15T12:30:45+02:00",
+        )
+        assert resolve_subject_local_moment(subject)[3] == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+    def test_iso_only_subject_keeps_seconds(self):
+        from types import SimpleNamespace
+
+        subject = SimpleNamespace(iso_formatted_local_datetime="1990-06-15T12:30:45+02:00")
+        year, month, day, hour = resolve_subject_local_moment(subject)
+        assert (year, month, day) == (1990, 6, 15)
+        assert hour == pytest.approx(12 + 30 / 60 + 45 / 3600)
+
+
+def test_the_documented_helpers_import_from_the_flat_facade():
+    """`house_spans` and `normalize_degree` are documented as public helpers of
+    `kerykeion.utilities`, and moving them into `utilities.core` left the flat
+    facade without them: the documented import raised ImportError."""
+    from kerykeion.utilities import house_spans, normalize_degree
+
+    assert normalize_degree(-1e-15) == 0.0
+    spans, reversed_wedges = house_spans([30.0 * index for index in range(12)])
+    assert sum(spans) == pytest.approx(360.0, abs=1e-9)
+    assert set(reversed_wedges) == {False}
+
+
+def test_a_formatted_longitude_never_leaves_its_own_sign():
+    """Rounding must not move a longitude into the sign next door.
+
+    149.99687 is Leo, and `f"{v:.2f}"` prints "150.00" — zero degrees of Virgo —
+    on a row whose sign label still says Leo. The guard clamps at the sign's
+    ceiling; this holds it at both ends, for every sign, including the values
+    that sit a hair inside either boundary.
+    """
+    from kerykeion.utilities.core import format_absolute_degrees
+
+    assert format_absolute_degrees(149.99687) == "149.99"
+
+    for index in range(12):
+        floor = 30.0 * index
+        for offset in (0.0, 1e-9, 0.001, 0.004, 0.005, 14.9, 29.99, 29.995, 29.999):
+            value = floor + offset
+            formatted = float(format_absolute_degrees(value))
+            assert floor <= formatted < floor + 30.0, (value, formatted)
+
+
+def test_the_house_reader_agrees_with_the_house_division_it_is_given():
+    """Two functions in one module must not disagree about the same twelve cusps.
+
+    `house_spans` reads the direction from all twelve at once, and the wheel is
+    drawn from what it returns. The reader chose the shorter arc for each pair
+    independently, which is the right rule on a ring that is NOT a division and
+    the wrong one on a ring that is: the twelve below run forwards and total 360
+    with a first house 200 degrees wide, and read pair by pair that house becomes
+    the opposite 160 degrees — so longitude 100, inside it and drawn inside it,
+    belonged to no house at all and the reader raised.
+
+    Synthetic, because no real chart reaches it: the widest arc measured across
+    23 systems and nine latitudes is 179.2388 degrees. The two disagreeing is
+    worth closing anyway.
+    """
+    from kerykeion.utilities.core import get_planet_house, house_spans
+
+    cusps = [0.0, 200.0, 210.0, 220.0, 230.0, 240.0, 250.0, 260.0, 270.0, 280.0, 290.0, 300.0]
+    spans, reversed_wedges = house_spans(cusps)
+    assert set(reversed_wedges) == {False}
+    assert sum(spans) == pytest.approx(360.0, abs=1e-9)
+    assert spans[0] > 180.0, "the fixture no longer has a reflex house"
+
+    assert get_planet_house(100.0, cusps) == "First_House"
+    assert get_planet_house(205.0, cusps) == "Second_House"
+    # The exact-on-cusp rule still comes first.
+    assert get_planet_house(200.0, cusps) == "Second_House"
+
+
+def test_a_point_on_a_cusp_belongs_to_the_cusp_it_is_on():
+    """The exact-on-cusp rule has to find the nearest cusp, not the first nearby one.
+
+    Above the polar circle several systems crowd cusps together: Sunshine at 89S
+    puts the eighth, the ninth and the tenth within 6.6e-11 degrees of each other,
+    and the Midheaven IS the tenth, bit for bit. Scanning upwards and returning
+    the first match inside the tolerance filed it in the eighth — and the report
+    and the context both repeated that.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.utilities.core import get_planet_house
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "A", 1990, 6, 15, 0, 0, city="Antarctic", nation="AQ", lat=-89.0, lng=0.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="I",
+    )
+    cusps = [
+        getattr(subject, name).abs_pos
+        for name in (
+            "first_house", "second_house", "third_house", "fourth_house",
+            "fifth_house", "sixth_house", "seventh_house", "eighth_house",
+            "ninth_house", "tenth_house", "eleventh_house", "twelfth_house",
+        )
+    ]
+    # The fixture's whole point: three cusps inside the tolerance of one another,
+    # and the Midheaven exactly on the last of them.
+    assert abs(cusps[7] - cusps[9]) < 1e-9 and cusps[7] != cusps[9]
+    assert subject.medium_coeli.abs_pos == cusps[9]
+
+    assert get_planet_house(subject.medium_coeli.abs_pos, cusps) == "Tenth_House"
+    assert subject.medium_coeli.house == "Tenth_House"
+
+
+# ---------------------------------------------------------------------------
+# An angle opens the house of the cusp it IS, and twelve numbers cannot say so
+# ---------------------------------------------------------------------------
+
+#: The one chart, of 5,520 swept across 23 systems and 15 latitudes, whose angle
+#: the shared reader could not place: Sunshine at 74.25 degrees north, where the
+#: second through the sixth cusps stand on one longitude and the Imum Coeli IS the
+#: fourth of them.
+_SUBJECT_ON_A_CROWDED_RING = dict(
+    year=1990, month=6, day=15, hour=3, minute=45,
+    lat=74.25, lng=0.0, tz_str="UTC", city="Crowded", nation="NO",
+    online=False, suppress_geonames_warning=True, houses_system_identifier="I",
+)
+
+
+
+def _cusps_of(subject):
+    from kerykeion.utilities.core import HOUSE_FIELD_NAMES
+
+    return [getattr(subject, name).abs_pos for name in HOUSE_FIELD_NAMES]
+
+
+def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
+    """Nearest is as far as twelve numbers can take it; identical is not nearest.
+
+    The exact-on-cusp rule takes the cusp closest to the point, which settles a
+    crowd whose members differ by a fraction of a nanodegree. It cannot settle a
+    crowd whose members are bit-identical: they are all equally near, and `min`
+    answers with the lowest-numbered one. Here the second, third, fourth, fifth and sixth
+    cusps are the same float and the Imum Coeli is that float, so the reader said
+    the third house — for the point that DEFINES the fourth.
+
+    The answer is not in the twelve numbers. It is in what the point is, which the
+    ephemeris knows when it hands back the cusps and the angles from one call.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.utilities.core import get_planet_house
+
+    subject = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
+    cusps = _cusps_of(subject)
+
+    # The fixture's whole point, asserted rather than assumed: a crowd of cusps
+    # the reader cannot choose between, with the Imum Coeli standing exactly on
+    # one of them. The crowd is stated through coincident_house_cusps rather than
+    # by comparing floats bit for bit — the two backends lay the last bit of these
+    # four out differently and both are crowds, which is the property that matters.
+    assert subject.coincident_house_cusps == [[2, 3, 4, 5, 6]]
+    assert subject.imum_coeli.abs_pos == cusps[3]
+
+    # The shared reader still answers some OTHER house: it is given twelve numbers
+    # and nothing else, and this is the limit of what they can say. Which of the
+    # crowd it names is a fact about the ephemeris's last bit — the two backends
+    # answer the second and the third — so what is asserted is that it does not
+    # name the fourth. Not a defect to fix here; the assertions below are what
+    # changed.
+    assert get_planet_house(subject.imum_coeli.abs_pos, cusps) != "Fourth_House"
+
+    assert subject.imum_coeli.house == "Fourth_House"
+    assert subject.medium_coeli.house == "Tenth_House"
+    assert subject.ascendant.house == "First_House"
+    assert subject.descendant.house == "Seventh_House"
+
+
+def test_a_crowded_ring_says_so_instead_of_being_discovered():
+    """The cusps stand as the reference ephemeris computes them, and declare it.
+
+    Swiss Ephemeris returns the same crowded ring for this chart, so repairing the
+    cusps would diverge from the implementation this library is validated against.
+    What a consumer gets instead is the fact: these house numbers share a
+    longitude, and the houses between them have no width.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
+    # The second cusp is a hair off the other four rather than bit-identical to
+    # them, and a hair below a thousandth of a milliarcsecond is the same point.
+    assert crowded.coincident_house_cusps == [[2, 3, 4, 5, 6]]
+
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "Rome", 1990, 6, 15, 12, 0, lat=41.9, lng=12.5, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+    )
+    assert ordinary.coincident_house_cusps == []
+
+
+_ANGLES_ONLY = ["Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"]
+
+
+def test_a_payload_that_predates_the_field_declares_its_crowd_anyway():
+    """The field promises to be empty only when the twelve cusps are distinct.
+
+    A payload written before 6.0.0a88 has no such field, and a default of `[]`
+    would make that promise false for a crowded chart whose cusps are right there
+    in the payload. So the groups are read off the cusps. A payload that names the
+    field is taken at its word, even when the word is `[]`.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.schemas.models import AstrologicalSubjectModel
+
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING).model_dump()
+    older = {key: value for key, value in crowded.items() if key != "coincident_house_cusps"}
+    assert AstrologicalSubjectModel.model_validate(older).coincident_house_cusps == [[2, 3, 4, 5, 6]]
+    assert AstrologicalSubjectModel.model_validate({**crowded, "coincident_house_cusps": []}).coincident_house_cusps == []
+
+
+@pytest.mark.parametrize(
+    "groups",
+    [[[3]], [[0, 1]], [[12, 13]], [[3, 2]], [[2, 3], [3, 4]]],
+    ids=["one house is no crowd", "house 0", "house 13", "descending", "a house in two groups"],
+)
+def test_the_field_refuses_a_crowd_that_cannot_exist(groups):
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.schemas.models import AstrologicalSubjectModel
+    from pydantic import ValidationError
+
+    payload = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING).model_dump()
+    with pytest.raises(ValidationError):
+        AstrologicalSubjectModel.model_validate({**payload, "coincident_house_cusps": groups})
+
+
+def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
+    """The sweep the single fixture above was found in, kept as the guard.
+
+    Twenty-three house systems, latitudes from 89.9 south to 89.9 north, eight
+    hours of the day: wherever a chart puts an angle exactly on the cusp that
+    shares its number, that angle must be in that house. One chart failed this
+    before — the Sunshine ring above — and the rule is stated over all of them so
+    the next system to crowd its cusps is caught by the same test.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.utilities.core import (
+        ANGLE_CUSP_INDEX,
+        angle_is_its_cusp,
+        get_house_number,
+    )
+
+    from typing import get_args
+
+    from kerykeion.schemas.literals import HousesSystemIdentifier
+
+    latitudes = (-89.9, -84.1, -74.25, -70.5, -66.75, 0.0, 45.0, 66.75, 70.5, 74.25, 84.1, 89.9)
+    # Every identifier the library accepts, so a new system joins the sweep by
+    # existing. (A hand-written string once carried an "E" that is no system at
+    # all, and 96 attempts were swallowed below without a word.)
+    systems = get_args(HousesSystemIdentifier)
+
+    misfiled = []
+    not_cast = []
+    for system in systems:
+        for latitude in latitudes:
+            for hour in range(0, 24, 3):
+                try:
+                    subject = AstrologicalSubjectFactory.from_birth_data(
+                        "S", 1990, 6, 15, hour, 45, lat=latitude, lng=0.0,
+                        tz_str="UTC", city="S", nation="XX", online=False,
+                        suppress_geonames_warning=True,
+                        houses_system_identifier=system,
+                        # The four angles and their cusps are all this reads; the
+                        # planets would cost five times as much and say nothing.
+                        active_points=_ANGLES_ONLY,
+                    )
+                except Exception as refusal:
+                    # A system undefined at this latitude with no substitute would
+                    # be a different subject; today every one of them casts, and
+                    # the assertion below says so rather than letting a sweep that
+                    # casts nothing pass in silence.
+                    not_cast.append((system, latitude, hour, type(refusal).__name__))
+                    continue
+                cusps = _cusps_of(subject)
+                for angle_name, cusp_index in ANGLE_CUSP_INDEX.items():
+                    angle = getattr(subject, angle_name)
+                    if not angle_is_its_cusp(angle.abs_pos, cusps, cusp_index):
+                        continue
+                    if get_house_number(angle.house) != cusp_index + 1:
+                        misfiled.append((system, latitude, hour, angle_name, angle.house))
+
+    assert misfiled == []
+    assert not_cast == [], f"{len(not_cast)} of {len(systems) * len(latitudes) * 8} charts could not be cast"
+
+
+def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities():
+    """Relocating towards a pole is how a real user meets a crowded ring.
+
+    The relocated chart recomputes its own cusps and its own angles, so it decides
+    the identities again from the ring it just made — and it must, because the
+    natal ring's identities describe a different place.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.relocated_chart import RelocatedChartFactory
+
+    from kerykeion.utilities.core import get_planet_house
+
+    natal = AstrologicalSubjectFactory.from_birth_data(
+        "Rome", 1990, 6, 15, 5, 45, lat=41.9, lng=12.5, tz_str="Europe/Rome",
+        city="Rome", nation="IT", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="I",
+    )
+    assert natal.coincident_house_cusps == []
+
+    relocated = RelocatedChartFactory.relocate(
+        natal, new_lat=74.25, new_lng=0.0, new_tz_str="UTC", new_city="Crowded",
+        new_nation="NO",
+    )
+    cusps = _cusps_of(relocated)
+    assert relocated.coincident_house_cusps, "the fixture must relocate onto a crowded ring"
+    assert relocated.imum_coeli.abs_pos == cusps[3]
+    # The discriminating half: given only the twelve numbers the reader still names
+    # a house that is not the fourth, so this passes only because the relocated
+    # ring decided the identity again for the place it was cast at.
+    assert get_planet_house(relocated.imum_coeli.abs_pos, cusps) != "Fourth_House"
+    assert relocated.imum_coeli.house == "Fourth_House"
+
+
+def test_a_davison_composite_inherits_the_identity_fix():
+    """A Davison is cast as an ordinary chart, so it gets the ordinary chart's rule.
+
+    The a87 notes named it as inheriting the defect; it inherits the fix by the same
+    route, with nothing written for it in the composite factory. Both parents are
+    cast at the crowded moment, so the midpoint moment is that moment and the
+    Davison lands on the same ring — which is the only way to make this assertion
+    say something rather than pass because the ring happened to be ordinary.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.composite_subject import CompositeSubjectFactory
+    from kerykeion.utilities.core import get_planet_house
+
+    def parent(name):
+        return AstrologicalSubjectFactory.from_birth_data(name, **_SUBJECT_ON_A_CROWDED_RING)
+
+    davison = CompositeSubjectFactory(
+        parent("A"), parent("B")
+    ).get_davison_composite_subject_model()
+
+    cusps = _cusps_of(davison)
+    assert davison.coincident_house_cusps == [[2, 3, 4, 5, 6]]
+    assert davison.imum_coeli.abs_pos == cusps[3]
+    assert get_planet_house(davison.imum_coeli.abs_pos, cusps) != "Fourth_House"
+    assert davison.imum_coeli.house == "Fourth_House"
+
+
+def test_a_midpoint_composite_declares_the_crowd_on_its_own_ring():
+    """The midpoint ring is built in the composite factory, not cast, so it has to say
+    so itself: two parents on the crowded ring put their midpoints on one longitude,
+    and a composite that declared nothing would contradict the field's own promise.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.composite_subject import CompositeSubjectFactory
+
+    def parent(name):
+        return AstrologicalSubjectFactory.from_birth_data(name, **_SUBJECT_ON_A_CROWDED_RING)
+
+    composite = CompositeSubjectFactory(parent("A"), parent("B")).get_midpoint_composite_subject_model()
+
+    # The groups, not the floats: swisseph lays the same crowd out a bit apart.
+    assert composite.coincident_house_cusps == [[2, 3, 4, 5, 6]]
+    assert composite.imum_coeli.house == "Fourth_House"
+
+
+def test_the_house_comparison_reads_the_owner_house_off_the_model():
+    """A point's house in its own chart is what the model says, not a re-reading.
+
+    The comparison tables used to project the point into its own cusps again with
+    the shared reader, and on the crowded ring answered Third for an Imum Coeli the
+    model files in Fourth. The model already knows; the reader is only for a point
+    that carries no house.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.house_comparison.utils import calculate_points_in_reciprocal_houses
+
+    # The comparison lists a point only if the subject itself asked for it.
+    crowded = AstrologicalSubjectFactory.from_birth_data(
+        "Crowded", **{**_SUBJECT_ON_A_CROWDED_RING, "active_points": ["Sun", "Imum_Coeli"]}
+    )
+    rows = calculate_points_in_reciprocal_houses(crowded, crowded, active_points=["Sun", "Imum_Coeli"])
+    (imum_coeli,) = [row for row in rows if row.point_name == "Imum_Coeli"]
+    assert crowded.imum_coeli.house == "Fourth_House"
+    assert imum_coeli.point_owner_house_name == "Fourth_House"
+
+
+def test_a_solar_arc_of_zero_keeps_an_angle_in_the_house_it_opens():
+    """Directed by nothing, the Imum Coeli is still the fourth cusp and opens it.
+
+    Solar arc directs the points and not the houses, so at any other arc an angle
+    has left its cusp and is read as a point; at an arc of zero it IS its cusp, and
+    the reader would file it with the lowest of the coincident cusps instead.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.secondary_progressions.solar_arc import SolarArcFactory
+
+    crowded = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
+    directed = SolarArcFactory.compute_directed_subject(crowded, target_iso_utc_datetime=crowded.iso_formatted_utc_datetime)
+    assert directed.imum_coeli.abs_pos == crowded.imum_coeli.abs_pos
+    assert directed.imum_coeli.house == "Fourth_House"
+
+
+def test_the_identity_rule_answers_for_every_angle_the_reader_cannot_place():
+    """Stated on a ring built for the purpose, not on whichever chart happens to hit it.
+
+    Swept at a quarter of an hour across the eight systems that crowd their cusps
+    and fourteen latitudes beyond 66 degrees — some 10,700 charts — exactly one
+    real chart today has an angle the shared reader misplaces, and it is the Imum
+    Coeli of the Sunshine ring above. That is a fact about the reader's tie-break,
+    not about the rule: it answers with the LOWEST-numbered cusp of a crowd, so an
+    Ascendant standing on one always wins by being the first, and a Midheaven
+    standing on one always loses.
+
+    So the Midheaven's half of the rule is stated here, on twelve numbers written
+    to have that shape, rather than left waiting for an ephemeris to produce it.
+    Written as four cases and not one so that a change to the tie-break cannot
+    quietly turn any of them into the other kind.
+    """
+    from kerykeion.utilities.core import angle_house_identities, get_planet_house
+
+    # Eighth, ninth and tenth on one longitude; the four angular cusps where a
+    # quadrant system puts them, each angle opposite its partner.
+    crowded = 250.0
+    ring = [0.0, 30.0, 50.0, 70.0, 120.0, 150.0, 180.0, crowded, crowded, crowded, 300.0, 330.0]
+    identities = angle_house_identities(ring, ascendant=0.0, medium_coeli=crowded)
+
+    assert identities["medium_coeli"] == "Tenth_House"
+    assert get_planet_house(crowded, ring) == "Eighth_House"
+
+    # The other three are on their own cusps too, and two of them the reader also
+    # gets right — which is the point: the rule does not depend on whether it does.
+    assert identities["ascendant"] == "First_House"
+    assert identities["imum_coeli"] == "Fourth_House"
+    assert identities["descendant"] == "Seventh_House"
+
+    # And it claims nothing where the chart puts the angle off its cusp: a whole
+    # sign ring opens the first house at the start of the Ascendant's sign.
+    whole_sign = [(index * 30.0) for index in range(12)]
+    assert angle_house_identities(whole_sign, ascendant=17.5, medium_coeli=283.0) == {}

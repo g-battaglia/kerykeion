@@ -14,11 +14,23 @@ Main responsibilities:
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
-from kerykeion.charts.charts_utils import degreeDiff, sliceToX, sliceToY, convert_decimal_to_degree_string
+from kerykeion.charts.utils import (
+    DOUBLE_CHART_TYPES,
+    STATION_LABELS,
+    degree_difference,
+    escape_svg_text,
+    wheel_x,
+    wheel_y,
+    convert_decimal_to_degree_string,
+)
+from kerykeion.charts.svg_metadata import point_state_attributes
 from kerykeion.schemas import KerykeionException, ChartType, KerykeionPointModel
-from kerykeion.schemas.kr_literals import Houses
+from kerykeion.schemas.literals import Houses
+from kerykeion.settings.chart_defaults import resolve_glyph_id
 import logging
-from typing import Union, get_args, List, Optional, Tuple, Sequence, Mapping, Any
+from typing import Union, get_args, Optional, Sequence, Mapping, Any
+
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # CONSTANTS
@@ -28,18 +40,16 @@ from typing import Union, get_args, List, Optional, Tuple, Sequence, Mapping, An
 PLANET_GROUPING_THRESHOLD = 3.4  # Distance to consider planets as grouped
 INDICATOR_GROUPING_THRESHOLD = 2.5  # Distance for indicator overlap detection
 
-# Chart angle indices (ASC, MC, DSC, IC are between these indices)
-CHART_ANGLE_MIN_INDEX = 22
-CHART_ANGLE_MAX_INDEX = 27
-
 # Radius offsets for different chart elements
 NATAL_INDICATOR_OFFSET = 72  # Offset for inner chart degree indicators
-DUAL_CHART_ANGLE_RADIUS = 76  # Radius for chart angles in dual charts
 DUAL_CHART_PLANET_RADIUS_A = 110  # Alternate planet radius in dual charts
 DUAL_CHART_PLANET_RADIUS_B = 130  # Default planet radius in dual charts
 
-# Chart types that display two subjects
-DUAL_CHART_TYPES = ("Transit", "Synastry", "DualReturnChart")
+# Chart types that can display two subjects. Every dual type requires
+# secondary points — keeping the two names aliased means a future dual chart
+# type cannot be added to one list and silently render without its outer wheel.
+DUAL_CHART_TYPES = DOUBLE_CHART_TYPES
+REQUIRED_SECONDARY_CHART_TYPES: tuple[ChartType, ...] = DOUBLE_CHART_TYPES
 
 
 # =============================================================================
@@ -56,10 +66,12 @@ def draw_planets(
     main_subject_seventh_house_degree_ut: Union[int, float],
     chart_type: ChartType,
     second_subject_available_kerykeion_celestial_points: Union[list[KerykeionPointModel], None] = None,
+    second_subject_available_planets_setting: Union[Sequence[Mapping[str, Any]], None] = None,
     external_view: bool = False,
     first_circle_radius: Union[int, float, None] = None,
     second_circle_radius: Union[int, float, None] = None,
     show_degree_indicators: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draws celestial points on an astrological chart.
@@ -77,7 +89,7 @@ def draw_planets(
         main_subject_seventh_house_degree_ut: Seventh house cusp degree (Descendant).
         chart_type: Type of chart (Natal, Transit, Synastry, Return, etc.).
         second_subject_available_kerykeion_celestial_points: Points for second subject
-            (required for Transit, Synastry, Return charts).
+            (required for Transit, Synastry, Progression charts).
         external_view: If True, render planets on outer ring with connecting lines.
         first_circle_radius: Radius of the outer zodiac ring.
         second_circle_radius: Radius of the middle circle.
@@ -90,7 +102,7 @@ def draw_planets(
         KerykeionException: If secondary points are required but not provided.
     """
     # Points to exclude from transit ring (house cusps)
-    transit_ring_exclude_points: List[str] = list(get_args(Houses))
+    transit_ring_exclude_points: list[str] = list(get_args(Houses))
     output = ""
 
     # -------------------------------------------------------------------------
@@ -110,13 +122,20 @@ def draw_planets(
         secondary_points_rel_positions = [p.position for p in second_subject_available_kerykeion_celestial_points]
 
     # -------------------------------------------------------------------------
-    # 3. Build position-to-index mapping and sort for ordered processing
+    # 3. Build position/index pairs and sort for ordered processing
     # -------------------------------------------------------------------------
-    position_index_map = {main_points_abs_positions[i]: i for i in range(len(available_planets_setting))}
-    sorted_positions = sorted(position_index_map.keys())
-
-    for i, pos in enumerate(sorted_positions):
-        logging.debug(f"Planet index: {position_index_map[pos]}, degree: {pos}")
+    # A list of (abs_pos, index) tuples is used instead of a {abs_pos: index}
+    # dict so that two points sharing the exact same absolute position (e.g.
+    # an exact conjunction) are both kept and rendered.
+    # Bound to the shorter of the two lists so a settings list longer than the
+    # collected points (e.g. a return subject with fewer points than settings)
+    # can't IndexError — the same length guard the sibling indicator helpers use.
+    sorted_position_entries = sorted(
+        (main_points_abs_positions[i], i)
+        for i in range(min(len(available_planets_setting), len(main_points_abs_positions)))
+    )
+    sorted_positions = [entry[0] for entry in sorted_position_entries]
+    sorted_point_indices = [entry[1] for entry in sorted_position_entries]
 
     # -------------------------------------------------------------------------
     # 4. Calculate position adjustments to prevent overlapping
@@ -124,7 +143,7 @@ def draw_planets(
     position_adjustments = _calculate_planet_adjustments(
         main_points_abs_positions,
         available_planets_setting,
-        position_index_map,
+        sorted_point_indices,
         sorted_positions,
     )
 
@@ -133,10 +152,12 @@ def draw_planets(
     # -------------------------------------------------------------------------
     adjusted_offset = 0.0
     for position_idx, abs_position in enumerate(sorted_positions):
-        point_idx = position_index_map[abs_position]
+        point_idx = sorted_point_indices[position_idx]
 
         # Determine radius based on chart type and point type
-        point_radius = _determine_point_radius(point_idx, chart_type, bool(position_idx % 2), external_view)
+        point_radius = _determine_point_radius(
+            available_planets_setting[point_idx]["name"], chart_type, bool(position_idx % 2), external_view
+        )
 
         # Calculate position offsets
         adjusted_offset = _calculate_point_offset(
@@ -151,8 +172,8 @@ def draw_planets(
         )
 
         # Calculate coordinates
-        point_x = sliceToX(0, radius - point_radius, adjusted_offset) + point_radius
-        point_y = sliceToY(0, radius - point_radius, adjusted_offset) + point_radius
+        point_x = wheel_x(0, radius - point_radius, adjusted_offset) + point_radius
+        point_y = wheel_y(0, radius - point_radius, adjusted_offset) + point_radius
 
         # Determine scale factor
         scale_factor = 0.8 if chart_type in DUAL_CHART_TYPES or external_view else 1.0
@@ -167,16 +188,27 @@ def draw_planets(
                 true_offset,
                 adjusted_offset,
                 available_planets_setting[point_idx]["color"],
+                available_planets_setting[point_idx]["name"],
+                abs_pos=main_points_abs_positions[point_idx],
             )
 
         # Draw the celestial point SVG element
         point_details = available_kerykeion_celestial_points[point_idx]
+        # In dual charts, main subject is horoscope "0"
+        h_id = "0" if chart_type in DUAL_CHART_TYPES else None
+        # v6: dynamic catalog fixed stars carry a ``glyph_id`` setting pointing
+        # to a generic ``#FixedStar`` symbol (their per-star <symbol> doesn't
+        # exist in the template). Other points fall back to their own slug.
+        glyph_id = available_planets_setting[point_idx].get("glyph_id")
         output += _generate_point_svg(
             point_details,
             point_x,
             point_y,
             scale_factor,
             available_planets_setting[point_idx]["name"],
+            horoscope_id=h_id,
+            glyph_id=glyph_id,
+            show_motion_state=show_motion_state,
         )
 
     # -------------------------------------------------------------------------
@@ -197,24 +229,37 @@ def draw_planets(
                 points_settings=available_planets_setting,
             )
     elif chart_type in DUAL_CHART_TYPES:
-        # Dual charts: draw indicators for both primary and secondary points
+        # Dual charts: the secondary/outer points (transit or partner planets)
+        # are ALWAYS drawn — their glyphs are chart content, not an indicator.
+        # ``show_degree_indicators`` only gates tick lines and degree labels.
+        if secondary_points_abs_positions and secondary_points_rel_positions:
+            # v6: use the per-second-subject settings list if provided so
+            # the iteration aligns with the actual collected points. Falls
+            # back to the shared ``available_planets_setting`` to keep
+            # legacy callers working (single-subject + transit charts where
+            # the second subject mirrors the primary settings).
+            secondary_settings = (
+                second_subject_available_planets_setting
+                if second_subject_available_planets_setting is not None
+                else available_planets_setting
+            )
+            output = _draw_secondary_points(
+                output,
+                radius,
+                main_subject_first_house_degree_ut,
+                main_subject_seventh_house_degree_ut,
+                secondary_points_abs_positions,
+                secondary_points_rel_positions,
+                secondary_settings,
+                chart_type,
+                transit_ring_exclude_points,
+                second_subject_available_kerykeion_celestial_points,
+                show_degree_indicators=show_degree_indicators,
+                show_motion_state=show_motion_state,
+            )
+        # Primary/inner points (natal planets): pure degree indicators, so the
+        # flag gates the whole call (their glyphs are drawn in section 5).
         if show_degree_indicators:
-            # Secondary/outer points (transit planets)
-            if secondary_points_abs_positions and secondary_points_rel_positions:
-                output = _draw_secondary_points(
-                    output,
-                    radius,
-                    main_subject_first_house_degree_ut,
-                    main_subject_seventh_house_degree_ut,
-                    secondary_points_abs_positions,
-                    secondary_points_rel_positions,
-                    available_planets_setting,
-                    chart_type,
-                    transit_ring_exclude_points,
-                    adjusted_offset,
-                    second_subject_available_kerykeion_celestial_points,
-                )
-            # Primary/inner points (natal planets)
             output = _draw_inner_point_indicators(
                 output=output,
                 radius=radius,
@@ -239,12 +284,8 @@ def _validate_dual_chart_inputs(
     secondary_points: Union[list[KerykeionPointModel], None],
 ) -> None:
     """Validate that dual charts have the required secondary points."""
-    error_messages = {
-        "Transit": "Secondary celestial points are required for Transit charts",
-        "Synastry": "Secondary celestial points are required for Synastry charts",
-    }
-    if chart_type in error_messages and secondary_points is None:
-        raise KerykeionException(error_messages[chart_type])
+    if chart_type in REQUIRED_SECONDARY_CHART_TYPES and secondary_points is None:
+        raise KerykeionException(f"Secondary celestial points are required for {chart_type} charts")
 
 
 # =============================================================================
@@ -255,9 +296,9 @@ def _validate_dual_chart_inputs(
 def _calculate_planet_adjustments(
     points_abs_positions: Sequence[Any],
     points_settings: Sequence[Mapping[str, Any]],
-    position_index_map: dict,
+    sorted_point_indices: Sequence[int],
     sorted_positions: Sequence[Any],
-) -> List[float]:
+) -> list[float]:
     """
     Calculate position adjustments for planets to prevent visual overlapping.
 
@@ -267,20 +308,20 @@ def _calculate_planet_adjustments(
     Args:
         points_abs_positions: Absolute positions of all points.
         points_settings: Settings for all points.
-        position_index_map: Mapping of position to point index.
+        sorted_point_indices: Point indices aligned with ``sorted_positions``.
         sorted_positions: Positions sorted in ascending order.
 
     Returns:
         List of adjustment values (in degrees) for each position.
     """
-    planets_by_position: List[Optional[List[Union[int, float]]]] = [None] * len(position_index_map)
-    point_groups: List[List[List[Union[int, float, str]]]] = []
-    position_adjustments: List[float] = [0.0] * len(points_settings)
+    planets_by_position: list[Optional[list[Union[int, float]]]] = [None] * len(sorted_point_indices)
+    point_groups: list[list[list[Union[int, float, str]]]] = []
+    position_adjustments: list[float] = [0.0] * len(points_settings)
     is_group_open = False
 
-    # Build position data and identify groups
+    # First pass: compute adjacent distances for every position
     for position_idx, abs_position in enumerate(sorted_positions):
-        point_idx = position_index_map[abs_position]
+        point_idx = sorted_point_indices[position_idx]
 
         # Calculate distances to adjacent points
         if len(sorted_positions) == 1:
@@ -289,14 +330,27 @@ def _calculate_planet_adjustments(
             distance_to_next = 360.0
         else:
             prev_pos, next_pos = _get_adjacent_positions(
-                position_idx, sorted_positions, position_index_map, points_abs_positions
+                position_idx, sorted_positions, sorted_point_indices, points_abs_positions
             )
-            distance_to_prev = degreeDiff(prev_pos, points_abs_positions[point_idx])
-            distance_to_next = degreeDiff(next_pos, points_abs_positions[point_idx])
+            distance_to_prev = degree_difference(prev_pos, points_abs_positions[point_idx])
+            distance_to_next = degree_difference(next_pos, points_abs_positions[point_idx])
 
         planets_by_position[position_idx] = [point_idx, distance_to_prev, distance_to_next]
-        label = points_settings[point_idx]["label"]
-        logging.debug(f"{label}, distance_to_prev: {distance_to_prev}, distance_to_next: {distance_to_next}")
+
+    # Second pass: identify groups scanning the ring circularly, starting just
+    # after the widest gap. Starting at index 0 would split a run that
+    # straddles 0°/360° (e.g. 29°58' Pisces + 0°10' Aries) into two fragments,
+    # leaving the wrap pair without any anti-collision adjustment.
+    total_positions = len(sorted_positions)
+    scan_start = (
+        max(range(total_positions), key=lambda idx: planets_by_position[idx][1])  # type: ignore[index]
+        if total_positions
+        else 0
+    )
+    for scan_step in range(total_positions):
+        position_idx = (scan_start + scan_step) % total_positions
+        point_idx, distance_to_prev, distance_to_next = planets_by_position[position_idx]  # type: ignore[misc, assignment]
+        label = points_settings[int(point_idx)]["label"]
 
         # Group points that are close to each other
         if distance_to_next < PLANET_GROUPING_THRESHOLD:
@@ -319,26 +373,37 @@ def _calculate_planet_adjustments(
         elif len(group) >= 3:
             _handle_multi_point_group(group, position_adjustments, PLANET_GROUPING_THRESHOLD)
 
+    if point_groups and logger.isEnabledFor(logging.DEBUG):
+        logger.debug("Layout overlap groups")
+        for group_idx, group in enumerate(point_groups, start=1):
+            group_entries: list[str] = []
+            for point_data in group:
+                position_idx = int(point_data[0])
+                label = str(point_data[3])
+                abs_position = float(sorted_positions[position_idx])
+                group_entries.append(f"{label}({abs_position:.2f})")
+            logger.debug("  group %d: %s", group_idx, " ".join(group_entries))
+
     return position_adjustments
 
 
 def _get_adjacent_positions(
     position_idx: int,
     sorted_positions: Sequence[Any],
-    position_index_map: dict,
+    sorted_point_indices: Sequence[int],
     points_abs_positions: Sequence[Any],
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """Get the absolute positions of adjacent points (with wraparound)."""
     total = len(sorted_positions)
     if position_idx == 0:
-        prev_idx = position_index_map[sorted_positions[-1]]
-        next_idx = position_index_map[sorted_positions[1]]
+        prev_idx = sorted_point_indices[-1]
+        next_idx = sorted_point_indices[1]
     elif position_idx == total - 1:
-        prev_idx = position_index_map[sorted_positions[position_idx - 1]]
-        next_idx = position_index_map[sorted_positions[0]]
+        prev_idx = sorted_point_indices[position_idx - 1]
+        next_idx = sorted_point_indices[0]
     else:
-        prev_idx = position_index_map[sorted_positions[position_idx - 1]]
-        next_idx = position_index_map[sorted_positions[position_idx + 1]]
+        prev_idx = sorted_point_indices[position_idx - 1]
+        next_idx = sorted_point_indices[position_idx + 1]
 
     return points_abs_positions[prev_idx], points_abs_positions[next_idx]
 
@@ -425,13 +490,28 @@ def _handle_multi_point_group(
     if (space_before_first > (needed_space * 0.5)) and (space_after_last > (needed_space * 0.5)):
         start_position = space_before_first - (needed_space * 0.5)
     else:
-        start_position = (leftover_space / (space_before_first + space_after_last)) * space_before_first
+        # Guard the divisor: a group of >=3 points at the exact same absolute
+        # position gives space_before_first == space_after_last == 0 (0/0). Fall
+        # back to centering the group instead of raising ZeroDivisionError.
+        edge_space = space_before_first + space_after_last
+        start_position = (
+            (leftover_space / edge_space) * space_before_first if edge_space else space_before_first
+        )
 
     # Apply positions if there's enough space
     if available_space > needed_space:
         position_adjustments[group[0][0]] = start_position - group[0][1] + (1.5 * threshold)
         for i in range(group_size - 1):
             position_adjustments[group[i + 1][0]] = 1.2 * threshold + position_adjustments[group[i][0]] - group[i][2]
+    else:
+        # Not enough room for the full spread: distribute the points evenly
+        # across whatever space is available instead of giving up entirely —
+        # dense stelliums would otherwise render fully stacked, mitigated only
+        # by the alternating point radii.
+        step = available_space / (group_size + 1)
+        position_adjustments[group[0][0]] = step - group[0][1]
+        for i in range(group_size - 1):
+            position_adjustments[group[i + 1][0]] = step + position_adjustments[group[i][0]] - group[i][2]
 
 
 def _calculate_point_offset(
@@ -440,11 +520,11 @@ def _calculate_point_offset(
     adjustment: Union[int, float],
 ) -> float:
     """Calculate the angular offset for placing a celestial point on the chart."""
-    return (int(seventh_house_degree) / -1) + int(point_degree + adjustment)
+    return -int(seventh_house_degree) + int(point_degree + adjustment)
 
 
 def _determine_point_radius(
-    point_idx: int,
+    point_name: str,
     chart_type: str,
     is_alternate_position: bool,
     external_view: bool = False,
@@ -452,11 +532,24 @@ def _determine_point_radius(
     """
     Determine the radial distance for placing a celestial point.
 
-    Different radii are used to create visual separation between points
-    and to distinguish between chart angles and regular planets.
+    Two radii alternate down the sorted list of points, which is what keeps two
+    neighbours from printing on top of each other: consecutive points sit on
+    different lanes, so a crowd spreads across two rings instead of one.
+
+    An angle is drawn on those same lanes. It used to get a third radius of its
+    own, further out than either — but the code that recognised one did it by
+    the point's index in a fixed list, and the v6 catalog moved the angles off
+    those indices, so for years the outer lane went to Ceres, Pallas, Juno and
+    Vesta while the angles alternated with everything else. That is the chart
+    people know, and when the classification was repaired the angles jumped
+    outward into the zodiac ring. Giacomo's call is that they belong with the
+    points, so the dedicated radius is gone rather than restored: an angle is a
+    point, and there is no fourth lane for anyone to land on by accident.
 
     Args:
-        point_idx: Index of the celestial point.
+        point_name: Name of the celestial point. Unused by the geometry now, and
+            kept because the signature is part of how callers read this: the
+            radius is a property of the point, not of its position in a loop.
         chart_type: Type of the chart.
         is_alternate_position: Whether to use alternate positioning for visual separation.
         external_view: Whether external view mode is enabled.
@@ -464,29 +557,18 @@ def _determine_point_radius(
     Returns:
         Radius value for the point placement.
     """
-    is_chart_angle = CHART_ANGLE_MIN_INDEX < point_idx < CHART_ANGLE_MAX_INDEX
-
     # Dual charts (Transit, Synastry, Return)
     if chart_type in DUAL_CHART_TYPES:
-        if is_chart_angle:
-            return DUAL_CHART_ANGLE_RADIUS
         return DUAL_CHART_PLANET_RADIUS_A if is_alternate_position else DUAL_CHART_PLANET_RADIUS_B
 
     # Natal chart with external view
     # In external view, all points are placed on outer ring with small offset variations
-    # Original calculations: amin = 74-10=64, bmin = 94-10=84, cmin = 40-10=30
-    # Result: 74 - 64 = 10, 94 - 84 = 10, 40 - 30 = 10
+    # Original calculations: amin = 74-10=64, bmin = 94-10=84
+    # Result: 74 - 64 = 10, 94 - 84 = 10
     if external_view:
-        if is_chart_angle:
-            return 40 - (40 - 10)  # = 10
-        elif is_alternate_position:
-            return 74 - (74 - 10)  # = 10
-        else:
-            return 94 - (94 - 10)  # = 10
+        return 10
 
     # Standard natal chart
-    if is_chart_angle:
-        return 40
     return 74 if is_alternate_position else 94
 
 
@@ -519,41 +601,75 @@ def _calculate_indicator_adjustments(
     position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
     exclude_points = exclude_points or []
 
-    # Build position-to-index mapping (excluding filtered points)
-    position_index_map = {}
-    for i in range(len(points_settings)):
-        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
-            continue
-        position_index_map[points_abs_positions[i]] = i
+    # Build sorted (position, index) pairs (excluding filtered points). A list
+    # of tuples is used instead of a {abs_pos: index} dict so points sharing
+    # the exact same absolute position are all kept.
+    # v6 safety net: bound to the shorter of the two lists so an upstream
+    # mismatch (e.g. a return subject with fewer collected points than
+    # active_points settings) can't trigger an IndexError. Callers are
+    # expected to pass aligned lists; this guard is purely defensive.
+    n = min(len(points_settings), len(points_abs_positions))
+    sorted_point_indices = [
+        index
+        for _, index in sorted(
+            (points_abs_positions[i], i)
+            for i in range(n)
+            if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
+        )
+    ]
 
-    sorted_positions = sorted(position_index_map.keys())
-
-    # Identify groups of close points
-    point_groups: List[List[int]] = []
-    in_group = False
-
-    for pos_idx, abs_position in enumerate(sorted_positions):
-        point_a_idx = position_index_map[abs_position]
-        point_b_idx = position_index_map[
-            sorted_positions[0] if pos_idx == len(sorted_positions) - 1 else sorted_positions[pos_idx + 1]
-        ]
-
-        distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
-
-        if distance <= INDICATOR_GROUPING_THRESHOLD:
-            if in_group:
-                point_groups[-1].append(point_b_idx)
-            else:
-                point_groups.append([point_a_idx, point_b_idx])
-                in_group = True
-        else:
-            in_group = False
+    # Identify groups of close points (circular-aware: a run straddling the
+    # list start is one group, not two overwriting each other).
+    point_groups = _group_close_indicators(sorted_point_indices, points_abs_positions)
 
     # Apply adjustments based on group size
     for group in point_groups:
         _apply_group_adjustments(group, position_adjustments)
 
     return position_adjustments
+
+
+def _group_close_indicators(
+    sorted_point_indices: list[int],
+    points_abs_positions: Sequence[Any],
+) -> list[list[int]]:
+    """Group circularly-adjacent indicators closer than the grouping threshold.
+
+    The positions live on a circle: the run detection must treat the
+    last->first pair like any other, and a run straddling the list start must
+    stay ONE group — building it as a separate group would overwrite the first
+    group's adjustments and leave labels overlapping.
+    """
+    m = len(sorted_point_indices)
+    if m < 2:
+        return []
+
+    close_to_next = [
+        degree_difference(
+            points_abs_positions[sorted_point_indices[k]],
+            points_abs_positions[sorted_point_indices[(k + 1) % m]],
+        )
+        <= INDICATOR_GROUPING_THRESHOLD
+        for k in range(m)
+    ]
+
+    if all(close_to_next):
+        # Every neighbor pair is close: one single circular group.
+        return [list(sorted_point_indices)]
+
+    # Rotate to a run boundary so each maximal run is scanned contiguously.
+    start = next(k for k in range(m) if not close_to_next[(k - 1) % m])
+    groups: list[list[int]] = []
+    current = [sorted_point_indices[start]]
+    for step in range(m):
+        k = (start + step) % m
+        if close_to_next[k]:
+            current.append(sorted_point_indices[(k + 1) % m])
+        else:
+            if len(current) > 1:
+                groups.append(current)
+            current = [sorted_point_indices[(k + 1) % m]]
+    return groups
 
 
 def _apply_group_adjustments(group: list[int], adjustments: dict[int, float]) -> None:
@@ -618,7 +734,15 @@ def _apply_secondary_group_adjustments(group: list[int], adjustments: dict[int, 
         adjustments[group[1]] = -1.0
         adjustments[group[2]] = 1.0
         adjustments[group[3]] = 2.0
-    # Note: Groups of 5+ are not handled for secondary points in original code
+    elif size >= 5:
+        # Spread a 5+ transit stellium symmetrically about its center, mirroring
+        # the primary path (whose size>=5 branch uses spread 1.5). Secondary
+        # spacing is tighter (2/3 of primary, matching the 2/3/4 ratios above),
+        # so a 5+ outer stellium's degree labels no longer stack and overlap.
+        spread = 1.0
+        mid = (size - 1) / 2
+        for i, idx in enumerate(group):
+            adjustments[idx] = (i - mid) * spread
 
 
 def _calculate_secondary_indicator_adjustments(
@@ -646,35 +770,26 @@ def _calculate_secondary_indicator_adjustments(
     position_adjustments: dict[int, float] = {i: 0.0 for i in range(len(points_settings))}
     exclude_points = exclude_points or []
 
-    # Build position-to-index mapping (excluding filtered points)
-    position_index_map = {}
-    for i in range(len(points_settings)):
-        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
-            continue
-        position_index_map[points_abs_positions[i]] = i
+    # Build sorted (position, index) pairs (excluding filtered points). A list
+    # of tuples is used instead of a {abs_pos: index} dict so points sharing
+    # the exact same absolute position are all kept.
+    # v6 safety net: bound to the shorter of the two lists so an upstream
+    # mismatch (e.g. a return subject with fewer collected points than
+    # active_points settings) can't trigger an IndexError. Callers are
+    # expected to pass aligned lists; this guard is purely defensive.
+    n = min(len(points_settings), len(points_abs_positions))
+    sorted_point_indices = [
+        index
+        for _, index in sorted(
+            (points_abs_positions[i], i)
+            for i in range(n)
+            if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
+        )
+    ]
 
-    sorted_positions = sorted(position_index_map.keys())
-
-    # Identify groups of close points
-    point_groups: List[List[int]] = []
-    in_group = False
-
-    for pos_idx, abs_position in enumerate(sorted_positions):
-        point_a_idx = position_index_map[abs_position]
-        point_b_idx = position_index_map[
-            sorted_positions[0] if pos_idx == len(sorted_positions) - 1 else sorted_positions[pos_idx + 1]
-        ]
-
-        distance = degreeDiff(points_abs_positions[point_a_idx], points_abs_positions[point_b_idx])
-
-        if distance <= INDICATOR_GROUPING_THRESHOLD:
-            if in_group:
-                point_groups[-1].append(point_b_idx)
-            else:
-                point_groups.append([point_a_idx, point_b_idx])
-                in_group = True
-        else:
-            in_group = False
+    # Identify groups of close points (circular-aware: a run straddling the
+    # list start is one group, not two overwriting each other).
+    point_groups = _group_close_indicators(sorted_point_indices, points_abs_positions)
 
     # Apply secondary-specific adjustments (tighter spacing)
     for group in point_groups:
@@ -686,7 +801,7 @@ def _calculate_secondary_indicator_adjustments(
 def _calculate_text_rotation(
     first_house_degree: float,
     point_abs_position: float,
-) -> Tuple[float, str]:
+) -> tuple[float, str]:
     """
     Calculate text rotation angle and anchor for degree labels.
 
@@ -728,13 +843,18 @@ def _generate_point_svg(
     y: float,
     scale: float,
     point_name: str,
+    horoscope_id: Union[str, None] = None,
+    glyph_id: Union[str, None] = None,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Generate SVG markup for a celestial point.
 
     Creates a group element containing the point symbol with proper
     positioning, scaling, and metadata attributes. If the point is
-    retrograde, a small retrograde symbol (℞) is rendered next to the glyph.
+    retrograde, a small retrograde symbol (℞) is rendered next to the glyph;
+    with ``show_motion_state`` a body at a station takes that same spot with
+    an "SR" or "SD" mark instead, naming the turn it is making.
 
     Args:
         point_details: Model containing point data.
@@ -748,25 +868,53 @@ def _generate_point_svg(
     """
     is_retrograde = point_details["retrograde"] is True
     retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
+    horoscope_attr = f' kr:horoscope="{horoscope_id}"' if horoscope_id else ""
+    gauq = getattr(point_details, "gauquelin_sector", None)
+    gauq_attr = f' kr:gauquelinsector="{gauq}"' if gauq is not None else ""
+    state_attrs = point_state_attributes(point_details)
 
-    svg = f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" '
-    svg += f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" '
-    svg += f'kr:signposition="{point_details["position"]}" kr:slug="{point_details["name"]}"{retro_attr} '
-    svg += f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">'
-    svg += f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{point_name}" />'
+    # kr:cx / kr:cy — the rendered glyph center, emitted so frontend hit-
+    # detection can use an exact center without having to measure the symbol's
+    # <use> (whose bbox depends on the referenced <symbol>, which has no
+    # intrinsic viewBox). `x` and `y` passed into this function are the glyph
+    # center in the FULL_WHEEL-LOCAL frame — the translate(-12*scale, -12*scale)
+    # on the wrapping <g> cancels the half-offset that the symbol's own
+    # coordinate system imposes. chart_drawer._rebase_glyph_centers then adds
+    # each template's Full_Wheel translate so the final SVG carries true
+    # root-space values.
+    glyph_ref = glyph_id or (
+        point_name if point_details.point_type == "House" else resolve_glyph_id(point_name)
+    )
+    parts: list[str] = [
+        f'<g kr:node="ChartPoint" kr:house="{point_details["house"]}" ',
+        f'kr:sign="{point_details["sign"]}" kr:absoluteposition="{point_details["abs_pos"]}" ',
+        f'kr:signposition="{point_details["position"]}" kr:slug="{escape_svg_text(point_details["name"])}"{retro_attr}{horoscope_attr}{gauq_attr}{state_attrs} ',
+        f'kr:cx="{x}" kr:cy="{y}" ',
+        f'transform="translate(-{12 * scale},-{12 * scale}) scale({scale})">',
+        f'<use x="{x * (1 / scale)}" y="{y * (1 / scale)}" xlink:href="#{glyph_ref}" />',
+    ]
 
-    if is_retrograde:
-        # Position the retrograde symbol at the bottom-right foot of the planet glyph.
-        # Planet glyphs occupy ~24x24 units; x=+22 sits just past the right edge,
-        # y=+18 aligns the symbol with the glyph's baseline (foot).
-        retro_x = x * (1 / scale) + 22
-        retro_y = y * (1 / scale) + 18
-        svg += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">'
-        svg += '<use xlink:href="#retrograde" />'
-        svg += "</g>"
+    # Both marks share the bottom-right foot of the planet glyph. Planet glyphs
+    # occupy ~24x24 units; x=+22 sits just past the right edge, y=+18 aligns
+    # with the glyph's baseline (foot).
+    marker_x = x * (1 / scale) + 22
+    marker_y = y * (1 / scale) + 18
+    station = STATION_LABELS.get(getattr(point_details, "motion_state", None) or "") if show_motion_state else None
+    if station is not None:
+        # A station wins the spot: it is the rarer and more specific event, and
+        # the reader who turned the option on turned it on to see exactly this.
+        parts.append(
+            f'<text x="{marker_x}" y="{marker_y + 6}" '
+            f'style="fill: var(--kerykeion-color-warning); font-size: 11px; font-weight: bold;"'
+            f">{station}</text>"
+        )
+    elif is_retrograde:
+        parts.append(f'<g transform="translate({marker_x},{marker_y}) scale(0.55)">')
+        parts.append('<use xlink:href="#retrograde" />')
+        parts.append("</g>")
 
-    svg += "</g>"
-    return svg
+    parts.append("</g>")
+    return "".join(parts)
 
 
 def _draw_external_natal_lines(
@@ -777,6 +925,8 @@ def _draw_external_natal_lines(
     true_offset: Union[int, float],
     adjusted_offset: Union[int, float],
     color: str,
+    point_name: str = "",
+    abs_pos: Optional[Union[int, float]] = None,
 ) -> str:
     """
     Draw connecting lines for external view mode.
@@ -792,26 +942,33 @@ def _draw_external_natal_lines(
         true_offset: True angular position.
         adjusted_offset: Visually adjusted position.
         color: Line color.
+        point_name: Name of the celestial point (for kr:slug metadata).
+        abs_pos: The owning ChartPoint's absolute position — the same float the
+            ChartPoint tag interpolates, so kr:absoluteposition strings match.
 
     Returns:
         Updated SVG output with added lines.
     """
     # First line: from chart edge to intermediate position
-    x1 = sliceToX(0, radius - third_circle_radius, true_offset) + third_circle_radius
-    y1 = sliceToY(0, radius - third_circle_radius, true_offset) + third_circle_radius
-    x2 = sliceToX(0, radius - point_radius - 30, true_offset) + point_radius + 30
-    y2 = sliceToY(0, radius - point_radius - 30, true_offset) + point_radius + 30
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+    x1 = wheel_x(0, radius - third_circle_radius, true_offset) + third_circle_radius
+    y1 = wheel_y(0, radius - third_circle_radius, true_offset) + third_circle_radius
+    x2 = wheel_x(0, radius - point_radius - 30, true_offset) + point_radius + 30
+    y2 = wheel_y(0, radius - point_radius - 30, true_offset) + point_radius + 30
 
     # Second line: from intermediate to final adjusted position
-    x1, y1 = x2, y2
-    x2 = sliceToX(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    y2 = sliceToY(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+    x3 = wheel_x(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
+    y3 = wheel_y(0, radius - point_radius - 10, adjusted_offset) + point_radius + 10
 
-    return output
+    pos_attr = f' kr:absoluteposition="{abs_pos}"' if abs_pos is not None else ""
+    return (
+        output
+        + f'<g kr:node="ConnectingLine" kr:slug="{escape_svg_text(point_name)}"{pos_attr}>'
+        + f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+        + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.3;"/>\n'
+        + f'<line x1="{x2}" y1="{y2}" x2="{x3}" y2="{y3}" '
+        + f'style="stroke-width:1px;stroke:{color};stroke-opacity:.5;"/>\n'
+        + "</g>"
+    )
 
 
 # =============================================================================
@@ -854,34 +1011,48 @@ def _draw_primary_point_indicators(
     position_adjustments = _calculate_indicator_adjustments(points_abs_positions, points_settings)
     zero_point = 360 - seventh_house_degree
 
-    for point_idx in range(len(points_settings)):
+    parts: list[str] = [output]
+
+    # Bound by the shortest list, as every sibling helper does (see
+    # _calculate_indicator_adjustments and _draw_secondary_points). A settings
+    # list longer than the collected points would otherwise raise IndexError.
+    n = min(len(points_settings), len(points_abs_positions), len(points_rel_positions))
+    for point_idx in range(n):
         point_offset = zero_point + points_abs_positions[point_idx]
         if point_offset > 360:
             point_offset -= 360
 
         # Draw radial indicator line
-        x1 = sliceToX(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
-        y1 = sliceToY(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
-        x2 = sliceToX(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
-        y2 = sliceToY(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
+        x1 = wheel_x(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
+        y1 = wheel_y(0, radius - first_circle_radius + 4, point_offset) + first_circle_radius - 4
+        x2 = wheel_x(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
+        y2 = wheel_y(0, radius - first_circle_radius - 4, point_offset) + first_circle_radius + 4
 
         point_color = points_settings[point_idx]["color"]
-        output += f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
         # Draw degree text (always horizontal for readability)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = first_circle_radius - 10.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text text-anchor="middle" dominant-baseline="middle" '
-        output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+        point_slug = points_settings[point_idx]["name"]
+        # kr:absoluteposition reuses the same float as the ChartPoint tag so the
+        # two attribute strings are identical (focus code matches by string).
+        parts.append(
+            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}" '
+            f'kr:absoluteposition="{points_abs_positions[point_idx]}">'
+            f'<line class="planet-degree-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+            f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+            f'<g transform="translate({deg_x},{deg_y})">'
+            f'<text text-anchor="middle" dominant-baseline="middle" '
+            f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+            "</g>"
+        )
 
-    return output
+    return "".join(parts)
 
 
 def _draw_inner_point_indicators(
@@ -915,35 +1086,48 @@ def _draw_inner_point_indicators(
     """
     position_adjustments = _calculate_indicator_adjustments(points_abs_positions, points_settings)
     zero_point = 360 - seventh_house_degree
+    parts: list[str] = [output]
 
-    for point_idx in range(len(points_settings)):
+    # Bound by the shortest list, as every sibling helper does (see
+    # _calculate_indicator_adjustments and _draw_secondary_points). A settings
+    # list longer than the collected points would otherwise raise IndexError.
+    n = min(len(points_settings), len(points_abs_positions), len(points_rel_positions))
+    for point_idx in range(n):
         point_offset = zero_point + points_abs_positions[point_idx]
         if point_offset > 360:
             point_offset -= 360
 
         # Draw radial line at inner boundary
-        x1 = sliceToX(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
-        y1 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
-        x2 = sliceToX(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
-        y2 = sliceToY(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
+        x1 = wheel_x(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
+        y1 = wheel_y(0, radius - NATAL_INDICATOR_OFFSET + 4, point_offset) + NATAL_INDICATOR_OFFSET - 4
+        x2 = wheel_x(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
+        y2 = wheel_y(0, radius - NATAL_INDICATOR_OFFSET - 4, point_offset) + NATAL_INDICATOR_OFFSET + 4
 
         point_color = points_settings[point_idx]["color"]
-        output += f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
         # Draw degree text (always horizontal, positioned toward center)
         adjusted_point_offset = point_offset + position_adjustments[point_idx]
         text_radius = NATAL_INDICATOR_OFFSET + 5.0
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+        deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
 
         degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text text-anchor="middle" dominant-baseline="middle" '
-        output += f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
+        point_slug = points_settings[point_idx]["name"]
+        # Subject 1's ring in dual charts: kr:horoscope="0" + the same abs-pos
+        # float as the ChartPoint tag (string-identical for focus matching).
+        parts.append(
+            f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_slug)}" '
+            f'kr:absoluteposition="{points_abs_positions[point_idx]}" kr:horoscope="0">'
+            f'<line class="planet-degree-line-inner" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+            f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+            f'<g transform="translate({deg_x},{deg_y})">'
+            f'<text text-anchor="middle" dominant-baseline="middle" '
+            f'style="fill: {point_color}; font-size: 8px;">{degree_text}</text></g>'
+            "</g>"
+        )
 
-    return output
+    return "".join(parts)
 
 
 def _draw_secondary_points(
@@ -956,8 +1140,9 @@ def _draw_secondary_points(
     points_settings: Sequence[Mapping[str, Any]],
     chart_type: str,
     exclude_points: list[str],
-    main_offset: float,
     celestial_points: Union[list[KerykeionPointModel], None] = None,
+    show_degree_indicators: bool = True,
+    show_motion_state: bool = False,
 ) -> str:
     """
     Draw secondary celestial points for transit/synastry charts.
@@ -965,6 +1150,8 @@ def _draw_secondary_points(
     Renders the outer ring of planets (transit positions) with symbols,
     connecting lines, and degree indicators. If a point is retrograde,
     a small retrograde symbol (℞) is rendered next to the glyph.
+    The glyphs are always rendered; ``show_degree_indicators`` only controls
+    the tick lines and the degree labels next to them.
 
     Args:
         output: Current SVG output.
@@ -976,7 +1163,6 @@ def _draw_secondary_points(
         points_settings: Display settings.
         chart_type: Type of chart.
         exclude_points: Points to exclude from rendering.
-        main_offset: Offset for connecting line drawing.
         celestial_points: Celestial point models (used for retrograde detection).
 
     Returns:
@@ -988,30 +1174,34 @@ def _draw_secondary_points(
         points_abs_positions, points_settings, chart_type, exclude_points
     )
 
-    # Build position map (excluding houses for Transit)
-    position_index_map = {}
-    for i in range(len(points_settings)):
-        if chart_type == "Transit" and points_settings[i]["name"] in exclude_points:
-            continue
-        position_index_map[points_abs_positions[i]] = i
+    # Build sorted (position, index) pairs (excluding houses for Transit).
+    # A list of tuples is used instead of a {abs_pos: index} dict so points
+    # sharing the exact same absolute position are all rendered.
+    # Bound the scan to the shortest of the three parallel lists: every index
+    # in sorted_point_indices is later used to look up all three, so an index
+    # valid for points_settings but not for the positions lists would raise.
+    n = min(len(points_settings), len(points_abs_positions), len(points_rel_positions))
+    sorted_point_indices = [
+        index
+        for _, index in sorted(
+            (points_abs_positions[i], i)
+            for i in range(n)
+            if not (chart_type == "Transit" and points_settings[i]["name"] in exclude_points)
+        )
+    ]
 
-    sorted_positions = sorted(position_index_map.keys())
     zero_point = 360 - seventh_house_degree
     alternate_position = False
-    point_idx = 0
 
     # Draw each secondary point
-    for abs_position in sorted_positions:
-        point_idx = position_index_map[abs_position]
-
+    for point_idx in sorted_point_indices:
         if chart_type == "Transit" and points_settings[point_idx]["name"] in exclude_points:
             continue
 
-        # Determine point radius (alternating for visual separation)
-        is_chart_angle = CHART_ANGLE_MIN_INDEX < point_idx < CHART_ANGLE_MAX_INDEX
-        if is_chart_angle:
-            point_radius = 9
-        elif alternate_position:
+        # Determine point radius (alternating for visual separation). Angles
+        # alternate with everything else here too — see _determine_point_radius
+        # for why the lane they used to have is gone.
+        if alternate_position:
             point_radius = 18
             alternate_position = False
         else:
@@ -1024,64 +1214,95 @@ def _draw_secondary_points(
             point_offset -= 360
 
         # Draw point symbol
-        point_x = sliceToX(0, radius - point_radius, point_offset) + point_radius
-        point_y = sliceToY(0, radius - point_radius, point_offset) + point_radius
-        is_retrograde = (
-            celestial_points is not None
-            and point_idx < len(celestial_points)
-            and celestial_points[point_idx].retrograde is True
+        point_x = wheel_x(0, radius - point_radius, point_offset) + point_radius
+        point_y = wheel_y(0, radius - point_radius, point_offset) + point_radius
+        # Bound once per iteration rather than inside the glyph branch below:
+        # a point that carries its own glyph_id would otherwise leave the name
+        # pointing at the previous iteration's model.
+        point_details = (
+            celestial_points[point_idx]
+            if celestial_points is not None and point_idx < len(celestial_points)
+            else None
         )
+        is_retrograde = point_details is not None and point_details.retrograde is True
         retro_attr = ' kr:retrograde="true"' if is_retrograde else ""
-        output += f'<g class="transit-planet-name"{retro_attr} transform="translate(-6,-6)"><g transform="scale(0.5)">'
-        output += f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{points_settings[point_idx]["name"]}" />'
-        if is_retrograde:
-            # Same offset logic as _generate_point_svg: bottom-right foot of the glyph.
-            # Inner coordinate space is 2x due to scale(0.5) wrapper.
-            retro_x = point_x * 2 + 22
-            retro_y = point_y * 2 + 18
-            output += f'<g transform="translate({retro_x},{retro_y}) scale(0.55)">'
-            output += '<use xlink:href="#retrograde" />'
-            output += "</g>"
-        output += "</g></g>"
-
-        # Draw indicator line
-        x1 = sliceToX(0, radius + 3, point_offset) - 3
-        y1 = sliceToY(0, radius + 3, point_offset) - 3
-        x2 = sliceToX(0, radius - 3, point_offset) + 3
-        y2 = sliceToY(0, radius - 3, point_offset) + 3
         point_color = points_settings[point_idx]["color"]
-        output += f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-        output += f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
 
-        # Draw degree text (always horizontal for readability)
-        adjusted_point_offset = point_offset + position_adjustments[point_idx]
-        text_radius = -9.0
+        # Build point symbol with kr: metadata (matching _generate_point_svg attributes)
+        point_name = points_settings[point_idx]["name"]
+        # v6: dynamic points fall back to their shared generic symbols.
+        point_glyph = points_settings[point_idx].get("glyph_id")
+        if not point_glyph:
+            point_glyph = (
+                point_name
+                if point_details is not None and point_details.point_type == "House"
+                else resolve_glyph_id(point_name)
+            )
+        kr_attrs = f'kr:node="ChartPoint" kr:slug="{escape_svg_text(point_name)}" kr:horoscope="1"'
+        if point_details is not None:
+            cp = point_details
+            kr_attrs += f' kr:house="{cp.house}" kr:sign="{cp.sign}" kr:absoluteposition="{cp.abs_pos}" kr:signposition="{cp.position}"'
+            kr_attrs += point_state_attributes(cp)
+        # kr:cx / kr:cy — glyph center in the FULL_WHEEL-LOCAL frame, matching
+        # _generate_point_svg. The outer translate(-6,-6) plus inner scale(0.5)
+        # and pre-doubled use x/y place the symbol center exactly at
+        # (point_x, point_y) in that frame; chart_drawer._rebase_glyph_centers
+        # adds the template's Full_Wheel translate for true root-space values.
+        kr_attrs += f' kr:cx="{point_x}" kr:cy="{point_y}"'
+        point_svg = (
+            f'<g {kr_attrs}{retro_attr} class="transit-planet-name" transform="translate(-6,-6)"><g transform="scale(0.5)">'
+            f'<use x="{point_x * 2}" y="{point_y * 2}" xlink:href="#{point_glyph}" />'
+        )
+        # Same offset logic as _generate_point_svg: bottom-right foot of the
+        # glyph. Inner coordinate space is 2x due to the scale(0.5) wrapper.
+        marker_x = point_x * 2 + 22
+        marker_y = point_y * 2 + 18
+        station = (
+            STATION_LABELS.get(getattr(point_details, "motion_state", None) or "")
+            if show_motion_state and point_details is not None
+            else None
+        )
+        if station is not None:
+            point_svg += (
+                f'<text x="{marker_x}" y="{marker_y + 6}" '
+                f'style="fill: var(--kerykeion-color-warning); font-size: 11px; font-weight: bold;"'
+                f">{station}</text>"
+            )
+        elif is_retrograde:
+            point_svg += (
+                f'<g transform="translate({marker_x},{marker_y}) scale(0.55)"><use xlink:href="#retrograde" /></g>'
+            )
+        point_svg += "</g></g>"
 
-        deg_x = sliceToX(0, radius - text_radius, adjusted_point_offset) + text_radius
-        deg_y = sliceToY(0, radius - text_radius, adjusted_point_offset) + text_radius
+        output += point_svg
 
-        degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
-        output += f'<g transform="translate({deg_x},{deg_y})">'
-        output += f'<text text-anchor="middle" dominant-baseline="middle" '
-        output += f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+        if show_degree_indicators:
+            # Draw indicator line
+            x1 = wheel_x(0, radius + 3, point_offset) - 3
+            y1 = wheel_y(0, radius + 3, point_offset) - 3
+            x2 = wheel_x(0, radius - 3, point_offset) + 3
+            y2 = wheel_y(0, radius - 3, point_offset) + 3
 
-    # Draw connecting lines for the main reference point
-    dropin = 36 if chart_type in DUAL_CHART_TYPES else 0
-    x1 = sliceToX(0, radius - (dropin + 3), main_offset) + (dropin + 3)
-    y1 = sliceToY(0, radius - (dropin + 3), main_offset) + (dropin + 3)
-    x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    point_color = points_settings[point_idx]["color"]
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
+            # Draw degree text (always horizontal for readability)
+            adjusted_point_offset = point_offset + position_adjustments[point_idx]
+            text_radius = -9.0
 
-    # Second connecting line segment
-    dropin = 160 if chart_type in DUAL_CHART_TYPES else 120
-    x1 = sliceToX(0, radius - dropin, main_offset) + dropin
-    y1 = sliceToY(0, radius - dropin, main_offset) + dropin
-    x2 = sliceToX(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    y2 = sliceToY(0, radius - (dropin - 3), main_offset) + (dropin - 3)
-    output += f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-    output += f'style="stroke: {point_color}; stroke-width: 2px; stroke-opacity:.6;"/>'
+            deg_x = wheel_x(0, radius - text_radius, adjusted_point_offset) + text_radius
+            deg_y = wheel_y(0, radius - text_radius, adjusted_point_offset) + text_radius
+
+            degree_text = convert_decimal_to_degree_string(points_rel_positions[point_idx], format_type="1")
+            # Wrap tick + degree text in an Indicator node (kr:absoluteposition is
+            # the same float as the ChartPoint tag, so the strings are identical
+            # and downstream focus code can tie this tick to the outer ring).
+            output += (
+                f'<g kr:node="Indicator" kr:slug="{escape_svg_text(point_name)}" '
+                + f'kr:absoluteposition="{points_abs_positions[point_idx]}" kr:horoscope="1">'
+                + f'<line class="transit-planet-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
+                + f'style="stroke: {point_color}; stroke-width: 1px; stroke-opacity:.8;"/>'
+                + f'<g transform="translate({deg_x},{deg_y})">'
+                + '<text text-anchor="middle" dominant-baseline="middle" '
+                + f'style="fill: {point_color}; font-size: 10px;">{degree_text}</text></g>'
+                + "</g>"
+            )
 
     return output

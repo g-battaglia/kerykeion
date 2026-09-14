@@ -11,7 +11,7 @@ Responsibilities:
     - Time conversions (datetime <-> Julian Day)
     - Sidereal time computation
     - Coordinate transformations (equatorial -> horizontal)
-    - Precise sunrise/sunset calculation via Swiss Ephemeris
+    - Precise rise/set calculation (Sun, Moon) via Swiss Ephemeris
     - Global solar and lunar eclipse search via Swiss Ephemeris
 
 These helpers keep the main factory module focused on building domain models
@@ -24,11 +24,21 @@ from __future__ import annotations
 import logging
 import math
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import Optional, Tuple
-import swisseph as swe
+from typing import Optional
+from kerykeion.ephemeris_backend.backend import ephe, EPHE_DATA_PATH
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.utilities.core import wrap_180
 
 logger = logging.getLogger(__name__)
+
+
+# The "expected calculation failed → degrade to None" handlers below must catch
+# the backend's own error (libephemeris raises its ``Error`` hierarchy — incl.
+# ``EphemerisRangeError`` near the ephemeris edge; pyswisseph raises
+# ``swisseph.Error``), NOT ``RuntimeError`` which no backend raises. Resolve the
+# type once, module-level, so the ``except`` clauses stay mypy-clean (a bare
+# ``getattr(ephe, "Error", …)`` inline in an ``except`` is untyped ``Any``).
+_BACKEND_ERRORS: tuple = tuple({RuntimeError, getattr(ephe, "Error", RuntimeError)})
 
 
 # ---------------------------------------------------------------------------
@@ -36,16 +46,16 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 # Different swisseph builds expose eclipse flags with or without the SE_ prefix.
-ECL_TOTAL = getattr(swe, "SE_ECL_TOTAL", getattr(swe, "ECL_TOTAL", 0))
-ECL_ANNULAR_TOTAL = getattr(swe, "SE_ECL_ANNULAR_TOTAL", getattr(swe, "ECL_ANNULAR_TOTAL", 0))
-ECL_ANNULAR = getattr(swe, "SE_ECL_ANNULAR", getattr(swe, "ECL_ANNULAR", 0))
-ECL_PARTIAL = getattr(swe, "SE_ECL_PARTIAL", getattr(swe, "ECL_PARTIAL", 0))
-ECL_PENUMBRAL = getattr(swe, "SE_ECL_PENUMBRAL", getattr(swe, "ECL_PENUMBRAL", 0))
+ECL_TOTAL = getattr(ephe, "SE_ECL_TOTAL", getattr(ephe, "ECL_TOTAL", 0))
+ECL_ANNULAR_TOTAL = getattr(ephe, "SE_ECL_ANNULAR_TOTAL", getattr(ephe, "ECL_ANNULAR_TOTAL", 0))
+ECL_ANNULAR = getattr(ephe, "SE_ECL_ANNULAR", getattr(ephe, "ECL_ANNULAR", 0))
+ECL_PARTIAL = getattr(ephe, "SE_ECL_PARTIAL", getattr(ephe, "ECL_PARTIAL", 0))
+ECL_PENUMBRAL = getattr(ephe, "SE_ECL_PENUMBRAL", getattr(ephe, "ECL_PENUMBRAL", 0))
 
 # Distance unit conversion: Astronomical Unit to kilometers.
 # IAU 2012 nominal value: 1 AU = 149,597,870.700 km exactly
 # Source: https://www.iau.org/static/resolutions/IAU2012_English.pdf
-AU_KM = getattr(swe, "AUNIT", 149597870.7)
+AU_KM = getattr(ephe, "AUNIT", 149597870.7)
 
 # Standard meteorological conditions at sea level for atmospheric refraction calculations
 # Used by Swiss Ephemeris rise/set routines to compute apparent horizon
@@ -53,35 +63,39 @@ AU_KM = getattr(swe, "AUNIT", 149597870.7)
 STANDARD_ATMOSPHERIC_PRESSURE_HPA = 1013.25  # hectopascals (sea level)
 STANDARD_TEMPERATURE_CELSIUS = 15.0  # degrees Celsius
 
-# Global cache for ephemeris configuration
-_EPHEMERIS_CONFIG = None
 
 
 def safe_parse_iso_datetime(value: Optional[str]) -> datetime:
     """
     Parse an ISO formatted datetime string into an aware UTC datetime.
 
-    This helper is defensive:
+    This helper is tolerant about the *format*:
         - Accepts both standard ISO strings and those ending with 'Z'
         - Treats naive datetimes as UTC
-        - Falls back to the current UTC time if parsing fails
+
+    It is strict about *invalid input*: an empty or unparseable value raises
+    a :class:`KerykeionException` instead of silently falling back to the
+    current UTC time, which produced a plausible-looking but wrong result
+    downstream.
+
+    Raises:
+        KerykeionException: If ``value`` is empty/None or not a valid ISO
+            datetime string.
     """
     if not value:
-        logger.warning("safe_parse_iso_datetime received empty value; using current UTC time.")
-        return datetime.now(timezone.utc)
+        raise KerykeionException(
+            "Cannot parse ISO datetime: value is empty or None."
+        )
 
     try:
         dt = datetime.fromisoformat(value)
-    except ValueError:
+    except (TypeError, ValueError):
         try:
             dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
         except Exception as exc:
-            logger.warning(
-                "safe_parse_iso_datetime failed to parse value %r (%s); using current UTC time.",
-                value,
-                exc,
-            )
-            return datetime.now(timezone.utc)
+            raise KerykeionException(
+                f"Cannot parse ISO datetime {value!r}: {exc}"
+            ) from exc
 
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
@@ -121,22 +135,24 @@ def configure_ephemeris_path() -> int:
     """
     Configure Swiss Ephemeris path and base flags for calculations.
 
-    This function is idempotent - it sets the ephemeris path only once
-    on first call and caches the result, improving performance for
-    subsequent calls.
+    The path is (re-)applied on every call: ``set_ephe_path`` is cheap and
+    idempotent on both backends, while a once-only cache would silently
+    leave the path unset after any session reset elsewhere in the process
+    (``reset_session()``/``close()`` clear it), causing a fallback to
+    default data discovery — or, on pyswisseph, to the low-precision
+    Moshier ephemeris.
+
+    Prefer ``kerykeion.ephemeris_backend.backend.ephemeris_session`` for new code;
+    it handles path setup, locking, and cleanup in one place.
 
     Returns:
-        int: Base iflag (FLG_SWIEPH) to be used in swe.calc_ut-style functions.
+        int: Base iflag (FLG_SWIEPH) to be used in ephe.calc_ut-style functions.
     """
-    global _EPHEMERIS_CONFIG
-    if _EPHEMERIS_CONFIG is None:
-        ephe_path = str(Path(__file__).parents[1].absolute() / "sweph")
-        swe.set_ephe_path(ephe_path)
-        _EPHEMERIS_CONFIG = swe.FLG_SWIEPH
-    return _EPHEMERIS_CONFIG
+    ephe.set_ephe_path(EPHE_DATA_PATH)
+    return ephe.FLG_SWIEPH
 
 
-def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
+def _extract_eclipse_result(result: object) -> Optional[tuple[int, float]]:
     """
     Extract (retflag, jd) from Swiss Ephemeris eclipse calculation result.
 
@@ -144,10 +160,10 @@ def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
     where tret is a tuple of floats with tret[0] being the Julian Day of the eclipse.
 
     Args:
-        result: Raw result from swe.sol_eclipse_when_glob or swe.lun_eclipse_when.
+        result: Raw result from ephe.sol_eclipse_when_glob or ephe.lun_eclipse_when.
 
     Returns:
-        Optional[Tuple[int, float]]: (retflag, eclipse_jd) or None if extraction fails.
+        Optional[tuple[int, float]]: (retflag, eclipse_jd) or None if extraction fails.
     """
     if not (isinstance(result, tuple) and len(result) >= 2):
         return None
@@ -161,7 +177,7 @@ def _extract_eclipse_result(result: object) -> Optional[Tuple[int, float]]:
     return retflag, float(tret[0])
 
 
-def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]]:
+def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]]:
     """
     Compute the next global solar eclipse after the given Julian day.
 
@@ -171,13 +187,13 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
         jd_start: Starting Julian Day in Universal Time (UT).
 
     Returns:
-        Optional[Tuple[int, float]]: (retflag, eclipse_jd) where:
+        Optional[tuple[int, float]]: (retflag, eclipse_jd) where:
             - retflag: Eclipse type flags (e.g. SE_ECL_TOTAL, SE_ECL_PARTIAL)
             - eclipse_jd: Julian Day of maximum eclipse in UT
             Returns None if calculation fails or no eclipse found.
 
     Examples:
-        >>> from kerykeion.utilities import datetime_to_julian
+        >>> from kerykeion.utilities.core import datetime_to_julian
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
         >>> result = compute_next_solar_eclipse_jd(jd)
         >>> if result:
@@ -186,8 +202,8 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
     """
     try:
         iflag = configure_ephemeris_path()
-        result = swe.sol_eclipse_when_glob(jd_start, iflag)
-    except RuntimeError as exc:
+        result = ephe.sol_eclipse_when_glob(jd_start, iflag)
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Solar eclipse calculation failed (expected): %s", exc)
         return None
@@ -199,7 +215,7 @@ def compute_next_solar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
     return _extract_eclipse_result(result)
 
 
-def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]]:
+def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[tuple[int, float]]:
     """
     Compute the next global lunar eclipse after the given Julian day.
 
@@ -209,13 +225,13 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
         jd_start: Starting Julian Day in Universal Time (UT).
 
     Returns:
-        Optional[Tuple[int, float]]: (retflag, eclipse_jd) where:
+        Optional[tuple[int, float]]: (retflag, eclipse_jd) where:
             - retflag: Eclipse type flags (e.g. SE_ECL_TOTAL, SE_ECL_PARTIAL)
             - eclipse_jd: Julian Day of maximum eclipse in UT
             Returns None if calculation fails or no eclipse found.
 
     Examples:
-        >>> from kerykeion.utilities import datetime_to_julian
+        >>> from kerykeion.utilities.core import datetime_to_julian
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
         >>> result = compute_next_lunar_eclipse_jd(jd)
         >>> if result:
@@ -224,8 +240,8 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
     """
     try:
         iflag = configure_ephemeris_path()
-        result = swe.lun_eclipse_when(jd_start, iflag)
-    except RuntimeError as exc:
+        result = ephe.lun_eclipse_when(jd_start, iflag)
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Lunar eclipse calculation failed (expected): %s", exc)
         return None
@@ -237,31 +253,147 @@ def compute_next_lunar_eclipse_jd(jd_start: float) -> Optional[Tuple[int, float]
     return _extract_eclipse_result(result)
 
 
-def compute_sun_rise_set_swe(
-    jd_midnight: float,
+def _extract_event_time(result: object) -> Optional[float]:
+    """
+    Extract the primary event time (JD) from an `ephe.rise_trans` result.
+
+    The backend returns:
+
+        (res, tret)
+
+    where:
+        - res: integer status (0 = event found, -2 = circumpolar, etc.)
+        - tret: tuple of 10 floats, with tret[0] = JD of the event.
+
+    Module-level rather than nested so the rise/set and transit helpers share
+    one reading of that contract: they must agree on what "no event" means, and
+    two copies would be free to drift apart.
+    """
+    if not isinstance(result, tuple) or not result:
+        return None
+
+    if len(result) < 2:
+        return None
+
+    res, tret = result[0], result[1]
+
+    # We only accept res == 0 (event found).
+    if not isinstance(res, int) or res != 0:
+        return None
+
+    if not isinstance(tret, (list, tuple)) or not tret:
+        return None
+
+    if not isinstance(tret[0], (float, int)):
+        return None
+
+    return float(tret[0])
+
+
+def compute_sun_transit_ephe(
+    jd_start: float,
     latitude: float,
     longitude: float,
-) -> Tuple[Optional[float], Optional[float]]:
+) -> Optional[float]:
     """
-    Compute precise sunrise and sunset times using Swiss Ephemeris `swe.rise_trans`.
+    Compute the Sun's next upper meridian transit — true local noon.
 
-    This helper delegates the heavy lifting to Swiss Ephemeris' dedicated
-    rise/transit routines, avoiding any custom numerical search logic.
+    This is the instant the Sun crosses the observer's meridian, i.e. the moment
+    it is highest in the sky. It is NOT the midpoint between sunrise and sunset:
+    the two coincide only when the declination is stationary. Away from the
+    solstices the midpoint drifts, and it drifts further the higher the latitude
+    (measured against this function: +21 s at Rome on the equinox, +34 s at
+    Ushuaia, +62 s at Reykjavik) — while at a longitude far from its timezone
+    the midpoint can land on the wrong civil day altogether.
+
+    A transit is a pure hour-angle search, so unlike rise/set it has no horizon,
+    no disc and no refraction: `atpress`/`attemp` are accepted by the backend and
+    ignored on this path, and the geocentric place is the correct one (diurnal
+    parallax displaces a body in altitude only, leaving the hour angle intact).
+    It also exists on days when rise and set do not — the Sun still culminates
+    during polar night — which is why the caller must not gate it on them.
 
     Args:
-        jd_midnight: Julian Day at the start of the *local* civil day,
-            expressed in UT (i.e. the Julian day of local midnight converted
-            to UTC). Swiss Ephemeris will search for events around this time.
+        jd_start: Julian Day (UT) to search forward from, normally local midnight.
         latitude: Observer latitude in degrees.
         longitude: Observer longitude in degrees.
 
     Returns:
-        Tuple[Optional[float], Optional[float]]: (sunrise_jd, sunset_jd)
-            Returns None for each event that doesn't occur on this day (polar day/night).
+        The transit instant as a Julian Day, or ``None`` if the backend could not
+        produce one.
     """
     try:
-        # Ensure Swiss Ephemeris is configured (idempotent).
         iflag = configure_ephemeris_path()
+        geopos = (float(longitude), float(latitude), 0.0)
+        CALC_MTRANSIT = getattr(ephe, "CALC_MTRANSIT", getattr(ephe, "SE_CALC_MTRANSIT", 4))
+
+        result = ephe.rise_trans(
+            jd_start,
+            ephe.SUN,
+            CALC_MTRANSIT,
+            geopos,
+            atpress=0.0,
+            attemp=0.0,
+            flags=iflag,
+        )
+        return _extract_event_time(result)
+
+    except _BACKEND_ERRORS as exc:
+        logger.debug("Sun transit calculation failed: %s", exc)
+        return None
+    except (AttributeError, TypeError, IndexError, ValueError) as exc:  # pragma: no cover
+        logger.error("Unexpected error in Sun transit calculation: %s", exc, exc_info=True)
+        return None
+
+
+def compute_rise_set_ephe(
+    jd_midnight: float,
+    latitude: float,
+    longitude: float,
+    body: Optional[int] = None,
+) -> tuple[Optional[float], Optional[float]]:
+    """
+    Compute precise rise and set times via the backend's `rise_trans`.
+
+    This helper delegates the heavy lifting to the backend's dedicated
+    rise/transit routines, avoiding any custom numerical search logic.
+
+    The event is the apparent UPPER LIMB on the horizon under a standard
+    atmosphere (1013.25 hPa, 15 degrees C), which leaves the Sun's geometric
+    centre near -0.83 degrees. That is deliberately a different question from
+    ``AstrologicalSubjectModel.is_diurnal``, which tests the geometric centre
+    against the true horizon: within a few minutes of the event the two
+    legitimately disagree, by 3.3 min at the equator and 10 min at 70 degrees.
+
+    The same convention is what makes the Moon's answer the one an almanac
+    prints: the backend adds the topocentric horizontal parallax for it, so the
+    moonrise is the moment the upper limb clears the horizon for an observer on
+    the ground, not for one at the Earth's centre.
+
+    Args:
+        jd_midnight: Julian Day at the start of the *local* civil day,
+            expressed in UT (i.e. the Julian day of local midnight converted
+            to UTC). The backend will search for events around this time.
+        latitude: Observer latitude in degrees.
+        longitude: Observer longitude in degrees.
+        body: Backend body id to rise and set. Defaults to ``ephe.SUN``
+            (resolved at call time, not at import, so a patched backend is
+            honoured). ``ephe.MOON`` gives moonrise/moonset.
+
+    Returns:
+        tuple[Optional[float], Optional[float]]: (rise_jd, set_jd)
+            Returns None for each event the backend does not find after
+            ``jd_midnight`` at all (polar day/night). Note that a returned
+            instant is only guaranteed to be the NEXT event: for the Moon,
+            which is ~50 minutes later each day, it routinely falls on the
+            following civil day, and the caller decides whether that still
+            counts as this day's moonrise.
+    """
+    try:
+        # Ensure the ephemeris backend is configured (idempotent).
+        iflag = configure_ephemeris_path()
+
+        target_body = ephe.SUN if body is None else body
 
         # Observer position: longitude, latitude, altitude (meters)
         geopos = (float(longitude), float(latitude), 0.0)
@@ -271,45 +403,13 @@ def compute_sun_rise_set_swe(
         attemp = STANDARD_TEMPERATURE_CELSIUS
 
         # Compatibility shims for rise/set calculation flags
-        CALC_RISE = getattr(swe, "CALC_RISE", getattr(swe, "SE_CALC_RISE", 1))
-        CALC_SET = getattr(swe, "CALC_SET", getattr(swe, "SE_CALC_SET", 2))
+        CALC_RISE = getattr(ephe, "CALC_RISE", getattr(ephe, "SE_CALC_RISE", 1))
+        CALC_SET = getattr(ephe, "CALC_SET", getattr(ephe, "SE_CALC_SET", 2))
 
-        def _extract_event_time(result: object) -> Optional[float]:
-            """
-            Extract the primary event time (JD) from `swe.rise_trans` result.
-
-            According to the Python wrapper documentation, the result is:
-
-                (res, tret)
-
-            where:
-                - res: integer status (0 = event found, -2 = circumpolar, etc.)
-                - tret: tuple of 10 floats, with tret[0] = JD of the event.
-            """
-            if not isinstance(result, tuple) or not result:
-                return None
-
-            if len(result) < 2:
-                return None
-
-            res, tret = result[0], result[1]
-
-            # We only accept res == 0 (event found).
-            if not isinstance(res, int) or res != 0:
-                return None
-
-            if not isinstance(tret, (list, tuple)) or not tret:
-                return None
-
-            if not isinstance(tret[0], (float, int)):
-                return None
-
-            return float(tret[0])
-
-        # Sunrise (next rise after jd_midnight)
-        sunrise_result = swe.rise_trans(
+        # Rise (next rise after jd_midnight)
+        rise_result = ephe.rise_trans(
             jd_midnight,
-            swe.SUN,
+            target_body,
             CALC_RISE,
             geopos,
             atpress=atpress,
@@ -317,10 +417,10 @@ def compute_sun_rise_set_swe(
             flags=iflag,
         )
 
-        # Sunset (next set after jd_midnight)
-        sunset_result = swe.rise_trans(
+        # Set (next set after jd_midnight)
+        set_result = ephe.rise_trans(
             jd_midnight,
-            swe.SUN,
+            target_body,
             CALC_SET,
             geopos,
             atpress=atpress,
@@ -328,19 +428,45 @@ def compute_sun_rise_set_swe(
             flags=iflag,
         )
 
-        sunrise_jd = _extract_event_time(sunrise_result)
-        sunset_jd = _extract_event_time(sunset_result)
+        rise_jd = _extract_event_time(rise_result)
+        set_jd = _extract_event_time(set_result)
 
-        return sunrise_jd, sunset_jd
+        return rise_jd, set_jd
 
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: circumpolar conditions, ephemeris unavailable, etc.
-        logger.debug("Sun rise/set calculation failed (expected for polar regions): %s", exc)
+        logger.debug("Rise/set calculation failed (expected for polar regions): %s", exc)
         return None, None
     except (AttributeError, TypeError, IndexError, ValueError) as exc:  # pragma: no cover
         # Unexpected error: potential bug in code
-        logger.error("Unexpected error in Sun rise/set calculation: %s", exc, exc_info=True)
+        logger.error("Unexpected error in rise/set calculation: %s", exc, exc_info=True)
         return None, None
+
+
+def compute_sun_rise_set_ephe(
+    jd_midnight: float,
+    latitude: float,
+    longitude: float,
+) -> tuple[Optional[float], Optional[float]]:
+    """
+    Compute precise sunrise and sunset times via the backend's `rise_trans`.
+
+    Backwards-compatible alias kept for the Sun, which is the case with callers
+    (and patch targets) already in the wild. It forwards to
+    :func:`compute_rise_set_ephe` with no body argument, so the Sun's answer is
+    the same call it always was, byte for byte — pressure, temperature, flags
+    and refracted upper limb included.
+
+    Args:
+        jd_midnight: Julian Day at the start of the *local* civil day, in UT.
+        latitude: Observer latitude in degrees.
+        longitude: Observer longitude in degrees.
+
+    Returns:
+        tuple[Optional[float], Optional[float]]: (sunrise_jd, sunset_jd)
+            Returns None for each event that doesn't occur on this day (polar day/night).
+    """
+    return compute_rise_set_ephe(jd_midnight, latitude, longitude)
 
 
 def compute_lunar_phase_jd(
@@ -352,8 +478,8 @@ def compute_lunar_phase_jd(
     Compute exact Julian Day when Sun-Moon longitudinal angle reaches target value.
 
     Uses binary search with Swiss Ephemeris for maximum precision (~1 second),
-    replacing the mean synodic month approximation. The search is constrained
-    to ±30 days from jd_start to ensure convergence.
+    replacing the mean synodic month approximation. The bracketing walk covers
+    up to ±31 days from jd_start, enough for any same-phase spacing.
 
     Args:
         jd_start: Starting Julian Day in Universal Time (UT).
@@ -363,15 +489,16 @@ def compute_lunar_phase_jd(
                 - 90° = First Quarter (Moon 90° east of Sun)
                 - 180° = Full Moon (Moon opposite Sun)
                 - 270° = Last Quarter (Moon 90° west of Sun)
-        forward: If True, search forward in time; if False, search backward.
+        forward: If True, find the first occurrence after jd_start; if False,
+            find the most recent occurrence at or before jd_start.
 
     Returns:
         Julian Day (UT) when the phase angle is reached with ~1 second precision,
-        or None if calculation fails or phase is not found within ±30 day search window.
+        or None if calculation fails or phase is not found within the ±31 day search window.
 
     Examples:
         >>> # Find next Full Moon after Jan 1, 2025
-        >>> from kerykeion.utilities import datetime_to_julian, julian_to_datetime
+        >>> from kerykeion.utilities.core import datetime_to_julian, julian_to_datetime
         >>> jd = datetime_to_julian(datetime(2025, 1, 1, tzinfo=timezone.utc))
         >>> full_moon_jd = compute_lunar_phase_jd(jd, 180.0, forward=True)
         >>> if full_moon_jd:
@@ -380,23 +507,53 @@ def compute_lunar_phase_jd(
     """
     try:
         configure_ephemeris_path()
-        iflag = swe.FLG_SWIEPH
+        iflag = ephe.FLG_SWIEPH
 
         # Normalize target angle to [0, 360)
         target_angle = target_angle % 360.0
 
-        # Search range: ±30 days is sufficient to find any lunar phase.
-        # Synodic month varies between ~29.27 and ~29.83 days (extremes).
+        # Search range: the daily bracketing walk below covers search_range + 1
+        # = 31 days, enough for any spacing between consecutive same-phase
+        # instants: new/full repeat within ~29.27-29.83 days, and quarter
+        # phases stretch slightly wider (measured max 29.93 days over
+        # 1990-2045) because the lunar anomaly affects them more strongly.
         # Mean synodic month: 29.530588853 days (Chapront ELP 2000-82B)
         # Source: https://eclipse.gsfc.nasa.gov/SEhelp/moonorbit.html
         search_range = 30.0
 
-        if forward:
-            jd_min = jd_start
-            jd_max = jd_start + search_range
-        else:
-            jd_min = jd_start - search_range
-            jd_max = jd_start
+        def _signed_diff(jd: float) -> float:
+            # Sun-Moon separation minus target, normalized to [-180, 180) so the
+            # sought instant is an upward zero crossing (the separation grows
+            # monotonically at ~12.2°/day).
+            sun_pos = ephe.calc_ut(jd, ephe.SUN, iflag)[0]
+            moon_pos = ephe.calc_ut(jd, ephe.MOON, iflag)[0]
+            angle = (float(moon_pos[0]) - float(sun_pos[0])) % 360.0
+            return wrap_180(angle - target_angle)
+
+        # The normalized diff is a sawtooth: it rises through zero exactly at
+        # the sought instants and jumps from +180 to -180 once per synodic
+        # month. Plain bisection over a 30-day window is unreliable on such a
+        # shape — depending on where the wrap falls it can converge on the
+        # wrap itself (the opposite phase) or collapse onto a window edge.
+        # So first bracket the nearest genuine crossing in the requested
+        # direction with daily samples (a real crossing is a ~12° rise
+        # between samples, unlike the ~360° jump at the wrap), then bisect
+        # inside that one-day bracket.
+        step = 1.0 if forward else -1.0
+        prev_jd = jd_start
+        prev_diff = _signed_diff(prev_jd)
+        bracket = None
+        for day in range(1, int(search_range) + 2):
+            cur_jd = jd_start + step * float(day)
+            cur_diff = _signed_diff(cur_jd)
+            earlier_diff, later_diff = (prev_diff, cur_diff) if forward else (cur_diff, prev_diff)
+            if earlier_diff < 0.0 <= later_diff:
+                bracket = (min(prev_jd, cur_jd), max(prev_jd, cur_jd))
+                break
+            prev_jd, prev_diff = cur_jd, cur_diff
+        if bracket is None:
+            return None
+        jd_min, jd_max = bracket
 
         # Binary search convergence criteria:
         # - Tolerance: 1 second = 1/86400 day (sufficient for astronomical applications)
@@ -407,27 +564,15 @@ def compute_lunar_phase_jd(
 
         for _ in range(max_iterations):
             jd_mid = (jd_min + jd_max) / 2.0
+            diff = _signed_diff(jd_mid)
 
-            # Get Sun and Moon positions
-            sun_pos = swe.calc_ut(jd_mid, swe.SUN, iflag)[0]
-            moon_pos = swe.calc_ut(jd_mid, swe.MOON, iflag)[0]
-
-            # Calculate Sun-Moon angle
-            sun_lon = float(sun_pos[0])
-            moon_lon = float(moon_pos[0])
-            angle = (moon_lon - sun_lon) % 360.0
-
-            # Normalize angular difference to [-180, 180) to handle angle wrapping.
-            # Example: if angle=10° and target=350°, diff should be 20° (not -340°)
-            diff = (angle - target_angle + 180.0) % 360.0 - 180.0
-
-            # Binary search logic:
-            # - Forward search: if Moon hasn't reached target (diff < 0), advance time
-            # - Backward search: if Moon is past target (diff > 0), go back in time
-            if (forward and diff < 0) or (not forward and diff > 0):
-                jd_min = jd_mid  # Target phase occurs later in time
+            # The target instant is an upward zero crossing of diff: below the
+            # target → it lies later, at/above → it lies at or earlier. The
+            # backward case was bracketed above, so the same rule applies.
+            if diff < 0:
+                jd_min = jd_mid
             else:
-                jd_max = jd_mid  # Target phase occurs earlier in time
+                jd_max = jd_mid
 
             # Check if range is small enough
             if abs(jd_max - jd_min) < tolerance:
@@ -436,7 +581,7 @@ def compute_lunar_phase_jd(
         # Fallback: return best estimate
         return (jd_min + jd_max) / 2.0
 
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Lunar phase calculation failed (expected): %s", exc)
         return None
@@ -462,7 +607,7 @@ def equatorial_to_horizontal(
     jd_ut: float,
     latitude: float,
     longitude: float,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Convert equatorial coordinates (RA, Dec) to horizontal coordinates (alt, az).
 
@@ -477,7 +622,7 @@ def equatorial_to_horizontal(
         longitude: Observer longitude in degrees.
 
     Returns:
-        Tuple[float, float]: (altitude_degrees, azimuth_degrees).
+        tuple[float, float]: (altitude_degrees, azimuth_degrees).
     """
     # Convert RA to hours and angles to radians for spherical trigonometry
     ra_hours = ra_deg / 15.0
@@ -518,26 +663,26 @@ def compute_sun_position(
     jd_ut: float,
     latitude: float,
     longitude: float,
-) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+) -> tuple[Optional[float], Optional[float], Optional[float]]:
     """
     Compute apparent Sun altitude, azimuth and distance using Swiss Ephemeris.
 
     Returns:
-        Tuple[Optional[float], Optional[float], Optional[float]]:
+        tuple[Optional[float], Optional[float], Optional[float]]:
             (altitude_deg, azimuth_deg, distance_km)
     """
     try:
         configure_ephemeris_path()
-        iflag = swe.FLG_SWIEPH | swe.FLG_SPEED
-        sun_calc = swe.calc_ut(jd_ut, swe.SUN, iflag)[0]
+        iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
+        sun_calc = ephe.calc_ut(jd_ut, ephe.SUN, iflag)[0]
         distance_km = float(sun_calc[2]) * AU_KM
 
-        sun_eq = swe.calc_ut(jd_ut, swe.SUN, iflag | swe.FLG_EQUATORIAL)[0]
+        sun_eq = ephe.calc_ut(jd_ut, ephe.SUN, iflag | ephe.FLG_EQUATORIAL)[0]
         ra_deg = float(sun_eq[0])
         dec_deg = float(sun_eq[1])
 
         altitude, azimuth = equatorial_to_horizontal(ra_deg, dec_deg, jd_ut, latitude, longitude)
-    except RuntimeError as exc:
+    except _BACKEND_ERRORS as exc:
         # Expected error: ephemeris data unavailable, date out of range, etc.
         logger.debug("Sun position calculation failed (expected): %s", exc)
         return None, None, None
@@ -556,7 +701,9 @@ __all__ = [
     "configure_ephemeris_path",
     "compute_next_solar_eclipse_jd",
     "compute_next_lunar_eclipse_jd",
-    "compute_sun_rise_set_swe",
+    "compute_rise_set_ephe",
+    "compute_sun_rise_set_ephe",
+    "compute_sun_transit_ephe",
     "compute_lunar_phase_jd",
     "greenwich_mean_sidereal_time",
     "equatorial_to_horizontal",

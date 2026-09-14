@@ -29,8 +29,8 @@ To set the language for your chart, use the `chart_language` parameter when crea
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 # Russian Language Chart (offline)
 ru_subject = AstrologicalSubjectFactory.from_birth_data(
@@ -61,15 +61,15 @@ it_chart.save_svg(output_path=Path("charts_output"), filename="loren-it")
 
 ### English (EN) - Default
 
-![English Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20EN%20-%20Natal%20Chart.svg)
+![English Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20EN%20-%20Natal%20Chart%20-%20Classic.svg)
 
 ### German (DE)
 
-![German Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20DE%20-%20Synastry%20Chart.svg)
+![German Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20DE%20-%20Synastry%20Chart%20-%20Classic.svg)
 
 ### Russian (RU)
 
-![Russian Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20RU%20-%20Transit%20Chart.svg)
+![Russian Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20RU%20-%20Transit%20Chart%20-%20Classic.svg)
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: 'Active Points Reference'
-description: 'Complete reference for all 63 celestial points available in Kerykeion: planets, asteroids, TNOs, Arabic parts, fixed stars, and special points.'
+description: 'Complete reference for 53 active chart points plus separately configured fixed stars.'
 category: 'Reference'
 tags: ['docs', 'points', 'planets', 'asteroids', 'configuration', 'kerykeion']
 order: 14
@@ -8,7 +8,10 @@ order: 14
 
 # Active Points Reference
 
-Kerykeion supports **63 celestial points** that can be individually enabled or disabled via the `active_points` parameter. This page documents every available point and the preset configurations.
+Kerykeion supports **53 non-star chart points** through the `active_points`
+parameter. Fixed stars use the separate `active_fixed_stars` parameter and
+fixed-star presets; they are not members of `ALL_ACTIVE_POINTS`. This page
+documents both configuration mechanisms.
 
 ## Available Points
 
@@ -40,7 +43,7 @@ Two calculation methods are available: **True** (oscillating, astronomically pre
 | `Mean_North_Lunar_Node` | Mean (averaged) North Node |
 | `Mean_South_Lunar_Node` | Mean (averaged) South Node |
 
-By default, only the True nodes are active. You can switch to Mean nodes or enable both.
+By default, only `True_North_Lunar_Node` is active (the South Node is not). You can switch to Mean nodes or enable more.
 
 ### Angles / Axial Cusps (4)
 
@@ -53,13 +56,16 @@ The four angles of the chart. These are always recommended to keep active.
 | `Descendant` | Setting point, the western horizon |
 | `Imum_Coeli` | Nadir, the lowest point |
 
-### Other Points (5)
+### Other Points (8)
 
 | Point | Description |
 | :---- | :---------- |
 | `Chiron` | The "wounded healer" asteroid/comet |
 | `Mean_Lilith` | Mean Black Moon Lilith (lunar apogee, averaged) |
 | `True_Lilith` | True (oscillating) Black Moon Lilith |
+| `Interpolated_Lilith` | Interpolated Black Moon Lilith (smoothed between mean and true) |
+| `Mean_Priapus` | Mean Priapus (anti-Lilith, lunar perigee, averaged) |
+| `True_Priapus` | True (oscillating) Priapus |
 | `Earth` | Useful for heliocentric charts |
 | `Pholus` | Centaur object associated with catalytic events |
 
@@ -73,6 +79,21 @@ The four major asteroids in the main belt.
 | `Pallas` | Wisdom, strategy, creative intelligence |
 | `Juno` | Partnership, commitment, marriage |
 | `Vesta` | Devotion, focus, sacred service |
+
+### Uranian / Hamburg School Planets (8)
+
+Eight hypothetical trans-Neptunian points used in Uranian astrology. Pass them in `active_points` to include.
+
+| Point | Description |
+| :---- | :---------- |
+| `Cupido` | Relationships, family, art, social connections |
+| `Hades` | Hidden things, the past, degradation, research |
+| `Zeus` | Directed energy, leadership, machinery, fire |
+| `Kronos` | Authority, government, expertise, height |
+| `Apollon` | Expansion, commerce, science, peace |
+| `Admetos` | Depth, stagnation, concentration, beginnings/endings |
+| `Vulkanus` | Mighty force, intensity, power |
+| `Poseidon` | Idealism, spirituality, enlightenment, illusion |
 
 ### Trans-Neptunian Objects (7)
 
@@ -88,11 +109,16 @@ Distant objects beyond Neptune. Ephemeris data may not be available for all hist
 | `Orcus` | Oaths, the underworld, accountability |
 | `Quaoar` | Creation myths, primordial forces |
 
-> **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, it is silently removed from the active points for that subject.
+> **Note:** Some TNOs may not have ephemeris data for very old or far-future dates. If calculation fails for a point, a warning is logged and the point is removed from the active points for that subject.
 
-### Fixed Stars (23)
+### Fixed Stars (1,447-name catalog; 23-star preset, configured separately)
 
-All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 additional bright stars. Fixed stars are inactive by default.
+The default libephemeris backend provides a 1,447-name catalog. The 23 names
+below form `DEFAULT_FIXED_STARS` (all 15 Behenian stars plus 8 additional bright
+stars); they are a convenient preset, not the complete catalog. Fixed stars are
+inactive by default and are selected with `active_fixed_stars`, not
+`active_points`. Import `FixedStarCatalog` from `kerykeion.fixed_stars` and use
+`list_all()`/`find()` for the full catalog.
 
 #### Royal Stars (4)
 
@@ -103,7 +129,7 @@ All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 ad
 | `Antares` | ~1.1 | Royal star, intensity and obsession |
 | `Fomalhaut` | ~1.2 | Royal star, idealism and vision |
 
-#### Behenian Stars (12, not listed above)
+#### Behenian Stars (11, not listed above)
 
 | Point | Magnitude | Description |
 | :---- | :-------- | :---------- |
@@ -118,12 +144,12 @@ All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 ad
 | `Alphecca` | ~2.2 | Gemma, the jewel in the crown |
 | `Algorab` | ~2.9 | Delta Corvi, cunning |
 | `Deneb_Algedi` | ~2.8 | Tail of the goat, law and justice |
-| `Alkaid` | ~1.9 | Tip of Great Bear's tail, mourning and leadership |
 
-#### Other Bright Stars (7)
+#### Other Bright Stars (8)
 
 | Point | Magnitude | Description |
 | :---- | :-------- | :---------- |
+| `Alkaid` | ~1.9 | Tip of Great Bear's tail, mourning and leadership |
 | `Canopus` | -0.7 | Second brightest, pathfinding and navigation |
 | `Rigel` | 0.1 | Knowledge and ambition |
 | `Betelgeuse` | 0.4 | Fame and endings |
@@ -134,31 +160,33 @@ All 15 Behenian stars of the medieval/Hermetic tradition are included, plus 8 ad
 
 ### Arabic Parts / Lots (4)
 
-Calculated points based on the formula involving the Ascendant, Sun, and other bodies. Their calculation depends on whether the chart is diurnal or nocturnal (the `is_diurnal` field on the subject model).
+Calculated points based on the formula involving the Ascendant, Sun, and other bodies. For `Pars_Fortunae` and `Pars_Spiritus`, the calculation depends on whether the chart is diurnal or nocturnal (the `is_diurnal` field on the subject model); `Pars_Amoris` and `Pars_Fidei` use a single formula regardless of sect.
 
 | Point | Formula (Day) | Formula (Night) |
 | :---- | :------------ | :-------------- |
 | `Pars_Fortunae` | Asc + Moon - Sun | Asc + Sun - Moon |
 | `Pars_Spiritus` | Asc + Sun - Moon | Asc + Moon - Sun |
-| `Pars_Amoris` | Asc + Venus - Sun | Asc + Sun - Venus |
-| `Pars_Fidei` | Asc + Mercury - Moon | Asc + Moon - Mercury |
+| `Pars_Amoris` | Asc + Venus - Sun | Asc + Venus - Sun (same) |
+| `Pars_Fidei` | Asc + Jupiter - Saturn | Asc + Jupiter - Saturn (same) |
 
-### Special Points (2)
+### Special Points (4)
 
 | Point | Description |
 | :---- | :---------- |
 | `Vertex` | A fated point on the western side of the chart |
 | `Anti_Vertex` | The point opposite the Vertex |
+| `Interpolated_Perigee` | Interpolated lunar perigee point |
+| `White_Moon` | Selena / White Moon (hypothetical point) |
 
 ## Preset Configurations
 
 Kerykeion provides three preset lists you can import and use directly.
 
-### `DEFAULT_ACTIVE_POINTS` (18 points)
+### `DEFAULT_ACTIVE_POINTS` (14 points)
 
 The default configuration used when no `active_points` parameter is specified.
 
-Includes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, True_North_Lunar_Node, True_South_Lunar_Node, Chiron, Mean_Lilith, Ascendant, Medium_Coeli, Descendant, Imum_Coeli.
+Includes: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, True_North_Lunar_Node, Chiron, Ascendant, Medium_Coeli.
 
 ### `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS` (9 points)
 
@@ -181,9 +209,9 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 )
 ```
 
-### `ALL_ACTIVE_POINTS` (63 points)
+### `ALL_ACTIVE_POINTS` (53 points)
 
-Every available point enabled. Useful for research or comprehensive analysis.
+Every non-star active point enabled. Useful for research or comprehensive analysis; configure fixed stars separately with `active_fixed_stars`.
 
 ```python
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
@@ -196,15 +224,10 @@ chart_data = ChartDataFactory.create_natal_chart_data(
 
 ## Custom Configuration
 
-You can build your own list by combining any of the 63 available point names:
+You can build your own list by combining any of the available point names:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Custom Points", 1990, 6, 15, 12, 0,
-    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
 
 # Classical planets + asteroids + Part of Fortune
 custom_points = [
@@ -214,6 +237,12 @@ custom_points = [
     "Pars_Fortunae",
     "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
 ]
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Custom Points", 1990, 6, 15, 12, 0,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_points=custom_points,
+)
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
@@ -226,7 +255,7 @@ print(f"Pars Fortunae: {subject.pars_fortunae.sign} at {subject.pars_fortunae.po
 
 ## Diurnal / Nocturnal Detection
 
-Since v5.8.0, the `AstrologicalSubjectModel` includes an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (the formula reverses for night charts).
+The `AstrologicalSubjectModel` carries an `is_diurnal` boolean field. This determines whether the chart is a day chart (Sun above the horizon) or a night chart (Sun below). It is used internally for Arabic Parts calculation (for `Pars_Fortunae` and `Pars_Spiritus` the formula reverses in night charts; `Pars_Amoris` and `Pars_Fidei` use the same formula regardless of sect, as shown in the table above).
 
 ```python
 subject = AstrologicalSubjectFactory.from_birth_data(

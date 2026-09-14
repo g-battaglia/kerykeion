@@ -1,0 +1,96 @@
+========================
+Chart Dominants — modern
+========================
+
++Dominants Summary-+-------------+
+| Field            | Value       |
++------------------+-------------+
+| Strategy         | modern      |
+| Method           | modern      |
+| Dominant Planet  | Mars        |
+| Dominant Sign    | Lib         |
+| Dominant Element | Air         |
+| Dominant Quality | Fixed       |
+| Dominant House   | Sixth House |
++------------------+-------------+
+
++Dominant Planets+-------+-------+
+| Rank | Name    | Score | Share |
++------+---------+-------+-------+
+| 1    | Mars    | 7.72  | 16.0% |
+| 2    | Mercury | 7.51  | 16.0% |
+| 3    | Sun     | 6.38  | 13.0% |
+| 4    | Saturn  | 5.27  | 11.0% |
+| 5    | Moon    | 5.09  | 11.0% |
+| 6    | Venus   | 5.06  | 11.0% |
+| 7    | Jupiter | 3.16  | 7.0%  |
+| 8    | Pluto   | 3.09  | 7.0%  |
+| 9    | Uranus  | 2.38  | 5.0%  |
+| 10   | Neptune | 1.44  | 3.0%  |
++------+---------+-------+-------+
+
++Dominant Signs-------+-------+
+| Rank | Name | Score | Share |
++------+------+-------+-------+
+| 1    | Lib  | 14.10 | 18.0% |
+| 2    | Vir  | 14.01 | 18.0% |
+| 3    | Tau  | 10.81 | 14.0% |
+| 4    | Ari  | 10.72 | 14.0% |
+| 5    | Leo  | 9.47  | 12.0% |
+| 6    | Gem  | 7.51  | 9.0%  |
+| 7    | Sco  | 7.51  | 9.0%  |
+| 8    | Aqu  | 5.09  | 6.0%  |
++------+------+-------+-------+
+
++Dominant Elements-----+-------+
+| Rank | Name  | Score | Share |
++------+-------+-------+-------+
+| 1    | Air   | 19.19 | 41.0% |
+| 2    | Earth | 17.30 | 37.0% |
+| 3    | Water | 7.51  | 16.0% |
+| 4    | Fire  | 3.09  | 6.0%  |
++------+-------+-------+-------+
+
++Dominant Qualities-------+-------+
+| Rank | Name     | Score | Share |
++------+----------+-------+-------+
+| 1    | Fixed    | 26.50 | 56.0% |
+| 2    | Cardinal | 14.10 | 30.0% |
+| 3    | Mutable  | 6.50  | 14.0% |
++------+----------+-------+-------+
+
++Dominant Houses--------+-------+-------+
+| Rank | Name           | Score | Share |
++------+----------------+-------+-------+
+| 1    | Sixth House    | 23.79 | 41.0% |
+| 2    | First House    | 14.67 | 25.0% |
+| 3    | Seventh House  | 7.51  | 13.0% |
+| 4    | Eleventh House | 5.09  | 9.0%  |
+| 5    | Third House    | 3.76  | 7.0%  |
+| 6    | Fifth House    | 3.09  | 5.0%  |
++------+----------------+-------+-------+
+
++Dominant Polarities--+-------+
+| Rank | Name | Score | Share |
++------+------+-------+-------+
+| 1    | Yin  | 24.81 | 53.0% |
+| 2    | Yang | 22.28 | 47.0% |
++------+------+-------+-------+
+
++Dominant Hemispheres--+-------+
+| Rank | Name  | Score | Share |
++------+-------+-------+-------+
+| 1    | North | 34.49 | 37.0% |
+| 2    | West  | 31.20 | 33.0% |
+| 3    | East  | 15.90 | 17.0% |
+| 4    | South | 12.60 | 13.0% |
++------+-------+-------+-------+
+
++Dominant Quadrants------+-------+-------+
+| Rank | Name            | Score | Share |
++------+-----------------+-------+-------+
+| 1    | Second Quadrant | 23.69 | 50.0% |
+| 2    | First Quadrant  | 10.81 | 23.0% |
+| 3    | Third Quadrant  | 7.51  | 16.0% |
+| 4    | Fourth Quadrant | 5.09  | 11.0% |
++------+-----------------+-------+-------+

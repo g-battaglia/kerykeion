@@ -30,7 +30,10 @@ Calculates aspects within a single astrological subject.
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
 
 # Create subject
-subject = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 6, 15, 12, 0, "London", "GB")
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+)
 
 # Calculate aspects
 aspects_data = AspectsFactory.single_chart_aspects(subject)
@@ -43,12 +46,12 @@ for aspect in aspects_data.aspects[:5]:  # Show first 5
 **Expected Output:**
 
 ```text
-Total Aspects: 24
-Sun conjunction Mercury (orb: 3.45°)
-Sun square Mars (orb: 2.18°)
-Sun trine Jupiter (orb: 4.67°)
-Sun sextile Ascendant (orb: 1.23°)
-Moon opposition Saturn (orb: 5.89°)
+Total Aspects: 34
+Moon sextile Venus (orb: 3.93°)
+Moon trine Jupiter (orb: 1.08°)
+Moon sextile Neptune (orb: 1.08°)
+Moon trine Pluto (orb: 0.60°)
+Moon trine Chiron (orb: 1.25°)
 ```
 
 > **Note:** Orb values are always non-negative (absolute deviation from exact aspect). To determine whether an aspect is applying or separating, check the `aspect_movement` field (`"Applying"`, `"Separating"`, or `"Static"`).
@@ -59,7 +62,10 @@ Calculates aspects between two different subjects (Synastry/Transits).
 
 ```python
 # Create second subject
-subject_b = AstrologicalSubjectFactory.from_birth_data("Bob", 1992, 8, 20, 14, 30, "New York", "US")
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.006, lat=40.7128, tz_str="America/New_York", online=False,
+)
 
 # Calculate synastry
 synastry = AspectsFactory.dual_chart_aspects(subject, subject_b)
@@ -70,7 +76,7 @@ print(f"Synastry Aspects: {len(synastry.aspects)}")
 **Expected Output:**
 
 ```text
-Synastry Aspects: 31
+Synastry Aspects: 67
 ```
 
 **Additional Parameters for `dual_chart_aspects`:**
@@ -82,6 +88,15 @@ Synastry Aspects: 31
 
 _These parameters affect aspect movement calculation (applying/separating)._
 
+### Deprecated compatibility aliases
+
+`natal_aspects(subject, *, active_points=None, active_aspects=None,
+axis_orb_limit=None)` delegates to `single_chart_aspects()`, while
+`synastry_aspects(first_subject, second_subject, *, active_points=None,
+active_aspects=None, axis_orb_limit=None)` delegates to `dual_chart_aspects()`.
+Both aliases emit `DeprecationWarning` and are scheduled for removal in 7.0.0;
+new code should call the corresponding primary method directly.
+
 ## Configuration
 
 ### Supported Aspects
@@ -90,19 +105,19 @@ Kerykeion calculates both major and minor aspects. Orbs can be customized.
 
 | Aspect             | Angle | Default Orb | Active by Default | Type  |
 | :----------------- | :---- | :---------- | :---------------- | :---- |
-| **Conjunction**    | 0°    | 10°         | Yes               | Major |
-| **Opposition**     | 180°  | 10°         | Yes               | Major |
-| **Trine**          | 120°  | 8°          | Yes               | Major |
-| **Sextile**        | 60°   | 6°          | Yes               | Major |
-| **Square**         | 90°   | 5°          | Yes               | Major |
-| **Quintile**       | 72°   | 1°          | Yes               | Minor |
-| **Semi-sextile**   | 30°   | 1°          | No                | Minor |
-| **Semi-square**    | 45°   | 1°          | No                | Minor |
-| **Sesquiquadrate** | 135°  | 1°          | No                | Minor |
-| **Biquintile**     | 144°  | 1°          | No                | Minor |
-| **Quincunx**       | 150°  | 1°          | No                | Minor |
+| **Conjunction**    | 0°    | 6°          | Yes               | Major |
+| **Opposition**     | 180°  | 6°          | Yes               | Major |
+| **Trine**          | 120°  | 6°          | Yes               | Major |
+| **Square**         | 90°   | 6°          | Yes               | Major |
+| **Sextile**        | 60°   | 5°          | Yes               | Major |
+| **Quintile**       | 72°   | 2°          | No                | Minor |
+| **Semi-sextile**   | 30°   | 2°          | No                | Minor |
+| **Semi-square**    | 45°   | 2°          | No                | Minor |
+| **Sesquiquadrate** | 135°  | 2°          | No                | Minor |
+| **Biquintile**     | 144°  | 2°          | No                | Minor |
+| **Quincunx**       | 150°  | 2°          | No                | Minor |
 
-> The orb values shown above are the defaults from `ALL_ACTIVE_ASPECTS`. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the first 6 aspects (Conjunction through Quintile). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
+> The orb values shown above are the base orbs from `DEFAULT_ACTIVE_ASPECTS` / `ALL_ACTIVE_ASPECTS`. `AspectsFactory` applies no luminary widening unless a per-point adjustment table is supplied; `ChartDataFactory` natal, synastry, and composite entry points resolve `None` to the Sun/Moon +1.5° preset. The `DEFAULT_ACTIVE_ASPECTS` preset includes only the five major aspects (conjunction, sextile, square, trine, opposition). To enable all 11 aspects, pass `active_aspects=ALL_ACTIVE_ASPECTS` from `kerykeion.settings.config_constants`.
 
 ### Filtering Options
 
@@ -136,11 +151,64 @@ tight_aspects = AspectsFactory.single_chart_aspects(subject, active_aspects=cust
 #### Axis Orbs (`axis_orb_limit`)
 
 Apply stricter orbs when angles (Ascendant, MC) are involved.
+The value must be a finite positive number when provided.
 
 ```python
 # Standard orb for planets, but strict 2° orb for Angles
 aspects = AspectsFactory.single_chart_aspects(subject, axis_orb_limit=2.0)
 ```
+
+#### Per-point Orbs (`point_orb_adjustments`)
+
+Widen or tighten the orb for specific points (for example, give the luminaries a
+larger orb). `point_orb_adjustments` maps a point name to a **finite additive
+adjustment** in degrees, and `point_orb_adjustment_strategy` controls how the
+two endpoints' adjustments combine. NaN and infinite adjustments are rejected
+before calculation.
+
+| Strategy | Combination |
+| :------- | :---------- |
+| `"max_explicit"` (default) | The larger of the adjustments that are actually configured. |
+| `"min_explicit"` | The smaller of the configured adjustments — a negative one still tightens the pair. |
+| `"sum"` | Both adjustments added together. |
+| `"none"` | No adjustment; the base orb stands. |
+
+Only *explicitly configured* points take part: an unconfigured endpoint is
+absent from the comparison rather than counted as `0.0`.
+
+```python
+# Add 1.5° to aspects involving the Sun or Moon.
+aspects = AspectsFactory.single_chart_aspects(
+    subject,
+    point_orb_adjustments={"Sun": 1.5, "Moon": 1.5},
+)
+```
+
+A built-in preset, `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` (luminary widening), is
+available in `kerykeion.settings.config_constants`.
+
+##### Aspect-keyed adjustments
+
+A point's entry can also vary **by aspect**: instead of a single number, pass a
+mapping of aspect name → adjustment, with `"*"` as the default for aspects not
+listed. `number` and `{"*": number}` are equivalent.
+
+```python
+aspects = AspectsFactory.single_chart_aspects(
+    subject,
+    point_orb_adjustments={
+        "Sun": {"*": 1.5, "conjunction": 3.0},  # 3.0° for Sun conjunctions, 1.5° otherwise
+        "Ascendant": {"conjunction": -3.0},     # configured ONLY for conjunctions
+    },
+)
+```
+
+Without a `"*"` key, the point is **unconfigured** for the aspects it does not
+list — not treated as `0.0`. That preserves the explicit-only rule per aspect:
+in the example above, a Mars–Ascendant trine resolves exactly as if the
+Ascendant were absent from the table, so another point's negative adjustment
+still tightens the pair. Unknown aspect names log a warning (they can never
+match) but do not raise, mirroring how `active_aspects` treats unknown names.
 
 ## Return Data Structure
 
@@ -154,16 +222,61 @@ The factory returns a `SingleChartAspectsModel` (for single charts) or `DualChar
 - `aspect_degrees`: The theoretical angle (e.g., 120 for trine).
 - `aspect_movement`: `"Applying"`, `"Separating"`, or `"Static"`.
 
+## Declination Aspects
+
+In addition to ecliptic (longitude) aspects, `AspectsFactory` supports **declination-based aspects**. Two points form a **parallel** when their declinations are within orb degrees of each other (both north or both south). A **contra-parallel** occurs when their declinations are equal in magnitude but opposite in sign.
+
+### `single_chart_declination_aspects`
+
+```python
+from kerykeion import AstrologicalSubjectFactory, AspectsFactory
+
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+
+dec_aspects = AspectsFactory.single_chart_declination_aspects(subject, orb=1.0)
+
+for asp in dec_aspects:
+    print(f"{asp.p1_name} {asp.aspect} {asp.p2_name} (orb: {asp.orbit:.2f})")
+```
+
+| Parameter       | Type         | Default | Description                                    |
+| :-------------- | :----------- | :------ | :--------------------------------------------- |
+| `subject`       | Subject      | --      | The astrological subject                       |
+| `orb`           | float        | 1.0     | Finite, non-negative maximum orb in degrees    |
+| `active_points` | List or None | None    | Points to include (defaults to subject's list) |
+
+### `dual_chart_declination_aspects`
+
+```python
+subject_a = AstrologicalSubjectFactory.from_birth_data(
+    "Alice", 1990, 6, 15, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False
+)
+subject_b = AstrologicalSubjectFactory.from_birth_data(
+    "Bob", 1992, 8, 20, 14, 30,
+    lng=-74.0060, lat=40.7128, tz_str="America/New_York", online=False
+)
+
+dec_synastry = AspectsFactory.dual_chart_declination_aspects(subject_a, subject_b, orb=1.0)
+```
+
+Returns `List[AspectModel]` with `aspect="parallel"` or `aspect="contra-parallel"`.
+Its `orb` parameter has the same finite, non-negative contract as the
+single-chart method.
+
 ## Aspect Utilities
 
-Import from: `kerykeion.aspects.aspects_utils`
+Import from: `kerykeion.aspects.utils`
 
 ### `calculate_aspect_movement`
 
 Determines if an aspect is Applying (orb decreasing) or Separating (orb increasing).
 
 ```python
-from kerykeion.aspects.aspects_utils import calculate_aspect_movement
+from kerykeion.aspects.utils import calculate_aspect_movement
 
 movement = calculate_aspect_movement(
     point_one_abs_pos=120.0,
@@ -185,28 +298,45 @@ Applying
 
 Low-level function to check if two points form an aspect.
 
+`get_aspect_from_two_points(aspects_settings, point_one, point_two, extra_orb=0.0)`
+
+`extra_orb` accepts either a number, applied to every aspect's base orb, or a
+mapping of aspect name → adjustment (missing names get `0.0`; the caller
+resolves any `"*"` wildcard before building the mapping). The effective orb is
+clamped to `>= 0.0`.
+
 ```python
-from kerykeion.aspects.aspects_utils import get_aspect_from_two_points
+from kerykeion.aspects.utils import get_aspect_from_two_points
 
 aspect = get_aspect_from_two_points(
     [{"name": "trine", "degree": 120, "orb": 8}],
     0.0,
     120.5,
 )
-# Returns dict with aspect details if found, else verdict=False
+print(aspect["verdict"], aspect["name"], round(aspect["orbit"], 2))
 ```
+
+**Expected Output:**
+
+```text
+True trine 0.5
+```
+
+`verdict` is `False` when no configured aspect matches; `orbit` always reports
+the distance from exactness.
 
 ### `get_active_points_list`
 
 Extracts active celestial points from a subject based on configuration.
 
 ```python
-from kerykeion.aspects.aspects_utils import get_active_points_list
+from kerykeion.aspects.utils import get_active_points_list
+from kerykeion.settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
 points = get_active_points_list(
-    subject=subject,
+    subject,
     active_points=["Sun", "Moon", "Mercury"],
-    celestial_points=settings.celestial_points  # keyword-only
+    celestial_points=DEFAULT_CELESTIAL_POINTS_SETTINGS,  # keyword-only; defaults to this
 )
 ```
 
@@ -215,9 +345,10 @@ points = get_active_points_list(
 Converts a planet name to its Swiss Ephemeris ID.
 
 ```python
-from kerykeion.aspects.aspects_utils import planet_id_decoder
+from kerykeion.aspects.utils import planet_id_decoder
+from kerykeion.settings import DEFAULT_CELESTIAL_POINTS_SETTINGS
 
-swe_id = planet_id_decoder(planets_settings, "Jupiter")
+swe_id = planet_id_decoder(DEFAULT_CELESTIAL_POINTS_SETTINGS, "Jupiter")
 # Returns 5
 ```
 

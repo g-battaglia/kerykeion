@@ -7,7 +7,9 @@ order: 16
 
 # Active Points
 
-Kerykeion supports 63 celestial points that can be individually enabled or disabled. This page shows practical examples.
+Kerykeion supports 53 non-star chart points through `active_points`, plus fixed
+stars through the separate `active_fixed_stars` parameter. This page shows
+practical examples of both mechanisms.
 
 For the full reference of all available points, see [Active Points Reference](/content/docs/active_points).
 
@@ -19,15 +21,16 @@ The `TRADITIONAL_ASTROLOGY_ACTIVE_POINTS` preset includes only the 7 classical p
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.settings.config_constants import TRADITIONAL_ASTROLOGY_ACTIVE_POINTS
 
+# The preset belongs on from_birth_data: that is where the points are computed.
+# Passing it only to create_natal_chart_data would narrow the chart while the
+# subject kept its 14 defaults.
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Traditional Chart", 1990, 6, 15, 12, 0,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
     active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS,
 )
+
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
 
 # Only classical planets and nodes will appear
 for point_name in ["sun", "moon", "mars", "jupiter", "saturn"]:
@@ -43,13 +46,15 @@ Add the four major asteroids to the default set:
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
+# Add asteroids to the default list
+points_with_asteroids = DEFAULT_ACTIVE_POINTS + ["Ceres", "Pallas", "Juno", "Vesta"]
+
+# Pass active_points to from_birth_data so the subject computes them
 subject = AstrologicalSubjectFactory.from_birth_data(
     "With Asteroids", 1986, 4, 12, 8, 45,
     lng=11.3426, lat=44.4949, tz_str="Europe/Rome", online=False,
+    active_points=points_with_asteroids,
 )
-
-# Add asteroids to the default list
-points_with_asteroids = DEFAULT_ACTIVE_POINTS + ["Ceres", "Pallas", "Juno", "Vesta"]
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
@@ -71,11 +76,6 @@ Arabic Parts (Lots) are calculated points. Their formula reverses for night char
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "With Arabic Parts", 1990, 3, 15, 14, 30,
-    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
 # Add Arabic Parts
 points_with_lots = DEFAULT_ACTIVE_POINTS + [
     "Pars_Fortunae",
@@ -83,6 +83,13 @@ points_with_lots = DEFAULT_ACTIVE_POINTS + [
     "Pars_Amoris",
     "Pars_Fidei",
 ]
+
+# Pass active_points to from_birth_data so the subject computes them
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "With Arabic Parts", 1990, 3, 15, 14, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_points=points_with_lots,
+)
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,
@@ -94,27 +101,32 @@ print(f"Part of Fortune: {subject.pars_fortunae.sign} at {subject.pars_fortunae.
 print(f"Part of Spirit: {subject.pars_spiritus.sign} at {subject.pars_spiritus.position:.2f}°")
 ```
 
-## Enabling All Points
+## Enabling All Points and Fixed Stars
 
-Use the `ALL_ACTIVE_POINTS` preset to enable everything:
+`ALL_ACTIVE_POINTS` enables all 53 non-star chart points. Fixed stars use the
+separate `active_fixed_stars` parameter; combine both presets to enable the
+complete built-in point set:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
+from kerykeion.charts.drawer import ChartDrawer
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_FIXED_STARS
 from pathlib import Path
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "All Points", 1990, 6, 15, 12, 0,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
     active_points=ALL_ACTIVE_POINTS,
+    active_fixed_stars=DEFAULT_FIXED_STARS,
 )
 
-# Generate a chart with all 63 points
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
+print(f"Points on the chart: {len(chart_data.subject.active_points)}")
+
+# 52, not 53: Earth is dropped in the default Apparent Geocentric perspective,
+# where it has no position as seen from itself. The configured fixed stars are
+# separate and are not counted here.
 chart = ChartDrawer(chart_data=chart_data)
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
@@ -123,32 +135,27 @@ chart.save_svg(output_path=output_dir, filename="all-points-chart")
 
 ## Including Fixed Stars
 
-v5.12 added 23 fixed stars (all 15 Behenian + 4 Royal Stars + more). Fixed stars are computed for every subject but excluded from chart rendering and aspects by default. Add them to `active_points` to include them:
+Fixed stars are configured via the `active_fixed_stars` parameter on `from_birth_data`. Stars are accessed through `subject.fixed_stars` (list) or `subject.find_fixed_star(name)` (lookup by name).
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+from kerykeion import AstrologicalSubjectFactory
 
+# Specify which stars to compute
 subject = AstrologicalSubjectFactory.from_birth_data(
     "With Stars", 1990, 6, 15, 12, 0,
     lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_fixed_stars=["Regulus", "Aldebaran", "Antares", "Fomalhaut"],
 )
 
-# Add the 4 Royal Stars to the default set
-points_with_stars = DEFAULT_ACTIVE_POINTS + [
-    "Regulus", "Aldebaran", "Antares", "Fomalhaut",
-]
+# Access via find_fixed_star (case-insensitive)
+regulus = subject.find_fixed_star("Regulus")
+print(f"Regulus: {regulus.sign} at {regulus.position:.2f}°")
+print(f"  Declination: {regulus.declination:.2f}°")
+print(f"  Speed: {regulus.speed:.4f}°/day")
 
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    active_points=points_with_stars,
-)
-
-# Access fixed star data (always available, even without active_points)
-print(f"Regulus: {subject.regulus.sign} at {subject.regulus.position:.2f}°")
-print(f"  Magnitude: {subject.regulus.magnitude}")
-print(f"  Declination: {subject.regulus.declination:.2f}°")
-print(f"  Speed: {subject.regulus.speed:.4f}°/day")
+# Or iterate over all computed stars
+for star in subject.fixed_stars:
+    print(f"{star.name}: {star.sign} {star.position:.2f}°")
 ```
 
 ## Switching Between True and Mean Nodes
@@ -158,11 +165,6 @@ By default, Kerykeion uses True (oscillating) lunar nodes. To use Mean nodes ins
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Mean Nodes", 1990, 6, 15, 12, 0,
-    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
-)
-
 mean_node_points = [
     "Sun", "Moon", "Mercury", "Venus", "Mars",
     "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto",
@@ -171,6 +173,14 @@ mean_node_points = [
     "Chiron", "Mean_Lilith",
     "Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli",
 ]
+
+# The points must be calculated on the subject itself; ChartDataFactory can
+# only ever *narrow* to points the subject already carries.
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Mean Nodes", 1990, 6, 15, 12, 0,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False,
+    active_points=mean_node_points,
+)
 
 chart_data = ChartDataFactory.create_natal_chart_data(
     subject,

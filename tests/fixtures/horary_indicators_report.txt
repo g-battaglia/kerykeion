@@ -1,0 +1,29 @@
+=================
+Horary Indicators
+=================
+
++Significators-----+------+-------+------------+-------------+------------+------+
+| Role     | House | Sign | Ruler | Ruler Sign | Ruler House | Dignity    | Ret. |
++----------+-------+------+-------+------------+-------------+------------+------+
+| Querent  | 1     | Lib  | Venus | Can        | 10          | Triplicity | -    |
+| Quesited | 7     | Ari  | Mars  | Tau        | 8           | Detriment  | -    |
++----------+-------+------+-------+------------+-------------+------------+------+
+
++Ascendant---------+--------+
+| Field            | Value  |
++------------------+--------+
+| Ascendant Degree | 14.11° |
++------------------+--------+
+
++Considerations Before Judgment------+-----------+
+| Consideration                      | Status    |
++------------------------------------+-----------+
+| Ascendant in the judgeable degrees | Favorable |
+| Moon not void of course            | Favorable |
++------------------------------------+-----------+
+
++Mutual Receptions-------------+------------+
+| First Planet | Second Planet | Type       |
++--------------+---------------+------------+
+| Moon         | Mars          | Exaltation |
++--------------+---------------+------------+

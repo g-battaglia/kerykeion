@@ -1,0 +1,101 @@
+# -*- coding: utf-8 -*-
+"""
+This is part of Kerykeion (C) 2025 Giacomo Battaglia
+"""
+
+from __future__ import annotations
+
+from kerykeion.schemas.models import SunTimesModel
+from kerykeion.schemas.exceptions import KerykeionException
+from kerykeion.sun_times.utils import compute_sun_events, compute_twilight_events, resolve_timezone
+
+
+class SunTimesFactory:
+    """
+    Factory for sunrise / sunset / solar-noon / day-length at a place and date.
+
+    This is a lightweight, location-only calculation: it queries the active
+    ephemeris backend's rise/set routine directly (with atmospheric refraction)
+    rather than building a full astrological subject, so it is fast and has no
+    geolocation dependency. Times are returned as timezone-aware UTC datetimes;
+    on polar day/night dates ``day_length`` is ``None``; on transition dates it
+    is ``None`` only when no sunrise could be paired with a later sunset — a
+    successful pairing can reach past local midnight and push ``day_length``
+    beyond 24 hours (see ``SunTimesModel``). Solar noon
+    is still reported: a meridian crossing is not a horizon crossing, so the Sun
+    culminates on a day it never rises.
+
+    Example:
+        >>> from kerykeion import SunTimesFactory
+        >>> sun = SunTimesFactory.from_date(2026, 5, 28, latitude=41.9028,
+        ...                                 longitude=12.4964, tz_str="Europe/Rome")
+        >>> sun.sunrise.isoformat()
+        '2026-05-28T03:39:...+00:00'
+        >>> str(sun.day_length)
+        '14:5...'
+
+    Note:
+        The result is the apparent (refracted) upper-limb sunrise/sunset, the
+        convention used by civil timekeeping.
+    """
+
+    @classmethod
+    def from_date(
+        cls,
+        year: int,
+        month: int,
+        day: int,
+        *,
+        latitude: float,
+        longitude: float,
+        tz_str: str,
+    ) -> SunTimesModel:
+        """
+        Compute sun times for a civil date at a location.
+
+        Args:
+            year: Gregorian civil year (1-9999 CE).
+            month: Civil month (1-12).
+            day: Civil day (1-31).
+            latitude: Observer latitude in degrees, north positive (-90 to 90).
+            longitude: Observer longitude in degrees, east positive (-180 to 180).
+            tz_str: IANA timezone identifier the civil date is anchored to.
+
+        Returns:
+            SunTimesModel: sunrise, sunset, solar noon, day length, polar flags
+            and civil/nautical/astronomical twilight.
+
+        Raises:
+            KerykeionException: If ``tz_str`` is invalid, the latitude/longitude
+                is out of range, or the civil date is unsupported.
+        """
+        if not -90.0 <= latitude <= 90.0:
+            raise KerykeionException(
+                f"Latitude {latitude} is out of range; it must be between -90 and 90 degrees."
+            )
+        if not -180.0 <= longitude <= 180.0:
+            raise KerykeionException(
+                f"Longitude {longitude} is out of range; it must be between -180 and 180 degrees."
+            )
+        tz = resolve_timezone(tz_str)
+        events = compute_sun_events(year, month, day, latitude, longitude, tz)
+        twilight = compute_twilight_events(year, month, day, latitude, longitude, tz)
+
+        return SunTimesModel(
+            date=f"{year:04d}-{month:02d}-{day:02d}",
+            timezone=tz_str,
+            latitude=latitude,
+            longitude=longitude,
+            sunrise=events.sunrise,
+            sunset=events.sunset,
+            solar_noon=events.solar_noon,
+            day_length=events.day_length,
+            is_polar_day=events.is_polar_day,
+            is_polar_night=events.is_polar_night,
+            civil_dawn=twilight.civil_dawn,
+            civil_dusk=twilight.civil_dusk,
+            nautical_dawn=twilight.nautical_dawn,
+            nautical_dusk=twilight.nautical_dusk,
+            astronomical_dawn=twilight.astronomical_dawn,
+            astronomical_dusk=twilight.astronomical_dusk,
+        )

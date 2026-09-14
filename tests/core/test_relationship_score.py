@@ -11,10 +11,9 @@ import pytest
 from pytest import approx
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.relationship_score_factory import (
+from kerykeion.relationship_score.factory import (
     RelationshipScoreFactory,
     DESTINY_SIGN_POINTS,
-    HIGH_PRECISION_ORBIT_THRESHOLD,
     MAJOR_ASPECT_POINTS_HIGH_PRECISION,
     MAJOR_ASPECT_POINTS_STANDARD,
     MINOR_ASPECT_POINTS,
@@ -155,10 +154,11 @@ def fixed_taurus():
 
 @pytest.fixture(scope="module")
 def ancient_subject():
-    """Subject from a much earlier era (year 1800)."""
+    """Subject from a much earlier era (year 1875 — inside every kernel tier,
+    including the base kernel's 1849 lower edge)."""
     return AstrologicalSubjectFactory.from_birth_data(
         name="Ancient Subject",
-        year=1800,
+        year=1875,
         month=1,
         day=1,
         hour=0,
@@ -692,16 +692,35 @@ class TestExactRegressionScores:
         )
 
     def test_john_lennon_yoko_ono_exact_score(self, john_lennon, yoko_ono):
-        """Regression: John Lennon & Yoko Ono score = 12, 'Important'."""
+        """Regression: John Lennon & Yoko Ono score = 8, 'Medium'.
+
+        Computed with Discepolo's own orb set (DISCEPOLO_SCORE_ACTIVE_ASPECTS).
+        """
         score = RelationshipScoreFactory(john_lennon, yoko_ono).get_relationship_score()
-        assert score.score_value == 12
-        assert score.score_description == "Important"
+        assert score.score_value == 8
+        assert score.score_description == "Medium"
 
     def test_freud_jung_exact_score(self, freud, jung):
-        """Regression: Freud & Jung score = 32, 'Rare Exceptional'."""
+        """Regression: Freud & Jung score = 28, 'Exceptional'.
+
+        Was 32 / 'Rare Exceptional' until Kesswil's 1875 offset was corrected.
+        Switzerland kept Bern Mean Time (+00:29:46) from 1853 to 1894, so the
+        earlier longitude-derived local mean time (+00:37:16) placed Jung's chart
+        450 s too early. Freud's chart is unaffected — the German Freiberg's 1856
+        record IS a longitude-derived mean time, so nothing moved there.
+
+        The 450 s moved Jung's Moon by 0.074 deg, which pushed the Freud-Ascendant /
+        Jung-Moon opposition from 7.956 deg to 8.030 deg of orb — across the 8 deg
+        limit — dropping the 4-point `moon_ascendant` rule. Every other contributing
+        rule is unchanged; only that one aspect leaves the set.
+
+        Worth knowing when this test next moves: the pair sits 0.03 deg outside an
+        orb boundary, so ANY sub-arcminute change to Jung's Moon flips it back. The
+        value is a regression pin, not a stable property of the pairing.
+        """
         score = RelationshipScoreFactory(freud, jung).get_relationship_score()
-        assert score.score_value == 32
-        assert score.score_description == "Rare Exceptional"
+        assert score.score_value == 28
+        assert score.score_description == "Exceptional"
 
     def test_burton_taylor_exact_score(self, richard_burton, liz_taylor):
         """Regression: Richard Burton & Liz Taylor score = 23, 'Exceptional'."""
@@ -710,11 +729,33 @@ class TestExactRegressionScores:
         assert score.score_description == "Exceptional"
 
     def test_dario_franca_exact_score(self, dario_fo, franca_rame):
-        """Regression: Dario Fo & Franca Rame score = 13, 'Important'."""
+        """Regression: Dario Fo & Franca Rame score = 9, 'Medium'.
+
+        Computed with Discepolo's own orb set (DISCEPOLO_SCORE_ACTIVE_ASPECTS).
+        """
         score = RelationshipScoreFactory(dario_fo, franca_rame).get_relationship_score()
-        assert score.score_value == 13
-        assert score.score_description == "Important"
+        assert score.score_value == 9
+        assert score.score_description == "Medium"
 
 
 if __name__ == "__main__":
     pytest.main(["-vv", __file__])
+
+
+class TestMissingSunGuard:
+    def test_subjects_without_sun_raise_kerykeion_exception(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.relationship_score.factory import RelationshipScoreFactory
+        from kerykeion.schemas import KerykeionException
+        import pytest
+
+        kwargs = dict(
+            year=1990, month=6, day=15, hour=12, minute=0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=["Moon", "Venus", "Mars"],
+        )
+        s1 = AstrologicalSubjectFactory.from_birth_data(name="No Sun A", **kwargs)
+        s2 = AstrologicalSubjectFactory.from_birth_data(name="No Sun B", **kwargs)
+        with pytest.raises(KerykeionException, match="Sun"):
+            RelationshipScoreFactory(s1, s2).get_relationship_score()

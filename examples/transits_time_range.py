@@ -28,11 +28,14 @@ def main() -> None:
     start = datetime(2025, 1, 1, tzinfo=timezone.utc)
     end = start + timedelta(days=21)
 
+    # A 4-hour step keeps the sampling finer than half the Moon's in-orb window,
+    # so fast-Moon transits are not under-sampled (a coarse day-scale step makes
+    # TransitsTimeRangeFactory log a sub-sampling warning and can miss exact hits).
     ephemeris_factory = EphemerisDataFactory(
         start,
         end,
-        step_type="days",
-        step=3,
+        step_type="hours",
+        step=4,
         lat=natal.lat or 41.9028,
         lng=natal.lng or 12.4964,
         tz_str=natal.tz_str or "Europe/Rome",

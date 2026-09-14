@@ -30,10 +30,9 @@ from kerykeion import (
     ElementDistributionModel,
     QualityDistributionModel,
 )
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException, AstrologicalSubjectModel
-from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 from kerykeion.settings.chart_defaults import DEFAULT_CELESTIAL_POINTS_SETTINGS
 from kerykeion.utilities import find_common_active_points
 
@@ -652,6 +651,36 @@ class TestAspectCalculations:
         aspect_points = {a.p1_name for a in chart.aspects}.union({a.p2_name for a in chart.aspects})
         assert aspect_points.issubset(set(chart.active_points))
 
+    def test_active_points_metadata_includes_fixed_stars(self):
+        """Round 18 F4: chart-data active_points must list the catalog stars that
+        actually appear in the aspects, or the metadata misdescribes the result."""
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "StarChart", 1990, 6, 15, 12, 0,
+            lng=12.5, lat=41.9, tz_str="Europe/Rome", city="Roma", online=False,
+            active_fixed_stars=["Sirius", "Regulus"],
+        )
+        chart = ChartDataFactory.create_natal_chart_data(subject)
+        star_aspects = [
+            a for a in chart.aspects
+            if a.p1_name in ("Sirius", "Regulus") or a.p2_name in ("Sirius", "Regulus")
+        ]
+        assert star_aspects, "expected at least one aspect involving a fixed star"
+        assert {"Sirius", "Regulus"}.issubset(set(chart.active_points))
+        # And every aspect participant is still within the declared active set.
+        aspect_points = {a.p1_name for a in chart.aspects}.union({a.p2_name for a in chart.aspects})
+        assert aspect_points.issubset(set(chart.active_points))
+
+    def test_active_aspects_metadata_drops_ignored_declination(self, johnny_depp):
+        """Round 18 F5: an active_aspects entry the longitudinal engine ignores
+        (parallel/contra-parallel) must not appear in the serialized metadata."""
+        chart = ChartDataFactory.create_natal_chart_data(
+            johnny_depp,
+            active_aspects=[{"name": "conjunction", "orb": 8}, {"name": "parallel", "orb": 1}],
+        )
+        names = [a["name"] for a in chart.active_aspects]
+        assert "parallel" not in names
+        assert "conjunction" in names
+
 
 # =============================================================================
 # 6. TestFactoryParameterValidation
@@ -679,6 +708,20 @@ class TestFactoryParameterValidation:
         """Invalid chart type raises ValueError or KerykeionException."""
         with pytest.raises((ValueError, KerykeionException)):
             ChartDataFactory.create_chart_data("InvalidType", johnny_depp)
+
+    def test_dual_return_requires_planet_return_model(self, johnny_depp, john_lennon):
+        """v6: DualReturnChart with a plain AstrologicalSubjectModel second
+        subject raises a clear KerykeionException (the guard previously
+        checked the non-existent 'Return' chart type and never fired)."""
+        with pytest.raises(KerykeionException) as exc_info:
+            ChartDataFactory.create_chart_data("DualReturnChart", johnny_depp, john_lennon)
+
+        assert "PlanetReturnModel" in str(exc_info.value)
+
+    def test_dual_return_with_planet_return_model_succeeds(self, johnny_depp, return_subject):
+        """The guard must not reject the legitimate PlanetReturnModel input."""
+        chart = ChartDataFactory.create_chart_data("DualReturnChart", johnny_depp, return_subject)
+        assert chart.chart_type == "DualReturnChart"
 
     def test_custom_active_points(self, johnny_depp):
         """Chart with fewer active points has correspondingly fewer aspects."""
@@ -719,6 +762,32 @@ class TestFactoryParameterValidation:
 
         assert len(limited.aspects) <= len(full.aspects)
         assert len(limited.active_points) <= len(full.active_points)
+
+    def test_axis_orb_limit_forwarded_natal(self, johnny_depp):
+        """The natal convenience method must forward ``axis_orb_limit`` so that
+        axis-involving aspects beyond the threshold are dropped. Regression
+        guard against the parameter being a silent no-op."""
+        axes = {"Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"}
+        full = ChartDataFactory.create_natal_chart_data(johnny_depp)
+        tight = ChartDataFactory.create_natal_chart_data(johnny_depp, axis_orb_limit=0.5)
+
+        assert len(tight.aspects) <= len(full.aspects)
+        # Every surviving aspect that touches an axis must respect the tight limit.
+        for asp in tight.aspects:
+            if asp.p1_name in axes or asp.p2_name in axes:
+                assert abs(asp.orbit) <= 0.5 + 1e-9
+
+    def test_axis_orb_limit_forwarded_synastry(self, johnny_depp, john_lennon):
+        """The synastry convenience method must forward ``axis_orb_limit`` (it
+        affects both the dual-chart aspects and the relationship score)."""
+        axes = {"Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"}
+        full = ChartDataFactory.create_synastry_chart_data(johnny_depp, john_lennon)
+        tight = ChartDataFactory.create_synastry_chart_data(johnny_depp, john_lennon, axis_orb_limit=0.5)
+
+        assert len(tight.aspects) <= len(full.aspects)
+        for asp in tight.aspects:
+            if asp.p1_name in axes or asp.p2_name in axes:
+                assert abs(asp.orbit) <= 0.5 + 1e-9
 
     def test_selective_synastry_features(self, johnny_depp, john_lennon):
         """Toggling house_comparison and relationship_score flags works."""
@@ -973,7 +1042,7 @@ class TestAllActivePoints:
 
     def test_all_active_points_with_chart_drawer(self):
         """ChartDrawer reflects the same active points as the chart data."""
-        from kerykeion.charts.chart_drawer import ChartDrawer
+        from kerykeion.charts.drawer import ChartDrawer
 
         subject = AstrologicalSubjectFactory.from_birth_data(
             "Drawer Test",
@@ -1072,3 +1141,53 @@ class TestCompleteFactoryBehavior:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+class TestSynastryDistributionRawTotalsRound5:
+    """Round-5 regression: synastry element/quality fields hold RAW point totals
+    (like every other chart type), not percentages summing to 100."""
+
+    def test_synastry_element_fields_are_raw_totals(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
+        john = AstrologicalSubjectFactory.from_birth_data(
+            "John", 1990, 1, 1, 12, 0, lng=-0.13, lat=51.5, tz_str="Europe/London",
+            online=False, suppress_geonames_warning=True)
+        jane = AstrologicalSubjectFactory.from_birth_data(
+            "Jane", 1992, 6, 15, 14, 30, lng=2.35, lat=48.85, tz_str="Europe/Paris",
+            online=False, suppress_geonames_warning=True)
+        ed = ChartDataFactory.create_synastry_chart_data(john, jane).element_distribution
+        raw_sum = ed.fire + ed.earth + ed.air + ed.water
+        assert abs(raw_sum - 100.0) > 1.0  # raw totals, not percentages
+        pct_sum = ed.fire_percentage + ed.earth_percentage + ed.air_percentage + ed.water_percentage
+        assert 99 <= pct_sum <= 101
+
+
+class TestDistributionHonorsExplicitFilterRound14:
+    """Round-14 regression: the single-subject distribution must honor an
+    explicit active_points filter (round-13 fix over-corrected and dropped it)."""
+
+    def test_explicit_filter_honored(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.chart_data.factory import ChartDataFactory
+        s = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 14, 30, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True)
+        ed = ChartDataFactory.create_natal_chart_data(s, active_points=["Sun", "Moon"]).element_distribution
+        # Sun (Gemini/air) + Moon (Pisces/water) only -> no fire/earth
+        assert ed.fire == 0 and ed.earth == 0
+
+
+def test_unknown_chart_type_raises_with_valid_options():
+    """An unknown chart_type must fail up front naming the valid types, not
+    with a misleading 'Second subject is required for X charts' error."""
+    from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+    from kerykeion.schemas import KerykeionException
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "T", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    with pytest.raises(KerykeionException, match="Unknown chart_type.*Natal"):
+        ChartDataFactory.create_chart_data("NatalFoo", subject)

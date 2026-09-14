@@ -9,7 +9,7 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 from requests.exceptions import RequestException
 
-from kerykeion.fetch_geonames import (
+from kerykeion.geonames.fetcher import (
     FetchGeonames,
     _should_cache_geonames_response,
     TRANSIENT_GEONAMES_ERROR_CODES,
@@ -41,7 +41,7 @@ class TestGeonamesOnline:
 
     def test_error_handling_returns_empty_dict(self):
         """Network errors result in an empty dict from get_serialized_data."""
-        with patch("kerykeion.fetch_geonames.CachedSession") as mock_session:
+        with patch("kerykeion.geonames.fetcher.CachedSession") as mock_session:
             mock_session_instance = Mock()
             mock_session_instance.send.side_effect = RequestException("Network error")
             mock_session.return_value = mock_session_instance
@@ -65,9 +65,38 @@ class TestGeonamesMocked:
         assert fetcher.city_name == "TestCity"
         assert fetcher.country_code == "TS"
 
+    def test_urls_use_https_secure_endpoint(self):
+        """GeoNames calls must go over HTTPS (secure.geonames.org), not
+        plaintext HTTP: the username credential travels as a query param."""
+        fetcher = FetchGeonames("TestCity", "TS")
+        assert fetcher.base_url == "https://secure.geonames.org/searchJSON"
+        assert fetcher.timezone_url == "https://secure.geonames.org/timezoneJSON"
+
+    def test_get_timezone_for_coordinates_returns_timezonestr(self):
+        """The public coordinate-based lookup hits the timezoneJSON endpoint
+        (reusing the cached session) and returns the timezonestr."""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"timezoneId": "Europe/Rome", "gmtOffset": 1}
+        geonames = FetchGeonames("Rome", "IT", username="test_user")
+        with patch.object(geonames.session, "send", return_value=mock_response) as mock_send:
+            result = geonames.get_timezone_for_coordinates(41.9028, 12.4964)
+
+        assert result["timezonestr"] == "Europe/Rome"
+        sent_url = mock_send.call_args.args[0].url
+        assert sent_url.startswith("https://secure.geonames.org/timezoneJSON")
+
+    def test_get_timezone_for_coordinates_missing_timezone_id_returns_empty(self):
+        """A timezoneJSON payload without a timezoneId yields an empty dict."""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"gmtOffset": 1}
+        geonames = FetchGeonames("Rome", "IT", username="test_user")
+        with patch.object(geonames.session, "send", return_value=mock_response):
+            result = geonames.get_timezone_for_coordinates(41.9028, 12.4964)
+        assert result == {}
+
     def test_exception_handling_with_mocks(self):
         """Mocked session raising RequestException returns empty dict."""
-        with patch("kerykeion.fetch_geonames.CachedSession") as mock_session:
+        with patch("kerykeion.geonames.fetcher.CachedSession") as mock_session:
             mock_session_instance = Mock()
             mock_session_instance.send.side_effect = RequestException("Network error")
             mock_session.return_value = mock_session_instance
@@ -76,25 +105,79 @@ class TestGeonamesMocked:
             result = fetcher.get_serialized_data()
             assert result == {}
 
-    def test_custom_cache_name(self, monkeypatch):
-        """Custom cache_name is forwarded to CachedSession."""
+    def test_malformed_geonames_scalar_does_not_raise(self):
+        """A payload whose 'geonames' is a scalar (not a list) must not raise a
+        TypeError from the debug-log len(): logger args are evaluated eagerly and
+        such a TypeError would escape the network/JSON handlers. Expect {} instead."""
+        with patch("kerykeion.geonames.fetcher.CachedSession") as mock_session:
+            response = Mock()
+            response.raise_for_status = Mock()
+            response.json = Mock(return_value={"geonames": 5})
+            mock_session_instance = Mock()
+            mock_session_instance.send.return_value = response
+            mock_session.return_value = mock_session_instance
+
+            fetcher = FetchGeonames("TestCity", "TS", username="test_user")
+            result = fetcher.get_serialized_data()
+            assert result == {}
+
+    def test_custom_cache_name(self, monkeypatch, tmp_path):
+        """Custom cache_name is forwarded to CachedSession (its parent
+        directory is created on demand), with the TTL appended to the stem."""
         session_mock = Mock()
         cached_session_mock = Mock(return_value=session_mock)
-        monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+        monkeypatch.setattr("kerykeion.geonames.fetcher.CachedSession", cached_session_mock)
 
-        FetchGeonames("TestCity", "TS", cache_name="custom/cache/path")
+        custom_cache_name = tmp_path / "custom" / "cache" / "path"
+        FetchGeonames("TestCity", "TS", cache_name=custom_cache_name, cache_expire_after_days=30)
 
-        assert cached_session_mock.call_args.kwargs["cache_name"] == "custom/cache/path"
+        assert cached_session_mock.call_args.kwargs["cache_name"] == str(custom_cache_name.with_name("path_30d"))
+        assert custom_cache_name.parent.is_dir()
 
     def test_default_cache_name(self, monkeypatch, tmp_path):
-        """Default cache_name uses FetchGeonames.default_cache_name."""
+        """Default cache_name uses FetchGeonames.default_cache_name (TTL-suffixed)."""
         session_mock = Mock()
         cached_session_mock = Mock(return_value=session_mock)
-        monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+        monkeypatch.setattr("kerykeion.geonames.fetcher.CachedSession", cached_session_mock)
 
         monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
-        FetchGeonames("TestCity", "TS")
-        assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache")
+        FetchGeonames("TestCity", "TS", cache_expire_after_days=30)
+        assert cached_session_mock.call_args.kwargs["cache_name"] == str(tmp_path / "geo_cache_30d")
+
+    def test_cache_segregated_by_ttl(self, monkeypatch, tmp_path):
+        """Instances with different TTLs must not share a sqlite store, or a
+        short-TTL caller could be served a long-lived entry another instance
+        wrote (requests-cache stamps expiry at write time)."""
+        cache_names = []
+        cached_session_mock = Mock(side_effect=lambda **kw: cache_names.append(kw["cache_name"]) or Mock())
+        monkeypatch.setattr("kerykeion.geonames.fetcher.CachedSession", cached_session_mock)
+        monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
+
+        FetchGeonames("TestCity", "TS", cache_expire_after_days=30)
+        FetchGeonames("TestCity", "TS", cache_expire_after_days=1)
+        assert cache_names[0] != cache_names[1]
+        assert cache_names[0].endswith("_30d")
+        assert cache_names[1].endswith("_1d")
+
+    def test_close_releases_session(self, monkeypatch, tmp_path):
+        """close() / context manager release the CachedSession's file handles."""
+        session_mock = Mock()
+        cached_session_mock = Mock(return_value=session_mock)
+        monkeypatch.setattr("kerykeion.geonames.fetcher.CachedSession", cached_session_mock)
+        monkeypatch.setattr(FetchGeonames, "default_cache_name", tmp_path / "geo_cache")
+
+        with FetchGeonames("TestCity", "TS") as geonames:
+            assert geonames.session is session_mock
+        session_mock.close.assert_called_once()
+
+    def test_default_cache_name_is_per_user(self):
+        """The default cache lives in the per-user ~/.kerykeion/cache/ directory
+        (same convention as DEFAULT_SWEPH_DOWNLOAD_DIR), not relative to the CWD."""
+        from pathlib import Path
+        from kerykeion.geonames.fetcher import DEFAULT_GEONAMES_CACHE_NAME
+
+        assert DEFAULT_GEONAMES_CACHE_NAME.is_absolute()
+        assert DEFAULT_GEONAMES_CACHE_NAME == Path.home() / ".kerykeion" / "cache" / "kerykeion_geonames_cache"
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +191,7 @@ class TestCacheFiltering:
     def test_filter_fn_is_configured(self, monkeypatch):
         """CachedSession is created with the correct filter_fn."""
         cached_session_mock = Mock()
-        monkeypatch.setattr("kerykeion.fetch_geonames.CachedSession", cached_session_mock)
+        monkeypatch.setattr("kerykeion.geonames.fetcher.CachedSession", cached_session_mock)
 
         FetchGeonames("TestCity", "TS")
 

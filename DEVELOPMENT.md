@@ -6,7 +6,7 @@ Welcome to Kerykeion! This guide will help you set up your development environme
 
 Before you begin, ensure you have the following installed:
 
-- **Python 3.9 or higher** - Check with `python --version`
+- **Python 3.12 or higher** - Check with `python --version`
 - **Git** - For cloning the repository
 - **uv** - Ultra-fast Python package manager (replaces pip/poetry)
 
@@ -41,64 +41,228 @@ If you don't have uv installed, follow the installation instructions at the offi
 Kerykeion uses [poethepoet](https://github.com/nat-n/poethepoet) as a task runner. All tasks are defined in `pyproject.toml`.
 
 ### Running Tests
+
+Tests are organized in 4 tiers (each tier includes the previous):
+
 ```bash
-# Run all tests
-uv run poe test
+# Core tests (fastest — excludes the 5 heavy parametrized suites)
+uv run poe test:core
 
-# Run tests without output capture (useful for debugging)
-uv run poe test-no-capture
+# Base tier (DE440s range: 1849-2150)
+uv run poe test:base
 
-# Run tests excluding chart generation tests
-uv run poe test-nocharts
+# Medium tier (DE440 range: 1550-2650)
+uv run poe test:medium
+
+# Extended tier (DE441 full range)
+uv run poe test:extended
+
+# All offline tests (alias for test:extended; online GeoNames tests stay excluded)
+uv run poe test:all
+
+# Run with coverage
+uv run poe test:core:cov
 
 # Run specific test file
-uv run pytest tests/test_astrological_subject.py
+uv run pytest tests/core/test_aspects.py
 
-# Run tests with coverage
-uv run pytest --cov=kerykeion
+# Run tests with verbose output (useful for debugging)
+uv run pytest tests/core/test_aspects.py -s -vvv
+
+# How many tests each command collects, without running them
+uv run pytest tests/ --collect-only -q -m 'not online' | tail -1
 ```
+
+#### The tier is auto-detected, and `LIBEPHEMERIS_PRECISION` is what widens it
+
+`test:extended` and `test:all` both run `pytest tests/ -m 'not online'` and set
+**no** `LIBEPHEMERIS_PRECISION`. `tests/conftest.py` probes the ephemeris kernel
+that is actually loaded and picks the widest tier it can serve — a fresh install
+bundles the base DE440s kernel (1849-2150), so on a default install that is
+`base`, and the medium-tier (1550-1848, 2200) and extended-tier (500 BC through
+1492) subjects are **skipped with a reason**, not run and not failed. The task
+name says which tier is being asked for; the installed kernel decides which one
+you get.
+
+To really run the extended tier, install the full-range kernel and ask for it:
+
+```bash
+uv run python -c "import libephemeris; libephemeris.download_leb_for_tier('extended')"
+LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
+```
+
+The `regenerate:*` tasks and `test:gates:extended` set
+`LIBEPHEMERIS_PRECISION=extended` themselves — baselines must be regenerated on
+the full-range kernel or the long-range subjects are silently dropped.
 
 ### Code Quality
 ```bash
-# Format code with Black
+# Format code with Ruff
 uv run poe format
 
 # Format all code (including tests)
 uv run poe format:all
 
-# Type checking with MyPy
-uv run poe analize
+# Lint with Ruff
+uv run poe lint
 
-# Lint with specific tools
-uv run black --check kerykeion/
-uv run mypy kerykeion/
+# Type checking with Pyright
+uv run poe typecheck
+
+# Type checking with MyPy
+uv run poe analyze
+
+# Run the full quality gate (ruff lint + mypy + pyright + full pytest suite)
+uv run poe quality
+
+# Build the wheel, install it in isolation, and smoke-test packaged assets
+uv run poe build:smoke
 ```
 
 ### Documentation
 ```bash
-# Generate documentation
+# Generate the API reference (pdoc)
 uv run poe docs
 
-# The docs will be generated in the ./docs folder
-# Open docs/index.html in your browser to view them
+# Output lands in ./docs — open docs/index.html in your browser.
+# It is generated on demand and git-ignored; only docs/charts/ is tracked.
+
+# Check that every ```python block in the docs actually runs
+uv run poe docs:snippets
+
+# Audit public-API documentation coverage
+uv run poe docs:check
+
+# Both gates also cover skills/kerykeion (the AI Agent Skill). Skill blocks
+# always run standalone — no import prelude, no shared page context — even in
+# the default docs:snippets run. Focused version:
+uv run poe docs:snippets:skill
+
+# Regenerate the README's showcase charts (docs/charts/)
+uv run poe regenerate:docs-charts
 ```
+
+### Command-Line Interface
+
+```bash
+# Run the `cli` marker (offline; in-process)
+uv run poe test:cli
+
+# Smoke-test the entry point from the checkout
+uv run poe cli:smoke
+
+# Run every bash block in skills/kerykeion-cli against a sandboxed profile
+# store (also part of `poe check` and `poe quality`): the CLI skill's examples
+# are shell, which the python snippet runner and pytest both ignore.
+uv run poe skill:cli:smoke
+
+# Regenerate cli/man/man1/kerykeion.1 from the CLI's argparse tree; the
+# wheel ships it as share/man data. `poe man:check` (part of `poe check`
+# and `poe quality`) fails when the committed page has drifted from the tree.
+uv run poe man:generate
+uv run poe man:check
+```
+
+The CLI is a **second distribution** in this repository, `cli/` (package
+`kerykeion_cli`, published as `kerykeion-cli`). It owns the `kerykeion` console
+script, so the library's own wheel installs no command and `kerykeion[cli]` is
+what brings one. It is standard-library only (argparse), so the library is its
+whole dependency. `uv` treats the two as a workspace: one lockfile, one `.venv`,
+and `uv sync` installs the CLI editable through the `dev` group (extras are not
+synced), which is what puts `kerykeion` on `.venv/bin` for `skill:cli:smoke`.
+
+The `kerykeion(1)` man page is generated source: `scripts/generate_cli_manpage.py`
+walks `build_parser()` and renders `cli/man/man1/kerykeion.1`, which the wheel
+carries as `share/man/man1` data. Never edit the page by hand — change the
+parser (or the generator) and run `poe man:generate`; `poe man:check` and
+`TestManPage` in `tests/core/test_cli.py` keep it in step.
+
+#### Documentation gates
+
+`poe docs:check` fails on an export in `kerykeion.__all__` that no user-facing
+page documents. `poe docs:snippets` executes every ` ```python ` block in
+`README.md`, `kerykeion/llms.txt`, `site/docs`, `site/examples` and
+`skills/kerykeion/` — release notes and other top-level Markdown files are
+skipped by default; `--all` scans every Markdown file in the tree, ignored
+virtual environments and worktrees included. `poe docs:snippets:skill` is the
+focused run over `skills/kerykeion/` alone. `poe regenerate:docs-charts` rewrites
+`docs/charts/` — the SVGs the README embeds **by raw URL**, so they must be
+regenerated whenever the chart renderer changes or the README shows charts the
+library no longer draws.
+
+### No CI — every gate is local
+
+This project deliberately runs **no** GitHub Actions. `.github/` holds only
+`FUNDING.yml`. Every gate lives in `pyproject.toml` as a poe task and is run
+locally before a push or a release: `poe check`, `poe quality`, `poe test:core`,
+`poe docs:check`, `poe docs:snippets`, `poe build:smoke`. Do not add a workflow
+file.
 
 ## 📁 Project Structure
 
 ```
 kerykeion/
-├── kerykeion/                 # Main package
-│   ├── __init__.py
-│   ├── aspects/               # Astrological aspects
-│   ├── charts/                # Chart generation
-│   ├── schemas/              # Type definitions
-│   ├── settings/              # Configuration
-│   └── ...
-├── tests/                     # Test suite
-├── examples/                  # Usage examples
-├── docs/                      # Generated documentation
-├── pyproject.toml            # Project configuration
-├── uv.lock                   # Dependency lock file
+├── kerykeion/                   # Main package — every module below is a package
+│   ├── __init__.py              # Public API exports (__all__)
+│   ├── aspects/                 # Natal, synastry and transit aspect detection
+│   ├── astro_cartography/       # Astro-cartography (ACG) lines
+│   ├── astrological_subject/    # AstrologicalSubjectFactory — the core subject
+│   ├── chart_data/              # ChartDataFactory — chart models with aspects and distributions
+│   ├── charts/                  # SVG chart rendering (natal, synastry, transit, composite, return)
+│   ├── composite_subject/       # Composite (midpoint) and Davison charts
+│   ├── context/                 # Serialization of the models into semantic XML for AI consumption
+│   ├── dignities/               # Essential dignities for traditional evaluation
+│   ├── dominants/               # Planet/sign/element/quality scoring
+│   ├── eclipses/                # Localized solar and lunar eclipse search
+│   ├── ephemeris_backend/       # Backend selection (libephemeris/swisseph) and the ephemeris lock
+│   ├── ephemeris_data/          # EphemerisDataFactory — time-series ephemeris
+│   ├── firdaria/                # Firdaria (Firdariyyat), the Persian time-lord technique
+│   ├── fixed_stars/             # Dynamic fixed-star discovery and catalog
+│   ├── geonames/                # GeoNames city/timezone lookup (the only networked module)
+│   ├── heliacal/                # Heliacal risings and settings
+│   ├── horary/                  # Horary significators and considerations before judgment
+│   ├── house_comparison/        # Bidirectional synastry house overlay
+│   ├── lunations/               # New/quarter/full moon moments over a range
+│   ├── midpoints/               # Cosmobiology midpoints
+│   ├── moon_phase_details/      # Lunar phase context and upcoming phases
+│   ├── motion/                  # Per-point motion state (retrograde, stationary, slow, fast)
+│   ├── mundane_aspects/         # Exact transiting-to-transiting aspects
+│   ├── occultations/            # Lunar occultations
+│   ├── planetary_hours/         # Chaldean planetary hours
+│   ├── planetary_nodes/         # Planetary nodes and apsides
+│   ├── planetary_phenomena/     # Elongation, phase, station and other observational data
+│   ├── planetary_returns/       # Solar and lunar returns
+│   ├── predictive/              # Shared helpers for the predictive techniques
+│   ├── primary_directions/      # Placidus semi-arc primary directions
+│   ├── profections/             # Annual profections, the Hellenistic year-lord technique
+│   ├── receptions/              # Mutual receptions between classical planets
+│   ├── relationship_score/      # Compatibility scoring (Ciro Discepolo method)
+│   ├── relocated_chart/         # Relocated charts: natal positions, recomputed houses
+│   ├── report/                  # Plain-text reports
+│   ├── retrograde_stations/     # Retrograde/direct stations and retrograde spans
+│   ├── schemas/                 # Canonical home of all public models, literals and settings
+│   ├── secondary_progressions/  # Secondary progressions and solar arc
+│   ├── settings/                # Global configuration, chart defaults, translations
+│   ├── sign_ingresses/          # Zodiac sign-boundary crossings and sign stays
+│   ├── sun_times/               # Sunrise, sunset, solar noon and the twilights
+│   ├── swisseph_setup/          # Fetches the Swiss Ephemeris data files (optional backend)
+│   ├── transits/                # TransitsTimeRangeFactory — transits over a period
+│   ├── utilities/               # Zodiac/house lookups, Julian-day and angle math, tz resolution
+│   ├── vedic/                   # Nakshatra calculations
+│   ├── void_of_course_moon/     # Void-of-course Moon state and windows
+│   └── zodiacal_releasing/      # Zodiacal releasing (aphesis) time-lord periods
+├── cli/                         # The kerykeion-cli distribution: the `kerykeion` command (argparse, stdlib only)
+├── tests/core/                  # Test suite (102 files — see TEST.md)
+├── tests/data/, tests/fixtures/ # Golden baselines: SVGs, positions, aspects, report snapshots
+├── examples/                    # Runnable usage examples (see examples/README.md)
+├── scripts/                     # Developer tooling and gates (see scripts/README.md)
+├── site/docs/                   # Documentation source (markdown)
+├── skills/kerykeion/            # Cross-platform AI Agent Skill (agentskills.io)
+├── skills/kerykeion-cli/        # The CLI's agent skill (shell recipes, gated by skill:cli:smoke)
+├── release_notes/               # Selective longer release notes
+├── docs/charts/                 # The README's showcase SVGs (regenerate:docs-charts)
+├── pyproject.toml               # Project configuration and every poe task
+├── uv.lock                      # Dependency lock file
 └── README.md
 ```
 
@@ -137,11 +301,11 @@ uv add --group test pytest-benchmark
 3. **Test your changes**
    ```bash
    # Run tests
-   uv run poe test
+   uv run poe test:core
    
    # Check code style
    uv run poe format
-   uv run poe analize
+   uv run poe analyze
    ```
 
 4. **Commit and push**
@@ -153,7 +317,7 @@ uv add --group test pytest-benchmark
 
 5. **Create a Pull Request**
    - Go to GitHub and create a PR
-   - Ensure all CI checks pass
+   - Run the quality checks locally (`poe quality`, `poe test:core`) before opening the PR
 
 ## 🐛 Debugging
 
@@ -182,16 +346,21 @@ uv sync --dev
 
 **Issue: Tests failing**
 ```bash
-# Run tests with verbose output
-uv run pytest -v
+# Run the fast tier with verbose output. Prefer this over a bare `uv run pytest`:
+# `-m 'not online'` is NOT in addopts, so a plain run also fires the GeoNames
+# network tests and fails without an account.
+uv run poe test:core -v
 
-# Run specific test with debugging
-uv run pytest tests/test_specific.py -s -vvv
+# Or, if you want pytest directly, deselect the online tests yourself
+uv run pytest tests/core -m 'not online' -v
+
+# Run a specific test with debugging (tests live under tests/core/)
+uv run pytest tests/core/test_aspects.py -s -vvv
 ```
 
 ## 📊 Code Style Guidelines
 
-- **Line length**: 120 characters (configured in Black)
+- **Line length**: 120 characters (configured in Ruff)
 - **Type hints**: Required for public APIs
 - **Docstrings**: Use Google style for all public functions
 - **Testing**: Aim for >90% code coverage
@@ -239,17 +408,60 @@ uv sync --upgrade
 uv add "requests>=2.32.0" --upgrade
 
 # Check for outdated dependencies
-uv tree
+uv tree --outdated
 ```
 
 ## 🏗️ Building the Package
 
 ```bash
-# Build wheel and source distribution
-uv build
+# Build both distributions (library and CLI) into dist/
+uv build --all-packages -o dist
 
-# The built packages will be in the dist/ folder
+# Release gate: build, then in isolated envs verify the library wheel alone
+# renders a chart and carries no command, and that both wheels serve it
+uv run poe build:smoke
 ```
+
+### Releasing
+
+One version, two wheels. A release bumps **three** numbers, which must agree:
+
+| Where | What |
+|---|---|
+| `pyproject.toml` | `[project] version` |
+| `cli/pyproject.toml` | `[project] version` **and** the `kerykeion==` pin |
+
+Nothing in the resolver enforces this, so
+`tests/core/test_cli.py::TestEntryPoint::test_one_version_two_distributions`
+does, and it says which one drifted. Then: the `Verified against` pins in `skills/*/SKILL.md`,
+the CHANGELOG entry and the release note, `uv lock`, `uv run poe check`,
+`uv run poe docs:check`, `uv run poe docs:snippets`, and the full extended suite
+with `LIBEPHEMERIS_PRECISION=extended` explicitly set. Build and smoke-test both
+distributions, commit the release preparation, tag that commit, then publish
+**the library first**. The [6.0.0rc1 checklist](release_notes/v6.0.0rc1.md#maintainer-publication-checklist)
+records this candidate's artifacts and validation.
+
+Use a version-specific output directory so a release upload cannot also select
+old artifacts already present in `dist/`:
+
+```bash
+uv build --all-packages -o dist/6.0.0rc1
+uv run --isolated --no-project --with dist/6.0.0rc1/kerykeion-6.0.0rc1-py3-none-any.whl python scripts/build_smoke_check.py
+uv run --isolated --no-project --with dist/6.0.0rc1/kerykeion-6.0.0rc1-py3-none-any.whl --with dist/6.0.0rc1/kerykeion_cli-6.0.0rc1-py3-none-any.whl python scripts/build_smoke_check_cli.py
+uvx twine check --strict dist/6.0.0rc1/*
+
+uv publish dist/6.0.0rc1/kerykeion-6.0.0rc1-py3-none-any.whl dist/6.0.0rc1/kerykeion-6.0.0rc1.tar.gz
+# Only once the library is visible on PyPI:
+uv publish dist/6.0.0rc1/kerykeion_cli-6.0.0rc1-py3-none-any.whl dist/6.0.0rc1/kerykeion_cli-6.0.0rc1.tar.gz
+```
+
+> **During the v6 prerelease cycle (alpha and RC)**, explicitly select the
+> candidate: `uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"`.
+> For the extra, use `pip install --pre "kerykeion[cli]==6.0.0rc1"` so the
+> resolver also admits the separately versioned CLI prerelease. Mark a GitHub
+> release as **pre-release**; the PyPI classifiers use **4 - Beta** because
+> there is no RC-specific development-status classifier. The version itself
+> (`6.0.0rc1`) identifies the candidate.
 
 ---
 

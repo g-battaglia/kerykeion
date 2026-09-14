@@ -28,23 +28,39 @@ Covers:
 from __future__ import annotations
 
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Dict, List
+from typing import Any, List, get_args
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.report import ReportGenerator
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.composite_subject_factory import CompositeSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
+from kerykeion.report.generator import ASPECT_SYMBOLS, HORARY_CONSIDERATION_LABELS, ReportGenerator
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.composite_subject.factory import CompositeSubjectFactory
+from kerykeion.dominants import DominantsFactory
+from kerykeion.firdaria import FirdariaFactory
+from kerykeion.horary import HoraryIndicatorsFactory
+from kerykeion.midpoints import MidpointFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.moon_phase_details import MoonPhaseDetailsFactory
-from kerykeion.schemas.kr_models import (
+from kerykeion.profections import ProfectionsFactory
+from kerykeion.receptions import MutualReceptionsFactory
+from kerykeion.zodiacal_releasing import ZodiacalReleasingFactory
+from kerykeion.schemas.literals import AspectName
+from kerykeion.schemas.models import (
+    DominantsModel,
+    FirdariaModel,
+    HoraryIndicatorsModel,
     MoonPhaseOverviewModel,
     MoonPhaseMoonSummaryModel,
     MoonPhaseSunInfoModel,
     MoonPhaseLocationModel,
+    MutualReceptionsModel,
+    ProfectionsModel,
+    ZodiacalReleasingModel,
 )
 from kerykeion.settings.config_constants import (
     ALL_ACTIVE_ASPECTS,
@@ -56,6 +72,60 @@ from kerykeion.settings.config_constants import (
 )
 
 FIXTURES_DIR = Path("tests/fixtures")
+
+
+def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: float = 0.01) -> None:
+    """Compare report text against its fixture, strictly.
+
+    The non-numeric skeleton of every line must match exactly; numbers
+    (positions, degrees, speeds) are compared within *abs_tol*, which only
+    absorbs display-rounding flips of the last printed decimals across
+    backend/kernel builds. Structural drift — different line counts, a
+    different aspect set, renamed points — must FAIL: the previous lenient
+    version (skip on line-count mismatch, skip on skeleton mismatch, 10.0°
+    tolerance) let the all-points fixtures go stale through three real code
+    changes without a single test noticing. If a legitimate code change
+    alters the output, regenerate the fixtures with
+    `uv run poe regenerate:reports` instead of loosening this helper.
+    """
+    number_re = re.compile(r"-?\d+(?:\.\d+)?")
+    captured_lines = captured.splitlines()
+    expected_lines = expected_with_newline.splitlines()
+    if len(captured_lines) != len(expected_lines):
+        first_diff = next(
+            (
+                f"first divergent line {i + 1}:\n  got:  {c}\n  exp:  {e}"
+                for i, (c, e) in enumerate(zip(captured_lines, expected_lines))
+                if c != e
+            ),
+            "lines diverge only past the shorter report",
+        )
+        raise AssertionError(
+            f"Report line count mismatch: got {len(captured_lines)}, expected "
+            f"{len(expected_lines)} — the fixture is stale or the generator "
+            f"changed; regenerate via `uv run poe regenerate:reports`. "
+            f"{first_diff}"
+        )
+    for i, (cap, exp) in enumerate(zip(captured_lines, expected_lines)):
+        cap_text = number_re.sub("NUM", cap)
+        exp_text = number_re.sub("NUM", exp)
+        assert cap_text == exp_text, (
+            f"Line {i + 1} content differs:\n  got:  {cap}\n  exp:  {exp}"
+        )
+        cap_nums = [float(x) for x in number_re.findall(cap)]
+        exp_nums = [float(x) for x in number_re.findall(exp)]
+        assert len(cap_nums) == len(exp_nums), (
+            f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
+        )
+        for j, (cn, en) in enumerate(zip(cap_nums, exp_nums)):
+            # Add a tiny epsilon so an exact last-decimal flip (e.g. 1.64 vs 1.65,
+            # whose float difference is 0.0100000000000000009) stays within the
+            # intended 0.01 tolerance instead of failing on representation noise.
+            assert abs(cn - en) <= abs_tol + 1e-9, (
+                f"Line {i + 1}, number #{j + 1}: {cn} vs {en} "
+                f"(diff {abs(cn - en):.6f}, tol {abs_tol})\n  got:  {cap}\n  exp:  {exp}"
+            )
+
 
 # ---------------------------------------------------------------------------
 # Shared location dict for simple helpers
@@ -81,7 +151,7 @@ _RE_JULIAN_DAY = re.compile(r"\d+\.\d{6}")
 _RE_DATE = re.compile(r"\d{2}/\d{2}/")
 _RE_RETROGRADE_COL = re.compile(r"\|\s*([R-])\s*\|")
 
-_ASPECT_SYMBOLS = {"☌", "☍", "△", "□", "⚹", "⚻", "∠", "⚼", "Q"}
+_ASPECT_SYMBOLS = {"☌", "☍", "△", "□", "⚹", "⚻", "⚺", "∠", "⚼", "Q", "bQ", "∥", "⋕"}
 _MOVEMENT_SYMBOLS = {"→", "←", "="}
 
 # ---------------------------------------------------------------------------
@@ -175,40 +245,40 @@ def _make_offline_subject(
     )
 
 
+_report_cache: dict = {}
+
+
+def _make_hashable(val):
+    """Recursively convert mutable containers to hashable equivalents for cache keys."""
+    if isinstance(val, list):
+        return tuple(_make_hashable(v) for v in val)
+    if isinstance(val, dict):
+        return tuple(sorted((k, _make_hashable(v)) for k, v in val.items()))
+    if isinstance(val, set):
+        return frozenset(_make_hashable(v) for v in val)
+    return val
+
+
 def _snapshot_subject(**kwargs):
-    return AstrologicalSubjectFactory.from_birth_data(
-        name="Sample Natal Subject",
-        year=1990,
-        month=7,
-        day=21,
-        hour=14,
-        minute=45,
-        city="Liverpool",
-        nation="GB",
-        lat=53.4084,
-        lng=-2.9916,
-        tz_str="Europe/London",
-        online=False,
-        **kwargs,
-    )
+    key = ("snapshot_subject", tuple(sorted((k, _make_hashable(v)) for k, v in kwargs.items())))
+    if key not in _report_cache:
+        _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            name="Sample Natal Subject", year=1990, month=7, day=21, hour=14, minute=45,
+            city="Liverpool", nation="GB", lat=53.4084, lng=-2.9916,
+            tz_str="Europe/London", online=False, **kwargs,
+        )
+    return _report_cache[key]
 
 
 def _snapshot_partner(**kwargs):
-    return AstrologicalSubjectFactory.from_birth_data(
-        name="Yoko Ono",
-        year=1933,
-        month=2,
-        day=18,
-        hour=20,
-        minute=30,
-        city="Tokyo",
-        nation="JP",
-        lat=35.6762,
-        lng=139.6503,
-        tz_str="Asia/Tokyo",
-        online=False,
-        **kwargs,
-    )
+    key = ("snapshot_partner", tuple(sorted((k, _make_hashable(v)) for k, v in kwargs.items())))
+    if key not in _report_cache:
+        _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
+            name="Yoko Ono", year=1933, month=2, day=18, hour=20, minute=30,
+            city="Tokyo", nation="JP", lat=35.6762, lng=139.6503,
+            tz_str="Asia/Tokyo", online=False, **kwargs,
+        )
+    return _report_cache[key]
 
 
 def _snapshot_transit(**kwargs):
@@ -246,6 +316,75 @@ def _make_moon_phase_overview() -> MoonPhaseOverviewModel:
     return MoonPhaseDetailsFactory.from_subject(subject)
 
 
+# Technique reports resolve their "current" period against a target date, so
+# the fixtures pin one: an unpinned run would rewrite them every day. Kept in
+# step with scripts/regenerate_report_snapshots.py.
+_TECHNIQUE_TARGET_DATE = "2026-06-04"
+
+
+def _technique_natal_subject():
+    """John Lennon, the subject the time-lord fixtures are built from."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        "John Lennon",
+        1940,
+        10,
+        9,
+        18,
+        30,
+        lng=-2.9916,
+        lat=53.4084,
+        tz_str="Europe/London",
+        city="Liverpool",
+        nation="GB",
+        online=False,
+    )
+
+
+def _technique_horary_subject():
+    """A question chart WITH dignities: the significator table has that column."""
+    return AstrologicalSubjectFactory.from_birth_data(
+        "Horary Question",
+        2026,
+        6,
+        4,
+        15,
+        30,
+        lng=12.4964,
+        lat=41.9028,
+        tz_str="Europe/Rome",
+        city="Rome",
+        nation="IT",
+        online=False,
+        calculate_dignities=True,
+    )
+
+
+def _technique_profections() -> ProfectionsModel:
+    return ProfectionsFactory.from_subject(_technique_natal_subject(), target_date=_TECHNIQUE_TARGET_DATE)
+
+
+def _technique_firdaria() -> FirdariaModel:
+    return FirdariaFactory.from_subject(_technique_natal_subject(), target_date=_TECHNIQUE_TARGET_DATE)
+
+
+def _technique_horary() -> HoraryIndicatorsModel:
+    return HoraryIndicatorsFactory.from_subject(_technique_horary_subject(), is_moon_void=False)
+
+
+def _technique_receptions() -> MutualReceptionsModel:
+    return MutualReceptionsFactory.from_subject(_technique_horary_subject())
+
+
+def _technique_dominants() -> DominantsModel:
+    return DominantsFactory.from_subject(_technique_natal_subject(), strategy="modern")
+
+
+def _technique_releasing() -> ZodiacalReleasingModel:
+    return ZodiacalReleasingFactory.from_subject(
+        _technique_natal_subject(), lot="fortune", levels=2, target_date=_TECHNIQUE_TARGET_DATE
+    )
+
+
 def _extract_percentages(text: str, section: str) -> List[float]:
     """Parse percentage values from a distribution section."""
     in_section = False
@@ -255,12 +394,36 @@ def _extract_percentages(text: str, section: str) -> List[float]:
             in_section = True
             continue
         if in_section:
-            m = re.search(r"(\d+\.\d)%", line)
-            if m:
-                pcts.append(float(m.group(1)))
+            # Break before parsing so the "Total 100%" row is not counted (the
+            # integer-percentage regex would otherwise capture its 100%).
             if "Total" in line:
                 break
+            m = re.search(r"(\d+(?:\.\d+)?)%", line)
+            if m:
+                pcts.append(float(m.group(1)))
     return pcts
+
+
+def _celestial_points_section(text: str) -> str:
+    """The Celestial Points table only, sliced out of a full report.
+
+    Which points a preset TABULATES is a statement about that table, not about
+    the whole document: the angles keep their names in the Angularities
+    section (a planet on the Descendant is a fact of the chart even when the
+    Descendant is not among the drawn points), and asserting over the full
+    text would conflate the two.
+    """
+    lines = text.splitlines()
+    start = next((i for i, line in enumerate(lines) if "Celestial Points" in line), None)
+    if start is None:
+        return ""
+    section: List[str] = []
+    for line in lines[start:]:
+        # Tables are separated by a blank line; the first one ends the section.
+        if not line.strip() and section:
+            break
+        section.append(line)
+    return "\n".join(section)
 
 
 # =====================================================================
@@ -734,6 +897,11 @@ class TestTransitReport:
 class TestMoonPhaseOverviewReport:
     """Report from MoonPhaseOverviewModel via MoonPhaseDetailsFactory."""
 
+    @pytest.mark.skipif(
+        BACKEND_NAME == "swisseph",
+        reason="Phase-event root-finding differs by a few seconds across backends; "
+        "the golden fixture tracks the default libephemeris backend.",
+    )
     def test_generate_matches_print(self) -> None:
         """generate_report() and print_report() must produce identical content."""
         overview = _make_moon_phase_overview()
@@ -743,7 +911,7 @@ class TestMoonPhaseOverviewReport:
         expected = (FIXTURES_DIR / "moon_phase_overview_report.txt").read_text(
             encoding="utf-8",
         )
-        assert generated == expected
+        _assert_report_match(generated, expected)
 
     @pytest.mark.parametrize("section", _MOON_OVERVIEW_SECTIONS)
     def test_section_present(self, section: str) -> None:
@@ -817,8 +985,8 @@ class TestMoonPhaseOverviewReport:
             datestamp="Fri, 08 Oct 1993 13:20:00 +0000",
             moon=MoonPhaseMoonSummaryModel(),
             sun=MoonPhaseSunInfoModel(
-                sunrise_timestamp="07:15",
-                sunset_timestamp="18:18",
+                sunrise=datetime(1993, 10, 8, 7, 15, tzinfo=timezone.utc),
+                sunset=datetime(1993, 10, 8, 18, 18, tzinfo=timezone.utc),
             ),
         )
         text = ReportGenerator(model).generate_report()
@@ -849,6 +1017,149 @@ class TestMoonPhaseOverviewReport:
 
 
 # =====================================================================
+# 7B. TestTechniqueReports — subject-less technique models
+# =====================================================================
+
+
+class TestTechniqueReports:
+    """Profections, firdaria, horary and receptions as report inputs."""
+
+    def test_profections_report_sections(self) -> None:
+        text = ReportGenerator(_technique_profections()).generate_report()
+        assert "Annual Profections" in text
+        assert "Current Profection Year" in text
+        assert "Profection Years" in text
+        assert "Lord of the Year" in text
+
+    def test_profections_marks_the_current_year(self) -> None:
+        profections = _technique_profections()
+        text = ReportGenerator(profections).generate_report()
+        years_rows = [line for line in text.splitlines() if line.startswith("| *")]
+        assert len(years_rows) == 1, "exactly one row is the current profection year"
+        assert f"| {profections.current.age} " in years_rows[0]
+
+    def test_firdaria_report_sections(self) -> None:
+        firdaria = _technique_firdaria()
+        text = ReportGenerator(firdaria).generate_report()
+        assert "Firdaria — Night Chart" in text or "Firdaria — Day Chart" in text
+        assert "Firdaria Summary" in text
+        assert "Firdaria Periods" in text
+        assert ("Nocturnal" if not firdaria.is_diurnal else "Diurnal") in text
+
+    def test_firdaria_lists_only_the_running_periods_sub_lords(self) -> None:
+        firdaria = _technique_firdaria()
+        text = ReportGenerator(firdaria).generate_report()
+        assert firdaria.current is not None
+        lord = str(firdaria.current.lord).replace("_", " ")
+        assert f"Sub-Periods of the {lord} Period" in text
+        # Seven classical sub-lords, and no other period's ring alongside them.
+        assert text.count("Sub-Periods of the") == 1
+
+    def test_horary_report_sections(self) -> None:
+        text = ReportGenerator(_technique_horary()).generate_report()
+        assert "Horary Indicators" in text
+        assert "Significators" in text
+        assert "Querent" in text and "Quesited" in text
+        assert "Considerations Before Judgment" in text
+
+    def test_horary_considerations_render_labels_not_raw_keys(self) -> None:
+        indicators = _technique_horary()
+        text = ReportGenerator(indicators).generate_report()
+        for consideration in indicators.considerations:
+            assert consideration.key not in text, "the stable key is an identifier, not display prose"
+            assert HORARY_CONSIDERATION_LABELS[consideration.key] in text
+
+    def test_mutual_receptions_report(self) -> None:
+        receptions = _technique_receptions()
+        text = ReportGenerator(receptions).generate_report()
+        assert "Mutual Receptions" in text
+        if receptions.receptions:
+            first = receptions.receptions[0]
+            assert str(first.first_planet).replace("_", " ") in text
+            assert str(first.reception_type).capitalize() in text
+
+    def test_empty_receptions_state_the_absence(self) -> None:
+        text = ReportGenerator(MutualReceptionsModel(receptions=[])).generate_report()
+        assert "No mutual receptions" in text
+
+    def test_dominants_report_sections(self) -> None:
+        dominants = _technique_dominants()
+        text = ReportGenerator(dominants).generate_report()
+        assert "Chart Dominants" in text
+        assert "Dominants Summary" in text
+        assert "Dominant Planets" in text
+        assert str(dominants.dominant_planet) in text
+
+    def test_dominants_skips_categories_the_school_left_empty(self) -> None:
+        empty = DominantsModel(strategy_name="custom")
+        text = ReportGenerator(empty).generate_report()
+        assert "Dominants Summary" in text
+        for category in ("Dominant Planets", "Dominant Signs", "Dominant Houses"):
+            assert category not in text, "an unscored category must not render an empty table"
+
+    def test_zodiacal_releasing_report_sections(self) -> None:
+        releasing = _technique_releasing()
+        text = ReportGenerator(releasing).generate_report()
+        assert "Zodiacal Releasing — Lot of Fortune" in text
+        assert "Releasing Summary" in text
+        assert "Level 1 Periods" in text
+        assert "Current Period Chain" in text
+        assert str(releasing.lot_sign) in text
+
+    def test_zodiacal_releasing_without_target_has_no_current_chain(self) -> None:
+        releasing = ZodiacalReleasingFactory.from_subject(
+            _technique_natal_subject(), lot="fortune", levels=1
+        )
+        text = ReportGenerator(releasing).generate_report()
+        assert "Level 1 Periods" in text
+        assert "Current Period Chain" not in text
+
+    @pytest.mark.parametrize(
+        "build",
+        [
+            _technique_profections,
+            _technique_firdaria,
+            _technique_horary,
+            _technique_receptions,
+            _technique_dominants,
+            _technique_releasing,
+        ],
+        ids=["profections", "firdaria", "horary", "receptions", "dominants", "releasing"],
+    )
+    def test_print_matches_generate(self, capsys, build) -> None:
+        model = build()
+        expected = ReportGenerator(model).generate_report()
+        ReportGenerator(model).print_report()
+        assert capsys.readouterr().out == expected + "\n"
+
+    @pytest.mark.parametrize(
+        ("build", "expected_titles"),
+        [
+            (_technique_profections, ["Current Profection Year", "Profection Years"]),
+            (_technique_firdaria, ["Firdaria Summary", "Firdaria Periods"]),
+            (
+                _technique_horary,
+                ["Significators", "Ascendant", "Considerations Before Judgment", "Mutual Receptions"],
+            ),
+            (_technique_receptions, ["Mutual Receptions"]),
+            (_technique_dominants, ["Dominants Summary", "Dominant Planets", "Dominant Signs"]),
+            (_technique_releasing, ["Releasing Summary", "Level 1 Periods", "Current Period Chain"]),
+        ],
+        ids=["profections", "firdaria", "horary", "receptions", "dominants", "releasing"],
+    )
+    def test_section_titles_survive_rendering(self, build, expected_titles) -> None:
+        """Every section title must actually reach the output.
+
+        AsciiTable DROPS a title wider than its table instead of widening or
+        wrapping it, so a title that outgrows its columns disappears in
+        silence. Pinning the titles turns that into a failing test.
+        """
+        text = ReportGenerator(build()).generate_report()
+        for title in expected_titles:
+            assert f"+{title}" in text, f"section title {title!r} was dropped by the table renderer"
+
+
+# =====================================================================
 # 8. TestGoldenFileSnapshots
 # =====================================================================
 
@@ -856,7 +1167,11 @@ class TestMoonPhaseOverviewReport:
 class TestGoldenFileSnapshots:
     """Compare generated reports against fixture files in tests/fixtures/.
 
-    Skip if fixture doesn't exist.
+    Skip if fixture doesn't exist. Golden files are backend-specific:
+    numerical values differ slightly between swisseph and libephemeris.
+    When running under a backend different from the one that generated the
+    fixtures, mismatches are expected — the test still runs but uses a
+    line-by-line numeric-tolerant comparison (0.02° for positions).
     """
 
     def test_new_moon_natal_report(self, capsys) -> None:
@@ -880,7 +1195,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart_data).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_synastry_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "synastry_report.txt"
@@ -893,7 +1208,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_transit_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "transit_report.txt"
@@ -906,7 +1221,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_composite_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "composite_report.txt"
@@ -924,7 +1239,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_solar_return_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "solar_return_report.txt"
@@ -949,7 +1264,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_dual_return_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "dual_return_report.txt"
@@ -974,8 +1289,13 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
+    @pytest.mark.skipif(
+        BACKEND_NAME == "swisseph",
+        reason="Phase-event root-finding differs by a few seconds across backends; "
+        "the golden fixture tracks the default libephemeris backend.",
+    )
     def test_moon_phase_overview_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "moon_phase_overview_report.txt"
         if not fixture.exists():
@@ -985,7 +1305,28 @@ class TestGoldenFileSnapshots:
         ReportGenerator(overview).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
+
+    @pytest.mark.parametrize(
+        ("fixture_name", "build"),
+        [
+            ("profections_john_lennon_report.txt", lambda: _technique_profections()),
+            ("firdaria_john_lennon_report.txt", lambda: _technique_firdaria()),
+            ("horary_indicators_report.txt", lambda: _technique_horary()),
+            ("mutual_receptions_report.txt", lambda: _technique_receptions()),
+            ("dominants_john_lennon_report.txt", lambda: _technique_dominants()),
+            ("zodiacal_releasing_john_lennon_report.txt", lambda: _technique_releasing()),
+        ],
+        ids=["profections", "firdaria", "horary", "receptions", "dominants", "releasing"],
+    )
+    def test_technique_report_snapshot(self, capsys, fixture_name, build) -> None:
+        fixture = FIXTURES_DIR / fixture_name
+        if not fixture.exists():
+            pytest.skip(f"Fixture {fixture.name} not found")
+
+        ReportGenerator(build()).print_report()
+        captured = capsys.readouterr().out
+        _assert_report_match(captured, fixture.read_text(encoding="utf-8") + "\n")
 
     def test_natal_traditional_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_traditional_points_report.txt"
@@ -997,7 +1338,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_natal_all_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_all_points_report.txt"
@@ -1009,7 +1350,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_natal_all_points_all_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_all_points_all_aspects_report.txt"
@@ -1024,7 +1365,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_natal_all_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_all_aspects_report.txt"
@@ -1039,7 +1380,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_natal_discepolo_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_discepolo_aspects_report.txt"
@@ -1054,7 +1395,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_synastry_traditional_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "synastry_traditional_points_report.txt"
@@ -1067,7 +1408,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_synastry_all_points_all_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "synastry_all_points_all_aspects_report.txt"
@@ -1084,7 +1425,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_transit_traditional_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "transit_traditional_points_report.txt"
@@ -1097,7 +1438,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_transit_all_points_all_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "transit_all_points_all_aspects_report.txt"
@@ -1114,7 +1455,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_composite_traditional_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "composite_traditional_points_report.txt"
@@ -1132,7 +1473,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_composite_all_points_all_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "composite_all_points_all_aspects_report.txt"
@@ -1153,7 +1494,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_solar_return_all_points_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "solar_return_all_points_report.txt"
@@ -1181,7 +1522,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_dual_return_all_points_all_aspects_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "dual_return_all_points_all_aspects_report.txt"
@@ -1210,7 +1551,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     # ---- Geographic diversity golden snapshots ----
 
@@ -1241,7 +1582,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_buenos_aires_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_buenos_aires_all_report.txt"
@@ -1270,7 +1611,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_quito_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_quito_all_report.txt"
@@ -1299,10 +1640,11 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     # ---- Temporal diversity golden snapshots ----
 
+    @pytest.mark.extended
     def test_ancient_rome_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_ancient_rome_all_report.txt"
         if not fixture.exists():
@@ -1329,7 +1671,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_einstein_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_einstein_all_report.txt"
@@ -1358,7 +1700,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
     def test_future_2050_snapshot(self, capsys) -> None:
         fixture = FIXTURES_DIR / "natal_future_2050_all_report.txt"
@@ -1387,7 +1729,7 @@ class TestGoldenFileSnapshots:
         ReportGenerator(chart).print_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
 
 # =====================================================================
@@ -1470,7 +1812,7 @@ class TestReportOptions:
         expected = report.generate_report()
         report.print_report()
         captured = capsys.readouterr().out
-        assert captured == expected + "\n"
+        _assert_report_match(captured, expected + "\n")
 
 
 # =====================================================================
@@ -1552,6 +1894,125 @@ class TestReportContentFormatting:
 
 
 # =====================================================================
+# 11b. TestAspectSymbolMapping
+# =====================================================================
+
+
+class TestAspectSymbolMapping:
+    """ASPECT_SYMBOLS keys must mirror AspectName so aspect cells never duplicate.
+
+    Regression: ``semisquare``/``sesquisquare`` keys didn't match the real
+    ``semi-square``/``sesquiquadrate`` aspect names and several minor aspects
+    had no entry, so the fallback echoed the aspect name and the report
+    rendered cells like ``semi-square semi-square``.
+    """
+
+    def test_symbols_cover_aspect_names_exactly(self) -> None:
+        assert set(ASPECT_SYMBOLS) == set(get_args(AspectName))
+
+    def test_minor_aspects_render_glyph_not_duplicated_name(self) -> None:
+        subject = _snapshot_subject(active_points=ALL_ACTIVE_POINTS)
+        chart = ChartDataFactory.create_natal_chart_data(
+            subject,
+            active_aspects=ALL_ACTIVE_ASPECTS,
+        )
+        text = ReportGenerator(chart).generate_report()
+
+        for name in get_args(AspectName):
+            assert f"{name} {name}" not in text, f"Duplicated aspect cell for {name!r}"
+        corrected_cells = [f"{name} {symbol}" for name, symbol in ASPECT_SYMBOLS.items()]
+        assert any(cell in text for cell in corrected_cells), (
+            "No 'name glyph' aspect cell found in the aspects table"
+        )
+
+    def test_unknown_aspect_name_never_duplicates(self, john_lennon) -> None:
+        """Aspects missing from ASPECT_SYMBOLS render the bare name, not name twice."""
+        chart = ChartDataFactory.create_natal_chart_data(john_lennon)
+        generator = ReportGenerator(chart)
+        generator._chart_data = SimpleNamespace(
+            aspects=[
+                SimpleNamespace(
+                    aspect="exotic-aspect",
+                    p1_name="Sun",
+                    p2_name="Moon",
+                    orbit=1.0,
+                    aspect_movement="Static",
+                )
+            ]
+        )
+        text = generator._aspects_report(max_aspects=None)
+        assert "exotic-aspect exotic-aspect" not in text
+        assert "exotic-aspect" in text
+
+
+# =====================================================================
+# 11c. TestFixedStarsAndMidpointsReport
+# =====================================================================
+
+
+class TestFixedStarsAndMidpointsReport:
+    """The v6 ``fixed_stars`` / ``active_midpoints`` arrays must surface in reports."""
+
+    @staticmethod
+    def _star_subject():
+        return _make_offline_subject(
+            "Fixed Star Subject",
+            1990,
+            7,
+            21,
+            14,
+            45,
+            lat=53.4084,
+            lng=-2.9916,
+            tz_str="Europe/London",
+            active_fixed_stars=["Regulus", "Spica"],
+        )
+
+    @staticmethod
+    def _plain_subject(name: str = "Plain Subject"):
+        return _make_offline_subject(
+            name,
+            1990,
+            7,
+            21,
+            14,
+            45,
+            lat=53.4084,
+            lng=-2.9916,
+            tz_str="Europe/London",
+        )
+
+    def test_subject_report_includes_fixed_stars(self) -> None:
+        text = ReportGenerator(self._star_subject()).generate_report()
+        assert "Fixed Stars" in text
+        assert "Regulus" in text
+        assert "Spica" in text
+
+    def test_chart_report_includes_fixed_stars(self) -> None:
+        chart = ChartDataFactory.create_natal_chart_data(self._star_subject())
+        text = ReportGenerator(chart).generate_report()
+        assert "Natal Fixed Stars" in text
+        assert "Regulus" in text
+        assert "Spica" in text
+
+    def test_subject_report_includes_active_midpoints(self) -> None:
+        subject = self._plain_subject("Midpoint Subject")
+        subject.active_midpoints = MidpointFactory.compute_active_midpoint_points(
+            subject,
+            ["Sun_Moon"],
+        )
+        text = ReportGenerator(subject).generate_report()
+        assert "Midpoints" in text
+        assert "Sun Moon Midpoint" in text
+
+    def test_default_report_has_no_star_or_midpoint_sections(self) -> None:
+        text = ReportGenerator(self._plain_subject()).generate_report()
+        assert "Fixed Stars" not in text
+        assert "Regulus" not in text
+        assert "Midpoint" not in text
+
+
+# =====================================================================
 # 12. TestActivePointsContentValidation
 # =====================================================================
 
@@ -1566,10 +2027,10 @@ _POINTS_CONTENT_PRESETS = [
     ),
     pytest.param(
         DEFAULT_ACTIVE_POINTS,
-        18,
-        ["Sun", "Moon", "Chiron", "Mean Lilith", "Ascendant"],
-        ["Ceres", "Eris", "Vertex"],
-        id="default_18pts",
+        14,
+        ["Sun", "Moon", "Chiron", "Ascendant"],
+        ["Ceres", "Eris", "Vertex", "Mean Lilith", "Descendant"],
+        id="default_14pts",
     ),
     pytest.param(
         ALL_ACTIVE_POINTS,
@@ -1609,11 +2070,14 @@ class TestActivePointsContentValidation:
         )
         chart = ChartDataFactory.create_natal_chart_data(subject)
         text = ReportGenerator(chart).generate_report()
+        points_table = _celestial_points_section(text)
 
         for name in present_names:
             assert name in text, f"{name!r} should appear with {len(active_points)}-point preset"
         for name in absent_names:
-            assert name not in text, f"{name!r} should NOT appear with {len(active_points)}-point preset"
+            assert name not in points_table, (
+                f"{name!r} should NOT be tabulated with the {len(active_points)}-point preset"
+            )
 
     @pytest.mark.parametrize(
         "active_points,expected_min,present_names,absent_names",
@@ -1647,9 +2111,9 @@ class TestActivePointsContentValidation:
     def test_traditional_points_has_fewer_celestial_rows(self) -> None:
         subject = _snapshot_subject(active_points=TRADITIONAL_ASTROLOGY_ACTIVE_POINTS)
         chart = ChartDataFactory.create_natal_chart_data(subject)
-        text = ReportGenerator(chart).generate_report()
+        points_table = _celestial_points_section(ReportGenerator(chart).generate_report())
         for absent in ("Ceres", "Chiron", "Eris", "Ascendant", "Medium Coeli"):
-            assert absent not in text, f"{absent!r} should not appear in traditional report"
+            assert absent not in points_table, f"{absent!r} should not be tabulated in a traditional report"
 
     def test_all_points_has_extra_bodies(self) -> None:
         subject = _snapshot_subject(active_points=ALL_ACTIVE_POINTS)
@@ -1667,10 +2131,10 @@ class TestActivePointsContentValidation:
 _ASPECTS_CONTENT_PRESETS = [
     pytest.param(
         DEFAULT_ACTIVE_ASPECTS,
-        6,
-        {"conjunction", "opposition", "trine", "sextile", "square", "quintile"},
-        {"semi-sextile", "semi-square", "sesquiquadrate", "biquintile", "quincunx"},
-        id="default_6asp",
+        5,
+        {"conjunction", "opposition", "trine", "sextile", "square"},
+        {"quintile", "semi-sextile", "semi-square", "sesquiquadrate", "biquintile", "quincunx"},
+        id="default_5asp",
     ),
     pytest.param(
         ALL_ACTIVE_ASPECTS,
@@ -1822,9 +2286,12 @@ class TestActiveAspectsContentValidation:
 
 
 class TestTemporalDiversity:
-    """Reports for different epochs must differ; ancient era excludes unsupported TNOs."""
+    """Reports for different epochs must differ and omit unsupported points."""
 
+    @pytest.mark.extended
     def test_ancient_rome_has_fewer_points_due_to_ephemeris(self) -> None:
+        if BACKEND_NAME != "libephemeris":
+            pytest.skip("The fitted apsides window is a libephemeris sealed-mode contract")
         subject = AstrologicalSubjectFactory.from_birth_data(
             name="Ancient Rome Subject",
             year=100,
@@ -1844,10 +2311,20 @@ class TestTemporalDiversity:
             active_aspects=ALL_ACTIVE_ASPECTS,
         )
         text = ReportGenerator(chart).generate_report()
-        for body in ("Eris", "Sedna", "Haumea", "Makemake"):
-            assert body not in text, f"{body} should be absent for 100 AD"
+        # The core bodies are computable in any era on any kernel.
         for body in ("Sun", "Moon", "Mars", "Jupiter"):
             assert body in text, f"{body} must appear even in ancient era"
+        # libephemeris 3.2.1 serves the interpolated apsides from a fitted
+        # model whose window is narrower than the extended planetary kernel.
+        # Wider planetary data must not turn these omissions into invented
+        # positions, and consumers must be able to detect them from the model.
+        warnings = {warning.point_name: warning for warning in subject.ephemeris_warnings}
+        for point in ("Interpolated_Lilith", "Interpolated_Perigee"):
+            assert getattr(subject, point.lower()) is None
+            assert point not in subject.active_points
+            assert point.replace("_", " ") not in text
+            assert point in warnings
+            assert warnings[point].requested_jd == subject.julian_day
 
     def test_temporal_reports_differ(self) -> None:
         s1 = AstrologicalSubjectFactory.from_birth_data(
@@ -2097,7 +2574,7 @@ class TestReportMissingDataScenarios:
 
     def test_report_houses_with_composite_no_houses(self):
         """Composite chart report generates houses section correctly."""
-        from kerykeion.composite_subject_factory import CompositeSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
 
         first = AstrologicalSubjectFactory.from_birth_data(
             name="First",
@@ -2153,9 +2630,250 @@ class TestReportMissingDataScenarios:
         assert "Subject Report" in result
 
 
+class TestUntrustedFieldSanitization:
+    """Untrusted subject free-text (name/city/nation) is stripped of terminal-
+    control chars before it reaches stdout, so a birth record cannot rewrite the
+    window title, clear the screen, or drive an OSC-52 clipboard write."""
+
+    def test_control_char_name_city_nation_sanitized(self) -> None:
+        subject = _make_offline_subject(
+            "\x1b]0;pwn\x07\x1b[2Jinjected",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            city="\x1b]52;c;evil\x07Rome",
+            nation="I\x00T",
+        )
+        report = ReportGenerator(subject, include_aspects=False).generate_report()
+
+        # No raw ESC / BEL / NUL survive anywhere in the rendered report.
+        assert "\x1b" not in report
+        assert "\x07" not in report
+        assert "\x00" not in report
+        # The printable remainder is preserved (only control chars are dropped).
+        assert "injected" in report
+        assert "Rome" in report
+
+    def test_normal_name_renders_unchanged(self) -> None:
+        subject = _make_offline_subject(
+            "Alice",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            city="Rome",
+            nation="IT",
+        )
+        report = ReportGenerator(subject, include_aspects=False).generate_report()
+        # Clean text is untouched by the sanitizer (translate is a no-op on it).
+        assert "Alice — Subject Report" in report
+        assert "Alice" in report
+        assert "Rome" in report
+        assert "IT" in report
+
+
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import logging
 
     logging.basicConfig(level=logging.CRITICAL)
     pytest.main(["-vv", __file__])
+
+
+# =============================================================================
+# WHICH HOUSE DIVISION THE READER IS LOOKING AT
+# =============================================================================
+
+
+class TestHouseProvenanceInTheReport:
+    """A report that names only the system actually used describes a division the
+    reader may not have asked for, and a composite that does not record its anchor
+    describes a chart that cannot be reproduced."""
+
+    def test_a_substituted_house_system_is_named(self) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier="P",
+        )
+        assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
+
+        row = [
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        ]
+        assert row, "no Houses System row at all"
+        assert "Porphyry" in row[0] and "Placidus" in row[0], row[0]
+
+    def test_an_ordinary_chart_names_one_system(self) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+        )
+        row = [
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        ]
+        assert "substituted" not in row[0], row[0]
+
+    @pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
+    def test_the_composite_names_its_anchor(self, anchor: str) -> None:
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.composite_subject.factory import CompositeSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
+                      online=False, suppress_geonames_warning=True)
+        first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
+        second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
+
+        model = CompositeSubjectFactory(
+            first, second, house_anchor=anchor
+        ).get_midpoint_composite_subject_model()
+        row = [
+            line for line in ReportGenerator(model).generate_report().splitlines()
+            if "House Anchor" in line
+        ]
+        assert row and anchor in row[0], row
+
+        davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
+        assert "House Anchor" not in ReportGenerator(davison).generate_report()
+
+    def test_no_house_degree_is_printed_at_its_own_ceiling(self) -> None:
+        """29.99687 rounds to "30.00°", which is zero degrees of the next sign."""
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.report.generator import ReportGenerator
+
+        for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20)):
+            subject = AstrologicalSubjectFactory.from_birth_data(
+                "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
+                lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+            )
+            report = ReportGenerator(subject).generate_report()
+            assert "| 30.00°" not in report
+            assert " 30.00° " not in report
+
+
+def test_the_houses_row_reads_this_chart_s_fallback_and_not_the_first_one():
+    """Asking for Gauquelin sectors adds a SECOND fallback record, and it is not
+    about the houses.
+
+    Above the polar circle the 36-sector ring is recomputed at a clamped
+    latitude, which files a record of its own listing "house_cusps" like any
+    other. Taking the first record in the list therefore made a polar whole-sign
+    chart — whose twelve cusps are perfectly well defined and were not touched —
+    report them as "substituted for Gauquelin sectors". The subject has an
+    accessor that matches on the requested identifier; the row uses it.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.report.generator import ReportGenerator
+
+    def houses_row(system):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            houses_system_identifier=system, calculate_gauquelin=True,
+        )
+        assert any(
+            record.requested_house_system_identifier == "G"
+            for record in subject.polar_house_fallbacks
+        ), "the fixture no longer files an ancillary Gauquelin record"
+        return next(
+            line for line in ReportGenerator(subject).generate_report().splitlines()
+            if "Houses System" in line
+        )
+
+    # Whole sign is defined at every latitude: nothing was substituted.
+    assert "substituted" not in houses_row("W")
+    # Placidus is not, and that substitution is the one the row exists to report.
+    assert "substituted for Placidus" in houses_row("P")
+
+
+def test_a_star_name_with_padding_reaches_the_ephemeris_stripped():
+    """The slug was stripped and the ephemeris name was not.
+
+    A padded request deduped as the same star — so a caller could not even ask
+    twice to work around it — and then failed to resolve, counting against the
+    unresolved share that decides whether the catalog warning fires.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+
+    def sun_star_names(requested):
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            active_fixed_stars=requested,
+        )
+        return sorted(star.name for star in (subject.fixed_stars or []))
+
+    assert sun_star_names([" Regulus"]) == sun_star_names(["Regulus"])
+    assert sun_star_names(["Regulus"]), "the fixture resolves no star at all"
+
+
+def test_the_gauquelin_section_says_which_latitude_it_was_computed_at():
+    """The 36-sector ring is undefined inside the polar circle and is recomputed
+    at a clamped latitude.
+
+    That files a fallback record of its own, separate from any substitution of
+    the houses — and the houses row deliberately ignores it, because it is not
+    about the houses. Nothing else in the report mentioned it either, so the
+    sector values read as if cast where the subject was born. On the chart below
+    they are computed at 66 degrees, not 78.2232.
+    """
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.report.generator import ReportGenerator
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=78.2232, lng=15.6467,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="P", calculate_gauquelin=True,
+    )
+    clamp = next(
+        record for record in subject.polar_house_fallbacks
+        if record.requested_house_system_identifier == "G"
+    )
+    assert clamp.used_latitude != clamp.latitude, "the fixture no longer clamps"
+
+    report = ReportGenerator(subject).generate_report()
+    assert f"{clamp.used_latitude:.4f}" in report
+    assert "computed at" in report
+
+    # A chart whose Gauquelin ring needed no clamp says nothing extra.
+    ordinary = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=41.9, lng=12.5,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        calculate_gauquelin=True,
+    )
+    assert "computed at" not in ReportGenerator(ordinary).generate_report()
+
+
+def test_a_southern_clamp_keeps_its_hemisphere():
+    """Both latitudes went through `abs()`, so a chart at 78S was told its ring
+    had been computed at 66 degrees NORTH — and that the real latitude was 78
+    north too. The fields were right; only the sentence lied."""
+    from kerykeion import AstrologicalSubjectFactory
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=-78.0, lng=15.0,
+        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        houses_system_identifier="W", calculate_gauquelin=True,
+    )
+    record = subject.polar_house_fallbacks[0]
+    assert record.latitude < 0 and record.used_latitude < 0
+    assert f"{record.used_latitude:.4f}" in record.message
+    assert f"{record.latitude:.4f}" in record.message

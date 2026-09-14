@@ -1,4 +1,6 @@
-from .house_comparison_factory import HouseComparisonFactory
+"""Bidirectional synastry house overlay analysis."""
+
+from .factory import HouseComparisonFactory
 
 __all__ = [
     "HouseComparisonFactory",

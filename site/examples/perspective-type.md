@@ -7,7 +7,7 @@ order: 8
 
 # Perspective Type
 
-The `perspective_type` parameter defines the viewpoint from which planetary positions are calculated. Kerykeion supports four different perspectives.
+The `perspective_type` parameter defines the viewpoint from which planetary positions are calculated. `PerspectiveType` has eleven members; the four below cover nearly all astrological work.
 
 ## Available Perspective Types
 
@@ -17,6 +17,11 @@ The `perspective_type` parameter defines the viewpoint from which planetary posi
 | `True Geocentric` | Earth-centered, without light-time correction. Positions as they "truly" are at that moment. | Research, comparison with astronomical data |
 | `Heliocentric` | Sun-centered. Shows planetary positions as seen from the Sun. Earth replaces Sun in the chart. | Esoteric/cosmobiological techniques, solar system studies |
 | `Topocentric` | Observer's exact location on Earth's surface. Most accurate for Moon position. | Precise lunar work, electional astrology |
+
+The other seven place the observer on another body or at the solar-system
+barycentre: `Selenocentric` (the Moon), `Mercurycentric`, `Venuscentric`,
+`Marscentric`, `Jupitercentric`, `Saturncentric`, and `Barycentric`. Each drops
+the point it is centred on, since a body has no position as seen from itself.
 
 ## Apparent Geocentric (Default)
 
@@ -40,7 +45,7 @@ print(f"Moon: {subject.moon.sign} {subject.moon.position:.2f}°")
 **Output:**
 ```
 Sun: Lib 16.27°
-Moon: Aqu 3.50°
+Moon: Aqu 3.55°
 ```
 
 ## Heliocentric
@@ -50,17 +55,21 @@ In heliocentric charts, we view the solar system from the Sun's perspective. The
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
+
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon - Heliocentric", 1940, 10, 9, 18, 30,
     lng=-2.9833, lat=53.4, tz_str="Europe/London",
     online=False,
     perspective_type="Heliocentric",
+    # Heliocentric excludes the Sun automatically, but Earth is NOT added
+    # by default — opt in explicitly to chart it.
+    active_points=[*DEFAULT_ACTIVE_POINTS, "Earth"],
 )
 
-# Note: In heliocentric, Earth replaces Sun
 print(f"Earth: {subject.earth.sign} {subject.earth.position:.2f}°")
 print(f"Mars: {subject.mars.sign} {subject.mars.position:.2f}°")
 
@@ -69,14 +78,25 @@ chart = ChartDrawer(data)
 
 out_dir = Path("charts_output")
 out_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=out_dir, filename="lennon-heliocentric")
+chart.save_svg(output_path=out_dir, filename="lennon-heliocentric", style="classic")
 ```
 
-The output will be:
+**Output:**
+```
+Earth: Ari 16.27°
+Mars: Vir 24.51°
+```
 
-![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart.svg)
+The chart will be:
 
-> **Note:** Heliocentric charts have no houses or Ascendant since there is no observer on Earth. The house system is ignored.
+![John Lennon Heliocentric](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Heliocentric%20-%20Natal%20Chart%20-%20Classic.svg)
+
+> **Note:** Heliocentric charts still compute houses and the angles — the
+> Ascendant and MC come from the observer's clock and place, which the subject
+> carries regardless of where the planetary longitudes are measured from. What
+> the perspective drops are the Sun (it is the centre) and the geocentric-only
+> points: the lunar nodes and the Lilith / apogee variants. Both exclusions are
+> logged.
 
 ## True Geocentric
 
@@ -136,12 +156,15 @@ for perspective in perspectives:
 **Output:**
 ```
 Apparent Geocentric:
-  Moon: 15.2347°
+  Moon: 14.8016°
 True Geocentric:
-  Moon: 15.2348°
+  Moon: 14.8018°
 Topocentric:
-  Moon: 15.1892°  # Note the larger difference due to parallax
+  Moon: 13.9628°
 ```
+
+The topocentric figure is nearly a degree away: that is lunar parallax, and it
+is why the Moon is the point the perspective matters most for.
 
 > **Tip:** For most astrological work, stick with the default `Apparent Geocentric`. Use `Topocentric` only when precise Moon timing is critical (e.g., for electional astrology or void-of-course Moon calculations).
 

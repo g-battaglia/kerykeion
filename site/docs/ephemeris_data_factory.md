@@ -46,24 +46,36 @@ print(f"Sun 1st Day: {data[0]['planets'][0]['abs_pos']:.2f}°")
 
 Returns a list of dictionaries (or `EphemerisDictModel` instances if `as_model=True`). Fast and lightweight. Best for raw data processing.
 
+Every sample dict always carries `date`, `planets`, `houses`, `ephemeris_warnings` and `polar_house_fallbacks` keys. The last two are always present and empty when there is nothing to report, so consumers can read them unconditionally instead of guessing. `polar_house_fallbacks` holds `PolarHouseFallbackModel` entries for any sample whose house cusps could not be computed with the requested system at the requested latitude — see [Polar Latitudes](/content/docs/faq) for what a substitution changes and what it leaves exact.
+
+A `fixed_stars` key is added to each sample **only when** the factory was built with a non-empty `active_fixed_stars` list; without requested stars the key is omitted entirely.
+
+The `planets` and `houses` lists hold `KerykeionPointModel` instances -- not plain dicts -- which support both attribute access (`point.abs_pos`) and dictionary-style subscripting (`point["abs_pos"]`).
+
+`date` is the UTC instant of the sample, serialised with `datetime.isoformat()`
+from a timezone-aware datetime, so it always ends in the `+00:00` offset.
+
 | Parameter  | Type   | Default | Description                                              |
 | :--------- | :----- | :------ | :------------------------------------------------------- |
 | `as_model` | `bool` | `False` | If `True`, returns `EphemerisDictModel` instances instead of dicts. |
 
 **Output Structure:**
 
-```json
+```text
 [
   {
-    "date": "2024-01-01T00:00:00",
+    "date": "2024-01-01T00:00:00+00:00",
     "planets": [
-      { "name": "Sun", "abs_pos": 280.23, "sign": "Cap", ... },
+      KerykeionPointModel(name="Sun", abs_pos=280.04, sign="Cap", ...),
       ...
     ],
     "houses": [
-      { "name": "First_House", "abs_pos": 15.42, "sign": "Ari", ... },
+      KerykeionPointModel(name="First_House", abs_pos=187.07, sign="Lib", ...),
       ...
-    ]
+    ],
+    "ephemeris_warnings": [],
+    "polar_house_fallbacks": [],  # PolarHouseFallbackModel entries, empty at temperate latitudes
+    # "fixed_stars": [...]  # present only when active_fixed_stars is non-empty
   },
   ...
 ]
@@ -101,7 +113,13 @@ print(subjects[0].sun.sign)
 | `lat`     | Latitude for house cusps  | `51.4769` (London) |
 | `lng`     | Longitude for house cusps | `0.0005`           |
 | `tz_str`  | Timezone string           | `"Etc/UTC"`        |
-| `is_dst`  | Daylight saving time flag | `False`            |
+| `is_dst`  | Which UTC offset to use when a wall time in the series is non-unique: `True` = the larger offset, `False` = the smaller. Applies to skipped times as well as repeated ones. | `False` (= the smaller offset) |
+
+Naive inputs are local wall times. Daily samples advance by local calendar days;
+hourly and minutely samples advance uniformly in UTC. Before a zone has any
+recorded civil time, a synthetic IANA `LMT` record is replaced by local mean
+time at the supplied longitude, exactly as in `AstrologicalSubjectFactory`.
+Named historical records such as RMT or BMT remain authoritative.
 
 ### Calculation Parameters
 
@@ -113,8 +131,21 @@ print(subjects[0].sun.sign)
 | `perspective_type`         | Calculation perspective     | `"Apparent Geocentric"` |
 | `custom_ayanamsa_t0`      | Reference epoch (Julian Day) for USER sidereal mode | `None` |
 | `custom_ayanamsa_ayan_t0` | Ayanamsa offset in degrees at epoch (USER mode)     | `None` |
+| `active_points`            | Points computed on every generated subject | `None` (= `DEFAULT_ACTIVE_POINTS`) |
+| `active_fixed_stars`       | Fixed stars computed on every generated subject; adds a `fixed_stars` key to each sample | `None` (= none) |
+| `altitude`                 | Observer altitude in metres, used only with the `"Topocentric"` perspective | `None` |
 
 _Note: You can override safety limits by passing `None` if you need large datasets. Both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0` are required when `sidereal_mode="USER"`._
+
+### Raises
+
+The constructor raises `ValueError` for a non-positive `step`, for an unknown
+`step_type`, when the sample count exceeds the `max_days` / `max_hours` /
+`max_minutes` limit in force, and -- as `"No dates found. Check the date range
+and step values."` -- when the range yields no sample at all, which is what an
+inverted range (`end_datetime` before `start_datetime`) produces.
+
+_Note: When feeding `TransitsTimeRangeFactory` with non-default points (asteroids, TNOs, extra angles), pass the **same** `active_points` list here — aspects can only be detected for points present on both the natal and the ephemeris subjects; the transit factory warns if a requested point is present on only one side (missing from the ephemeris series or from the natal chart)._
 
 ---
 

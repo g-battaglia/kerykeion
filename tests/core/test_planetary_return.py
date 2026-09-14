@@ -13,7 +13,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
+from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 from kerykeion.schemas import KerykeionException
 from pytest import approx
 
@@ -610,6 +610,15 @@ class TestValidationErrors:
                 "Mercury",  # type: ignore
             )
 
+    @pytest.mark.parametrize("bad_iso", ["", "not-a-date", "2024-13-01T00:00:00Z"])
+    def test_malformed_iso_raises_kerykeion(self, factory, bad_iso):
+        """Round 19: a malformed ISO timestamp on the *_from_iso_formatted_time
+        entry points surfaces as KerykeionException, not a raw ValueError."""
+        with pytest.raises(KerykeionException):
+            factory.next_return_from_iso_formatted_time(bad_iso, "Solar")
+        with pytest.raises(KerykeionException):
+            factory.next_lunar_node_crossing_from_iso_formatted_time(bad_iso)
+
     def test_invalid_month_raises(self, factory):
         with pytest.raises(KerykeionException, match="Invalid month"):
             factory.next_return_from_date(2024, 13, 1, return_type="Solar")
@@ -783,6 +792,307 @@ class TestAdditionalIntegration:
         assert diff < 0.1
 
 
+# ===========================================================================
+# Sidereal returns (v6 regression)
+# ===========================================================================
+
+
+class TestSiderealReturns:
+    """v6 regression: the crossing search must run in the natal zodiac.
+
+    Before the fix, solcross_ut/mooncross_ut received the SIDEREAL natal
+    abs_pos but searched TROPICAL longitudes, landing solar returns ~25 days
+    off (the ayanamsa divided by the Sun's daily motion).
+    """
+
+    @pytest.fixture(scope="class")
+    def sidereal_subject(self):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal Return Test",
+            1990,
+            6,
+            15,
+            14,
+            30,
+            lat=ROME_LAT,
+            lng=ROME_LNG,
+            tz_str=ROME_TZ,
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+
+    @pytest.fixture(scope="class")
+    def sidereal_factory(self, sidereal_subject):
+        return PlanetaryReturnFactory(
+            sidereal_subject,
+            lat=ROME_LAT,
+            lng=ROME_LNG,
+            tz_str=ROME_TZ,
+            online=False,
+        )
+
+    def test_sidereal_solar_return_sun_matches_natal(self, sidereal_factory, sidereal_subject):
+        """Return Sun abs_pos (sidereal) must equal the natal Sun within 1e-3°."""
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        diff = _angular_diff(result.sun.abs_pos, sidereal_subject.sun.abs_pos)
+        assert diff < 1e-3, (
+            f"Sidereal solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{sidereal_subject.sun.abs_pos}° by {diff}° — crossing searched in the wrong zodiac"
+        )
+
+    def test_sidereal_solar_return_near_birthday(self, sidereal_factory):
+        """The sidereal return is ~1 day per 72 years from the birthday, not ~25 days off."""
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        return_dt = datetime.fromisoformat(result.iso_formatted_utc_datetime)
+        birthday = datetime(2024, 6, 15, tzinfo=timezone.utc)
+        assert abs((return_dt - birthday).days) <= 3, (
+            f"Sidereal solar return on {return_dt.date()} is too far from the birthday"
+        )
+
+    def test_sidereal_lunar_return_moon_matches_natal(self, sidereal_factory, sidereal_subject):
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        diff = _angular_diff(result.moon.abs_pos, sidereal_subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"Sidereal lunar return Moon {result.moon.abs_pos}° differs from natal "
+            f"{sidereal_subject.moon.abs_pos}° by {diff}°"
+        )
+
+    def test_sidereal_return_chart_is_sidereal(self, sidereal_factory):
+        result = sidereal_factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        assert result.zodiac_type == "Sidereal"
+        assert result.sidereal_mode == "LAHIRI"
+
+
+# ===========================================================================
+# Perspective-aware returns (v6 regression)
+# ===========================================================================
+
+
+class TestReturnPerspectivePropagation:
+    """v6 regression: the crossing search must run in the natal perspective.
+
+    Before the fix, the search session propagated the natal zodiac but NOT
+    the natal perspective, so a "True Geocentric" natal Sun was searched
+    against apparent-geocentric longitudes (return Sun ~0.0056° off, the
+    annual aberration, i.e. ~8 minutes early) and a "Topocentric" natal Moon
+    against geocentric longitudes (~0.319° off, the lunar parallax, i.e.
+    ~35 minutes off).
+    """
+
+    def _make_subject(self, perspective_type):
+        return AstrologicalSubjectFactory.from_birth_data(
+            f"{perspective_type} Return Test",
+            1990,
+            6,
+            15,
+            12,
+            30,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+            suppress_geonames_warning=True,
+            perspective_type=perspective_type,
+        )
+
+    def _make_factory(self, subject):
+        return PlanetaryReturnFactory(
+            subject,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+        )
+
+    def test_true_geocentric_solar_return_sun_matches_natal(self):
+        """Return Sun (True Geocentric) must equal the natal Sun within 1e-3°.
+
+        Pre-fix error was ~0.0056° (the aberration of light).
+        """
+        subject = self._make_subject("True Geocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        assert result.perspective_type == "True Geocentric"
+        diff = _angular_diff(result.sun.abs_pos, subject.sun.abs_pos)
+        assert diff < 1e-3, (
+            f"True Geocentric solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{subject.sun.abs_pos}° by {diff}° — crossing searched in the wrong perspective"
+        )
+
+    def test_true_geocentric_lunar_return_moon_matches_natal(self):
+        subject = self._make_subject("True Geocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"True Geocentric lunar return Moon {result.moon.abs_pos}° differs from natal "
+            f"{subject.moon.abs_pos}° by {diff}°"
+        )
+
+    def test_topocentric_lunar_return_moon_matches_natal(self):
+        """The returned Moon must reach the natal target in the return frame."""
+        subject = self._make_subject("Topocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+        assert result.perspective_type == "Topocentric"
+        diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"Topocentric lunar return Moon {result.moon.abs_pos}° differs from natal "
+            f"{subject.moon.abs_pos}° by {diff}°"
+        )
+
+    def test_topocentric_lunar_return_uses_return_location(self):
+        subject = self._make_subject("Topocentric")
+        factory = PlanetaryReturnFactory(
+            subject,
+            lat=41.9028,
+            lng=12.4964,
+            tz_str="Europe/Rome",
+            online=False,
+        )
+        result = factory.next_return_from_date(2026, 1, 1, return_type="Lunar")
+
+        diff = _angular_diff(result.moon.abs_pos, subject.moon.abs_pos)
+        assert diff < 1e-3, (
+            f"Topocentric return at a different location missed its natal target by {diff}°"
+        )
+
+    def test_topocentric_return_search_uses_return_altitude(self, monkeypatch):
+        import kerykeion.planetary_returns.factory as factory_module
+
+        subject = self._make_subject("Topocentric")
+        factory = PlanetaryReturnFactory(
+            subject,
+            lat=41.9028,
+            lng=12.4964,
+            altitude=4000.0,
+            tz_str="Europe/Rome",
+            online=False,
+        )
+        captured_topos = []
+        original_ephemeris_session = factory_module.ephemeris_session
+
+        def capture_ephemeris_session(*args, **kwargs):
+            captured_topos.append(kwargs.get("topo"))
+            return original_ephemeris_session(*args, **kwargs)
+
+        monkeypatch.setattr(factory_module, "ephemeris_session", capture_ephemeris_session)
+        result = factory.next_return_from_date(2026, 1, 1, return_type="Lunar")
+
+        assert captured_topos == [(12.4964, 41.9028, 4000.0)]
+        assert result.altitude == 4000.0
+        assert _angular_diff(result.moon.abs_pos, subject.moon.abs_pos) < 1e-3
+
+    def test_topocentric_solar_return_sun_matches_natal(self):
+        subject = self._make_subject("Topocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        diff = _angular_diff(result.sun.abs_pos, subject.sun.abs_pos)
+        assert diff < 1e-3, (
+            f"Topocentric solar return Sun {result.sun.abs_pos}° differs from natal "
+            f"{subject.sun.abs_pos}° by {diff}°"
+        )
+
+    def test_heliocentric_natal_raises_pointing_to_heliocentric_api(self):
+        """A heliocentric natal has no geocentric crossing target — loud error."""
+        subject = self._make_subject("Heliocentric")
+        factory = self._make_factory(subject)
+        with pytest.raises(KerykeionException, match="next_heliocentric_return"):
+            factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+        with pytest.raises(KerykeionException, match="next_heliocentric_return"):
+            factory.next_return_from_date(2024, 1, 1, return_type="Lunar")
+
+    def test_heliocentric_natal_still_supports_heliocentric_returns(self):
+        """The same factory must keep working through the heliocentric API."""
+        subject = self._make_subject("Heliocentric")
+        factory = self._make_factory(subject)
+        result = factory.next_heliocentric_return_from_year("Mars", 2024)
+        assert result.return_type == "Heliocentric"
+
+    def test_unsupported_perspective_raises(self):
+        """Perspectives the search cannot reproduce (e.g. Barycentric) raise."""
+        subject = self._make_subject("Barycentric")
+        factory = self._make_factory(subject)
+        with pytest.raises(KerykeionException, match="Barycentric"):
+            factory.next_return_from_date(2024, 1, 1, return_type="Solar")
+
+    def test_heliocentric_return_sidereal_honors_frame(self):
+        """A sidereal subject's heliocentric return must land where the planet's
+        SIDEREAL heliocentric longitude equals the natal one — not the tropical
+        one. Regression guard: ``helio_cross_ut`` honors FLG_SIDEREAL (unlike
+        ``nod_aps_ut``), so masking the flag out would search a tropical
+        crossing and land ~24° (the ayanamsa) off."""
+        from kerykeion.ephemeris_backend import ephe, ephemeris_session
+
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Sidereal Helio Return",
+            1990,
+            6,
+            15,
+            12,
+            30,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        factory = PlanetaryReturnFactory(
+            subject,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            city="New York",
+            nation="US",
+            online=False,
+        )
+        result = factory.next_heliocentric_return_from_year("Jupiter", 2001)
+        assert result.return_type == "Heliocentric"
+
+        # _build_return_chart casts a geocentric chart, so recompute the
+        # heliocentric longitude at the natal/return instants ourselves.
+        planet_id = ephe.JUPITER
+        with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as iflag:
+            helio = iflag | ephe.FLG_HELCTR
+            natal_sid = ephe.calc_ut(subject.julian_day, planet_id, helio)[0][0]
+            ret_sid = ephe.calc_ut(result.julian_day, planet_id, helio)[0][0]
+            ret_trop = ephe.calc_ut(result.julian_day, planet_id, helio & ~ephe.FLG_SIDEREAL)[0][0]
+
+        # The return moment reproduces the natal SIDEREAL heliocentric longitude.
+        assert _angular_diff(ret_sid, natal_sid) < 1e-2, (
+            f"sidereal helio return off by {_angular_diff(ret_sid, natal_sid)}°"
+        )
+        # And it is genuinely sidereal: the tropical longitude there differs by
+        # the ayanamsa (~24°), so a flag-masking 'fix' would have been ~24° off.
+        assert _angular_diff(ret_trop, natal_sid) > 1.0
+
+
+# ===========================================================================
+# Timezone-aware ISO entry points (v6 regression)
+# ===========================================================================
+
+
+class TestAwareIsoEntryPoint:
+    """Offset-aware ISO datetimes must be normalised to UTC before the search."""
+
+    def test_offset_aware_iso_equals_utc_equivalent(self, johnny_depp):
+        """'...T10:30:00+05:00' must give the same return as '...T05:30:00Z'."""
+        factory = PlanetaryReturnFactory(
+            johnny_depp,
+            lat=NY_LAT,
+            lng=NY_LNG,
+            tz_str=NY_TZ,
+            online=False,
+        )
+        with_offset = factory.next_return_from_iso_formatted_time("2024-01-01T10:30:00+05:00", "Lunar")
+        utc_equiv = factory.next_return_from_iso_formatted_time("2024-01-01T05:30:00+00:00", "Lunar")
+        assert with_offset.julian_day == approx(utc_equiv.julian_day, abs=1e-8)
+
+
 # =============================================================================
 # DEPRECATED API + ONLINE MODE (from edge_cases + factories)
 # =============================================================================
@@ -845,3 +1155,238 @@ class TestPlanetaryReturnOnlineMode:
         # Default online should be True
         factory = PlanetaryReturnFactory(subject, city="Rome", nation="IT")
         assert factory.online is True
+
+
+class TestPlanetaryReturnV6FlagPropagation:
+    """Regression: 6.0.0a44 → a45 — return charts ignored v6 calc flags."""
+
+    def _make_natal(self, **kwargs):
+        return AstrologicalSubjectFactory.from_birth_data(
+            "Test V6 Return",
+            1993,
+            6,
+            10,
+            12,
+            15,
+            lat=45.41317,
+            lng=10.39799,
+            tz_str="Europe/Rome",
+            city="Montichiari",
+            nation="IT",
+            online=False,
+            suppress_geonames_warning=True,
+            **kwargs,
+        )
+
+    def _make_factory(self, natal, **kwargs):
+        return PlanetaryReturnFactory(
+            natal,
+            online=False,
+            city="Montichiari",
+            nation="IT",
+            lng=10.39799,
+            lat=45.41317,
+            tz_str="Europe/Rome",
+            **kwargs,
+        )
+
+    def test_solar_return_propagates_active_fixed_stars(self):
+        natal = self._make_natal(active_fixed_stars=["Betelgeuse", "Vindemiatrix"])
+        factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse", "Vindemiatrix"])
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
+        names = {s.name for s in return_subj.fixed_stars}
+        assert "Betelgeuse" in names
+        assert "Vindemiatrix" in names
+
+    def test_solar_return_propagates_calculate_dignities(self):
+        natal = self._make_natal(calculate_dignities=True)
+        factory = self._make_factory(natal, calculate_dignities=True)
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
+        # Every classical planet should carry an essential_dignity value
+        # (Peregrine for un-dignified placements, never None when the flag
+        # is set).
+        assert return_subj.sun.essential_dignity is not None
+        assert return_subj.moon.essential_dignity is not None
+
+    def test_solar_return_dual_wheel_renders_without_indexerror(self):
+        """Regression for the IndexError in _calculate_secondary_indicator_adjustments
+        when the return subject's collected point count differs from
+        active_points length."""
+        from kerykeion.chart_data.factory import ChartDataFactory
+        from kerykeion.charts.drawer import ChartDrawer
+
+        natal = self._make_natal(active_fixed_stars=["Betelgeuse"])
+        factory = self._make_factory(natal, active_fixed_stars=["Betelgeuse"])
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
+        data = ChartDataFactory.create_return_chart_data(natal, return_subj)
+        svg = ChartDrawer(data).generate_wheel_only_svg_string()
+        assert len(svg) > 0
+        assert "<svg" in svg
+        # Betelgeuse should be referenced in the chart (kr:slug on the wheel)
+        assert "Betelgeuse" in svg
+
+    def test_factory_defaults_keep_legacy_behaviour(self):
+        """Caller that doesn't opt into v6 flags should not see any fixed
+        star or dignity computed on the return — preserving pre-a45 behaviour
+        for downstream consumers that haven't migrated yet."""
+        natal = self._make_natal()
+        factory = self._make_factory(natal)
+        return_subj = factory.next_return_from_date(2026, 1, 1, return_type="Solar")
+        assert return_subj.fixed_stars == []
+        assert return_subj.sun.essential_dignity is None
+
+
+class TestReturnFactoryOnlineGating:
+    """Regression: online mode must fetch when ANY of tz_str/lat/lng is
+    missing (an AND gate skipped the fetch for partial input, leaving None
+    coordinates that crashed every return calculation) and must not overwrite
+    the fields the caller provided."""
+
+    def test_partial_input_fetches_and_preserves_tz(self, monkeypatch, johnny_depp):
+        from kerykeion.geonames import fetcher
+
+        rome = {"countryCode": "IT", "timezonestr": "Europe/Rome", "lat": "41.89193", "lng": "12.51133"}
+        monkeypatch.setattr(
+            fetcher.FetchGeonames, "get_serialized_data", lambda self: dict(rome)
+        )
+        factory = PlanetaryReturnFactory(
+            johnny_depp,
+            city="Rome", nation="IT", tz_str="Europe/Vienna",  # tz given, coords missing
+            online=True,
+        )
+        assert factory.lat == pytest.approx(41.89193)
+        assert factory.lng == pytest.approx(12.51133)
+        assert factory.tz_str == "Europe/Vienna"  # explicit value preserved
+
+
+class TestReturnEnrichmentParityRound4:
+    """Round-4 regression: the return chart must inherit the natal subject's
+    enrichments (parity with SecondaryProgressionFactory), and a USER-sidereal
+    subject must not require re-passing its ayanamsa."""
+
+    def test_return_inherits_natal_enrichments(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            name="T", year=1990, month=6, day=15, hour=12, minute=0,
+            city="Rome", nation="IT", lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            calculate_dignities=True, active_fixed_stars=["Regulus", "Spica"],
+        )
+        rf = PlanetaryReturnFactory(
+            natal, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        ret = rf.next_return_from_iso_formatted_time("2026-06-01T00:00:00Z", "Solar")
+        assert ret.sun.essential_dignity is not None
+        assert [s.name for s in ret.fixed_stars] == ["Regulus", "Spica"]
+
+    def test_user_sidereal_return_reads_ayanamsa_from_subject(self):
+        from kerykeion import AstrologicalSubjectFactory
+        from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+
+        sid = AstrologicalSubjectFactory.from_birth_data(
+            name="S", year=1990, month=6, day=15, hour=12, minute=0,
+            city="Rome", nation="IT", lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            zodiac_type="Sidereal", sidereal_mode="USER",
+            custom_ayanamsa_t0=2451545.0, custom_ayanamsa_ayan_t0=23.5,
+        )
+        # Must NOT raise despite not re-passing custom_ayanamsa_* to the factory.
+        rf = PlanetaryReturnFactory(
+            sid, lng=12.5, lat=41.9, tz_str="Europe/Rome",
+            city="Rome", nation="IT", online=False,
+        )
+        ret = rf.next_return_from_date(2027, 1, 1, return_type="Solar")
+        assert ret is not None
+
+
+class TestReturnSearchAtEphemerisEdge:
+    """Round 31: when the return-crossing search (solcross_ut / mooncross_ut)
+    walks off the loaded ephemeris date range, the raw libephemeris Error must be
+    normalized to KerykeionException — matching every sibling event factory,
+    instead of leaking a raw backend exception through the public API."""
+
+    @pytest.fixture(autouse=True)
+    def _require_medium_kernel_edges(self):
+        # These tests hardcode the medium (DE440) range boundaries (~1550/2650
+        # and their JD equivalents). On a base kernel the natal dates are
+        # themselves out of range; on an extended kernel the searches never
+        # walk off the edge, so nothing raises. Only the medium kernel puts
+        # the edges where the scenarios need them.
+        from tests.conftest import _detect_ephemeris_tier
+
+        if _detect_ephemeris_tier() != "medium":
+            pytest.skip("Requires the medium (DE440) kernel's range edges (~1550/2650).")
+
+    @pytest.mark.parametrize("return_type", ["Solar", "Lunar"])
+    def test_forward_search_past_upper_edge_raises_kerykeion(self, return_type):
+        # Natal just below the kernel's upper edge; the forward return search
+        # then steps past 2650 and the backend can no longer calculate.
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Edge", iso_utc_time="2649-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
+        )
+        rf = PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
+        with pytest.raises(KerykeionException):
+            rf.next_return_from_iso_formatted_time("2650-01-24T00:00:00Z", return_type)
+
+    @pytest.mark.parametrize("return_type", ["Solar", "Lunar"])
+    def test_backward_search_past_lower_edge_raises_kerykeion(self, return_type):
+        # Natal just above the kernel's lower edge; the backward search then
+        # steps before 1550.
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Edge", iso_utc_time="1550-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
+        )
+        rf = PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
+        with pytest.raises(KerykeionException):
+            rf.next_return_from_iso_formatted_time(
+                "1550-01-05T00:00:00Z", return_type, backwards=True
+            )
+
+    def _edge_factory(self):
+        natal = AstrologicalSubjectFactory.from_iso_utc_time(
+            name="Edge", iso_utc_time="2600-06-01T00:00:00Z",
+            lng=0.0, lat=51.5, tz_str="UTC", online=False,
+        )
+        return PlanetaryReturnFactory(natal, lng=0.0, lat=51.5, tz_str="UTC", online=False)
+
+    @pytest.mark.parametrize("backwards", [False, True])
+    def test_heliocentric_search_past_edge_raises_kerykeion(self, backwards):
+        # Round 32: the heliocentric crossing search (helio_cross_ut) must also
+        # normalize an off-range backend error to KerykeionException, like the
+        # Solar/Lunar paths (R31 wrapped those but missed this sibling method).
+        rf = self._edge_factory()
+        start = (2287184.5 + 5) if backwards else (2688976.5 - 5)
+        with pytest.raises(KerykeionException):
+            rf.next_heliocentric_return("Jupiter", start, backwards=backwards)
+
+    @pytest.mark.parametrize("backwards", [False, True])
+    def test_lunar_node_crossing_past_edge_raises_kerykeion(self, backwards):
+        # Round 32: same for the lunar-node crossing search (mooncross_node_ut).
+        rf = self._edge_factory()
+        start = (2287184.5 + 1) if backwards else (2688976.5 - 1)
+        with pytest.raises(KerykeionException):
+            rf.next_lunar_node_crossing(start, backwards=backwards)
+
+
+class TestReturnModelSect:
+    """is_diurnal must survive the PlanetReturnModel boundary: pydantic used to
+    silently drop it (field undeclared), so sect-aware consumers (dominants,
+    zodiacal releasing) treated every night return as a day chart."""
+
+    def test_return_model_carries_sect(self):
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Sect Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        rf = PlanetaryReturnFactory(
+            natal, lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False
+        )
+        ret = rf.next_return_from_iso_formatted_time("2026-01-01T00:00:00Z", "Solar")
+        assert isinstance(ret.is_diurnal, bool)
+        # The 2026 solar return for this natal lands at night local time.
+        assert ret.is_diurnal is False

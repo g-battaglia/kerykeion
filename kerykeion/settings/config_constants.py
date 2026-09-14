@@ -14,9 +14,13 @@ Using these constants instead of magic strings/numbers improves maintainability
 and reduces the risk of typos.
 """
 
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-from kerykeion.schemas.kr_models import ActiveAspect
-from typing import List
+import os
+import unicodedata
+
+from typing import cast
+
+from kerykeion.schemas.literals import AstrologicalPoint, SiderealMode
+from kerykeion.schemas.models import ActiveAspect
 
 
 # =============================================================================
@@ -28,6 +32,24 @@ ZODIAC_TYPE_TROPICAL: str = "Tropical"
 
 ZODIAC_TYPE_SIDEREAL: str = "Sidereal"
 """Vedic/Eastern zodiac based on fixed star positions."""
+
+DEFAULT_SIDEREAL_MODE: SiderealMode = "FAGAN_BRADLEY"
+"""Default ayanamsa applied when a sidereal chart omits ``sidereal_mode``.
+
+Single source of truth for the sidereal default, shared by the subject factory
+and the ephemeris backend so the displayed ayanamsa always matches the one used
+to compute positions."""
+
+DEFAULT_NAKSHATRA_AYANAMSA: SiderealMode = "LAHIRI"
+"""Default ayanamsa used to place the nakshatras on a NON-sidereal chart.
+
+The nakshatras divide the *sidereal* zodiac, so on a tropical (or otherwise
+non-sidereal) chart the tropical longitude has to be rotated into the sidereal
+frame before the 27-fold division is applied. Lahiri is the ayanamsa Jyotish
+uses by default, which is the tradition the nakshatras belong to; it is not
+``DEFAULT_SIDEREAL_MODE`` (Fagan-Bradley), which serves western sidereal
+charts. Pass ``nakshatra_ayanamsa=None`` to opt back into the legacy,
+uncorrected behaviour."""
 
 
 # =============================================================================
@@ -45,6 +67,112 @@ PERSPECTIVE_HELIOCENTRIC: str = "Heliocentric"
 
 PERSPECTIVE_TOPOCENTRIC: str = "Topocentric"
 """Observer location-centered view with parallax correction."""
+
+#: The perspectives cast from the Earth, and so the only ones whose Sun is the
+#: Sun ``is_diurnal`` measures. A whitelist rather than a list of exclusions on
+#: purpose: a perspective added upstream should default to *not* claiming a
+#: day/night, since asserting one about the wrong body is worse than omitting it.
+#: Topocentric and True Geocentric differ from Apparent Geocentric by parallax
+#: and aberration — under a hundredth of a degree for the Sun, so the two agree
+#: on which side of the horizon it is at every minute of a sampled day.
+#:
+#: KNOWN LIMIT, not fixed: within the few seconds either side of the horizon
+#: crossing itself, an offset that small is the whole distance, so the value and
+#: a perspective-specific altitude can disagree. Making ``is_diurnal``
+#: perspective-dependent would fix that and cost more than it is worth — the
+#: field is deliberately independent of both ``zodiac_type`` and
+#: ``perspective_type``, which is what lets a sidereal or draconic chart carry a
+#: meaningful one, and every consumer of it relies on that.
+EARTH_CENTRED_PERSPECTIVES: frozenset[str] = frozenset(
+    {PERSPECTIVE_APPARENT_GEOCENTRIC, PERSPECTIVE_TRUE_GEOCENTRIC, PERSPECTIVE_TOPOCENTRIC}
+)
+
+
+#: Translation key and English default per ``ReturnType``.
+#:
+#: A mapping rather than a Solar/else binary, which is what every one of these
+#: call sites was: ``Heliocentric`` and ``Lunar_Node_Crossing`` are both valid
+#: return types and both rendered as "Lunar Return". Fixing only the panel left a
+#: single-wheel chart reading ``Type: Heliocentric Return`` under a title ending
+#: "Lunar Return", and the dual chart's outer grid still labelled Lunar — one
+#: mapping, five places that need it.
+_RETURN_LABELS: dict[str, tuple[str, str]] = {
+    "Solar": ("solar_return", "Solar Return"),
+    "Lunar": ("lunar_return", "Lunar Return"),
+    "Heliocentric": ("heliocentric_return", "Heliocentric Return"),
+    "Lunar_Node_Crossing": ("node_return", "Node Return"),
+}
+
+
+def has_visible_text(text: str) -> bool:
+    """Does *text* put any ink on the page?
+
+    ``str.strip()`` is not enough, and the difference is reachable: it does not
+    remove the zero-width space, the joiners, the bidi marks, the word joiner,
+    the soft hyphen, or a lone combining mark. A wheel name of one zero-width
+    space rendered a row reading "\u200b Nocturnal \u00b7 Antonio Nocturnal" — a
+    value with no owner, exactly what the whitespace guard was written to
+    prevent, and a pasted name is far likelier to carry a zero-width character
+    than to consist only of spaces.
+    """
+    return any(not char.isspace() and unicodedata.category(char) not in ("Cf", "Mn", "Me", "Cc") for char in text)
+
+
+def return_label_keys(subject: object) -> tuple[str, str]:
+    """``(translation_key, english_default)`` for *subject*'s return type.
+
+    Read with :func:`getattr` rather than behind an ``isinstance`` gate. The gate
+    looked like type hygiene and was a Solar/else binary in disguise: it fed
+    ``None`` for every subject that was not a :class:`PlanetReturnModel`, so a
+    duck-typed subject *declaring* ``return_type="Solar"`` came out labelled
+    "Lunar Return" — the very substitution this mapping exists to end, on the one
+    input :mod:`kerykeion.report.generator` documents as supported.
+
+    Anything the map does not know falls through to the neutral ``Return``
+    instead of borrowing the lunar label: a `PlanetReturnModel` always carries
+    one of the four keyed types, so this arm is reached only by a duck-typed
+    subject or by a ``ReturnType`` added upstream without a label here, and
+    naming the wrong body confidently is worse than naming none.
+
+    ``Return`` is the key every language pack already ships — `Ritorno`,
+    `Rückkehr`, `回归` — and which the house-comparison grid already renders in
+    the same drawing. A first version of this invented a lowercase ``return``
+    instead, which no pack has and none ever could: the packs are dumped from
+    :class:`KerykeionLanguageModel`, and ``return`` is a Python keyword, so it
+    cannot be a field and is dropped even when a caller passes it. That would
+    have printed English "Return" beside an Italian "Ritorno" in one SVG.
+
+    ``getattr`` promises nothing about the value, and an unhashable one — a list,
+    a dict — raised ``TypeError`` out of the lookup where the old gate returned a
+    label. Caught rather than pre-screened with ``isinstance(str)``: that screen
+    was written first and quietly narrowed the input class this function had just
+    been widened to serve. A ``UserString``, or any lazy-translation proxy that
+    hashes and compares equal to :class:`str` without subclassing it, matches the
+    map perfectly well; only the lookup itself knows what it can accept.
+    """
+    return_type = getattr(subject, "return_type", None)
+    try:
+        return _RETURN_LABELS.get(return_type or "", ("Return", "Return"))
+    except TypeError:
+        return ("Return", "Return")
+
+
+def subject_states_a_diurnality(subject: object) -> bool:
+    """Whether *subject*'s ``is_diurnal`` describes the chart drawn for it.
+
+    The single source of truth for a rule the SVG panel and the text report both
+    apply, so the two cannot drift: the value means something only when the chart
+    is cast from the Earth (otherwise the drawn Sun is not the one measured, or
+    there is no Sun at all) and the engine actually produced one (a midpoint
+    composite represents no single sky and leaves it ``None``).
+
+    The chart additionally honours ``ChartDrawer(show_diurnality=False)``, which
+    is a rendering preference rather than a property of the subject, so that gate
+    stays at the call site.
+    """
+    if getattr(subject, "perspective_type", None) not in EARTH_CENTRED_PERSPECTIVES:
+        return False
+    return getattr(subject, "is_diurnal", None) is not None
 
 
 # =============================================================================
@@ -68,6 +196,9 @@ CHART_TYPE_SINGLE_RETURN: str = "SingleReturnChart"
 
 CHART_TYPE_DUAL_RETURN: str = "DualReturnChart"
 """Dual chart with natal and return overlay."""
+
+CHART_TYPE_PROGRESSION: str = "Progression"
+"""Dual chart comparing natal to secondary-progressed positions."""
 
 
 # =============================================================================
@@ -164,7 +295,7 @@ HOUSE_SYSTEM_CAMPANUS: str = "C"
 HOUSE_SYSTEM_REGIOMONTANUS: str = "R"
 """Regiomontanus house system."""
 
-HOUSE_SYSTEM_EQUAL: str = "E"
+HOUSE_SYSTEM_EQUAL: str = "A"
 """Equal house system (from Ascendant)."""
 
 HOUSE_SYSTEM_MORINUS: str = "M"
@@ -190,7 +321,7 @@ QUALITY_MUTABLE: str = "Mutable"
 # =============================================================================
 
 
-TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: List[AstrologicalPoint] = [
+TRADITIONAL_ASTROLOGY_ACTIVE_POINTS: list[AstrologicalPoint] = [
     "Sun",
     "Moon",
     "Mercury",
@@ -206,7 +337,7 @@ Traditional astrology active points: the seven classical planets (Sun to Saturn)
 Excludes modern planets (Uranus, Neptune, Pluto), asteroids, and calculated points (Asc, MC, etc.).
 """
 
-DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
+DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
     "Sun",
     "Moon",
     "Mercury",
@@ -220,9 +351,9 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     # "Mean_North_Lunar_Node",
     "True_North_Lunar_Node",
     # "Mean_South_Lunar_Node",
-    "True_South_Lunar_Node",
+    # "True_South_Lunar_Node",
     "Chiron",
-    "Mean_Lilith",
+    # "Mean_Lilith",
     # "True_Lilith",
     # "Earth",
     # "Pholus",
@@ -263,8 +394,8 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
     # "Alkaid",
     "Ascendant",
     "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
+    # "Descendant",
+    # "Imum_Coeli",
     # "Vertex",
     # "Anti_Vertex",
     # "Pars_Fortunae",
@@ -274,10 +405,53 @@ DEFAULT_ACTIVE_POINTS: List[AstrologicalPoint] = [
 ]
 """
 Default list of active points in the charts or aspects calculations.
-The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
+The full list of points is available in the `schemas.literals.AstrologicalPoint` literal.
 """
 
-ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
+V5_DEFAULT_ACTIVE_POINTS: list[AstrologicalPoint] = [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    "True_North_Lunar_Node",
+    "True_South_Lunar_Node",
+    "Chiron",
+    "Mean_Lilith",
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+]
+"""
+The 18 points that ``DEFAULT_ACTIVE_POINTS`` held in v5, kept for result continuity.
+
+v6 trimmed the default set to 14: ``True_South_Lunar_Node``, ``Mean_Lilith``,
+``Descendant`` and ``Imum_Coeli`` are no longer active unless asked for. Code that
+relied on the defaults therefore gets fewer points after upgrading, silently --
+nothing raises, the results are simply narrower.
+
+Pass this list to reproduce v5 output verbatim::
+
+    from kerykeion import AstrologicalSubjectFactory
+    from kerykeion.settings import V5_DEFAULT_ACTIVE_POINTS
+
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        ..., active_points=V5_DEFAULT_ACTIVE_POINTS,
+    )
+
+This is a frozen historical record, not a maintained preset: it will not follow
+future changes to the default set. See the migration guide for the other two
+behavioural changes (Sun/Moon orb adjustments and the chart style default),
+which this constant does not address.
+"""
+
+ALL_ACTIVE_POINTS: list[AstrologicalPoint] = [
     # Planets
     "Sun",
     "Moon",
@@ -313,7 +487,78 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Ixion",
     "Orcus",
     "Quaoar",
-    # Fixed Stars (23 total -- expanded in v5.12 from 2)
+    # Fixed Stars (v6): no longer included in DEFAULT_ACTIVE_POINTS.
+    # Stars are activated separately via the ``active_fixed_stars`` parameter
+    # of AstrologicalSubjectFactory. See ROYAL_FIXED_STARS, BEHENIAN_FIXED_STARS,
+    # and DEFAULT_FIXED_STARS below for ready-made presets.
+    # Angular Points
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+    "Vertex",
+    "Anti_Vertex",
+    # Uranian / Hamburg School hypothetical planets
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
+    # Lilith/Priapus variants
+    "Interpolated_Lilith",
+    "Mean_Priapus",
+    "True_Priapus",
+    # Lunar apse points
+    "Interpolated_Perigee",
+    "White_Moon",
+    # Arabic Parts (Lots)
+    "Pars_Fortunae",
+    "Pars_Spiritus",
+    "Pars_Amoris",
+    "Pars_Fidei",
+]
+"""
+Full list of active points in the charts or aspects calculations.
+The full list of points is available in the `schemas.literals.AstrologicalPoint` literal.
+"""
+
+# =============================================================================
+# FIXED STAR PRESETS (v6.0)
+# =============================================================================
+# Use these with the `active_fixed_stars` parameter of AstrologicalSubjectFactory.
+# Names must match entries in the ephemeris backend's fixed-star catalog.
+
+ROYAL_FIXED_STARS: list[str] = [
+    "Aldebaran",
+    "Regulus",
+    "Antares",
+    "Fomalhaut",
+]
+"""The four Royal Stars (Watchers of the Sky) in Persian/Hellenistic astrology."""
+
+BEHENIAN_FIXED_STARS: list[str] = [
+    "Algol",
+    "Alcyone",
+    "Aldebaran",
+    "Capella",
+    "Sirius",
+    "Procyon",
+    "Regulus",
+    "Algorab",
+    "Spica",
+    "Arcturus",
+    "Alphecca",
+    "Antares",
+    "Vega",
+    "Deneb_Algedi",
+    "Fomalhaut",
+]
+"""The 15 Behenian stars of the medieval/Hermetic magical tradition."""
+
+DEFAULT_FIXED_STARS: list[str] = [
     "Regulus",
     "Spica",
     "Aldebaran",
@@ -337,61 +582,95 @@ ALL_ACTIVE_POINTS: List[AstrologicalPoint] = [
     "Algorab",
     "Deneb_Algedi",
     "Alkaid",
-    # Angular Points
-    "Ascendant",
-    "Medium_Coeli",
-    "Descendant",
-    "Imum_Coeli",
-    "Vertex",
-    "Anti_Vertex",
-    # Arabic Parts (Lots)
-    "Pars_Fortunae",
-    "Pars_Spiritus",
-    "Pars_Amoris",
-    "Pars_Fidei",
+]
+"""The 23 default fixed stars (same set as Kerykeion v5.12)."""
+
+
+URANIAN_ACTIVE_POINTS: list[AstrologicalPoint] = [
+    "Cupido",
+    "Hades",
+    "Zeus",
+    "Kronos",
+    "Apollon",
+    "Admetos",
+    "Vulkanus",
+    "Poseidon",
 ]
 """
-Full list of active points in the charts or aspects calculations.
-The full list of points is available in the `schemas.kr_literals.AstrologicalPoint` literal.
+Uranian / Hamburg School hypothetical trans-Neptunian planets (Alfred Witte).
+Use these alongside DEFAULT_ACTIVE_POINTS for Uranian astrology work.
 """
 
-DEFAULT_ACTIVE_ASPECTS: List[ActiveAspect] = [
-    {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10},
-    {"name": "trine", "orb": 8},
-    {"name": "sextile", "orb": 6},
-    {"name": "square", "orb": 5},
-    {"name": "quintile", "orb": 1},
-    # {"name": "semi-sextile", "orb": 1},
-    # {"name": "semi-square", "orb": 1},
-    # {"name": "sesquiquadrate", "orb": 1},
-    # {"name": "biquintile", "orb": 1},
-    # {"name": "quincunx", "orb": 1},
+
+DEFAULT_ACTIVE_ASPECTS: list[ActiveAspect] = [
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 5},
+    {"name": "square", "orb": 6},
 ]
 """
-Default list of active aspects in the aspects calculations.
-The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
+Default active aspects for natal and synastry charts.
+Base orb 6° for the four major aspects, 5° for sextile —
+the orb values used by mainstream online astrology calculators. Luminary
+widening is applied separately via point orb adjustments; use 8° orbs if you
+need that behaviour without per-planet logic.
 """
 
-ALL_ACTIVE_ASPECTS: List[ActiveAspect] = [
-    {"name": "conjunction", "orb": 10},
-    {"name": "opposition", "orb": 10},
-    {"name": "trine", "orb": 8},
-    {"name": "sextile", "orb": 6},
-    {"name": "square", "orb": 5},
-    {"name": "quintile", "orb": 1},
-    {"name": "semi-sextile", "orb": 1},
-    {"name": "semi-square", "orb": 1},
-    {"name": "sesquiquadrate", "orb": 1},
-    {"name": "biquintile", "orb": 1},
-    {"name": "quincunx", "orb": 1},
+PREDICTIVE_ACTIVE_ASPECTS: list[ActiveAspect] = [
+    {"name": "conjunction", "orb": 3},
+    {"name": "opposition", "orb": 3},
+    {"name": "trine", "orb": 3},
+    {"name": "sextile", "orb": 3},
+    {"name": "square", "orb": 3},
 ]
 """
-Full list of active aspects in the charts or aspects calculations.
-The full list of aspects is available in the `schemas.kr_literals.AspectName` literal.
+Active aspects for predictive/dual-chart techniques (transits, secondary
+progressions, solar arcs). Five Ptolemaic aspects at a tight 3° orb — the
+conventional default for transit and progression chart wheels.
 """
 
-DISCEPOLO_SCORE_ACTIVE_ASPECTS: List[ActiveAspect] = [
+
+DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS: dict[str, float] = {
+    "Sun": 1.5,
+    "Moon": 1.5,
+}
+"""
+Per-point orb adjustment for natal/relationship charts.
+Added to the aspect base orb when a point is involved in the aspect. The
+luminaries (Sun, Moon) get +1.5°: with the 6° major-aspect base orb, a
+Sun/Moon major aspect resolves to 7.5° — the classic luminary-widening rule.
+Combined per pair via :func:`kerykeion.aspects.orb_utils.resolve_pair_orb_adjustment`.
+"""
+
+
+NO_POINT_ORB_ADJUSTMENTS: dict[str, float] = {}
+"""
+Empty per-point orb adjustment table — used by predictive charts (transits,
+returns, progressions, solar arcs) where a flat, tight orb applies uniformly
+to every point regardless of whether it is a luminary.
+"""
+
+
+ALL_ACTIVE_ASPECTS: list[ActiveAspect] = [
+    {"name": "conjunction", "orb": 6},
+    {"name": "opposition", "orb": 6},
+    {"name": "trine", "orb": 6},
+    {"name": "sextile", "orb": 5},
+    {"name": "square", "orb": 6},
+    {"name": "quintile", "orb": 2},
+    {"name": "semi-sextile", "orb": 2},
+    {"name": "semi-square", "orb": 2},
+    {"name": "sesquiquadrate", "orb": 2},
+    {"name": "biquintile", "orb": 2},
+    {"name": "quincunx", "orb": 2},
+]
+"""
+Full list of active aspects including minors.
+Major: 6°, sextile: 5°, all minors: 2°.
+"""
+
+DISCEPOLO_SCORE_ACTIVE_ASPECTS: list[ActiveAspect] = [
     {"name": "conjunction", "orb": 8},
     {"name": "semi-sextile", "orb": 2},
     {"name": "semi-square", "orb": 2},
@@ -404,3 +683,144 @@ DISCEPOLO_SCORE_ACTIVE_ASPECTS: List[ActiveAspect] = [
 """
 List of active aspects with their orbs according to Ciro Discepolo's affinity scoring methodology.
 """
+
+
+# =============================================================================
+# POINT ID MAPPINGS (Swiss Ephemeris)
+# =============================================================================
+# Centralized celestial point name -> Swiss Ephemeris ID mappings.
+# Previously duplicated in `utilities.py` (_POINT_NUMBER_MAP) and
+# `astrological_subject_factory.py` (STANDARD_PLANETS); unified here to
+# eliminate drift between the two. Historic symbols remain re-exported in
+# those modules for backward compatibility.
+
+STANDARD_PLANETS: dict[AstrologicalPoint, int] = {
+    "Sun": 0,
+    "Moon": 1,
+    "Mercury": 2,
+    "Venus": 3,
+    "Mars": 4,
+    "Jupiter": 5,
+    "Saturn": 6,
+    "Uranus": 7,
+    "Neptune": 8,
+    "Pluto": 9,
+    "Mean_North_Lunar_Node": 10,
+    "True_North_Lunar_Node": 11,
+    "Mean_Lilith": 12,
+    "True_Lilith": 13,
+    "Earth": 14,
+    "Chiron": 15,
+    "Pholus": 16,
+    "Ceres": 17,
+    "Pallas": 18,
+    "Juno": 19,
+    "Vesta": 20,
+    # Interpolated lunar apse points (SwissEph IDs 21-22)
+    "Interpolated_Lilith": 21,  # SE_INTP_APOG -- proper interpolated apogee
+    "Interpolated_Perigee": 22,  # SE_INTP_PERG -- proper interpolated perigee
+    # Uranian / Hamburg School hypothetical planets (SwissEph IDs 40-47)
+    "Cupido": 40,
+    "Hades": 41,
+    "Zeus": 42,
+    "Kronos": 43,
+    "Apollon": 44,
+    "Admetos": 45,
+    "Vulkanus": 46,
+    "Poseidon": 47,
+}
+"""
+Standard planets with direct Swiss Ephemeris IDs (0-22, 40-47).
+Used for `ephe.calc_ut()` calls where the planet identifier is a native SE code.
+"""
+
+POINT_NUMBER_MAP: dict[str, int] = {
+    # The Literal keys of STANDARD_PLANETS are plain strings at runtime; widen
+    # them for this str-keyed public map.
+    **cast("dict[str, int]", STANDARD_PLANETS),
+    # Extra points without Swiss Ephemeris IDs
+    "Mean_South_Lunar_Node": 1000,
+    "True_South_Lunar_Node": 1100,
+    "White_Moon": 56,  # SE_WHITE_MOON / Selena
+    "Ascendant": 9900,
+    "Descendant": 9901,
+    "Medium_Coeli": 9902,
+    "Imum_Coeli": 9903,
+}
+"""
+Swiss Ephemeris–compatible subset of astrological points: bodies with native SE
+IDs plus synthetic IDs (>=1000) for points that can still be looked up by this
+map (South Nodes, axial cusps, White Moon).
+
+This is NOT a full mapping of all `AstrologicalPoint` values. Many active points
+(Vertex, Arabic parts / Lots, fixed stars, TNOs, etc.) are intentionally absent
+because they are not used by the call sites that consume this constant. Callers
+that can receive arbitrary `AstrologicalPoint` names must handle `KeyError`.
+"""
+
+MAIN_PLANETS: list[AstrologicalPoint] = [
+    "Sun",
+    "Moon",
+    "Mercury",
+    "Venus",
+    "Mars",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+]
+"""The ten main planets (Sun, Moon, Mercury..Pluto) in canonical report order."""
+
+LUNAR_NODES: list[AstrologicalPoint] = [
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+]
+"""North lunar nodes (mean and true). South nodes are derived via OPPOSITE_PAIRS."""
+
+AXIAL_POINTS: list[AstrologicalPoint] = [
+    "Ascendant",
+    "Medium_Coeli",
+    "Descendant",
+    "Imum_Coeli",
+]
+"""The four axial cusps (angles) of the horoscope."""
+
+#: The axes and lunar nodes, in the order a document should present them.
+AXES_AND_NODES_IN_READING_ORDER: list[AstrologicalPoint] = [
+    "Ascendant",
+    "Descendant",
+    "Medium_Coeli",
+    "Imum_Coeli",
+    "Vertex",
+    "Anti_Vertex",
+    "Mean_North_Lunar_Node",
+    "True_North_Lunar_Node",
+    "Mean_South_Lunar_Node",
+    "True_South_Lunar_Node",
+]
+
+#: Points that are the 180-degree opposite of another, and of which.
+#:
+#: None of these five is in ``DEFAULT_ACTIVE_POINTS``, because a caller who asks
+#: for the Ascendant has asked for the Descendant whether they said so or not.
+#: A document that drives its point list off ``active_points`` therefore drops
+#: them from every default chart — which is why a report could name the Imum
+#: Coeli in one table and give its degree in none, and why under whole sign or
+#: equal houses, where the fourth cusp is NOT the Imum Coeli, the reader had no
+#: way to learn where it was.
+#:
+#: They are added when their counterpart is active, and only then: a traditional
+#: point set that leaves the Ascendant out has left the Descendant out with it.
+OPPOSITE_POINTS: dict[AstrologicalPoint, AstrologicalPoint] = {
+    "Descendant": "Ascendant",
+    "Imum_Coeli": "Medium_Coeli",
+    "Anti_Vertex": "Vertex",
+    "Mean_South_Lunar_Node": "Mean_North_Lunar_Node",
+    "True_South_Lunar_Node": "True_North_Lunar_Node",
+}
+
+# Default target of `python -m kerykeion.swisseph_setup` and the directory the
+# swisseph backend auto-detects when KERYKEION_EPHE_PATH is unset. Lives here
+# (dependency-free) so the setup script never has to import the backend module.
+DEFAULT_SWEPH_DOWNLOAD_DIR: str = os.path.join(os.path.expanduser("~"), ".kerykeion", "sweph")

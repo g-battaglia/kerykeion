@@ -89,24 +89,27 @@ print(relationship_score)
 
 ```plaintext
 RelationshipScoreModel(
-    score_value=18,
-    score_description='Very Important',
-    is_destiny_sign=True,
-    aspects=[
-        RelationshipScoreAspectModel(p1_name='Sun', p2_name='Sun', aspect='conjunction', orbit=1.5),
-        RelationshipScoreAspectModel(p1_name='Sun', p2_name='Moon', aspect='sextile', orbit=2.1),
-        RelationshipScoreAspectModel(p1_name='Venus', p2_name='Mars', aspect='trine', orbit=3.4)
-    ],
-    subjects=[<AstrologicalSubjectModel of Person A>, <AstrologicalSubjectModel of Person B>]
+    score_value=25,
+    score_description='Exceptional',
+    is_destiny_sign=True,
+    aspects=[
+        RelationshipScoreAspectModel(p1_name='Sun', p2_name='Sun', aspect='conjunction', orbit=6.27),
+        RelationshipScoreAspectModel(p1_name='Sun', p2_name='Ascendant', aspect='sextile', orbit=1.97),
+        RelationshipScoreAspectModel(p1_name='Moon', p2_name='Sun', aspect='trine', orbit=3.84),
+        RelationshipScoreAspectModel(p1_name='Ascendant', p2_name='Moon', aspect='opposition', orbit=2.67)
+    ],
+    score_breakdown=[...],
+    subjects=[<AstrologicalSubjectModel of Person A>, <AstrologicalSubjectModel of Person B>]
 )
 ```
 
 ### Additional Notes
 
+- To print the score on the chart itself, pass `show_relationship_score=True` to `ChartDrawer`. The line takes one of the two rows the synastry info panel leaves empty and reads `Relationship Score: 16 (Very Important)` — the number travels with its band, since a count of weighted contacts means nothing without the scale it sits on. It needs a score on the chart data, which `create_synastry_chart_data` computes unless `include_relationship_score=False`; a chart drawn from the generic factory path prints nothing rather than a zero it never measured.
 - This implementation is based on the Ciro Discepolo method. Additional details can be found [here](http://www.cirodiscepolo.it/Articoli/Discepoloele.htm).
 - Logging is available for debugging purposes, with detailed messages during aspect evaluations.
 
-This class integrates seamlessly with Kerykeion v5 factories and models.
+This class integrates seamlessly with Kerykeion factories and models.
 
 ---
 

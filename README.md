@@ -1,115 +1,158 @@
 <h1 align="center">Kerykeion</h1>
 
 <div align="center">
-    <img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="stars">
-    <img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="forks">
+  <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="GitHub stars"></a>
+  <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="GitHub forks"></a>
+  <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/v/kerykeion?label=PyPI" alt="PyPI version"></a>
+  <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions"></a>
+  <a href="https://pepy.tech/project/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://static.pepy.tech/badge/kerykeion/month" alt="Monthly downloads"></a>
 </div>
-<div align="center">
-    <img src="https://static.pepy.tech/badge/kerykeion/month" alt="PyPI Downloads">
-    <img src="https://static.pepy.tech/badge/kerykeion/week" alt="PyPI Downloads">
-    <img src="https://static.pepy.tech/personalized-badge/kerykeion?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=BLUE&left_text=downloads/total" alt="PyPI Downloads">
-</div>
-<div align="center">
-    <img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version">
-    <img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions">
-</div>
-<p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 <p align="center">
-  <img src="docs/charts/classic_default_natal.svg" width="540" alt="John Lennon - Natal Chart">
+  <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
 </p>
 
-Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
+Kerykeion is a comprehensive Python astrology library for calculations and SVG chart generation. It supports most major astrological traditions and techniques, from modern Western and traditional astrology to Vedic, Uranian, predictive, locational, and mundane work.
 
-The main goal of this project is to provide high-precision astrological calculations through a clean, data-driven approach, making them accessible and programmable.
-
-Kerykeion also serves as the engine behind the hosted [Astrologer API](https://www.kerykeion.net/astrologer-api), and it integrates seamlessly with LLM and AI applications.
+It is highly configurable, with sensible defaults optimized for modern astrology. Results are typed, serializable, and ready for Python applications, APIs, LLMs, and AI agents.
 
 ## Hosted API
 
-If you are building a commercial application, a SaaS, or prefer to keep the codebase closed-source, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)** on RapidAPI.
+Building a commercial, SaaS, or closed-source product? Use the hosted **Astrologer API** on RapidAPI. Your app calls Kerykeion as an external service, with no Python or ephemeris infrastructure and no AGPL library in your codebase.
 
-Your app consumes Kerykeion as an external service rather than importing the AGPL library directly — no server setup, no copyleft concerns. Subscribing directly supports the ongoing development of this open-source project.
+Get JSON calculations, ready-to-display SVG charts, and AI-ready context endpoints. A dedicated **Astrologer API Agent Skill** gives AI coding agents the authentication pattern, endpoint routing, schemas, and integration examples they need to build with the service.
 
-**[Full API Documentation](https://www.kerykeion.net/astrologer-api)**
+<p align="center">
+  <strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Get Started on RapidAPI</a></strong>
+  &nbsp;·&nbsp;
+  <strong><a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Full API Documentation</a></strong>
+  &nbsp;·&nbsp;
+  <strong><a href="https://github.com/g-battaglia/Astrologer-API/tree/v5/skills/astrologer-api" target="_blank" rel="noopener noreferrer">AI Agent Skill</a></strong>
+</p>
+
+Subscriptions directly support Kerykeion's continued development.
+
+## Chart Styles and Themes
+
+Kerykeion includes two complete SVG chart styles, **Modern** and **Classic**, and three built-in themes. Every combination below is generated by the library:
+
+<table>
+  <tr>
+    <th></th>
+    <th align="center">Classic theme</th>
+    <th align="center">Dark theme</th>
+    <th align="center">Black &amp; white</th>
+  </tr>
+  <tr>
+    <th>Modern style</th>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_classic_natal.svg" width="250" alt="Modern chart with the classic theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_dark_natal.svg" width="250" alt="Modern chart with the dark theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/modern_black_and_white_natal.svg" width="250" alt="Modern chart with the black-and-white theme"></td>
+  </tr>
+  <tr>
+    <th>Classic style</th>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/classic_default_natal.svg" width="250" alt="Classic chart with the classic theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/classic_dark_natal.svg" width="250" alt="Classic chart with the dark theme"></td>
+    <td><img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/v6/docs/charts/classic_black_and_white_natal.svg" width="250" alt="Classic chart with the black-and-white theme"></td>
+  </tr>
+</table>
+
+Choose a style with `style="modern"` or `style="classic"`, and a theme with `theme="classic"`, `theme="dark"`, or `theme="black-and-white"`. See [Chart Rendering](#chart-rendering), <a href="https://www.kerykeion.net/content/examples/modern-charts" target="_blank" rel="noopener noreferrer">Modern Charts</a>, and <a href="https://www.kerykeion.net/content/examples/theming" target="_blank" rel="noopener noreferrer">Theming</a>.
 
 ## Table of Contents
 
-- [**Astrology API**](#astrology-api)
-- [Table of Contents](#table-of-contents)
+- [Hosted API](#hosted-api)
+- [Chart Styles and Themes](#chart-styles-and-themes)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Basic Usage](#basic-usage)
-- [Generate a SVG Chart](#generate-a-svg-chart)
-  - [Birth Chart](#birth-chart)
-  - [External Birth Chart](#external-birth-chart)
-  - [Synastry Chart](#synastry-chart)
-  - [Transit Chart](#transit-chart)
-  - [Solar Return Chart (Dual Wheel)](#solar-return-chart-dual-wheel)
-  - [Solar Return Chart (Single Wheel)](#solar-return-chart-single-wheel)
-  - [Lunar Return Chart](#lunar-return-chart)
-  - [Composite Chart](#composite-chart)
-- [Wheel Only Charts](#wheel-only-charts)
-  - [Birth Chart](#birth-chart-1)
-  - [Wheel Only Birth Chart (External)](#wheel-only-birth-chart-external)
-  - [Synastry Chart](#synastry-chart-1)
-  - [Change the Output Directory](#change-the-output-directory)
-  - [Change Language](#change-language)
-  - [Minified SVG](#minified-svg)
-  - [SVG without CSS Variables](#svg-without-css-variables)
-  - [Grid Only SVG](#grid-only-svg)
-- [Modern Chart Style](#modern-chart-style)
-  - [Modern Birth Chart](#modern-birth-chart)
-  - [Modern Synastry Chart](#modern-synastry-chart)
-  - [Modern Transit Chart](#modern-transit-chart)
-  - [Modern Wheel Only](#modern-wheel-only)
-- [Report Generator](#report-generator)
-  - [Quick Examples](#quick-examples)
-  - [Section Access](#section-access)
-- [AI Context Serializer](#ai-context-serializer)
-  - [Quick Example](#quick-example)
-- [Example: Retrieving Aspects](#example-retrieving-aspects)
-- [Relationship Score](#relationship-score)
-- [Element \& Quality Distribution Strategies](#element--quality-distribution-strategies)
-- [Ayanamsa (Sidereal Modes)](#ayanamsa-sidereal-modes)
-- [House Systems](#house-systems)
-- [Perspective Type](#perspective-type)
-- [Themes](#themes)
-- [Alternative Initialization](#alternative-initialization)
-- [Lunar Nodes (Rahu \\& Ketu)](#lunar-nodes-rahu--ketu)
-- [Fixed Stars](#fixed-stars)
-- [JSON Support](#json-support)
-- [Moon Phase Details](#moon-phase-details)
+- [How Kerykeion Is Organized](#how-kerykeion-is-organized)
+- [Feature Overview](#feature-overview)
+  - [Subjects and Chart Types](#subjects-and-chart-types)
+  - [Zodiacs, Houses, Perspectives, and Points](#zodiacs-houses-perspectives-and-points)
+  - [Aspects and Chart Analysis](#aspects-and-chart-analysis)
+  - [Predictive and Locational Techniques](#predictive-and-locational-techniques)
+  - [Sky Events and Time Calculations](#sky-events-and-time-calculations)
+  - [Traditional Techniques](#traditional-techniques)
+  - [Rendering, Data, Reports, and AI](#rendering-data-reports-and-ai)
+- [Core Workflows](#core-workflows)
+  - [Build and Inspect a Subject](#build-and-inspect-a-subject)
+  - [Generate an SVG Chart](#generate-an-svg-chart)
+  - [Synastry and Transits](#synastry-and-transits)
+  - [Solar and Lunar Returns](#solar-and-lunar-returns)
+  - [Composite and Davison Charts](#composite-and-davison-charts)
+  - [Aspects and Chart Analysis](#aspects-and-chart-analysis-1)
+  - [Reports and AI Context](#reports-and-ai-context)
+- [Calculation Configuration](#calculation-configuration)
+  - [Active Points](#active-points)
+  - [Fixed Stars](#fixed-stars)
+  - [Sidereal Modes and Custom Ayanamsa](#sidereal-modes-and-custom-ayanamsa)
+  - [House Systems and Polar Latitudes](#house-systems-and-polar-latitudes)
+  - [Observer Perspectives](#observer-perspectives)
+  - [Timezones, LMT, and Calendars](#timezones-lmt-and-calendars)
+  - [Precision, Coverage, and Provenance](#precision-coverage-and-provenance)
+- [Chart Rendering](#chart-rendering)
+- [Command-Line Interface](#command-line-interface)
 - [Documentation](#documentation)
-- [Projects built with Kerykeion](#projects-built-with-kerykeion)
+- [Swiss Ephemeris Backend](#swiss-ephemeris-backend)
+- [AI Agent Skill](#ai-agent-skill)
 - [Development](#development)
-- [Integrating Kerykeion into Your Project](#integrating-kerykeion-into-your-project)
-- [License](#license)
-- [Contributing](#contributing)
-- [Citations](#citations)
+- [License and Commercial Use](#license-and-commercial-use)
+- [Astrologer Studio](#astrologer-studio)
+- [Contributing and Citation](#contributing-and-citation)
 
 ## Installation
 
-Kerykeion requires **Python 3.9** or higher.
+Kerykeion requires **Python 3.12 or newer**.
+
+This branch documents **6.0.0rc1**, the first v6 release candidate. Select the prerelease explicitly:
 
 ```bash
-pip3 install kerykeion
+# Library only
+pip install --upgrade "kerykeion==6.0.0rc1"
+
+# Library plus the command-line interface
+pip install --upgrade --pre "kerykeion[cli]==6.0.0rc1"
+
+# Library, CLI, and optional Swiss Ephemeris backend
+pip install --upgrade --pre "kerykeion[all]==6.0.0rc1"
 ```
 
-For more installation options and environment setup, see the [Getting Started guide](https://www.kerykeion.net/content/docs/).
+An unqualified `pip install kerykeion` selects the latest stable release. Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/v6/release_notes/v6.0.0rc1.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/content/docs/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
+
+A plain library installation intentionally provides no shell command. The `kerykeion` command belongs to the separate `kerykeion-cli` distribution, installed by the `cli` extra.
+
+### Supported date ranges
+
+The default reviewed ephemeris tier uses JPL DE440s and covers **1850–2150**. The upper bound is exclusive. Dates outside the active kernel raise `KerykeionException` rather than silently changing source.
+
+Install a wider reviewed core through libephemeris:
+
+```python
+# doc-snippet: no-run - downloads ephemeris kernels
+import libephemeris
+
+libephemeris.download_leb_for_tier("medium")    # 1550–2650
+libephemeris.download_leb_for_tier("extended")  # DE441, including BCE dates
+```
+
+The core tier controls the date range of the core bodies. Asteroids, exotics, and lunar apsides use separate data groups or runtime models and can have different coverage. See <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> and <a href="https://www.kerykeion.net/content/docs/backend_precision_comparison" target="_blank" rel="noopener noreferrer">Backend Precision Comparison</a>.
 
 ## Quick Start
 
+This offline example creates a subject, derives chart data, and saves a natal SVG:
+
 ```python
 from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     name="Example Person",
-    year=1990, month=7, day=15,
-    hour=10, minute=30,
+    year=1990,
+    month=7,
+    day=15,
+    hour=10,
+    minute=30,
     lng=12.4964,
     lat=41.9028,
     tz_str="Europe/Rome",
@@ -117,1600 +160,694 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 )
 
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
-chart_drawer = ChartDrawer(chart_data=chart_data)
+drawer = ChartDrawer(chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="example-natal")
 
-chart_drawer.save_svg(output_path=output_dir, filename="example-natal")
-print("Chart saved to", (output_dir / "example-natal.svg").resolve())
+print(subject.sun.sign, subject.sun.position)
+print((output_dir / "example-natal.svg").resolve())
 ```
 
-This script shows the recommended workflow:
+The recommended offline contract is explicit: set `online=False` and provide longitude, latitude, and an IANA timezone. For automatic location lookup, set `online=True`, provide `city` and `nation`, and configure a GeoNames username through `geonames_username` or `KERYKEION_GEONAMES_USERNAME`.
 
-1. Create an `AstrologicalSubject` with explicit coordinates and timezone (offline mode).
-2. Build a `ChartDataModel` through `ChartDataFactory`.
-3. Render the SVG via `ChartDrawer`, saving it to a controlled folder (`charts_output`).
+- <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer">Getting Started</a>
+- <a href="https://www.kerykeion.net/content/examples/birth-data" target="_blank" rel="noopener noreferrer">Birth Data</a>
+- <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Astrological Subject Factory</a>
+- <a href="https://www.kerykeion.net/content/examples/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart Example</a>
 
-Use the same pattern for synastry, composite, transit, or return charts by swapping the factory method.
+## How Kerykeion Is Organized
 
-**📖 More examples: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)**
+Kerykeion separates calculations from presentation:
 
-## Basic Usage
-
-Below is a simple example illustrating the creation of an astrological subject and retrieving astrological details:
-
-```python
-from kerykeion import AstrologicalSubjectFactory
-
-# Create an instance of the AstrologicalSubjectFactory class.
-# Arguments: Name, year, month, day, hour, minutes, city, nation
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Retrieve information about the Sun:
-print(john.sun.model_dump_json())
-# > {"name":"Sun","quality":"Cardinal","element":"Air","sign":"Lib","sign_num":6,"position":16.26789199474399,"abs_pos":196.267891994744,"emoji":"♎️","point_type":"AstrologicalPoint","house":"Sixth_House","retrograde":false}
-
-# Retrieve information about the first house:
-print(john.first_house.model_dump_json())
-# > {"name":"First_House","quality":"Cardinal","element":"Fire","sign":"Ari","sign_num":0,"position":19.74676624176799,"abs_pos":19.74676624176799,"emoji":"♈️","point_type":"House","house":null,"retrograde":null}
-
-# Retrieve the element of the Moon sign:
-print(john.moon.element)
-# > 'Air'
+```text
+Birth/event data
+      |
+      v
+AstrologicalSubjectFactory  ->  AstrologicalSubjectModel
+      |
+      v
+ChartDataFactory            ->  ChartDataModel
+      |
+      +--> ChartDrawer       ->  SVG
+      +--> ReportGenerator   ->  text
+      +--> to_context        ->  XML for LLMs
+      +--> model_dump_json   ->  JSON
 ```
 
-> **Working offline:** pass `online=False` and specify `lng`, `lat`, and `tz_str` as shown above.  
-> **Working online:** set `online=True` and provide `city`, `nation`, and a valid GeoNames username. Register for free at [geonames.org](https://www.geonames.org/login). You can set the username via the `KERYKEION_GEONAMES_USERNAME` environment variable or the `geonames_username` parameter.
+- `AstrologicalSubjectFactory` computes the sky, houses, points, configuration, and provenance through `from_birth_data()`, `from_iso_utc_time()`, or `from_current_time()`.
+- `ChartDataFactory` adds aspects, distributions, angularities, stelliums, relationship scores, and house comparisons where appropriate.
+- `ChartDrawer` only renders already-computed chart data.
+- Every public result is a Pydantic model with attribute access, dictionary-style compatibility, and JSON serialization.
 
-**📖 Full factory documentation: [AstrologicalSubjectFactory](https://www.kerykeion.net/content/docs/astrological_subject_factory)**
+This design lets applications use the calculations without SVG, replace the presentation layer, or send structured results directly to another service.
 
-**To avoid GeoNames, provide longitude, latitude, and timezone and set `online=False`:**
+## Feature Overview
 
-```python
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    city="Liverpool",
-    nation="GB",
-    lng=-2.9833,  # Longitude for Liverpool
-    lat=53.4000,  # Latitude for Liverpool
-    tz_str="Europe/London",  # Timezone for Liverpool
-    online=False,
-)
-```
+Every public calculation factory is named below. Features that share a factory or are configured as point families, rendering options, or output formats are listed separately so the README remains a complete map of the library.
 
-## Generate a SVG Chart
+### Subjects and Chart Types
 
-All chart-rendering examples below create a local `charts_output/` folder so the tests can write without touching your home directory. Feel free to change the path when integrating into your own projects.
-
-To generate a chart, use the `ChartDataFactory` to pre-compute chart data, then `ChartDrawer` to create the visualization. This two-step process ensures clean separation between astrological calculations and chart rendering.
-
-**📖 Chart generation docs: [Charts Documentation](https://www.kerykeion.net/content/docs/charts)**
-
-**Tip:**
-The optimized way to open the generated SVG files is with a web browser (e.g., Chrome, Firefox).
-To improve compatibility across different applications, you can use the `remove_css_variables` parameter when generating the SVG. This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
-
-### Birth Chart
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data
-chart_data = ChartDataFactory.create_natal_chart_data(john)
-
-# Step 3: Create visualization
-birth_chart_svg = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal")
-```
-
-The SVG file is saved under `charts_output/john-lennon-natal.svg`.
-
-**📖 More birth chart examples: [Birth Chart Guide](https://www.kerykeion.net/content/examples/birth-chart)**
-
-![John Lennon Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart.svg)
-
-### External Birth Chart
-
-An "external" birth chart places the zodiac wheel on the outer ring, offering an alternative visualization style:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data for external natal chart
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-# Step 3: Create visualization with external_view=True
-birth_chart_svg = ChartDrawer(chart_data=chart_data, external_view=True)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal-external")
-```
-
-![John Lennon External Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20ExternalNatal%20-%20Natal%20Chart.svg)
-
-### Synastry Chart
-
-Synastry charts overlay two individuals' planetary positions to analyze relationship compatibility:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subjects
-first = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-second = AstrologicalSubjectFactory.from_birth_data(
-    "Paul McCartney", 1942, 6, 18, 15, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute synastry chart data
-chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
-
-# Step 3: Create visualization
-synastry_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-synastry_chart.save_svg(output_path=output_dir, filename="lennon-mccartney-synastry")
-```
-
-**📖 Synastry chart guide: [Synastry Chart Examples](https://www.kerykeion.net/content/examples/synastry-chart)**
-
-![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart.svg)
-
-### Transit Chart
-
-Transit charts compare current planetary positions against a natal chart:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subjects
-transit = AstrologicalSubjectFactory.from_birth_data(
-    "Transit", 2025, 6, 8, 8, 45,
-    lng=-84.3880,
-    lat=33.7490,
-    tz_str="America/New_York",
-    online=False,
-)
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute transit chart data
-chart_data = ChartDataFactory.create_transit_chart_data(subject, transit)
-
-# Step 3: Create visualization
-transit_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-transit_chart.save_svg(output_path=output_dir, filename="john-lennon-transit")
-```
-
-**📖 Transit chart guide: [Transit Chart Examples](https://www.kerykeion.net/content/examples/transit-chart)**
-
-![John Lennon Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart.svg)
-
-### Solar Return Chart (Dual Wheel)
-
-Solar returns calculate the exact moment the Sun returns to its natal position each year:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create natal subject
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Calculate Solar Return subject (offline example with manual coordinates)
-return_factory = PlanetaryReturnFactory(
-    john,
-    lng=-2.9833,
-    lat=53.4000,
-    tz_str="Europe/London",
-    online=False
-)
-solar_return_subject = return_factory.next_return_from_date(1964, 10, 1, return_type="Solar")
-
-# Step 3: Pre-compute return chart data (dual wheel: natal + solar return)
-chart_data = ChartDataFactory.create_return_chart_data(john, solar_return_subject)
-
-# Step 4: Create visualization
-solar_return_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-solar_return_chart.save_svg(output_path=output_dir, filename="john-lennon-solar-return-dual")
-```
-
-**📖 Return chart guide: [Dual Return Chart Examples](https://www.kerykeion.net/content/examples/dual-return-chart)**
-
-![John Lennon Solar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Solar%20Return.svg)
-
-### Solar Return Chart (Single Wheel)
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create natal subject
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Calculate Solar Return subject (offline example with manual coordinates)
-return_factory = PlanetaryReturnFactory(
-    john,
-    lng=-2.9833,
-    lat=53.4000,
-    tz_str="Europe/London",
-    online=False
-)
-solar_return_subject = return_factory.next_return_from_date(1964, 10, 1, return_type="Solar")
-
-# Step 3: Build a single-wheel return chart
-chart_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return_subject)
-
-# Step 4: Create visualization
-single_wheel_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-single_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-solar-return-single")
-```
-
-**📖 Planetary return factory docs: [PlanetaryReturnFactory](https://www.kerykeion.net/content/docs/planetary_return_factory)**
-
-![John Lennon Solar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20Solar%20Return%20-%20SingleReturnChart%20Chart.svg)
-
-### Lunar Return Chart
-
-Lunar returns calculate when the Moon returns to its natal position (approximately monthly):
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.planetary_return_factory import PlanetaryReturnFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create natal subject
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Calculate Lunar Return subject
-return_factory = PlanetaryReturnFactory(
-    john,
-    lng=-2.9833,
-    lat=53.4000,
-    tz_str="Europe/London",
-    online=False
-)
-lunar_return_subject = return_factory.next_return_from_date(1964, 1, 1, return_type="Lunar")
-
-# Step 3: Build a dual wheel (natal + lunar return)
-lunar_return_chart_data = ChartDataFactory.create_return_chart_data(john, lunar_return_subject)
-dual_wheel_chart = ChartDrawer(chart_data=lunar_return_chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-dual_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-lunar-return-dual")
-
-# Optional: create a single-wheel lunar return
-single_wheel_data = ChartDataFactory.create_single_wheel_return_chart_data(lunar_return_subject)
-single_wheel_chart = ChartDrawer(chart_data=single_wheel_data)
-single_wheel_chart.save_svg(output_path=output_dir, filename="john-lennon-lunar-return-single")
-```
-
-![John Lennon Lunar Return Chart (Dual Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20DualReturnChart%20Chart%20-%20Lunar%20Return.svg)
-
-![John Lennon Lunar Return Chart (Single Wheel)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20Lunar%20Return%20-%20SingleReturnChart%20Chart.svg)
-
-### Composite Chart
-
-Composite charts create a single chart from two individuals' midpoints to represent the relationship entity:
-
-```python
-from pathlib import Path
-from kerykeion import CompositeSubjectFactory, AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subjects (offline configuration)
-angelina = AstrologicalSubjectFactory.from_birth_data(
-    "Angelina Jolie", 1975, 6, 4, 9, 9,
-    lng=-118.2437,
-    lat=34.0522,
-    tz_str="America/Los_Angeles",
-    online=False,
-)
-
-brad = AstrologicalSubjectFactory.from_birth_data(
-    "Brad Pitt", 1963, 12, 18, 6, 31,
-    lng=-96.7069,
-    lat=35.3273,
-    tz_str="America/Chicago",
-    online=False,
-)
-
-# Step 2: Create composite subject
-factory = CompositeSubjectFactory(angelina, brad)
-composite_model = factory.get_midpoint_composite_subject_model()
-
-# Step 3: Pre-compute composite chart data
-chart_data = ChartDataFactory.create_composite_chart_data(composite_model)
-
-# Step 4: Create visualization
-composite_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-composite_chart.save_svg(output_path=output_dir, filename="jolie-pitt-composite")
-```
-
-**📖 Composite factory docs: [CompositeSubjectFactory](https://www.kerykeion.net/content/docs/composite_subject_factory)**
-
-![Angelina Jolie and Brad Pitt Composite Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/Angelina%20Jolie%20and%20Brad%20Pitt%20Composite%20Chart%20-%20Composite%20Chart.svg)
-
-## Wheel Only Charts
-
-For _all_ the charts, you can generate a wheel-only chart by using the method `save_wheel_only_svg_file()`:
-
-**📖 Minimalist charts guide: [Wheel Only & Aspect Grid Charts](https://www.kerykeion.net/content/examples/minimalist-charts-and-aspect-table)**
-
-### Birth Chart
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-# Step 3: Create visualization
-birth_chart_svg = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-lennon-natal-wheel")
-```
-
-![John Lennon — Natal Chart (Wheel Only)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Wheel%20Only%20-%20Natal%20Chart%20-%20Wheel%20Only.svg)
-
-### Wheel Only Birth Chart (External)
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute external natal chart data
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-# Step 3: Create visualization (external wheel view)
-birth_chart_svg = ChartDrawer(chart_data=chart_data, external_view=True)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_wheel_only_svg_file(output_path=output_dir, filename="john-lennon-natal-wheel-external")
-```
-
-![John Lennon — Natal Chart (External Wheel Only)](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Wheel%20External%20Only%20-%20ExternalNatal%20Chart%20-%20Wheel%20Only.svg)
-
-### Synastry Chart
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subjects
-first = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-second = AstrologicalSubjectFactory.from_birth_data(
-    "Paul McCartney", 1942, 6, 18, 15, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute synastry chart data
-chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
-
-# Step 3: Create visualization
-synastry_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-synastry_chart.save_wheel_only_svg_file(output_path=output_dir, filename="lennon-mccartney-synastry-wheel")
-```
-
-![John Lennon and Paul McCartney Synastry](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Wheel%20Synastry%20Only%20-%20Synastry%20Chart%20-%20Wheel%20Only.svg)
-
-### Change the Output Directory
-
-To save the SVG file in a custom location, specify the `output_path` parameter in `save_svg()`:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subjects
-first = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-second = AstrologicalSubjectFactory.from_birth_data(
-    "Paul McCartney", 1942, 6, 18, 15, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute synastry chart data
-chart_data = ChartDataFactory.create_synastry_chart_data(first, second)
-
-# Step 3: Create visualization with custom output directory
-synastry_chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-synastry_chart.save_svg(output_path=output_dir)
-print("Saved to", (output_dir / f"{synastry_chart.first_obj.name} - Synastry Chart.svg").resolve())
-```
-
-### Change Language
-
-You can switch chart language by passing `chart_language` to the `ChartDrawer` class:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-# Step 3: Create visualization with Italian language
-birth_chart_svg = ChartDrawer(
-    chart_data=chart_data,
-    chart_language="IT"  # Change to Italian
-)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_svg(output_path=output_dir, filename="john-lennon-natal-it")
-```
-
-You can also provide custom labels (or introduce a brand-new language) by passing
-a dictionary to `language_pack`. Only the keys you supply are merged on top of the
-built-in strings:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-custom_labels = {
-    "PT": {
-        "info": "Informações",
-        "celestial_points": {"Sun": "Sol", "Moon": "Lua"},
-    }
-}
-
-custom_chart = ChartDrawer(
-    chart_data=chart_data,
-    chart_language="PT",
-    language_pack=custom_labels["PT"],
-)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-custom_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-pt")
-```
-
-**📖 Language configuration guide: [Chart Language Settings](https://www.kerykeion.net/content/examples/chart-language)**
-
-The available languages are:
-
-- EN (English)
-- FR (French)
-- PT (Portuguese)
-- ES (Spanish)
-- TR (Turkish)
-- RU (Russian)
-- IT (Italian)
-- CN (Chinese)
-- DE (German)
-- HI (Hindi)
-
-### Minified SVG
-
-To generate a minified SVG, set `minify=True` in the `save_svg()` method:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-# Step 3: Create visualization
-birth_chart_svg = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_svg(
-    output_path=output_dir,
-    filename="john-lennon-natal-minified",
-    minify=True,
-)
-```
-
-### SVG without CSS Variables
-
-To generate an SVG without CSS variables, set `remove_css_variables=True` in the `save_svg()` method:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data
-chart_data = ChartDataFactory.create_natal_chart_data(birth_chart)
-
-# Step 3: Create visualization
-birth_chart_svg = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-birth_chart_svg.save_svg(
-    output_path=output_dir,
-    filename="john-lennon-natal-no-css-variables",
-    remove_css_variables=True,
-)
-```
-
-This will inline all styles and eliminate CSS variables, resulting in an SVG that is more broadly supported.
-
-### Grid Only SVG
-
-It's possible to generate a grid-only SVG, useful for creating a custom layout. To do this, use the `save_aspect_grid_only_svg_file()` method:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subjects
-birth_chart = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-second = AstrologicalSubjectFactory.from_birth_data(
-    "Paul McCartney", 1942, 6, 18, 15, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute synastry chart data
-chart_data = ChartDataFactory.create_synastry_chart_data(birth_chart, second)
-
-# Step 3: Create visualization with dark theme
-aspect_grid_chart = ChartDrawer(chart_data=chart_data, theme="dark")
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-aspect_grid_chart.save_aspect_grid_only_svg_file(output_path=output_dir, filename="lennon-mccartney-aspect-grid")
-```
-
-![John Lennon — Aspect Grid](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Aspect%20Grid%20Only%20-%20Natal%20Chart%20-%20Aspect%20Grid%20Only.svg)
-
-## Modern Chart Style
-
-All chart types support a **modern** concentric-ring layout as an alternative to the classic wheel. You can set the style at the instance level via `ChartDrawer(chart_data=..., style="modern")` or per-render via `save_svg(style="modern")`. The modern style works with all six themes.
-
-Available `style` values: `"classic"` (default) and `"modern"`.
-
-**Modern-only keyword arguments** (ignored by the classic style):
-
-| Parameter | Type | Default | Description |
+| Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges as the outer zodiac annulus around the cusp ring |
+| Natal and event subjects | `AstrologicalSubjectFactory` | Planetary positions, houses, axes, lunar phase, configuration, and provenance for a local or UTC moment | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Structured chart data | `ChartDataFactory` | Typed data for natal, synastry, transit, return, composite, and progression charts | <a href="https://www.kerykeion.net/content/docs/chart_data_factory" target="_blank" rel="noopener noreferrer">Chart Data</a> |
+| Natal charts | `ChartDataFactory.create_natal_chart_data` | Single-subject aspects, distributions, angularities, and stelliums | <a href="https://www.kerykeion.net/content/examples/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart</a> |
+| Synastry charts | `ChartDataFactory.create_synastry_chart_data` | Cross-chart aspects, reciprocal house placement, and compatibility scoring | <a href="https://www.kerykeion.net/content/examples/synastry-chart" target="_blank" rel="noopener noreferrer">Synastry</a> |
+| Transit charts | `ChartDataFactory.create_transit_chart_data` | Natal-to-transit aspects and projected house positions | <a href="https://www.kerykeion.net/content/examples/transit-chart" target="_blank" rel="noopener noreferrer">Transit Chart</a> |
+| Solar and Lunar return charts | `PlanetaryReturnFactory` | Exact return moments and single- or dual-wheel return subjects | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> · <a href="https://www.kerykeion.net/content/examples/dual-return-chart" target="_blank" rel="noopener noreferrer">Example</a> |
+| Heliocentric returns | `PlanetaryReturnFactory.next_heliocentric_return` | Returns of a planet to its natal heliocentric longitude | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
+| Lunar-node crossings | `PlanetaryReturnFactory.next_lunar_node_crossing` | Exact moments when the Moon crosses its orbital node | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
+| Midpoint composite charts | `CompositeSubjectFactory.get_midpoint_composite_subject_model` | Circular midpoint positions with explicit house-frame metadata | <a href="https://www.kerykeion.net/content/docs/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subjects</a> · <a href="https://www.kerykeion.net/content/examples/composite-chart" target="_blank" rel="noopener noreferrer">Example</a> |
+| Davison charts | `CompositeSubjectFactory.get_davison_composite_subject_model` | The time-space midpoint recast as a real chart | <a href="https://www.kerykeion.net/content/docs/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subjects</a> |
+| Relocated charts | `RelocatedChartFactory` | Natal planetary positions with houses, axes, sect, Vertex, and Lots recalculated for another location | <a href="https://www.kerykeion.net/content/docs/relocated_chart_factory" target="_blank" rel="noopener noreferrer">Relocated Charts</a> |
+| Secondary-progressed charts | `SecondaryProgressionFactory` | Day-for-a-year progressed subjects and progressed-to-natal contacts | <a href="https://www.kerykeion.net/content/docs/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a> |
+| Solar-arc-directed charts | `SolarArcFactory` | A uniform progressed-Sun arc applied to natal points and angles | <a href="https://www.kerykeion.net/content/docs/solar_arc_factory" target="_blank" rel="noopener noreferrer">Solar Arc</a> |
 
-**Dual-chart keyword arguments** (Synastry, Transit, Composite, Dual Return):
+### Zodiacs, Houses, Perspectives, and Points
 
-| Parameter | Type | Default | Description |
+| Feature | Configuration/API | Description | Documentation |
 |---|---|---|---|
-| `double_chart_aspect_grid_type` | `str` | `"list"` | Aspect grid layout: `"list"` (compact vertical list) or `"table"` (traditional cross-reference grid) |
+| Tropical zodiac | `zodiac_type="Tropical"` | Default zodiac frame | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Sidereal zodiac | `zodiac_type="Sidereal"`, `sidereal_mode` | 47 named modes plus the custom `USER` mode | <a href="https://www.kerykeion.net/content/examples/sidereal-modes" target="_blank" rel="noopener noreferrer">Sidereal Modes</a> |
+| Custom ayanamsa | `sidereal_mode="USER"`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0` | User-defined reference epoch and offset | <a href="https://www.kerykeion.net/content/docs/schemas#siderealmode" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Fixed reference frames | J2000, J1900, B1950, and related modes | Backend-supported sidereal reference-frame choices | <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
+| House systems | `houses_system_identifier` | Placidus by default and all systems supported by the active backend | <a href="https://www.kerykeion.net/content/examples/houses-systems" target="_blank" rel="noopener noreferrer">House Systems</a> |
+| Polar house handling | `polar_house_fallbacks`, `coincident_house_cusps` | Machine-readable substitutions and zero-width cusp groups | <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">FAQ</a> |
+| Apparent and true geocentric | `perspective_type` | Standard apparent positions or true geometric positions | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Topocentric | `perspective_type="Topocentric"`, `altitude` | Observer-parallax positions at a specific location and elevation | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Heliocentric and barycentric | `perspective_type` | Sun-centered or Solar System barycenter positions | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Planetocentric perspectives | Selenocentric through Saturncentric | Positions observed from another supported planet | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Configurable point set | `active_points` | Compute only the planets, axes, nodes, Lots, and optional bodies required by the application | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Lunar nodes | True/Mean North and South nodes | Rahu/Ketu pairs with exact derived opposites | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Lilith, Priapus, and White Moon | Mean/True/Interpolated variants | Lunar apogee/perigee families and native Selena support where available | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Arabic Parts / Lots | Fortune, Spirit, Eros, and Faith | Sect-aware points with prerequisites calculated automatically | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Asteroids and centaurs | Chiron, Ceres, Pallas, Juno, Vesta, Pholus | Optional minor-body positions | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Trans-Neptunian objects | Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar | Optional TNO positions with source/coverage metadata | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Uranian / Hamburg points | Cupido through Poseidon | Eight hypothetical points from runtime analytical models | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Fixed stars | `active_fixed_stars`, `subject.fixed_stars` | Opt-in catalog stars with longitude, latitude, speed, declination, and magnitude | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Dynamic star discovery | `FixedStarDiscoveryFactory` | Search the catalog and find prominent stars near subject positions | <a href="https://www.kerykeion.net/content/docs/fixed_star_discovery_factory" target="_blank" rel="noopener noreferrer">Fixed Star Discovery</a> |
+| Online location resolution | GeoNames integration | Cached city, coordinate, and timezone lookup | <a href="https://www.kerykeion.net/content/docs/fetch_geonames" target="_blank" rel="noopener noreferrer">GeoNames</a> |
 
-**Classic-only constructor arguments** (ignored by the modern style):
+### Aspects and Chart Analysis
 
-| Parameter | Type | Default | Description |
+| Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| `show_degree_indicators` | `bool` | `True` | Show degree indicators on planets |
-| `show_aspect_icons` | `bool` | `True` | Show aspect icons on aspect lines |
+| Single- and dual-chart aspects | `AspectsFactory` | Longitudinal aspects within one chart or between two charts | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| Declination aspects | `single_chart_declination_aspects`, `dual_chart_declination_aspects` | Parallels and contra-parallels | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| Applying/separating motion | `AspectModel.aspect_movement` | Aspect movement derived from relative speed | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| Custom orbs | `active_aspects`, `point_orb_adjustments` | Per-aspect, per-point, and aspect-specific orb policies | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| House comparison | `HouseComparisonFactory` | Reciprocal placement of each subject's points in the other's houses | <a href="https://www.kerykeion.net/content/docs/house_comparison" target="_blank" rel="noopener noreferrer">House Comparison</a> · <a href="https://www.kerykeion.net/content/examples/house-comparison" target="_blank" rel="noopener noreferrer">Example</a> |
+| Relationship score | `RelationshipScoreFactory` | Ciro Discepolo compatibility score with contributing aspects | <a href="https://www.kerykeion.net/content/docs/relationship_score_factory" target="_blank" rel="noopener noreferrer">Relationship Score</a> · <a href="https://www.kerykeion.net/content/examples/relationship-score" target="_blank" rel="noopener noreferrer">Example</a> |
+| Element and quality distributions | `ChartDataFactory` | Pure count or configurable weighted analysis | <a href="https://www.kerykeion.net/content/docs/element_quality_distribution" target="_blank" rel="noopener noreferrer">Element and Quality</a> |
+| Angularities and stelliums | `ChartDataModel.angularities`, `.stelliums` | Planets near axes and concentrations by house | <a href="https://www.kerykeion.net/content/docs/chart_data_factory" target="_blank" rel="noopener noreferrer">Chart Data</a> |
+| Essential dignities | `calculate_dignities=True` | Domicile, exaltation, detriment, fall, triplicity, terms, and scores | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Vedic nakshatras | `calculate_nakshatra=True` | Nakshatra, pada, and Vimshottari lord with an explicit ayanamsa | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Motion state | point `speed`, `retrograde`, `motion_state` | Fast, average, slow, retrograde, and named station states | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Declination and out-of-bounds | point `declination`, `is_out_of_bounds` | OOB detection against the epoch's true obliquity | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Gauquelin sectors | `calculate_gauquelin=True` | 36-sector cusps and per-point sector values | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Local Space | `calculate_local_space=True` | Azimuth and altitude above the observer's horizon | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Nutation and obliquity | `calculate_nutation=True` | True/mean obliquity and nutation components | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Midpoint analysis | `MidpointFactory` | Pairwise midpoints, 90° dial positions, and third-point activations | <a href="https://www.kerykeion.net/content/docs/midpoint_factory" target="_blank" rel="noopener noreferrer">Midpoints</a> |
+| Chart dominants | `DominantsFactory` | Modern, Almuten Figuris, elemental, or custom `DominantStrategy` scoring | <a href="https://www.kerykeion.net/content/docs/dominants_factory" target="_blank" rel="noopener noreferrer">Dominants</a> |
 
-### Modern Birth Chart
+### Predictive and Locational Techniques
+
+| Feature | Main API | Description | Documentation |
+|---|---|---|---|
+| Ephemeris time series | `EphemerisDataFactory` | Daily, hourly, or minutely samples as dictionaries, models, or full subjects | <a href="https://www.kerykeion.net/content/docs/ephemeris_data_factory" target="_blank" rel="noopener noreferrer">Ephemeris Data</a> · <a href="https://www.kerykeion.net/content/examples/ephemeris-data" target="_blank" rel="noopener noreferrer">Example</a> |
+| Transit snapshots | `TransitsTimeRangeFactory.get_transit_moments` | Aspects at every supplied ephemeris sample, optionally including the full subject | <a href="https://www.kerykeion.net/content/docs/transits_time_range_factory" target="_blank" rel="noopener noreferrer">Transit Ranges</a> |
+| Transit events | `TransitsTimeRangeFactory.get_transit_events` | Applying/exact/separating runs, retrograde multi-passes, and optional exact-moment refinement | <a href="https://www.kerykeion.net/content/docs/transits_time_range_factory" target="_blank" rel="noopener noreferrer">Transit Ranges</a> · <a href="https://www.kerykeion.net/content/examples/transits-time-range" target="_blank" rel="noopener noreferrer">Example</a> |
+| Solar and Lunar returns | `PlanetaryReturnFactory` | Exact return searches in the natal zodiac/perspective, cast for the requested return location | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
+| Secondary progressions | `SecondaryProgressionFactory` | Day-for-a-year subjects and contacts | <a href="https://www.kerykeion.net/content/docs/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a> |
+| Solar arc | `SolarArcFactory` | Directed points and directed-to-natal aspects | <a href="https://www.kerykeion.net/content/docs/solar_arc_factory" target="_blank" rel="noopener noreferrer">Solar Arc</a> |
+| Primary directions | `PrimaryDirectionsFactory` | Placidus semi-arc directions with Ptolemy and Naibod rate keys | <a href="https://www.kerykeion.net/content/docs/primary_directions_factory" target="_blank" rel="noopener noreferrer">Primary Directions</a> |
+| Astrocartography | `AstroCartographyFactory` | MC, IC, ASC, and DSC lines represented as world-coordinate sequences | <a href="https://www.kerykeion.net/content/docs/astro_cartography_factory" target="_blank" rel="noopener noreferrer">Astrocartography</a> |
+| Relocation | `RelocatedChartFactory` | House and angle changes for a destination while natal planetary longitudes stay fixed | <a href="https://www.kerykeion.net/content/docs/relocated_chart_factory" target="_blank" rel="noopener noreferrer">Relocated Charts</a> |
+
+Secondary-progressed houses follow the **Q2 / daily houses** convention: they are the real angles at the progressed ephemeris instant, not solar-arc-directed angles. Planetary progressions are unaffected by this choice. See <a href="https://www.kerykeion.net/content/docs/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a>.
+
+### Sky Events and Time Calculations
+
+| Feature | Main API | Description | Documentation |
+|---|---|---|---|
+| Detailed Moon phase | `MoonPhaseDetailsFactory` | Illumination, phase windows, rise/set, Sun data, upcoming phases, and eclipse context | <a href="https://www.kerykeion.net/content/docs/moon_phase_details_factory" target="_blank" rel="noopener noreferrer">Moon Phase Details</a> · <a href="https://www.kerykeion.net/content/examples/moon-phase-details" target="_blank" rel="noopener noreferrer">Example</a> |
+| Exact lunations | `LunationFinderFactory` | New, first-quarter, full, and last-quarter moments across a range | <a href="https://www.kerykeion.net/content/docs/lunation_factory" target="_blank" rel="noopener noreferrer">Lunations</a> |
+| Sunrise, sunset, and twilight | `SunTimesFactory` | Upper-limb rise/set, solar noon, day length, twilight, and polar day/night | <a href="https://www.kerykeion.net/content/docs/sun_times_factory" target="_blank" rel="noopener noreferrer">Sun Times</a> |
+| Planetary hours | `PlanetaryHoursFactory` | Twelve unequal day and night hours with Chaldean rulers | <a href="https://www.kerykeion.net/content/docs/planetary_hours_factory" target="_blank" rel="noopener noreferrer">Planetary Hours</a> |
+| Void-of-course Moon | `VoidOfCourseMoonFactory` | Current void state and complete VoC windows before ingress | <a href="https://www.kerykeion.net/content/docs/void_of_course_moon_factory" target="_blank" rel="noopener noreferrer">Void of Course</a> |
+| Retrograde stations and periods | `RetrogradeStationFactory` | Exact SR/SD events and clipped retrograde spans | <a href="https://www.kerykeion.net/content/docs/retrograde_station_factory" target="_blank" rel="noopener noreferrer">Retrograde Stations</a> |
+| Sign ingresses and stays | `SignIngressFactory` | Exact ingress moments and contiguous sign periods | <a href="https://www.kerykeion.net/content/docs/sign_ingress_factory" target="_blank" rel="noopener noreferrer">Sign Ingresses</a> |
+| Mundane aspects | `MundaneAspectFactory` | Exact moving-body-to-moving-body aspects for aspectarians | <a href="https://www.kerykeion.net/content/docs/mundane_aspects_factory" target="_blank" rel="noopener noreferrer">Mundane Aspects</a> |
+| Solar and Lunar eclipses | `EclipseFactory` | Global and local eclipse searches with structured circumstances | <a href="https://www.kerykeion.net/content/docs/eclipse_factory" target="_blank" rel="noopener noreferrer">Eclipses</a> |
+| Planetary phenomena | `PlanetaryPhenomenaFactory` | Elongation, phase angle, magnitude, morning/evening status, and solar phase | <a href="https://www.kerykeion.net/content/docs/planetary_phenomena_factory" target="_blank" rel="noopener noreferrer">Planetary Phenomena</a> |
+| Planetary nodes and apsides | `PlanetaryNodesFactory` | Ascending/descending nodes and periapsis/apoapsis | <a href="https://www.kerykeion.net/content/docs/planetary_nodes_factory" target="_blank" rel="noopener noreferrer">Planetary Nodes</a> |
+| Heliacal events | `HeliacalFactory` | Heliacal risings and settings from observer and atmospheric inputs | <a href="https://www.kerykeion.net/content/docs/heliacal_factory" target="_blank" rel="noopener noreferrer">Heliacal Events</a> |
+| Lunar occultations | `OccultationFactory` | Global or local occultation searches for supported bodies | <a href="https://www.kerykeion.net/content/docs/occultation_factory" target="_blank" rel="noopener noreferrer">Occultations</a> |
+
+Sunrise and `subject.is_diurnal` intentionally answer different questions. Sunrise uses the apparent upper limb and standard refraction; diurnality uses the Sun's geometric center against the true horizon. See <a href="https://www.kerykeion.net/content/docs/sun_times_factory" target="_blank" rel="noopener noreferrer">Sun Times</a>.
+
+### Traditional Techniques
+
+| Feature | Main API | Description | Documentation |
+|---|---|---|---|
+| Zodiacal releasing | `ZodiacalReleasingFactory` | L1–L4 aphesis periods from Fortune or Spirit, with loosing-of-the-bond and peak markers | <a href="https://www.kerykeion.net/content/docs/zodiacal_releasing_factory" target="_blank" rel="noopener noreferrer">Zodiacal Releasing</a> |
+| Annual profections | `ProfectionsFactory` | Activated house/sign, Lord of the Year, and age cycle | <a href="https://www.kerykeion.net/content/docs/profections_factory" target="_blank" rel="noopener noreferrer">Profections</a> |
+| Firdaria | `FirdariaFactory` | Sect-dependent Persian major and sub-period sequences | <a href="https://www.kerykeion.net/content/docs/firdaria_factory" target="_blank" rel="noopener noreferrer">Firdaria</a> |
+| Mutual receptions | `MutualReceptionsFactory` | Domicile and exaltation receptions among classical planets | <a href="https://www.kerykeion.net/content/docs/receptions_factory" target="_blank" rel="noopener noreferrer">Mutual Receptions</a> |
+| Horary indicators | `HoraryIndicatorsFactory` | Querent/quesited rulers, considerations before judgment, VoC state, and receptions | <a href="https://www.kerykeion.net/content/docs/horary_factory" target="_blank" rel="noopener noreferrer">Horary</a> |
+
+### Rendering, Data, Reports, and AI
+
+| Feature | Main API/configuration | Description | Documentation |
+|---|---|---|---|
+| SVG rendering | `ChartDrawer` | Natal, synastry, transit, return, composite, and progression charts | <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a> |
+| Modern and classic styles | `style="modern"` / `"classic"` | Concentric modern layout or traditional classic wheel | <a href="https://www.kerykeion.net/content/examples/modern-charts" target="_blank" rel="noopener noreferrer">Modern Charts</a> |
+| Themes | `theme` | Classic/light, dark, black-and-white, or unthemed CSS variables | <a href="https://www.kerykeion.net/content/examples/theming" target="_blank" rel="noopener noreferrer">Theming</a> |
+| Ten chart languages | `chart_language`, `language_pack` | EN, FR, PT, ES, TR, RU, IT, CN, DE, HI, plus custom labels | <a href="https://www.kerykeion.net/content/examples/chart-language" target="_blank" rel="noopener noreferrer">Chart Language</a> |
+| Glyph sizing and spreading | `glyph_size`, automatic decluttering | Small, medium, or large clusters with collision-aware placement | <a href="https://www.kerykeion.net/content/examples/glyph-sizes" target="_blank" rel="noopener noreferrer">Glyph Sizes</a> · <a href="https://www.kerykeion.net/content/docs/chart-glyphs" target="_blank" rel="noopener noreferrer">Glyph Reference</a> |
+| Optional visual marks | `show_motion_state`, `show_out_of_bounds`, `show_aspect_movement`, `show_relationship_score`, `show_ayanamsa_value`, `show_polar_fallback_note` | Opt-in facts already carried by chart data | <a href="https://www.kerykeion.net/content/examples/chart-marks" target="_blank" rel="noopener noreferrer">Chart Marks</a> |
+| Minimal SVG outputs | wheel-only and grid-only methods | Reusable wheel or aspect table without the full chart page | <a href="https://www.kerykeion.net/content/examples/minimalist-charts-and-aspect-table" target="_blank" rel="noopener noreferrer">Minimalist Charts</a> |
+| External natal view | `external_view=True`, classic style | Classic natal wheel with planets outside the zodiac ring | <a href="https://www.kerykeion.net/content/examples/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart</a> |
+| SVG portability controls | `minify`, `remove_css_variables`, `transparent_background`, `auto_size`, `custom_title` | Compact, standalone, embeddable, and custom-sized output | <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a> |
+| Machine-readable SVG metadata | `kr:` attributes | Stable point, owner, house, projected-house, and ring identifiers | <a href="https://www.kerykeion.net/content/docs/chart_internals" target="_blank" rel="noopener noreferrer">Chart Internals</a> |
+| Pydantic and JSON | `.model_dump()`, `.model_dump_json()` | Typed validation and structured serialization | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Text reports | `ReportGenerator` | Reports for subjects, chart data, Moon context, and traditional techniques | <a href="https://www.kerykeion.net/content/docs/report" target="_blank" rel="noopener noreferrer">Reports</a> · <a href="https://www.kerykeion.net/content/examples/report" target="_blank" rel="noopener noreferrer">Example</a> |
+| LLM context | `to_context` | Escaped, non-qualitative XML for prompts and agents | <a href="https://www.kerykeion.net/content/docs/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a> |
+| Command-line interface | `kerykeion-cli` | Charts, analysis, techniques, events, profiles, JSON, SVG, and guarded factory dispatch | <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">CLI</a> |
+| AI Agent Skill | `skills/kerykeion`, `kerykeion/llms.txt` | API-grounded instructions for coding agents | [AI Agent Skill](#ai-agent-skill) |
+| Selectable backend | `BACKEND_NAME`, environment variables | Default libephemeris or optional Swiss Ephemeris | <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
+| Hosted service | Astrologer API | External access to calculations, SVG, and AI context for commercial products | <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">RapidAPI</a> · <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">API Docs</a> |
+
+## Core Workflows
+
+### Build and Inspect a Subject
 
 ```python
-from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
+    "John Lennon",
+    1940,
+    10,
+    9,
+    18,
+    30,
     lng=-2.9833,
     lat=53.4,
     tz_str="Europe/London",
     online=False,
 )
 
-chart_data = ChartDataFactory.create_natal_chart_data(john)
-chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="john-lennon-modern", style="modern")
+print(john.sun.sign, john.sun.position, john.sun.house)
+print(john["moon"]["abs_pos"])
+print(john.is_diurnal)
+print(john.model_dump_json(indent=2))
 ```
 
-![John Lennon Modern Birth Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
+Each `KerykeionPointModel` can carry sign, absolute and within-sign longitude, speed, retrograde state, motion state, house, declination, ecliptic latitude, source, precision class, and optional enrichment data. Fields that do not apply remain `None` rather than receiving fabricated values.
 
-### Modern Synastry Chart
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-yoko = AstrologicalSubjectFactory.from_birth_data(
-    "Yoko Ono", 1933, 2, 18, 20, 30,
-    lng=139.6917,
-    lat=35.6895,
-    tz_str="Asia/Tokyo",
-    online=False,
-)
-
-chart_data = ChartDataFactory.create_synastry_chart_data(john, yoko)
-chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-ono-synastry-modern", style="modern")
-```
-
-![John Lennon Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
-
-### Modern Transit Chart
+### Generate an SVG Chart
 
 ```python
 from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
 
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
+from kerykeion import ChartDataFactory, ChartDrawer
 
-transit = AstrologicalSubjectFactory.from_birth_data(
-    "Transit", 2025, 3, 4, 12, 0,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
+natal_data = ChartDataFactory.create_natal_chart_data(john)
+natal_drawer = ChartDrawer(natal_data)
 
-chart_data = ChartDataFactory.create_transit_chart_data(john, transit)
-chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-transit-modern", style="modern")
-```
-
-![John Lennon Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
-
-### Modern Wheel Only
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-john = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-chart_data = ChartDataFactory.create_natal_chart_data(john)
-chart = ChartDrawer(chart_data=chart_data, theme="dark")
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-chart.save_wheel_only_svg_file(
-    output_path=output_dir,
-    filename="john-lennon-modern-wheel-dark",
+chart_dir = Path("charts_output")
+chart_dir.mkdir(exist_ok=True)
+natal_drawer.save_svg(
+    output_path=chart_dir,
+    filename="john-lennon-natal",
     style="modern",
 )
 ```
 
-![John Lennon Modern Wheel Only](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Wheel%20Only.svg)
+Use `generate_svg_string()` when the SVG should stay in memory. Wheel-only and aspect-grid-only methods are available for custom layouts. See <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a>.
 
-**📖 Modern chart examples: [Modern Charts Guide](https://www.kerykeion.net/content/examples/modern-charts)**
-
-## Report Generator
-
-`ReportGenerator` mirrors the chart-type dispatch of `ChartDrawer`. It accepts raw `AstrologicalSubjectModel` instances as well as any `ChartDataModel` produced by `ChartDataFactory`—including natal, composite, synastry, transit, and planetary return charts—and renders the appropriate textual report automatically.
-
-**📖 Full report documentation: [Report Generator Guide](https://www.kerykeion.net/content/docs/report)**
-
-### Quick Examples
-
-```python
-from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
-
-# Subject-only report
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Natal", 1990, 7, 21, 14, 45,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-ReportGenerator(subject).print_report(include_aspects=False)
-
-# Single-chart data (elements, qualities, aspects enabled)
-natal_data = ChartDataFactory.create_natal_chart_data(subject)
-ReportGenerator(natal_data).print_report(max_aspects=10)
-
-# Dual-chart data (synastry, transit, dual return, …)
-partner = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Partner", 1992, 11, 5, 9, 30,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-synastry_data = ChartDataFactory.create_synastry_chart_data(subject, partner)
-ReportGenerator(synastry_data).print_report(max_aspects=12)
-```
-
-Each report contains:
-
-- A chart-aware title summarising the subject(s) and chart type
-- Birth/event metadata and configuration settings
-- Celestial points with sign, position, **daily motion**, **declination**, retrograde flag, and house
-- House cusp tables for every subject involved
-- Lunar phase details when available
-- Element/quality distributions and active configuration summaries (for chart data)
-- Aspect listings tailored for single or dual charts, with symbols for type and movement
-- Dual-chart extras such as house comparisons and relationship scores (when provided by the data)
-
-### Section Access
-
-All section helpers remain available for targeted output:
-
-```python
-from kerykeion import ReportGenerator, AstrologicalSubjectFactory, ChartDataFactory
-
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sample Natal", 1990, 7, 21, 14, 45,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-natal_data = ChartDataFactory.create_natal_chart_data(subject)
-
-report = ReportGenerator(natal_data)
-sections = report.generate_report(max_aspects=5).split("\n\n")
-for section in sections[:3]:
-    print(section)
-```
-
-**📖 Report examples: [Report Examples](https://www.kerykeion.net/content/examples/report)**
-
-## AI Context Serializer
-
-The `context_serializer` module transforms Kerykeion data models into precise, non-qualitative XML optimized for LLM consumption. It provides the essential "ground truth" data needed for AI agents to generate accurate astrological interpretations.
-
-**📖 Full context serializer docs: [Context Serializer Guide](https://www.kerykeion.net/content/docs/context_serializer)**
-
-### Quick Example
-
-```python
-from kerykeion import AstrologicalSubjectFactory, to_context
-
-# Create a subject
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Doe", 1990, 1, 1, 12, 0,
-    city="London",
-    nation="GB",
-    lng=-0.1278,
-    lat=51.5074,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Generate AI-ready context
-context = to_context(subject)
-print(context)
-```
-
-**Output:**
-
-```xml
-<chart name="John Doe">
-  <birth_data date="1990-01-01" time="12:00" city="London" nation="GB" ... />
-  <config zodiac="Tropical" house_system="Placidus" perspective="Apparent Geocentric" />
-  <planets>
-    <point name="Sun" position="10.81" sign="Capricorn" element="Earth" quality="Cardinal" ... />
-    <point name="Moon" position="25.60" sign="Aquarius" element="Air" quality="Fixed" ... />
-    ...
-  </planets>
-  <houses>...</houses>
-  <lunar_phase name="Waning Gibbous" phase="20" degrees_between="254.32" emoji="🌖" />
-</chart>
-```
-
-**Key Features:**
-
-- **XML Output:** Well-formed XML with semantic tags, proper escaping, and optional field omission.
-- **Standardized Output:** Consistent format for Natal, Synastry, Composite, and Return charts.
-- **Non-Qualitative:** Provides raw data (positions, aspects) without interpretive bias.
-- **Prompt-Ready:** Designed to be injected directly into system prompts.
-
-## Example: Retrieving Aspects
-
-Kerykeion provides a unified `AspectsFactory` class for calculating astrological aspects within single charts or between two charts:
-
-```python
-from kerykeion import AspectsFactory, AstrologicalSubjectFactory
-
-# Create astrological subjects
-jack = AstrologicalSubjectFactory.from_birth_data(
-    "Jack", 1990, 6, 15, 15, 15,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-jane = AstrologicalSubjectFactory.from_birth_data(
-    "Jane", 1991, 10, 25, 21, 0,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-
-# For single chart aspects (natal, return, composite, etc.)
-single_chart_result = AspectsFactory.single_chart_aspects(jack)
-print(f"Found {len(single_chart_result.aspects)} aspects in Jack's chart")
-print(single_chart_result.aspects[0])
-
-# For dual chart aspects (synastry, transits, comparisons, etc.)
-dual_chart_result = AspectsFactory.dual_chart_aspects(jack, jane)
-print(f"Found {len(dual_chart_result.aspects)} aspects between Jack and Jane's charts")
-print(dual_chart_result.aspects[0])
-
-# Each AspectModel includes:
-# - p1_name, p2_name: Planet/point names
-# - p1_owner, p2_owner: Subject name string (e.g., "Jack", "Jane")
-# - aspect: Aspect type (conjunction, trine, square, etc.)
-# - orbit: Actual orb in degrees
-# - aspect_degrees: Exact degrees for the aspect (0, 60, 90, 120, 180, etc.)
-# - diff: Absolute angular difference between the two points
-# - p1_abs_pos, p2_abs_pos: Absolute ecliptic positions
-# - p1_speed, p2_speed: Daily speed of each point
-# - aspect_movement: "Applying", "Separating", or "Static"
-```
-
-**📖 Aspects documentation: [Aspects Factory Guide](https://www.kerykeion.net/content/docs/aspects)**
-
-**Advanced Usage with Custom Settings:**
-
-```python
-# You can also customize aspect calculations with custom orb settings
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
-
-# Modify aspect settings if needed
-custom_aspects = DEFAULT_ACTIVE_ASPECTS.copy()
-# ... modify as needed
-
-# The factory automatically uses the configured settings for orb calculations
-# and filters aspects based on relevance and orb thresholds
-```
-
-**📖 Configuration options: [Settings Documentation](https://www.kerykeion.net/content/docs/settings)**
-
-## Relationship Score
-
-Kerykeion can calculate a relationship compatibility score based on synastry aspects, using the method of the Italian astrologer **Ciro Discepolo**:
-
-```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
-
-# Create two subjects
-person1 = AstrologicalSubjectFactory.from_birth_data(
-    "Alice", 1990, 3, 15, 14, 30,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-person2 = AstrologicalSubjectFactory.from_birth_data(
-    "Bob", 1988, 7, 22, 9, 0,
-    lng=12.4964,
-    lat=41.9028,
-    tz_str="Europe/Rome",
-    online=False,
-)
-
-# Calculate relationship score
-score_factory = RelationshipScoreFactory(person1, person2)
-result = score_factory.get_relationship_score()
-
-print(f"Compatibility Score: {result.score_value}")
-print(f"Description: {result.score_description}")
-```
-
-**📖 Relationship score guide: [Relationship Score Examples](https://www.kerykeion.net/content/examples/relationship-score)**
-
-**📖 Factory documentation: [RelationshipScoreFactory](https://www.kerykeion.net/content/docs/relationship_score_factory)**
-
-## Element & Quality Distribution Strategies
-
-`ChartDataFactory` now offers two strategies for calculating element and modality totals. The default `"weighted"` mode leans on a curated map that emphasises core factors (for example `sun`, `moon`, and `ascendant` weight 2.0, angles such as `medium_coeli` 1.5, personal planets 1.5, social planets 1.0, outers 0.5, and minor bodies 0.3–0.8). Provide `distribution_method="pure_count"` when you want every active point to contribute equally.
-
-You can refine the weighting without rebuilding the dictionary: pass lowercase point names to `custom_distribution_weights` and use `"__default__"` to override the fallback value applied to entries that are not listed explicitly.
+### Synastry and Transits
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Sample", 1986, 4, 12, 8, 45,
-    lng=11.3426,
-    lat=44.4949,
-    tz_str="Europe/Rome",
+paul = AstrologicalSubjectFactory.from_birth_data(
+    "Paul McCartney",
+    1942,
+    6,
+    18,
+    15,
+    30,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
     online=False,
 )
 
-# Equal weighting: every active point counts once
-pure_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    distribution_method="pure_count",
+synastry_data = ChartDataFactory.create_synastry_chart_data(john, paul)
+print(len(synastry_data.aspects))
+print(synastry_data.relationship_score.score_value)
+
+transit_data = ChartDataFactory.create_transit_chart_data(john, paul)
+print(transit_data.chart_type)
+```
+
+A transit chart accepts any event subject as its moving side. For sampled transit timelines and refined exact events, use `EphemerisDataFactory` with `TransitsTimeRangeFactory`.
+
+### Solar and Lunar Returns
+
+```python
+from kerykeion import ChartDataFactory, PlanetaryReturnFactory
+
+return_factory = PlanetaryReturnFactory(
+    john,
+    lng=-2.9833,
+    lat=53.4,
+    tz_str="Europe/London",
+    online=False,
+)
+solar_return = return_factory.next_return_from_date(
+    2026,
+    1,
+    1,
+    return_type="Solar",
 )
 
-# Custom emphasis: boost the Sun, soften everything else
-weighted_data = ChartDataFactory.create_natal_chart_data(
-    subject,
+single_return_data = ChartDataFactory.create_single_wheel_return_chart_data(solar_return)
+dual_return_data = ChartDataFactory.create_return_chart_data(john, solar_return)
+
+print(solar_return.iso_formatted_utc_datetime)
+print(single_return_data.chart_type, dual_return_data.chart_type)
+```
+
+Return instants are reported to the whole second. Feeding a reported instant back to the ISO entry point advances to the following return; `backwards=True` finds the preceding one. Topocentric returns use the requested return location and altitude consistently for both the crossing search and the returned chart.
+
+### Composite and Davison Charts
+
+```python
+from kerykeion import CompositeSubjectFactory
+
+composite_factory = CompositeSubjectFactory(john, paul, house_anchor="auto")
+midpoint_composite = composite_factory.get_midpoint_composite_subject_model()
+davison_composite = composite_factory.get_davison_composite_subject_model()
+
+print(midpoint_composite.house_frame)
+print(davison_composite.sun.abs_pos)
+```
+
+The midpoint composite is a symbolic midpoint model. The Davison result is a real ephemeris chart cast at the pair's midpoint time and place. See <a href="https://www.kerykeion.net/content/docs/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subject Factory</a>.
+
+### Aspects and Chart Analysis
+
+```python
+from kerykeion import AspectsFactory, ChartDataFactory
+
+aspect_result = AspectsFactory.single_chart_aspects(
+    john,
+    point_orb_adjustments={"Sun": 1.5, "Moon": 1.5},
+)
+analysis = ChartDataFactory.create_natal_chart_data(
+    john,
     distribution_method="weighted",
-    custom_distribution_weights={
-        "sun": 3.0,
-        "__default__": 0.75,
-    },
 )
 
-print(pure_data.element_distribution.fire)
-print(weighted_data.element_distribution.fire)
+for aspect in aspect_result.aspects[:5]:
+    print(aspect.p1_name, aspect.aspect, aspect.p2_name, aspect.orbit)
+
+print(analysis.element_distribution)
+print(analysis.angularities[:2])
+print(analysis.stelliums)
 ```
 
-All convenience helpers (`create_synastry_chart_data`, `create_transit_chart_data`, returns, and composites) forward the same keyword-only parameters, so you can keep a consistent weighting scheme across every chart type.
+Use `single_chart_declination_aspects()` or `dual_chart_declination_aspects()` for parallels and contra-parallels. See <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a>.
 
-**📖 Element/quality distribution guide: [Distribution Documentation](https://www.kerykeion.net/content/docs/element_quality_distribution)**
-
-## Ayanamsa (Sidereal Modes)
-
-By default, the zodiac type is **Tropical**. To use **Sidereal**, specify the sidereal mode:
+### Reports and AI Context
 
 ```python
-johnny = AstrologicalSubjectFactory.from_birth_data(
-    "Johnny Depp", 1963, 6, 9, 0, 0,
-    lng=-87.1112,
-    lat=37.7719,
-    tz_str="America/Chicago",
-    online=False,
-    zodiac_type="Sidereal",
-    sidereal_mode="LAHIRI"
-)
+from kerykeion import ReportGenerator, to_context
 
-# The ayanamsa offset (degrees) is available on sidereal charts:
-print(johnny.ayanamsa_value)  # e.g. 23.85
+report = ReportGenerator(natal_data).generate_report(max_aspects=10)
+xml_context = to_context(natal_data)
+
+print(report[:500])
+print(xml_context[:500])
 ```
 
-Kerykeion supports **47 named sidereal modes** plus a **USER** mode for custom ayanamsa definitions (48 total). Mode families include Indian/Vedic (Lahiri, Krishnamurti, Raman, Aryabhata, Suryasiddhanta, True Citra/Pushya/Revati, ...), Western sidereal (Fagan-Bradley, DeLuce, Hipparchos, ...), Babylonian (Kugler, Huber, Britton, ...), galactic alignment, and astronomical reference frames (J2000, J1900, B1950).
+`ReportGenerator` creates human-readable text. `to_context()` creates neutral XML intended as factual input to an LLM; it does not generate an astrological interpretation. See <a href="https://www.kerykeion.net/content/docs/report" target="_blank" rel="noopener noreferrer">Reports</a> and <a href="https://www.kerykeion.net/content/docs/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a>.
 
-**Custom ayanamsa (USER mode):**
+## Calculation Configuration
 
-```python
-custom = AstrologicalSubjectFactory.from_birth_data(
-    "Custom Ayanamsa", 2000, 1, 1, 0, 0,
-    lng=0.0, lat=51.5, tz_str="Etc/GMT", online=False,
-    zodiac_type="Sidereal",
-    sidereal_mode="USER",
-    custom_ayanamsa_t0=2451545.0,      # J2000.0 reference epoch
-    custom_ayanamsa_ayan_t0=23.5,       # ayanamsa offset at epoch (degrees)
-)
-```
+### Active Points
 
-**📖 Sidereal mode examples: [Sidereal Modes Guide](https://www.kerykeion.net/content/examples/sidereal-modes/)**
+`active_points` is a calculation choice, not only a drawing filter. Request optional points when the subject is created. `ChartDataFactory` can filter points that already exist, but it does not go back and calculate omitted bodies.
 
-**📖 Full list of supported sidereal modes: [SiderealMode Schema](https://www.kerykeion.net/content/docs/schemas#siderealmode)**
-
-## House Systems
-
-By default, houses are calculated using **Placidus**. Configure a different house system as follows:
+This example correctly includes both Mean and True lunar nodes and their opposites:
 
 ```python
-johnny = AstrologicalSubjectFactory.from_birth_data(
-    "Johnny Depp", 1963, 6, 9, 0, 0,
-    lng=-87.1112,
-    lat=37.7719,
-    tz_str="America/Chicago",
-    online=False,
-    houses_system_identifier="M"
-)
-```
-
-**📖 House system examples: [House Systems Guide](https://www.kerykeion.net/content/examples/houses-systems/)**
-
-**📖 Full list of supported house systems: [HouseSystemIdentifier Schema](https://www.kerykeion.net/content/docs/schemas#housesystemidentifier)**
-
-So far all the available houses system in the Swiss Ephemeris are supported but the Gauquelin Sectors.
-
-## Perspective Type
-
-By default, Kerykeion uses the **Apparent Geocentric** perspective (the most standard in astrology). Other perspectives (e.g., **Heliocentric**) can be set this way:
-
-```python
-johnny = AstrologicalSubjectFactory.from_birth_data(
-    "Johnny Depp", 1963, 6, 9, 0, 0,
-    lng=-87.1112,
-    lat=37.7719,
-    tz_str="America/Chicago",
-    online=False,
-    perspective_type="Heliocentric"
-)
-```
-
-**📖 Perspective type examples: [Perspective Type Guide](https://www.kerykeion.net/content/examples/perspective-type/)**
-
-**📖 Full list of supported perspective types: [PerspectiveType Schema](https://www.kerykeion.net/content/docs/schemas#perspectivetype)**
-
-## Themes
-
-<table>
-  <tr>
-    <td></td>
-    <td align="center"><strong>Classic</strong></td>
-    <td align="center"><strong>Dark</strong></td>
-    <td align="center"><strong>Light</strong></td>
-    <td align="center"><strong>Black & White</strong></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>Classic Style</strong></td>
-    <td><img src="docs/charts/classic_default_natal.svg" width="220" alt="Classic Natal Chart"></td>
-    <td><img src="docs/charts/classic_dark_natal.svg" width="220" alt="Dark Natal Chart"></td>
-    <td><img src="docs/charts/classic_light_natal.svg" width="220" alt="Light Natal Chart"></td>
-    <td><img src="docs/charts/classic_black_and_white_natal.svg" width="220" alt="Black and White Natal Chart"></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>Modern Style</strong></td>
-    <td><img src="docs/charts/modern_classic_natal.svg" width="220" alt="Modern Classic Natal Chart"></td>
-    <td><img src="docs/charts/modern_dark_natal.svg" width="220" alt="Modern Dark Natal Chart"></td>
-    <td><img src="docs/charts/modern_light_natal.svg" width="220" alt="Modern Light Natal Chart"></td>
-    <td><img src="docs/charts/modern_black_and_white_natal.svg" width="220" alt="Modern Black and White Natal Chart"></td>
-  </tr>
-</table>
-
-Kerykeion provides several chart themes: **Classic** (default), **Dark**, **Light**, and **Black & White** (optimized for monochrome printing). Each is available in both **classic** and **modern** chart styles.
-
-Each theme offers a distinct visual style, allowing you to choose the one that best suits your preferences or presentation needs. If you prefer more control over the appearance, you can opt not to set any theme, making it easier to customize the chart by overriding the default CSS variables.
-
-**📖 Theming guide with all examples: [Theming Documentation](https://www.kerykeion.net/content/examples/theming)**
-
-The Black & White theme renders glyphs, rings, and aspects in solid black on light backgrounds, designed for crisp B/W prints (PDF or paper) without sacrificing legibility.
-
-Here's an example of how to set the theme:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-dark_theme_subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon - Dark Theme", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data
-chart_data = ChartDataFactory.create_natal_chart_data(dark_theme_subject)
-
-# Step 3: Create visualization with dark high contrast theme
-dark_theme_natal_chart = ChartDrawer(chart_data=chart_data, theme="dark-high-contrast")
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-dark_theme_natal_chart.save_svg(output_path=output_dir, filename="john-lennon-natal-dark-high-contrast")
-```
-
-![John Lennon](https://www.kerykeion.net/img/showcase/John%20Lennon%20-%20Dark%20-%20Natal%20Chart.svg)
-
-## Alternative Initialization
-
-Create an `AstrologicalSubjectModel` from a UTC ISO 8601 string:
-
-```python
-from kerykeion import AstrologicalSubjectFactory
-
-subject = AstrologicalSubjectFactory.from_iso_utc_time(
-    name="Johnny Depp",
-    iso_utc_time="1963-06-09T05:00:00Z",
-    city="Owensboro",
-    nation="US",
-    lng=-87.1112,
-    lat=37.7719,
-    tz_str="America/Chicago",
-    online=False,
-)
-
-print(subject.iso_formatted_local_datetime)
-```
-
-If you prefer automatic geocoding, set `online=True` and provide your GeoNames credentials via `geonames_username`.
-
-**📖 All initialization options: [AstrologicalSubjectFactory Documentation](https://www.kerykeion.net/content/docs/astrological_subject_factory)**
-
-## Lunar Nodes (Rahu & Ketu)
-
-Kerykeion supports both **True** and **Mean** Lunar Nodes:
-
-- **True North Lunar Node**: `"True_North_Lunar_Node"`
-- **True South Lunar Node**: `"True_South_Lunar_Node"`
-- **Mean North Lunar Node**: `"Mean_North_Lunar_Node"`
-- **Mean South Lunar Node**: `"Mean_South_Lunar_Node"`
-
-By default, only the **True** nodes are active in charts and aspect calculations. To include the Mean nodes (or customize which nodes appear), pass the `active_points` parameter to the `ChartDataFactory` methods.
-
-**📖 ChartDataFactory documentation: [ChartDataFactory Guide](https://www.kerykeion.net/content/docs/chart_data_factory)**
-
-Example:
-
-```python
-from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
-
-# Step 1: Create subject
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833,
-    lat=53.4,
-    tz_str="Europe/London",
-    online=False,
-)
-
-# Step 2: Pre-compute chart data with custom active points including true nodes
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    active_points=[
-        "Sun",
-        "Moon",
-        "Mercury",
-        "Venus",
-        "Mars",
-        "Jupiter",
-        "Saturn",
-        "Uranus",
-        "Neptune",
-        "Pluto",
-        "Mean_North_Lunar_Node",
-        "Mean_South_Lunar_Node",
-        "True_North_Lunar_Node",
-        "True_South_Lunar_Node",
-        "Ascendant",
-        "Medium_Coeli",
-        "Descendant",
-        "Imum_Coeli"
-    ]
-)
-
-# Step 3: Create visualization
-chart = ChartDrawer(chart_data=chart_data)
-
-output_dir = Path("charts_output")
-output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="johnny-depp-custom-points")
-```
-
-## Fixed Stars
-
-Kerykeion includes **23 fixed stars** — the 2 original stars (Regulus, Spica) plus 21 new stars added in v5.12, completing all 15 Behenian stars of the medieval/Hermetic tradition plus 8 additional bright stars. The set includes the 4 Royal Stars of Persian/Hellenistic astrology (Regulus, Aldebaran, Antares, Fomalhaut). Each star provides ecliptic longitude, daily motion (`speed`), equatorial `declination`, and apparent visual `magnitude`.
-
-Fixed stars are computed for every subject but are **inactive by default** in charts and aspect calculations. To include them, pass their names in `active_points`:
-
-```python
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "John Lennon", 1940, 10, 9, 18, 30,
-    lng=-2.9833, lat=53.4, tz_str="Europe/London", online=False,
-)
+requested_nodes = [
+    "Mean_North_Lunar_Node",
+    "Mean_South_Lunar_Node",
+    "True_North_Lunar_Node",
+    "True_South_Lunar_Node",
+]
+all_requested_points = list(dict.fromkeys([*DEFAULT_ACTIVE_POINTS, *requested_nodes]))
 
-# Access fixed star data directly
-print(subject.sirius.abs_pos)        # Ecliptic longitude
-print(subject.sirius.magnitude)      # -1.44
-print(subject.sirius.declination)    # Equatorial declination
-
-# Include fixed stars in chart rendering
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
-    active_points=list(DEFAULT_ACTIVE_POINTS) + [
-        "Sirius", "Regulus", "Aldebaran", "Antares", "Fomalhaut",
-    ],
+node_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Node Example",
+    1990,
+    7,
+    15,
+    10,
+    30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+    active_points=all_requested_points,
 )
+node_data = ChartDataFactory.create_natal_chart_data(node_subject)
+
+assert node_subject.mean_north_lunar_node is not None
+assert node_subject.mean_south_lunar_node is not None
+assert set(requested_nodes) <= set(node_data.active_points)
 ```
 
-Available fixed stars: Regulus, Spica, Aldebaran, Antares, Sirius, Fomalhaut, Algol, Betelgeuse, Canopus, Procyon, Arcturus, Pollux, Deneb, Altair, Rigel, Achernar, Capella, Vega, Alcyone, Alphecca, Algorab, Deneb_Algedi, Alkaid.
+Presets for core, all, Uranian, and other point groups are documented in <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> and <a href="https://www.kerykeion.net/content/examples/active-points" target="_blank" rel="noopener noreferrer">Active Points Examples</a>.
 
-**📖 Full active points list: [Active Points Documentation](https://www.kerykeion.net/content/docs/active_points)**
+### Fixed Stars
 
-## JSON Support
+Fixed stars use a separate open-name channel because they come from a catalog rather than the closed chart-point vocabulary:
 
-You can serialize the astrological subject (the base data used throughout the library) to JSON:
+```python
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
+
+star_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Star Example",
+    1990,
+    7,
+    15,
+    10,
+    30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
+    online=False,
+    active_fixed_stars=["Sirius", "Regulus", "Aldebaran", "Antares", "Fomalhaut"],
+)
+
+sirius = star_subject.find_fixed_star("Sirius")
+assert sirius is not None
+print(sirius.abs_pos, sirius.declination, sirius.magnitude)
+
+star_chart_data = ChartDataFactory.create_natal_chart_data(star_subject)
+```
+
+Requested stars participate automatically in chart rendering and aspects. Discover catalog names through `FixedStarCatalog` or `FixedStarDiscoveryFactory`. See <a href="https://www.kerykeion.net/content/docs/fixed_star_discovery_factory" target="_blank" rel="noopener noreferrer">Fixed Star Discovery</a>.
+
+### Sidereal Modes and Custom Ayanamsa
 
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
-johnny = AstrologicalSubjectFactory.from_birth_data(
-    "Johnny Depp", 1963, 6, 9, 0, 0,
-    lng=-87.1112,
-    lat=37.7719,
-    tz_str="America/Chicago",
+sidereal_subject = AstrologicalSubjectFactory.from_birth_data(
+    "Sidereal Example",
+    1990,
+    7,
+    15,
+    10,
+    30,
+    lng=12.4964,
+    lat=41.9028,
+    tz_str="Europe/Rome",
     online=False,
+    zodiac_type="Sidereal",
+    sidereal_mode="LAHIRI",
 )
-
-print(johnny.model_dump_json(indent=2))
+print(sidereal_subject.ayanamsa_value)
 ```
 
-**📖 Data models and schemas: [Schemas Documentation](https://www.kerykeion.net/content/docs/schemas)**
+For a custom ayanamsa, use `sidereal_mode="USER"` and provide both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0`. Nakshatras on a tropical chart use `nakshatra_ayanamsa="LAHIRI"` by default for the lunar-mansion division only; the chart's tropical longitudes remain unchanged.
 
-## Moon Phase Details
+See <a href="https://www.kerykeion.net/content/examples/sidereal-modes" target="_blank" rel="noopener noreferrer">Sidereal Modes</a> and <a href="https://www.kerykeion.net/content/docs/schemas#siderealmode" target="_blank" rel="noopener noreferrer">Schemas</a>.
 
-The `MoonPhaseDetailsFactory` generates a rich lunar phase context from any astrological subject — including illumination, upcoming major phases, next eclipses (solar and lunar), sunrise/sunset, and apparent solar position. All timings use Swiss Ephemeris for ~1 second precision.
+### House Systems and Polar Latitudes
+
+Pass a one-character `houses_system_identifier`; Placidus (`"P"`) is the default. See <a href="https://www.kerykeion.net/content/examples/houses-systems" target="_blank" rel="noopener noreferrer">House Systems</a> for the supported list.
+
+Some quadrant systems are mathematically undefined inside the polar circle. Kerykeion records any substitution in `subject.polar_house_fallbacks`; `houses_system_identifier` remains what was requested and `effective_houses_system_identifier` states what produced the cusps. Systems that legitimately place several cusps at one longitude expose those zero-width groups through `coincident_house_cusps`.
+
+`ChartDrawer(..., show_polar_fallback_note=True)` can print the substitution on the chart.
+
+### Observer Perspectives
+
+The default is `"Apparent Geocentric"`. Available alternatives include `"True Geocentric"`, `"Topocentric"`, `"Heliocentric"`, `"Barycentric"`, `"Selenocentric"`, and supported planetocentric frames.
+
+Frame-specific rules matter:
+
+- a center body has no position as seen from itself and is excluded;
+- lunar nodes and lunar apogee variants are geocentric-only;
+- Local Space, Gauquelin sectors, and OOB classification are only populated in frames where they are meaningful;
+- two-chart operations require compatible frames;
+- a Topocentric subject cannot be relocated by keeping its original planetary positions, because their parallax belongs to the original observer.
+
+See <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a>.
+
+### Timezones, LMT, and Calendars
+
+- Use an IANA zone such as `Europe/Rome`; a modern fixed UTC offset cannot reproduce historical or DST rules.
+- If a modern wall time is repeated or skipped by a transition, `is_dst=True` selects the larger UTC offset and `is_dst=False` the smaller one. Leaving it unset raises instead of guessing.
+- Before a zone has a recorded civil clock, a synthetic IANA `LMT` record is replaced by Local Mean Time at the supplied longitude. Named historical records such as RMT, BMT, KMT, and MMT remain authoritative.
+- Naive daily `EphemerisDataFactory` inputs advance by local calendar days. Hourly and minutely series advance uniformly in UTC.
+- CE birth-data components use the proleptic Gregorian calendar. BCE birth input uses astronomical year numbering (`0` = 1 BCE) and the Julian-calendar birth path.
+- ISO event timestamps use the proleptic Gregorian calendar required by ISO 8601.
+
+See <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Astrological Subject Factory</a>, <a href="https://www.kerykeion.net/content/docs/ephemeris_data_factory" target="_blank" rel="noopener noreferrer">Ephemeris Data</a>, and <a href="https://www.kerykeion.net/content/docs/utilities" target="_blank" rel="noopener noreferrer">Utilities</a>.
+
+### Precision, Coverage, and Provenance
+
+High precision depends on body, date, active data tier, and source. A successful chart can contain points from different producers; applications should inspect the public metadata instead of assuming every optional body came from the core JPL kernel:
+
+- `subject.ephemeris_warnings` lists optional points that no permitted source could produce;
+- `point.source` identifies sources such as `LEB`, `Derived`, `Analytical`, or `Keplerian`;
+- `point.precision_class` states the backend's classification;
+- `point.ephemeris_coverage_start_jd` and `point.ephemeris_coverage_end_jd` expose the applicable window;
+- `point.source_reviewed` reports whether that coverage record is reviewed.
+
+`source="Keplerian"` is an approximation and is not ephemeris-grade. Geometrically derived points say `source="Derived"`. Uranian points are runtime analytical models and say `source="Analytical"`; they are not LEB data.
+
+Sun or Moon calculation failure raises because a subject without either luminary is not a usable chart. Optional-body failures can return a valid subject with a machine-readable warning. See <a href="https://www.kerykeion.net/content/docs/backend_precision_comparison" target="_blank" rel="noopener noreferrer">Backend Precision Comparison</a>.
+
+## Chart Rendering
+
+The modern concentric-ring renderer is the default; the classic wheel remains fully supported. All chart types can use the three built-in themes-`"classic"`, `"dark"`, and `"black-and-white"`-or `theme=None` for unthemed CSS variables.
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, MoonPhaseDetailsFactory, ReportGenerator
+from pathlib import Path
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Example", 2025, 4, 1, 7, 51,
-    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False,
+from kerykeion import ChartDrawer
+
+styled_drawer = ChartDrawer(
+    natal_data,
+    theme="dark",
+    chart_language="IT",
+    glyph_size="large",
+    show_motion_state=True,
+    show_out_of_bounds=True,
+    show_aspect_movement=True,
 )
-
-overview = MoonPhaseDetailsFactory.from_subject(subject)
-
-print(f"Phase: {overview.moon.phase_name} {overview.moon.emoji}")
-print(f"Illumination: {overview.moon.illumination}")
-print(f"Stage: {overview.moon.stage}")
-
-if overview.moon.detailed and overview.moon.detailed.upcoming_phases:
-    fm = overview.moon.detailed.upcoming_phases.full_moon
-    if fm and fm.next:
-        print(f"Next Full Moon: {fm.next.datestamp}")
-
-# Generate a formatted ASCII report
-ReportGenerator(overview).print_report()
+styled_drawer.save_svg(
+    output_path=Path("charts_output"),
+    filename="john-dark-marked",
+    minify=True,
+)
 ```
 
-**Report output (truncated):**
+The complete visual comparison is shown in [Chart Styles and Themes](#chart-styles-and-themes) near the top of this README.
 
-```text
-=====================================================
-Moon Phase Overview — Tue, 01 Apr 2025 06:51:00 +0000
-=====================================================
+### Output controls
 
-+Moon Summary--+--------------------+
-| Field        | Value              |
-+--------------+--------------------+
-| Phase Name   | Waxing Crescent 🌒 |
-| Major Phase  | New Moon           |
-| Stage        | Waxing             |
-| Illumination | 8%                 |
-| Age (days)   | 3                  |
-| Lunar Cycle  | 9.571%             |
-| Sun Sign     | Ari                |
-| Moon Sign    | Gem                |
-+--------------+--------------------+
+| Option | Purpose |
+|---|---|
+| `style="modern"` / `"classic"` | Select the wheel renderer |
+| `theme` | Choose a built-in palette or leave CSS variables unthemed |
+| `chart_language` / `language_pack` | Use one of ten languages or supply custom labels |
+| `colors_settings`, `celestial_points_settings`, `aspects_settings` | Customize palette, glyphs, and aspect appearance |
+| `glyph_size` | Select small, medium, or large point clusters on modern wheels |
+| `show_zodiac_background_ring` | Toggle the colored zodiac annulus on modern wheels |
+| `transparent_background=True` | Leave the SVG page unpainted |
+| `auto_size=True` and `padding` | Fit the page to rendered content |
+| `custom_title` | Replace the generated chart title |
+| `minify=True` | Minify a saved SVG |
+| `remove_css_variables=True` | Inline styles for SVG consumers without CSS-variable support |
+| `external_view=True` | Use the external classic natal layout |
+| `show_degree_indicators`, `show_aspect_icons` | Toggle classic-wheel degree and aspect symbols |
+| `double_chart_aspect_grid_type` | Choose the `"list"` or `"table"` dual-chart aspect layout |
+| `show_house_position_comparison` | Include point-to-house comparison tables on supported dual charts |
+| `show_cusp_position_comparison` | Include reciprocal cusp placement tables |
+| `show_diurnality` | Show or hide applicable diurnal/nocturnal labels |
 
-+Illumination Details-------+
-| Field            | Value  |
-+------------------+--------+
-| Percentage       | 8.0%   |
-| Visible Fraction | 0.0837 |
-| Phase Angle      | 34.46° |
-+------------------+--------+
+Optional marks-`show_motion_state`, `show_out_of_bounds`, `show_aspect_movement`, `show_relationship_score`, `show_ayanamsa_value`, and `show_polar_fallback_note`-default to `False`. A mark is silent when its source data has no applicable value.
 
-+Upcoming Phases+---------------------------------+---------------------------------+
-| Phase         | Last                            | Next                            |
-+---------------+---------------------------------+---------------------------------+
-| New Moon      | Sun, 29 Mar 2025 10:57:49 +0000 | Mon, 28 Apr 2025 00:31:07 +0000 |
-| First Quarter | ...                             | ...                             |
-| Full Moon     | ...                             | ...                             |
-| Last Quarter  | ...                             | ...                             |
-+---------------+---------------------------------+---------------------------------+
+See <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a>, <a href="https://www.kerykeion.net/content/examples/theming" target="_blank" rel="noopener noreferrer">Theming</a>, <a href="https://www.kerykeion.net/content/examples/chart-language" target="_blank" rel="noopener noreferrer">Chart Language</a>, <a href="https://www.kerykeion.net/content/examples/glyph-sizes" target="_blank" rel="noopener noreferrer">Glyph Sizes</a>, <a href="https://www.kerykeion.net/content/examples/chart-marks" target="_blank" rel="noopener noreferrer">Chart Marks</a>, and <a href="https://www.kerykeion.net/content/examples/minimalist-charts-and-aspect-table" target="_blank" rel="noopener noreferrer">Minimalist Charts</a>.
 
-...
+## Command-Line Interface
+
+The CLI is a separate distribution, `kerykeion-cli`. It uses only the Python standard library beyond Kerykeion itself.
+
+```bash
+pip install --pre "kerykeion[cli]==6.0.0rc1"
+# Or install it as an isolated tool:
+uv tool install --prerelease=allow "kerykeion-cli==6.0.0rc1"
 ```
 
-You can also get the full model as JSON:
+Save a subject profile and reuse it:
 
-```python
-print(overview.model_dump_json(exclude_none=True, indent=2))
+```console
+$ kerykeion subject save john --name "John Lennon" --date 1940-10-09 --time 18:30 \
+      --lat 53.4 --lng -2.9833 --tz Europe/London --offline
+$ kerykeion natal -s john
+$ kerykeion natal -s john -f svg -o /tmp/john.svg --theme dark
 ```
 
-**JSON output (truncated):**
+A terminal defaults to a text report. A pipeline defaults to JSON:
 
-```json
-{
-  "timestamp": 1743490260,
-  "datestamp": "Tue, 01 Apr 2025 06:51:00 +0000",
-  "sun": {
-    "sunrise_timestamp": "06:35",
-    "sunset_timestamp": "19:34",
-    "solar_noon": "13:04",
-    "day_length": "12:59",
-    "next_solar_eclipse": { "type": "Partial Solar Eclipse", "...": "..." }
-  },
-  "moon": {
-    "phase_name": "Waxing Crescent",
-    "major_phase": "New Moon",
-    "stage": "waxing",
-    "illumination": "12%",
-    "emoji": "🌒",
-    "next_lunar_eclipse": { "type": "Total Lunar Eclipse", "...": "..." },
-    "detailed": { "upcoming_phases": { "...": "..." }, "illumination_details": { "...": "..." } }
-  },
-  "location": { "latitude": "51.5074", "longitude": "-0.1276" }
-}
+```console
+$ kerykeion natal -s john | jq -r .sun.sign
+Lib
 ```
 
-**📖 Full documentation: [Moon Phase Details Factory](https://www.kerykeion.net/content/docs/moon_phase_details_factory)**
+The command tree covers charts, aspects, dominants, Moon context, relationship scores, predictive and traditional techniques, astronomical events, ephemeris data, transit timelines, stored subject profiles, and a guarded dispatcher for public factories:
 
-**📖 Examples: [Moon Phase Details Examples](https://www.kerykeion.net/content/examples/moon-phase-details)**
+```console
+$ kerykeion call ProfectionsFactory.from_subject -s john -f json
+$ kerykeion call --list
+$ kerykeion info literals SiderealMode
+$ kerykeion status --check
+```
 
+`call` dispatches only to names exported by `kerykeion.__all__`; arbitrary Python names are refused. See the <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">complete CLI reference</a>.
+
+The CLI wheel also ships a Unix man page, `kerykeion(1)`, generated from the same command tree behind `--help`: after a `pip install` into a system prefix (`/usr/local`, Homebrew), `man kerykeion` works with no further step. Isolated installs (`uv tool`, a venv) keep the page inside their own prefix; point `MANPATH` at it once, e.g. `man -M "$(uv tool dir)/kerykeion-cli/share/man" kerykeion`.
+
+For a commercial product that should not install Python, manage ephemeris data, or import the AGPL library, use the <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">hosted Astrologer API</a> instead.
 
 ## Documentation
 
-- **Main Website**: [kerykeion.net](https://www.kerykeion.net)
-- **Getting Started**: [kerykeion.net/docs](https://www.kerykeion.net/content/docs/)
-- **Examples Gallery**: [kerykeion.net/examples](https://www.kerykeion.net/content/examples/)
-- **API Reference**: [kerykeion.net/pydocs](https://www.kerykeion.net/pydocs/)
-- **Astrologer API Docs**: [kerykeion.net/astrologer-api](https://www.kerykeion.net/content/astrologer-api/)
-- **Migration Guide (v4 → v5)**: [Migration Guide](https://www.kerykeion.net/content/docs/migration)
+- **Getting Started:** <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer">kerykeion.net/content/docs</a>
+- **Examples Gallery:** <a href="https://www.kerykeion.net/content/examples/" target="_blank" rel="noopener noreferrer">kerykeion.net/content/examples</a>
+- **Python API Reference:** <a href="https://www.kerykeion.net/pydocs/" target="_blank" rel="noopener noreferrer">kerykeion.net/pydocs</a>
+- **Migration Guide:** <a href="https://www.kerykeion.net/content/docs/migration" target="_blank" rel="noopener noreferrer">v4/v5 to v6</a>
+- **Cookbook:** <a href="https://www.kerykeion.net/content/docs/cookbook" target="_blank" rel="noopener noreferrer">Practical recipes</a>
+- **Schemas:** <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Models and literals</a>
+- **FAQ:** <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">Troubleshooting and conventions</a>
+- **Hosted API:** <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Full API Documentation</a>
 
-## Projects built with Kerykeion
+## Swiss Ephemeris Backend
 
-**[Astrologer Studio](https://www.astrologerstudio.com/)** is professional online astrology software built on the Kerykeion engine — chart generation, client management, transit tracking, and AI-powered insights.
+Kerykeion uses **libephemeris 3.2.1** by default. To use the optional Swiss Ephemeris backend:
+
+```bash
+pip install --pre "kerykeion[swiss]==6.0.0rc1"
+python -m kerykeion.swisseph_setup
+export KERYKEION_BACKEND=swisseph
+export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
+```
+
+Swiss Ephemeris needs its `.se1` data files for full precision and `sefstars.txt` for fixed-star features. Without complete files, body and date availability can be narrower. See <a href="https://www.kerykeion.net/content/docs/swisseph_configuration" target="_blank" rel="noopener noreferrer">Swiss Ephemeris Configuration</a>.
+
+Backend selection happens once at import. `KERYKEION_BACKEND` selects the engine, `KERYKEION_LEB_MODE` controls the libephemeris calculation mode, and `LIBEPHEMERIS_PRECISION` selects the active data tier. See <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a>.
+
+## AI Agent Skill
+
+Kerykeion includes a cross-platform <a href="https://agentskills.io/" target="_blank" rel="noopener noreferrer">Agent Skill</a> that teaches coding agents the real v6 factories, models, configuration, and examples. During the v6 prerelease cycle, copy it from the current `v6` branch:
+
+```bash
+git clone --branch v6 --depth 1 https://github.com/g-battaglia/kerykeion.git
+cd kerykeion
+
+# Claude Code
+cp -r skills/kerykeion /path/to/project/.claude/skills/kerykeion
+
+# Codex
+cp -r skills/kerykeion /path/to/project/.agents/skills/kerykeion
+
+# Generic agentskills.io layout
+cp -r skills/kerykeion /path/to/project/skills/kerykeion
+```
+
+Once v6 is the default branch, skills-aware tools can install it with:
+
+```bash
+npx skills add g-battaglia/kerykeion
+```
+
+The library wheel also includes `kerykeion/llms.txt`, a self-contained API guide. For runtime chart context, use `to_context()`.
 
 ## Development
 
-Clone the repository or download the ZIP via the GitHub interface.
+Kerykeion uses `uv`, pytest, Ruff, MyPy, Pyright, and poethepoet. All project gates run locally; the repository intentionally has no GitHub Actions workflows.
 
 ```bash
-git clone https://github.com/g-battaglia/kerykeion.git
+git clone --branch v6 https://github.com/g-battaglia/kerykeion.git
 cd kerykeion
-pip install -e ".[dev]"
+uv sync --dev
+
+uv run poe test:core
+uv run poe check
+uv run poe docs:check
+uv run poe docs:snippets
+uv run poe build:smoke
 ```
 
-## Integrating Kerykeion into Your Project
+Test tiers correspond to installed ephemeris coverage. To run the full-range suite, install the extended kernel and select it explicitly:
 
-If you would like to incorporate Kerykeion's astrological features into your application, please reach out via [email](mailto:kerykeion.astrology@gmail.com?subject=Integration%20Request). Whether you need custom features, support, or specialized consulting, I am happy to discuss potential collaborations.
-
-For commercial or closed-source applications, consider using the paid [Astrologer API (RapidAPI plans & pricing)](https://www.kerykeion.net/astrologer-api/subscribe) which provides REST endpoints for all Kerykeion functionality.
-
-## License
-
-This project is covered under the AGPL-3.0 License. For detailed information, please see the [LICENSE](LICENSE) file. If you have questions, feel free to contact me at [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com?subject=Kerykeion).
-
-As a rule of thumb, if you import this library directly into a project, that project should be open-sourced under a compatible license.
-
-Alternatively, if the source code must remain private, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)**. Since it functions as an external third-party service, consuming its REST endpoints does *not* require the calling application to be open-source.
-
-## Contributing
-
-Contributions are welcome! Feel free to submit pull requests or report issues.
-
-By submitting a contribution, you agree to assign the copyright of that contribution to the maintainer. The project stays openly available under the AGPL for everyone, while the re-licensing option helps sustain future development. Your authorship remains acknowledged in the commit history and release notes.
-
-## Citations
-
-If using Kerykeion in published or academic work, please cite as follows:
-
+```bash
+LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
 ```
+
+- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/DEVELOPMENT.md" target="_blank" rel="noopener noreferrer">Development Guide</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/TEST.md" target="_blank" rel="noopener noreferrer">Test Guide</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing Guide</a>
+- <a href="https://github.com/g-battaglia/kerykeion/blob/v6/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
+
+## License and Commercial Use
+
+Kerykeion and the default libephemeris backend are distributed under **AGPL-3.0**. If your software imports or operates the library, review the AGPL's requirements for distribution and network use. See <a href="https://github.com/g-battaglia/kerykeion/blob/v6/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/v6/LICENSING.md" target="_blank" rel="noopener noreferrer">LICENSING.md</a>.
+
+For commercial applications, SaaS products, mobile apps, or closed-source codebases, the recommended route is the hosted **Astrologer API**:
+
+- **<a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Subscribe on RapidAPI</a>**
+- **<a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Read the Full API Documentation</a>**
+
+Your product calls an external service rather than importing Kerykeion directly. Subscription revenue directly funds the maintenance and continued development of this repository.
+
+A direct commercial license for embedding Kerykeion can also be discussed with the copyright holder. The intended model is described in <a href="https://github.com/g-battaglia/kerykeion/blob/v6/COMMERCIAL-LICENSE.md" target="_blank" rel="noopener noreferrer">COMMERCIAL-LICENSE.md</a>; that document is currently marked as a draft. Contact <a href="mailto:kerykeion.astrology@gmail.com?subject=Kerykeion%20Commercial%20License" target="_blank" rel="noopener noreferrer">kerykeion.astrology@gmail.com</a>.
+
+This section is a practical project summary, not legal advice. Consult qualified counsel for your specific use case.
+
+## Astrologer Studio
+
+**<a href="https://www.astrologerstudio.com/" target="_blank" rel="noopener noreferrer">Astrologer Studio</a>** is a cloud astrology application powered by Kerykeion and the hosted Astrologer API. It brings professional astrological calculations and chart generation into a ready-to-use online workspace-without requiring a local Python installation or ephemeris setup.
+
+<p align="center">
+  <strong><a href="https://www.astrologerstudio.com/" target="_blank" rel="noopener noreferrer">Open Astrologer Studio</a></strong>
+</p>
+
+## Contributing and Citation
+
+Contributions are welcome. Open an issue or discussion before substantial work and follow the local gates in <a href="https://github.com/g-battaglia/kerykeion/blob/v6/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">CONTRIBUTING.md</a>. Contributions are accepted under the copyright-assignment terms documented there; authorship remains visible in project history and release notes.
+
+For academic or published work, cite:
+
+```text
 Battaglia, G. (2025). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
 https://github.com/g-battaglia/kerykeion
 ```
+
+Questions and integration requests: <a href="mailto:kerykeion.astrology@gmail.com?subject=Kerykeion" target="_blank" rel="noopener noreferrer">kerykeion.astrology@gmail.com</a>.

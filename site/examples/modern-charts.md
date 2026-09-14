@@ -7,19 +7,19 @@ order: 15
 
 # Modern Charts
 
-Kerykeion supports a **modern concentric-ring** chart style as an alternative to the classic wheel. The modern style renders charts with graduated ruler scales, clean aspect lines with midpoint glyphs, and a distinct visual hierarchy.
+The **modern concentric-ring** layout is Kerykeion's default chart style. It renders charts with graduated ruler scales, clean aspect lines with midpoint glyphs, and a distinct visual hierarchy.
 
-All chart types and all six themes work with the modern style.
+All chart types and all three themes (`"classic"`, `"dark"`, `"black-and-white"`, plus `theme=None` for no CSS at all) work with the modern style. The traditional wheel remains available via `style="classic"` — see the [Charts documentation](/content/docs/charts).
 
 ## Modern Natal Chart
 
-Pass `style="modern"` to `save_svg()` or `generate_svg_string()`.
+Modern is the default: `save_svg()` and `generate_svg_string()` render it without any extra argument (passing `style="modern"` explicitly is equivalent).
 
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -31,10 +31,10 @@ chart = ChartDrawer(chart_data=chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-modern-natal", style="modern")
+chart.save_svg(output_path=output_dir, filename="lennon-modern-natal")
 ```
 
-![Modern Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
+![Modern Natal Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern.svg)
 
 ## Modern Synastry Chart
 
@@ -43,8 +43,8 @@ Dual-wheel modern charts show two subjects with distinct inner and outer planet 
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 john = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -60,18 +60,18 @@ chart = ChartDrawer(chart_data=chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-ono-modern-synastry", style="modern")
+chart.save_svg(output_path=output_dir, filename="lennon-ono-modern-synastry")
 ```
 
-![Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
+![Modern Synastry Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Synastry%20Chart%20-%20Modern.svg)
 
 ## Modern Transit Chart
 
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -88,10 +88,10 @@ chart = ChartDrawer(chart_data=chart_data)
 
 output_dir = Path("charts_output")
 output_dir.mkdir(exist_ok=True)
-chart.save_svg(output_path=output_dir, filename="lennon-modern-transit", style="modern")
+chart.save_svg(output_path=output_dir, filename="lennon-modern-transit")
 ```
 
-![Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
+![Modern Transit Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Transit%20Chart%20-%20Modern.svg)
 
 ## Modern Wheel Only
 
@@ -100,8 +100,8 @@ The wheel-only output (without aspect grid) also supports the modern style:
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data_factory import ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.chart_data.factory import ChartDataFactory
+from kerykeion.charts.drawer import ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,
@@ -116,11 +116,10 @@ output_dir.mkdir(exist_ok=True)
 chart.save_wheel_only_svg_file(
     output_path=output_dir,
     filename="lennon-modern-wheel-dark",
-    style="modern",
 )
 ```
 
-![Modern Wheel Only](https://raw.githubusercontent.com/g-battaglia/kerykeion/main/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Wheel%20Only.svg)
+![Modern Wheel Only](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/alpha/v6/tests/data/svg/John%20Lennon%20-%20Natal%20Chart%20-%20Modern%20Wheel%20Only.svg)
 
 ## Modern-Only Parameters
 
@@ -129,6 +128,10 @@ These keyword arguments are specific to the modern style and are ignored when `s
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `show_zodiac_background_ring` | `bool` | `True` | Draw colored zodiac wedges behind the outer planet ring |
+| `glyph_size` | `"small" \| "medium" \| "large"` | `"medium"` | Planet-cluster size on the wheel — see [Glyph Sizes](/content/examples/glyph-sizes) |
+
+Both can be set once on the constructor as a per-instance default, or per call
+on any render method.
 
 Example disabling the zodiac background:
 
@@ -136,7 +139,6 @@ Example disabling the zodiac background:
 chart.save_svg(
     output_path=output_dir,
     filename="modern-no-zodiac-bg",
-    style="modern",
     show_zodiac_background_ring=False,
 )
 ```

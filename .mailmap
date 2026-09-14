@@ -1,0 +1,14 @@
+# Consolidate the maintainer's many commit identities under one canonical
+# name + email, so `git shortlog`/`git blame` and any chain-of-title review
+# show a single natural person.
+#
+# External human contributors and AI-assist ("Claude") commits are
+# intentionally NOT collapsed here.
+
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <battaglia.giacomo@icloud.com>
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <battaglia.giacomo@yahoo.it>
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <66565007+g-battaglia@users.noreply.github.com>
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <giacomo@MacBook-Pro-di-Giacomo.local>
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <giacomo@mbp-di-giacomo.homenet.telecomitalia.it>
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <giacomobattaglia@Air-di-Giacomo.wind3.hub>
+Giacomo Battaglia <kerykeion.astrology@gmail.com> <kerykeion.astrology@gmail.com>

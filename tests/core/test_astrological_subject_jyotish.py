@@ -406,12 +406,31 @@ class TestAstrologicalSubjectJyotish:
         assert self.subject.twelfth_house.point_type == self.expected_output["twelfth_house"]["point_type"]
 
     def test_lunar_phase(self):
-        assert self.subject.lunar_phase.model_dump()["degrees_between_s_m"] == approx(
-            self.expected_output["lunar_phase"]["degrees_between_s_m"], abs=1e-2
-        )
-        assert self.subject.lunar_phase.model_dump()["moon_phase"] == self.expected_output["lunar_phase"]["moon_phase"]
-        assert self.subject.lunar_phase.model_dump()["moon_emoji"] == self.expected_output["lunar_phase"]["moon_emoji"]
-        assert (
-            self.subject.lunar_phase.model_dump()["moon_phase_name"]
-            == self.expected_output["lunar_phase"]["moon_phase_name"]
-        )
+        dumped = self.subject.lunar_phase.model_dump()
+        expected = self.expected_output["lunar_phase"]
+        assert dumped["degrees_between_s_m"] == approx(expected["degrees_between_s_m"], abs=1e-2)
+        assert dumped["moon_phase"] == expected["moon_phase"]
+        assert dumped["moon_emoji"] == expected["moon_emoji"]
+        assert dumped["moon_phase_name"] == expected["moon_phase_name"]
+        assert dumped["major_phase"] == expected["major_phase"]
+        assert dumped["stage"] == expected["stage"]
+
+
+def test_nakshatra_pada_exact_boundary_degrees():
+    """Exactly-representable pada boundaries (20.0, 30.0, 60.0, 70.0, ...)
+    used to land in the PREVIOUS pada: the remainder-based pada computation
+    inherited the span constant's float error. The 108-quarter mapping keeps
+    nakshatra and pada exact and mutually consistent."""
+    from kerykeion.vedic.nakshatra_utils import calculate_nakshatra
+
+    for degrees, expected_nakshatra, expected_pada in [
+        (20.0, 2, 3),   # 20° = 6th pada boundary → Bharani pada 3
+        (30.0, 3, 2),   # 30° = 9th pada boundary → Krittika pada 2
+        (60.0, 5, 3),   # 60° = 18th pada boundary → Mrigashira pada 3
+        (70.0, 6, 2),   # 70° = 21st pada boundary → Ardra pada 2
+        (0.0, 1, 1),
+        (360.0, 1, 1),  # wraps to 0
+    ]:
+        result = calculate_nakshatra(degrees)
+        assert result["nakshatra_number"] == expected_nakshatra, (degrees, result)
+        assert result["nakshatra_pada"] == expected_pada, (degrees, result)

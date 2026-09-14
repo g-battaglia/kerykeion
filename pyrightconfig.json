@@ -1,5 +1,8 @@
 {
-  "include": ["kerykeion"],
+  "include": [
+    "kerykeion",
+    "cli/kerykeion_cli"
+  ],
   "exclude": [
     "tests",
     "examples",
@@ -12,7 +15,7 @@
     "*.egg-info"
   ],
   "typeCheckingMode": "basic",
-  "pythonVersion": "3.9",
+  "pythonVersion": "3.12",
   "pythonPlatform": "All",
   "venvPath": ".",
   "venv": ".venv",

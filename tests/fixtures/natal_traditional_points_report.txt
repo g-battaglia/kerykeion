@@ -15,6 +15,7 @@ Sample Natal Subject — Natal Chart Report
 | Timezone           | Europe/London             |
 | Day of Week        | Saturday                  |
 | ISO Local Datetime | 1990-07-21T14:45:00+01:00 |
+| Diurnality         | Diurnal                   |
 +--------------------+---------------------------+
 
 +Natal — Settings-----+---------------------+
@@ -27,36 +28,36 @@ Sample Natal Subject — Natal Chart Report
 | Active Points Count | 9                   |
 +---------------------+---------------------+
 
-+Natal Celestial Points-+---------+----------+-------------+---------+------+---------------+
-| Point                 | Sign    | Position | Speed       | Decl.   | Ret. | House         |
-+-----------------------+---------+----------+-------------+---------+------+---------------+
-| Sun                   | Can ♋️ | 28.54°   | +0.9551°/d  | +20.45° | -    | Ninth House   |
-| Moon                  | Can ♋️ | 21.21°   | +14.4024°/d | +23.21° | -    | Ninth House   |
-| Mercury               | Leo ♌️ | 17.61°   | +1.6910°/d  | +16.88° | -    | Ninth House   |
-| Venus                 | Can ♋️ | 1.71°    | +1.2038°/d  | +22.74° | -    | Eighth House  |
-| Mars                  | Tau ♉️ | 5.97°    | +0.6554°/d  | +11.57° | -    | Seventh House |
-| Jupiter               | Can ♋️ | 23.91°   | +0.2240°/d  | +21.56° | -    | Ninth House   |
-| Saturn                | Cap ♑️ | 21.52°   | -0.0732°/d  | -21.66° | R    | Third House   |
-| True North Lunar Node | Aqu ♒️ | 7.26°    | -0.0090°/d  | -18.46° | R    | Third House   |
-| True South Lunar Node | Leo ♌️ | 7.26°    | +0.0090°/d  | +18.46° | R    | Ninth House   |
-+-----------------------+---------+----------+-------------+---------+------+---------------+
++Natal Celestial Points-+--------+----------+-------------+------------+---------+------+---------------+
+| Point                 | Sign   | Position | Speed       | Motion     | Decl.   | Ret. | House         |
++-----------------------+--------+----------+-------------+------------+---------+------+---------------+
+| Sun                   | Can ♋ | 28.54°   | +0.9551°/d  | Average    | +20.45° | -    | Ninth House   |
+| Moon                  | Can ♋ | 21.21°   | +14.4024°/d | Average    | +23.21° | -    | Ninth House   |
+| Mercury               | Leo ♌ | 17.61°   | +1.6910°/d  | Fast       | +16.88° | -    | Ninth House   |
+| Venus                 | Can ♋ | 1.71°    | +1.2038°/d  | Average    | +22.74° | -    | Eighth House  |
+| Mars                  | Tau ♉ | 5.97°    | +0.6554°/d  | Fast       | +11.57° | -    | Seventh House |
+| Jupiter               | Can ♋ | 23.91°   | +0.2240°/d  | Fast       | +21.56° | -    | Ninth House   |
+| Saturn                | Cap ♑ | 21.52°   | -0.0732°/d  | Retrograde | -21.66° | R    | Third House   |
+| True North Lunar Node | Aqu ♒ | 7.26°    | -0.0080°/d  | -          | -18.46° | R    | Third House   |
+| True South Lunar Node | Leo ♌ | 7.26°    | -0.0080°/d  | -          | +18.46° | R    | Ninth House   |
++-----------------------+--------+----------+-------------+------------+---------+------+---------------+
 
-+Natal Houses (Placidus)---+----------+-------------------+
-| House          | Sign    | Position | Absolute Position |
-+----------------+---------+----------+-------------------+
-| First House    | Sco ♏️ | 5.82°    | 215.82°           |
-| Second House   | Sag ♐️ | 3.71°    | 243.71°           |
-| Third House    | Cap ♑️ | 9.79°    | 279.79°           |
-| Fourth House   | Aqu ♒️ | 19.91°   | 319.91°           |
-| Fifth House    | Pis ♓️ | 23.00°   | 353.00°           |
-| Sixth House    | Ari ♈️ | 17.47°   | 17.47°            |
-| Seventh House  | Tau ♉️ | 5.82°    | 35.82°            |
-| Eighth House   | Gem ♊️ | 3.71°    | 63.71°            |
-| Ninth House    | Can ♋️ | 9.79°    | 99.79°            |
-| Tenth House    | Leo ♌️ | 19.91°   | 139.91°           |
-| Eleventh House | Vir ♍️ | 23.00°   | 173.00°           |
-| Twelfth House  | Lib ♎️ | 17.47°   | 197.47°           |
-+----------------+---------+----------+-------------------+
++Natal Houses (Placidus)--+----------+-------------------+
+| House          | Sign   | Position | Absolute Position |
++----------------+--------+----------+-------------------+
+| First House    | Sco ♏ | 5.82°    | 215.82°           |
+| Second House   | Sag ♐ | 3.71°    | 243.71°           |
+| Third House    | Cap ♑ | 9.79°    | 279.79°           |
+| Fourth House   | Aqu ♒ | 19.91°   | 319.91°           |
+| Fifth House    | Pis ♓ | 23.00°   | 353.00°           |
+| Sixth House    | Ari ♈ | 17.47°   | 17.47°            |
+| Seventh House  | Tau ♉ | 5.82°    | 35.82°            |
+| Eighth House   | Gem ♊ | 3.71°    | 63.71°            |
+| Ninth House    | Can ♋ | 9.79°    | 99.79°            |
+| Tenth House    | Leo ♌ | 19.91°   | 139.91°           |
+| Eleventh House | Vir ♍ | 23.00°   | 173.00°           |
+| Twelfth House  | Lib ♎ | 17.47°   | 197.47°           |
++----------------+--------+----------+-------------------+
 
 +Lunar Phase--------------+--------------------+
 | Lunar Phase Information | Value              |
@@ -69,21 +70,34 @@ Sample Natal Subject — Natal Chart Report
 +Element Distribution-----------+
 | Element  | Count | Percentage |
 +----------+-------+------------+
-| Fire 🔥  | 2.0   | 17.4%      |
-| Earth 🌍 | 2.5   | 21.7%      |
-| Air 💨   | 0.5   | 4.3%       |
-| Water 💧 | 6.5   | 56.5%      |
+| Fire 🔥  | 2.0   | 17%        |
+| Earth 🌍 | 2.5   | 22%        |
+| Air 💨   | 0.5   | 4%         |
+| Water 💧 | 6.5   | 57%        |
 | Total    | 11.5  | 100%       |
 +----------+-------+------------+
 
 +Quality Distribution-----------+
 | Quality  | Count | Percentage |
 +----------+-------+------------+
-| Cardinal | 7.5   | 65.2%      |
-| Fixed    | 4.0   | 34.8%      |
-| Mutable  | 0.0   | 0.0%       |
+| Cardinal | 7.5   | 65%        |
+| Fixed    | 4.0   | 35%        |
+| Mutable  | 0.0   | 0%         |
 | Total    | 11.5  | 100%       |
 +----------+-------+------------+
+
++Angularities------------+----------+
+| Point   | Angle        | Distance |
++---------+--------------+----------+
+| Mars    | Descendant   | 0.15°    |
+| Mercury | Medium Coeli | 2.31°    |
++---------+--------------+----------+
+
++Stelliums------+-----------------------------+
+| House | Count | Points                      |
++-------+-------+-----------------------------+
+| 9     | 4     | Sun, Moon, Mercury, Jupiter |
++-------+-------+-----------------------------+
 
 +Active Celestial Points----+
 | # | Active Point          |
@@ -102,22 +116,20 @@ Sample Natal Subject — Natal Chart Report
 +-------------+---------+
 | Aspect      | Orb (°) |
 +-------------+---------+
-| conjunction | 10      |
-| opposition  | 10      |
-| trine       | 8       |
-| sextile     | 6       |
-| square      | 5       |
-| quintile    | 1       |
+| conjunction | 6.0     |
+| opposition  | 6.0     |
+| trine       | 6.0     |
+| sextile     | 5.0     |
+| square      | 6.0     |
 +-------------+---------+
 
 +Aspects--+---------------+-----------------------+-------+--------------+
 | Point 1 | Aspect        | Point 2               | Orb   | Movement     |
 +---------+---------------+-----------------------+-------+--------------+
 | Sun     | conjunction ☌ | Moon                  | 7.33° | Applying →   |
+| Sun     | square □      | Mars                  | 7.42° | Applying →   |
 | Sun     | conjunction ☌ | Jupiter               | 4.63° | Separating ← |
 | Sun     | opposition ☍  | Saturn                | 7.03° | Separating ← |
-| Sun     | opposition ☍  | True North Lunar Node | 8.72° | Applying →   |
-| Sun     | conjunction ☌ | True South Lunar Node | 8.72° | Applying →   |
 | Moon    | conjunction ☌ | Jupiter               | 2.70° | Applying →   |
 | Moon    | opposition ☍  | Saturn                | 0.31° | Applying →   |
 | Venus   | sextile ⚹     | Mars                  | 4.26° | Applying →   |

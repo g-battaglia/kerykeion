@@ -1,18 +1,35 @@
 ---
-title: 'Migration Guide v4 to v5'
-description: 'Step-by-step instructions to migrate your code from Kerykeion v4 to v5'
+title: 'Migration Guide (v4/v5 to v6)'
+description: 'Step-by-step instructions to migrate your code from Kerykeion v4/v5 to v6'
 category: 'Getting Started'
-tags: ['docs', 'migration', 'v4', 'v5', 'upgrade']
+tags: ['docs', 'migration', 'v4', 'v5', 'v6', 'upgrade']
 order: 2
 ---
 
-# Migration Guide: v4 to v5
+# Migration Guide: v4/v5 to v6
 
-This guide provides comprehensive instructions for migrating your code from Kerykeion v4 to v5. The v5 release introduces a new factory-based architecture that provides better separation of concerns, improved type safety, and more flexibility.
+This guide provides comprehensive instructions for migrating your code from Kerykeion v4 or v5 to v6. The v5 release introduced a factory-based architecture; v6 removes the v4 backward compatibility layer entirely and adds advanced calculation modules.
+
+The current v6 release is **6.0.0rc1**, a release candidate. Use Python 3.12 or
+newer and select it explicitly:
+
+```bash
+pip install --upgrade "kerykeion==6.0.0rc1"
+# Optional CLI, released with and pinned to the same library version:
+pip install --upgrade --pre "kerykeion[cli]==6.0.0rc1"
+```
+
+v6 uses `libephemeris==3.2.1` by default. Its bundled base data covers
+1850–2150 (upper bound exclusive); install a wider data tier before working
+outside that interval. See [backend configuration](/content/docs/ephemeris_backend)
+for data tiers and the optional Swiss Ephemeris backend. Timezone handling uses
+`zoneinfo` with `tzdata`; ambiguous and nonexistent local times require an
+explicit choice. The [`is_dst` migration notes](/content/docs/faq#what-is_dst-actually-selects)
+explain its offset-based contract.
 
 ## Quick Reference
 
-| v4 (Deprecated) | v5 (Current) |
+| v4 (Removed in v6) | v6 (Current) |
 |:----------------|:-------------|
 | `AstrologicalSubject()` | `AstrologicalSubjectFactory.from_birth_data()` |
 | `KerykeionChartSVG()` | `ChartDataFactory` + `ChartDrawer` |
@@ -22,21 +39,24 @@ This guide provides comprehensive instructions for migrating your code from Kery
 | `kerykeion.kr_types` | `kerykeion.schemas` |
 | `mean_node`, `true_node` | `mean_north_lunar_node`, `true_north_lunar_node` |
 
+> **Note:** `kerykeion.kr_types` was a deprecated shim throughout v5 and is **removed in v6**. Import from `kerykeion.schemas` instead.
+
 ## Breaking Changes
 
 ### 1. Subject Creation
 
 **v4 (Deprecated):**
 ```python
+# doc-snippet: no-run — legacy v4 example (removed in v6)
 from kerykeion import AstrologicalSubject
 
 subject = AstrologicalSubject(
     "John", 1990, 1, 1, 12, 0,
-    city="London", nat="GB"
+    city="London", nation="GB"
 )
 ```
 
-**v5 (Current):**
+**v6 (Current):**
 ```python
 from kerykeion import AstrologicalSubjectFactory
 
@@ -56,6 +76,7 @@ Key differences:
 
 **v4 (Deprecated):**
 ```python
+# doc-snippet: no-run — legacy v4 example (removed in v6)
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
@@ -63,11 +84,11 @@ chart = KerykeionChartSVG(subject)
 chart.makeSVG()
 ```
 
-**v5 (Current):**
+**v6 (Current):**
 ```python
 from pathlib import Path
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 
 # Step 1: Create subject
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -95,6 +116,7 @@ The new architecture separates:
 
 **v4 (Deprecated):**
 ```python
+# doc-snippet: no-run — legacy v4 example (removed in v6)
 from kerykeion import NatalAspects, SynastryAspects
 
 natal_aspects = NatalAspects(subject)
@@ -105,15 +127,20 @@ for aspect in natal_aspects.relevant_aspects:
     print(aspect)
 ```
 
-**v5 (Current):**
+**v6 (Current):**
 ```python
 from kerykeion import AspectsFactory
 
 # Single chart (natal, composite, return)
 natal_result = AspectsFactory.single_chart_aspects(subject)
 
-# Dual chart (synastry, transit)
-synastry_result = AspectsFactory.dual_chart_aspects(subject1, subject2)
+# Dual chart (synastry, transit) — needs a second subject
+subject2 = AstrologicalSubjectFactory.from_birth_data(
+    "Jane", 1992, 5, 15, 10, 30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+    online=False
+)
+synastry_result = AspectsFactory.dual_chart_aspects(subject, subject2)
 
 # Accessing aspects (unified list)
 for aspect in natal_result.aspects:
@@ -126,9 +153,9 @@ Key changes:
 
 ### 4. Lunar Node Naming
 
-All lunar node properties have been renamed for clarity:
+All lunar node properties were renamed for clarity:
 
-| v4 Property | v5 Property |
+| v4 Property | v6 Property |
 |:------------|:------------|
 | `subject.mean_node` | `subject.mean_north_lunar_node` |
 | `subject.true_node` | `subject.true_north_lunar_node` |
@@ -137,33 +164,64 @@ All lunar node properties have been renamed for clarity:
 
 In active_points lists:
 
-| v4 String | v5 String |
+| v4 String | v6 String |
 |:----------|:----------|
 | `"Mean_Node"` | `"Mean_North_Lunar_Node"` |
 | `"True_Node"` | `"True_North_Lunar_Node"` |
 
 ### 5. Import Path Changes
 
-| v4 Import | v5 Import |
+| v4 Import | v6 Import |
 |:----------|:----------|
 | `from kerykeion.kr_types import *` | `from kerykeion.schemas import *` |
-| `from kerykeion.kr_types.kr_literals import Planet` | `from kerykeion.schemas.kr_literals import AstrologicalPoint` |
+| `from kerykeion.kr_types.kr_literals import Planet` | `from kerykeion.schemas.literals import AstrologicalPoint` |
 | `from kerykeion.kr_types import KerykeionException` | `from kerykeion.schemas import KerykeionException` |
+
+#### v5 → v6 module paths
+
+v6 reorganised the package so that every domain lives in its own directory. **If you import only from the top level — `from kerykeion import X` — nothing changes.** These paths matter only if you imported a module directly.
+
+| v5 module | v6 module |
+|:----------|:----------|
+| `kerykeion.astrological_subject_factory` | `kerykeion.astrological_subject.factory` |
+| `kerykeion.chart_data_factory` | `kerykeion.chart_data.factory` |
+| `kerykeion.composite_subject_factory` | `kerykeion.composite_subject.factory` |
+| `kerykeion.planetary_return_factory` | `kerykeion.planetary_returns.factory` |
+| `kerykeion.transits_time_range_factory` | `kerykeion.transits.factory` |
+| `kerykeion.relationship_score_factory` | `kerykeion.relationship_score.factory` |
+| `kerykeion.relocated_chart_factory` | `kerykeion.relocated_chart.factory` |
+| `kerykeion.ephemeris_data_factory` | `kerykeion.ephemeris_data.factory` |
+| `kerykeion.context_serializer` | `kerykeion.context.serializer` |
+| `kerykeion.fetch_geonames` | `kerykeion.geonames.fetcher` |
+| `kerykeion.charts.chart_drawer` | `kerykeion.charts.drawer` |
+| `kerykeion.charts.charts_utils` | `kerykeion.charts.utils` |
+| `kerykeion.aspects.aspects_factory` | `kerykeion.aspects.factory` |
+| `kerykeion.aspects.aspects_utils` | `kerykeion.aspects.utils` |
+| `kerykeion.house_comparison.house_comparison_factory` | `kerykeion.house_comparison.factory` |
+| `kerykeion.house_comparison.house_comparison_utils` | `kerykeion.house_comparison.utils` |
+| `kerykeion.schemas.kr_models` | `kerykeion.schemas.models` |
+| `kerykeion.schemas.kr_literals` | `kerykeion.schemas.literals` |
+| `kerykeion.schemas.kerykeion_exception` | `kerykeion.schemas.exceptions` |
+| `kerykeion.settings.kerykeion_settings` | `kerykeion.settings.loader` |
+| `kerykeion.kr_types` (and submodules) | `kerykeion.schemas` |
+
+Unchanged, because they became packages under the same name: `kerykeion.report`, `kerykeion.utilities`, `kerykeion.ephemeris_backend`, `kerykeion.motion`, `kerykeion.swisseph_setup`.
+
+The same domain packages also renamed their internal factory module (`eclipses.eclipse_factory` → `eclipses.factory`, and the same for `lunations`, `midpoints`, `occultations`, `heliacal`, `planetary_nodes`, `planetary_phenomena`, `primary_directions`, `retrograde_stations`, `sign_ingresses`, `astro_cartography`, `fixed_stars`, `dignities`, `secondary_progressions`). Every one of these classes is also exported from `kerykeion` directly, which is the import worth switching to.
 
 ### 6. Type Aliases
 
-The `Planet` and `AxialCusps` types are now unified:
+The `Planet` and `AxialCusps` types were unified into `AstrologicalPoint`:
 
 ```python
-# v4
-from kerykeion.kr_types.kr_literals import Planet, AxialCusps
+# v4 (removed in v6)
+# from kerykeion.kr_types.kr_literals import Planet, AxialCusps
 
-# v5 (recommended)
-from kerykeion.schemas.kr_literals import AstrologicalPoint
-
-# v5 (aliases still available for transition)
-from kerykeion.schemas import Planet, AxialCusps  # Aliases
+# v6 (correct)
+from kerykeion.schemas.literals import AstrologicalPoint
 ```
+
+The v5 model aliases `NatalAspectsModel` and `SynastryAspectsModel` were also removed — use `SingleChartAspectsModel` and `DualChartAspectsModel` instead.
 
 ### 7. Removed Parameters
 
@@ -173,44 +231,186 @@ from kerykeion.schemas import Planet, AxialCusps  # Aliases
 | `disable_chiron_and_lilith` | Removed | Use `active_points` to exclude |
 | `new_settings_file` | Removed | Use `language_pack` parameter |
 
-## Backward Compatibility Layer
+## What Changes in the Results
 
-For gradual migration, v5 includes a compatibility layer in `kerykeion.backword`:
+Everything above is about code that stops working: you get an `ImportError`, you fix the call, you move on. This section is about the opposite — code that keeps working and quietly returns **different numbers**.
+
+It applies even if you were already using the v5 factory API correctly. Nothing raises, nothing warns; the output is simply not the same as before.
+
+| What | v5 | v6 | What you see |
+|:-----|:---|:---|:-------------|
+| Default active points | 18 | 14 | Fewer points in charts and aspects |
+| Default aspect orbs | conj/opp 10°, trine 8°, sextile 6°, square 5°, quintile 1° | conj/opp/trine/square 6°, sextile 5° | **Markedly fewer aspects**; quintiles disappear entirely |
+| Orbs on non-natal charts | same defaults as natal | flat 3° (`PREDICTIVE_ACTIVE_ASPECTS`) | Transits, returns and progressions report far fewer aspects |
+| Sun/Moon orb bonus | none | `+1.5°`, natal-family charts only | Slightly wider orbs for luminaries |
+| Chart style | `"classic"` | `"modern"` | A different drawing, and a different filename |
+| Nakshatras on a non-sidereal chart | tropical longitude used as-is | rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) | Different nakshatra, pada and lord — about two nakshatras' worth |
+| Lunar phase name | 28 fixed bins | windows centred on the syzygies | `moon_phase_name` and `moon_emoji` change near a boundary; `moon_phase` (1-28) does not |
+| Moon's apsides | `perihelion` / `aphelion` only | `periapsis` / `apoapsis` / `apsis_kind` | Old fields still populated; new ones are correct for the Moon |
+
+These are deliberate v6 choices, not oversights. What follows is how to opt back into the old behaviour where you need continuity.
+
+### Active points: 18 → 14
+
+Four points left the default set: `Descendant`, `Imum_Coeli`, `True_South_Lunar_Node` and `Mean_Lilith`. They still exist — they are simply no longer computed unless you ask for them.
 
 ```python
-# These still work but emit DeprecationWarning
-from kerykeion import AstrologicalSubject, KerykeionChartSVG, NatalAspects
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.settings import V5_DEFAULT_ACTIVE_POINTS
 
-subject = AstrologicalSubject(
+# v6 defaults: 14 points
+subject = AstrologicalSubjectFactory.from_birth_data(
     "John", 1990, 1, 1, 12, 0,
-    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
 )
 
-# Old node properties still work via wrapper
-print(subject.mean_node)  # Maps to mean_north_lunar_node
+# The v5 set, restored explicitly
+subject_v5 = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    active_points=V5_DEFAULT_ACTIVE_POINTS,
+)
+
+print(len(subject.active_points), len(subject_v5.active_points))
 ```
 
-> **Warning:** The backward compatibility layer will be **removed in v6.0**. Plan to migrate your code before then.
+`V5_DEFAULT_ACTIVE_POINTS` is a frozen historical record: it will not track future changes to the default set. If you want the current defaults plus one point, build the list from `DEFAULT_ACTIVE_POINTS` instead.
+
+### Aspect orbs
+
+This is the largest silent change, and it has three separate parts. Expect **fewer** aspects after upgrading, not more.
+
+**The default orbs shrank.** `DEFAULT_ACTIVE_ASPECTS` was rewritten:
+
+| Aspect | v5 orb | v6 orb |
+|:-------|-------:|-------:|
+| conjunction | 10° | 6° |
+| opposition | 10° | 6° |
+| trine | 8° | 6° |
+| sextile | 6° | 5° |
+| square | 5° | 6° |
+| quintile | 1° | *removed from the defaults* |
+
+**Non-natal charts moved to a flat 3°.** In v5 every chart type used the same defaults. In v6 only the natal family (`Natal`, `Synastry`, `Composite`) uses `DEFAULT_ACTIVE_ASPECTS`; transits, returns and progressions use `PREDICTIVE_ACTIVE_ASPECTS`, which is 3° for all five aspects. Both presets live in `kerykeion.settings.config_constants`.
+
+The difference is small on a natal chart and large everywhere else. On one sample chart: 38 natal aspects under v6 against 40 with the v5 orbs — but **19 transit aspects against 51**. If your code reads transits, returns or progressions, this is the change to look at first.
+
+**Luminaries gained a 1.5° bonus — natal family only.** `DEFAULT_NATAL_POINT_ORB_ADJUSTMENTS` (also in `kerykeion.settings.config_constants`) widens aspects involving the Sun or the Moon. It applies *only* where `chart_type` is in the natal family; every other `create_*_chart_data` already uses no adjustment, so `point_orb_adjustments={}` is a no-op there.
+
+To restore v5 orbs, pass the aspect list explicitly — this is the part `V5_DEFAULT_ACTIVE_POINTS` does *not* cover:
+
+```python
+from kerykeion import ChartDataFactory
+
+V5_DEFAULT_ACTIVE_ASPECTS = [
+    {"name": "conjunction", "orb": 10},
+    {"name": "opposition", "orb": 10},
+    {"name": "trine", "orb": 8},
+    {"name": "sextile", "orb": 6},
+    {"name": "square", "orb": 5},
+    {"name": "quintile", "orb": 1},
+]
+
+# v6 defaults
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
+# v5-equivalent orbs: the old aspect list, and no luminary bonus
+chart_data_v5 = ChartDataFactory.create_natal_chart_data(
+    subject,
+    active_aspects=V5_DEFAULT_ACTIVE_ASPECTS,
+    point_orb_adjustments={},
+)
+
+print(len(chart_data.aspects), len(chart_data_v5.aspects))
+```
+
+For a transit chart, pass the same `active_aspects` to `create_transit_chart_data` — there `point_orb_adjustments` is already empty, so only the aspect list matters.
+
+`AspectsFactory.single_chart_aspects` applies no orb adjustment by default, so it and `ChartDataFactory` can disagree on the same subject unless you pass the same arguments to both.
+
+### Nakshatras on a non-sidereal chart
+
+Nakshatras divide the sidereal zodiac. In v5 a tropical chart's longitudes were handed to the 27-fold division as they were, so every `nakshatra`, `nakshatra_pada` and `nakshatra_lord` came out about two nakshatras off. In v6 a non-sidereal chart's longitudes are rotated by `nakshatra_ayanamsa` (default `"LAHIRI"`) for the division only: the chart stays tropical, and its nakshatras agree exactly with the sidereal chart cast in the same mode.
+
+If you stored v5 values and need to reproduce them, pass `nakshatra_ayanamsa=None`. That is the legacy path; it logs one warning per subject.
+
+```python
+from kerykeion import AstrologicalSubjectFactory
+
+corrected = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_nakshatra=True,
+)
+legacy = AstrologicalSubjectFactory.from_birth_data(
+    "John", 1990, 1, 1, 12, 0,
+    lng=-0.1276, lat=51.5074, tz_str="Europe/London", online=False,
+    calculate_nakshatra=True, nakshatra_ayanamsa=None,   # the v5 numbers
+)
+print(corrected.moon.nakshatra, "vs", legacy.moon.nakshatra)
+```
+
+A sidereal chart is unaffected: `nakshatra_ayanamsa` is ignored there, and `subject.nakshatra_ayanamsa` reads `None`.
+
+### Lunar phase names moved onto the event
+
+`moon_phase_name` and `moon_emoji` used to come from 28 equal bins, which put the label a little ahead of or behind the event it names. They now come from windows centred on the syzygies: New and Full span ±6.4286° of the exact aspect, the two quarters ±19.2857°, and the four crescent/gibbous names fill the rest. A moment near a boundary can therefore report a different name than it did in v5 — a closer one.
+
+The `moon_phase` index (1-28) is unchanged, and so are `get_moon_phase_name_from_phase_int` / `get_moon_emoji_from_phase_int`, which only ever see that index: they remain the 28-bin approximation and can disagree with the model near a boundary. `LunarPhaseModel` also gained `major_phase` (the nearest of the four syzygy/quadrature events) and `stage` (`"waxing"` / `"waning"`).
+
+### `perihelion` / `aphelion` are deprecated
+
+`PlanetaryNodeModel` now exposes the apsides as `periapsis` and `apoapsis`, with `apsis_kind` saying which body they are measured against. The old `perihelion` / `aphelion` name the Sun — right for the eight planets, wrong for the Moon, which goes round the Earth. They are still populated with the same objects, so nothing that reads them breaks; new code should read the generic pair.
+
+### Chart style
+
+`ChartDrawer` now defaults to `style="modern"`. The v5 drawing is still available, and the saved filename reflects the style (`"... - Classic.svg"` vs `"... - Modern.svg"`), so scripts that look for a fixed filename need updating either way.
+
+```python
+from kerykeion import ChartDrawer
+
+drawer = ChartDrawer(chart_data, style="classic")  # the v5 look
+svg = drawer.generate_svg_string()
+```
+
+Note that `external_view` only takes effect in the classic style.
+
+## Backward Compatibility Layer (Removed in v6)
+
+v5 included a compatibility layer in `kerykeion.backword` that allowed gradual migration. **This layer has been removed in v6.0.**
+
+```python
+# v5 ONLY (no longer works in v6):
+# from kerykeion import AstrologicalSubject, KerykeionChartSVG, NatalAspects
+# These imports now raise ImportError in v6.
+```
+
+> **Warning:** The backward compatibility layer has been **removed in v6.0**. The legacy imports (`AstrologicalSubject`, `KerykeionChartSVG`, `NatalAspects`, `SynastryAspects`) will raise `ImportError`. Use the factory-based API shown above.
 
 ## Step-by-Step Migration
 
 ### Step 1: Update Imports
 
 ```python
-# Old
-from kerykeion import AstrologicalSubject, KerykeionChartSVG
+# Old (removed in v6)
+# from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 # New
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from pathlib import Path
+
+from kerykeion import (
+    AspectsFactory,
+    AstrologicalSubjectFactory,
+    ChartDataFactory,
+    ChartDrawer,
+)
 ```
 
 ### Step 2: Update Subject Creation
 
 ```python
-# Old
-subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
+# Old (removed in v6)
+# subject = AstrologicalSubject("John", 1990, 1, 1, 12, 0, "London", "GB")
 
 # New
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -223,21 +423,23 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 ### Step 3: Update Chart Generation
 
 ```python
-# Old
-chart = KerykeionChartSVG(subject)
-chart.makeSVG()
+# Old (removed in v6)
+# chart = KerykeionChartSVG(subject)
+# chart.makeSVG()
 
 # New
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
 drawer = ChartDrawer(chart_data=chart_data)
-drawer.save_svg(output_path=Path("output"), filename="chart")
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+drawer.save_svg(output_path=output_dir, filename="chart")
 ```
 
 ### Step 4: Update Lunar Node References
 
 ```python
-# Old
-mean_node = subject.mean_node
+# Old (removed in v6)
+# mean_node = subject.mean_node
 
 # New
 mean_node = subject.mean_north_lunar_node
@@ -246,10 +448,10 @@ mean_node = subject.mean_north_lunar_node
 ### Step 5: Update Aspect Access
 
 ```python
-# Old
-aspects = NatalAspects(subject)
-for a in aspects.relevant_aspects:
-    print(a)
+# Old (removed in v6)
+# aspects = NatalAspects(subject)
+# for a in aspects.relevant_aspects:
+#     print(a)
 
 # New
 result = AspectsFactory.single_chart_aspects(subject)
@@ -281,6 +483,9 @@ echo "Migration complete. Review changes before committing."
 ## Migration Checklist
 
 - [ ] Update imports to use new module paths
+- [ ] Use Python 3.12+ and install the v6 release candidate explicitly
+- [ ] Provision the ephemeris tier needed for your date range
+- [ ] Review active points, aspect orbs, chart style and timezone behavior
 - [ ] Replace `AstrologicalSubject` with `AstrologicalSubjectFactory.from_birth_data()`
 - [ ] Replace `KerykeionChartSVG` with `ChartDataFactory` + `ChartDrawer`
 - [ ] Replace `NatalAspects` with `AspectsFactory.single_chart_aspects()`
@@ -295,8 +500,8 @@ echo "Migration complete. Review changes before committing."
 
 | Version | Status |
 |:--------|:-------|
-| **v5.x** | Current - Backward compatibility available |
-| **v6.0** | Future - All deprecated items will be removed |
+| **v5.x** | Legacy - Backward compatibility was available |
+| **v6.0.0rc1** | Release candidate - The v4 compatibility layer and deprecated v5 aliases have been removed |
 
 ## Getting Help
 

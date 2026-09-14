@@ -21,12 +21,9 @@ from kerykeion.charts.draw_planets import (
     _calculate_text_rotation,
     _calculate_indicator_adjustments,
     _apply_group_adjustments,
-    _handle_two_point_group,
     _handle_multi_point_group,
     PLANET_GROUPING_THRESHOLD,
     INDICATOR_GROUPING_THRESHOLD,
-    CHART_ANGLE_MIN_INDEX,
-    CHART_ANGLE_MAX_INDEX,
     DUAL_CHART_TYPES,
 )
 from kerykeion.schemas import KerykeionException, KerykeionPointModel
@@ -244,25 +241,28 @@ class TestPlanetGlyphPositioning:
         assert 'xlink:href="#First_House"' in result
 
     def test_determine_point_radius_natal(self):
-        """_determine_point_radius returns expected values for Natal chart."""
-        # Regular planet, not alternate
-        assert _determine_point_radius(0, "Natal", False) == 94
-        # Regular planet, alternate
-        assert _determine_point_radius(0, "Natal", True) == 74
-        # Chart angle (index 23 is between 22-27)
-        assert _determine_point_radius(23, "Natal", False) == 40
+        """Two alternating lanes, and every point uses them — angles included."""
+        assert _determine_point_radius("Sun", "Natal", False) == 94
+        assert _determine_point_radius("Sun", "Natal", True) == 74
+        # An angle is a point: no third lane further out, which is where a
+        # repaired classification once sent it — into the zodiac ring.
+        assert _determine_point_radius("Ascendant", "Natal", False) == 94
+        assert _determine_point_radius("Ascendant", "Natal", True) == 74
+        assert _determine_point_radius("Ceres", "Natal", False) == 94
 
     def test_determine_point_radius_dual_chart(self):
         """_determine_point_radius returns dual chart radii for Transit."""
-        assert _determine_point_radius(0, "Transit", False) == 130
-        assert _determine_point_radius(0, "Transit", True) == 110
-        assert _determine_point_radius(23, "Transit", False) == 76
+        assert _determine_point_radius("Sun", "Transit", False) == 130
+        assert _determine_point_radius("Sun", "Transit", True) == 110
+        assert _determine_point_radius("Medium_Coeli", "Transit", False) == 130
+        assert _determine_point_radius("Medium_Coeli", "Transit", True) == 110
+        assert _determine_point_radius("Vesta", "Transit", False) == 130
 
     def test_determine_point_radius_external_view(self):
         """_determine_point_radius returns 10 for all external view cases."""
-        assert _determine_point_radius(0, "Natal", False, external_view=True) == 10
-        assert _determine_point_radius(0, "Natal", True, external_view=True) == 10
-        assert _determine_point_radius(23, "Natal", False, external_view=True) == 10
+        assert _determine_point_radius("Sun", "Natal", False, external_view=True) == 10
+        assert _determine_point_radius("Sun", "Natal", True, external_view=True) == 10
+        assert _determine_point_radius("Ascendant", "Natal", False, external_view=True) == 10
 
     def test_calculate_point_offset(self):
         """_calculate_point_offset returns correct angular offset."""
@@ -573,9 +573,10 @@ class TestGrouping:
             _make_setting(2, "Mars"),
         ]
         abs_positions = [p.abs_pos for p in pts]
-        pos_map = {abs_positions[i]: i for i in range(len(stgs))}
-        sorted_pos = sorted(pos_map.keys())
-        adjustments = _calculate_planet_adjustments(abs_positions, stgs, pos_map, sorted_pos)
+        sorted_entries = sorted((abs_positions[i], i) for i in range(len(abs_positions)))
+        sorted_pos = [entry[0] for entry in sorted_entries]
+        sorted_indices = [entry[1] for entry in sorted_entries]
+        adjustments = _calculate_planet_adjustments(abs_positions, stgs, sorted_indices, sorted_pos)
         assert all(adj == 0.0 for adj in adjustments)
 
     def test_apply_group_adjustments_two(self):
@@ -771,6 +772,19 @@ class TestEdgeCases:
                 chart_type="Synastry",
             )
 
+    def test_progression_without_secondary_raises(self):
+        """Progression chart without secondary points raises KerykeionException."""
+        with pytest.raises(KerykeionException, match="Secondary celestial points are required for Progression"):
+            draw_planets(
+                radius=RADIUS,
+                available_kerykeion_celestial_points=_mock_points(),
+                available_planets_setting=_mock_settings(),
+                third_circle_radius=THIRD_CIRCLE_RADIUS,
+                main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
+                main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
+                chart_type="Progression",
+            )
+
     def test_single_return_chart_without_secondary_does_not_raise(self):
         """SingleReturnChart without secondary points does NOT raise exception."""
         result = draw_planets(
@@ -784,18 +798,20 @@ class TestEdgeCases:
         )
         assert isinstance(result, str)
 
-    def test_dual_return_chart_without_secondary_does_not_raise(self):
-        """DualReturnChart without secondary points does NOT raise exception."""
-        result = draw_planets(
-            radius=RADIUS,
-            available_kerykeion_celestial_points=_mock_points(),
-            available_planets_setting=_mock_settings(),
-            third_circle_radius=THIRD_CIRCLE_RADIUS,
-            main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
-            main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
-            chart_type="DualReturnChart",
-        )
-        assert isinstance(result, str)
+    def test_dual_return_chart_without_secondary_raises(self):
+        """DualReturnChart requires secondary points like every other dual
+        chart type — previously it silently rendered a bi-wheel with the
+        outer return wheel missing."""
+        with pytest.raises(KerykeionException, match="Secondary celestial points are required for DualReturnChart"):
+            draw_planets(
+                radius=RADIUS,
+                available_kerykeion_celestial_points=_mock_points(),
+                available_planets_setting=_mock_settings(),
+                third_circle_radius=THIRD_CIRCLE_RADIUS,
+                main_subject_first_house_degree_ut=FIRST_HOUSE_DEG,
+                main_subject_seventh_house_degree_ut=SEVENTH_HOUSE_DEG,
+                chart_type="DualReturnChart",
+            )
 
     def test_planets_crossing_zero_boundary(self):
         """Planets spanning the 360/0 boundary render correctly."""
@@ -1171,18 +1187,33 @@ class TestChartTypes:
 class TestLogging:
     """Ensure logging calls are made during draw_planets execution."""
 
-    @patch("kerykeion.charts.draw_planets.logging.debug")
-    def test_debug_logging_called(self, mock_debug):
-        """Debug logging is invoked for planet index reporting."""
-        _natal_draw([_mock_points()[0]], [_mock_settings()[0]])
-        assert mock_debug.called
+    @patch("kerykeion.charts.draw_planets.logger")
+    def test_debug_logging_called(self, mock_logger):
+        """Debug logging is invoked when overlapping planets produce groups."""
+        mock_logger.isEnabledFor.return_value = True
+        # Two planets within PLANET_GROUPING_THRESHOLD (3.4°) to trigger overlap logging
+        close_points = _mock_points([
+            {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
+            {**MOCK_POINTS_DATA[1], "abs_pos": 17.0, "position": 17.0},
+        ])
+        close_settings = _mock_settings(MOCK_SETTINGS_DATA[:2])
+        _natal_draw(close_points, close_settings)
+        assert mock_logger.debug.called
 
-    @patch("kerykeion.charts.draw_planets.logging.debug")
-    def test_debug_logging_called_with_multiple_planets(self, mock_debug):
-        """Debug logging is invoked once per planet for index and distance info."""
-        _natal_draw(_mock_points(), _mock_settings())
-        # At minimum: one call per planet for index + one per planet for distances
-        assert mock_debug.call_count >= 3
+    @patch("kerykeion.charts.draw_planets.logger")
+    def test_debug_logging_called_with_multiple_planets(self, mock_logger):
+        """Debug logging is invoked for overlap groups with multiple planets."""
+        mock_logger.isEnabledFor.return_value = True
+        # Three planets within PLANET_GROUPING_THRESHOLD to form a multi-point group
+        close_points = _mock_points([
+            {**MOCK_POINTS_DATA[0], "abs_pos": 15.0, "position": 15.0},
+            {**MOCK_POINTS_DATA[2], "abs_pos": 16.5, "position": 16.5},
+            {**MOCK_POINTS_DATA[1], "abs_pos": 18.0, "position": 18.0},
+        ])
+        close_settings = _mock_settings(MOCK_SETTINGS_DATA)
+        _natal_draw(close_points, close_settings)
+        # "Layout overlap groups" header + at least one group entry
+        assert mock_logger.debug.call_count >= 2
 
 
 # =============================================================================
@@ -1206,10 +1237,19 @@ class TestInternalHelpers:
         # At least first and last should be adjusted
         assert any(a != 0.0 for a in adjustments)
 
-    def test_chart_angle_index_boundaries(self):
-        """Chart angle constants define the expected index range."""
-        assert CHART_ANGLE_MIN_INDEX == 22
-        assert CHART_ANGLE_MAX_INDEX == 27
+    def test_an_angle_is_placed_like_any_other_point(self):
+        """There is no lane reserved for the angles, in either kind of chart.
+
+        The four angles once had a radius of their own, further out than the two
+        the points alternate between. Nothing selects them any more — this is
+        the test that says so, so the lane cannot come back by accident.
+        """
+        for angle in ("Ascendant", "Medium_Coeli", "Descendant", "Imum_Coeli"):
+            for chart_type in ("Natal", "Transit"):
+                for alternate in (False, True):
+                    assert _determine_point_radius(angle, chart_type, alternate) == (
+                        _determine_point_radius("Sun", chart_type, alternate)
+                    )
 
     def test_dual_chart_types_tuple(self):
         """DUAL_CHART_TYPES includes the expected chart type names."""

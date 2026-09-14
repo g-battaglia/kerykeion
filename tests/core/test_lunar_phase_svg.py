@@ -16,9 +16,9 @@ Usage:
 from pathlib import Path
 from xml.etree import ElementTree
 
-from kerykeion.charts.charts_utils import makeLunarPhase
+from kerykeion.charts.utils import make_lunar_phase
 
-from tests.data.compare_svg_lines import compare_svg_lines
+from tests.data.compare_svg_lines import compare_svg_file
 
 
 PHASE_ANGLES = (0, 45, 90, 135, 180, 225, 270, 315)
@@ -33,7 +33,7 @@ class TestLunarPhaseSVG:
         icon_groups: list[str] = []
 
         for index, angle in enumerate(PHASE_ANGLES):
-            icon_svg = makeLunarPhase(angle, 0.0)
+            icon_svg = make_lunar_phase(angle, 0.0)
             unique_clip_id = f"moonPhaseCutOffCircle{index}"
             icon_svg = icon_svg.replace("moonPhaseCutOffCircle", unique_clip_id)
 
@@ -56,16 +56,7 @@ class TestLunarPhaseSVG:
 
         generated_svg = "\n".join(generated_lines)
 
-        expected_path = SVG_DIR / "Moon Phases.svg"
-        expected_lines = expected_path.read_text(encoding="utf-8").splitlines()
-        actual_lines = generated_svg.splitlines()
-
-        assert len(actual_lines) == len(expected_lines), (
-            f"Line count mismatch: expected {len(expected_lines)}, got {len(actual_lines)}"
-        )
-
-        for expected_line, actual_line in zip(expected_lines, actual_lines):
-            compare_svg_lines(expected_line, actual_line)
+        compare_svg_file(SVG_DIR / "Moon Phases.svg", generated_svg)
 
 
 class TestLunarPhaseIndividual:
@@ -77,7 +68,7 @@ class TestLunarPhaseIndividual:
 
     def test_each_phase_is_valid_xml(self) -> None:
         for angle in PHASE_ANGLES:
-            svg_fragment = makeLunarPhase(angle, 0.0)
+            svg_fragment = make_lunar_phase(angle, 0.0)
             doc = self._wrap_as_svg_document(svg_fragment)
             try:
                 tree = ElementTree.fromstring(doc)
@@ -87,7 +78,7 @@ class TestLunarPhaseIndividual:
 
     def test_each_phase_contains_svg_content(self) -> None:
         for angle in PHASE_ANGLES:
-            svg_fragment = makeLunarPhase(angle, 0.0)
+            svg_fragment = make_lunar_phase(angle, 0.0)
             assert len(svg_fragment.strip()) > 0, f"Phase angle {angle}° produced empty SVG"
             assert "<" in svg_fragment, f"Phase angle {angle}° produced no XML tags"
 
@@ -96,15 +87,15 @@ class TestLunarPhaseAngles:
     """Verify that distinct angles yield distinct SVG output."""
 
     def test_different_angles_produce_different_svgs(self) -> None:
-        svgs = {angle: makeLunarPhase(angle, 0.0) for angle in PHASE_ANGLES}
+        svgs = {angle: make_lunar_phase(angle, 0.0) for angle in PHASE_ANGLES}
 
         for i, a1 in enumerate(PHASE_ANGLES):
             for a2 in PHASE_ANGLES[i + 1 :]:
                 assert svgs[a1] != svgs[a2], f"Phase angles {a1}° and {a2}° produced identical SVGs"
 
     def test_new_moon_and_full_moon_differ(self) -> None:
-        new_moon = makeLunarPhase(0, 0.0)
-        full_moon = makeLunarPhase(180, 0.0)
+        new_moon = make_lunar_phase(0, 0.0)
+        full_moon = make_lunar_phase(180, 0.0)
 
         assert new_moon != full_moon, "New moon (0°) and full moon (180°) should produce visually distinct SVGs"
         # Structural difference: they should differ in more than just numeric values

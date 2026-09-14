@@ -44,8 +44,10 @@ for conj in conjunctions:
 
 **Output:**
 ```
-Sun conjunct Mercury (orb: 2.34°)
-Venus conjunct Mars (orb: 5.12°)
+Sun conjunct Jupiter (orb: 0.12°)
+Sun conjunct Chiron (orb: 3.43°)
+Jupiter conjunct Chiron (orb: 3.31°)
+Uranus conjunct Neptune (orb: 5.95°)
 ```
 
 ### Find Applying vs Separating Aspects
@@ -118,11 +120,11 @@ for aspect_name, count in aspect_counts.most_common():
 **Output:**
 ```
 Aspect distribution:
-  sextile: 8
-  trine: 6
-  square: 5
+  square: 8
+  sextile: 6
   conjunction: 4
-  opposition: 3
+  opposition: 4
+  trine: 3
 ```
 
 ---
@@ -133,7 +135,7 @@ Aspect distribution:
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 # Sample birth data
@@ -166,7 +168,7 @@ for person in people:
 ```python
 from itertools import combinations
 from kerykeion import AstrologicalSubjectFactory, AspectsFactory
-from kerykeion.relationship_score_factory import RelationshipScoreFactory
+from kerykeion.relationship_score.factory import RelationshipScoreFactory
 
 # Create subjects
 subjects = []
@@ -204,6 +206,8 @@ for person1, person2 in combinations(subjects, 2):
 
 ```python
 import json
+from pathlib import Path
+
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -217,16 +221,21 @@ chart_data = ChartDataFactory.create_natal_chart_data(subject)
 # Export to JSON
 json_output = chart_data.model_dump_json(indent=2)
 
-with open("chart_data.json", "w") as f:
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
+with open(output_dir / "chart_data.json", "w") as f:
     f.write(json_output)
 
-print("Chart data exported to chart_data.json")
+print("Chart data exported to charts_output/chart_data.json")
 ```
 
 ### Export Planetary Positions to CSV
 
 ```python
 import csv
+from pathlib import Path
+
 from kerykeion import AstrologicalSubjectFactory
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -238,7 +247,10 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 planets = ["sun", "moon", "mercury", "venus", "mars", 
            "jupiter", "saturn", "uranus", "neptune", "pluto"]
 
-with open("planetary_positions.csv", "w", newline="") as f:
+output_dir = Path("charts_output")
+output_dir.mkdir(exist_ok=True)
+
+with open(output_dir / "planetary_positions.csv", "w", newline="") as f:
     writer = csv.writer(f)
     writer.writerow(["Planet", "Sign", "Position", "House", "Retrograde", "Speed", "Declination", "Magnitude"])
     
@@ -255,23 +267,26 @@ with open("planetary_positions.csv", "w", newline="") as f:
             f"{planet.magnitude:.2f}" if planet.magnitude is not None else "",
         ])
 
-print("Positions exported to planetary_positions.csv")
+print("Positions exported to charts_output/planetary_positions.csv")
 ```
 
 **Output CSV:**
 ```csv
 Planet,Sign,Position,House,Retrograde,Speed,Declination,Magnitude
-Sun,Can,22.54,Eleventh_House,False,0.9534,,
-Moon,Sco,15.32,Third_House,False,13.1762,,
+Sun,Can,22.65,Tenth_House,False,0.9539,21.5399,
+Moon,Ari,21.80,Eighth_House,False,14.0131,13.1955,
 ...
 ```
 
 ### Export Ephemeris Data to Pandas DataFrame
 
+> **Requires pandas** (not a Kerykeion dependency): `pip install pandas`.
+
 ```python
+# doc-snippet: no-run — requires optional pandas dependency
 import pandas as pd
 from datetime import datetime
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 ephemeris = EphemerisDataFactory(
     start_datetime=datetime(2024, 1, 1),
@@ -322,11 +337,11 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 
 # Define custom tight orbs
 custom_aspects = [
-    {"name": "conjunction", "orb": 6},  # Tighter than default 10
-    {"name": "opposition", "orb": 6},
-    {"name": "trine", "orb": 5},        # Tighter than default 8
-    {"name": "square", "orb": 4},       # Tighter than default 5
-    {"name": "sextile", "orb": 3},      # Tighter than default 6
+    {"name": "conjunction", "orb": 6},  # Same as default 6
+    {"name": "opposition", "orb": 6},   # Same as default 6
+    {"name": "trine", "orb": 5},        # Tighter than default 6
+    {"name": "square", "orb": 4},       # Tighter than default 6
+    {"name": "sextile", "orb": 3},      # Tighter than default 5
 ]
 
 aspects = AspectsFactory.single_chart_aspects(
@@ -341,7 +356,7 @@ print(f"Found {len(aspects.aspects)} aspects with tight orbs")
 
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-from kerykeion.charts.chart_drawer import ChartDrawer
+from kerykeion.charts.drawer import ChartDrawer
 from pathlib import Path
 
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -369,6 +384,12 @@ drawer.save_svg(output_path=output_dir, filename="traditional-planets-only")
 
 ### Including All Available Points
 
+`active_points` must be passed to `AstrologicalSubjectFactory.from_birth_data`:
+that is where the points are computed. The same argument on
+`ChartDataFactory.create_natal_chart_data` only *narrows* what the subject
+already carries, so handing the full preset to the chart data factory alone
+leaves the 14 default points untouched.
+
 ```python
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
@@ -376,17 +397,24 @@ from kerykeion.settings.config_constants import ALL_ACTIVE_POINTS
 subject = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1990, 7, 15, 10, 30,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False
-)
-
-# Use the ALL_ACTIVE_POINTS preset (63 points including fixed stars, TNOs, etc.)
-chart_data = ChartDataFactory.create_natal_chart_data(
-    subject,
+    online=False,
     active_points=ALL_ACTIVE_POINTS,
 )
 
+chart_data = ChartDataFactory.create_natal_chart_data(subject)
+
 print(f"Chart includes {len(chart_data.subject.active_points)} points")
 ```
+
+**Output:**
+```
+Chart includes 52 points
+```
+
+`ALL_ACTIVE_POINTS` holds 53 names; `Earth` is dropped with an informational log
+line in the default Apparent Geocentric perspective, since it has no position as
+seen from itself. Switch to `perspective_type="Heliocentric"` and the Sun goes
+instead.
 
 ---
 
@@ -394,160 +422,151 @@ print(f"Chart includes {len(chart_data.subject.active_points)} points")
 
 ### Find the Next Exact Aspect
 
-```python
-from datetime import date, timedelta
-from kerykeion import AstrologicalSubjectFactory, AspectsFactory
-
-def find_next_exact_aspect(natal_subject, planet1, planet2, aspect_type, 
-                           start_date, max_days=365):
-    """Find when two planets form an exact aspect."""
-    
-    for day_offset in range(max_days):
-        check_date = start_date + timedelta(days=day_offset)
-        
-        transit = AstrologicalSubjectFactory.from_birth_data(
-            "Transit", check_date.year, check_date.month, check_date.day, 12, 0,
-            lng=natal_subject.lng, lat=natal_subject.lat, 
-            tz_str=natal_subject.tz_str, online=False
-        )
-        
-        aspects = AspectsFactory.dual_chart_aspects(natal_subject, transit)
-        
-        for asp in aspects.aspects:
-            if (asp.p1_name == planet1 and asp.p2_name == planet2 and 
-                asp.aspect == aspect_type and asp.orbit < 1.0):
-                return check_date, asp.orbit
-    
-    return None, None
-
-# Example usage
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Example", 1990, 7, 15, 10, 30,
-    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False
-)
-
-found_date, orb = find_next_exact_aspect(
-    subject, "Sun", "Jupiter", "conjunction",
-    date(2024, 1, 1)
-)
-
-if found_date:
-    print(f"Next Sun-Jupiter conjunction: {found_date} (orb: {orb:.2f}°)")
-```
-
-### Calculate Planetary Hours
+`TransitsTimeRangeFactory.get_transit_events()` groups a scanned range into
+discrete events; `refine_exact_moments=True` then ternary-searches between the
+two bracketing samples for the sub-step instant of exactness.
 
 ```python
 from datetime import datetime, timedelta
+
 from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
+from kerykeion.transits.factory import TransitsTimeRangeFactory
 
-def get_planetary_hours(date_obj, lng, lat, tz_str):
-    """Calculate planetary hours for a given day."""
-    
-    # Simplified calculation (actual would need sunrise/sunset times)
-    # This uses a fixed 6 AM sunrise and 6 PM sunset
-    
-    day_planets = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
-    night_planets = day_planets.copy()
-    
-    # Day of week determines starting planet
-    # Sunday=0 starts with Sun, Monday=1 with Moon, etc.
-    weekday = date_obj.weekday()
-    day_order = (weekday + 1) % 7  # Adjust for Python's Monday=0
-    
-    hours = []
-    for i in range(24):
-        planet_index = (day_order + i) % 7
-        hour_start = datetime(date_obj.year, date_obj.month, date_obj.day, i, 0)
-        hours.append({
-            "hour": i,
-            "start": hour_start.strftime("%H:%M"),
-            "planet": day_planets[planet_index]
-        })
-    
-    return hours
-
-# Example
-from datetime import date
-hours = get_planetary_hours(date(2024, 7, 15), -0.1276, 51.5074, "Europe/London")
-
-print("Planetary Hours for July 15, 2024:")
-for h in hours[:12]:  # First 12 hours
-    print(f"  {h['start']}: {h['planet']}")
-```
-
-### Check if Moon is Void-of-Course
-
-```python
-from kerykeion import AstrologicalSubjectFactory, AspectsFactory
-
-def is_moon_void_of_course(subject):
-    """
-    Check if the Moon is void-of-course (no more major aspects before sign change).
-    Simplified version - checks if Moon has any applying aspects.
-    """
-    
-    aspects = AspectsFactory.single_chart_aspects(subject)
-    
-    moon_aspects = [a for a in aspects.aspects 
-                    if (a.p1_name == "Moon" or a.p2_name == "Moon")
-                    and a.aspect_movement == "Applying"
-                    and a.aspect in ["conjunction", "opposition", "trine", "square", "sextile"]]
-    
-    return len(moon_aspects) == 0
-
-# Example
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Now", 2024, 7, 15, 14, 30,
+natal = AstrologicalSubjectFactory.from_birth_data(
+    "Example", 1990, 7, 15, 10, 30,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False
+    online=False,
 )
 
-if is_moon_void_of_course(subject):
-    print(f"Moon is void-of-course in {subject.moon.sign}")
-else:
-    print(f"Moon in {subject.moon.sign} is NOT void-of-course")
+start = datetime(2024, 1, 1)
+ephemeris = EphemerisDataFactory(
+    start_datetime=start,
+    end_datetime=start + timedelta(days=120),
+    step_type="days",
+    step=1,
+    lat=natal.lat,
+    lng=natal.lng,
+    tz_str=natal.tz_str,
+).get_ephemeris_data_as_astrological_subjects()
+
+events = TransitsTimeRangeFactory(
+    natal_chart=natal,
+    ephemeris_data_points=ephemeris,
+    active_points=["Sun", "Jupiter"],
+).get_transit_events(refine_exact_moments=True)
+
+# Transiting Sun to natal Jupiter only
+for event in events.events:
+    if event.p1_name == "Sun" and event.p2_name == "Jupiter":
+        print(f"{event.aspect}: {event.exact_moment} (min orb {event.min_orb:.4f}°)")
 ```
 
-### Calculate Age Progressions (Secondary)
+**Output:**
+```
+opposition: 2024-01-13T05:59:51.601033+00:00 (min orb 0.0000°)
+trine: 2024-03-12T14:58:37.784670+00:00 (min orb 0.0000°)
+square: 2024-04-11T22:43:25.292653+00:00 (min orb 0.0000°)
+```
+
+The step size sets the resolution of the search: a `"days"` step can miss a fast
+pair that comes and goes inside one day, so use `step_type="hours"` for the Moon.
+A pair with no exact hit in the range simply yields no event.
+
+See [Transits Time Range Factory](/content/docs/transits_time_range_factory) for
+the full API.
+
+### Planetary Hours
+
+`PlanetaryHoursFactory` divides real sunrise-to-sunset into twelve unequal day
+hours and sunset-to-next-sunrise into twelve night hours, then rules them in
+Chaldean order starting from the weekday ruler. Equal clock hours are not the
+same thing and give the wrong ruler for most of the day.
 
 ```python
-from datetime import date, timedelta
-from kerykeion import AstrologicalSubjectFactory
+from kerykeion import PlanetaryHoursFactory
 
-def calculate_progressed_chart(natal_subject, target_date):
-    """
-    Calculate secondary progressions (1 day = 1 year).
-    """
-    birth_date = date(natal_subject.year, natal_subject.month, natal_subject.day)
-    years_elapsed = (target_date - birth_date).days / 365.25
-    
-    # Progressed date: birth + days equal to years lived
-    progressed_date = birth_date + timedelta(days=years_elapsed)
-    
-    progressed = AstrologicalSubjectFactory.from_birth_data(
-        f"{natal_subject.name} (Progressed to {target_date})",
-        progressed_date.year, progressed_date.month, progressed_date.day,
-        natal_subject.hour, natal_subject.minute,
-        lng=natal_subject.lng, lat=natal_subject.lat,
-        tz_str=natal_subject.tz_str, online=False
-    )
-    
-    return progressed
+hours = PlanetaryHoursFactory.from_datetime(
+    2024, 7, 15, 14, 30,
+    latitude=51.5074,
+    longitude=-0.1276,
+    tz_str="Europe/London",
+)
 
-# Example
+print(f"Day ruler: {hours.day_ruler}")
+print(f"Current hour {hours.current_index}: {hours.current_ruler}")
+
+for planetary_hour in hours.hours[:6]:
+    phase = "day" if planetary_hour.is_diurnal else "night"
+    print(f"  {planetary_hour.index:2d} ({phase}) {planetary_hour.ruler}")
+```
+
+A moment before sunrise belongs to the previous planetary day, which the factory
+resolves for you. Polar day or night leaves the bounding sunrise or sunset
+undefined and raises `KerykeionException`. See
+[Planetary Hours Factory](/content/docs/planetary_hours_factory).
+
+### Check if the Moon is Void-of-Course
+
+The Moon is void after its last exact Ptolemaic aspect in its current sign,
+until the next ingress. That is a claim about the *future* of the sign, so it
+cannot be read off a single chart's aspect list.
+`VoidOfCourseMoonFactory` scans forward for it.
+
+```python
+from kerykeion import VoidOfCourseMoonFactory
+
+state = VoidOfCourseMoonFactory.from_datetime(
+    2024, 7, 15, 14, 30,
+    tz_str="Europe/London",
+)
+
+if state.is_void_of_course:
+    print(f"Moon is void-of-course in {state.moon_sign} until {state.void_end}")
+else:
+    print(f"Moon in {state.moon_sign} is not void; the void opens at {state.void_start}")
+
+if state.last_aspect is not None:
+    print(f"Last aspect: {state.last_aspect.aspect} to {state.last_aspect.planet}")
+```
+
+`from_iso_range(start_date, end_date)` returns every complete window over a
+range instead of the state at one moment. See
+[Void-of-Course Moon Factory](/content/docs/void_of_course_moon_factory).
+
+### Secondary Progressions
+
+Use the dedicated `SecondaryProgressionFactory` for accurate day-for-a-year progressions with progressed-to-natal aspect detection:
+
+```python
+from kerykeion import AstrologicalSubjectFactory, SecondaryProgressionFactory
+
 natal = AstrologicalSubjectFactory.from_birth_data(
     "Example", 1990, 7, 15, 10, 30,
     lng=-0.1276, lat=51.5074, tz_str="Europe/London",
     online=False
 )
 
-progressed = calculate_progressed_chart(natal, date(2024, 7, 15))
+# Simple: get the progressed subject
+progressed = SecondaryProgressionFactory.compute(
+    natal,
+    target_iso_utc_datetime="2026-07-15T00:00:00Z",
+)
 
-print(f"Natal Sun: {natal.sun.sign} {natal.sun.position:.2f}°")
-print(f"Progressed Sun: {progressed.sun.sign} {progressed.sun.position:.2f}°")
+print(f"Natal Sun: {natal.sun.sign} {natal.sun.position:.2f}")
+print(f"Progressed Sun: {progressed.sun.sign} {progressed.sun.position:.2f}")
+
+# Full: get progressed-to-natal aspects
+result = SecondaryProgressionFactory.compute_full(
+    natal,
+    target_iso_utc_datetime="2026-07-15T00:00:00Z",
+)
+
+for asp in result.progressed_to_natal_aspects:
+    print(f"P.{asp.progressed_point} {asp.aspect} N.{asp.natal_point} (orb: {asp.orb:.2f})")
 ```
+
+See [Secondary Progressions](/content/docs/secondary_progressions_factory) and [Solar Arc Directions](/content/docs/solar_arc_factory) for full documentation.
 
 ---
 
@@ -578,28 +597,28 @@ print(f"Same object: {subject1 is subject2}")  # True
 
 ### Minimize Active Points for Speed
 
+The cost is in computing the points, which happens in
+`AstrologicalSubjectFactory`. Narrowing `active_points` on the chart data
+factory filters an already-computed subject and saves nothing:
+
 ```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 import time
 
-subject = AstrologicalSubjectFactory.from_birth_data(
-    "Example", 1990, 7, 15, 10, 30,
-    lng=-0.1276, lat=51.5074, tz_str="Europe/London",
-    online=False
-)
+from kerykeion import AstrologicalSubjectFactory
 
-# Minimal points for faster calculation
 minimal_points = ["Sun", "Moon", "Ascendant"]
 
 start = time.time()
-for _ in range(100):
-    chart_data = ChartDataFactory.create_natal_chart_data(
-        subject,
-        active_points=minimal_points
+for _ in range(20):
+    subject = AstrologicalSubjectFactory.from_birth_data(
+        "Example", 1990, 7, 15, 10, 30,
+        lng=-0.1276, lat=51.5074, tz_str="Europe/London",
+        online=False,
+        active_points=minimal_points,
     )
 elapsed = time.time() - start
 
-print(f"100 charts with 3 points: {elapsed:.2f}s")
+print(f"20 subjects with 3 points: {elapsed:.2f}s")
 ```
 
 ### Skip Unnecessary Calculations

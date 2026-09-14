@@ -6,16 +6,16 @@ and adds additional coverage for initialization, transit moments, custom configu
 empty data paths, and full integration pipeline.
 """
 
+import logging
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory
-from kerykeion.transits_time_range_factory import TransitsTimeRangeFactory
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
-from kerykeion.schemas.kr_models import TransitsTimeRangeModel, TransitMomentModel
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, DEFAULT_ACTIVE_ASPECTS
+from kerykeion.transits.factory import TransitsTimeRangeFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
+from kerykeion.schemas.models import TransitsTimeRangeModel, TransitMomentModel
+from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS, PREDICTIVE_ACTIVE_ASPECTS
 
 
 # ---------------------------------------------------------------------------
@@ -73,7 +73,8 @@ class TestBasicInitialization:
         assert factory.natal_chart == natal_subject
         assert factory.ephemeris_data_points == ephemeris_subjects
         assert factory.active_points == DEFAULT_ACTIVE_POINTS
-        assert factory.active_aspects == DEFAULT_ACTIVE_ASPECTS
+        # Transits default to the tight predictive orbs, not the wide natal set.
+        assert factory.active_aspects == PREDICTIVE_ACTIVE_ASPECTS
         assert factory.settings_file is None
 
     def test_custom_active_points(self, natal_subject, ephemeris_subjects):
@@ -249,7 +250,85 @@ class TestEmptyDataPath:
 
 
 # ===========================================================================
-# 5. TestTransitIntegration
+# 5. TestFrameConsistencyWarning
+# ===========================================================================
+
+
+class TestFrameConsistencyWarning:
+    """v6 pre-beta fix: a zodiac/perspective frame mismatch between the natal
+    chart and the ephemeris series must be reported at construction time
+    (cross-frame aspects are silently ~ayanamsha off otherwise)."""
+
+    def test_sidereal_natal_with_tropical_ephemeris_warns(self, ephemeris_subjects, caplog):
+        """Sidereal natal vs (default) tropical ephemeris series → warning."""
+        sidereal_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp Sidereal",
+            1963,
+            6,
+            9,
+            0,
+            0,
+            lat=37.7742,
+            lng=-87.1133,
+            tz_str="America/Chicago",
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(sidereal_natal, ephemeris_subjects)
+        assert "different calculation frames" in caplog.text
+
+    def test_matched_tropical_frames_do_not_warn(self, natal_subject, ephemeris_subjects, caplog):
+        """Tropical natal vs tropical ephemeris series → no frame warning."""
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal_subject, ephemeris_subjects)
+        assert "different calculation frames" not in caplog.text
+
+    def test_matched_sidereal_frames_do_not_warn(self, natal_subject, caplog):
+        """Sidereal natal vs same-mode sidereal series → no frame warning."""
+        sidereal_natal = AstrologicalSubjectFactory.from_birth_data(
+            "Johnny Depp Sidereal",
+            1963,
+            6,
+            9,
+            0,
+            0,
+            lat=37.7742,
+            lng=-87.1133,
+            tz_str="America/Chicago",
+            online=False,
+            suppress_geonames_warning=True,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        )
+        start = datetime(2024, 1, 1, 12, 0)
+        sidereal_ephemeris = EphemerisDataFactory(
+            start_datetime=start,
+            end_datetime=start + timedelta(days=2),
+            step_type="days",
+            step=1,
+            lat=natal_subject.lat,
+            lng=natal_subject.lng,
+            tz_str=natal_subject.tz_str,
+            zodiac_type="Sidereal",
+            sidereal_mode="LAHIRI",
+        ).get_ephemeris_data_as_astrological_subjects()
+
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(sidereal_natal, sidereal_ephemeris)
+        assert "different calculation frames" not in caplog.text
+
+    def test_empty_ephemeris_does_not_warn(self, natal_subject, caplog):
+        """No data points → nothing to compare, no frame warning."""
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal_subject, [])
+        assert "different calculation frames" not in caplog.text
+
+
+# ===========================================================================
+# 6. TestTransitIntegration
 # ===========================================================================
 
 
@@ -338,3 +417,228 @@ class TestTransitIntegration:
 
         assert isinstance(result, TransitsTimeRangeModel)
         assert len(result.transits) == 4
+
+
+# ===========================================================================
+# Extended-year (pre-CE) ISO handling in run splitting
+# ===========================================================================
+
+
+class TestExtendedYearRunSplitting:
+    """The run splitter must compute sampling gaps on extended-year ISO
+    timestamps (e.g. ``-0499-…``), where ``datetime.fromisoformat`` raises.
+    A silent parse failure used to map every gap to 0 seconds, merging all
+    recurrences of an aspect in a pre-CE range into one event."""
+
+    def test_split_track_extended_year_iso(self):
+        factory = TransitsTimeRangeFactory.__new__(TransitsTimeRangeFactory)
+        track = [
+            ("-0499-01-01T12:00:00+00:00", 1.0, "applying"),
+            ("-0499-01-02T12:00:00+00:00", 0.5, "applying"),
+            # 44-day hole: the aspect left orb in between, so a new run starts.
+            ("-0499-02-15T12:00:00+00:00", 0.8, "separating"),
+        ]
+        runs = factory._split_track_into_runs(track, 1.0)
+        assert len(runs) == 2
+        assert runs[0] == track[:2]
+        assert runs[1] == track[2:]
+
+        # CE control: identical structure must split identically.
+        ce_track = [(d.replace("-0499", "2020"), o, m) for d, o, m in track]
+        assert len(factory._split_track_into_runs(ce_track, 1.0)) == 2
+
+
+class TestActivePointsForwarding:
+    """Transits to non-default natal points require the ephemeris subjects to
+    carry the same points: EphemerisDataFactory must forward active_points and
+    TransitsTimeRangeFactory must warn when requested points are absent from
+    the series (they used to vanish silently)."""
+
+    def _natal_with_ceres(self):
+        from kerykeion.settings.config_constants import DEFAULT_ACTIVE_POINTS
+
+        points = [*DEFAULT_ACTIVE_POINTS, "Ceres"]
+        return points, AstrologicalSubjectFactory.from_birth_data(
+            "Ceres Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            active_points=points,
+        )
+
+    def test_ephemeris_factory_forwards_active_points(self):
+        points, _ = self._natal_with_ceres()
+        factory = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            active_points=points,
+        )
+        subjects = factory.get_ephemeris_data_as_astrological_subjects()
+        assert "Ceres" in subjects[0].active_points
+        assert subjects[0].ceres is not None
+
+    def test_warns_when_requested_points_missing_from_ephemeris(self, caplog):
+        points, natal = self._natal_with_ceres()
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris, active_points=points)
+        assert any(
+            "Ceres" in record.message and "absent" in record.message
+            for record in caplog.records
+        )
+
+    def test_no_warning_when_points_match(self, caplog):
+        points, natal = self._natal_with_ceres()
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            active_points=points,
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris, active_points=points)
+        assert not any("absent" in record.message for record in caplog.records)
+
+    def test_no_false_positive_for_points_absent_from_both_sides(self, caplog):
+        # Heliocentric drops Sun/nodes from BOTH natal and ephemeris subjects;
+        # that is not a caller mistake and must not warn (the advice would be
+        # unfollowable — the factory re-drops them).
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Helio", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+            perspective_type="Heliocentric",
+        )
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            perspective_type="Heliocentric",
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris)
+        assert not any("absent" in record.message for record in caplog.records)
+
+    def test_warns_when_requested_points_missing_from_natal(self, caplog):
+        # Symmetric hole: point computed on the ephemeris side but not on the
+        # natal — aspects involving it are equally undetectable.
+        points, _ = self._natal_with_ceres()
+        natal_default = AstrologicalSubjectFactory.from_birth_data(
+            "Default Natal", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+            active_points=points,
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal_default, ephemeris, active_points=points)
+        assert any(
+            "Ceres" in record.message and "natal chart" in record.message
+            for record in caplog.records
+        )
+
+    def test_warns_when_point_missing_from_both_sides(self, caplog):
+        # The most common misconfiguration: an asteroid added only to this
+        # factory's request, computed by neither side.
+        natal = AstrologicalSubjectFactory.from_birth_data(
+            "Plain", 1990, 6, 15, 12, 0,
+            lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+            online=False, suppress_geonames_warning=True,
+        )
+        ephemeris = EphemerisDataFactory(
+            datetime(2026, 3, 25), datetime(2026, 3, 27),
+            lat=41.9028, lng=12.4964, tz_str="Europe/Rome",
+        ).get_ephemeris_data_as_astrological_subjects()
+        with caplog.at_level(logging.WARNING):
+            TransitsTimeRangeFactory(natal, ephemeris, active_points=["Sun", "Ceres"])
+        assert any(
+            "Ceres" in record.message and "BOTH" in record.message
+            for record in caplog.records
+        )
+
+
+@pytest.mark.parametrize(
+    "invalid_limit",
+    [float("nan"), float("inf"), float("-inf"), 0.0, -1.0],
+)
+def test_axis_orb_limit_validated_up_front(invalid_limit):
+    """Invalid limits used to fail only deep inside get_transit_moments."""
+    from kerykeion.schemas import KerykeionException
+
+    natal = AstrologicalSubjectFactory.from_birth_data(
+        "N", 1990, 6, 15, 12, 0,
+        lng=12.4964, lat=41.9028, tz_str="Europe/Rome",
+        online=False, suppress_geonames_warning=True,
+    )
+    with pytest.raises(KerykeionException, match="axis_orb_limit"):
+        TransitsTimeRangeFactory(natal, [natal], axis_orb_limit=invalid_limit)
+
+
+# ===========================================================================
+# 7. TestTransitMomentSubjects
+# ===========================================================================
+
+
+class TestTransitMomentSubjects:
+    """``include_subjects`` attaches the transiting subject to each moment."""
+
+    def test_default_leaves_subject_unset(self, natal_subject, ephemeris_subjects):
+        """Without the flag every moment keeps ``subject`` at None, in model and dump alike."""
+        result = TransitsTimeRangeFactory(natal_subject, ephemeris_subjects).get_transit_moments()
+
+        assert all(moment.subject is None for moment in result.transits)
+        assert all(moment.model_dump()["subject"] is None for moment in result.transits)
+
+    def test_include_subjects_attaches_the_sample_it_was_computed_from(
+        self, natal_subject, ephemeris_subjects
+    ):
+        """Each moment carries the very ephemeris subject behind its aspects, not a copy."""
+        result = TransitsTimeRangeFactory(natal_subject, ephemeris_subjects).get_transit_moments(
+            include_subjects=True
+        )
+
+        assert len(result.transits) == len(ephemeris_subjects)
+        for moment, sample in zip(result.transits, ephemeris_subjects):
+            assert moment.subject is sample
+            assert moment.subject.iso_formatted_utc_datetime == moment.date
+
+    def test_included_subject_is_a_full_chart(self, natal_subject, ephemeris_subjects):
+        """Positions, signs, motion state and lunar phase are all there, per sample."""
+        result = TransitsTimeRangeFactory(natal_subject, ephemeris_subjects).get_transit_moments(
+            include_subjects=True
+        )
+
+        for moment in result.transits:
+            subject = moment.subject
+            assert subject.lunar_phase is not None
+            assert subject.lunar_phase.moon_phase_name
+            assert isinstance(subject.lunar_phase.moon_phase, int)
+            for point in (subject.sun, subject.moon, subject.mercury):
+                assert point.sign
+                assert isinstance(point.abs_pos, float)
+                assert point.motion_state is not None
+
+    def test_included_subjects_carry_dignities_when_the_series_computed_them(self, natal_subject):
+        """Dignities ride along only because the ephemeris series was asked for them."""
+        start = datetime(2024, 1, 1, 12, 0)
+        series = EphemerisDataFactory(
+            start_datetime=start,
+            end_datetime=start + timedelta(days=1),
+            step_type="days",
+            step=1,
+            lat=natal_subject.lat,
+            lng=natal_subject.lng,
+            tz_str=natal_subject.tz_str,
+            calculate_dignities=True,
+        ).get_ephemeris_data_as_astrological_subjects()
+
+        result = TransitsTimeRangeFactory(natal_subject, series).get_transit_moments(
+            include_subjects=True
+        )
+
+        for moment in result.transits:
+            assert isinstance(moment.subject.sun.essential_dignity, str)
+            assert isinstance(moment.subject.sun.dignity_score, int)

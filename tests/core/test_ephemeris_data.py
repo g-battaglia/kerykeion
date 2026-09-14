@@ -10,12 +10,11 @@ model vs dict output, edge cases, and chronological ordering.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
-from pytest import approx
 
-from kerykeion.ephemeris_data_factory import EphemerisDataFactory
+from kerykeion.ephemeris_data.factory import EphemerisDataFactory
 
 
 # ---------------------------------------------------------------------------
@@ -115,6 +114,29 @@ class TestDailyEphemeris:
         data = factory.get_ephemeris_data()
         dates = [d["date"] for d in data]
         assert dates == sorted(dates)
+
+
+class TestHistoricalLocalTimeConsistency:
+    """A series and a single subject must interpret one local wall time alike."""
+
+    @pytest.mark.medium
+    def test_synthetic_lmt_uses_the_observer_longitude(self):
+        from kerykeion import AstrologicalSubjectFactory
+
+        location = {"lng": 11.576, "lat": 48.137, "tz_str": "Europe/Berlin"}
+        subject = AstrologicalSubjectFactory.from_birth_data(
+            "Munich", 1880, 1, 1, 12, 0, online=False, **location
+        )
+        sample = EphemerisDataFactory(
+            datetime(1880, 1, 1, 12),
+            datetime(1880, 1, 1, 12),
+            **location,
+        ).get_ephemeris_data_as_astrological_subjects()[0]
+
+        assert sample.julian_day == pytest.approx(subject.julian_day, abs=1.0 / 86400.0)
+        assert sample.iso_formatted_utc_datetime == subject.iso_formatted_utc_datetime
+        assert sample.iso_formatted_local_datetime == subject.iso_formatted_local_datetime
+        assert sample.ascendant.abs_pos == pytest.approx(subject.ascendant.abs_pos, abs=1e-6)
 
 
 # ===========================================================================
@@ -404,6 +426,113 @@ class TestEdgeCases:
                 max_minutes=100,
             )
 
+    def test_over_cap_raises_before_materializing_series(self, monkeypatch):
+        """The size cap is enforced on the PROJECTED count, before the date
+        list is built — the allocation is the cost the cap exists to prevent.
+
+        Patch the module's ``timedelta`` so any attempt to build the series
+        (the only place it is constructed) raises a sentinel; an over-cap
+        request must still raise the plain ``ValueError`` cap message, proving
+        the comprehension is never reached.
+        """
+        from kerykeion.ephemeris_data import factory as edf
+
+        def _boom(*_args, **_kwargs):
+            raise AssertionError("series was materialized before the cap check")
+
+        monkeypatch.setattr(edf, "timedelta", _boom)
+
+        # minutes (2.2x over cap) — the original DoS vector
+        with pytest.raises(ValueError, match="Too many minutes"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2000, 1, 1),
+                end_datetime=datetime(2002, 4, 1),
+                step_type="minutes",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_minutes=500000,
+            )
+
+        # days over cap
+        with pytest.raises(ValueError, match="Too many days"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2024, 1, 1),
+                end_datetime=datetime(2026, 1, 1),
+                step_type="days",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_days=100,
+            )
+
+        # hours over cap
+        with pytest.raises(ValueError, match="Too many hours"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2024, 1, 1, 0, 0),
+                end_datetime=datetime(2024, 1, 10, 0, 0),
+                step_type="hours",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_hours=50,
+            )
+
+    def test_over_cap_minutes_is_fast_and_low_memory(self):
+        """A wildly over-cap minutes range fails cheaply (no 66 MB / 13 s
+        materialization before the ValueError)."""
+        import time
+        import tracemalloc
+
+        tracemalloc.start()
+        start = time.perf_counter()
+        with pytest.raises(ValueError, match="Too many minutes"):
+            EphemerisDataFactory(
+                start_datetime=datetime(2000, 1, 1),
+                end_datetime=datetime(2002, 4, 1),
+                step_type="minutes",
+                step=1,
+                lat=DEFAULT_LAT,
+                lng=DEFAULT_LNG,
+                tz_str=DEFAULT_TZ,
+                max_minutes=500000,
+            )
+        elapsed = time.perf_counter() - start
+        _, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+
+        assert elapsed < 1.0, f"over-cap path too slow: {elapsed:.3f}s"
+        assert peak < 5 * 1024 * 1024, f"over-cap path allocated {peak} bytes"
+
+    def test_in_cap_series_unchanged(self):
+        """Moving the cap check earlier does not alter an in-cap series."""
+        factory = EphemerisDataFactory(
+            start_datetime=datetime(2024, 1, 1, 0, 0),
+            end_datetime=datetime(2024, 1, 1, 2, 0),
+            step_type="minutes",
+            step=30,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+            max_minutes=1000,
+        )
+        assert len(factory.dates_list) == 5  # 0, 30, 60, 90, 120 min
+
+        factory_h = EphemerisDataFactory(
+            start_datetime=datetime(2024, 1, 1, 0, 0),
+            end_datetime=datetime(2024, 1, 1, 10, 0),
+            step_type="hours",
+            step=2,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+            max_hours=1000,
+        )
+        assert len(factory_h.dates_list) == 6  # 0, 2, 4, 6, 8, 10 h
+
     def test_end_before_start_raises(self):
         """End datetime before start raises ValueError."""
         with pytest.raises(ValueError, match="No dates found"):
@@ -645,3 +774,331 @@ class TestEphemerisConfigurationVariants:
         data = factory.get_ephemeris_data(as_model=True)
         assert data is not None
         assert len(data) == 3
+
+    @pytest.mark.parametrize(
+        "start,end,expected_dates",
+        [
+            # Spring-forward day (clocks jump 02:00->03:00): the UTC span is 23h,
+            # so a fixed 24h step dropped 2024-04-01.
+            (
+                datetime(2024, 3, 29),
+                datetime(2024, 4, 2),
+                ["2024-03-29", "2024-03-30", "2024-03-31", "2024-04-01", "2024-04-02"],
+            ),
+            # Fall-back day (clocks fall 03:00->02:00): the UTC span is 25h.
+            (
+                datetime(2024, 10, 25),
+                datetime(2024, 10, 29),
+                ["2024-10-25", "2024-10-26", "2024-10-27", "2024-10-28", "2024-10-29"],
+            ),
+        ],
+    )
+    def test_daily_samples_preserved_across_dst(self, start, end, expected_dates):
+        """Daily steps must land on each requested LOCAL calendar day at the
+        same wall time, regardless of DST — and the UTC series stays monotonic."""
+        from zoneinfo import ZoneInfo
+
+        tz = ZoneInfo("Europe/Rome")
+        factory = EphemerisDataFactory(
+            start_datetime=start, end_datetime=end,
+            step_type="days", lat=41.9, lng=12.5, tz_str="Europe/Rome",
+        )
+        data = factory.get_ephemeris_data()
+        locals_ = [datetime.fromisoformat(d["date"]).astimezone(tz) for d in data]
+        assert [d.date().isoformat() for d in locals_] == expected_dates
+        assert all(d.strftime("%H:%M") == "00:00" for d in locals_)
+        utc = [datetime.fromisoformat(d["date"]) for d in data]
+        assert all(utc[i] < utc[i + 1] for i in range(len(utc) - 1))
+
+
+# ---------------------------------------------------------------------------
+# Nested ephemeris_session guard (round 18)
+# ---------------------------------------------------------------------------
+
+
+class TestEphemerisSessionNestingGuard:
+    """A nested session is rejected before it can corrupt the outer state."""
+
+    def test_no_warning_when_not_nested(self, caplog):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with caplog.at_level(logging.WARNING, logger="kerykeion.ephemeris_backend.backend"):
+            with ephemeris_session():
+                pass
+        assert "Nested ephemeris_session" not in caplog.text
+
+    def test_nested_session_is_rejected_without_mutating_outer_sidereal_state(self):
+        from kerykeion.ephemeris_backend.backend import ephe, ephemeris_session, _SESSION_DEPTH
+
+        jd = 2451545.0
+        with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as outer_iflag:
+            before = ephe.calc_ut(jd, ephe.SUN, outer_iflag)[0][0]
+
+            with pytest.raises(RuntimeError, match="Nested ephemeris_session is not supported"):
+                with ephemeris_session():
+                    pytest.fail("nested session must be rejected before entering")
+
+            # The rejected inner session never resets the outer LAHIRI state.
+            after = ephe.calc_ut(jd, ephe.SUN, outer_iflag)[0][0]
+            assert after == pytest.approx(before, abs=1e-12)
+            assert getattr(_SESSION_DEPTH, "value", 0) == 1
+
+        # The successfully-entered outer session still performs its normal cleanup.
+        assert getattr(_SESSION_DEPTH, "value", 0) == 0
+
+
+class TestEphemerisSessionValidation:
+    @pytest.mark.parametrize("zodiac_type", ["Typo", "sidereal", ""])
+    def test_unknown_zodiac_rejected(self, zodiac_type):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="zodiac_type"):
+            with ephemeris_session(zodiac_type=zodiac_type):
+                pass
+
+    @pytest.mark.parametrize("perspective_type", ["Typo", "Geocentric", ""])
+    def test_unknown_perspective_rejected(self, perspective_type):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="perspective_type"):
+            with ephemeris_session(perspective_type=perspective_type):
+                pass
+
+    @pytest.mark.parametrize(
+        ("t0", "ayan_t0"),
+        [
+            (float("nan"), 0.0),
+            (0.0, float("nan")),
+            (float("inf"), 0.0),
+            (0.0, float("-inf")),
+        ],
+    )
+    def test_user_ayanamsa_requires_finite_parameters(self, t0, ayan_t0):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="finite"):
+            with ephemeris_session(
+                zodiac_type="Sidereal",
+                sidereal_mode="USER",
+                custom_ayanamsa_t0=t0,
+                custom_ayanamsa_ayan_t0=ayan_t0,
+            ):
+                pass
+
+    @pytest.mark.parametrize(
+        "topo",
+        [
+            (float("nan"), 0.0, 0.0),
+            (0.0, float("inf"), 0.0),
+            (181.0, 0.0, 0.0),
+            (0.0, -91.0, 0.0),
+        ],
+    )
+    def test_topocentric_coordinates_validated(self, topo):
+        from kerykeion.ephemeris_backend import ephemeris_session
+
+        with pytest.raises(ValueError, match="topo"):
+            with ephemeris_session(perspective_type="Topocentric", topo=topo):
+                pass
+
+
+# ===========================================================================
+# 10. TestFixedStarsInEphemeris
+# ===========================================================================
+
+
+class TestFixedStarsInEphemeris:
+    """Fixed stars in EphemerisDataFactory samples via active_fixed_stars."""
+
+    @staticmethod
+    def _factory(**overrides):
+        kwargs = dict(
+            start_datetime=datetime(2024, 1, 1, 12, 0),
+            end_datetime=datetime(2024, 1, 2, 12, 0),
+            step_type="days",
+            step=1,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+        )
+        kwargs.update(overrides)
+        return EphemerisDataFactory(**kwargs)
+
+    def test_default_output_has_no_fixed_stars_key(self):
+        """Without active_fixed_stars the sample dicts are unchanged: no key."""
+        data = self._factory().get_ephemeris_data()
+        assert len(data) == 2
+        for sample in data:
+            assert "fixed_stars" not in sample
+            assert set(sample.keys()) == {
+                "date",
+                "planets",
+                "houses",
+                "ephemeris_warnings",
+                "polar_house_fallbacks",
+            }
+
+    def test_a_substituted_house_system_is_declared_on_every_sample(self):
+        """A series whose houses are NOT the requested system must say so.
+
+        The samples carry house cusps with no label, so a consumer that asked for
+        Placidus and got Porphyry has no way to notice. An empty list here would
+        be worse than a missing field: it actively asserts the cusps are Placidus.
+        """
+        factory = self._factory(
+            lat=78.2232, lng=15.6467, tz_str="Arctic/Longyearbyen",
+            houses_system_identifier="P",
+        )
+        for sample in factory.get_ephemeris_data():
+            declared = sample["polar_house_fallbacks"]
+            assert [f.used_house_system_identifier for f in declared] == ["O"]
+        for model in factory.get_ephemeris_data(as_model=True):
+            assert [f.used_house_system_identifier for f in model.polar_house_fallbacks] == ["O"]
+
+    def test_no_declaration_when_the_requested_system_was_used(self):
+        for sample in self._factory().get_ephemeris_data():
+            assert sample["polar_house_fallbacks"] == []
+
+    def test_empty_star_list_output_has_no_fixed_stars_key(self):
+        """active_fixed_stars=[] behaves exactly like the default (no key)."""
+        data = self._factory(active_fixed_stars=[]).get_ephemeris_data()
+        for sample in data:
+            assert "fixed_stars" not in sample
+
+    def test_requested_stars_present_with_point_model_shape(self):
+        """Requested stars appear in every sample as KerykeionPointModel entries."""
+        from kerykeion.schemas.models import KerykeionPointModel
+
+        data = self._factory(active_fixed_stars=["Regulus", "Spica"]).get_ephemeris_data()
+        assert len(data) == 2
+        for sample in data:
+            stars = sample["fixed_stars"]
+            assert [star.name for star in stars] == ["Regulus", "Spica"]
+            for star in stars:
+                # Same shape as subject.fixed_stars: real point models with
+                # attribute AND subscript access.
+                assert isinstance(star, KerykeionPointModel)
+                assert 0.0 <= star.abs_pos < 360.0
+                assert star["abs_pos"] == star.abs_pos
+                assert star.sign is not None
+                assert star.house is not None
+                assert star.retrograde is False
+
+    def test_as_model_carries_fixed_stars(self):
+        """as_model=True: EphemerisDictModel exposes the same star points."""
+        models = self._factory(active_fixed_stars=["Regulus"]).get_ephemeris_data(as_model=True)
+        assert len(models) == 2
+        for model in models:
+            assert [star.name for star in model.fixed_stars] == ["Regulus"]
+
+    def test_as_model_default_fixed_stars_empty(self):
+        """as_model=True without requested stars: field validates to empty list."""
+        models = self._factory().get_ephemeris_data(as_model=True)
+        for model in models:
+            assert model.fixed_stars == []
+
+    def test_subjects_expose_fixed_stars(self):
+        """get_ephemeris_data_as_astrological_subjects carries subject.fixed_stars."""
+        subjects = self._factory(
+            active_fixed_stars=["Regulus", "Spica"]
+        ).get_ephemeris_data_as_astrological_subjects()
+        assert len(subjects) == 2
+        for subject in subjects:
+            assert [star.name for star in subject.fixed_stars] == ["Regulus", "Spica"]
+
+    def test_active_fixed_stars_passthrough_and_isolation(self, monkeypatch):
+        """The factory forwards a fresh copy of the star list to from_birth_data."""
+        from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory
+
+        captured = []
+        real = AstrologicalSubjectFactory.from_birth_data.__func__
+
+        def spy(cls, *args, **kwargs):
+            captured.append(kwargs.get("active_fixed_stars"))
+            return real(cls, *args, **kwargs)
+
+        monkeypatch.setattr(AstrologicalSubjectFactory, "from_birth_data", classmethod(spy))
+
+        requested = ["Regulus", "Spica"]
+        factory = self._factory(active_fixed_stars=requested)
+        # Mutating the caller's list after construction must not leak into the
+        # factory (constructor copies) ...
+        requested.append("Algol")
+        factory.get_ephemeris_data()
+
+        assert len(captured) == 2
+        for forwarded in captured:
+            assert forwarded == ["Regulus", "Spica"]
+            # ... and every sample gets its own fresh copy, never the
+            # factory's (or the caller's) list object itself.
+            assert forwarded is not requested
+            assert forwarded is not factory.active_fixed_stars
+
+        # Default path: from_birth_data receives None, not [].
+        captured.clear()
+        self._factory().get_ephemeris_data()
+        assert captured == [None, None]
+
+
+# ===========================================================================
+# 11. TestEssentialDignitiesInEphemeris
+# ===========================================================================
+
+
+class TestEssentialDignitiesInEphemeris:
+    """``calculate_dignities`` is off by default and reaches every generated subject."""
+
+    @staticmethod
+    def _factory(**overrides):
+        settings = dict(
+            start_datetime=datetime(2024, 1, 1, 12, 0),
+            end_datetime=datetime(2024, 1, 2, 12, 0),
+            step_type="days",
+            step=1,
+            lat=DEFAULT_LAT,
+            lng=DEFAULT_LNG,
+            tz_str=DEFAULT_TZ,
+        )
+        settings.update(overrides)
+        return EphemerisDataFactory(**settings)
+
+    def test_default_computes_no_dignities(self):
+        """The flag is opt-in: by default no sample carries dignity fields."""
+        factory = self._factory()
+        assert factory.calculate_dignities is False
+
+        for subject in factory.get_ephemeris_data_as_astrological_subjects():
+            assert subject.sun.essential_dignity is None
+            assert subject.sun.dignity_score is None
+
+    def test_dignities_on_every_sample_when_requested(self):
+        """Every classical planet of every sample gets a dignity and a score."""
+        subjects = self._factory(calculate_dignities=True).get_ephemeris_data_as_astrological_subjects()
+
+        assert len(subjects) == 2
+        for subject in subjects:
+            classical = (
+                subject.sun, subject.moon, subject.mercury, subject.venus,
+                subject.mars, subject.jupiter, subject.saturn,
+            )
+            for point in classical:
+                assert isinstance(point.essential_dignity, str), point.name
+                assert isinstance(point.dignity_score, int), point.name
+
+    def test_flag_is_forwarded_to_from_birth_data(self, monkeypatch):
+        """The factory hands the flag to the subject factory instead of post-processing."""
+        from kerykeion import AstrologicalSubjectFactory
+
+        captured = []
+        real = AstrologicalSubjectFactory.from_birth_data.__func__
+
+        def spy(cls, *args, **kwargs):
+            captured.append(kwargs.get("calculate_dignities"))
+            return real(cls, *args, **kwargs)
+
+        monkeypatch.setattr(AstrologicalSubjectFactory, "from_birth_data", classmethod(spy))
+
+        self._factory(calculate_dignities=True).get_ephemeris_data()
+        self._factory().get_ephemeris_data()
+
+        assert captured == [True, True, False, False]

@@ -1,172 +1,205 @@
-# Analysis — aspects, compatibility, house comparison, distributions
+# Analysis: dominants, relationship score, house comparison, midpoints
 
-These tools turn one or two subjects into the relational data astrologers care about: aspects,
-compatibility scores, where one chart's planets fall in another's houses, and elemental/modal balance.
+Chart-analysis factories that post-process already-built `AstrologicalSubjectModel` objects.
+Sources: `kerykeion/dominants/`, `kerykeion/relationship_score/factory.py`,
+`kerykeion/house_comparison/`, `kerykeion/midpoints/factory.py`. All four factories and
+their main models are exported from the top-level `kerykeion` namespace; strategy
+internals need subpackage imports (labeled below).
 
-## Table of contents
-- [AspectsFactory](#aspectsfactory)
-- [Customizing aspects: active_aspects, active_points, orbs](#customizing-aspects)
-- [RelationshipScoreFactory (compatibility)](#relationshipscorefactory-compatibility)
-- [HouseComparisonFactory](#housecomparisonfactory)
-- [Element & quality distributions](#element--quality-distributions)
+## DominantsFactory — dominant planet/sign/element/quality
 
-## AspectsFactory
+Package: `kerykeion/dominants/`. Three built-in "schools" selected via the `strategy`
+kwarg, plus a Protocol-based extension point.
 
-All methods are classmethods; pass subjects (or composite/return models). Single-chart methods return
-a `SingleChartAspectsModel`, dual-chart methods a `DualChartAspectsModel`; both expose `.aspects`
-(a list of `AspectModel`).
+- **`DominantsFactory.from_subject(subject, *, strategy="modern", active_points=None, distribution_method="weighted", custom_weights=None, include_accidental_dignities=False, include_score_breakdown=False)`** → `DominantsModel`
+- **`DominantsFactory.from_birth_data(name, year, month, day, hour=12, minute=0, *, strategy=..., <same kwargs>, **subject_kwargs)`** — builds the subject first; `subject_kwargs` (e.g. `lat`, `lng`, `tz_str`, `online`) forwarded to `AstrologicalSubjectFactory.from_birth_data`
+- **`DominantsFactory.available_methods()`** → `['almuten_figuris', 'elemental', 'modern']`
+
+| kwarg | default | notes |
+|---|---|---|
+| `strategy` | `"modern"` | `DominantMethod` name or a `DominantStrategy` instance; unknown values raise `KerykeionException` |
+| `active_points` | `None` | explicit subset of point names (honoured by the `elemental` school); `None` → the subject's own `active_points` |
+| `distribution_method` | `"weighted"` | `DistributionMethod = Literal["pure_count", "weighted"]` for the element/modality tally |
+| `custom_weights` | `None` | per-point weight overrides, case-insensitive names (element/modality tally) |
+| `include_accidental_dignities` | `False` | Almuten Figuris only: adds house placement / day-ruler layer |
+| `include_score_breakdown` | `False` | populates `score_breakdown` audit trail |
+
+`DominantMethod = Literal["modern", "almuten_figuris", "elemental"]` (top-level export).
+What each school populates:
+
+| method | populated categories | notes |
+|---|---|---|
+| `modern` | all 8 (planets, signs, elements, qualities, houses, polarities, hemispheres, quadrants) | Astrotheme-style: angularity + aspects + dignity + rulership per planet |
+| `almuten_figuris` | `planets` (7 classical, ranked by dignity totals) + single-entry winner placement categories | traditional Lord of the Geniture; traditionally tropical |
+| `elemental` | `elements`, `qualities`, `polarities` only | weighted or pure count; other categories empty, `dominant_planet` is `None` |
+
+Models (top-level exports): `DominantsModel` — fixed school-agnostic shape:
+`strategy_name`, `method` (`None` for custom strategies), the 8 category lists of
+`DominantScoreModel` (`name`, `score`, `percentage` — normalized to ~100 per category,
+`rank` — 1-based, `is_dominant`), convenience winners `dominant_planet`, `dominant_sign`,
+`dominant_element`, `dominant_quality`, `dominant_house` (each `None` when its category is
+empty), and `score_breakdown` (list of `DominantBreakdownItemModel`: `category`, `target`,
+`rule`, `points`, `detail` — only populated with `include_score_breakdown=True`).
 
 ```python
-from kerykeion import AspectsFactory, AstrologicalSubjectFactory
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion import DominantsFactory
 
-jack = AstrologicalSubjectFactory.from_birth_data("Jack", 1990, 6, 15, 15, 15,
-        city="Rome", nation="IT", lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
-jane = AstrologicalSubjectFactory.from_birth_data("Jane", 1991, 10, 25, 21, 0,
-        city="Rome", nation="IT", lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
-
-# Within one chart (natal, return, composite):
-res = AspectsFactory.single_chart_aspects(jack)        # alias: natal_aspects(...)
-print(len(res.aspects), res.aspects[0])
-
-# Between two charts (synastry / transits / comparisons):
-res = AspectsFactory.dual_chart_aspects(jack, jane)    # alias: synastry_aspects(...)
-print(len(res.aspects))
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+print(DominantsFactory.available_methods())
+for method in ("modern", "almuten_figuris", "elemental"):
+    result = DominantsFactory.from_subject(subject, strategy=method)
+    print(method, result.dominant_planet, result.dominant_element, result.dominant_quality)
 ```
 
-`natal_aspects` is a convenience alias of `single_chart_aspects`; `synastry_aspects` of
-`dual_chart_aspects`. Each `AspectModel` carries:
+### Custom strategies (extension contract)
 
-| field | meaning |
+`DominantStrategy` is a runtime-checkable `typing.Protocol`: any object with a `name: str`
+attribute and `compute(subject, config) -> DominantsModel` qualifies — pass the instance as
+`strategy=`. `BaseDominantStrategy` is an optional base class providing `build_model(...)`
+(ranking, percentage normalization, winner selection). Both are top-level exports.
+
+**Subpackage import:** `from kerykeion.dominants import DominantsConfig, ModernDominantStrategy, AlmutenFigurisStrategy, ElementalBalanceStrategy, Category, BreakdownItem`
+**Subpackage import:** `from kerykeion.dominants.base import DistributionMethod`
+
+`DominantsConfig` is the dataclass the factory hands to `compute` (fields mirror the
+`from_subject` kwargs plus `dominant_planet_count`, default 3). `Category` (raw
+`scores`/`dominant`/`tiebreak_order`) and `BreakdownItem` are the plain-dataclass value
+objects a custom school feeds to `build_model`.
+
+```python
+# doc-snippet: no-run
+from kerykeion import DominantsFactory
+from kerykeion.dominants import BaseDominantStrategy, Category
+
+class MySchool(BaseDominantStrategy):
+    name = "my_school"
+    def compute(self, subject, config):
+        scores = {"Sun": 2.0, "Moon": 1.0}          # your scoring logic
+        return self.build_model(
+            categories={"planets": Category(scores=scores, dominant={"Sun"})})
+
+result = DominantsFactory.from_subject(subject, strategy=MySchool())
+```
+
+## RelationshipScoreFactory — Discepolo synastry score
+
+Package: `kerykeion/relationship_score/`. Ciro Discepolo's method: weighted synastry
+aspects between two natal charts.
+
+Constructor: `RelationshipScoreFactory(first_subject, second_subject, use_only_major_aspects=True, *, axis_orb_limit=None)`.
+The two subjects MUST share the same reference frame (zodiac type, sidereal mode,
+perspective) — mixed frames raise `KerykeionException` at construction. Aspects are computed
+with Discepolo's own fixed orb set (not the UI defaults). `axis_orb_limit` optionally
+discards axis aspects at/above the threshold.
+
+**`get_relationship_score()`** → `RelationshipScoreModel`: `score_value` (int),
+`score_description` (`RelationshipScoreDescription`), `is_destiny_sign` (both Suns in the
+same quality/mode group), `aspects` (list of `RelationshipScoreAspectModel`: `p1_name`,
+`p2_name`, `aspect`, `orbit`), `score_breakdown` (list of `ScoreBreakdownItemModel`: `rule`,
+`description`, `points`, `details`), `subjects`. Subjects built without the Sun raise
+`KerykeionException`.
+
+`RelationshipScoreDescription` — 6 tiers (import from `kerykeion.schemas`):
+
+| score | tier |
 |---|---|
-| `p1_name`, `p2_name` | the two points, e.g. `"Sun"`, `"Moon"` |
-| `p1_owner`, `p2_owner` | which subject each point belongs to (name string) |
-| `aspect` | aspect type, e.g. `"trine"` (see reference-data.md for all 11) |
-| `aspect_degrees` | exact angle of the aspect (0, 60, 90, 120, 180, …) |
-| `orbit` | the actual orb (deviation from exact), in degrees |
-| `diff` | absolute angular separation of the two points |
-| `p1_abs_pos`, `p2_abs_pos` | absolute ecliptic longitudes |
-| `p1_speed`, `p2_speed` | daily motion of each point |
-| `aspect_movement` | `"Applying"`, `"Separating"`, or `"Static"` |
-
-## Customizing aspects
-
-Three keyword-only knobs. `active_points` and `active_aspects` are also accepted by the
-`ChartDataFactory` helpers and `TransitsTimeRangeFactory`; `axis_orb_limit` is accepted by
-`AspectsFactory`, `TransitsTimeRangeFactory`, and the generic `ChartDataFactory.create_chart_data`,
-but **not** by the `create_*_chart_data` convenience helpers (see `references/charts.md`).
+| < 5 | `"Minimal"` |
+| 5–10 | `"Medium"` |
+| 10–15 | `"Important"` |
+| 15–20 | `"Very Important"` |
+| 20–30 | `"Exceptional"` |
+| >= 30 | `"Rare Exceptional"` |
 
 ```python
-# Narrow which points participate (subset of the subject's active points).
-# NB: like everywhere, active_points can only narrow — to aspect an asteroid/fixed star, build the
-# SUBJECT with it active first (see references/subjects.md); it cannot be added here.
-res = AspectsFactory.single_chart_aspects(
-    jack,
-    active_points=["Sun", "Moon", "Venus", "Mars", "Ascendant", "Medium_Coeli"],
-)
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion import RelationshipScoreFactory
 
-# Choose which aspects to detect and the orb for each (name + orb in degrees)
-res = AspectsFactory.dual_chart_aspects(
-    jack, jane,
-    active_aspects=[
-        {"name": "conjunction", "orb": 8},
-        {"name": "opposition",  "orb": 8},
-        {"name": "trine",       "orb": 6},
-        {"name": "square",      "orb": 6},
-        {"name": "sextile",     "orb": 4},
-    ],
-    axis_orb_limit=2.0,    # tighter cap for aspects to Asc/MC/Dsc/IC
-)
+a = AstrologicalSubjectFactory.from_birth_data(
+    name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+b = AstrologicalSubjectFactory.from_birth_data(
+    name="Second Person", year=1992, month=3, day=21, hour=8, minute=15,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+score = RelationshipScoreFactory(a, b).get_relationship_score()
+print(score.score_value, score.score_description, score.is_destiny_sign)
+print(len(score.aspects), len(score.score_breakdown))
 ```
 
-The default active aspects are conjunction (10°), opposition (10°), trine (8°), sextile (6°), square
-(5°), quintile (1°). Available aspect names and their exact degrees are in
-`references/reference-data.md`. You can also start from the shipped default and tweak:
+## HouseComparisonFactory — bidirectional house overlays
+
+Package: `kerykeion/house_comparison/`. Where each subject's points (and cusps) fall in the
+OTHER subject's houses — the synastry "your Sun in my 7th house" analysis.
+
+Constructor: `HouseComparisonFactory(first_subject, second_subject, active_points=DEFAULT_ACTIVE_POINTS)`.
+Subjects can be `AstrologicalSubjectModel` or `PlanetReturnModel` (natal-vs-return overlays
+work). Same-frame check as above (`KerykeionException` on mismatch); house SYSTEMS may
+legitimately differ.
+
+**`get_house_comparison()`** → `HouseComparisonModel`: `first_subject_name`,
+`second_subject_name`, `first_points_in_second_houses`, `second_points_in_first_houses`,
+`first_cusps_in_second_houses`, `second_cusps_in_first_houses` — all four lists of
+`PointInHouseModel` (import from `kerykeion.schemas`): `point_name`, `point_degree` (within
+sign), `point_sign`, `point_owner_name`, `point_owner_house_number/_name` (Optional),
+`projected_house_number`, `projected_house_name`, `projected_house_owner_name`.
+
+Helper functions (public, `kerykeion/house_comparison/utils.py`, not re-exported top-level):
+`calculate_points_in_reciprocal_houses(point_subject, house_subject, active_points=DEFAULT_ACTIVE_POINTS)`
+and `calculate_cusps_in_reciprocal_houses(cusp_subject, house_subject)` — each one direction,
+returning `list[PointInHouseModel]`.
 
 ```python
-from kerykeion.settings.config_constants import DEFAULT_ACTIVE_ASPECTS
-custom = [dict(a) for a in DEFAULT_ACTIVE_ASPECTS] + [{"name": "semi-square", "orb": 2}]
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion import HouseComparisonFactory
+
+a = AstrologicalSubjectFactory.from_birth_data(
+    name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+b = AstrologicalSubjectFactory.from_birth_data(
+    name="Second Person", year=1992, month=3, day=21, hour=8, minute=15,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+comparison = HouseComparisonFactory(a, b).get_house_comparison()
+first = comparison.first_points_in_second_houses[0]
+print(first.point_name, first.projected_house_number, first.projected_house_name)
+print(len(comparison.first_cusps_in_second_houses))   # 12
 ```
 
-## RelationshipScoreFactory (compatibility)
+## MidpointFactory — cosmobiology midpoints
 
-Computes a numeric synastry compatibility score using the method of Italian astrologer Ciro
-Discepolo. Construct with two subjects, then call `get_relationship_score()` → `RelationshipScoreModel`.
+Package: `kerykeion/midpoints/`. Shorter-arc midpoints of every unordered pair of active
+points, with 90° dial positions and optional aspect activations.
+
+- **`MidpointFactory.compute(subject, *, active_points=None, compute_aspects=True, aspect_orb=1.0, aspects=None)`** → `list[MidpointModel]`, one per pair, in deterministic input order. `active_points` defaults to `DEFAULT_PREDICTIVE_POINTS` (10 planets + True Node, Chiron, Asc, MC → 91 pairs); `aspects=None` allows every aspect in `DEFAULT_CHART_ASPECTS_SETTINGS` — pass a whitelist like `("conjunction", "opposition", "square")` for dial work.
+- **`MidpointFactory.compute_active_midpoint_points(subject, pair_names)`** → `list[KerykeionPointModel]` with `name="A_B_Midpoint"`, `point_type="Midpoint"`, house assigned from the natal cusps. `pair_names` use the `"A_B"` form (`"Sun_Moon"`, `"Sun_True_North_Lunar_Node"`); pairs that do not resolve against `subject.active_points` are skipped with a warning. Used to render midpoints on charts (see `references/charts-and-drawing.md`).
+
+`MidpointModel` fields: `point_a`, `point_b`, `point_a_abs_pos`, `point_b_abs_pos`,
+`midpoint_abs_pos` (shorter arc), `midpoint_sign` (3-letter code), `midpoint_position`
+(0–30 in sign), `midpoint_modulus_90` (90° dial), `aspects_to_midpoint` (list of
+`MidpointAspectModel`: `point_name`, `point_abs_pos`, `aspect`, `aspect_degrees`, `orb` —
+third points only, the two constituents are excluded).
 
 ```python
-from kerykeion import AstrologicalSubjectFactory, RelationshipScoreFactory
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion import MidpointFactory
 
-a = AstrologicalSubjectFactory.from_birth_data("Alice", 1990, 3, 15, 14, 30,
-        city="Rome", nation="IT", lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
-b = AstrologicalSubjectFactory.from_birth_data("Bob", 1988, 7, 22, 9, 0,
-        city="Rome", nation="IT", lng=12.4964, lat=41.9028, tz_str="Europe/Rome", online=False)
-
-result = RelationshipScoreFactory(a, b).get_relationship_score()
-print(result.score_value)         # numeric total
-print(result.score_description)   # "Minimal" | "Medium" | "Important" | "Very Important" | "Exceptional" | "Rare Exceptional"
-print(result.is_destiny_sign)     # bool: Sun-sign "destiny" pairing
-for item in result.score_breakdown:   # which aspects contributed how many points
-    print(item)
+subject = AstrologicalSubjectFactory.from_birth_data(
+    name="Example Person", year=1990, month=7, day=15, hour=10, minute=30,
+    lng=12.4964, lat=41.9028, tz_str="Europe/Rome", city="Rome", nation="IT", online=False)
+midpoints = MidpointFactory.compute(
+    subject, active_points=["Sun", "Moon", "Venus", "Mars"], aspect_orb=1.0)
+print(len(midpoints))                                 # 6 pairs
+m = midpoints[0]
+print(m.point_a, m.point_b, m.midpoint_sign, round(m.midpoint_modulus_90, 2))
+for a in m.aspects_to_midpoint:
+    print(" ", a.point_name, a.aspect, round(a.orb, 2))
 ```
 
-Constructor: `RelationshipScoreFactory(first_subject, second_subject, use_only_major_aspects=True, *,
-axis_orb_limit=None)`. The model also exposes `.aspects` and `.subjects`.
+## Related
 
-## HouseComparisonFactory
-
-Shows which of subject A's points land in subject B's houses and vice-versa — the backbone of
-synastry house overlays.
-
-```python
-from kerykeion import AstrologicalSubjectFactory, HouseComparisonFactory
-
-cmp = HouseComparisonFactory(a, b).get_house_comparison()   # → HouseComparisonModel
-# first_points_in_second_houses = subject A's points landing in subject B's houses.
-# Mind the two owners: point_owner_name is whose PLANET it is (A);
-# projected_house_owner_name is whose HOUSE it falls into (B) — use the latter for the overlay label.
-for p in cmp.first_points_in_second_houses:
-    print(f"{p.point_owner_name}'s {p.point_name} ({p.point_sign}) "
-          f"→ house {p.projected_house_number} of {p.projected_house_owner_name}")
-```
-
-The model has `first_points_in_second_houses`, `second_points_in_first_houses`,
-`first_cusps_in_second_houses`, `second_cusps_in_first_houses` (each a list of `PointInHouseModel`),
-plus `first_subject_name` / `second_subject_name`. Each `PointInHouseModel` distinguishes
-`point_owner_name` (owner of the planet) from `projected_house_owner_name` (owner of the house the
-planet projects into) — don't confuse them when labelling. Optional constructor arg `active_points`
-limits the points considered. (Dual `ChartDataFactory` results already include this as `data.house_comparison`
-when `include_house_comparison=True`.)
-
-## Element & quality distributions
-
-`ChartDataFactory` attaches `element_distribution` (Fire/Earth/Air/Water) and `quality_distribution`
-(Cardinal/Fixed/Mutable) to its result. Two strategies:
-
-- `distribution_method="weighted"` (default) — core factors count more (Sun/Moon/Asc ≈ 2.0, angles
-  ≈ 1.5, personal planets ≈ 1.5, social ≈ 1.0, outer ≈ 0.5, minor bodies 0.3–0.8).
-- `distribution_method="pure_count"` — every active point counts equally.
-
-Override individual weights with `custom_distribution_weights` (lowercase point names; the special
-key `"__default__"` sets the fallback for unlisted points):
-
-```python
-from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
-
-s = AstrologicalSubjectFactory.from_birth_data("Sample", 1986, 4, 12, 8, 45,
-        city="Bologna", nation="IT", lng=11.3426, lat=44.4949, tz_str="Europe/Rome", online=False)
-
-pure = ChartDataFactory.create_natal_chart_data(s, distribution_method="pure_count")
-weighted = ChartDataFactory.create_natal_chart_data(
-    s, distribution_method="weighted",
-    custom_distribution_weights={"sun": 3.0, "__default__": 0.75},
-)
-
-print(pure.element_distribution.fire, weighted.element_distribution.fire)
-print(weighted.element_distribution.fire_percentage)          # also *_percentage fields
-print(weighted.quality_distribution.cardinal,
-      weighted.quality_distribution.cardinal_percentage)
-```
-
-`ElementDistributionModel` fields: `fire`, `earth`, `air`, `water` (+ each `*_percentage`).
-`QualityDistributionModel` fields: `cardinal`, `fixed`, `mutable` (+ each `*_percentage`). The same
-keyword options forward through every `create_*_chart_data` method, so you can keep one weighting
-scheme across natal, synastry, transit, return, and composite charts.
+`TriplicityLordsModel` (top-level export) is the Dorothean triplicity-lords result
+(`element`, `sect`, `primary` in-sect lord, `secondary`, `participating`) produced by
+`get_triplicity_lords(element, is_diurnal)` in `kerykeion/dignities/` — see
+`references/traditional.md`. Element/quality distribution models used by chart data live in
+`references/charts-and-drawing.md`; synastry aspect grids in `references/aspects-and-orbs.md`.
