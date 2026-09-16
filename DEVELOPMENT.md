@@ -438,21 +438,21 @@ the CHANGELOG entry and the release note, `uv lock`, `uv run poe check`,
 `uv run poe docs:check`, `uv run poe docs:snippets`, and the full extended suite
 with `LIBEPHEMERIS_PRECISION=extended` explicitly set. Build and smoke-test both
 distributions, commit the release preparation, tag that commit, then publish
-**the library first**. The [6.0.1 checklist](release_notes/v6.0.1.md#maintainer-publication-checklist)
+**the library first**. The [6.0.2 checklist](release_notes/v6.0.2.md#maintainer-publication-checklist)
 records the stable release artifacts and validation.
 
 Use a version-specific output directory so a release upload cannot also select
 old artifacts already present in `dist/`:
 
 ```bash
-uv build --all-packages -o dist/6.0.1
-uv run --isolated --no-project --with dist/6.0.1/kerykeion-6.0.1-py3-none-any.whl python scripts/build_smoke_check.py
-uv run --isolated --no-project --with dist/6.0.1/kerykeion-6.0.1-py3-none-any.whl --with dist/6.0.1/kerykeion_cli-6.0.1-py3-none-any.whl python scripts/build_smoke_check_cli.py
-uvx twine check --strict dist/6.0.1/*
+uv build --all-packages -o dist/6.0.2
+uv run --isolated --no-project --with dist/6.0.2/kerykeion-6.0.2-py3-none-any.whl python scripts/build_smoke_check.py
+uv run --isolated --no-project --with dist/6.0.2/kerykeion-6.0.2-py3-none-any.whl --with dist/6.0.2/kerykeion_cli-6.0.2-py3-none-any.whl python scripts/build_smoke_check_cli.py
+uvx twine check --strict dist/6.0.2/*
 
-uv publish dist/6.0.1/kerykeion-6.0.1-py3-none-any.whl dist/6.0.1/kerykeion-6.0.1.tar.gz
+uv publish dist/6.0.2/kerykeion-6.0.2-py3-none-any.whl dist/6.0.2/kerykeion-6.0.2.tar.gz
 # Only once the library is visible on PyPI:
-uv publish dist/6.0.1/kerykeion_cli-6.0.1-py3-none-any.whl dist/6.0.1/kerykeion_cli-6.0.1.tar.gz
+uv publish dist/6.0.2/kerykeion_cli-6.0.2-py3-none-any.whl dist/6.0.2/kerykeion_cli-6.0.2.tar.gz
 ```
 
 For stable v6, no prerelease resolver flag is needed. Create a normal GitHub

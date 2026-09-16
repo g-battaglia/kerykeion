@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.1"
+version = "6.0.2"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -45,7 +45,7 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # Keep the exact backend version verified for v6.0.1. Golden fixtures and
+    # Keep the exact backend version verified for v6.0.2. Golden fixtures and
     # source/coverage contracts are verified against this release;
     # the dependency pin gives PyPI installs the same backend as the lockfile.
     # A backend upgrade requires rechecking the extended suite and fixtures.
@@ -518,7 +518,7 @@ dev = [
     "pdoc>=15.0.4",
     "poethepoet>=0.36.0",
     "pyright>=1.1.408",
-    "pytest>=8.4.1",
+    "pytest>=9.0.3",
     "pytest-cov>=6.0.0",
     "pytest-xdist>=3.5.0",
     "pytest-sugar>=1.1.1",

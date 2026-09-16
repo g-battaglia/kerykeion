@@ -116,10 +116,10 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 
 Kerykeion requires **Python 3.12 or newer**.
 
-Install **6.0.1**, the stable release documented here:
+Install the current stable release:
 
 ```bash
-pip install --upgrade "kerykeion==6.0.1"
+pip install --upgrade "kerykeion"
 ```
 
 This installs the Python library only. It does not install a shell command. The optional CLI is a separate distribution described in the [Command-Line Interface](#command-line-interface) section.
@@ -716,10 +716,10 @@ The core Kerykeion package is a Python library and does not install a shell comm
 
 ```bash
 # Library and CLI in the current environment
-pip install "kerykeion[cli]==6.0.1"
+pip install "kerykeion[cli]"
 
 # Or install the CLI as an isolated tool
-uv tool install "kerykeion-cli==6.0.1"
+uv tool install "kerykeion-cli"
 ```
 
 ### CLI overview
@@ -765,7 +765,7 @@ Common first-run issues:
 Kerykeion uses **libephemeris 3.2.1** by default. To use the optional Swiss Ephemeris backend:
 
 ```bash
-pip install "kerykeion[swiss]==6.0.1"
+pip install "kerykeion[swiss]"
 python -m kerykeion.swisseph_setup
 export KERYKEION_BACKEND=swisseph
 export KERYKEION_EPHE_PATH=~/.kerykeion/sweph

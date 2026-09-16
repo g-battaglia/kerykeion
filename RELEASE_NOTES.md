@@ -1,7 +1,7 @@
 # Release Notes
 
-Current release: **[Kerykeion 6.0.1](release_notes/v6.0.1.md)**
-(2026-09-14), including installation, migration notes, validation results and
+Current release: **[Kerykeion 6.0.2](release_notes/v6.0.2.md)**
+(2026-09-16), including installation, migration notes, validation results and
 the publication checklist for both distributions.
 
 The full, current change history lives in **[CHANGELOG.md](CHANGELOG.md)**.

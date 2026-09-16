@@ -30,7 +30,7 @@ This tutorial walks you through building a complete astrology application using 
 Install the stable v6 release used by this tutorial:
 
 ```bash
-pip install "kerykeion==6.0.1"
+pip install "kerykeion"
 ```
 
 Create a project directory:

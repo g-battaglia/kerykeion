@@ -92,22 +92,23 @@ def app():
 
 
 @pytest.fixture(autouse=True)
-def _reset_cli_error_policy():
-    """Reset the CLI's process-global error knobs around every test.
+def _reset_cli_process_state():
+    """Reset the CLI's process-global output and error knobs around every test.
 
-    ``--traceback`` and ``--warnings-as-errors`` set module globals in
-    :mod:`kerykeion_cli.errors` that nothing resets, so without this a
-    test that escalates warnings leaks the policy into every
-    later test in the same process — making the suite order-dependent. Reset
-    before and after so each test starts and ends clean.
+    ``--traceback``, ``--warnings-as-errors`` and ``--envelope`` set module
+    globals that nothing resets, so without this one test can leak its policy
+    into a later test in the same process and make the suite order-dependent.
+    Reset before and after so each test starts and ends clean.
     """
-    from kerykeion_cli import errors
+    from kerykeion_cli import errors, warnings
 
     errors.set_traceback_enabled(False)
     errors.set_warnings_as_errors(False)
+    warnings.set_envelope(False)
     yield
     errors.set_traceback_enabled(False)
     errors.set_warnings_as_errors(False)
+    warnings.set_envelope(False)
 
 
 @pytest.fixture

@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+## [6.0.2] - 2026-09-16
+
+Security maintenance release for both `kerykeion` and `kerykeion-cli`. No
+calculation, rendering or public API behavior changes. See the
+[release notes](release_notes/v6.0.2.md).
+
+### Changed
+
+- Make installation commands version-agnostic across the current documentation,
+  agent skills and stable v6 release notes, so they install the latest stable
+  release instead of preserving a stale package pin.
+
+### Security
+
+- Update the transitive runtime dependency `idna` from 3.11 to 3.16 to
+  address GHSA-65pc-fj4g-8rjx / CVE-2026-45409, a denial of service risk
+  from specially crafted inputs to `idna.encode()`. Update its
+  `url-normalize` caller from 2.2.1 to 3.0.0 to avoid the API deprecated by
+  the patched `idna` release.
+- Update the development dependency `pytest` from 9.0.2 to 9.0.3 to address
+  GHSA-6w46-j5rx-g56g / CVE-2025-71176, insecure temporary-directory
+  handling on UNIX.
+- Update the transitive runtime dependency `click` from 8.3.1 to 8.3.3 to
+  remove the `click.edit()` command-injection report tracked as
+  GHSA-47fr-3ffg-hgmw / CVE-2026-7246.
+
 ## [6.0.1] - 2026-09-14
 
 Documentation and packaging maintenance release for both `kerykeion` and

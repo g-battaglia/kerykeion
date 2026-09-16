@@ -12,13 +12,13 @@ Requires **Python 3.12+**. Choose one installation method:
 
 ```bash
 # Isolated tool, available on PATH
-uv tool install "kerykeion-cli==6.0.1"
+uv tool install "kerykeion-cli"
 
 # Or install the library and CLI in your Python environment
-pip install "kerykeion[cli]==6.0.1"
+pip install "kerykeion[cli]"
 ```
 
-The CLI pins `kerykeion==6.0.1` and adds no dependencies beyond the library itself. A plain `pip install kerykeion` installs no shell command. `python -m kerykeion_cli` is the alternative entry point when the package is installed in the active Python environment.
+The CLI pins the matching `kerykeion` release exactly and adds no dependencies beyond the library itself. A plain `pip install kerykeion` installs no shell command. `python -m kerykeion_cli` is the alternative entry point when the package is installed in the active Python environment.
 
 ## Install the AI Agent Skill
 
