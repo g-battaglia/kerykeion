@@ -1,7 +1,4 @@
 <h1 align="center">Kerykeion</h1>
-
-> A typed Python astrology library for natal charts, synastry, transits, planetary returns and SVG rendering.
-
 <div align="center">
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="GitHub stars"></a>
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="GitHub forks"></a>
