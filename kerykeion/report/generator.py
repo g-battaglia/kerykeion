@@ -1,4 +1,8 @@
-"""Human-readable ASCII report generation for astrological data."""
+"""Human-readable ASCII report generation for astrological data.
+
+Entry point: ``ReportGenerator`` (``generate_report`` / ``print_report``).
+See https://www.kerykeion.net/content/docs/report for covered inputs.
+"""
 
 from __future__ import annotations
 

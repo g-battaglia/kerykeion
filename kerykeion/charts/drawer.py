@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
+"""SVG chart rendering for already-computed chart data.
+
+``ChartDrawer`` takes a ``ChartDataModel`` from ``ChartDataFactory`` and renders
+natal, synastry, transit, return, composite and progression wheels in modern or
+classic style. See https://www.kerykeion.net/content/docs/charts and
+https://www.kerykeion.net/content/docs/chart_internals for options and the
+``kr:`` metadata contract.
+
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 

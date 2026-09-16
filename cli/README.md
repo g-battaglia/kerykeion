@@ -79,7 +79,12 @@ Prefer the curated commands for common tasks. Use `call` when a public factory o
 
 | Area | Capabilities |
 | --- | --- |
-| Charts | Natal, synastry, transit, returns, composite, Davison and progressions |
+| Charts | Natal, synastry, transit, returns, midpoint composite and progressions |
+
+> **Davison note:** the library's `CompositeSubjectFactory.get_davison_composite_subject_model`
+> has no dedicated `composite --davison` command. The `composite` command is the midpoint
+> composite; reach Davison from the terminal with
+> `kerykeion call CompositeSubjectFactory.get_davison_composite_subject_model -s ada -S bob`.
 | Analysis | Aspects, dominants, relationship scores, Moon context and midpoints |
 | Predictive and locational | Primary directions, solar arc, secondary progressions and astrocartography |
 | Traditional | Profections, firdaria, zodiacal releasing, receptions and horary indicators |

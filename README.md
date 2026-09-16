@@ -1,5 +1,7 @@
 <h1 align="center">Kerykeion</h1>
 
+> A typed Python astrology library for natal charts, synastry, transits, planetary returns and SVG rendering.
+
 <div align="center">
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="GitHub stars"></a>
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="GitHub forks"></a>
@@ -12,6 +14,8 @@
 <div align="center">
   <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version"></a>
   <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions"></a>
+  <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
+  <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/docs-kerykeion.net-blue.svg" alt="Documentation"></a>
 </div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
@@ -100,6 +104,7 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 - [Chart Rendering](#chart-rendering)
 - [Command-Line Interface](#command-line-interface)
 - [Documentation](#documentation)
+  - [Troubleshooting](#troubleshooting)
 - [Swiss Ephemeris Backend](#swiss-ephemeris-backend)
 - [AI Agent Skill](#ai-agent-skill)
 - [Development](#development)
@@ -111,7 +116,7 @@ Choose a style with `style="modern"` or `style="classic"`, and a theme with `the
 
 Kerykeion requires **Python 3.12 or newer**.
 
-The current stable release is **6.0.1**:
+Install **6.0.1**, the stable release documented here:
 
 ```bash
 pip install --upgrade "kerykeion==6.0.1"
@@ -169,6 +174,15 @@ drawer.save_svg(output_path=output_dir, filename="example-natal")
 print(subject.sun.sign, subject.sun.position)
 print((output_dir / "example-natal.svg").resolve())
 ```
+
+Expected output (longitude abbreviated):
+
+```text
+Can 22.607...
+.../charts_output/example-natal.svg
+```
+
+The second line is an absolute path based on your current working directory. Open the generated SVG in a browser to view the chart.
 
 The recommended offline contract is explicit: set `online=False` and provide longitude, latitude, and an IANA timezone. For automatic location lookup, set `online=True`, provide `city` and `nation`, and configure a GeoNames username through `geonames_username` or `KERYKEION_GEONAMES_USERNAME`.
 
@@ -710,7 +724,7 @@ uv tool install "kerykeion-cli==6.0.1"
 
 ### CLI overview
 
-The CLI exposes natal, synastry, transit, return, progression, composite and Davison charts, together with aspects, traditional and predictive techniques, sky events, ephemeris series, transit timelines and saved subject profiles. It supports text, JSON, XML and SVG output.
+The CLI exposes natal, synastry, transit, return, progression and midpoint-composite charts, together with aspects, traditional and predictive techniques, sky events, ephemeris series, transit timelines and saved subject profiles. It supports text, JSON, XML and SVG output. Davison charts remain a library feature (`CompositeSubjectFactory.get_davison_composite_subject_model`) and are reachable from the terminal through `kerykeion call`.
 
 It is also designed for automation and agentic workflows. Structured output, stable exit codes, separate payload and diagnostic streams, warning envelopes, command discovery, reusable profiles, a guarded public-factory dispatcher and `status --check` give coding agents explicit contracts to work with.
 
@@ -736,6 +750,15 @@ For every commercial CLI workflow, use the <a href="https://rapidapi.com/gbattag
 - **Schemas:** <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Models and literals</a>
 - **FAQ:** <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">Troubleshooting and conventions</a>
 - **Hosted API:** <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Full API Documentation</a>
+- **Changelog:** <a href="https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a>
+
+### Troubleshooting
+
+Common first-run issues:
+
+- `KerykeionException` for dates outside the active kernel (default tier covers **1850–2150**, upper bound exclusive). Install a wider tier or narrow the range; see [Supported date ranges](#supported-date-ranges).
+- Ambiguous or nonexistent local times during timezone transitions need an explicit `is_dst` choice or a known UTC instant supplied through `from_iso_utc_time()`. The factory refuses to guess; see the <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">FAQ</a> for offset-selection semantics.
+- `online=True` without a GeoNames username fails. Either stay offline with explicit `lng`/`lat`/`tz_str` and `online=False`, or configure `geonames_username` / `KERYKEION_GEONAMES_USERNAME`. See the <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">FAQ</a>.
 
 ## Swiss Ephemeris Backend
 

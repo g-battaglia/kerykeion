@@ -10,6 +10,12 @@ order: 6
 
 The `AspectsFactory` provides a unified interface for calculating angular relationships between planets. It handles both single-chart analysis (natal, return) and dual-chart analysis (synastry, transits).
 
+> **Looking for `synastry/`?** There is no `synastry` submodule: synastry is
+> `AspectsFactory.dual_chart_aspects()` plus `HouseComparisonFactory` and
+> `RelationshipScoreFactory`. The v5 `SynastryAspects` class was removed in v6;
+> importing it raises a migration error pointing at `dual_chart_aspects` and the
+> [migration guide](/content/docs/migration).
+
 ## What Are Aspects?
 
 **Aspects** are specific angular relationships between planets in a chart. They represent how planetary energies interact:

@@ -13,6 +13,12 @@ uv run python examples/<script>.py
 Scripts that render charts write into `examples/output/`, which is gitignored;
 the rest print to stdout.
 
+> **Scope note:** this folder covers the Python library only. For terminal usage,
+> see the [kerykeion-cli README](../cli/README.md), the
+> [CLI reference](https://www.kerykeion.net/content/docs/cli/) and the
+> [CLI Agent Skill](../skills/kerykeion-cli/) — including `subject save`, `natal`,
+> `transits`, `sky lunations` and `call --list/--explain` recipes.
+
 ## Charts
 
 | Script | What it shows |
@@ -56,6 +62,13 @@ the rest print to stdout.
 | `firdaria_example.py` | Firdaria: the Persian major and minor periods. |
 | `horary_example.py` | Horary significators and the considerations before judgment. |
 | `mutual_receptions_example.py` | Domicile and exaltation receptions between classical planets. |
+| `secondary_progressions_example.py` | Day-for-a-year progressed subjects and progressed-to-natal contacts. |
+| `solar_arc_example.py` | Uniform solar-arc directed points and directed-to-natal aspects. |
+| `primary_directions_example.py` | Placidus semi-arc primary directions with a speculum. |
+| `midpoints_example.py` | Pairwise midpoints on the shorter arc with aspect activations. |
+| `relocated_and_acg_example.py` | A relocated chart plus astro-cartography angular lines. |
+| `dignities_nakshatra_motion_example.py` | Essential dignities, Vedic nakshatras and motion states. |
+| `eclipses_example.py` | Global and location-specific solar and lunar eclipse search. |
 
 ## Time series and sky events
 

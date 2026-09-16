@@ -193,6 +193,16 @@ def render_manpage() -> str:
     for name, sub in (_choices(root) or {}).items():
         nested = _choices(sub)
         if nested is None:  # a top-level command
+            if name in ("ephemeris", "transits"):
+                # These are top-level commands, but roff would render them as if
+                # they belonged to the preceding .SS group (sky). Give them their
+                # own subsection so the page never suggests `kerykeion sky ephemeris`.
+                if not any(line == ".SS time series" for line in lines):
+                    add(".SS time series")
+                    lines += _prose(
+                        "Top-level commands over a date range (not under sky): "
+                        "invoke as kerykeion ephemeris and kerykeion transits."
+                    )
             lines += _command_entry(sub)
         else:  # a group (technique, sky, subject, info): a subsection with its own commands
             add(f".SS {esc(name)}")

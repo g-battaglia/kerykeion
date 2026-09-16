@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
+"""Annual profections: one activated house per year of life.
+
+Entry point: ``ProfectionsFactory.from_subject``. See
+https://www.kerykeion.net/content/docs/profections_factory for parameters,
+models and the Feb-29 anniversary convention.
+
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 

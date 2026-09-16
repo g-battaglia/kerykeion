@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
+"""Longitudinal and declination aspects within one chart or between two charts.
+
+Entry points: ``AspectsFactory.single_chart_aspects`` / ``dual_chart_aspects``
+(plus the declination variants). See
+https://www.kerykeion.net/content/docs/aspects for the full reference.
+
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 

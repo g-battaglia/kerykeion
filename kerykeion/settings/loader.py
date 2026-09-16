@@ -1,8 +1,9 @@
-"""
-Utilities for loading Kerykeion configuration settings from Python sources.
+"""Utilities for loading Kerykeion configuration settings from Python sources.
 
 The translation strings are now stored directly in :mod:`translation_strings`,
 so the loader simply wraps those dictionaries (or any user-provided overrides).
+
+See https://www.kerykeion.net/content/docs/settings for the settings reference.
 """
 
 from __future__ import annotations

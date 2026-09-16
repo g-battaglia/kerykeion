@@ -100,8 +100,7 @@ Ascendant: Vir
 
 ```python
 from pathlib import Path
-from kerykeion import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
+from kerykeion import ChartDataFactory, ChartDrawer
 
 # Step 1: Calculate chart data
 chart_data = ChartDataFactory.create_natal_chart_data(subject)
@@ -225,7 +224,7 @@ drawer.save_svg(output_path=Path("charts_output"), filename="alice-bob-synastry"
 Kerykeion can calculate a compatibility score using Ciro Discepolo's method.
 
 ```python
-from kerykeion.relationship_score.factory import RelationshipScoreFactory
+from kerykeion import RelationshipScoreFactory
 
 # Calculate compatibility
 score_factory = RelationshipScoreFactory(alice, bob)
@@ -256,7 +255,7 @@ for item in result.score_breakdown[:5]:
 A **Solar Return** is the chart for the moment the Sun returns to its natal position each year. It's used for annual forecasts.
 
 ```python
-from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
+from kerykeion import PlanetaryReturnFactory
 
 # Create the return factory
 return_factory = PlanetaryReturnFactory(
@@ -332,8 +331,7 @@ for aspect in transit_aspects.aspects[:10]:
 ### Time-Range Transit Analysis
 
 ```python
-from kerykeion.ephemeris_data.factory import EphemerisDataFactory
-from kerykeion.transits.factory import TransitsTimeRangeFactory
+from kerykeion import EphemerisDataFactory, TransitsTimeRangeFactory
 from datetime import datetime
 
 # Generate ephemeris data for a date range
@@ -455,13 +453,13 @@ from pathlib import Path
 from kerykeion import (
     AstrologicalSubjectFactory,
     ChartDataFactory,
+    ChartDrawer,
     AspectsFactory,
     ReportGenerator,
+    RelationshipScoreFactory,
+    PlanetaryReturnFactory,
     to_context
 )
-from kerykeion.charts.drawer import ChartDrawer
-from kerykeion.relationship_score.factory import RelationshipScoreFactory
-from kerykeion.planetary_returns.factory import PlanetaryReturnFactory
 
 # Setup
 output_dir = Path("charts_output")

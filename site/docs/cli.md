@@ -40,11 +40,17 @@ Every command that produces a payload accepts `-f/--format` and `-o/--output`:
 With no `-f`, the format is chosen for you: **text on a TTY, JSON in a pipe**.
 So `kerykeion natal -s ada` reads as a report, while
 `kerykeion natal -s ada | jq -r .sun.sign` works with no extra flag. `-o file`
-infers the format from the suffix unless `-f` overrides it.
+infers the format from the suffix unless `-f` overrides it. When neither `-f`
+nor `-o` is given, `$KERYKEION_CLI_FORMAT` (one of `text`, `json`, `xml`, `svg`)
+sets the default; otherwise the TTY-or-pipe rule applies.
 
 > Warnings (ephemeris coverage gaps, polar-house fallbacks) always go to
 > **stderr**, even with `-f json`, so a payload piped to `jq` stays clean. Pass
 > `--warnings-as-errors` to turn them into exit `9` (after the payload prints).
+>
+> With `-f json`, `--envelope` wraps the payload for consumers that only capture
+> stdout: `{kerykeion: {version, backend, generated_at}, warnings: [...], data: {...}}`.
+> `--envelope` is JSON-only and is rejected with any other format.
 
 ## Subject profiles
 
@@ -57,6 +63,7 @@ $ kerykeion subject save ada --name "Ada Lovelace" --date 1990-07-15 --time 10:3
       --lat 41.9028 --lng 12.4964 --tz Europe/Rome --offline
 $ kerykeion subject list
 $ kerykeion subject show ada
+$ kerykeion subject path ada         # the profile's file path (for backup/inspection)
 $ kerykeion subject verify ada        # round-trips the recipe through the factory
 ```
 
@@ -64,7 +71,9 @@ The same subject-building flags (`--date`, `--time`, `--lat`, `--lng`, `--tz`,
 `--zodiac`, `--houses`, `--points`, `--with`, `--without`, `--set`, …) are
 spelled identically by `subject save`, `natal` and `now`.
 
-Profiles are stored as JSON recipes (`0600`, in a `0700` directory — birth data
+Profiles live under `$XDG_CONFIG_HOME/kerykeion/subjects/` (`~/.config` when
+`XDG_CONFIG_HOME` is unset). They are stored as JSON recipes (`0600`, in a
+`0700` directory — birth data
 is personal) and written atomically. A profile is a recipe, never a cached
 chart: every read rebuilds the subject, so it cannot go stale across kerykeion
 versions or backends. `subject verify` rebuilds one and prints a short summary,
@@ -74,12 +83,12 @@ the cheap pre-flight before a long batch.
 
 | Command | Chart |
 |---------|-------|
-| `natal -s ada` | Natal wheel / report |
-| `now --lat … --lng … --tz …` | The current moment (transit-style snapshot) |
+| `natal -s ada` | Natal wheel / report (full inline birth-data flags: `--date`, `--time`, `--lat`, `--lng`, `--tz`, …) |
+| `now --lat … --lng … --tz …` | The current moment (transit-style snapshot). Same place flags as `natal` but **no** date/time flags — the moment is always now. |
 | `synastry -s ada -S bob` | Two-subject dual wheel |
 | `transit -s ada [--to-date …]` | Natal vs a transit moment |
-| `composite -s ada -S bob` | Midpoint composite |
-| `return -s ada --year 2026 [--type Solar\|Lunar]` | Planetary return dual wheel |
+| `composite -s ada -S bob` | Midpoint composite (no Davison variant; see note below) |
+| `return -s ada --year 2026 [--type Solar\|Lunar] [--month M] [--day D]` | Planetary return dual wheel. `--month`/`--day` (default `1`) seed the search inside the year. |
 | `progression -s ada --target-year 2026` | Secondary progression |
 
 ```console
@@ -219,8 +228,9 @@ script should consult instead of hard-coding tables.
 ```console
 $ kerykeion info literals                 # every enum, by name
 $ kerykeion info literals SiderealMode    # one of them
-$ kerykeion info houses                   # letters and name aliases
+$ kerykeion info houses                   # letters and name aliases (case-sensitive)
 $ kerykeion info points                   # what --points accepts
+$ kerykeion info stars                    # what --fixed-stars accepts
 $ kerykeion info methods                  # per-command strategy names
 ```
 
@@ -232,6 +242,16 @@ failures.
 ```console
 $ kerykeion status -f json
 $ kerykeion status --check
+```
+
+## Composite vs Davison
+
+`composite` is the midpoint composite only. The library's Davison
+time-space-midpoint chart (`CompositeSubjectFactory.get_davison_composite_subject_model`)
+has no dedicated command; reach it from the terminal with:
+
+```console
+$ kerykeion call CompositeSubjectFactory.get_davison_composite_subject_model -s ada -S bob -f json
 ```
 
 ## Global flags
@@ -261,4 +281,7 @@ export MANPATH="$HOME/.local/share/uv/tools/kerykeion-cli/share/man:$MANPATH"  #
 
 The page is the map — the command tree, the output formats, the profile store,
 the environment, the exit codes — while each command's flags remain one
-`kerykeion <command> --help` away.
+`kerykeion <command> --help` away. Technique, sky and time-series commands
+(`technique …`, `sky …`, `ephemeris`, `transits`) expose their full flag tables
+only there; see also the tested recipes in the
+[CLI Agent Skill](https://github.com/g-battaglia/kerykeion/tree/main/skills/kerykeion-cli).

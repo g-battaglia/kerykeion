@@ -14,9 +14,7 @@ The birth chart is the most common chart in astrology. It is a representation of
 
 ```python
 from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 # Create a subject from birth data (offline example with manual coordinates)
 subject = AstrologicalSubjectFactory.from_birth_data(
@@ -45,9 +43,7 @@ The output will be a SVG file in `charts_output/kanye-natal.svg`.
 
 ```python
 from pathlib import Path
-from kerykeion import AstrologicalSubjectFactory
-from kerykeion.chart_data.factory import ChartDataFactory
-from kerykeion.charts.drawer import ChartDrawer
+from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
 
 subject = AstrologicalSubjectFactory.from_birth_data(
     "John Lennon", 1940, 10, 9, 18, 30,

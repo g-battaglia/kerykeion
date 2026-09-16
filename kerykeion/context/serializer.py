@@ -10,6 +10,9 @@ non-qualitative and non-interpretive, providing factual representations
 of astrological data in semantic XML format.
 
 Optional/None fields are omitted from the output rather than rendered as empty.
+
+See https://www.kerykeion.net/content/docs/context_serializer for the
+reference; entry point ``kerykeion.to_context``.
 """
 
 from __future__ import annotations

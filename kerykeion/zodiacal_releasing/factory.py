@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
+"""Zodiacal releasing: L1-L4 aphesis periods from Fortune or Spirit.
+
+Entry point: ``ZodiacalReleasingFactory.from_subject``. See
+https://www.kerykeion.net/content/docs/zodiacal_releasing_factory for lots,
+loosing-of-the-bond and peak markers.
+
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
