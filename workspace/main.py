@@ -6,7 +6,7 @@ Feel free to modify, extend, or completely replace this code with your own.
 
 For more examples, check:
 - examples/ directory in the repository
-- Documentation: https://www.kerykeion.net/content/docs/
+- Documentation: https://www.kerykeion.net/python-library/docs/v6/
 - README.md in this workspace folder
 """
 

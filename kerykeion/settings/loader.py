@@ -3,7 +3,7 @@
 The translation strings are now stored directly in :mod:`translation_strings`,
 so the loader simply wraps those dictionaries (or any user-provided overrides).
 
-See https://www.kerykeion.net/content/docs/settings for the settings reference.
+See https://www.kerykeion.net/python-library/docs/v6/settings for the settings reference.
 """
 
 from __future__ import annotations

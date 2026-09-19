@@ -281,7 +281,7 @@ def render_manpage() -> str:
     for what, where in (
         ("the flags of one command", "kerykeion <command> --help"),
         ("every value the flags accept", "kerykeion info literals"),
-        ("the complete CLI reference", "https://www.kerykeion.net/content/docs/cli/"),
+        ("the complete CLI reference", "https://www.kerykeion.net/python-library/docs/v6/cli/"),
         ("the library this command drives", "https://www.kerykeion.net"),
     ):
         add(".TP")

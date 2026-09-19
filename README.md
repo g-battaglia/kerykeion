@@ -12,7 +12,7 @@
   <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/v/kerykeion?label=pypi%20package" alt="Package version"></a>
   <a href="https://pypi.org/project/kerykeion/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/pypi/pyversions/kerykeion.svg" alt="Supported Python versions"></a>
   <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
-  <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/docs-kerykeion.net-blue.svg" alt="Documentation"></a>
+  <a href="https://www.kerykeion.net/python-library/docs/v6/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/docs-kerykeion.net-blue.svg" alt="Documentation"></a>
 </div>
 <p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
@@ -61,7 +61,7 @@ Kerykeion has two SVG chart styles, Modern and Classic, and three built-in theme
   </tr>
 </table>
 
-Choose a style with `style="modern"` or `style="classic"`, and a theme with `theme="classic"`, `theme="dark"`, or `theme="black-and-white"`. See [Chart Rendering](#chart-rendering), <a href="https://www.kerykeion.net/content/examples/modern-charts" target="_blank" rel="noopener noreferrer">Modern Charts</a>, and <a href="https://www.kerykeion.net/content/examples/theming" target="_blank" rel="noopener noreferrer">Theming</a>.
+Choose a style with `style="modern"` or `style="classic"`, and a theme with `theme="classic"`, `theme="dark"`, or `theme="black-and-white"`. See [Chart Rendering](#chart-rendering), <a href="https://www.kerykeion.net/content/examples/v6/modern-charts" target="_blank" rel="noopener noreferrer">Modern Charts</a>, and <a href="https://www.kerykeion.net/content/examples/v6/theming" target="_blank" rel="noopener noreferrer">Theming</a>.
 
 ## Table of contents
 
@@ -117,7 +117,7 @@ pip install --upgrade "kerykeion"
 
 This installs the Python library only. It does not install a shell command. The optional CLI is a separate distribution described in the [Command-Line Interface](#command-line-interface) section.
 
-Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/content/docs/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
+Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/python-library/docs/v6/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
 
 ### Supported date ranges
 
@@ -133,7 +133,7 @@ libephemeris.download_leb_for_tier("medium")    # 1550–2650
 libephemeris.download_leb_for_tier("extended")  # DE441, including BCE dates
 ```
 
-The core tier controls the date range of the core bodies. Asteroids, exotics, and lunar apsides use separate data groups or runtime models and can have different coverage. See <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> and <a href="https://www.kerykeion.net/content/docs/backend_precision_comparison" target="_blank" rel="noopener noreferrer">Backend Precision Comparison</a>.
+The core tier controls the date range of the core bodies. Asteroids, exotics, and lunar apsides use separate data groups or runtime models and can have different coverage. See <a href="https://www.kerykeion.net/python-library/docs/v6/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> and <a href="https://www.kerykeion.net/python-library/docs/v6/backend_precision_comparison" target="_blank" rel="noopener noreferrer">Backend Precision Comparison</a>.
 
 ## Quick start
 
@@ -179,10 +179,10 @@ The second line is an absolute path based on your current working directory. Ope
 
 For offline calculations, set `online=False` and provide longitude, latitude, and an IANA timezone. For automatic location lookup, set `online=True`, provide `city` and `nation`, and configure a GeoNames username through `geonames_username` or `KERYKEION_GEONAMES_USERNAME`.
 
-- <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer">Getting Started</a>
-- <a href="https://www.kerykeion.net/content/examples/birth-data" target="_blank" rel="noopener noreferrer">Birth Data</a>
-- <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Astrological Subject Factory</a>
-- <a href="https://www.kerykeion.net/content/examples/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart Example</a>
+- <a href="https://www.kerykeion.net/python-library/docs/v6/" target="_blank" rel="noopener noreferrer">Getting Started</a>
+- <a href="https://www.kerykeion.net/content/examples/v6/birth-data" target="_blank" rel="noopener noreferrer">Birth Data</a>
+- <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Astrological Subject Factory</a>
+- <a href="https://www.kerykeion.net/content/examples/v6/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart Example</a>
 
 ## How Kerykeion is organized
 
@@ -218,132 +218,132 @@ The tables below list the calculation factories, configuration options, and outp
 
 | Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| Natal and event subjects | `AstrologicalSubjectFactory` | Planetary positions, houses, axes, lunar phase, configuration, and provenance for a local or UTC moment | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
-| Structured chart data | `ChartDataFactory` | Typed data for natal, synastry, transit, return, composite, and progression charts | <a href="https://www.kerykeion.net/content/docs/chart_data_factory" target="_blank" rel="noopener noreferrer">Chart Data</a> |
-| Natal charts | `ChartDataFactory.create_natal_chart_data` | Single-subject aspects, distributions, angularities, and stelliums | <a href="https://www.kerykeion.net/content/examples/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart</a> |
-| Synastry charts | `ChartDataFactory.create_synastry_chart_data` | Cross-chart aspects, reciprocal house placement, and compatibility scoring | <a href="https://www.kerykeion.net/content/examples/synastry-chart" target="_blank" rel="noopener noreferrer">Synastry</a> |
-| Transit charts | `ChartDataFactory.create_transit_chart_data` | Natal-to-transit aspects and projected house positions | <a href="https://www.kerykeion.net/content/examples/transit-chart" target="_blank" rel="noopener noreferrer">Transit Chart</a> |
-| Solar and Lunar return charts | `PlanetaryReturnFactory` | Exact return moments and single- or dual-wheel return subjects | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> · <a href="https://www.kerykeion.net/content/examples/dual-return-chart" target="_blank" rel="noopener noreferrer">Example</a> |
-| Heliocentric returns | `PlanetaryReturnFactory.next_heliocentric_return` | Returns of a planet to its natal heliocentric longitude | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
-| Lunar-node crossings | `PlanetaryReturnFactory.next_lunar_node_crossing` | Exact moments when the Moon crosses its orbital node | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
-| Midpoint composite charts | `CompositeSubjectFactory.get_midpoint_composite_subject_model` | Circular midpoint positions with explicit house-frame metadata | <a href="https://www.kerykeion.net/content/docs/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subjects</a> · <a href="https://www.kerykeion.net/content/examples/composite-chart" target="_blank" rel="noopener noreferrer">Example</a> |
-| Davison charts | `CompositeSubjectFactory.get_davison_composite_subject_model` | The time-space midpoint recast as a real chart | <a href="https://www.kerykeion.net/content/docs/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subjects</a> |
-| Relocated charts | `RelocatedChartFactory` | Natal planetary positions with houses, axes, sect, Vertex, and Lots recalculated for another location | <a href="https://www.kerykeion.net/content/docs/relocated_chart_factory" target="_blank" rel="noopener noreferrer">Relocated Charts</a> |
-| Secondary-progressed charts | `SecondaryProgressionFactory` | Day-for-a-year progressed subjects and progressed-to-natal contacts | <a href="https://www.kerykeion.net/content/docs/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a> |
-| Solar-arc-directed charts | `SolarArcFactory` | A uniform progressed-Sun arc applied to natal points and angles | <a href="https://www.kerykeion.net/content/docs/solar_arc_factory" target="_blank" rel="noopener noreferrer">Solar Arc</a> |
+| Natal and event subjects | `AstrologicalSubjectFactory` | Planetary positions, houses, axes, lunar phase, configuration, and provenance for a local or UTC moment | <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Structured chart data | `ChartDataFactory` | Typed data for natal, synastry, transit, return, composite, and progression charts | <a href="https://www.kerykeion.net/python-library/docs/v6/chart_data_factory" target="_blank" rel="noopener noreferrer">Chart Data</a> |
+| Natal charts | `ChartDataFactory.create_natal_chart_data` | Single-subject aspects, distributions, angularities, and stelliums | <a href="https://www.kerykeion.net/content/examples/v6/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart</a> |
+| Synastry charts | `ChartDataFactory.create_synastry_chart_data` | Cross-chart aspects, reciprocal house placement, and compatibility scoring | <a href="https://www.kerykeion.net/content/examples/v6/synastry-chart" target="_blank" rel="noopener noreferrer">Synastry</a> |
+| Transit charts | `ChartDataFactory.create_transit_chart_data` | Natal-to-transit aspects and projected house positions | <a href="https://www.kerykeion.net/content/examples/v6/transit-chart" target="_blank" rel="noopener noreferrer">Transit Chart</a> |
+| Solar and Lunar return charts | `PlanetaryReturnFactory` | Exact return moments and single- or dual-wheel return subjects | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> · <a href="https://www.kerykeion.net/content/examples/v6/dual-return-chart" target="_blank" rel="noopener noreferrer">Example</a> |
+| Heliocentric returns | `PlanetaryReturnFactory.next_heliocentric_return` | Returns of a planet to its natal heliocentric longitude | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
+| Lunar-node crossings | `PlanetaryReturnFactory.next_lunar_node_crossing` | Exact moments when the Moon crosses its orbital node | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
+| Midpoint composite charts | `CompositeSubjectFactory.get_midpoint_composite_subject_model` | Circular midpoint positions with explicit house-frame metadata | <a href="https://www.kerykeion.net/python-library/docs/v6/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subjects</a> · <a href="https://www.kerykeion.net/content/examples/v6/composite-chart" target="_blank" rel="noopener noreferrer">Example</a> |
+| Davison charts | `CompositeSubjectFactory.get_davison_composite_subject_model` | The time-space midpoint recast as a real chart | <a href="https://www.kerykeion.net/python-library/docs/v6/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subjects</a> |
+| Relocated charts | `RelocatedChartFactory` | Natal planetary positions with houses, axes, sect, Vertex, and Lots recalculated for another location | <a href="https://www.kerykeion.net/python-library/docs/v6/relocated_chart_factory" target="_blank" rel="noopener noreferrer">Relocated Charts</a> |
+| Secondary-progressed charts | `SecondaryProgressionFactory` | Day-for-a-year progressed subjects and progressed-to-natal contacts | <a href="https://www.kerykeion.net/python-library/docs/v6/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a> |
+| Solar-arc-directed charts | `SolarArcFactory` | A uniform progressed-Sun arc applied to natal points and angles | <a href="https://www.kerykeion.net/python-library/docs/v6/solar_arc_factory" target="_blank" rel="noopener noreferrer">Solar Arc</a> |
 
 ### Zodiacs, houses, perspectives, and points
 
 | Feature | Configuration/API | Description | Documentation |
 |---|---|---|---|
-| Tropical zodiac | `zodiac_type="Tropical"` | Default zodiac frame | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
-| Sidereal zodiac | `zodiac_type="Sidereal"`, `sidereal_mode` | 47 named modes plus the custom `USER` mode | <a href="https://www.kerykeion.net/content/examples/sidereal-modes" target="_blank" rel="noopener noreferrer">Sidereal Modes</a> |
-| Custom ayanamsa | `sidereal_mode="USER"`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0` | User-defined reference epoch and offset | <a href="https://www.kerykeion.net/content/docs/schemas#siderealmode" target="_blank" rel="noopener noreferrer">Schemas</a> |
-| Fixed reference frames | J2000, J1900, B1950, and related modes | Backend-supported sidereal reference-frame choices | <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
-| House systems | `houses_system_identifier` | Placidus by default and all systems supported by the active backend | <a href="https://www.kerykeion.net/content/examples/houses-systems" target="_blank" rel="noopener noreferrer">House Systems</a> |
-| Polar house handling | `polar_house_fallbacks`, `coincident_house_cusps` | Machine-readable substitutions and zero-width cusp groups | <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">FAQ</a> |
-| Apparent and true geocentric | `perspective_type` | Standard apparent positions or true geometric positions | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
-| Topocentric | `perspective_type="Topocentric"`, `altitude` | Observer-parallax positions at a specific location and elevation | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
-| Heliocentric and barycentric | `perspective_type` | Sun-centered or Solar System barycenter positions | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
-| Planetocentric perspectives | Selenocentric through Saturncentric | Positions observed from another supported planet | <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
-| Configurable point set | `active_points` | Compute only the planets, axes, nodes, Lots, and optional bodies required by the application | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Lunar nodes | True/Mean North and South nodes | Rahu/Ketu pairs with exact derived opposites | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Lilith, Priapus, and White Moon | Mean/True/Interpolated variants | Lunar apogee/perigee families and native Selena support where available | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Arabic Parts / Lots | Fortune, Spirit, Eros, and Faith | Sect-aware points with prerequisites calculated automatically | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Asteroids and centaurs | Chiron, Ceres, Pallas, Juno, Vesta, Pholus | Optional minor-body positions | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Trans-Neptunian objects | Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar | Optional TNO positions with source/coverage metadata | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Uranian / Hamburg points | Cupido through Poseidon | Eight hypothetical points from runtime analytical models | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Fixed stars | `active_fixed_stars`, `subject.fixed_stars` | Opt-in catalog stars with longitude, latitude, speed, declination, and magnitude | <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
-| Dynamic star discovery | `FixedStarDiscoveryFactory` | Search the catalog and find prominent stars near subject positions | <a href="https://www.kerykeion.net/content/docs/fixed_star_discovery_factory" target="_blank" rel="noopener noreferrer">Fixed Star Discovery</a> |
-| Online location resolution | GeoNames integration | Cached city, coordinate, and timezone lookup | <a href="https://www.kerykeion.net/content/docs/fetch_geonames" target="_blank" rel="noopener noreferrer">GeoNames</a> |
+| Tropical zodiac | `zodiac_type="Tropical"` | Default zodiac frame | <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Sidereal zodiac | `zodiac_type="Sidereal"`, `sidereal_mode` | 47 named modes plus the custom `USER` mode | <a href="https://www.kerykeion.net/content/examples/v6/sidereal-modes" target="_blank" rel="noopener noreferrer">Sidereal Modes</a> |
+| Custom ayanamsa | `sidereal_mode="USER"`, `custom_ayanamsa_t0`, `custom_ayanamsa_ayan_t0` | User-defined reference epoch and offset | <a href="https://www.kerykeion.net/python-library/docs/v6/schemas#siderealmode" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Fixed reference frames | J2000, J1900, B1950, and related modes | Backend-supported sidereal reference-frame choices | <a href="https://www.kerykeion.net/python-library/docs/v6/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
+| House systems | `houses_system_identifier` | Placidus by default and all systems supported by the active backend | <a href="https://www.kerykeion.net/content/examples/v6/houses-systems" target="_blank" rel="noopener noreferrer">House Systems</a> |
+| Polar house handling | `polar_house_fallbacks`, `coincident_house_cusps` | Machine-readable substitutions and zero-width cusp groups | <a href="https://www.kerykeion.net/python-library/docs/v6/faq" target="_blank" rel="noopener noreferrer">FAQ</a> |
+| Apparent and true geocentric | `perspective_type` | Standard apparent positions or true geometric positions | <a href="https://www.kerykeion.net/content/examples/v6/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Topocentric | `perspective_type="Topocentric"`, `altitude` | Observer-parallax positions at a specific location and elevation | <a href="https://www.kerykeion.net/content/examples/v6/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Heliocentric and barycentric | `perspective_type` | Sun-centered or Solar System barycenter positions | <a href="https://www.kerykeion.net/content/examples/v6/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Planetocentric perspectives | Selenocentric through Saturncentric | Positions observed from another supported planet | <a href="https://www.kerykeion.net/content/examples/v6/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a> |
+| Configurable point set | `active_points` | Compute only the planets, axes, nodes, Lots, and optional bodies required by the application | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Lunar nodes | True/Mean North and South nodes | Rahu/Ketu pairs with exact derived opposites | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Lilith, Priapus, and White Moon | Mean/True/Interpolated variants | Lunar apogee/perigee families and native Selena support where available | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Arabic Parts / Lots | Fortune, Spirit, Eros, and Faith | Sect-aware points with prerequisites calculated automatically | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Asteroids and centaurs | Chiron, Ceres, Pallas, Juno, Vesta, Pholus | Optional minor-body positions | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Trans-Neptunian objects | Eris, Sedna, Haumea, Makemake, Ixion, Orcus, Quaoar | Optional TNO positions with source/coverage metadata | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Uranian / Hamburg points | Cupido through Poseidon | Eight hypothetical points from runtime analytical models | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Fixed stars | `active_fixed_stars`, `subject.fixed_stars` | Opt-in catalog stars with longitude, latitude, speed, declination, and magnitude | <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> |
+| Dynamic star discovery | `FixedStarDiscoveryFactory` | Search the catalog and find prominent stars near subject positions | <a href="https://www.kerykeion.net/python-library/docs/v6/fixed_star_discovery_factory" target="_blank" rel="noopener noreferrer">Fixed Star Discovery</a> |
+| Online location resolution | GeoNames integration | Cached city, coordinate, and timezone lookup | <a href="https://www.kerykeion.net/python-library/docs/v6/fetch_geonames" target="_blank" rel="noopener noreferrer">GeoNames</a> |
 
 ### Aspects and chart analysis
 
 | Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| Single- and dual-chart aspects | `AspectsFactory` | Longitudinal aspects within one chart or between two charts | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
-| Declination aspects | `single_chart_declination_aspects`, `dual_chart_declination_aspects` | Parallels and contra-parallels | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
-| Applying/separating motion | `AspectModel.aspect_movement` | Aspect movement derived from relative speed | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
-| Custom orbs | `active_aspects`, `point_orb_adjustments` | Per-aspect, per-point, and aspect-specific orb policies | <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
-| House comparison | `HouseComparisonFactory` | Reciprocal placement of each subject's points in the other's houses | <a href="https://www.kerykeion.net/content/docs/house_comparison" target="_blank" rel="noopener noreferrer">House Comparison</a> · <a href="https://www.kerykeion.net/content/examples/house-comparison" target="_blank" rel="noopener noreferrer">Example</a> |
-| Relationship score | `RelationshipScoreFactory` | Ciro Discepolo compatibility score with contributing aspects | <a href="https://www.kerykeion.net/content/docs/relationship_score_factory" target="_blank" rel="noopener noreferrer">Relationship Score</a> · <a href="https://www.kerykeion.net/content/examples/relationship-score" target="_blank" rel="noopener noreferrer">Example</a> |
-| Element and quality distributions | `ChartDataFactory` | Pure count or configurable weighted analysis | <a href="https://www.kerykeion.net/content/docs/element_quality_distribution" target="_blank" rel="noopener noreferrer">Element and Quality</a> |
-| Angularities and stelliums | `ChartDataModel.angularities`, `.stelliums` | Planets near axes and concentrations by house | <a href="https://www.kerykeion.net/content/docs/chart_data_factory" target="_blank" rel="noopener noreferrer">Chart Data</a> |
-| Essential dignities | `calculate_dignities=True` | Domicile, exaltation, detriment, fall, triplicity, terms, and scores | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
-| Vedic nakshatras | `calculate_nakshatra=True` | Nakshatra, pada, and Vimshottari lord with an explicit ayanamsa | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
-| Motion state | point `speed`, `retrograde`, `motion_state` | Fast, average, slow, retrograde, and named station states | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
-| Declination and out-of-bounds | point `declination`, `is_out_of_bounds` | OOB detection against the epoch's true obliquity | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
-| Gauquelin sectors | `calculate_gauquelin=True` | 36-sector cusps and per-point sector values | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
-| Local Space | `calculate_local_space=True` | Azimuth and altitude above the observer's horizon | <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
-| Nutation and obliquity | `calculate_nutation=True` | True/mean obliquity and nutation components | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
-| Midpoint analysis | `MidpointFactory` | Pairwise midpoints, 90° dial positions, and third-point activations | <a href="https://www.kerykeion.net/content/docs/midpoint_factory" target="_blank" rel="noopener noreferrer">Midpoints</a> |
-| Chart dominants | `DominantsFactory` | Modern, Almuten Figuris, elemental, or custom `DominantStrategy` scoring | <a href="https://www.kerykeion.net/content/docs/dominants_factory" target="_blank" rel="noopener noreferrer">Dominants</a> |
+| Single- and dual-chart aspects | `AspectsFactory` | Longitudinal aspects within one chart or between two charts | <a href="https://www.kerykeion.net/python-library/docs/v6/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| Declination aspects | `single_chart_declination_aspects`, `dual_chart_declination_aspects` | Parallels and contra-parallels | <a href="https://www.kerykeion.net/python-library/docs/v6/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| Applying/separating motion | `AspectModel.aspect_movement` | Aspect movement derived from relative speed | <a href="https://www.kerykeion.net/python-library/docs/v6/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| Custom orbs | `active_aspects`, `point_orb_adjustments` | Per-aspect, per-point, and aspect-specific orb policies | <a href="https://www.kerykeion.net/python-library/docs/v6/aspects" target="_blank" rel="noopener noreferrer">Aspects</a> |
+| House comparison | `HouseComparisonFactory` | Reciprocal placement of each subject's points in the other's houses | <a href="https://www.kerykeion.net/python-library/docs/v6/house_comparison" target="_blank" rel="noopener noreferrer">House Comparison</a> · <a href="https://www.kerykeion.net/content/examples/v6/house-comparison" target="_blank" rel="noopener noreferrer">Example</a> |
+| Relationship score | `RelationshipScoreFactory` | Ciro Discepolo compatibility score with contributing aspects | <a href="https://www.kerykeion.net/python-library/docs/v6/relationship_score_factory" target="_blank" rel="noopener noreferrer">Relationship Score</a> · <a href="https://www.kerykeion.net/content/examples/v6/relationship-score" target="_blank" rel="noopener noreferrer">Example</a> |
+| Element and quality distributions | `ChartDataFactory` | Pure count or configurable weighted analysis | <a href="https://www.kerykeion.net/python-library/docs/v6/element_quality_distribution" target="_blank" rel="noopener noreferrer">Element and Quality</a> |
+| Angularities and stelliums | `ChartDataModel.angularities`, `.stelliums` | Planets near axes and concentrations by house | <a href="https://www.kerykeion.net/python-library/docs/v6/chart_data_factory" target="_blank" rel="noopener noreferrer">Chart Data</a> |
+| Essential dignities | `calculate_dignities=True` | Domicile, exaltation, detriment, fall, triplicity, terms, and scores | <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Vedic nakshatras | `calculate_nakshatra=True` | Nakshatra, pada, and Vimshottari lord with an explicit ayanamsa | <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Motion state | point `speed`, `retrograde`, `motion_state` | Fast, average, slow, retrograde, and named station states | <a href="https://www.kerykeion.net/python-library/docs/v6/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Declination and out-of-bounds | point `declination`, `is_out_of_bounds` | OOB detection against the epoch's true obliquity | <a href="https://www.kerykeion.net/python-library/docs/v6/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Gauquelin sectors | `calculate_gauquelin=True` | 36-sector cusps and per-point sector values | <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Local Space | `calculate_local_space=True` | Azimuth and altitude above the observer's horizon | <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Subject Factory</a> |
+| Nutation and obliquity | `calculate_nutation=True` | True/mean obliquity and nutation components | <a href="https://www.kerykeion.net/python-library/docs/v6/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Midpoint analysis | `MidpointFactory` | Pairwise midpoints, 90° dial positions, and third-point activations | <a href="https://www.kerykeion.net/python-library/docs/v6/midpoint_factory" target="_blank" rel="noopener noreferrer">Midpoints</a> |
+| Chart dominants | `DominantsFactory` | Modern, Almuten Figuris, elemental, or custom `DominantStrategy` scoring | <a href="https://www.kerykeion.net/python-library/docs/v6/dominants_factory" target="_blank" rel="noopener noreferrer">Dominants</a> |
 
 ### Predictive and locational techniques
 
 | Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| Ephemeris time series | `EphemerisDataFactory` | Daily, hourly, or minutely samples as dictionaries, models, or full subjects | <a href="https://www.kerykeion.net/content/docs/ephemeris_data_factory" target="_blank" rel="noopener noreferrer">Ephemeris Data</a> · <a href="https://www.kerykeion.net/content/examples/ephemeris-data" target="_blank" rel="noopener noreferrer">Example</a> |
-| Transit snapshots | `TransitsTimeRangeFactory.get_transit_moments` | Aspects at every supplied ephemeris sample, optionally including the full subject | <a href="https://www.kerykeion.net/content/docs/transits_time_range_factory" target="_blank" rel="noopener noreferrer">Transit Ranges</a> |
-| Transit events | `TransitsTimeRangeFactory.get_transit_events` | Applying/exact/separating runs, retrograde multi-passes, and optional exact-moment refinement | <a href="https://www.kerykeion.net/content/docs/transits_time_range_factory" target="_blank" rel="noopener noreferrer">Transit Ranges</a> · <a href="https://www.kerykeion.net/content/examples/transits-time-range" target="_blank" rel="noopener noreferrer">Example</a> |
-| Solar and Lunar returns | `PlanetaryReturnFactory` | Exact return searches in the natal zodiac/perspective, cast for the requested return location | <a href="https://www.kerykeion.net/content/docs/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
-| Secondary progressions | `SecondaryProgressionFactory` | Day-for-a-year subjects and contacts | <a href="https://www.kerykeion.net/content/docs/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a> |
-| Solar arc | `SolarArcFactory` | Directed points and directed-to-natal aspects | <a href="https://www.kerykeion.net/content/docs/solar_arc_factory" target="_blank" rel="noopener noreferrer">Solar Arc</a> |
-| Primary directions | `PrimaryDirectionsFactory` | Placidus semi-arc directions with Ptolemy and Naibod rate keys | <a href="https://www.kerykeion.net/content/docs/primary_directions_factory" target="_blank" rel="noopener noreferrer">Primary Directions</a> |
-| Astrocartography | `AstroCartographyFactory` | MC, IC, ASC, and DSC lines represented as world-coordinate sequences | <a href="https://www.kerykeion.net/content/docs/astro_cartography_factory" target="_blank" rel="noopener noreferrer">Astrocartography</a> |
-| Relocation | `RelocatedChartFactory` | House and angle changes for a destination while natal planetary longitudes stay fixed | <a href="https://www.kerykeion.net/content/docs/relocated_chart_factory" target="_blank" rel="noopener noreferrer">Relocated Charts</a> |
+| Ephemeris time series | `EphemerisDataFactory` | Daily, hourly, or minutely samples as dictionaries, models, or full subjects | <a href="https://www.kerykeion.net/python-library/docs/v6/ephemeris_data_factory" target="_blank" rel="noopener noreferrer">Ephemeris Data</a> · <a href="https://www.kerykeion.net/content/examples/v6/ephemeris-data" target="_blank" rel="noopener noreferrer">Example</a> |
+| Transit snapshots | `TransitsTimeRangeFactory.get_transit_moments` | Aspects at every supplied ephemeris sample, optionally including the full subject | <a href="https://www.kerykeion.net/python-library/docs/v6/transits_time_range_factory" target="_blank" rel="noopener noreferrer">Transit Ranges</a> |
+| Transit events | `TransitsTimeRangeFactory.get_transit_events` | Applying/exact/separating runs, retrograde multi-passes, and optional exact-moment refinement | <a href="https://www.kerykeion.net/python-library/docs/v6/transits_time_range_factory" target="_blank" rel="noopener noreferrer">Transit Ranges</a> · <a href="https://www.kerykeion.net/content/examples/v6/transits-time-range" target="_blank" rel="noopener noreferrer">Example</a> |
+| Solar and Lunar returns | `PlanetaryReturnFactory` | Exact return searches in the natal zodiac/perspective, cast for the requested return location | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_return_factory" target="_blank" rel="noopener noreferrer">Planetary Returns</a> |
+| Secondary progressions | `SecondaryProgressionFactory` | Day-for-a-year subjects and contacts | <a href="https://www.kerykeion.net/python-library/docs/v6/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a> |
+| Solar arc | `SolarArcFactory` | Directed points and directed-to-natal aspects | <a href="https://www.kerykeion.net/python-library/docs/v6/solar_arc_factory" target="_blank" rel="noopener noreferrer">Solar Arc</a> |
+| Primary directions | `PrimaryDirectionsFactory` | Placidus semi-arc directions with Ptolemy and Naibod rate keys | <a href="https://www.kerykeion.net/python-library/docs/v6/primary_directions_factory" target="_blank" rel="noopener noreferrer">Primary Directions</a> |
+| Astrocartography | `AstroCartographyFactory` | MC, IC, ASC, and DSC lines represented as world-coordinate sequences | <a href="https://www.kerykeion.net/python-library/docs/v6/astro_cartography_factory" target="_blank" rel="noopener noreferrer">Astrocartography</a> |
+| Relocation | `RelocatedChartFactory` | House and angle changes for a destination while natal planetary longitudes stay fixed | <a href="https://www.kerykeion.net/python-library/docs/v6/relocated_chart_factory" target="_blank" rel="noopener noreferrer">Relocated Charts</a> |
 
-Secondary-progressed houses follow the **Q2 / daily houses** convention: they are the real angles at the progressed ephemeris instant, not solar-arc-directed angles. Planetary progressions are unaffected by this choice. See <a href="https://www.kerykeion.net/content/docs/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a>.
+Secondary-progressed houses follow the **Q2 / daily houses** convention: they are the real angles at the progressed ephemeris instant, not solar-arc-directed angles. Planetary progressions are unaffected by this choice. See <a href="https://www.kerykeion.net/python-library/docs/v6/secondary_progressions_factory" target="_blank" rel="noopener noreferrer">Secondary Progressions</a>.
 
 ### Sky events and time calculations
 
 | Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| Detailed Moon phase | `MoonPhaseDetailsFactory` | Illumination, phase windows, rise/set, Sun data, upcoming phases, and eclipse context | <a href="https://www.kerykeion.net/content/docs/moon_phase_details_factory" target="_blank" rel="noopener noreferrer">Moon Phase Details</a> · <a href="https://www.kerykeion.net/content/examples/moon-phase-details" target="_blank" rel="noopener noreferrer">Example</a> |
-| Exact lunations | `LunationFinderFactory` | New, first-quarter, full, and last-quarter moments across a range | <a href="https://www.kerykeion.net/content/docs/lunation_factory" target="_blank" rel="noopener noreferrer">Lunations</a> |
-| Sunrise, sunset, and twilight | `SunTimesFactory` | Upper-limb rise/set, solar noon, day length, twilight, and polar day/night | <a href="https://www.kerykeion.net/content/docs/sun_times_factory" target="_blank" rel="noopener noreferrer">Sun Times</a> |
-| Planetary hours | `PlanetaryHoursFactory` | Twelve unequal day and night hours with Chaldean rulers | <a href="https://www.kerykeion.net/content/docs/planetary_hours_factory" target="_blank" rel="noopener noreferrer">Planetary Hours</a> |
-| Void-of-course Moon | `VoidOfCourseMoonFactory` | Current void state and complete VoC windows before ingress | <a href="https://www.kerykeion.net/content/docs/void_of_course_moon_factory" target="_blank" rel="noopener noreferrer">Void of Course</a> |
-| Retrograde stations and periods | `RetrogradeStationFactory` | Exact SR/SD events and clipped retrograde spans | <a href="https://www.kerykeion.net/content/docs/retrograde_station_factory" target="_blank" rel="noopener noreferrer">Retrograde Stations</a> |
-| Sign ingresses and stays | `SignIngressFactory` | Exact ingress moments and contiguous sign periods | <a href="https://www.kerykeion.net/content/docs/sign_ingress_factory" target="_blank" rel="noopener noreferrer">Sign Ingresses</a> |
-| Mundane aspects | `MundaneAspectFactory` | Exact moving-body-to-moving-body aspects for aspectarians | <a href="https://www.kerykeion.net/content/docs/mundane_aspects_factory" target="_blank" rel="noopener noreferrer">Mundane Aspects</a> |
-| Solar and Lunar eclipses | `EclipseFactory` | Global and local eclipse searches with structured circumstances | <a href="https://www.kerykeion.net/content/docs/eclipse_factory" target="_blank" rel="noopener noreferrer">Eclipses</a> |
-| Planetary phenomena | `PlanetaryPhenomenaFactory` | Elongation, phase angle, magnitude, morning/evening status, and solar phase | <a href="https://www.kerykeion.net/content/docs/planetary_phenomena_factory" target="_blank" rel="noopener noreferrer">Planetary Phenomena</a> |
-| Planetary nodes and apsides | `PlanetaryNodesFactory` | Ascending/descending nodes and periapsis/apoapsis | <a href="https://www.kerykeion.net/content/docs/planetary_nodes_factory" target="_blank" rel="noopener noreferrer">Planetary Nodes</a> |
-| Heliacal events | `HeliacalFactory` | Heliacal risings and settings from observer and atmospheric inputs | <a href="https://www.kerykeion.net/content/docs/heliacal_factory" target="_blank" rel="noopener noreferrer">Heliacal Events</a> |
-| Lunar occultations | `OccultationFactory` | Global or local occultation searches for supported bodies | <a href="https://www.kerykeion.net/content/docs/occultation_factory" target="_blank" rel="noopener noreferrer">Occultations</a> |
+| Detailed Moon phase | `MoonPhaseDetailsFactory` | Illumination, phase windows, rise/set, Sun data, upcoming phases, and eclipse context | <a href="https://www.kerykeion.net/python-library/docs/v6/moon_phase_details_factory" target="_blank" rel="noopener noreferrer">Moon Phase Details</a> · <a href="https://www.kerykeion.net/content/examples/v6/moon-phase-details" target="_blank" rel="noopener noreferrer">Example</a> |
+| Exact lunations | `LunationFinderFactory` | New, first-quarter, full, and last-quarter moments across a range | <a href="https://www.kerykeion.net/python-library/docs/v6/lunation_factory" target="_blank" rel="noopener noreferrer">Lunations</a> |
+| Sunrise, sunset, and twilight | `SunTimesFactory` | Upper-limb rise/set, solar noon, day length, twilight, and polar day/night | <a href="https://www.kerykeion.net/python-library/docs/v6/sun_times_factory" target="_blank" rel="noopener noreferrer">Sun Times</a> |
+| Planetary hours | `PlanetaryHoursFactory` | Twelve unequal day and night hours with Chaldean rulers | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_hours_factory" target="_blank" rel="noopener noreferrer">Planetary Hours</a> |
+| Void-of-course Moon | `VoidOfCourseMoonFactory` | Current void state and complete VoC windows before ingress | <a href="https://www.kerykeion.net/python-library/docs/v6/void_of_course_moon_factory" target="_blank" rel="noopener noreferrer">Void of Course</a> |
+| Retrograde stations and periods | `RetrogradeStationFactory` | Exact SR/SD events and clipped retrograde spans | <a href="https://www.kerykeion.net/python-library/docs/v6/retrograde_station_factory" target="_blank" rel="noopener noreferrer">Retrograde Stations</a> |
+| Sign ingresses and stays | `SignIngressFactory` | Exact ingress moments and contiguous sign periods | <a href="https://www.kerykeion.net/python-library/docs/v6/sign_ingress_factory" target="_blank" rel="noopener noreferrer">Sign Ingresses</a> |
+| Mundane aspects | `MundaneAspectFactory` | Exact moving-body-to-moving-body aspects for aspectarians | <a href="https://www.kerykeion.net/python-library/docs/v6/mundane_aspects_factory" target="_blank" rel="noopener noreferrer">Mundane Aspects</a> |
+| Solar and Lunar eclipses | `EclipseFactory` | Global and local eclipse searches with structured circumstances | <a href="https://www.kerykeion.net/python-library/docs/v6/eclipse_factory" target="_blank" rel="noopener noreferrer">Eclipses</a> |
+| Planetary phenomena | `PlanetaryPhenomenaFactory` | Elongation, phase angle, magnitude, morning/evening status, and solar phase | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_phenomena_factory" target="_blank" rel="noopener noreferrer">Planetary Phenomena</a> |
+| Planetary nodes and apsides | `PlanetaryNodesFactory` | Ascending/descending nodes and periapsis/apoapsis | <a href="https://www.kerykeion.net/python-library/docs/v6/planetary_nodes_factory" target="_blank" rel="noopener noreferrer">Planetary Nodes</a> |
+| Heliacal events | `HeliacalFactory` | Heliacal risings and settings from observer and atmospheric inputs | <a href="https://www.kerykeion.net/python-library/docs/v6/heliacal_factory" target="_blank" rel="noopener noreferrer">Heliacal Events</a> |
+| Lunar occultations | `OccultationFactory` | Global or local occultation searches for supported bodies | <a href="https://www.kerykeion.net/python-library/docs/v6/occultation_factory" target="_blank" rel="noopener noreferrer">Occultations</a> |
 
-Sunrise and `subject.is_diurnal` intentionally answer different questions. Sunrise uses the apparent upper limb and standard refraction; diurnality uses the Sun's geometric center against the true horizon. See <a href="https://www.kerykeion.net/content/docs/sun_times_factory" target="_blank" rel="noopener noreferrer">Sun Times</a>.
+Sunrise and `subject.is_diurnal` intentionally answer different questions. Sunrise uses the apparent upper limb and standard refraction; diurnality uses the Sun's geometric center against the true horizon. See <a href="https://www.kerykeion.net/python-library/docs/v6/sun_times_factory" target="_blank" rel="noopener noreferrer">Sun Times</a>.
 
 ### Traditional techniques
 
 | Feature | Main API | Description | Documentation |
 |---|---|---|---|
-| Zodiacal releasing | `ZodiacalReleasingFactory` | L1–L4 aphesis periods from Fortune or Spirit, with loosing-of-the-bond and peak markers | <a href="https://www.kerykeion.net/content/docs/zodiacal_releasing_factory" target="_blank" rel="noopener noreferrer">Zodiacal Releasing</a> |
-| Annual profections | `ProfectionsFactory` | Activated house/sign, Lord of the Year, and age cycle | <a href="https://www.kerykeion.net/content/docs/profections_factory" target="_blank" rel="noopener noreferrer">Profections</a> |
-| Firdaria | `FirdariaFactory` | Sect-dependent Persian major and sub-period sequences | <a href="https://www.kerykeion.net/content/docs/firdaria_factory" target="_blank" rel="noopener noreferrer">Firdaria</a> |
-| Mutual receptions | `MutualReceptionsFactory` | Domicile and exaltation receptions among classical planets | <a href="https://www.kerykeion.net/content/docs/receptions_factory" target="_blank" rel="noopener noreferrer">Mutual Receptions</a> |
-| Horary indicators | `HoraryIndicatorsFactory` | Querent/quesited rulers, considerations before judgment, VoC state, and receptions | <a href="https://www.kerykeion.net/content/docs/horary_factory" target="_blank" rel="noopener noreferrer">Horary</a> |
+| Zodiacal releasing | `ZodiacalReleasingFactory` | L1–L4 aphesis periods from Fortune or Spirit, with loosing-of-the-bond and peak markers | <a href="https://www.kerykeion.net/python-library/docs/v6/zodiacal_releasing_factory" target="_blank" rel="noopener noreferrer">Zodiacal Releasing</a> |
+| Annual profections | `ProfectionsFactory` | Activated house/sign, Lord of the Year, and age cycle | <a href="https://www.kerykeion.net/python-library/docs/v6/profections_factory" target="_blank" rel="noopener noreferrer">Profections</a> |
+| Firdaria | `FirdariaFactory` | Sect-dependent Persian major and sub-period sequences | <a href="https://www.kerykeion.net/python-library/docs/v6/firdaria_factory" target="_blank" rel="noopener noreferrer">Firdaria</a> |
+| Mutual receptions | `MutualReceptionsFactory` | Domicile and exaltation receptions among classical planets | <a href="https://www.kerykeion.net/python-library/docs/v6/receptions_factory" target="_blank" rel="noopener noreferrer">Mutual Receptions</a> |
+| Horary indicators | `HoraryIndicatorsFactory` | Querent/quesited rulers, considerations before judgment, VoC state, and receptions | <a href="https://www.kerykeion.net/python-library/docs/v6/horary_factory" target="_blank" rel="noopener noreferrer">Horary</a> |
 
 ### Rendering, data, reports, and AI
 
 | Feature | Main API/configuration | Description | Documentation |
 |---|---|---|---|
-| SVG rendering | `ChartDrawer` | Natal, synastry, transit, return, composite, and progression charts | <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a> |
-| Modern and classic styles | `style="modern"` / `"classic"` | Concentric modern layout or traditional classic wheel | <a href="https://www.kerykeion.net/content/examples/modern-charts" target="_blank" rel="noopener noreferrer">Modern Charts</a> |
-| Themes | `theme` | Classic/light, dark, black-and-white, or unthemed CSS variables | <a href="https://www.kerykeion.net/content/examples/theming" target="_blank" rel="noopener noreferrer">Theming</a> |
-| Ten chart languages | `chart_language`, `language_pack` | EN, FR, PT, ES, TR, RU, IT, CN, DE, HI, plus custom labels | <a href="https://www.kerykeion.net/content/examples/chart-language" target="_blank" rel="noopener noreferrer">Chart Language</a> |
-| Glyph sizing and spreading | `glyph_size`, automatic decluttering | Small, medium, or large clusters with collision-aware placement | <a href="https://www.kerykeion.net/content/examples/glyph-sizes" target="_blank" rel="noopener noreferrer">Glyph Sizes</a> · <a href="https://www.kerykeion.net/content/docs/chart-glyphs" target="_blank" rel="noopener noreferrer">Glyph Reference</a> |
-| Optional visual marks | `show_motion_state`, `show_out_of_bounds`, `show_aspect_movement`, `show_relationship_score`, `show_ayanamsa_value`, `show_polar_fallback_note` | Opt-in facts already carried by chart data | <a href="https://www.kerykeion.net/content/examples/chart-marks" target="_blank" rel="noopener noreferrer">Chart Marks</a> |
-| Minimal SVG outputs | wheel-only and grid-only methods | Reusable wheel or aspect table without the full chart page | <a href="https://www.kerykeion.net/content/examples/minimalist-charts-and-aspect-table" target="_blank" rel="noopener noreferrer">Minimalist Charts</a> |
-| External natal view | `external_view=True`, classic style | Classic natal wheel with planets outside the zodiac ring | <a href="https://www.kerykeion.net/content/examples/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart</a> |
-| SVG portability controls | `minify`, `remove_css_variables`, `transparent_background`, `auto_size`, `custom_title` | Compact, standalone, embeddable, and custom-sized output | <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a> |
-| Machine-readable SVG metadata | `kr:` attributes | Stable point, owner, house, projected-house, and ring identifiers | <a href="https://www.kerykeion.net/content/docs/chart_internals" target="_blank" rel="noopener noreferrer">Chart Internals</a> |
-| Pydantic and JSON | `.model_dump()`, `.model_dump_json()` | Typed validation and structured serialization | <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
-| Text reports | `ReportGenerator` | Reports for subjects, chart data, Moon context, and traditional techniques | <a href="https://www.kerykeion.net/content/docs/report" target="_blank" rel="noopener noreferrer">Reports</a> · <a href="https://www.kerykeion.net/content/examples/report" target="_blank" rel="noopener noreferrer">Example</a> |
-| LLM context | `to_context` | Escaped, non-qualitative XML for prompts and agents | <a href="https://www.kerykeion.net/content/docs/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a> |
+| SVG rendering | `ChartDrawer` | Natal, synastry, transit, return, composite, and progression charts | <a href="https://www.kerykeion.net/python-library/docs/v6/charts" target="_blank" rel="noopener noreferrer">Charts</a> |
+| Modern and classic styles | `style="modern"` / `"classic"` | Concentric modern layout or traditional classic wheel | <a href="https://www.kerykeion.net/content/examples/v6/modern-charts" target="_blank" rel="noopener noreferrer">Modern Charts</a> |
+| Themes | `theme` | Classic/light, dark, black-and-white, or unthemed CSS variables | <a href="https://www.kerykeion.net/content/examples/v6/theming" target="_blank" rel="noopener noreferrer">Theming</a> |
+| Ten chart languages | `chart_language`, `language_pack` | EN, FR, PT, ES, TR, RU, IT, CN, DE, HI, plus custom labels | <a href="https://www.kerykeion.net/content/examples/v6/chart-language" target="_blank" rel="noopener noreferrer">Chart Language</a> |
+| Glyph sizing and spreading | `glyph_size`, automatic decluttering | Small, medium, or large clusters with collision-aware placement | <a href="https://www.kerykeion.net/content/examples/v6/glyph-sizes" target="_blank" rel="noopener noreferrer">Glyph Sizes</a> · <a href="https://www.kerykeion.net/python-library/docs/v6/chart-glyphs" target="_blank" rel="noopener noreferrer">Glyph Reference</a> |
+| Optional visual marks | `show_motion_state`, `show_out_of_bounds`, `show_aspect_movement`, `show_relationship_score`, `show_ayanamsa_value`, `show_polar_fallback_note` | Opt-in facts already carried by chart data | <a href="https://www.kerykeion.net/content/examples/v6/chart-marks" target="_blank" rel="noopener noreferrer">Chart Marks</a> |
+| Minimal SVG outputs | wheel-only and grid-only methods | Reusable wheel or aspect table without the full chart page | <a href="https://www.kerykeion.net/content/examples/v6/minimalist-charts-and-aspect-table" target="_blank" rel="noopener noreferrer">Minimalist Charts</a> |
+| External natal view | `external_view=True`, classic style | Classic natal wheel with planets outside the zodiac ring | <a href="https://www.kerykeion.net/content/examples/v6/birth-chart" target="_blank" rel="noopener noreferrer">Birth Chart</a> |
+| SVG portability controls | `minify`, `remove_css_variables`, `transparent_background`, `auto_size`, `custom_title` | Compact, standalone, embeddable, and custom-sized output | <a href="https://www.kerykeion.net/python-library/docs/v6/charts" target="_blank" rel="noopener noreferrer">Charts</a> |
+| Machine-readable SVG metadata | `kr:` attributes | Stable point, owner, house, projected-house, and ring identifiers | <a href="https://www.kerykeion.net/python-library/docs/v6/chart_internals" target="_blank" rel="noopener noreferrer">Chart Internals</a> |
+| Pydantic and JSON | `.model_dump()`, `.model_dump_json()` | Typed validation and structured serialization | <a href="https://www.kerykeion.net/python-library/docs/v6/schemas" target="_blank" rel="noopener noreferrer">Schemas</a> |
+| Text reports | `ReportGenerator` | Reports for subjects, chart data, Moon context, and traditional techniques | <a href="https://www.kerykeion.net/python-library/docs/v6/report" target="_blank" rel="noopener noreferrer">Reports</a> · <a href="https://www.kerykeion.net/content/examples/v6/report" target="_blank" rel="noopener noreferrer">Example</a> |
+| LLM context | `to_context` | Escaped, non-qualitative XML for prompts and agents | <a href="https://www.kerykeion.net/python-library/docs/v6/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a> |
 | AI Agent Skill | `skills/kerykeion`, `kerykeion/llms.txt` | API-grounded instructions for coding agents | [AI Agent Skill](#ai-agent-skill) |
-| Selectable backend | `BACKEND_NAME`, environment variables | Default libephemeris or optional Swiss Ephemeris | <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
+| Selectable backend | `BACKEND_NAME`, environment variables | Default libephemeris or optional Swiss Ephemeris | <a href="https://www.kerykeion.net/python-library/docs/v6/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a> |
 
 ## Core workflows
 
@@ -394,7 +394,7 @@ natal_drawer.save_svg(
 )
 ```
 
-Use `generate_svg_string()` when the SVG should stay in memory. Wheel-only and aspect-grid-only methods are available for custom layouts. See <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a>.
+Use `generate_svg_string()` when the SVG should stay in memory. Wheel-only and aspect-grid-only methods are available for custom layouts. See <a href="https://www.kerykeion.net/python-library/docs/v6/charts" target="_blank" rel="noopener noreferrer">Charts</a>.
 
 ### Synastry and transits
 
@@ -465,7 +465,7 @@ print(midpoint_composite.house_frame)
 print(davison_composite.sun.abs_pos)
 ```
 
-The midpoint composite is a symbolic midpoint model. The Davison result is a real ephemeris chart cast at the pair's midpoint time and place. See <a href="https://www.kerykeion.net/content/docs/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subject Factory</a>.
+The midpoint composite is a symbolic midpoint model. The Davison result is a real ephemeris chart cast at the pair's midpoint time and place. See <a href="https://www.kerykeion.net/python-library/docs/v6/composite_subject_factory" target="_blank" rel="noopener noreferrer">Composite Subject Factory</a>.
 
 ### Aspects and chart analysis
 
@@ -489,7 +489,7 @@ print(analysis.angularities[:2])
 print(analysis.stelliums)
 ```
 
-Use `single_chart_declination_aspects()` or `dual_chart_declination_aspects()` for parallels and contra-parallels. See <a href="https://www.kerykeion.net/content/docs/aspects" target="_blank" rel="noopener noreferrer">Aspects</a>.
+Use `single_chart_declination_aspects()` or `dual_chart_declination_aspects()` for parallels and contra-parallels. See <a href="https://www.kerykeion.net/python-library/docs/v6/aspects" target="_blank" rel="noopener noreferrer">Aspects</a>.
 
 ### Reports and AI context
 
@@ -503,7 +503,7 @@ print(report[:500])
 print(xml_context[:500])
 ```
 
-`ReportGenerator` creates human-readable text. `to_context()` creates neutral XML intended as factual input to an LLM; it does not generate an astrological interpretation. See <a href="https://www.kerykeion.net/content/docs/report" target="_blank" rel="noopener noreferrer">Reports</a> and <a href="https://www.kerykeion.net/content/docs/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a>.
+`ReportGenerator` creates human-readable text. `to_context()` creates neutral XML intended as factual input to an LLM; it does not generate an astrological interpretation. See <a href="https://www.kerykeion.net/python-library/docs/v6/report" target="_blank" rel="noopener noreferrer">Reports</a> and <a href="https://www.kerykeion.net/python-library/docs/v6/context_serializer" target="_blank" rel="noopener noreferrer">Context Serializer</a>.
 
 ## Calculation configuration
 
@@ -545,7 +545,7 @@ assert node_subject.mean_south_lunar_node is not None
 assert set(requested_nodes) <= set(node_data.active_points)
 ```
 
-Presets for core, all, Uranian, and other point groups are documented in <a href="https://www.kerykeion.net/content/docs/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> and <a href="https://www.kerykeion.net/content/examples/active-points" target="_blank" rel="noopener noreferrer">Active Points Examples</a>.
+Presets for core, all, Uranian, and other point groups are documented in <a href="https://www.kerykeion.net/python-library/docs/v6/active_points" target="_blank" rel="noopener noreferrer">Active Points</a> and <a href="https://www.kerykeion.net/content/examples/v6/active-points" target="_blank" rel="noopener noreferrer">Active Points Examples</a>.
 
 ### Fixed stars
 
@@ -575,7 +575,7 @@ print(sirius.abs_pos, sirius.declination, sirius.magnitude)
 star_chart_data = ChartDataFactory.create_natal_chart_data(star_subject)
 ```
 
-Requested stars participate automatically in chart rendering and aspects. Discover catalog names through `FixedStarCatalog` or `FixedStarDiscoveryFactory`. See <a href="https://www.kerykeion.net/content/docs/fixed_star_discovery_factory" target="_blank" rel="noopener noreferrer">Fixed Star Discovery</a>.
+Requested stars participate automatically in chart rendering and aspects. Discover catalog names through `FixedStarCatalog` or `FixedStarDiscoveryFactory`. See <a href="https://www.kerykeion.net/python-library/docs/v6/fixed_star_discovery_factory" target="_blank" rel="noopener noreferrer">Fixed Star Discovery</a>.
 
 ### Sidereal modes and custom ayanamsa
 
@@ -601,11 +601,11 @@ print(sidereal_subject.ayanamsa_value)
 
 For a custom ayanamsa, use `sidereal_mode="USER"` and provide both `custom_ayanamsa_t0` and `custom_ayanamsa_ayan_t0`. Nakshatras on a tropical chart use `nakshatra_ayanamsa="LAHIRI"` by default for the lunar-mansion division only; the chart's tropical longitudes remain unchanged.
 
-See <a href="https://www.kerykeion.net/content/examples/sidereal-modes" target="_blank" rel="noopener noreferrer">Sidereal Modes</a> and <a href="https://www.kerykeion.net/content/docs/schemas#siderealmode" target="_blank" rel="noopener noreferrer">Schemas</a>.
+See <a href="https://www.kerykeion.net/content/examples/v6/sidereal-modes" target="_blank" rel="noopener noreferrer">Sidereal Modes</a> and <a href="https://www.kerykeion.net/python-library/docs/v6/schemas#siderealmode" target="_blank" rel="noopener noreferrer">Schemas</a>.
 
 ### House systems and polar latitudes
 
-Pass a one-character `houses_system_identifier`; Placidus (`"P"`) is the default. See <a href="https://www.kerykeion.net/content/examples/houses-systems" target="_blank" rel="noopener noreferrer">House Systems</a> for the supported list.
+Pass a one-character `houses_system_identifier`; Placidus (`"P"`) is the default. See <a href="https://www.kerykeion.net/content/examples/v6/houses-systems" target="_blank" rel="noopener noreferrer">House Systems</a> for the supported list.
 
 Some quadrant systems are mathematically undefined inside the polar circle. Kerykeion records any substitution in `subject.polar_house_fallbacks`; `houses_system_identifier` remains what was requested and `effective_houses_system_identifier` states what produced the cusps. Systems that legitimately place several cusps at one longitude expose those zero-width groups through `coincident_house_cusps`.
 
@@ -623,7 +623,7 @@ Frame-specific rules matter:
 - two-chart operations require compatible frames;
 - a Topocentric subject cannot be relocated by keeping its original planetary positions, because their parallax belongs to the original observer.
 
-See <a href="https://www.kerykeion.net/content/examples/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a>.
+See <a href="https://www.kerykeion.net/content/examples/v6/perspective-type" target="_blank" rel="noopener noreferrer">Perspective Types</a>.
 
 ### Timezones, LMT, and calendars
 
@@ -634,7 +634,7 @@ See <a href="https://www.kerykeion.net/content/examples/perspective-type" target
 - CE birth-data components use the proleptic Gregorian calendar. BCE birth input uses astronomical year numbering (`0` = 1 BCE) and the Julian-calendar birth path.
 - ISO event timestamps use the proleptic Gregorian calendar required by ISO 8601.
 
-See <a href="https://www.kerykeion.net/content/docs/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Astrological Subject Factory</a>, <a href="https://www.kerykeion.net/content/docs/ephemeris_data_factory" target="_blank" rel="noopener noreferrer">Ephemeris Data</a>, and <a href="https://www.kerykeion.net/content/docs/utilities" target="_blank" rel="noopener noreferrer">Utilities</a>.
+See <a href="https://www.kerykeion.net/python-library/docs/v6/astrological_subject_factory" target="_blank" rel="noopener noreferrer">Astrological Subject Factory</a>, <a href="https://www.kerykeion.net/python-library/docs/v6/ephemeris_data_factory" target="_blank" rel="noopener noreferrer">Ephemeris Data</a>, and <a href="https://www.kerykeion.net/python-library/docs/v6/utilities" target="_blank" rel="noopener noreferrer">Utilities</a>.
 
 ### Precision, coverage, and provenance
 
@@ -648,7 +648,7 @@ High precision depends on body, date, active data tier, and source. A successful
 
 `source="Keplerian"` is an approximation and is not ephemeris-grade. Geometrically derived points say `source="Derived"`. Uranian points are runtime analytical models and say `source="Analytical"`; they are not LEB data.
 
-Sun or Moon calculation failure raises because a subject without either luminary is not a usable chart. Optional-body failures can return a valid subject with a machine-readable warning. See <a href="https://www.kerykeion.net/content/docs/backend_precision_comparison" target="_blank" rel="noopener noreferrer">Backend Precision Comparison</a>.
+Sun or Moon calculation failure raises because a subject without either luminary is not a usable chart. Optional-body failures can return a valid subject with a machine-readable warning. See <a href="https://www.kerykeion.net/python-library/docs/v6/backend_precision_comparison" target="_blank" rel="noopener noreferrer">Backend Precision Comparison</a>.
 
 ## Chart rendering
 
@@ -701,7 +701,7 @@ The complete visual comparison is shown in [Chart Styles and Themes](#chart-styl
 
 The optional marks `show_motion_state`, `show_out_of_bounds`, `show_aspect_movement`, `show_relationship_score`, `show_ayanamsa_value`, and `show_polar_fallback_note` default to `False`. The renderer omits a mark when its source data has no applicable value.
 
-See <a href="https://www.kerykeion.net/content/docs/charts" target="_blank" rel="noopener noreferrer">Charts</a>, <a href="https://www.kerykeion.net/content/examples/theming" target="_blank" rel="noopener noreferrer">Theming</a>, <a href="https://www.kerykeion.net/content/examples/chart-language" target="_blank" rel="noopener noreferrer">Chart Language</a>, <a href="https://www.kerykeion.net/content/examples/glyph-sizes" target="_blank" rel="noopener noreferrer">Glyph Sizes</a>, <a href="https://www.kerykeion.net/content/examples/chart-marks" target="_blank" rel="noopener noreferrer">Chart Marks</a>, and <a href="https://www.kerykeion.net/content/examples/minimalist-charts-and-aspect-table" target="_blank" rel="noopener noreferrer">Minimalist Charts</a>.
+See <a href="https://www.kerykeion.net/python-library/docs/v6/charts" target="_blank" rel="noopener noreferrer">Charts</a>, <a href="https://www.kerykeion.net/content/examples/v6/theming" target="_blank" rel="noopener noreferrer">Theming</a>, <a href="https://www.kerykeion.net/content/examples/v6/chart-language" target="_blank" rel="noopener noreferrer">Chart Language</a>, <a href="https://www.kerykeion.net/content/examples/v6/glyph-sizes" target="_blank" rel="noopener noreferrer">Glyph Sizes</a>, <a href="https://www.kerykeion.net/content/examples/v6/chart-marks" target="_blank" rel="noopener noreferrer">Chart Marks</a>, and <a href="https://www.kerykeion.net/content/examples/v6/minimalist-charts-and-aspect-table" target="_blank" rel="noopener noreferrer">Minimalist Charts</a>.
 
 ## Command-line interface
 
@@ -731,19 +731,19 @@ $ kerykeion call ProfectionsFactory.from_subject -s john -f json
 $ kerykeion status --check
 ```
 
-For installation details, command coverage, output behavior and examples, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/cli/README.md" target="_blank" rel="noopener noreferrer">kerykeion-cli README</a>. The <a href="https://www.kerykeion.net/content/docs/cli" target="_blank" rel="noopener noreferrer">CLI documentation</a> provides the complete reference, while the <a href="https://github.com/g-battaglia/kerykeion/tree/main/skills/kerykeion-cli" target="_blank" rel="noopener noreferrer">CLI Agent Skill</a> contains tested instructions and recipes for coding agents.
+For installation details, command coverage, output behavior and examples, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/cli/README.md" target="_blank" rel="noopener noreferrer">kerykeion-cli README</a>. The <a href="https://www.kerykeion.net/python-library/docs/v6/cli" target="_blank" rel="noopener noreferrer">CLI documentation</a> provides the complete reference, while the <a href="https://github.com/g-battaglia/kerykeion/tree/main/skills/kerykeion-cli" target="_blank" rel="noopener noreferrer">CLI Agent Skill</a> contains tested instructions and recipes for coding agents.
 
 For every commercial CLI workflow, use the <a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">hosted Astrologer API</a>. CLI access through Astrologer API is planned.
 
 ## Documentation
 
-- **Getting Started:** <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer">kerykeion.net/content/docs</a>
-- **Examples Gallery:** <a href="https://www.kerykeion.net/content/examples/" target="_blank" rel="noopener noreferrer">kerykeion.net/content/examples</a>
-- **Python API Reference:** <a href="https://www.kerykeion.net/pydocs/" target="_blank" rel="noopener noreferrer">kerykeion.net/pydocs</a>
-- **Migration Guide:** <a href="https://www.kerykeion.net/content/docs/migration" target="_blank" rel="noopener noreferrer">v4/v5 to v6</a>
-- **Cookbook:** <a href="https://www.kerykeion.net/content/docs/cookbook" target="_blank" rel="noopener noreferrer">Practical recipes</a>
-- **Schemas:** <a href="https://www.kerykeion.net/content/docs/schemas" target="_blank" rel="noopener noreferrer">Models and literals</a>
-- **FAQ:** <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">Troubleshooting and conventions</a>
+- **Getting Started:** <a href="https://www.kerykeion.net/python-library/docs/v6/" target="_blank" rel="noopener noreferrer">kerykeion.net/python-library/docs/v6</a>
+- **Examples Gallery:** <a href="https://www.kerykeion.net/content/examples/v6/" target="_blank" rel="noopener noreferrer">kerykeion.net/content/examples/v6</a>
+- **Legacy v5 Python API Reference:** <a href="https://www.kerykeion.net/pydocs/" target="_blank" rel="noopener noreferrer">kerykeion.net/pydocs</a>
+- **Migration Guide:** <a href="https://www.kerykeion.net/python-library/docs/v6/migration" target="_blank" rel="noopener noreferrer">v4/v5 to v6</a>
+- **Cookbook:** <a href="https://www.kerykeion.net/python-library/docs/v6/cookbook" target="_blank" rel="noopener noreferrer">Practical recipes</a>
+- **Schemas:** <a href="https://www.kerykeion.net/python-library/docs/v6/schemas" target="_blank" rel="noopener noreferrer">Models and literals</a>
+- **FAQ:** <a href="https://www.kerykeion.net/python-library/docs/v6/faq" target="_blank" rel="noopener noreferrer">Troubleshooting and conventions</a>
 - **Hosted API:** <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Full API Documentation</a>
 - **Changelog:** <a href="https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a>
 
@@ -752,8 +752,8 @@ For every commercial CLI workflow, use the <a href="https://rapidapi.com/gbattag
 Common first-run issues:
 
 - `KerykeionException` for dates outside the active kernel (default tier covers **1850–2150**, upper bound exclusive). Install a wider tier or narrow the range; see [Supported date ranges](#supported-date-ranges).
-- Ambiguous or nonexistent local times during timezone transitions need an explicit `is_dst` choice or a known UTC instant supplied through `from_iso_utc_time()`. The factory refuses to guess; see the <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">FAQ</a> for offset-selection semantics.
-- `online=True` without a GeoNames username fails. Either stay offline with explicit `lng`/`lat`/`tz_str` and `online=False`, or configure `geonames_username` / `KERYKEION_GEONAMES_USERNAME`. See the <a href="https://www.kerykeion.net/content/docs/faq" target="_blank" rel="noopener noreferrer">FAQ</a>.
+- Ambiguous or nonexistent local times during timezone transitions need an explicit `is_dst` choice or a known UTC instant supplied through `from_iso_utc_time()`. The factory refuses to guess; see the <a href="https://www.kerykeion.net/python-library/docs/v6/faq" target="_blank" rel="noopener noreferrer">FAQ</a> for offset-selection semantics.
+- `online=True` without a GeoNames username fails. Either stay offline with explicit `lng`/`lat`/`tz_str` and `online=False`, or configure `geonames_username` / `KERYKEION_GEONAMES_USERNAME`. See the <a href="https://www.kerykeion.net/python-library/docs/v6/faq" target="_blank" rel="noopener noreferrer">FAQ</a>.
 
 ## Swiss Ephemeris backend
 
@@ -766,9 +766,9 @@ export KERYKEION_BACKEND=swisseph
 export KERYKEION_EPHE_PATH=~/.kerykeion/sweph
 ```
 
-Swiss Ephemeris needs its `.se1` data files for full precision and `sefstars.txt` for fixed-star features. Without complete files, body and date availability can be narrower. See <a href="https://www.kerykeion.net/content/docs/swisseph_configuration" target="_blank" rel="noopener noreferrer">Swiss Ephemeris Configuration</a>.
+Swiss Ephemeris needs its `.se1` data files for full precision and `sefstars.txt` for fixed-star features. Without complete files, body and date availability can be narrower. See <a href="https://www.kerykeion.net/python-library/docs/v6/swisseph_configuration" target="_blank" rel="noopener noreferrer">Swiss Ephemeris Configuration</a>.
 
-Backend selection happens once at import. `KERYKEION_BACKEND` selects the engine, `KERYKEION_LEB_MODE` controls the libephemeris calculation mode, and `LIBEPHEMERIS_PRECISION` selects the active data tier. See <a href="https://www.kerykeion.net/content/docs/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a>.
+Backend selection happens once at import. `KERYKEION_BACKEND` selects the engine, `KERYKEION_LEB_MODE` controls the libephemeris calculation mode, and `LIBEPHEMERIS_PRECISION` selects the active data tier. See <a href="https://www.kerykeion.net/python-library/docs/v6/ephemeris_backend" target="_blank" rel="noopener noreferrer">Ephemeris Backend</a>.
 
 ## AI agent skill
 

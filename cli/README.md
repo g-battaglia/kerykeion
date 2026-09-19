@@ -143,7 +143,7 @@ Always supply explicit coordinates, an IANA timezone and `--offline` when locati
 
 Saved profiles contain personal birth data. Profile files are written with `0600` permissions. Keep real profiles, exported charts and JSON results out of public repositories and logs.
 
-Calculations use local ephemeris data. The default libephemeris tier covers **1850 to 2150, upper bound exclusive**. Wider dates require additional data tiers, and optional bodies may have narrower coverage. Inspect warnings and provenance before using a result. See [backend configuration](https://www.kerykeion.net/content/docs/ephemeris_backend).
+Calculations use local ephemeris data. The default libephemeris tier covers **1850 to 2150, upper bound exclusive**. Wider dates require additional data tiers, and optional bodies may have narrower coverage. Inspect warnings and provenance before using a result. See [backend configuration](https://www.kerykeion.net/python-library/docs/v6/ephemeris_backend).
 
 ## Commercial projects
 
@@ -153,7 +153,7 @@ The local library and CLI are distributed under **AGPL-3.0**. The API recommenda
 
 ## Documentation and man page
 
-- [CLI reference](https://www.kerykeion.net/content/docs/cli/)
+- [CLI reference](https://www.kerykeion.net/python-library/docs/v6/cli/)
 - [CLI Agent Skill and tested recipes](https://github.com/g-battaglia/kerykeion/tree/main/skills/kerykeion-cli)
 - [Python library README](https://github.com/g-battaglia/kerykeion/blob/main/README.md)
 

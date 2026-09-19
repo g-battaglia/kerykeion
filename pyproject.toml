@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.0.2"
+version = "6.0.3"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -45,7 +45,7 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # Keep the exact backend version verified for v6.0.2. Golden fixtures and
+    # Keep the exact backend version verified for v6.0.3. Golden fixtures and
     # source/coverage contracts are verified against this release;
     # the dependency pin gives PyPI installs the same backend as the lockfile.
     # A backend upgrade requires rechecking the extended suite and fixtures.
@@ -84,7 +84,7 @@ all = ["kerykeion[swiss]", "kerykeion[cli]"]
 [project.urls]
 Homepage = "https://www.kerykeion.net/"
 Repository = "https://github.com/g-battaglia/kerykeion"
-Documentation = "https://www.kerykeion.net/content/docs/"
+Documentation = "https://www.kerykeion.net/python-library/docs/v6/"
 Changelog = "https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md"
 Issues = "https://github.com/g-battaglia/kerykeion/issues"
 

@@ -1,7 +1,7 @@
 """Human-readable ASCII report generation for astrological data.
 
 Entry point: ``ReportGenerator`` (``generate_report`` / ``print_report``).
-See https://www.kerykeion.net/content/docs/report for covered inputs.
+See https://www.kerykeion.net/python-library/docs/v6/report for covered inputs.
 """
 
 from __future__ import annotations

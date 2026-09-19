@@ -11,7 +11,7 @@ of astrological data in semantic XML format.
 
 Optional/None fields are omitted from the output rather than rendered as empty.
 
-See https://www.kerykeion.net/content/docs/context_serializer for the
+See https://www.kerykeion.net/python-library/docs/v6/context_serializer for the
 reference; entry point ``kerykeion.to_context``.
 """
 

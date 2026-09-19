@@ -347,7 +347,7 @@ __all__ = [
 # =============================================================================
 # REMOVED v5 API — helpful migration errors (PEP 562)
 # =============================================================================
-_MIGRATION_GUIDE_URL = "https://www.kerykeion.net/content/docs/migration"
+_MIGRATION_GUIDE_URL = "https://www.kerykeion.net/python-library/docs/v6/migration"
 
 # Appended to every removed-name message below. Rewriting the call is only half
 # the upgrade: v6 also changed defaults that alter the numbers, and those change

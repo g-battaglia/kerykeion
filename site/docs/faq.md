@@ -465,7 +465,7 @@ Note: v6 also changed defaults that affect RESULTS, not just imports:
 Porting the call above does not restore v5 output. See 'What changes in the
 results' in the guide; kerykeion.settings.V5_DEFAULT_ACTIVE_POINTS restores
 the old point set, and the guide gives the v5 aspect list.
-Migration guide: https://www.kerykeion.net/content/docs/migration
+Migration guide: https://www.kerykeion.net/python-library/docs/v6/migration
 ```
 
 The trade-off is that `hasattr(kerykeion, "AstrologicalSubject")` and

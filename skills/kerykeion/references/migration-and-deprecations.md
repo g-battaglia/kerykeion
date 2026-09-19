@@ -1,6 +1,6 @@
 # Migration and deprecations (v5 → v6)
 
-v6 removed the four v5 entry-point classes, renamed the schemas module, and — separately — changed calculation defaults so that even a correctly ported call produces different numbers. This file lists the removed names and their replacements, the result-level changes, the currently deprecated methods scheduled for removal in 7.0.0, and older v4 renames. Full guide: https://www.kerykeion.net/content/docs/migration. All snippets here show old API on purpose and are not runnable.
+v6 removed the four v5 entry-point classes, renamed the schemas module, and — separately — changed calculation defaults so that even a correctly ported call produces different numbers. This file lists the removed names and their replacements, the result-level changes, the currently deprecated methods scheduled for removal in 7.0.0, and older v4 renames. Full guide: https://www.kerykeion.net/python-library/docs/v6/migration. All snippets here show old API on purpose and are not runnable.
 
 ## The four removed names — ImportError, not AttributeError
 
@@ -119,4 +119,4 @@ South nodes are separate points (`Mean_South_Lunar_Node`, `True_South_Lunar_Node
 4. Silence 7.0.0 removals by switching to the replacements in the DeprecationWarning table.
 5. Fixed stars moved out of `active_points` into `active_fixed_stars` — v5-style star names in `active_points` still work but are redirected with a warning; see `references/subjects.md`.
 
-Guide: https://www.kerykeion.net/content/docs/migration
+Guide: https://www.kerykeion.net/python-library/docs/v6/migration

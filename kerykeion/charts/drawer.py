@@ -3,8 +3,8 @@
 
 ``ChartDrawer`` takes a ``ChartDataModel`` from ``ChartDataFactory`` and renders
 natal, synastry, transit, return, composite and progression wheels in modern or
-classic style. See https://www.kerykeion.net/content/docs/charts and
-https://www.kerykeion.net/content/docs/chart_internals for options and the
+classic style. See https://www.kerykeion.net/python-library/docs/v6/charts and
+https://www.kerykeion.net/python-library/docs/v6/chart_internals for options and the
 ``kr:`` metadata contract.
 
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
@@ -3060,7 +3060,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 "Example:\n"
                 "    chart_data = ChartDataFactory.create_natal_chart_data(subject)\n"
                 "    svg = ChartDrawer(chart_data).generate_svg_string()\n"
-                "Migration guide: https://www.kerykeion.net/content/docs/migration"
+                "Migration guide: https://www.kerykeion.net/python-library/docs/v6/migration"
             )
 
         # Store reference to the full chart data

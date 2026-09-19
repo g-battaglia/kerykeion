@@ -15,7 +15,7 @@ the rest print to stdout.
 
 > **Scope note:** this folder covers the Python library only. For terminal usage,
 > see the [kerykeion-cli README](../cli/README.md), the
-> [CLI reference](https://www.kerykeion.net/content/docs/cli/) and the
+> [CLI reference](https://www.kerykeion.net/python-library/docs/v6/cli/) and the
 > [CLI Agent Skill](../skills/kerykeion-cli/) — including `subject save`, `natal`,
 > `transits`, `sky lunations` and `call --list/--explain` recipes.
 

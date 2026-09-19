@@ -83,7 +83,7 @@ workspace/
 
 ## Need Help?
 
-- 📖 Documentation: [kerykeion.net/content/docs](https://www.kerykeion.net/content/docs/)
+- 📖 Documentation: [kerykeion.net/content/docs](https://www.kerykeion.net/python-library/docs/v6/)
 - 💬 Discussions: [GitHub Discussions](https://github.com/g-battaglia/kerykeion/discussions)
 - 🐛 Issues: [GitHub Issues](https://github.com/g-battaglia/kerykeion/issues)
 - 📧 Email: [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com)

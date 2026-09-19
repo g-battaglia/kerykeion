@@ -10,7 +10,7 @@ order: 2
 
 This guide provides comprehensive instructions for migrating your code from Kerykeion v4 or v5 to v6. The v5 release introduced a factory-based architecture; v6 removes the v4 backward compatibility layer entirely and adds advanced calculation modules.
 
-The current v6 release is **6.0.2**, a stable maintenance release. Use Python 3.12
+The current v6 release is **6.0.3**, a stable maintenance release. Use Python 3.12
 or newer:
 
 ```bash

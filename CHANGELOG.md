@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [6.0.3] - 2026-09-19
+
+Documentation maintenance release for both `kerykeion` and `kerykeion-cli`.
+There are no calculation, rendering, public API or CLI behavior changes. See the
+[release notes](release_notes/v6.0.3.md).
+
+### Changed
+
+- Rewrite and reorganize the main README for clearer installation, API,
+  calculation, rendering, licensing and commercial-use guidance.
+- Replace the README theme previews with linked PNG images so all six Modern
+  and Classic combinations render reliably on GitHub and PyPI.
+- Update documentation links for the current versioned routes on
+  `kerykeion.net`.
+
+### Added
+
+- Add a reproducible SVG-to-PNG conversion command and regression tests for the
+  README chart preview files and links.
+
 ## [6.0.2] - 2026-09-16
 
 Security maintenance release for both `kerykeion` and `kerykeion-cli`. No
