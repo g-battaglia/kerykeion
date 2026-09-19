@@ -855,7 +855,7 @@ Contributions are welcome. Open an issue or discussion before substantial work a
 For academic or published work, cite:
 
 ```text
-Battaglia, G. (2025). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
+Battaglia, G. (2026). Kerykeion: A Python Library for Astrological Calculations and Chart Generation.
 https://github.com/g-battaglia/kerykeion
 ```
 
