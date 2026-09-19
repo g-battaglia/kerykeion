@@ -14,7 +14,7 @@
   <a href="https://github.com/g-battaglia/kerykeion/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
   <a href="https://www.kerykeion.net/content/docs/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/docs-kerykeion.net-blue.svg" alt="Documentation"></a>
 </div>
-<p align="center">Like Kerykeion? Star it on GitHub to help others discover it.</p>
+<p align="center">⭐ Like this project? Star it on GitHub and help it grow! ⭐</p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
