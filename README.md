@@ -31,9 +31,7 @@ The defaults use the tropical zodiac, Placidus houses, and apparent geocentric p
 The API returns JSON calculations, SVG charts, and context for LLMs. For integration with coding agents, the <a href="https://github.com/g-battaglia/Astrologer-API/tree/v5/skills/astrologer-api" target="_blank" rel="noopener noreferrer">Astrologer API Agent Skill</a> documents authentication, endpoints, schemas, and examples. CLI access through Astrologer API is planned.
 
 <p align="center">
-  <strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Get API access on RapidAPI</a></strong>
-  &nbsp;·&nbsp;
-  <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Read the API docs</a>
+  <strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Subscribe on RapidAPI</a></strong>
 </p>
 
 Subscriptions directly support Kerykeion's continued development.
