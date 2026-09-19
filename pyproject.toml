@@ -374,6 +374,10 @@ help = "Regenerate the documentation charts (docs/charts/) — the README's show
 [tool.poe.tasks."regenerate:docs-charts".env]
 LIBEPHEMERIS_PRECISION = "extended"
 
+[tool.poe.tasks."regenerate:docs-png"]
+cmd = "uv run --with cairosvg python scripts/convert_docs_charts.py"
+help = "Convert the six README theme previews from SVG to PNG"
+
 [tool.poe.tasks."regenerate:gallery-v6"]
 cmd = "python scripts/generate_v6_test_gallery.py"
 help = "Regenerate the v6 feature gallery (tests/data/v6_gallery/)"

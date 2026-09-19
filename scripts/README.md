@@ -28,7 +28,8 @@ them, regenerate — and read the diff, because that diff is the change.
 | `regenerate_synastry_aspects.py` | `regenerate:aspects:synastry` | `tests/data/expected_synastry_aspects.py`. |
 | `regenerate_report_snapshots.py` | `regenerate:reports:snapshots` | The text-report golden files in `tests/fixtures/`. |
 | `regenerate_test_output.py` | `regenerate:reports:output` | The report-snapshot output fixtures. |
-| `regenerate_docs_charts.py` | `regenerate:docs-charts` | `docs/charts/`, which the README embeds by raw URL. Run it after anything that changes how a chart looks, or the README shows a chart the library no longer draws. |
+| `regenerate_docs_charts.py` | `regenerate:docs-charts` | The SVG sources in `docs/charts/`. Run after changes to chart rendering, then refresh the PNG previews with `regenerate:docs-png`. |
+| `convert_docs_charts.py` | `regenerate:docs-png` | The six PNG theme previews in `docs/charts/`, linked from the README. Converts existing SVGs without calculating charts or loading ephemerides. |
 | `generate_v6_test_gallery.py` | `regenerate:gallery-v6` | `tests/data/v6_gallery/` and its index page. |
 
 `regenerate:svg`, `regenerate:reports`, `regenerate:positions`,
@@ -36,6 +37,56 @@ them, regenerate — and read the diff, because that diff is the change.
 `regenerate:gallery-v6` all set `LIBEPHEMERIS_PRECISION=extended` — without it,
 dates before roughly 1600 fall outside the loaded ephemeris and their fixtures
 are silently left stale. `regenerate:all` runs all of them in dependency order.
+
+## README image previews
+
+The README theme grid uses PNG images so readers can click through to GitHub's
+image viewer. Keep the SVG sources and generated PNGs together in `docs/charts/`.
+After regenerating the SVGs, refresh the previews:
+
+```bash
+uv run poe regenerate:docs-charts
+uv run poe regenerate:docs-png
+```
+
+To convert the existing SVGs without recalculating charts:
+
+```bash
+uv run --with cairosvg python scripts/convert_docs_charts.py
+
+# Optional output size and destination
+uv run --with cairosvg python scripts/convert_docs_charts.py --width 1780 --output-dir /tmp/kerykeion-previews
+```
+
+The converter defaults to 1780 pixels wide and preserves the aspect ratio and
+page background, including dark themes. Input paths and the default output
+path refer to this checkout regardless of the current directory. An explicit
+relative `--output-dir` refers to the current directory.
+
+CairoSVG is an optional tool dependency, not a Kerykeion dependency.
+`uv run --with cairosvg` installs it in the tool environment. If CairoSVG reports
+that it cannot load Cairo, install the system library with `brew install cairo`
+on macOS or `sudo apt-get install libcairo2` on Debian/Ubuntu. On macOS, if Cairo
+is installed but cannot be found, run:
+
+```bash
+DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib" uv run poe regenerate:docs-png
+```
+
+See the [CairoSVG installation guide](https://cairosvg.org/documentation/#installation)
+for other platforms. To run the preview tests with rendering enabled:
+
+```bash
+uv run --with cairosvg python -m pytest -n 0 tests/core/test_docs_chart_previews.py
+```
+
+Use the same library-path prefix for this command if your Mac needs it.
+Without CairoSVG, the tests skip rendering but still check conversion options,
+error handling, image links, and the dimensions of the generated files.
+
+Review the six PNGs after conversion and commit them along with any changed
+SVGs. `regenerate:docs-charts` and `regenerate:all` do not run the PNG converter;
+run `regenerate:docs-png` separately.
 
 ## Looking at the output
 
