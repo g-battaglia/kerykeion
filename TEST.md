@@ -357,7 +357,7 @@ rot rather than on a calculation.
 
 | File | What it covers |
 |------|----------------|
-| `test_agent_skill_contract.py` | `skills/kerykeion/` against version drift, license loss and dangling reference files — it is copied verbatim into third-party repos |
+| `test_agent_skill_contract.py` | `skills/*/` against major-line drift, license loss and dangling reference files — each skill is copied verbatim into third-party repos |
 | `test_every_baseline_has_a_reader.py` | A stored SVG baseline that no test compares. Twenty were unread when it was written |
 | `test_golden_charts_are_hermetic.py` | A golden chart asking GeoNames where it was cast; both network doors are refused for the whole golden suite |
 | `test_baseline_freshness.py` | A committed baseline missing an info-panel row the template now emits — how fifty-one baselines, eleven of them README images, were left behind |

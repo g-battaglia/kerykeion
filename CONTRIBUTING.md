@@ -69,10 +69,12 @@ semantics — update the skill **in the same commit**. This is enforced locally:
 `poe docs:check` requires every export to be documented in a reference file,
 `poe docs:snippets` executes each skill code block standalone, and
 `tests/core/test_agent_skill_contract.py` (part of `poe check` and
-`poe quality`) validates its structure, license, and version references.
-A release version bump must also update the "Verified against" line in
-`skills/kerykeion/SKILL.md` — the contract test fails until it does, which is
-the prompt to re-read the skill for API drift.
+`poe quality`) validates its structure, license, and major-line reference.
+No file outside the two `pyproject.toml` files carries the patch number: on a
+patch release only those pins move, plus the CHANGELOG entry and the release
+note. A major version bump must update the "Verified against kerykeion vX"
+line in each skill's `SKILL.md` — the contract test fails until it does, which
+is the prompt to re-read the skill for API drift.
 
 ## License
 

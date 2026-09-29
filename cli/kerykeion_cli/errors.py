@@ -56,7 +56,8 @@ def warnings_as_errors() -> bool:
     return _warnings_as_errors
 
 
-# Discovered once; kerykeion exposes no stable BACKEND_ERROR_TYPES yet (MANDATORY_EVOLUTIONS.md §2).
+# kerykeion exposes no stable BACKEND_ERROR_TYPES export, so the reachable
+# backends' coverage/data error types are discovered here, once.
 _backend_types: Optional[Tuple[Type[BaseException], ...]] = None
 _network_types: Optional[Tuple[Type[BaseException], ...]] = None
 

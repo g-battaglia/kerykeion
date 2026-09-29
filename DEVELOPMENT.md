@@ -433,26 +433,28 @@ One version, two wheels. A release bumps **three** numbers, which must agree:
 
 Nothing in the resolver enforces this, so
 `tests/core/test_cli.py::TestEntryPoint::test_one_version_two_distributions`
-does, and it says which one drifted. Then: the `Verified against` pins in `skills/*/SKILL.md`,
-the CHANGELOG entry and the release note, `uv lock`, `uv run poe check`,
-`uv run poe docs:check`, `uv run poe docs:snippets`, and the full extended suite
+does, and it says which one drifted. Then: the CHANGELOG entry and the release
+note, `uv lock`, `uv run poe check`, `uv run poe docs:check`,
+`uv run poe docs:snippets`, and the full extended suite
 with `LIBEPHEMERIS_PRECISION=extended` explicitly set. Build and smoke-test both
 distributions, commit the release preparation, tag that commit, then publish
-**the library first**. The [6.0.3 checklist](release_notes/v6.0.3.md#maintainer-publication-checklist)
-records the stable release artifacts and validation.
+**the library first**. The latest release note's
+`#maintainer-publication-checklist` section records the stable release artifacts
+and validation.
 
 Use a version-specific output directory so a release upload cannot also select
-old artifacts already present in `dist/`:
+old artifacts already present in `dist/` (set `V` to the version being released):
 
 ```bash
-uv build --all-packages -o dist/6.0.3
-uv run --isolated --no-project --with dist/6.0.3/kerykeion-6.0.3-py3-none-any.whl python scripts/build_smoke_check.py
-uv run --isolated --no-project --with dist/6.0.3/kerykeion-6.0.3-py3-none-any.whl --with dist/6.0.3/kerykeion_cli-6.0.3-py3-none-any.whl python scripts/build_smoke_check_cli.py
-uvx twine check --strict dist/6.0.3/*
+V=6.0.4
+uv build --all-packages -o dist/$V
+uv run --isolated --no-project --with dist/$V/kerykeion-$V-py3-none-any.whl python scripts/build_smoke_check.py
+uv run --isolated --no-project --with dist/$V/kerykeion-$V-py3-none-any.whl --with dist/$V/kerykeion_cli-$V-py3-none-any.whl python scripts/build_smoke_check_cli.py
+uvx twine check --strict dist/$V/*
 
-uv publish dist/6.0.3/kerykeion-6.0.3-py3-none-any.whl dist/6.0.3/kerykeion-6.0.3.tar.gz
+uv publish dist/$V/kerykeion-$V-py3-none-any.whl dist/$V/kerykeion-$V.tar.gz
 # Only once the library is visible on PyPI:
-uv publish dist/6.0.3/kerykeion_cli-6.0.3-py3-none-any.whl dist/6.0.3/kerykeion_cli-6.0.3.tar.gz
+uv publish dist/$V/kerykeion_cli-$V-py3-none-any.whl dist/$V/kerykeion_cli-$V.tar.gz
 ```
 
 For stable v6, no prerelease resolver flag is needed. Create a normal GitHub

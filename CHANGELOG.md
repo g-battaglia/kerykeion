@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [6.0.4] - 2026-09-29
+
+Documentation and repository maintenance release for both `kerykeion` and
+`kerykeion-cli`. There are no calculation, rendering, public API or CLI
+behavior changes. See the [release notes](release_notes/v6.0.4.md).
+
+### Changed
+
+- Soften the main README's Hosted API section and trim the installation and
+ephemeral ephemeris-tier notes.
+- Reword an internal CLI comment that pointed at a removed planning file; no
+runtime behavior change.
+- Bump both distributions to 6.0.4 (the only files that carry the exact
+patch number, plus the generated man page and the lockfile). The agent
+skills, `llms.txt` and the site docs now track the v6 major line instead of
+the patch, so future patch releases no longer touch them.
+
+### Removed
+
+- Remove the repository-only planning note, the release-notes pointer file and
+the personal workspace starter files. None of these shipped in the wheels.
+
 ## [6.0.3] - 2026-09-19
 
 Documentation maintenance release for both `kerykeion` and `kerykeion-cli`.

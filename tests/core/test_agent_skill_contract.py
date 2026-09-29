@@ -216,13 +216,17 @@ def test_stale_pin_sweep_survives_version_family_changes():
 def test_version_pins_match_pyproject(skill_dir: Path):
     pyproject = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
     version = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.MULTILINE).group(1)
+    major = version.split(".")[0]
     SKILL_MD = skill_dir / "SKILL.md"  # noqa: N806 — shadows the module-level path
 
-    assert version in SKILL_MD.read_text(encoding="utf-8"), (
-        f"The skill claims a version it was not verified against. Fix by editing "
-        f"the 'Verified against kerykeion X' line at the top of "
-        f"skills/{skill_dir.name}/SKILL.md to read {version}.\n"
-        f"This gate is intentional: a release bump is the moment to re-read the "
+    # The skill tracks the major line ("kerykeion v6"), not the patch: a
+    # patch release must not require touching every distributed file. Only a
+    # major bump changes the contract this gate enforces.
+    assert f"kerykeion v{major}" in SKILL_MD.read_text(encoding="utf-8"), (
+        f"The skill does not track the current major line. Fix by editing "
+        f"the 'Verified against kerykeion vX' line at the top of "
+        f"skills/{skill_dir.name}/SKILL.md to read v{major}.\n"
+        f"This gate is intentional: a major bump is the moment to re-read the "
         f"skill for API drift, and nothing else forces that review."
     )
 

@@ -62,7 +62,7 @@ maintained under three mechanical gates:
   import everything it uses and run offline on a default install, or carry
   `# doc-snippet: no-run` as its first line.
 - `tests/core/test_agent_skill_contract.py` — validates frontmatter, the
-  vendored license, reference reachability, and version references.
+  vendored license, reference reachability, and the major-line reference.
 
 Any change to public behavior (exports, defaults, error contracts, warnings)
 must update this skill **in the same commit**.

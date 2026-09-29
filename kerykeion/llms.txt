@@ -1,8 +1,8 @@
 # Kerykeion AI Agent Guide
 
-**Comprehensive reference for AI agents using the Kerykeion Astrological Library**
+**Comprehensive reference for AI agents using the Kerykeion Astrological Library (v6)**
 
-Version: **6.0.3**, Python 3.12+. Install with
+Install with
 `pip install "kerykeion"`. This v6 guide includes APIs and defaults that
 differ from v5.
 
