@@ -6,7 +6,7 @@ once per synodic month. A plain bisection over a 30-day window could converge
 on the wrap (returning the *opposite* phase — every backward search did this)
 or collapse onto a window edge (a rarer forward failure when the wrap split
 the bracket). These tests pin the bracketing-based implementation with the
-real ephemeris, property-style, so no almanac constants are needed.
+real ephemeris, both through angular properties and independent almanac dates.
 """
 
 from __future__ import annotations
@@ -44,6 +44,7 @@ _REFERENCE_DATES = (
 
 
 def _phase_angle(jd: float) -> float:
+    """Compute the geocentric Sun–Moon separation at a Julian day."""
     configure_ephemeris_path()
     iflag = ephe.FLG_SWIEPH
     sun = ephe.calc_ut(jd, ephe.SUN, iflag)[0]
@@ -52,12 +53,14 @@ def _phase_angle(jd: float) -> float:
 
 
 def _angle_error(jd: float, target: float) -> float:
+    """Return the smallest angular distance from the requested phase."""
     return abs((_phase_angle(jd) - target + 180.0) % 360.0 - 180.0)
 
 
 @pytest.mark.parametrize("reference", _REFERENCE_DATES, ids=lambda d: d.strftime("%Y-%m-%d"))
 @pytest.mark.parametrize("target", _PHASE_TARGETS, ids=("NM", "FQ", "FM", "LQ"))
 def test_backward_and_forward_bracket_the_reference(reference: datetime, target: float) -> None:
+    """Find genuine adjacent phases on either side of the reference instant."""
     jd_ref = datetime_to_julian(reference)
 
     last = compute_lunar_phase_jd(jd_ref, target, forward=False)
@@ -115,6 +118,7 @@ _ALMANAC_WINDOWS = (
 
 @pytest.mark.parametrize("reference,windows", _ALMANAC_WINDOWS, ids=("1993", "2024", "2026"))
 def test_phase_windows_match_independent_almanac(reference, windows):
+    """Compare both directions with USNO dates tabulated to the minute."""
     jd_ref = datetime_to_julian(datetime.fromisoformat(reference))
     for target, last, nxt in windows:
         for forward, expected in ((False, last), (True, nxt)):
@@ -127,6 +131,7 @@ def test_phase_windows_match_independent_almanac(reference, windows):
 @pytest.mark.parametrize("target", _PHASE_TARGETS)
 @pytest.mark.parametrize("offset_seconds", (-120, 120))
 def test_nearest_occurrence_on_both_sides_of_real_phase(target, offset_seconds):
+    """Select the nearest phase when starting two minutes before or after it."""
     jd_ref = datetime_to_julian(datetime(2026, 9, 1, tzinfo=timezone.utc))
     phase = compute_lunar_phase_jd(jd_ref, target)
     assert phase is not None
@@ -142,9 +147,12 @@ def test_nearest_occurrence_on_both_sides_of_real_phase(target, offset_seconds):
 
 @pytest.mark.parametrize("target", (0, 90, 180, 270, -90, 360))
 def test_exact_phase_boundary_and_angle_normalization(monkeypatch, target):
+    """Include an exact phase in backward searches and skip it going forward."""
+
     # A uniform 30-day cycle with an exact root at JD 100. This also crosses
     # the opposite-phase discontinuity midway through the forward search.
     def positions(jd, body, flags):
+        """Model a uniform lunar cycle with an exact phase at Julian day 100."""
         longitude = 0 if body == ephe.SUN else (target + 12 * (jd - 100)) % 360
         return ((longitude, 0, 0, 0, 0, 0), flags)
 
@@ -157,13 +165,17 @@ def test_exact_phase_boundary_and_angle_normalization(monkeypatch, target):
 
 
 def test_missing_crossing_returns_none(monkeypatch):
+    """Report no phase when the ephemeris never crosses the target angle."""
     monkeypatch.setattr(ephe, "calc_ut", lambda jd, body, flags: ((0, 0, 0, 0, 0, 0), flags))
     assert compute_lunar_phase_jd(100, 90) is None
     assert compute_lunar_phase_jd(100, 90, forward=False) is None
 
 
 def test_ephemeris_failure_returns_none(monkeypatch):
+    """Preserve the None fallback when ephemeris calculations fail."""
+
     def unavailable(*args):
+        """Simulate the existing RuntimeError failure contract."""
         raise RuntimeError("Ephemeris unavailable")
 
     monkeypatch.setattr(ephe, "calc_ut", unavailable)

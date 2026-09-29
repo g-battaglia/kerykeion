@@ -396,6 +396,7 @@ def compute_lunar_phase_jd(
         search_range = 30.0
 
         def _signed_diff(jd: float) -> float:
+            """Return the Sun–Moon separation from the target in [-180, 180)."""
             # Sun-Moon separation minus target, normalized to [-180, 180) so the
             # sought instant is an upward zero crossing (the separation grows
             # monotonically at ~12.2°/day).
