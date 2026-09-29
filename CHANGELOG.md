@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.12.10
+
+_Unreleased_
+
+**Bugfixes:**
+
+- Correct lunar phase searches in both time directions by bracketing the nearest genuine Sun–Moon angle crossing before bisection. Previous phases could be confused with their opposite phases, giving incorrect lunar ages in moon phase overviews, reports, and XML contexts. Forward searches could also converge on a window boundary. The calculation retains Swiss Ephemeris and approximately one-second precision.
+
 ## 5.12.9
 
 _2026-05-25_
