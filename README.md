@@ -26,15 +26,13 @@ The defaults use the tropical zodiac, Placidus houses, and apparent geocentric p
 
 ## Hosted API
 
-**For every commercial project, including SaaS products, mobile apps, paid services, and closed-source software, use the hosted Astrologer API instead of integrating the local library or CLI.** Your app calls Kerykeion as an external service, with no Python or ephemeris infrastructure and no AGPL library in your codebase.
+**For commercial closed-source projects, including SaaS products and mobile apps, we offer a hosted API.**
 
-The API returns JSON calculations, SVG charts, and context for LLMs. For integration with coding agents, the <a href="https://github.com/g-battaglia/Astrologer-API/tree/v5/skills/astrologer-api" target="_blank" rel="noopener noreferrer">Astrologer API Agent Skill</a> documents authentication, endpoints, schemas, and examples. CLI access through Astrologer API is planned.
+We also provide an [Astrologer API Agent Skill](https://github.com/g-battaglia/Astrologer-API/tree/v5/skills/astrologer-api) for development with coding agents.
 
-<p align="center">
-  <strong><a href="https://rapidapi.com/gbattaglia/api/astrologer/pricing" target="_blank" rel="noopener noreferrer">Subscribe on RapidAPI</a></strong>
-</p>
+[**Subscribe on RapidAPI**](https://rapidapi.com/gbattaglia/api/astrologer/pricing)  
 
-Subscriptions directly support Kerykeion's continued development.
+Subscriptions directly support Kerykeion development.
 
 ## Chart styles and themes
 
@@ -115,13 +113,11 @@ Install the current stable release:
 pip install --upgrade "kerykeion"
 ```
 
-This installs the Python library only. It does not install a shell command. The optional CLI is a separate distribution described in the [Command-Line Interface](#command-line-interface) section.
-
 Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/python-library/docs/v6/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
 
 ### Supported date ranges
 
-The default reviewed ephemeris tier uses JPL DE440s and covers **1850–2150**. The upper bound is exclusive. Dates outside the active kernel raise `KerykeionException` rather than silently changing source.
+The default reviewed ephemeris tier uses JPL DE440s and covers **1850–2150**.
 
 Install a wider reviewed core through libephemeris:
 
