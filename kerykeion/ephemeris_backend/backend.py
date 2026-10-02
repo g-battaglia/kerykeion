@@ -77,6 +77,7 @@ from typing import TYPE_CHECKING, Iterator, Optional, Sequence, Tuple
 
 if TYPE_CHECKING:
     from kerykeion.schemas.literals import Houses
+
     # Type-only: the runtime import lives inside the polar fallback branch below,
     # because the models package imports back into kerykeion at load time.
     from kerykeion.schemas.models import PolarHouseFallbackModel
@@ -271,9 +272,7 @@ def houses_ex2_with_polar_fallback_ex(
     *,
     context: str = "",
     polar_strategy: str = "substitute_system",
-) -> Tuple[
-    Sequence[float], Sequence[float], Sequence[float], Sequence[float], Optional["PolarHouseFallbackModel"]
-]:
+) -> Tuple[Sequence[float], Sequence[float], Sequence[float], Sequence[float], Optional["PolarHouseFallbackModel"]]:
     """Compute house cusps at the REAL latitude, substituting the SYSTEM if needed.
 
     Calls ``ephe.houses_ex2`` at the real observer ``lat``. If — and only if — the
@@ -374,8 +373,9 @@ def houses_ex2_with_polar_fallback_ex(
         else:
             # Only here is a latitude actually capped, so this is where the
             # helper — and the log line it emits — belongs.
-            retry_hsys, retry_lat = hsys, _clamp_inside_polar_limit(
-                lat, check_and_adjust_polar_latitude(lat), threshold
+            retry_hsys, retry_lat = (
+                hsys,
+                _clamp_inside_polar_limit(lat, check_and_adjust_polar_latitude(lat), threshold),
             )
             affects = ["house_cusps", "angles"]
 
@@ -593,12 +593,14 @@ _PINNED_LEB_MODE: Optional[str] = None
 # scripts can import it: until 6.0.0a85 the tuple lived in three hand-synced
 # copies — here, env_report.py, quickstart.py — and a mode renamed here would
 # have made both diagnostics call a working environment invalid.
-VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons")
+VALID_LEB_MODES = ("leb", "auto", "skyfield", "horizons", "db", "routed")
 
 if BACKEND_NAME == "libephemeris":
     _PINNED_LEB_MODE = os.environ.get("KERYKEION_LEB_MODE", "leb").strip().lower()
     if _PINNED_LEB_MODE not in VALID_LEB_MODES:
         raise ValueError(f"Invalid KERYKEION_LEB_MODE={_PINNED_LEB_MODE!r}. Must be one of {VALID_LEB_MODES}.")
+    if _PINNED_LEB_MODE in ("db", "routed") and not hasattr(_backend_module, "calculation_session"):
+        raise RuntimeError("DB/routed mode requires libephemeris calculation-session support.")
     _backend_module.set_calc_mode(_PINNED_LEB_MODE)
     if _PINNED_LEB_MODE == "leb":
         if not hasattr(_backend_module, "set_network_policy"):
@@ -796,7 +798,14 @@ def ephemeris_session(
                         ) from None
                     ephe.set_sid_mode(sidm_const)
 
-            yield iflag
+            # A chart/search owns transient scientific DB inputs only for this
+            # existing logical scope; keep the global sid/topo lock unchanged.
+            scope = getattr(ephe, "calculation_session", None)
+            if scope is None:
+                yield iflag
+            else:
+                with scope():
+                    yield iflag
         finally:
             _SESSION_DEPTH.value = getattr(_SESSION_DEPTH, "value", 1) - 1
             reset_ephemeris_session()

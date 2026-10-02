@@ -243,7 +243,7 @@ _FIXED_STAR_KEY_PREFIX = "fixed_stars::"
 # "ephemeris" would overstate them (and would silently mislabel any source
 # label a future libephemeris adds), so unrecognized labels fall back to
 # "numerical-model" instead. Compared lowercased.
-_EPHEMERIS_GRADE_SOURCES = frozenset({"leb", "spk", "skyfield"})
+_EPHEMERIS_GRADE_SOURCES = frozenset({"leb", "db", "mixed", "spk", "skyfield"})
 
 
 def _precision_class_for_source(source: str) -> str:
@@ -2854,14 +2854,9 @@ class AstrologicalSubjectFactory:
                 "local model produced a value for the requested date."
             )
         elif resolved_code == "unsupported_by_backend":
-            message = (
-                "Optional point omitted because the active backend does not support it."
-            )
+            message = "Optional point omitted because the active backend does not support it."
         else:
-            message = (
-                "Optional point omitted because the active ephemeris backend "
-                "could not calculate it."
-            )
+            message = "Optional point omitted because the active ephemeris backend could not calculate it."
 
         warning = {
             "code": resolved_code,
@@ -3159,9 +3154,7 @@ class AstrologicalSubjectFactory:
             # houses call lived here "for the Arabic Parts"; nothing could ever
             # reach it, and a second place that files the Ascendant is a second
             # place to get it wrong.
-            raise KerykeionException(
-                "The Ascendant is calculated with the houses, before any point can ask for it"
-            )
+            raise KerykeionException("The Ascendant is calculated with the houses, before any point can ask for it")
 
         # For planets, use STANDARD_PLANETS mapping
         if point in STANDARD_PLANETS:
@@ -3564,7 +3557,9 @@ class AstrologicalSubjectFactory:
                     # same way planets and derived antipodes already do.
                     star_ecl_lat = pos_ecl[1] if len(pos_ecl) > 1 else None
                     star_speed = pos_ecl[3] if len(pos_ecl) > 3 else 0.0
-                    pos_eq = ephe.fixstar_ut(swe_name, julian_day, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[0]
+                    pos_eq = ephe.fixstar_ut(swe_name, julian_day, (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL)[
+                        0
+                    ]
                     star_dec = pos_eq[1] if len(pos_eq) > 1 else None
                     try:
                         star_mag = ephe.fixstar2_mag(swe_name)[0]
@@ -3823,7 +3818,7 @@ class AstrologicalSubjectFactory:
                             point.source = backend
                             point.precision_class = _precision_class_for_source(backend)
 
-                            if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
+                            if backend in ("LEB", "DB", "Mixed") and hasattr(ephe, "get_body_coverage"):
                                 # rc14 date-aware coverage API: body_id + requested JD.
                                 body_coverage = ephe.get_body_coverage(body_id, julian_day)
                                 if body_coverage is not None:
@@ -3903,7 +3898,9 @@ class AstrologicalSubjectFactory:
                     elif primary_classes:
                         part.precision_class = "mixed"
                     coverage_starts = [
-                        p.ephemeris_coverage_start_jd for p in part_primaries if p.ephemeris_coverage_start_jd is not None
+                        p.ephemeris_coverage_start_jd
+                        for p in part_primaries
+                        if p.ephemeris_coverage_start_jd is not None
                     ]
                     coverage_ends = [
                         p.ephemeris_coverage_end_jd for p in part_primaries if p.ephemeris_coverage_end_jd is not None
