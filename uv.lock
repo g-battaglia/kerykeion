@@ -351,7 +351,7 @@ requires-dist = [
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
     { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
-    { name = "libephemeris", specifier = "==3.2.1" },
+    { name = "libephemeris", specifier = ">=3.2.1,<4" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
     { name = "requests", specifier = ">=2.33.0" },

@@ -45,11 +45,11 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # Keep the exact backend version verified for v6. Golden fixtures and
-    # source/coverage contracts are verified against this release;
-    # the dependency pin gives PyPI installs the same backend as the lockfile.
-    # A backend upgrade requires rechecking the extended suite and fixtures.
-    "libephemeris==3.2.1",
+    # Keep the backend floor verified for v6 while allowing compatible 3.x
+    # releases. Golden fixtures and source/coverage contracts are verified
+    # against 3.2.1; a backend upgrade requires rechecking the extended suite
+    # and fixtures.
+    "libephemeris>=3.2.1,<4",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
