@@ -13,8 +13,7 @@ from kerykeion.ephemeris_backend import backend
 @pytest.fixture
 def routed(monkeypatch):
     ephe = backend.ephe
-    if not hasattr(ephe, "calculation_session"):
-        pytest.skip("Requires coefficient-session backend")
+    assert hasattr(ephe, "calculation_session"), "The declared coefficient dependency must expose calculation_session"
     old_mode = ephe.get_calc_mode()
     old_tier = ephe.get_precision_tier()
     old_policy = ephe.get_configured_network_policy()
@@ -114,6 +113,25 @@ def test_station_factory_retains_fatal_category_through_normalization(routed, mo
     monkeypatch.setattr(routed, "calc_ut", unavailable)
     with pytest.raises(routed.DBDataError, match="Station"):
         RetrogradeStationFactory.from_julian_day(2451545.0, 2451550.0, planets=["Mars"])
+
+
+@pytest.mark.parametrize("source", ["Mixed", "DB", "LEB"])
+def test_routed_result_does_not_inherit_target_only_reviewed_status(routed, monkeypatch, source):
+    original = routed.get_body_coverage
+    calls = []
+
+    def coverage(body, jd=None):
+        calls.append(body)
+        return original(body, jd)
+
+    monkeypatch.setattr(routed, "get_trace_results", lambda: {routed.SUN: source})
+    monkeypatch.setattr(routed, "get_body_coverage", coverage)
+    result = subject()
+    assert result.sun.source == source
+    assert result.sun.source_reviewed is None
+    assert result.sun.ephemeris_coverage_start_jd is None
+    assert result.sun.ephemeris_coverage_end_jd is None
+    assert routed.SUN not in calls
 
 
 def test_existing_session_nesting_guard_remains(routed):

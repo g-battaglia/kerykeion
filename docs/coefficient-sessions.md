@@ -20,7 +20,10 @@ backend configuration.
 
 Point provenance recognizes `DB` and `Mixed` as coefficient-based sources,
 independently of transport. Coverage and reviewed status come from the actual
-serving source; dataset publication alone does not prove a reviewed artifact.
+serving source only when that source attests the whole calculation. Mixed
+results and every routed result leave the single-reader coverage/review fields
+unknown: the target-date reader cannot attest other support epochs or datasets.
+Dataset publication alone does not prove a reviewed artifact.
 The public factory signatures, chart fields and astronomical reductions are
 unchanged. Existing backend versions without the public hook retain their old
 behavior when an existing mode is selected.
@@ -28,4 +31,10 @@ behavior when an existing mode is selected.
 Targeted regressions live in `tests/core/test_coefficient_session.py`, alongside
 the existing backend-path and provenance tests. They cover one chart owner,
 optional-point failure, transit-refinement catches, station normalization and
-unchanged nesting rejection.
+unchanged nesting rejection, and conservative provenance across support sources.
+
+This review branch selects an immutable public source archive of the compatible
+coefficient implementation. The coefficient-session tests fail, rather than
+silently skip, if that declared dependency lacks the required public hook.
+Before publishing a package release, replace the snapshot reference with the
+actual compatible released version; no release or deployment is implied here.

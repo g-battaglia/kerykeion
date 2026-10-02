@@ -351,7 +351,7 @@ requires-dist = [
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
     { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
-    { name = "libephemeris", specifier = "==3.2.1" },
+    { name = "libephemeris", url = "https://github.com/g-battaglia/libephemeris/archive/0557ffec11471fa78beb690a96673b93a12a4535.zip" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
     { name = "requests", specifier = ">=2.33.0" },
@@ -395,7 +395,7 @@ requires-dist = [{ name = "kerykeion", editable = "." }]
 [[package]]
 name = "libephemeris"
 version = "3.2.1"
-source = { registry = "https://pypi.org/simple" }
+source = { url = "https://github.com/g-battaglia/libephemeris/archive/0557ffec11471fa78beb690a96673b93a12a4535.zip" }
 dependencies = [
     { name = "certifi" },
     { name = "click" },
@@ -404,10 +404,44 @@ dependencies = [
     { name = "skyfield-data" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/fe/bca7d80cab070edd33b6b4762f9e4a0eadde189fd84c3aab4ca33030b128/libephemeris-3.2.1.tar.gz", hash = "sha256:515fdae2b6f7ba01b801c788127a0d18c24202058ff81cc512d8dfcaee8945e8", size = 12386856, upload-time = "2026-09-05T10:46:33.719Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/50/a5/d90c3ed9940a6ff1e955a2c1849b4e68846a24d1adad3e9f01d9bce55e44/libephemeris-3.2.1-py3-none-any.whl", hash = "sha256:7853e2759fcdd52e3953d2235b249c220fa0327c508b0c4fab2e49942cd35711", size = 12436769, upload-time = "2026-09-05T10:46:29.741Z" },
+sdist = { hash = "sha256:85d58ed06b76f5449a44b4aea0c0ec56ea9e05dc8482e95a749df49a676502e9" }
+
+[package.metadata]
+requires-dist = [
+    { name = "assist", marker = "extra == 'nbody'", specifier = ">=1.1.0" },
+    { name = "astropy", marker = "extra == 'all'", specifier = ">=5.0.0" },
+    { name = "astropy", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "astropy", marker = "extra == 'stars'", specifier = ">=5.0.0" },
+    { name = "astroquery", marker = "extra == 'dev'", specifier = ">=0.4.7" },
+    { name = "astroquery", marker = "extra == 'stars'", specifier = ">=0.4.7" },
+    { name = "black", marker = "extra == 'dev'", specifier = ">=25.1.0" },
+    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "certifi" },
+    { name = "click", specifier = ">=8.0" },
+    { name = "ebooklib", marker = "extra == 'dev'", specifier = ">=0.20" },
+    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "markdown", marker = "extra == 'dev'", specifier = ">=3.7" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=2.0.0" },
+    { name = "poethepoet", marker = "extra == 'dev'", specifier = ">=0.37.0,<0.38.0" },
+    { name = "psycopg", extras = ["binary", "pool"], marker = "extra == 'postgres'", specifier = ">=3.2,<4" },
+    { name = "pyerfa", specifier = ">=2.0.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0,<9.0.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "pytest-sugar", marker = "extra == 'dev'", specifier = ">=1.1.1" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5.0" },
+    { name = "pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
+    { name = "rebound", marker = "extra == 'nbody'", specifier = ">=4.4.11,<5.0.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.6" },
+    { name = "skyfield", specifier = ">=1.54" },
+    { name = "skyfield-data", specifier = ">=7.0.0" },
+    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.0.0" },
+    { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=2.0.0" },
+    { name = "spiceypy", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "twine", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "zstandard", specifier = ">=0.22.0" },
 ]
+provides-extras = ["postgres", "stars", "nbody", "all", "dev", "docs"]
 
 [[package]]
 name = "librt"

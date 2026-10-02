@@ -45,11 +45,9 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # Keep the exact backend version verified for v6. Golden fixtures and
-    # source/coverage contracts are verified against this release;
-    # the dependency pin gives PyPI installs the same backend as the lockfile.
-    # A backend upgrade requires rechecking the extended suite and fixtures.
-    "libephemeris==3.2.1",
+    # Immutable public review snapshot with the required coefficient-session hook.
+    # Replace with the actual compatible release before publishing a package.
+    "libephemeris @ https://github.com/g-battaglia/libephemeris/archive/0557ffec11471fa78beb690a96673b93a12a4535.zip",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
@@ -99,6 +97,9 @@ members = ["cli"]
 
 [tool.uv.sources]
 kerykeion-cli = { workspace = true }
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]

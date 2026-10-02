@@ -3818,8 +3818,10 @@ class AstrologicalSubjectFactory:
                             point.source = backend
                             point.precision_class = _precision_class_for_source(backend)
 
-                            if backend in ("LEB", "DB", "Mixed") and hasattr(ephe, "get_body_coverage"):
-                                # rc14 date-aware coverage API: body_id + requested JD.
+                            if backend in ("LEB", "DB") and hasattr(ephe, "get_body_coverage") and getattr(ephe, "get_calc_mode", lambda: None)() != "routed":
+                                # A target-date reader cannot attest support sources
+                                # in mixed/routed work, even across two DB tiers.
+                                # Leave those coverage/review fields unknown.
                                 body_coverage = ephe.get_body_coverage(body_id, julian_day)
                                 if body_coverage is not None:
                                     point.precision_class = body_coverage.precision_class
