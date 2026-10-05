@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.0.5] - 2026-10-05
+
+### Changed
+
+- Pin libephemeris 3.2.2, which ships the regenerated base core and selects the
+  SHA-256-verified data-v4 LEB2 inventory for downloads. Existing caches can be
+  updated with `libephemeris download leb2-extended` (or the desired tier).
+- Keep the library and CLI distributions at the same version.
+
 ## [Unreleased]
 
 ## [6.0.4] - 2026-09-29

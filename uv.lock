@@ -303,7 +303,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.0.4"
+version = "6.0.5"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -351,7 +351,7 @@ requires-dist = [
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
     { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
-    { name = "libephemeris", specifier = "==3.2.1" },
+    { name = "libephemeris", git = "https://github.com/g-battaglia/libephemeris?rev=7c77b70717cf8420b85c19d3aaad128060998007" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
     { name = "requests", specifier = ">=2.33.0" },
@@ -383,7 +383,7 @@ dev = [
 
 [[package]]
 name = "kerykeion-cli"
-version = "6.0.4"
+version = "6.0.5"
 source = { editable = "cli" }
 dependencies = [
     { name = "kerykeion" },
@@ -394,8 +394,8 @@ requires-dist = [{ name = "kerykeion", editable = "." }]
 
 [[package]]
 name = "libephemeris"
-version = "3.2.1"
-source = { registry = "https://pypi.org/simple" }
+version = "3.2.2"
+source = { git = "https://github.com/g-battaglia/libephemeris?rev=7c77b70717cf8420b85c19d3aaad128060998007#7c77b70717cf8420b85c19d3aaad128060998007" }
 dependencies = [
     { name = "certifi" },
     { name = "click" },
@@ -403,10 +403,6 @@ dependencies = [
     { name = "skyfield" },
     { name = "skyfield-data" },
     { name = "zstandard" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/16/fe/bca7d80cab070edd33b6b4762f9e4a0eadde189fd84c3aab4ca33030b128/libephemeris-3.2.1.tar.gz", hash = "sha256:515fdae2b6f7ba01b801c788127a0d18c24202058ff81cc512d8dfcaee8945e8", size = 12386856, upload-time = "2026-09-05T10:46:33.719Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/50/a5/d90c3ed9940a6ff1e955a2c1849b4e68846a24d1adad3e9f01d9bce55e44/libephemeris-3.2.1-py3-none-any.whl", hash = "sha256:7853e2759fcdd52e3953d2235b249c220fa0327c508b0c4fab2e49942cd35711", size = 12436769, upload-time = "2026-09-05T10:46:29.741Z" },
 ]
 
 [[package]]
