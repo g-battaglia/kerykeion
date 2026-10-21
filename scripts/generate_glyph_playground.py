@@ -31,9 +31,10 @@ steps per ring: 270 charts. Wheel-only, so the eye lands on the wheel.
 ceiling saturates: past a point the cap, not the clearance, decides. So every
 step above the first renders with the ceiling lifted out of the way, and the
 first step is the chart exactly as the library ships it — measured ceiling
-included. On most of these charts the two coincide (the ceiling never binds and
-the marked step is simply the 0.45 chart); on the small synastry it genuinely
-binds, and the page says so rather than hiding the discontinuity.
+included. Whether the ceiling changes the layout is measured from the actual
+planet display angles, not assumed from the chart type or ephemeris backend.
+The current fixtures do not activate it; if a future fixture does, the page
+reports that discontinuity.
 
 **How 270 charts fit in 1.8 MB.** Changing the air moves the planet ring and
 nothing else, so each variant travels as a line-level diff against the shipped
@@ -82,6 +83,9 @@ UNBOUND_CEILING = 25.0
 SIZES = ["small", "medium", "large"]
 RINGS = ("natal", "dual_outer", "dual_inner")
 
+RingLayout = tuple[tuple[str, float], ...]
+DisplayLayout = tuple[RingLayout, ...]
+
 JOHN_LENNON_BIRTH_DATA = (1940, 10, 9, 18, 30)
 PAUL_MCCARTNEY_BIRTH_DATA = (1942, 6, 18, 15, 30)
 LIVERPOOL = golden_place("Liverpool", "GB")
@@ -91,7 +95,7 @@ LIVERPOOL = golden_place("Liverpool", "GB")
 
 
 @contextlib.contextmanager
-def _clearance_per_ring(clearances: list[float]):
+def _clearance_per_ring(clearances: list[float], layouts: list[RingLayout]):
     """Feed each planet ring its own clearance, in the order the renderer draws.
 
     The clearance reaches the resolver as a default argument bound when the
@@ -111,7 +115,9 @@ def _clearance_per_ring(clearances: list[float]):
         clearance=dm.DEFAULT_CLUSTER_CLEARANCE,
     ):
         queued = queue.pop(0) if queue else clearance
-        return resolve(planets_with_angles, min_separation=min_separation, row_radii=row_radii, clearance=queued)
+        resolved = resolve(planets_with_angles, min_separation=min_separation, row_radii=row_radii, clearance=queued)
+        layouts.append(display_layout(resolved))
+        return resolved
 
     dm._resolve_planet_collisions = resolve_with_queued_clearance
     try:
@@ -133,12 +139,32 @@ def _ceiling_lifted(glyph_size: str, rings: tuple[str, ...]):
             dm.GLYPH_SIZE_PROFILES[glyph_size][ring] = profile
 
 
-def render(chart_data, glyph_size: str, clearances: list[float], unbound: tuple[str, ...] = ()) -> str:
-    """One wheel-only SVG, drawn with the given air and the named ceilings lifted."""
-    with _clearance_per_ring(clearances) as queue, _ceiling_lifted(glyph_size, unbound):
+def display_layout(resolved: list[dict]) -> RingLayout:
+    """Canonical point rotations at the renderer's six-decimal SVG precision.
+
+    This is presentation precision, not an astronomical tolerance. Ordering and
+    equivalent 0/360-degree rotations do not constitute a layout change.
+    """
+    return tuple(sorted((entry["point"].name, float(f"{entry['display_angle']:.6f}") % 360.0) for entry in resolved))
+
+
+def render_with_layout(
+    chart_data,
+    glyph_size: str,
+    clearances: list[float],
+    unbound: tuple[str, ...] = (),
+) -> tuple[str, DisplayLayout]:
+    """Render the real wheel and capture the placements its resolver produced."""
+    layouts: list[RingLayout] = []
+    with _clearance_per_ring(clearances, layouts) as queue, _ceiling_lifted(glyph_size, unbound):
         svg = ChartDrawer(chart_data).generate_wheel_only_svg_string(style="modern", glyph_size=glyph_size)
     assert not queue, f"a ring went undrawn: {queue}"
-    return svg
+    return svg, tuple(layouts)
+
+
+def render(chart_data, glyph_size: str, clearances: list[float], unbound: tuple[str, ...] = ()) -> str:
+    """One wheel-only SVG, drawn with the given air and the named ceilings lifted."""
+    return render_with_layout(chart_data, glyph_size, clearances, unbound)[0]
 
 
 def step_clearance(step: int) -> float:
@@ -227,7 +253,7 @@ def apply_diff(base_lines: list[str], edits: list) -> str:
 
 
 def build_data() -> dict:
-    """Every chart the page can show: three shipped bases, 264 diffs from them."""
+    """Every chart the page can show: six shipped bases, 264 diffs from them."""
     john = AstrologicalSubjectFactory.from_birth_data(
         "John Lennon", *JOHN_LENNON_BIRTH_DATA, suppress_geonames_warning=True, **LIVERPOOL
     )
@@ -243,16 +269,18 @@ def build_data() -> dict:
 
     for size in SIZES:
         shipped_air = [dm.DEFAULT_CLUSTER_CLEARANCE]
-        natal_base = render(natal, size, shipped_air)
-        synastry_base = render(synastry, size, shipped_air * 2)
+        natal_base, natal_layout = render_with_layout(natal, size, shipped_air)
+        synastry_base, synastry_layout = render_with_layout(synastry, size, shipped_air * 2)
         bases[f"natal__{size}"] = natal_base
         bases[f"synastry__{size}"] = synastry_base
 
-        # Does the shipped ceiling actually cap anything here? The page tells the
-        # reader, because where it does, step 0 is not on the same curve as the rest.
+        # Clipping a pair's request does not necessarily move any point. Only
+        # changed display rotations, not unrelated SVG text, activate the note.
+        _, natal_unbound = render_with_layout(natal, size, shipped_air, ("natal",))
+        _, synastry_unbound = render_with_layout(synastry, size, shipped_air * 2, ("dual_outer", "dual_inner"))
         ceiling_binds[size] = {
-            "natal": render(natal, size, shipped_air, ("natal",)) != natal_base,
-            "synastry": render(synastry, size, shipped_air * 2, ("dual_outer", "dual_inner")) != synastry_base,
+            "natal": natal_unbound != natal_layout,
+            "synastry": synastry_unbound != synastry_layout,
         }
 
         natal_lines = lines_of(natal_base)

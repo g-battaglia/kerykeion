@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 1
 OUT="$ROOT/validation_output"
 REFERENCE="$OUT/reference"
+CONSUMER_REFERENCE="$OUT/reference-consumer"
 V3_PYTHON="${V3_PYTHON:-$ROOT/../../.venv/bin/python}"
 FAILED=0
 mkdir -p "$OUT"
@@ -12,6 +13,16 @@ if [ ! -f "$REFERENCE/pyproject.toml" ]; then
     mkdir -p "$REFERENCE"
     git archive b81527d6 | tar -x -C "$REFERENCE" || exit 1
 fi
+# Keep the astronomical/benchmark baseline untouched. The v3 consumer suite
+# needs the same consumer-only fixes, not v4-only production/integration code.
+if [ ! -f "$CONSUMER_REFERENCE/pyproject.toml" ]; then
+    mkdir -p "$CONSUMER_REFERENCE"
+    git archive b81527d6 | tar -x -C "$CONSUMER_REFERENCE" || exit 1
+fi
+for file in cli/man/man1/kerykeion.1 scripts/generate_glyph_playground.py \
+    scripts/glyph_playground.html tests/core/test_glyph_playground.py; do
+    cp "$ROOT/$file" "$CONSUMER_REFERENCE/$file" || exit 1
+done
 
 run_check() {
     local name="$1"
@@ -88,13 +99,13 @@ run_check numeric-comparison "$ROOT/.venv/bin/python" scripts/compare_rust_v3.py
     --check --reference-python "$V3_PYTHON" --reference-root "$REFERENCE" \
     --output "$OUT/numeric-comparison.json"
 
-cd "$REFERENCE" || exit 1
-run_check python-v3-full env PYTHONPATH="$REFERENCE:$REFERENCE/cli" \
+cd "$CONSUMER_REFERENCE" || exit 1
+run_check python-v3-full env PYTHONPATH="$CONSUMER_REFERENCE:$CONSUMER_REFERENCE/cli" \
     LIBEPHEMERIS_PRECISION=extended KERYKEION_BACKEND=libephemeris \
     KERYKEION_EPHE_PATH="$HOME/.kerykeion/sweph" \
     "$V3_PYTHON" -m pytest tests/ --tier=extended -n 2 --tb=short \
     --durations=50 --junitxml="$OUT/python-v3-full.xml"
-run_check python-v3-medium-boundaries env PYTHONPATH="$REFERENCE:$REFERENCE/cli" \
+run_check python-v3-medium-boundaries env PYTHONPATH="$CONSUMER_REFERENCE:$CONSUMER_REFERENCE/cli" \
     LIBEPHEMERIS_PRECISION=medium LIBEPHEMERIS_DATA_DIR="$OUT/data-medium" \
     KERYKEION_BACKEND=libephemeris "$V3_PYTHON" -m pytest -n 0 --tb=short \
     --junitxml="$OUT/python-v3-medium-boundaries.xml" $(tr '\n' ' ' < "$OUT/medium-boundary-nodeids.txt")

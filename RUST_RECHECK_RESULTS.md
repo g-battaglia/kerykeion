@@ -1,8 +1,11 @@
 # Recheck of the v4 issue fixes — core 09236862
 
 **Verdict: the original Kerykeion regressions are corrected, but the backend is
-not completely clear.** The full consumer suite now has only its two known
-consumer-only failures. An independent historical grid still exposes a real
+not completely clear.** At this recheck the full consumer suite had only its
+two known consumer-only failures. Those have since been corrected and both
+complete consumer suites pass; see
+[RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md). The measurements below retain
+the original recheck results. An independent historical grid still exposes a real
 stellar/live-anchor routing defect, filed as
 [#26](https://github.com/g-battaglia/libephemeris-rust/issues/26).
 

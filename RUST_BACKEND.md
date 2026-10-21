@@ -8,9 +8,11 @@ explicit optional backend; no Swiss code or numerical models were added to Rust.
 
 This is a development integration, **not a validated v4 release**. The upstream
 Rust project still lists scientific validation work in progress. The latest
-consumer verification is [RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md)
-(core `09236862`): the original regressions are corrected, but historical
-mixed-tier stellar/live-anchor calculations still fail; see upstream
+consumer verification is [RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md)
+(core `09236862`): the complete consumer suites pass after the manpage/playground
+fixes, but historical mixed-tier stellar/live-anchor calculations still fail.
+The preceding engine recheck and benchmarks are preserved in
+[RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md); see upstream
 [issue #26](https://github.com/g-battaglia/libephemeris-rust/issues/26).
 
 ## Install in the dedicated worktree
@@ -139,14 +141,18 @@ returns zero even when its report contains failing cases.
 `scripts/run_rust_validation.sh` orchestrates sequential benchmark/native/full
 Rust/full v3 runs plus the medium-range boundary cases, preserving logs, exit
 codes and JUnit files under the ignored `validation_output/` directory. It exits
-nonzero when any validation step fails; currently the recorded suites are not
-green. Its v3 reference is a source archive of the
-unchanged main commit `b81527d6`; no main-checkout files are rewritten.
+nonzero when any validation step fails. The consumer suites now pass, but the
+strict historical comparison still fails on #26. Its astronomical/benchmark
+reference remains an untouched archive of main commit `b81527d6`. The separate
+v3 consumer archive receives only the four manpage/playground fixes, without
+v4-only production changes or integration tests; main is never rewritten.
 
 ## Measured results
 
-See [RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md) for the latest completed
-runs, remaining issue and consumer-only follow-up. The original measurements
+See [RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md) for the latest complete
+consumer suites and remaining historical comparison failure. Engine recheck
+and benchmark measurements are in
+[RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md). The original measurements
 against core `2e0e5245` remain in
 [RUST_VALIDATION_RESULTS.md](RUST_VALIDATION_RESULTS.md). Raw logs and machine-readable outputs are kept
 in `validation_output/`; they are not package contents.
