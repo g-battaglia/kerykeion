@@ -83,9 +83,8 @@ def _nearest_conjunction(
 def _star_source_trace() -> Iterator[dict[str, str | None]]:
     """Scope backend source tracing to a single star's ephemeris calls.
 
-    ``start_tracing`` opens a native thread-local scope. Use independent scopes,
-    never nested ones: opening one per star keeps the collected map down to
-    that star's own body id, which is
+    ``start_tracing`` opens a native thread-local scope. Independent per-star
+    scopes keep the collected map down to that star's own body id, which is
     what lets us read the source label back without an id -> name inventory
     (the fixed-star id space, unlike the planetary one, exposes none).
 

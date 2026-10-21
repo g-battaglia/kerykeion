@@ -70,6 +70,11 @@ def capture():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--worker", action="store_true")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Exit nonzero for one-sided errors, class/flag mismatches or existing consumer-tolerance failures",
+    )
     parser.add_argument("--reference-python", type=Path)
     parser.add_argument("--reference-root", type=Path)
     parser.add_argument("--output", type=Path, default=Path("validation_output/numeric-comparison.json"))
@@ -112,6 +117,7 @@ def main():
         "both_success": 0,
         "both_error": 0,
         "one_sided_errors": [],
+        "error_class_differences": [],
         "flag_differences": [],
         "max_abs_residuals": [0.0] * 6,
         "max_residual_cases": [None] * 6,
@@ -123,6 +129,10 @@ def main():
         if "error" in rust or "error" in reference:
             if "error" in rust and "error" in reference:
                 summary["both_error"] += 1
+                if rust["error"] != reference["error"]:
+                    summary["error_class_differences"].append(
+                        {"case": key, "rust": rust["error"], "v3": reference["error"]}
+                    )
             else:
                 summary["one_sided_errors"].append({"case": key, "rust": rust, "v3": reference})
             continue
@@ -151,6 +161,17 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(records, indent=2) + "\n")
     print(json.dumps(summary, indent=2))
+    if args.check and any(
+        summary[name]
+        for name in (
+            "one_sided_errors",
+            "error_class_differences",
+            "flag_differences",
+            "position_above_0.01_degree",
+            "angular_speed_above_0.0001_degree_per_day",
+        )
+    ):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

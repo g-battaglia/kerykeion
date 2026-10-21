@@ -74,6 +74,33 @@ def main():
         except Exception as exc:
             out["sidereal_modes"][mode] = {"error": type(exc).__name__, "message": str(exc)}
 
+    # Modern-epoch success must not hide observer/tier routing failures in
+    # historical live-anchor calculations. Keep errors visible in the output.
+    out["historical_sidereal_modes"] = {}
+    out["historical_fixed_stars"] = {}
+    for year in [-500, 1000, 1700, 2000]:
+        jd = e.julday(year, 6, 15, 12.0)
+        modes = {}
+        for mode in get_args(SiderealMode):
+            if mode == "USER":
+                continue
+            setup(getattr(e, "SIDM_" + mode))
+            try:
+                e.calc_ut(jd, e.SUN, e.FLG_SWIEPH | e.FLG_SPEED | e.FLG_SIDEREAL)
+                modes[mode] = {"ok": True}
+            except Exception as exc:
+                modes[mode] = {"error": type(exc).__name__, "message": str(exc)}
+        out["historical_sidereal_modes"][str(year)] = modes
+        stars = {}
+        setup()
+        for name in ["Regulus", "Spica", "Aldebaran"]:
+            try:
+                e.fixstar_ut(name, jd, e.FLG_SWIEPH | e.FLG_SPEED)
+                stars[name] = {"ok": True}
+            except Exception as exc:
+                stars[name] = {"error": type(exc).__name__, "message": str(exc)}
+        out["historical_fixed_stars"][str(year)] = stars
+
     setup()
     outer = e.start_tracing()
     e.calc_ut(start, e.SUN, e.FLG_SPEED)

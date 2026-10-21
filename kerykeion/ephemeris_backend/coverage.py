@@ -1,9 +1,9 @@
 """Bounded caching of native v4 *metadata*, never planetary calculations.
 
-v4.dev0 verifies the digest of every active LEB image for each coverage query.
-On an extended dataset that hashes several GB for every chart point. Reuse the
-native coverage record while configuration, file identities and date-coverage
-membership are unchanged. Precision classes and reviewed flags remain native;
+Early v4 snapshots verified every active LEB digest for each coverage query,
+rehashing several GB per chart point. Upstream now caches immutable digests;
+this compatibility cache still reuses native records while configuration,
+file identities and date-coverage membership are unchanged. Precision classes and reviewed flags remain native;
 we never manufacture them from filenames or promote unreviewed data.
 """
 

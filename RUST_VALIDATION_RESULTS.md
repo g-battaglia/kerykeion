@@ -1,6 +1,11 @@
-# Rust v4 integration: completed validation and benchmarks
+# Rust v4 integration: initial validation and benchmarks
 
-**2026-10-21 — experimental, not production-ready.** Some successful sidereal
+> Historical report for core `2e0e5245`. The newer fixes and re-verification of
+> core `09236862` are in [RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md).
+> The ~24-degree crossing defect below is fixed in that newer revision; a
+> historical mixed-tier stellar support defect remains separately tracked.
+
+**Initial run, 2026-10-21 — experimental, not production-ready.** Some successful sidereal
 return searches produce results about **24 degrees wrong**. Other supported-v3
 configurations raise native errors. Do not interpret passing ordinary natal
 positions or a green packaging smoke test as validation of these techniques.

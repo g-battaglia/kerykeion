@@ -3547,9 +3547,9 @@ class AstrologicalSubjectFactory:
                 # per-body trace map cannot attribute them: a star's rows would be
                 # indistinguishable from a planet's. Wrap this star's calls in their
                 # OWN tracing scope instead, after planetary provenance has been
-                # harvested. Native v4 tracing is not nestable: every start replaces
-                # the current generation. Everything this scope holds belongs to
-                # this star and this star alone. Same guard
+                # harvested. Independent scopes also support early v4 snapshots
+                # that replaced rather than restored nested trace generations.
+                # Everything this scope holds belongs to this star alone. Same guard
                 # as the planetary scope above: only libephemeris exposes the channel.
                 _star_trace_token = None
                 if BACKEND_NAME == "libephemeris" and hasattr(ephe, "start_tracing"):
@@ -3865,9 +3865,9 @@ class AstrologicalSubjectFactory:
                     if reviewed_flags:
                         part.source_reviewed = all(reviewed_flags)
 
-        # v4 native tracing replaces rather than nests scopes. Calculate stars
-        # only after the planetary scope has been harvested and reset, otherwise
-        # even one requested star silently erases all planetary provenance.
+        # Keep planetary and per-star provenance independent. Harvesting and
+        # resetting planets first also supports early v4 snapshots whose nested
+        # traces discarded the parent generation (corrected upstream in #19).
         requested_fixed_stars = data.get("_active_fixed_stars") or []
         seen_star_slugs: set[str] = set()
         for star_name in requested_fixed_stars:

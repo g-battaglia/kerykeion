@@ -83,6 +83,11 @@ run_check rust-medium-boundaries env LIBEPHEMERIS_PRECISION=medium \
     "$ROOT/.venv/bin/python" -m pytest -n 0 --tb=short \
     --junitxml="$OUT/rust-medium-boundaries.xml" $(tr '\n' ' ' < "$OUT/medium-boundary-nodeids.txt")
 
+# A green consumer suite alone does not cover historical live-anchor routing.
+run_check numeric-comparison "$ROOT/.venv/bin/python" scripts/compare_rust_v3.py \
+    --check --reference-python "$V3_PYTHON" --reference-root "$REFERENCE" \
+    --output "$OUT/numeric-comparison.json"
+
 cd "$REFERENCE" || exit 1
 run_check python-v3-full env PYTHONPATH="$REFERENCE:$REFERENCE/cli" \
     LIBEPHEMERIS_PRECISION=extended KERYKEION_BACKEND=libephemeris \

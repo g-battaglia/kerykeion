@@ -388,8 +388,12 @@ requires-dist = [{ name = "kerykeion", editable = "." }]
 name = "libephemeris"
 version = "4.0.0.dev0"
 source = { directory = "../../../libephemeris-rust" }
+dependencies = [
+    { name = "numpy" },
+]
 
 [package.metadata]
+requires-dist = [{ name = "numpy", specifier = ">=1.26" }]
 
 [package.metadata.requires-dev]
 test = [{ name = "pytest", specifier = ">=8" }]

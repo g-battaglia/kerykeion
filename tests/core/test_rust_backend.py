@@ -69,8 +69,9 @@ def test_subject_with_fixed_star_leaves_no_native_trace_scope():
     )
     assert subject.sun.source == "LEB"
     assert len(subject.fixed_stars) == 1
-    # Current v4 does not emit fixed-star trace rows. Do not invent a source.
-    assert subject.fixed_stars[0].source is None
+    # The native fixed-star route now emits its actual provider (#17).
+    assert subject.fixed_stars[0].source == "LEB"
+    assert subject.fixed_stars[0].precision_class == "ephemeris"
     assert 149.0 < subject.fixed_stars[0].abs_pos < 150.0
     assert ephe.get_trace_results() == {}
 

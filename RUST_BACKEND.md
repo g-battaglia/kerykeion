@@ -7,7 +7,11 @@ This branch uses **LibEphemeris 4.0.0.dev0**, built from the local
 explicit optional backend; no Swiss code or numerical models were added to Rust.
 
 This is a development integration, **not a validated v4 release**. The upstream
-Rust project still lists scientific validation work in progress.
+Rust project still lists scientific validation work in progress. The latest
+consumer verification is [RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md)
+(core `09236862`): the original regressions are corrected, but historical
+mixed-tier stellar/live-anchor calculations still fail; see upstream
+[issue #26](https://github.com/g-battaglia/libephemeris-rust/issues/26).
 
 ## Install in the dedicated worktree
 
@@ -38,15 +42,14 @@ The default Kerykeion mode remains sealed-network `leb`.
 ## Consumer changes
 
 - Dependency and uv lockfile select the local v4 development distribution.
-- Native tracing tokens use `reset()`. They replace, rather than nest, native
-  trace generations. Planetary provenance is harvested **before** independent
-  fixed-star scopes, preventing stars from erasing planetary provenance.
-- Current v4 fixed-star calls emit no trace rows. Their source/precision metadata
-  stays `None` rather than inventing a source; the existing provenance tests
-  deliberately continue to expose this upstream gap.
-- v4.dev0's raw coverage query re-verifies every active LEB digest on every call.
-  With the local extended files, a raw query took about one second and an
-  uncached default subject about twelve seconds. Kerykeion now memoizes **only
+- Native tracing tokens use `reset()`. Core `09236862` restores parent trace
+  scopes correctly. The consumer still harvests planetary provenance **before**
+  independent fixed-star scopes, preserving compatibility with early snapshots.
+- Fixed stars now emit their native trace rows; the integration test requires
+  actual `LEB` provenance instead of retaining the old missing-metadata behavior.
+- Early v4 snapshots re-verified every LEB digest per coverage query, costing
+  about one second per extended query and twelve seconds per uncached subject.
+  This is corrected upstream. The compatibility cache still memoizes **only
   native coverage metadata**, not positions, searches or astronomical results.
   Keys distinguish all overlapping date-coverage regions. Configuration changes,
   file identity/content timestamps and group-directory changes invalidate the
@@ -61,7 +64,8 @@ The default Kerykeion mode remains sealed-network `leb`.
   transitive dependencies. A clean subprocess verifies that importing Kerykeion
   with the Rust backend does not import Skyfield, jplephem or NumPy, even when
   those test tools are installed. Legacy Skyfield exception probing is disabled
-  for native v4 and Swiss backends.
+  for native v4 and Swiss backends. Updated native bindings explicitly depend on
+  NumPy for compatible array inputs/results; the engine computations stay Rust.
 
 ## Reproduce complete tests and benchmarks
 
@@ -127,7 +131,10 @@ ALDEBARAN sidereal configurations: one-sided errors are recorded, not excluded
 from the results. It additionally compares all named ayanamsas and five fixed
 stars. It saves raw v3/v4 residuals, **not Swiss
 numerical fixtures**. This is a diagnostic grid, not independent scientific
-certification or proof for every date/configuration.
+certification or proof for every date/configuration. Use `--check` to make
+one-sided errors, error-class/flag mismatches and existing consumer-tolerance
+violations return a nonzero exit status. Diagnostic generation alone otherwise
+returns zero even when its report contains failing cases.
 
 `scripts/run_rust_validation.sh` orchestrates sequential benchmark/native/full
 Rust/full v3 runs plus the medium-range boundary cases, preserving logs, exit
@@ -138,7 +145,8 @@ unchanged main commit `b81527d6`; no main-checkout files are rewritten.
 
 ## Measured results
 
-See [RUST_VALIDATION_RESULTS.md](RUST_VALIDATION_RESULTS.md) for completed-run
-counts, failure diagnosis,
-backend timings and limitations. Raw logs and machine-readable outputs are kept
+See [RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md) for the latest completed
+runs, remaining issue and consumer-only follow-up. The original measurements
+against core `2e0e5245` remain in
+[RUST_VALIDATION_RESULTS.md](RUST_VALIDATION_RESULTS.md). Raw logs and machine-readable outputs are kept
 in `validation_output/`; they are not package contents.
