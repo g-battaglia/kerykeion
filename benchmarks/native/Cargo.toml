@@ -1,0 +1,10 @@
+[package]
+name = "kerykeion-rusty-leb-benchmark"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+libephemeris-core = { path = "../../../../../libephemeris-rust", features = ["bundled-data", "nbody"] }

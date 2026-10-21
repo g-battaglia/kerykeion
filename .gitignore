@@ -38,6 +38,9 @@ Thumbs.db
 
 # Folders #
 ###########
+/.worktrees/
+/.rust-target/
+/validation_output/
 
 __pycache__
 venv

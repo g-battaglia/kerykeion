@@ -6,16 +6,17 @@ Ephemeris Backend Abstraction
 This module provides a unified interface to the ephemeris calculation engine,
 supporting two mutually exclusive backends:
 
-- **libephemeris**: Pure-Python drop-in replacement using NASA JPL DE440/DE441
-  via Skyfield. No C compiler needed; works everywhere Python runs.
+- **libephemeris**: v4 Rust engine exposed through native PyO3 bindings.
+  Uses local LEB coefficients or native NASA JPL DE440/DE441 readers.
   Licensed under AGPL-3.0 by the Kerykeion project.
 - **swisseph** (``pyswisseph``): The traditional Swiss Ephemeris C library bindings.
   Requires compilation. Licensed under AGPL-3.0 by Astrodienst AG.
 
 Installation
 ------------
-A plain ``pip install kerykeion`` includes ``libephemeris`` by default.
-To use the C-based backend instead::
+This experimental branch builds ``libephemeris 4.0.0.dev0`` from the local
+Rust checkout with ``uv sync``. See ``RUST_BACKEND.md`` for installation.
+To use the alternative C-based backend instead::
 
     pip install kerykeion[swiss]    # Swiss Ephemeris C bindings (GPL)
 
@@ -35,8 +36,8 @@ When libephemeris is active, the calculation mode defaults to ``"leb"``
 (mandatory .leb binary ephemeris files) for maximum performance.
 Override via ``KERYKEION_LEB_MODE``::
 
-    KERYKEION_LEB_MODE=auto python my_script.py      # LEB if available, else Skyfield
-    KERYKEION_LEB_MODE=skyfield python my_script.py   # Always Skyfield/DE440
+    KERYKEION_LEB_MODE=auto python my_script.py      # Native provider routing
+    KERYKEION_LEB_MODE=skyfield python my_script.py   # Native JPL/SPK (legacy name)
     KERYKEION_LEB_MODE=leb python my_script.py        # Require .leb (default)
 
 Usage
@@ -163,7 +164,7 @@ else:
             "Kerykeion requires an ephemeris backend but neither 'libephemeris' nor "
             "'pyswisseph' is installed.\n\n"
             "Install one of:\n"
-            "  pip install libephemeris     # Pure Python (default)\n"
+            "  uv sync                     # Local Rust/PyO3 v4 backend (default)\n"
             "  pip install pyswisseph       # Swiss Ephemeris C bindings (AGPL-3.0)\n"
         )
 
@@ -585,7 +586,7 @@ logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 #
 # In "leb" mode, libephemeris raises RuntimeError if no .leb file is
 # found — this is intentional: we want a clear failure rather than a
-# silent fallback to Skyfield (which would require downloading DE440).
+# silent fallback to native JPL/SPK (which may require downloading DE440).
 
 _PINNED_LEB_MODE: Optional[str] = None
 
@@ -640,14 +641,14 @@ def reset_ephemeris_session() -> None:
 
     Uses ``reset_session()`` when the backend provides it (libephemeris),
     which clears sidereal mode, topocentric coordinates and per-call flags
-    while keeping the LEB reader, Skyfield timescale and SPK kernels alive.
+    while keeping the native LEB reader, timescale and SPK kernels alive.
     Falls back to ``close()`` on backends without ``reset_session()``
     (pyswisseph).
 
     Both reset paths clear the libephemeris calculation mode, so the mode
     pinned at import time (``KERYKEION_LEB_MODE``, default ``"leb"``) is
-    re-applied afterwards — otherwise a single reset would silently re-enable
-    the Skyfield auto-fallback this module explicitly disables.
+    re-applied afterwards — otherwise a single reset could silently re-enable
+    the native JPL/SPK auto-fallback this module explicitly disables.
 
     Callers must hold ``EPHEMERIS_LOCK``. Never call ``ephe.close()``
     directly; use this function (or ``ephemeris_session``) instead.

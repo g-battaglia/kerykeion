@@ -45,11 +45,8 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    # Keep the exact backend version verified for v6. Golden fixtures and
-    # source/coverage contracts are verified against this release;
-    # the dependency pin gives PyPI installs the same backend as the lockfile.
-    # A backend upgrade requires rechecking the extended suite and fixtures.
-    "libephemeris==3.2.2",
+    # Experimental Rust/PyO3 v4 backend; built from the local checkout below.
+    "libephemeris==4.0.0.dev0",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
@@ -99,9 +96,9 @@ members = ["cli"]
 
 [tool.uv.sources]
 kerykeion-cli = { workspace = true }
-# Keep repository installs reproducible before and after the PyPI publication.
-# Published distributions retain the exact 3.2.2 dependency above.
-libephemeris = { git = "https://github.com/g-battaglia/libephemeris", rev = "7c77b70717cf8420b85c19d3aaad128060998007" }
+# Relative to this dedicated worktree at kerykeion/.worktrees/kerykeion-rusty-leb.
+# Non-editable: build the PyO3 wheel without writing into the backend checkout.
+libephemeris = { path = "../../../libephemeris-rust" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]
@@ -519,6 +516,10 @@ ignore = [
 
 [dependency-groups]
 dev = [
+    # Independent test oracle only: v4 no longer brings these transitively.
+    # Never used by the Rust ephemeris runtime or shipped as runtime dependencies.
+    "skyfield>=1.54",
+    "skyfield-data>=7.0.0",
     "coverage>=7.6.0",
     "fonttools>=4.50",  # used by scripts/build_chart_glyphs.py to extract glyph outlines
     "mypy>=1.17.1",

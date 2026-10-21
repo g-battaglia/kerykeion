@@ -1,4 +1,9 @@
 <h1 align="center">Kerykeion</h1>
+
+> **Experimental `kerykeion-rusty-leb` branch:** uses the local LibEphemeris v4
+> Rust/PyO3 engine, not Python v3. Follow [RUST_BACKEND.md](RUST_BACKEND.md)
+> for installation, complete-suite results and backend benchmarks. The general
+> release installation instructions below do not install this experimental branch.
 <div align="center">
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/g-battaglia/kerykeion.svg?logo=github" alt="GitHub stars"></a>
   <a href="https://github.com/g-battaglia/kerykeion" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/forks/g-battaglia/kerykeion.svg?logo=github" alt="GitHub forks"></a>
