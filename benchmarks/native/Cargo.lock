@@ -360,7 +360,7 @@ checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
 name = "libephemeris-core"
-version = "4.0.0-dev"
+version = "4.0.0"
 dependencies = [
  "cc",
  "chrono",

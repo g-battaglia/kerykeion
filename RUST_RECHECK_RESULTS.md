@@ -1,5 +1,8 @@
 # Recheck of the v4 issue fixes — core 09236862
 
+> Historical engine snapshot. For the newer 4.0.0 build and corrected #26,
+> see [RUST_LATEST_RECHECK_RESULTS.md](RUST_LATEST_RECHECK_RESULTS.md).
+
 **Verdict: the original Kerykeion regressions are corrected, but the backend is
 not completely clear.** At this recheck the full consumer suite had only its
 two known consumer-only failures. Those have since been corrected and both

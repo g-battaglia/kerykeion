@@ -1,19 +1,19 @@
 # Experimental Rust/PyO3 backend
 
-This branch uses **LibEphemeris 4.0.0.dev0**, built from the local
+This branch uses **LibEphemeris 4.0.0**, built from the local
 `/Users/giacomo/dev/libephemeris-rust` checkout, instead of Python LibEphemeris
 3.2.2. The distribution/import name is still `libephemeris` and
 `KERYKEION_BACKEND=libephemeris` still selects it. Swiss Ephemeris remains an
 explicit optional backend; no Swiss code or numerical models were added to Rust.
 
-This is a development integration, **not a validated v4 release**. The upstream
-Rust project still lists scientific validation work in progress. The latest
-consumer verification is [RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md)
-(core `09236862`): the complete consumer suites pass after the manpage/playground
-fixes, but historical mixed-tier stellar/live-anchor calculations still fail.
-The preceding engine recheck and benchmarks are preserved in
-[RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md); see upstream
-[issue #26](https://github.com/g-battaglia/libephemeris-rust/issues/26).
+This is a development integration, **not complete scientific certification of
+v4**. The latest verification is
+[RUST_LATEST_RECHECK_RESULTS.md](RUST_LATEST_RECHECK_RESULTS.md), clean upstream
+core `c0fe8ac9`: the consumer suites and strict historical grid pass. The previous
+mixed-tier stellar defect [#26](https://github.com/g-battaglia/libephemeris-rust/issues/26)
+is corrected. Earlier consumer fixes and engine measurements remain recorded in
+[RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md) and
+[RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md).
 
 ## Install in the dedicated worktree
 
@@ -35,6 +35,17 @@ After updating the development backend, rebuild explicitly:
 ```sh
 CARGO_TARGET_DIR="$PWD/.rust-target" uv sync --reinstall-package libephemeris
 ```
+
+If the backend checkout contains work in progress, do not build those uncommitted
+sources accidentally. The latest recheck fetched `origin/main`, archived the
+exact committed revision, built that archive with `uv build --wheel`, and
+installed its wheel using `uv pip install --python .venv/bin/python --reinstall`.
+The original dirty backend checkout was not cleaned, stashed or edited. Use
+`.venv/bin/python` directly afterwards: ordinary `uv sync` can rebuild the
+configured local path rather than retain this archived-wheel build. Poe's
+automatic uv executor can also resync even under an outer `uv run --no-sync`;
+for example run the manpage gate without resync using
+`PATH="$PWD/.venv/bin:$PATH" .venv/bin/poe -e simple man:check`.
 
 Use `libephemeris._core.__file__` to verify the native extension. The `skyfield`
 calculation-mode name is retained upstream for compatibility; in v4 it selects
@@ -141,17 +152,18 @@ returns zero even when its report contains failing cases.
 `scripts/run_rust_validation.sh` orchestrates sequential benchmark/native/full
 Rust/full v3 runs plus the medium-range boundary cases, preserving logs, exit
 codes and JUnit files under the ignored `validation_output/` directory. It exits
-nonzero when any validation step fails. The consumer suites now pass, but the
-strict historical comparison still fails on #26. Its astronomical/benchmark
+nonzero when any validation step fails. Both consumer suites and the strict
+historical comparison now pass with core `c0fe8ac9`. Its astronomical/benchmark
 reference remains an untouched archive of main commit `b81527d6`. The separate
 v3 consumer archive receives only the four manpage/playground fixes, without
 v4-only production changes or integration tests; main is never rewritten.
 
 ## Measured results
 
-See [RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md) for the latest complete
-consumer suites and remaining historical comparison failure. Engine recheck
-and benchmark measurements are in
+See [RUST_LATEST_RECHECK_RESULTS.md](RUST_LATEST_RECHECK_RESULTS.md) for the latest
+complete suites, historical checks and measurements. The consumer-only fixes
+are documented in [RUST_CONSUMER_FIXES.md](RUST_CONSUMER_FIXES.md). Earlier engine
+recheck and benchmark measurements are in
 [RUST_RECHECK_RESULTS.md](RUST_RECHECK_RESULTS.md). The original measurements
 against core `2e0e5245` remain in
 [RUST_VALIDATION_RESULTS.md](RUST_VALIDATION_RESULTS.md). Raw logs and machine-readable outputs are kept

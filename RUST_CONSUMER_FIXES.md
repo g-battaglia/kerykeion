@@ -1,5 +1,8 @@
 # Consumer-only fixes: manpage and glyph playground
 
+> Historical core `09236862` snapshot. The later 4.0.0 recheck corrects #26 as
+> well; current results are in [RUST_LATEST_RECHECK_RESULTS.md](RUST_LATEST_RECHECK_RESULTS.md).
+
 The Kerykeion-owned defects reported in
 [#23](https://github.com/g-battaglia/libephemeris-rust/issues/23) and
 [#24](https://github.com/g-battaglia/libephemeris-rust/issues/24) are fixed in

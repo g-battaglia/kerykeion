@@ -46,7 +46,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     # Experimental Rust/PyO3 v4 backend; built from the local checkout below.
-    "libephemeris==4.0.0.dev0",
+    "libephemeris==4.0.0",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
