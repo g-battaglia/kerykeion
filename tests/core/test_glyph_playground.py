@@ -122,7 +122,7 @@ def test_the_marked_step_is_the_chart_the_library_ships(charts):
 
 @pytest.mark.parametrize(
     ("chart", "size", "binds_lib", "binds_swiss"),
-    [("synastry", "small", True, False), ("natal", "medium", False, False), ("synastry", "large", False, False)],
+    [("synastry", "small", False, False), ("natal", "medium", False, False), ("synastry", "large", False, False)],
 )
 def test_the_page_tells_the_truth_about_the_ceiling(charts, chart, size, binds_lib, binds_swiss):
     """Lifting ``min_separation`` has to matter exactly where the page says it does.
@@ -139,8 +139,11 @@ def test_the_page_tells_the_truth_about_the_ceiling(charts, chart, size, binds_l
     shipped = render(charts[chart], size, air)
     lifted = render(charts[chart], size, air, rings)
 
-    # The generator measures this per render. Swiss positions do not bind
-    # the small-synastry ceiling at this fixture's date; libephemeris does.
+    # The generator measures this per render. Neither current backend binds
+    # the ceiling at these fixtures. The old LibEphemeris 3.2.2 True case was
+    # four cx/cy rounding differences of about 1e-14 wheel units, rather than
+    # a visible change in separation. No astronomical or rendering tolerance
+    # is changed by updating this version-specific expectation.
     binds = binds_lib if BACKEND_NAME == "libephemeris" else binds_swiss
     assert (shipped != lifted) is binds
 

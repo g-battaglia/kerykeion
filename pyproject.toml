@@ -49,7 +49,7 @@ dependencies = [
     # source/coverage contracts are verified against this release;
     # the dependency pin gives PyPI installs the same backend as the lockfile.
     # A backend upgrade requires rechecking the extended suite and fixtures.
-    "libephemeris==3.2.2",
+    "libephemeris==4.0.0",
     "pydantic>=2.5",
     "svg-polish>=1.0.0",
     "requests-cache>=1.2.1",
@@ -100,8 +100,8 @@ members = ["cli"]
 [tool.uv.sources]
 kerykeion-cli = { workspace = true }
 # Keep repository installs reproducible before and after the PyPI publication.
-# Published distributions retain the exact 3.2.2 dependency above.
-libephemeris = { git = "https://github.com/g-battaglia/libephemeris", rev = "7c77b70717cf8420b85c19d3aaad128060998007" }
+# Published distributions retain the exact 4.0.0 dependency above.
+libephemeris = { git = "https://github.com/g-battaglia/libephemeris-rust", rev = "b5b513d8d0cf7c91d6296f9b3bdd166be427ef25" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["kerykeion"]

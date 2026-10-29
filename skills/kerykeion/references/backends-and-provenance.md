@@ -14,8 +14,8 @@ that decide whether an out-of-range date raises or lands in
 | | `libephemeris` (default) | `swisseph` (`pyswisseph`) |
 |---|---|---|
 | Install | bundled by `pip install kerykeion` | `pip install "kerykeion[swiss]"` |
-| Engine | NASA JPL DE440/DE441 via Skyfield + precomputed `.leb` binary files | Swiss Ephemeris C library |
-| Compiler | none (pure Python) | C bindings |
+| Engine | LibEphemeris 4.0.0 Rust engine: NASA JPL DE440/DE441 + precomputed `.leb` binary files | Swiss Ephemeris C library |
+| Compiler | Rust toolchain when building from source | C bindings |
 | Data files | manages its own (`~/.libephemeris/leb/`) | needs `.se1`; else falls back to Moshier (lower precision) |
 | Provenance metadata on points | **populated** (`source`, `precision_class`, coverage, `source_reviewed`) | always `None` |
 | `ephemeris_warnings` | populated | only the backend-agnostic codes |
@@ -53,8 +53,8 @@ print(subject.ascendant.source)   # None — house-geometry points carry no prov
   - `leb` — require `.leb` files AND enforce the **sealed** network policy
     (`set_network_policy("sealed")`): a clear failure beats a silent
     download/degrade. This is the shipped default.
-  - `auto` — LEB if available, else Skyfield/DE440 (may download).
-  - `skyfield` — always Skyfield/DE440.
+  - `auto` — LEB if available, else native JPL evaluation (may download).
+  - `skyfield` — native JPL evaluation (legacy mode name).
   - `horizons` — query JPL Horizons. Like `auto`/`skyfield` it may reach the
     network; only `leb` guarantees it will not.
 - **`KERYKEION_EPHE_PATH`** — ephemeris data directory. libephemeris: a no-op

@@ -18,13 +18,13 @@ setup, and some search directions can differ.
 
 | Backend | Package | License | Notes |
 |---------|---------|---------|-------|
-| **libephemeris** (default) | `libephemeris` | AGPL-3.0 | Pure Python. Uses NASA JPL DE440/DE441 data via LEB/Skyfield. No C compiler needed. Owned by the Kerykeion project. |
+| **libephemeris** (default) | `libephemeris==4.0.0` | AGPL-3.0 | Python bindings to the Rust engine. Uses NASA JPL DE440/DE441 and LEB files; all ephemeris computation runs in Rust. Owned by the Kerykeion project. |
 | **swisseph** | `pyswisseph` | AGPL-3.0 | C bindings to the Swiss Ephemeris library by Astrodienst AG. If you use this backend, the Swiss Ephemeris AGPL-3.0 license applies. |
 
 ## Installation
 
 ```bash
-# Default (libephemeris only -- no C compiler needed)
+# Default (LibEphemeris Rust engine)
 pip install "kerykeion"
 
 # Swiss Ephemeris backend (requires C compiler)
@@ -75,9 +75,9 @@ Controls the calculation pipeline. Default: `"leb"` (mandatory `.leb` files).
 
 | Value | Behavior |
 |-------|----------|
-| `leb` | **Require** precomputed `.leb` binary files. Raises `RuntimeError` if none found. Fastest (~14x vs Skyfield). This is the default. |
-| `auto` | Use `.leb` if available, fall back to Skyfield/DE440. |
-| `skyfield` | Always use Skyfield/DE440 (requires local DE440 file or download). |
+| `leb` | **Require** precomputed `.leb` binary files. Raises `RuntimeError` if none found. This is the default. |
+| `auto` | Use `.leb` if available, otherwise native JPL evaluation. |
+| `skyfield` | Native JPL evaluation (legacy mode name; requires a local DE file or download). |
 | `horizons` | Use NASA JPL Horizons API (requires internet). |
 
 ```bash
@@ -90,7 +90,7 @@ calls override whatever libephemeris read from its own `LIBEPHEMERIS_MODE` /
 `LIBEPHEMERIS_NETWORK_POLICY` variables, so setting those has no effect on a
 Kerykeion process — use `KERYKEION_LEB_MODE`. `reset_ephemeris_session()`
 re-applies the pinned mode after every reset, since a reset would otherwise
-leave the session in `auto` and silently re-enable the Skyfield fallback.
+leave the session in `auto` and silently re-enable the native JPL fallback.
 
 ### `LIBEPHEMERIS_PRECISION`
 
@@ -211,7 +211,7 @@ from kerykeion import BACKEND_NAME
 print(BACKEND_NAME)  # "libephemeris" or "swisseph"
 
 if BACKEND_NAME == "libephemeris":
-    print("Using pure-Python backend")
+    print("Using LibEphemeris Rust backend")
 ```
 
 ## Licensing and Dual-License Strategy

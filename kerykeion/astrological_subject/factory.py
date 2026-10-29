@@ -423,8 +423,8 @@ def _get_geonames_username() -> str:
 def ephemeris_trace() -> Iterator[Optional[Any]]:
     """Scope backend source tracing to the block, resetting the token always.
 
-    ``start_tracing`` sets a ContextVar and hands back a restore token. Losing
-    that token does not merely skip a log line: the ContextVar stays set, so
+    ``start_tracing`` opens backend trace state and returns a restore token. Losing
+    that token does not merely skip a log line: tracing stays active, so
     every later un-scoped ``calc_ut`` in the process keeps appending to an
     orphan trace dict that nothing will ever read or clear. One exception on
     the calculation path was enough to leak it, which is why the reset lives in
@@ -448,7 +448,12 @@ def ephemeris_trace() -> Iterator[Optional[Any]]:
     finally:
         if token is not None:
             try:
-                token.var.reset(token)
+                _native_reset = getattr(token, "reset", None)
+                if callable(_native_reset):
+                    _native_reset()
+                else:
+                    # Compatibility with older ContextVar-based backend tokens.
+                    token.var.reset(token)
             except Exception:
                 # Broad on purpose: this runs in a finally, so anything raised
                 # here REPLACES the exception on its way out and the caller sees
@@ -3545,8 +3550,8 @@ class AstrologicalSubjectFactory:
                 # Stars are addressed by catalog name, not by body id, so the outer
                 # per-body trace map cannot attribute them: a star's rows would be
                 # indistinguishable from a planet's. Wrap this star's calls in their
-                # OWN tracing scope instead — start_tracing() nests (it sets a
-                # ContextVar and hands back a restore token), so everything the map
+                # OWN tracing scope instead — start_tracing() nests and returns
+                # a restore token, so everything the map
                 # holds on exit belongs to this star and this star alone. Same guard
                 # as the planetary scope above: only libephemeris exposes the channel.
                 _star_trace_token = None
@@ -3611,7 +3616,11 @@ class AstrologicalSubjectFactory:
                         # Restore the enclosing (planetary) scope even on failure, or
                         # every later body would be traced into this star's map.
                         try:
-                            _star_trace_token.var.reset(_star_trace_token)
+                            _native_reset = getattr(_star_trace_token, "reset", None)
+                            if callable(_native_reset):
+                                _native_reset()
+                            else:
+                                _star_trace_token.var.reset(_star_trace_token)
                         except Exception:
                             pass
 

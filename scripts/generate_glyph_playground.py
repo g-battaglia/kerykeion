@@ -31,9 +31,9 @@ steps per ring: 270 charts. Wheel-only, so the eye lands on the wheel.
 ceiling saturates: past a point the cap, not the clearance, decides. So every
 step above the first renders with the ceiling lifted out of the way, and the
 first step is the chart exactly as the library ships it — measured ceiling
-included. On most of these charts the two coincide (the ceiling never binds and
-the marked step is simply the 0.45 chart); on the small synastry it genuinely
-binds, and the page says so rather than hiding the discontinuity.
+included. Where the ceiling never binds, the marked step is simply the 0.45
+chart. The generator measures whether it binds for each chart and size on the
+active backend, and the page reports that result.
 
 **How 270 charts fit in 1.8 MB.** Changing the air moves the planet ring and
 nothing else, so each variant travels as a line-level diff against the shipped

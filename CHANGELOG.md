@@ -11,6 +11,18 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Pin LibEphemeris 4.0.0 and its qualified Rust repository revision in the
+  development lockfile. All LibEphemeris ephemeris computation runs in Rust;
+  the optional Swiss backend continues to use pyswisseph.
+
+### Fixed
+
+- Restore native LibEphemeris tracing tokens after chart and fixed-star calls,
+  including nested scopes and exceptions. Preserve compatibility with the
+  previous ContextVar token protocol.
+
 ## [6.0.4] - 2026-09-29
 
 Documentation and repository maintenance release for both `kerykeion` and

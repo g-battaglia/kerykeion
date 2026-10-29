@@ -17,6 +17,7 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 from __future__ import annotations
 
+import importlib
 import logging
 import math
 from numbers import Real
@@ -39,17 +40,15 @@ _NO_EVENT_ERRORS: tuple = tuple(
 )
 
 def _resolve_skyfield_range_error() -> Optional[type]:
-    """libephemeris runs ``heliacal_ut`` through Skyfield, which raises its OWN
-    ``skyfield.errors.EphemerisRangeError`` (a plain ``ValueError`` subclass,
-    unrelated to libephemeris's exception tree) when a search walks off the end
-    of the ephemeris. Resolve it defensively so an out-of-range window is treated
-    as a hard error rather than a benign "no event". Returns ``None`` on
-    installs without Skyfield (e.g. the swisseph backend)."""
-    try:
-        from skyfield.errors import EphemerisRangeError
+    """Resolve the optional range error from legacy Skyfield installations.
 
-        return EphemerisRangeError
-    except Exception:  # pragma: no cover - Skyfield absent (swisseph backend)
+    LibEphemeris 4 exposes its own typed range error. Older installations may
+    instead raise Skyfield's unrelated ``ValueError`` subclass. Preserve that
+    hard-error classification without requiring Skyfield to be installed.
+    """
+    try:
+        return importlib.import_module("skyfield.errors").EphemerisRangeError
+    except Exception:  # pragma: no cover - optional legacy dependency absent
         return None
 
 
@@ -60,8 +59,7 @@ def _resolve_skyfield_range_error() -> Optional[type]:
 # "no event". Resolved defensively: on the swisseph backend these subclasses do
 # not exist, so only the resolvable members are included and other failures
 # remain best-effort "no event" — the generic swisseph.Error cannot be told
-# apart. The heliacal path in particular surfaces the *Skyfield* range error, so
-# it is resolved separately above.
+# apart. Legacy Skyfield range errors are resolved separately above.
 _BACKEND_HARD_ERRORS: tuple = tuple(
     t
     for t in (

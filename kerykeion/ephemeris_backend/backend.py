@@ -6,8 +6,8 @@ Ephemeris Backend Abstraction
 This module provides a unified interface to the ephemeris calculation engine,
 supporting two mutually exclusive backends:
 
-- **libephemeris**: Pure-Python drop-in replacement using NASA JPL DE440/DE441
-  via Skyfield. No C compiler needed; works everywhere Python runs.
+- **libephemeris**: Python bindings to the Rust engine using NASA JPL DE440/DE441
+  and LEB ephemeris files. All ephemeris computation runs in Rust.
   Licensed under AGPL-3.0 by the Kerykeion project.
 - **swisseph** (``pyswisseph``): The traditional Swiss Ephemeris C library bindings.
   Requires compilation. Licensed under AGPL-3.0 by Astrodienst AG.
@@ -35,8 +35,8 @@ When libephemeris is active, the calculation mode defaults to ``"leb"``
 (mandatory .leb binary ephemeris files) for maximum performance.
 Override via ``KERYKEION_LEB_MODE``::
 
-    KERYKEION_LEB_MODE=auto python my_script.py      # LEB if available, else Skyfield
-    KERYKEION_LEB_MODE=skyfield python my_script.py   # Always Skyfield/DE440
+    KERYKEION_LEB_MODE=auto python my_script.py      # LEB if available, else native JPL
+    KERYKEION_LEB_MODE=skyfield python my_script.py   # Native JPL (legacy mode name)
     KERYKEION_LEB_MODE=leb python my_script.py        # Require .leb (default)
 
 Usage
@@ -163,7 +163,7 @@ else:
             "Kerykeion requires an ephemeris backend but neither 'libephemeris' nor "
             "'pyswisseph' is installed.\n\n"
             "Install one of:\n"
-            "  pip install libephemeris     # Pure Python (default)\n"
+            "  pip install libephemeris     # Rust engine (default)\n"
             "  pip install pyswisseph       # Swiss Ephemeris C bindings (AGPL-3.0)\n"
         )
 
