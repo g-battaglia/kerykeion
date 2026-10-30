@@ -69,6 +69,16 @@ report its restricted coverage. Theme variants repeat some underlying dates.
 These classifications come only from public API diagnostics, not inspection of
 Swiss source or data contents.
 
+The installed local Swiss directory contains only `seas_18.se1`, `semo_18.se1`
+and `sepl_18.se1`. Historical Chiron requests ask for absent `seas_06.se1`
+(for example, year 800) or `seas_12.se1` (for example, year 1564). The eight
+restricted cases are the four earliest subjects and their dark-theme variants.
+The test tier detector probes only the Sun at years 1000/1700; Sun availability
+does not establish Chiron coverage. At year 1000 its public returned flags
+confirm Moshier fallback, yet the detector calls this `extended`. Thus the
+detector admits historical snapshot tests while their required optional-body
+data is unavailable.
+
 Kerykeion removes the unavailable optional body from `active_points` and records
 `ephemeris_calculation_failed` in `ephemeris_warnings`. That warning message is
 not displayed in the resulting SVG. Chiron's indicator and associated aspects
@@ -83,27 +93,58 @@ or non-finite positions. Against the old SVG metadata, maximum longitude shifts
 are lunar: about 0.319653 arcsec (Galileo) and 0.142389 arcsec (Newton). Visible
 degree-label comparison also crosses a one-arcsecond formatting boundary; the
 differences therefore are not exclusively invisible SVG-coordinate roundoff.
-The files were last changed before the current backend/data release.
 
 On the identical current data, the maximum v4-versus-3.2.2 longitude difference
 over all 14 points is 3.99041e-7 arcsec for Galileo (Mercury), and 9.07568e-5
 arcsec for Newton (Moon). The larger mismatch with the saved images is already
 present in 3.2.2. This supports a stale-reference diagnosis for the migration;
-it does not independently establish which historical lunar value is closer to
-JPL. An SVG is not an independent scientific reference, so no absolute-accuracy
-claim follows from this comparison and no tolerance or fixture was changed.
+the crossed file/tier controls below isolate its cause more precisely. An SVG
+is not an independent scientific reference, so no absolute-accuracy claim
+follows from this comparison and no tolerance or fixture was changed.
 
 A separate precision limitation is visible in the Galileo subject: Chiron uses
-the existing `Keplerian` / `approximate` route in both versions. It must not be
-described as a fully qualified numerical ephemeris. Newton uses the existing
-local LEB asset; v4 labels it `unverified-local` rather than asserting a review.
+the existing `Keplerian` / `approximate` route in both versions. The date 1564 is
+outside the installed stored-body coverage, which begins at 1600-01-01 and ends
+at 2500-01-01. It must not be described as a fully qualified numerical
+ephemeris. Newton uses the existing local LEB asset; v4 labels it
+`unverified-local` rather than asserting a review.
 
 Severity assessment: the manual header is a low-impact documentation defect;
-the two LibEphemeris snapshots are low-impact migration mismatches with a
-remaining independent lunar-reference question; missing Chiron is a meaningful
+the two LibEphemeris snapshots are a validation-configuration mismatch as
+isolated below; missing Chiron is a meaningful
 functional limitation whenever a historical chart is expected to include it.
 Ignoring the structured warning can leave a user with an apparently complete
 SVG that omits requested information. None is newly introduced by this branch.
+
+### Isolated lunar root cause: mixed LEB tiers
+
+The medium fixture/data association was tested without changing code, stored
+images, tolerances or astronomical assets. Both original failing pytest cases
+pass with the existing owner-root `medium_core.leb2` and tier `medium`
+(`medium-two-snapshots.log`: 2 passed). Their maximum numeric SVG differences
+are below 3e-8, against the unchanged 1e-4 threshold.
+
+Crossed controls separate the runtime tier from the selected coefficient file:
+
+| Runtime tier | Selected core file | SVG numeric slots beyond the original threshold, Galileo / Newton |
+| --- | --- | --- |
+| medium | medium | 0 / 0 |
+| extended | extended | 7 / 4 |
+| medium | extended | 7 / 4 |
+| extended | medium | 0 / 0 |
+
+The difference follows the loaded coefficient file. Public tier metadata maps
+`medium` to DE440 and `extended` to DE441. The old images match the medium
+data, while the complete qualification run explicitly selected extended data.
+Consequently, the earlier stale-image suspicion is narrowed to a demonstrated
+mixed-tier comparison; the test failures do not identify a Rust lunar
+calculation defect. Keep the intended production tier and make fixture inputs
+explicit, or qualify separate model-specific references. Do not widen a
+tolerance or silently substitute medium for an extended calculation.
+
+The manual root cause is also explicit in history: the page was last generated
+for 6.0.4, while the 6.0.5 release changed both project versions without updating
+that generated page. It has no numerical or backend effect.
 
 One version-specific glyph playground expectation changes from true to false.
 The old LibEphemeris 3.2.2 shipped/lifted comparison differed only in four SVG
