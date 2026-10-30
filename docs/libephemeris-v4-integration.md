@@ -59,6 +59,52 @@ Swiss failures are confined to existing historical chart cases and the same man
 page. Swiss values/residuals are not retained as fixtures; temporary Swiss test
 output directories are removed after the runs. Python 3.14 Swiss is not claimed.
 
+### Focused failure diagnosis — 2026-10-30
+
+The 18 Swiss SVG failures all have the same concrete consequence: Chiron is
+omitted. Each baseline has 14 chart points; each generated chart has 13, with no
+extra point and no non-finite position among the remaining points. The public
+backend raises for Chiron: ten test cases report a missing file, while eight
+report its restricted coverage. Theme variants repeat some underlying dates.
+These classifications come only from public API diagnostics, not inspection of
+Swiss source or data contents.
+
+Kerykeion removes the unavailable optional body from `active_points` and records
+`ephemeris_calculation_failed` in `ephemeris_warnings`. That warning message is
+not displayed in the resulting SVG. Chiron's indicator and associated aspects
+are also absent. This is an actual completeness limitation for those historical
+charts, rather than a numeric-tokenizer artifact or evidence of wrong values
+for every remaining planet. Adding files cannot resolve the cases the backend
+explicitly refuses as outside its supported coverage. A complete-chart consumer
+must inspect warnings or explicitly reject omission of required points.
+
+Both LibEphemeris cases retain all 14 points, with no public calculation errors
+or non-finite positions. Against the old SVG metadata, maximum longitude shifts
+are lunar: about 0.319653 arcsec (Galileo) and 0.142389 arcsec (Newton). Visible
+degree-label comparison also crosses a one-arcsecond formatting boundary; the
+differences therefore are not exclusively invisible SVG-coordinate roundoff.
+The files were last changed before the current backend/data release.
+
+On the identical current data, the maximum v4-versus-3.2.2 longitude difference
+over all 14 points is 3.99041e-7 arcsec for Galileo (Mercury), and 9.07568e-5
+arcsec for Newton (Moon). The larger mismatch with the saved images is already
+present in 3.2.2. This supports a stale-reference diagnosis for the migration;
+it does not independently establish which historical lunar value is closer to
+JPL. An SVG is not an independent scientific reference, so no absolute-accuracy
+claim follows from this comparison and no tolerance or fixture was changed.
+
+A separate precision limitation is visible in the Galileo subject: Chiron uses
+the existing `Keplerian` / `approximate` route in both versions. It must not be
+described as a fully qualified numerical ephemeris. Newton uses the existing
+local LEB asset; v4 labels it `unverified-local` rather than asserting a review.
+
+Severity assessment: the manual header is a low-impact documentation defect;
+the two LibEphemeris snapshots are low-impact migration mismatches with a
+remaining independent lunar-reference question; missing Chiron is a meaningful
+functional limitation whenever a historical chart is expected to include it.
+Ignoring the structured warning can leave a user with an apparently complete
+SVG that omits requested information. None is newly introduced by this branch.
+
 One version-specific glyph playground expectation changes from true to false.
 The old LibEphemeris 3.2.2 shipped/lifted comparison differed only in four SVG
 `cx`/`cy` values at about 1e-14 wheel units. With Rust 4.0.0 those renders are
