@@ -1538,7 +1538,26 @@ def _cusps_of(subject):
     return [getattr(subject, name).abs_pos for name in HOUSE_FIELD_NAMES]
 
 
-def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
+@pytest.fixture
+def ambiguous_house_reader(monkeypatch):
+    """Make numeric lookup ambiguous without relying on an engine's final ULP.
+
+    The integration contract is that an angle's cusp identity wins even when
+    generic lookup disagrees. Different valid house implementations can happen
+    to choose the fourth cusp on this ring, so disagreement must be explicit.
+    """
+    from kerykeion.astrological_subject import factory as subject_factory
+    from kerykeion.relocated_chart import factory as relocated_factory
+
+    def numeric_lookup(*_args, **_kwargs):
+        return "Third_House"
+
+    monkeypatch.setattr(subject_factory, "get_planet_house", numeric_lookup)
+    monkeypatch.setattr(relocated_factory, "get_planet_house", numeric_lookup)
+    return numeric_lookup
+
+
+def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house(ambiguous_house_reader):
     """Nearest is as far as twelve numbers can take it; identical is not nearest.
 
     The exact-on-cusp rule takes the cusp closest to the point, which settles a
@@ -1552,7 +1571,6 @@ def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
     ephemeris knows when it hands back the cusps and the angles from one call.
     """
     from kerykeion import AstrologicalSubjectFactory
-    from kerykeion.utilities.core import get_planet_house
 
     subject = AstrologicalSubjectFactory.from_birth_data("Crowded", **_SUBJECT_ON_A_CROWDED_RING)
     cusps = _cusps_of(subject)
@@ -1565,13 +1583,9 @@ def test_an_angle_on_a_crowd_of_identical_cusps_opens_its_own_house():
     assert subject.coincident_house_cusps == [[2, 3, 4, 5, 6]]
     assert subject.imum_coeli.abs_pos == cusps[3]
 
-    # The shared reader still answers some OTHER house: it is given twelve numbers
-    # and nothing else, and this is the limit of what they can say. Which of the
-    # crowd it names is a fact about the ephemeris's last bit — the two backends
-    # answer the second and the third — so what is asserted is that it does not
-    # name the fourth. Not a defect to fix here; the assertions below are what
-    # changed.
-    assert get_planet_house(subject.imum_coeli.abs_pos, cusps) != "Fourth_House"
+    # Force disagreement so this guards the identity path on every backend,
+    # including ones whose last-bit layout makes numeric lookup agree by chance.
+    assert ambiguous_house_reader(subject.imum_coeli.abs_pos, cusps) != "Fourth_House"
 
     assert subject.imum_coeli.house == "Fourth_House"
     assert subject.medium_coeli.house == "Tenth_House"
@@ -1696,7 +1710,7 @@ def test_every_angle_that_is_its_cusp_is_filed_in_that_cusps_house():
     assert not_cast == [], f"{len(not_cast)} of {len(systems) * len(latitudes) * 8} charts could not be cast"
 
 
-def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities():
+def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities(ambiguous_house_reader):
     """Relocating towards a pole is how a real user meets a crowded ring.
 
     The relocated chart recomputes its own cusps and its own angles, so it decides
@@ -1705,8 +1719,6 @@ def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities():
     """
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.relocated_chart import RelocatedChartFactory
-
-    from kerykeion.utilities.core import get_planet_house
 
     natal = AstrologicalSubjectFactory.from_birth_data(
         "Rome", 1990, 6, 15, 5, 45, lat=41.9, lng=12.5, tz_str="Europe/Rome",
@@ -1725,11 +1737,11 @@ def test_a_relocated_chart_files_its_angles_by_the_new_rings_identities():
     # The discriminating half: given only the twelve numbers the reader still names
     # a house that is not the fourth, so this passes only because the relocated
     # ring decided the identity again for the place it was cast at.
-    assert get_planet_house(relocated.imum_coeli.abs_pos, cusps) != "Fourth_House"
+    assert ambiguous_house_reader(relocated.imum_coeli.abs_pos, cusps) != "Fourth_House"
     assert relocated.imum_coeli.house == "Fourth_House"
 
 
-def test_a_davison_composite_inherits_the_identity_fix():
+def test_a_davison_composite_inherits_the_identity_fix(ambiguous_house_reader):
     """A Davison is cast as an ordinary chart, so it gets the ordinary chart's rule.
 
     The a87 notes named it as inheriting the defect; it inherits the fix by the same
@@ -1740,7 +1752,6 @@ def test_a_davison_composite_inherits_the_identity_fix():
     """
     from kerykeion import AstrologicalSubjectFactory
     from kerykeion.composite_subject import CompositeSubjectFactory
-    from kerykeion.utilities.core import get_planet_house
 
     def parent(name):
         return AstrologicalSubjectFactory.from_birth_data(name, **_SUBJECT_ON_A_CROWDED_RING)
@@ -1752,7 +1763,7 @@ def test_a_davison_composite_inherits_the_identity_fix():
     cusps = _cusps_of(davison)
     assert davison.coincident_house_cusps == [[2, 3, 4, 5, 6]]
     assert davison.imum_coeli.abs_pos == cusps[3]
-    assert get_planet_house(davison.imum_coeli.abs_pos, cusps) != "Fourth_House"
+    assert ambiguous_house_reader(davison.imum_coeli.abs_pos, cusps) != "Fourth_House"
     assert davison.imum_coeli.house == "Fourth_House"
 
 

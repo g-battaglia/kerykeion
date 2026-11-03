@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.1.0b1] - 2026-11-03
+
+### Changed
+
+- Use the published native Rust backend `libephemeris==4.0.0b1` from PyPI.
+- Adapt sessions, source/coverage metadata, fixed stars and heliacal settings;
+  retain bounded metadata-only caching with conservative invalidation.
+- Version the v4 angle/house, Arabic Parts, SVG and report references separately,
+  preserving legacy fixture bytes and numerical tolerances.
+- Fix glyph-playground activation and regenerate the matching CLI man page.
+- Keep independent Skyfield oracles in development dependencies only.
+
+Both distributions use `6.1.0b1`. See the [beta release notes](release_notes/v6.1.0b1.md)
+and [qualification report](release_notes/v6.1.0b1-validation.md).
+
 ## [6.0.5] - 2026-10-05
 
 ### Changed

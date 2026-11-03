@@ -38,6 +38,7 @@ from kerykeion.ephemeris_backend.backend import (
     houses_ex2_with_polar_fallback_ex,
     houses_ring_with_polar_fallback,
 )
+from kerykeion.ephemeris_backend.coverage import get_body_coverage
 import logging
 import math
 from datetime import datetime, timezone, timedelta
@@ -423,8 +424,8 @@ def _get_geonames_username() -> str:
 def ephemeris_trace() -> Iterator[Optional[Any]]:
     """Scope backend source tracing to the block, resetting the token always.
 
-    ``start_tracing`` sets a ContextVar and hands back a restore token. Losing
-    that token does not merely skip a log line: the ContextVar stays set, so
+    ``start_tracing`` opens a native thread-local scope and returns a PyO3
+    restore token. Losing that token leaves the scope active, so
     every later un-scoped ``calc_ut`` in the process keeps appending to an
     orphan trace dict that nothing will ever read or clear. One exception on
     the calculation path was enough to leak it, which is why the reset lives in
@@ -448,7 +449,12 @@ def ephemeris_trace() -> Iterator[Optional[Any]]:
     finally:
         if token is not None:
             try:
-                token.var.reset(token)
+                # Native v4 restore tokens and legacy ContextVar tokens.
+                reset = getattr(token, "reset", None)
+                if callable(reset):
+                    reset()
+                else:
+                    token.var.reset(token)
             except Exception:
                 # Broad on purpose: this runs in a finally, so anything raised
                 # here REPLACES the exception on its way out and the caller sees
@@ -2839,7 +2845,7 @@ class AstrologicalSubjectFactory:
         coverage = None
         if BACKEND_NAME == "libephemeris" and hasattr(ephe, "get_body_coverage"):
             # rc14 date-aware coverage API: body_id + requested JD.
-            coverage = ephe.get_body_coverage(body_id, requested_jd)
+            coverage = get_body_coverage(body_id, requested_jd)
 
         resolved_code = code
         if resolved_code is None:
@@ -3545,9 +3551,10 @@ class AstrologicalSubjectFactory:
                 # Stars are addressed by catalog name, not by body id, so the outer
                 # per-body trace map cannot attribute them: a star's rows would be
                 # indistinguishable from a planet's. Wrap this star's calls in their
-                # OWN tracing scope instead — start_tracing() nests (it sets a
-                # ContextVar and hands back a restore token), so everything the map
-                # holds on exit belongs to this star and this star alone. Same guard
+                # OWN tracing scope instead, after planetary provenance has been
+                # harvested. Independent scopes also support early v4 snapshots
+                # that replaced rather than restored nested trace generations.
+                # Everything this scope holds belongs to this star alone. Same guard
                 # as the planetary scope above: only libephemeris exposes the channel.
                 _star_trace_token = None
                 if BACKEND_NAME == "libephemeris" and hasattr(ephe, "start_tracing"):
@@ -3608,64 +3615,15 @@ class AstrologicalSubjectFactory:
                     return None
                 finally:
                     if _star_trace_token is not None:
-                        # Restore the enclosing (planetary) scope even on failure, or
-                        # every later body would be traced into this star's map.
+                        # Clear this star's native scope even on failure.
                         try:
-                            _star_trace_token.var.reset(_star_trace_token)
+                            reset = getattr(_star_trace_token, "reset", None)
+                            if callable(reset):
+                                reset()
+                            else:
+                                _star_trace_token.var.reset(_star_trace_token)
                         except Exception:
                             pass
-
-            requested_fixed_stars = data.get("_active_fixed_stars") or []
-            seen_star_slugs: set[str] = set()
-            for star_name in requested_fixed_stars:
-                # Stripped once, here: the slug was stripped and the ephemeris
-                # name was not, so " Regulus" deduped as Regulus and then failed
-                # to resolve, counting against the unresolved share.
-                star_name = star_name.strip()
-                slug = star_name.lower().replace(" ", "_").replace("-", "_")
-                if not slug or slug in seen_star_slugs:
-                    continue
-                seen_star_slugs.add(slug)
-                swe_name = star_name.replace("_", " ")
-                point = _calc_fixed_star(star_name, swe_name)
-                if point is not None:
-                    fixed_stars_list.append(point)
-
-            # v6: warn on the swisseph backend when any requested star could not
-            # be calculated — almost always a missing ``sefstars.txt`` in
-            # KERYKEION_EPHE_PATH, but just as often a Bayer abbreviation the
-            # backend cannot address. The fix is documented in
-            # site/docs/swisseph_configuration.md (section "Fixed Stars Catalog").
-            #
-            # Against `seen_star_slugs`, not the raw request list: the loop above
-            # skips repeats and blanks, so asking for Regulus twice and getting it
-            # once is a complete answer, not a missing star. And a partial result
-            # has to say so — the message used to claim nothing was calculated,
-            # which was true only of the case the gate used to cover.
-            attempted = len(seen_star_slugs)
-            calculated = len(fixed_stars_list)
-            if attempted and calculated < attempted and BACKEND_NAME == "swisseph":
-                global _swisseph_star_warning_emitted
-                if calculated == 0 or not _swisseph_star_warning_emitted:
-                    _swisseph_star_warning_emitted = True
-                    logger.warning(
-                        "Only %d of %d requested fixed stars could be calculated with "
-                        "the swisseph backend; the rest are missing from the result. "
-                        "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
-                        "is not bundled with kerykeion due to licensing, and many "
-                        "catalog names are Bayer abbreviations swisseph cannot address. "
-                        "Download it "
-                        "from https://github.com/aloistr/swisseph/tree/master/ephe "
-                        "and place it in KERYKEION_EPHE_PATH (currently: %s). "
-                        "Alternatively, use the libephemeris backend "
-                        "(KERYKEION_BACKEND=libephemeris) which ships its own "
-                        "catalog. See site/docs/swisseph_configuration.md for details.",
-                        calculated,
-                        attempted,
-                        EPHE_DATA_PATH or "<unset>",
-                    )
-
-            data["fixed_stars"] = fixed_stars_list
 
             # =============================================================================
             # ARABIC PARTS / LOTS (using centralized configuration)
@@ -3825,7 +3783,7 @@ class AstrologicalSubjectFactory:
 
                             if backend == "LEB" and hasattr(ephe, "get_body_coverage"):
                                 # rc14 date-aware coverage API: body_id + requested JD.
-                                body_coverage = ephe.get_body_coverage(body_id, julian_day)
+                                body_coverage = get_body_coverage(body_id, julian_day)
                                 if body_coverage is not None:
                                     point.precision_class = body_coverage.precision_class
                                     point.ephemeris_coverage_start_jd = body_coverage.jd_start
@@ -3853,8 +3811,8 @@ class AstrologicalSubjectFactory:
                 #      from its single primary.
                 #   3. Arabic Parts / Lots (second loop below): each inherits from
                 #      the ephemeris-backed primaries in its formula.
-                #   4. Fixed stars (annotated at their own call site, from a nested
-                #      per-star trace scope): source and precision_class only — the
+                #   4. Fixed stars (annotated afterwards, in independent
+                #      per-star trace scopes): source and precision_class only — the
                 #      coverage inventory is keyed by body id and holds no entry for
                 #      a catalog star, so the window and reviewed flag stay None.
                 # NOT annotated (source stays None): Ascendant, Medium Coeli, Vertex
@@ -3915,6 +3873,47 @@ class AstrologicalSubjectFactory:
                     reviewed_flags = [p.source_reviewed for p in part_primaries if p.source_reviewed is not None]
                     if reviewed_flags:
                         part.source_reviewed = all(reviewed_flags)
+
+        # Keep planetary and per-star provenance independent. Harvesting and
+        # resetting planets first also supports early v4 snapshots whose nested
+        # traces discarded the parent generation (corrected upstream in #19).
+        requested_fixed_stars = data.get("_active_fixed_stars") or []
+        seen_star_slugs: set[str] = set()
+        for star_name in requested_fixed_stars:
+            star_name = star_name.strip()
+            slug = star_name.lower().replace(" ", "_").replace("-", "_")
+            if not slug or slug in seen_star_slugs:
+                continue
+            seen_star_slugs.add(slug)
+            swe_name = star_name.replace("_", " ")
+            point = _calc_fixed_star(star_name, swe_name)
+            if point is not None:
+                fixed_stars_list.append(point)
+
+        # Compare against unique nonblank requests, not the raw input list.
+        attempted = len(seen_star_slugs)
+        calculated = len(fixed_stars_list)
+        if attempted and calculated < attempted and BACKEND_NAME == "swisseph":
+            global _swisseph_star_warning_emitted
+            if calculated == 0 or not _swisseph_star_warning_emitted:
+                _swisseph_star_warning_emitted = True
+                logger.warning(
+                    "Only %d of %d requested fixed stars could be calculated with "
+                    "the swisseph backend; the rest are missing from the result. "
+                    "The Swiss Ephemeris fixed-star catalog file ('sefstars.txt') "
+                    "is not bundled with kerykeion due to licensing, and many "
+                    "catalog names are Bayer abbreviations swisseph cannot address. "
+                    "Download it "
+                    "from https://github.com/aloistr/swisseph/tree/master/ephe "
+                    "and place it in KERYKEION_EPHE_PATH (currently: %s). "
+                    "Alternatively, use the libephemeris backend "
+                    "(KERYKEION_BACKEND=libephemeris) which ships its own "
+                    "catalog. See site/docs/swisseph_configuration.md for details.",
+                    calculated,
+                    attempted,
+                    EPHE_DATA_PATH or "<unset>",
+                )
+        data["fixed_stars"] = fixed_stars_list
 
     @staticmethod
     def _calculate_day_of_week(data: Dict[str, Any]) -> None:

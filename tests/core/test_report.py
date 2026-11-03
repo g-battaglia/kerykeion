@@ -109,14 +109,10 @@ def _assert_report_match(captured: str, expected_with_newline: str, abs_tol: flo
     for i, (cap, exp) in enumerate(zip(captured_lines, expected_lines)):
         cap_text = number_re.sub("NUM", cap)
         exp_text = number_re.sub("NUM", exp)
-        assert cap_text == exp_text, (
-            f"Line {i + 1} content differs:\n  got:  {cap}\n  exp:  {exp}"
-        )
+        assert cap_text == exp_text, f"Line {i + 1} content differs:\n  got:  {cap}\n  exp:  {exp}"
         cap_nums = [float(x) for x in number_re.findall(cap)]
         exp_nums = [float(x) for x in number_re.findall(exp)]
-        assert len(cap_nums) == len(exp_nums), (
-            f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
-        )
+        assert len(cap_nums) == len(exp_nums), f"Line {i + 1} number count differs:\n  got:  {cap}\n  exp:  {exp}"
         for j, (cn, en) in enumerate(zip(cap_nums, exp_nums)):
             # Add a tiny epsilon so an exact last-decimal flip (e.g. 1.64 vs 1.65,
             # whose float difference is 0.0100000000000000009) stays within the
@@ -263,9 +259,19 @@ def _snapshot_subject(**kwargs):
     key = ("snapshot_subject", tuple(sorted((k, _make_hashable(v)) for k, v in kwargs.items())))
     if key not in _report_cache:
         _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            name="Sample Natal Subject", year=1990, month=7, day=21, hour=14, minute=45,
-            city="Liverpool", nation="GB", lat=53.4084, lng=-2.9916,
-            tz_str="Europe/London", online=False, **kwargs,
+            name="Sample Natal Subject",
+            year=1990,
+            month=7,
+            day=21,
+            hour=14,
+            minute=45,
+            city="Liverpool",
+            nation="GB",
+            lat=53.4084,
+            lng=-2.9916,
+            tz_str="Europe/London",
+            online=False,
+            **kwargs,
         )
     return _report_cache[key]
 
@@ -274,9 +280,19 @@ def _snapshot_partner(**kwargs):
     key = ("snapshot_partner", tuple(sorted((k, _make_hashable(v)) for k, v in kwargs.items())))
     if key not in _report_cache:
         _report_cache[key] = AstrologicalSubjectFactory.from_birth_data(
-            name="Yoko Ono", year=1933, month=2, day=18, hour=20, minute=30,
-            city="Tokyo", nation="JP", lat=35.6762, lng=139.6503,
-            tz_str="Asia/Tokyo", online=False, **kwargs,
+            name="Yoko Ono",
+            year=1933,
+            month=2,
+            day=18,
+            hour=20,
+            minute=30,
+            city="Tokyo",
+            nation="JP",
+            lat=35.6762,
+            lng=139.6503,
+            tz_str="Asia/Tokyo",
+            online=False,
+            **kwargs,
         )
     return _report_cache[key]
 
@@ -1107,9 +1123,7 @@ class TestTechniqueReports:
         assert str(releasing.lot_sign) in text
 
     def test_zodiacal_releasing_without_target_has_no_current_chain(self) -> None:
-        releasing = ZodiacalReleasingFactory.from_subject(
-            _technique_natal_subject(), lot="fortune", levels=1
-        )
+        releasing = ZodiacalReleasingFactory.from_subject(_technique_natal_subject(), lot="fortune", levels=1)
         text = ReportGenerator(releasing).generate_report()
         assert "Level 1 Periods" in text
         assert "Current Period Chain" not in text
@@ -1646,7 +1660,9 @@ class TestGoldenFileSnapshots:
 
     @pytest.mark.extended
     def test_ancient_rome_snapshot(self, capsys) -> None:
-        fixture = FIXTURES_DIR / "natal_ancient_rome_all_report.txt"
+        from tests.data.model_fixtures import fixture_path
+
+        fixture = fixture_path(FIXTURES_DIR / "natal_ancient_rome_all_report.txt")
         if not fixture.exists():
             pytest.skip(f"Fixture {fixture.name} not found")
 
@@ -1921,9 +1937,7 @@ class TestAspectSymbolMapping:
         for name in get_args(AspectName):
             assert f"{name} {name}" not in text, f"Duplicated aspect cell for {name!r}"
         corrected_cells = [f"{name} {symbol}" for name, symbol in ASPECT_SYMBOLS.items()]
-        assert any(cell in text for cell in corrected_cells), (
-            "No 'name glyph' aspect cell found in the aspects table"
-        )
+        assert any(cell in text for cell in corrected_cells), "No 'name glyph' aspect cell found in the aspects table"
 
     def test_unknown_aspect_name_never_duplicates(self, john_lennon) -> None:
         """Aspects missing from ASPECT_SYMBOLS render the bare name, not name twice."""
@@ -2704,16 +2718,24 @@ class TestHouseProvenanceInTheReport:
         from kerykeion.report.generator import ReportGenerator
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Polar", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=70.0, lng=20.0,
-            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            "Polar",
+            1990,
+            6,
+            21,
+            0,
+            0,
+            city="X",
+            nation="XX",
+            lat=70.0,
+            lng=20.0,
+            tz_str="UTC",
+            online=False,
+            suppress_geonames_warning=True,
             houses_system_identifier="P",
         )
         assert subject.polar_house_fallbacks, "the fixture no longer substitutes"
 
-        row = [
-            line for line in ReportGenerator(subject).generate_report().splitlines()
-            if "Houses System" in line
-        ]
+        row = [line for line in ReportGenerator(subject).generate_report().splitlines() if "Houses System" in line]
         assert row, "no Houses System row at all"
         assert "Porphyry" in row[0] and "Placidus" in row[0], row[0]
 
@@ -2722,13 +2744,21 @@ class TestHouseProvenanceInTheReport:
         from kerykeion.report.generator import ReportGenerator
 
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "Ordinary", 1990, 6, 21, 0, 0, city="X", nation="XX", lat=45.0, lng=9.0,
-            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            "Ordinary",
+            1990,
+            6,
+            21,
+            0,
+            0,
+            city="X",
+            nation="XX",
+            lat=45.0,
+            lng=9.0,
+            tz_str="UTC",
+            online=False,
+            suppress_geonames_warning=True,
         )
-        row = [
-            line for line in ReportGenerator(subject).generate_report().splitlines()
-            if "Houses System" in line
-        ]
+        row = [line for line in ReportGenerator(subject).generate_report().splitlines() if "Houses System" in line]
         assert "substituted" not in row[0], row[0]
 
     @pytest.mark.parametrize("anchor", ["auto", "ascendant", "midheaven"])
@@ -2737,18 +2767,14 @@ class TestHouseProvenanceInTheReport:
         from kerykeion.composite_subject.factory import CompositeSubjectFactory
         from kerykeion.report.generator import ReportGenerator
 
-        kwargs = dict(city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC",
-                      online=False, suppress_geonames_warning=True)
+        kwargs = dict(
+            city="X", nation="XX", lat=51.5, lng=-0.1667, tz_str="UTC", online=False, suppress_geonames_warning=True
+        )
         first = AstrologicalSubjectFactory.from_birth_data("A", 1990, 1, 1, 0, 0, **kwargs)
         second = AstrologicalSubjectFactory.from_birth_data("B", 1990, 1, 1, 11, 30, **kwargs)
 
-        model = CompositeSubjectFactory(
-            first, second, house_anchor=anchor
-        ).get_midpoint_composite_subject_model()
-        row = [
-            line for line in ReportGenerator(model).generate_report().splitlines()
-            if "House Anchor" in line
-        ]
+        model = CompositeSubjectFactory(first, second, house_anchor=anchor).get_midpoint_composite_subject_model()
+        row = [line for line in ReportGenerator(model).generate_report().splitlines() if "House Anchor" in line]
         assert row and anchor in row[0], row
 
         davison = CompositeSubjectFactory(first, second).get_davison_composite_subject_model()
@@ -2761,8 +2787,19 @@ class TestHouseProvenanceInTheReport:
 
         for month, day, hour, minute in ((3, 1, 5, 55), (1, 14, 2, 57), (7, 3, 18, 20)):
             subject = AstrologicalSubjectFactory.from_birth_data(
-                "Boundary", 1990, month, day, hour, minute, city="X", nation="XX",
-                lat=45.0, lng=9.0, tz_str="UTC", online=False, suppress_geonames_warning=True,
+                "Boundary",
+                1990,
+                month,
+                day,
+                hour,
+                minute,
+                city="X",
+                nation="XX",
+                lat=45.0,
+                lng=9.0,
+                tz_str="UTC",
+                online=False,
+                suppress_geonames_warning=True,
             )
             report = ReportGenerator(subject).generate_report()
             assert "| 30.00°" not in report
@@ -2785,18 +2822,26 @@ def test_the_houses_row_reads_this_chart_s_fallback_and_not_the_first_one():
 
     def houses_row(system):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=78.0, lng=0.0,
-            tz_str="UTC", online=False, suppress_geonames_warning=True,
-            houses_system_identifier=system, calculate_gauquelin=True,
+            "N",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            city="X",
+            nation="XX",
+            lat=78.0,
+            lng=0.0,
+            tz_str="UTC",
+            online=False,
+            suppress_geonames_warning=True,
+            houses_system_identifier=system,
+            calculate_gauquelin=True,
         )
-        assert any(
-            record.requested_house_system_identifier == "G"
-            for record in subject.polar_house_fallbacks
-        ), "the fixture no longer files an ancillary Gauquelin record"
-        return next(
-            line for line in ReportGenerator(subject).generate_report().splitlines()
-            if "Houses System" in line
+        assert any(record.requested_house_system_identifier == "G" for record in subject.polar_house_fallbacks), (
+            "the fixture no longer files an ancillary Gauquelin record"
         )
+        return next(line for line in ReportGenerator(subject).generate_report().splitlines() if "Houses System" in line)
 
     # Whole sign is defined at every latitude: nothing was substituted.
     assert "substituted" not in houses_row("W")
@@ -2815,8 +2860,19 @@ def test_a_star_name_with_padding_reaches_the_ephemeris_stripped():
 
     def sun_star_names(requested):
         subject = AstrologicalSubjectFactory.from_birth_data(
-            "N", 1990, 6, 15, 12, 0, city="X", nation="XX", lat=41.9, lng=12.5,
-            tz_str="UTC", online=False, suppress_geonames_warning=True,
+            "N",
+            1990,
+            6,
+            15,
+            12,
+            0,
+            city="X",
+            nation="XX",
+            lat=41.9,
+            lng=12.5,
+            tz_str="UTC",
+            online=False,
+            suppress_geonames_warning=True,
             active_fixed_stars=requested,
         )
         return sorted(star.name for star in (subject.fixed_stars or []))
@@ -2839,14 +2895,23 @@ def test_the_gauquelin_section_says_which_latitude_it_was_computed_at():
     from kerykeion.report.generator import ReportGenerator
 
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=78.2232, lng=15.6467,
-        tz_str="UTC", online=False, suppress_geonames_warning=True,
-        houses_system_identifier="P", calculate_gauquelin=True,
+        "N",
+        1995,
+        1,
+        15,
+        2,
+        0,
+        city="X",
+        nation="XX",
+        lat=78.2232,
+        lng=15.6467,
+        tz_str="UTC",
+        online=False,
+        suppress_geonames_warning=True,
+        houses_system_identifier="P",
+        calculate_gauquelin=True,
     )
-    clamp = next(
-        record for record in subject.polar_house_fallbacks
-        if record.requested_house_system_identifier == "G"
-    )
+    clamp = next(record for record in subject.polar_house_fallbacks if record.requested_house_system_identifier == "G")
     assert clamp.used_latitude != clamp.latitude, "the fixture no longer clamps"
 
     report = ReportGenerator(subject).generate_report()
@@ -2855,8 +2920,19 @@ def test_the_gauquelin_section_says_which_latitude_it_was_computed_at():
 
     # A chart whose Gauquelin ring needed no clamp says nothing extra.
     ordinary = AstrologicalSubjectFactory.from_birth_data(
-        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=41.9, lng=12.5,
-        tz_str="UTC", online=False, suppress_geonames_warning=True,
+        "N",
+        1995,
+        1,
+        15,
+        2,
+        0,
+        city="X",
+        nation="XX",
+        lat=41.9,
+        lng=12.5,
+        tz_str="UTC",
+        online=False,
+        suppress_geonames_warning=True,
         calculate_gauquelin=True,
     )
     assert "computed at" not in ReportGenerator(ordinary).generate_report()
@@ -2869,9 +2945,21 @@ def test_a_southern_clamp_keeps_its_hemisphere():
     from kerykeion import AstrologicalSubjectFactory
 
     subject = AstrologicalSubjectFactory.from_birth_data(
-        "N", 1995, 1, 15, 2, 0, city="X", nation="XX", lat=-78.0, lng=15.0,
-        tz_str="UTC", online=False, suppress_geonames_warning=True,
-        houses_system_identifier="W", calculate_gauquelin=True,
+        "N",
+        1995,
+        1,
+        15,
+        2,
+        0,
+        city="X",
+        nation="XX",
+        lat=-78.0,
+        lng=15.0,
+        tz_str="UTC",
+        online=False,
+        suppress_geonames_warning=True,
+        houses_system_identifier="W",
+        calculate_gauquelin=True,
     )
     record = subject.polar_house_fallbacks[0]
     assert record.latitude < 0 and record.used_latitude < 0

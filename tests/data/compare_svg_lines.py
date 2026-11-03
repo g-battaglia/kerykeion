@@ -177,6 +177,13 @@ def compare_svg_file(
     if os.environ.get("KERYKEION_REGEN_BASELINES"):
         from tests.data.regeneration_guard import require_library_from_this_checkout
 
+        from tests.data.model_fixtures import ROOT, active_model
+
+        if baseline_path.resolve().is_relative_to(ROOT / "tests/data/svg") and active_model(backend=active_backend()):
+            raise AssertionError(
+                "Versioned v4 references cannot overwrite legacy SVGs; use scripts/generate_v4_model_baselines.py --check"
+            )
+
         # The same two refusals as the scripts: the library must be this checkout's,
         # and the backend the one the baselines are declared to come from.
         require_library_from_this_checkout(__file__)
@@ -189,6 +196,9 @@ def compare_svg_file(
         baseline_path.write_text(generated_svg, encoding="utf-8")
         return
 
+    from tests.data.model_fixtures import fixture_path
+
+    baseline_path = fixture_path(baseline_path, backend=active_backend())
     assert baseline_path.exists(), (
         f"No baseline at {baseline_path}. A golden test with no baseline compares "
         f"nothing; generate it with `uv run poe regenerate:svg`."

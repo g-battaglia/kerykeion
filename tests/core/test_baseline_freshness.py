@@ -191,7 +191,7 @@ GLYPHS = "GLYPHS:BEGIN", "GLYPHS:END"
 #: rewrites, and exactly the part a stale glyph shares with a fresh one — so what
 #: is compared is the shapes.
 _GEOMETRY = re.compile(
-    r'\b(?:d|cx|cy|r|rx|ry|x|y|x1|y1|x2|y2|width|height|points|transform|viewBox)='
+    r"\b(?:d|cx|cy|r|rx|ry|x|y|x1|y1|x2|y2|width|height|points|transform|viewBox)="
     r"(['\"])(.*?)\1",
     re.S,
 )
@@ -307,7 +307,7 @@ def test_every_baseline_draws_the_current_glyphs(svg: Path):
     )
 
 
-def test_the_extended_generator_refuses_to_report_success_after_a_failure():
+def test_the_extended_generator_refuses_to_report_success_after_a_failure(monkeypatch):
     """A regeneration that prints its failures and exits 0 reports success for a
     set it did not produce.
 
@@ -332,6 +332,11 @@ def test_the_extended_generator_refuses_to_report_success_after_a_failure():
     # come from, which is right for a regeneration and beside the point here: this
     # test is about how the script reports a failure, on whichever backend the
     # suite happens to run. Let it believe it is on the baseline backend.
+    # This unit test exercises exit reporting, never fixture generation. Bypass
+    # the model admission guard as well: v4 must not be allowed to rewrite v3.
+    import tests.data.regeneration_guard as guard
+
+    monkeypatch.setattr(guard, "require_the_baseline_backend", lambda: None)
     reported_backend = comparison.active_backend
     comparison.active_backend = lambda: comparison.BASELINE_BACKEND
     try:
