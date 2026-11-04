@@ -13,6 +13,7 @@ import psutil
 import pytest
 
 from scripts import check_import_graph, run_resource_limited
+from scripts import test_markdown_snippets as snippet_runner
 from scripts.run_resource_limited import LIMIT_EXIT_CODE, main, run_command
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -59,6 +60,42 @@ def test_command_exit_code_and_output_are_preserved(capfd):
     assert result.returncode == 7
     assert not result.limit_exceeded
     assert "child output" in capfd.readouterr().out
+
+
+@pytest.mark.parametrize("jobs", [None, 2])
+def test_isolated_doc_snippets_are_serial_unless_requested(monkeypatch, tmp_path, jobs):
+    page = tmp_path / "examples.md"
+    page.write_text("```python\nprint(1)\n```\n\n```python\nprint(2)\n```\n")
+    limits = []
+
+    class Executor:
+        def __init__(self, *, max_workers):
+            limits.append(max_workers)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def map(self, function, items):
+            return [function(item) for item in items]
+
+    args = ["snippets", "--isolated", str(page)]
+    if jobs is not None:
+        args.extend(["--jobs", str(jobs)])
+    monkeypatch.setattr(sys, "argv", args)
+    monkeypatch.setattr(snippet_runner, "ThreadPoolExecutor", Executor)
+    monkeypatch.setattr(snippet_runner, "test_snippet", lambda *args, **kwargs: (True, None))
+    assert snippet_runner.main() == 0
+    assert limits == [1 if jobs is None else jobs]
+
+
+def test_nonpositive_doc_snippet_jobs_fail_before_running(monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["snippets", "--jobs", "0"])
+    with pytest.raises(SystemExit) as error:
+        snippet_runner.main()
+    assert error.value.code == 2
 
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX process-group cleanup contract")
