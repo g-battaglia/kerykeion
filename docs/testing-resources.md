@@ -60,8 +60,39 @@ With indexed reads and one process, the complete optimized extended suite passed
 GeoNames online tests passed separately at **211.8 MiB**. All 1,470 stored owned-
 reader output hashes/model comparisons also match the indexed-reader run.
 
-The configuration and allocation mechanism explain the observed memory pressure.
-No matching OS panic or OOM diagnostic was available for the reported freeze, so
-this does not claim that every machine/application crash has the same cause.
-The available Python crash reports were from the previous day and identified a
-`curl-impersonate` allocator failure, not the native ephemeris reader.
+## System diagnostics from the actual freezes
+
+Sanitized fields are retained in [the evidence summary](testing-resource-evidence.json);
+raw machine reports, UUIDs, stack addresses and unrelated process details are not
+committed.
+
+- **2026-11-04 05:55:18 CET:** the kernel panic reports no watchdog check-ins
+  for **94 seconds**. Its memory snapshot has only **14.3 MiB free**, a **25.8 GiB
+  compressor**, and 35 `python3.12` processes; 25 report more than 1 GiB apiece.
+- **06:00:08 CET**, after the reboot: a Jetsam event identifies `python3.12` as
+  the largest process. It records 22 such processes and **51.3 GiB of accounted
+  process pages**. It also records 147 terminations with reason
+  `vm-compressor-space-shortage`.
+
+Accounted process pages and sums of per-process resident figures are not unique
+physical RAM; shared/compressed memory prevents treating them as a physical total.
+The snapshots nevertheless document severe memory exhaustion, in addition to the
+18-worker command log and the reader's per-process allocation mechanism. The
+immediate reboot mechanism was the kernel watchdog timeout. These findings support
+memory oversubscription as the cause of the validation freezes without claiming
+that every unrelated crash has that cause. The previous day's `curl-impersonate`
+allocator crashes are separate diagnostics.
+
+## Final combined validation
+
+The two PRs were merged in a temporary verification checkout. The new
+`poe test:bounded` path completed **14,341 passed, 72 skipped**, including all ten
+resource-runner tests, at **415.0 MiB sampled process-tree peak RSS**. The 72 skips
+are platform/backend/tier-specific tests, including tests requiring medium-tier
+range edges and frame combinations that are not applicable to this configuration.
+The three online tests passed separately.
+
+The full `poe check` sequence also passed with serial/indexed execution and a
+1 GiB watchdog: Ruff, mypy, pyright, structural/fresh imports, 7,913 core tests,
+1,155 baseline-gate tests, CLI smoke, all 39 runnable CLI examples and the generated
+manpage check. Its sampled process-tree peak was **581.8 MiB**.
