@@ -291,7 +291,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.1.0b1"
+version = "6.1.0b2"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -342,7 +342,7 @@ requires-dist = [
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
     { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
-    { name = "libephemeris", specifier = "==4.0.0b1" },
+    { name = "libephemeris", specifier = "==4.0.0b2" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
     { name = "requests", specifier = ">=2.33.0" },
@@ -377,7 +377,7 @@ dev = [
 
 [[package]]
 name = "kerykeion-cli"
-version = "6.1.0b1"
+version = "6.1.0b2"
 source = { editable = "cli" }
 dependencies = [
     { name = "kerykeion" },
@@ -388,17 +388,17 @@ requires-dist = [{ name = "kerykeion", editable = "." }]
 
 [[package]]
 name = "libephemeris"
-version = "4.0.0b1"
+version = "4.0.0b2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/37/00/923316395409c4461f3749b1b26c3a9c463792147137e768559612b2e4f2/libephemeris-4.0.0b1.tar.gz", hash = "sha256:e6c6a9efb4828003ff83de744961c5718ac8ce3ca33d2dfb95e95f62185b0ec9", size = 15328658, upload-time = "2026-11-03T17:48:30.279Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/fc/7561af329ba2cf70ade16d32ab7144d325948ed20080e93fc86cc97d8e15/libephemeris-4.0.0b2.tar.gz", hash = "sha256:e2cb9265e4d305c455fc94d765393f7b3f4d9dde601fc7109cb3ebcdf3103705", size = 15330281, upload-time = "2026-11-04T18:58:41.309Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/c4/77020e69800efeaa241e83497c40b44624f648c46f4436f8a35c1a8ee58c/libephemeris-4.0.0b1-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:5f45f0cd4fc7aa4fc1ff63e2c4cbb96fa3596a6689bd4f7f32ecc3d6b23c07ba", size = 16823182, upload-time = "2026-11-03T17:48:06.89Z" },
-    { url = "https://files.pythonhosted.org/packages/6f/76/3562b00bff5c07ad2da467a4fee61fcec45ceb90368cf6d4186c6bc391f2/libephemeris-4.0.0b1-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:12fa977b7f1d2b469cd7b4307d7485b080ef21389ecf3bba4b4458148f116c6c", size = 17254574, upload-time = "2026-11-03T17:48:11.766Z" },
-    { url = "https://files.pythonhosted.org/packages/1b/e5/6892fbab106d4c3565360334516d94a2967686a3e146310ae971c3f218b1/libephemeris-4.0.0b1-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0842ab54d18ba2b7ee8cc57d2d2f4c784bfb2834e924ba5a4b9ba64723d486ce", size = 17462225, upload-time = "2026-11-03T17:48:18.277Z" },
-    { url = "https://files.pythonhosted.org/packages/17/41/a783a7570ca9b512faf382f5b238530f4250b1d3f48e954dd15b82ba9125/libephemeris-4.0.0b1-cp312-abi3-win_amd64.whl", hash = "sha256:c4ff4955c0d09e4009f002cdc74dbd9df1c3e19a5f23de8b47c2f2a9c16079b4", size = 16994218, upload-time = "2026-11-03T17:48:24.87Z" },
+    { url = "https://files.pythonhosted.org/packages/00/bd/a7c201eb70ec0e752d7de84521d06a2fed6f948c480c60d5bded0e40d837/libephemeris-4.0.0b2-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:4e470f830bc0b2982d67af4b50b9ca3ae4f2e0037a40d3f6e4e9ecd06eb95c8c", size = 16819057, upload-time = "2026-11-04T18:58:12.567Z" },
+    { url = "https://files.pythonhosted.org/packages/32/ef/fab03ad3d6c54ec3ca2f403867c636a1a0ff886a26c5a0abc4196d625a2e/libephemeris-4.0.0b2-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:dfd65449a72599cf1d1394747aa2f6a5b448f9309cb694ec380aa4a107f543c6", size = 17254818, upload-time = "2026-11-04T18:58:22.016Z" },
+    { url = "https://files.pythonhosted.org/packages/ff/4b/c086d8346774b606bd475dce52aacac1c25898e587442f48e8e0d40cfafe/libephemeris-4.0.0b2-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:888fa0e025c7bf152e63f4ff693fd7b130115ea9149fb21ac46e985e19e7236c", size = 17462043, upload-time = "2026-11-04T18:58:30.493Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/96/1a7fc672b48863a3266f5a78a56775ed5ffd88b9a37939586aa5259fd7bc/libephemeris-4.0.0b2-cp312-abi3-win_amd64.whl", hash = "sha256:a9cfd2984331ce0dec3d561e9bede22ce0c9dbe9acee95fe0eb82f9dc83bea43", size = 16994169, upload-time = "2026-11-04T18:58:35.824Z" },
 ]
 
 [[package]]

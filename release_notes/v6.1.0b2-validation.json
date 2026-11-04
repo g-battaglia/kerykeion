@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "library_version": "6.1.0b2",
+  "cli_version": "6.1.0b2",
+  "backend_version": "4.0.0b2",
+  "platform": "macOS arm64",
+  "runtime_digest": {
+    "algorithm": "SHA-256 of sorted versioned runtime paths, NUL, file bytes, NUL",
+    "file_count": 171,
+    "sha256": "45e27d4ad17161d62fd7bcb8568dccbd9c09b21b49a9a84a87bd83ea08ad63e4"
+  },
+  "unique_tests": {
+    "collected": 14663,
+    "passed_at_least_once": 14663,
+    "unverified": 0,
+    "ids_sha256": "28dc56b2a85998718cff8fffe31f157bffdd79f9a43ef6fe186c5412a1826c97"
+  },
+  "profiles": {
+    "python312_extended_offline": {
+      "passed": 14646,
+      "skipped": 14,
+      "deselected_online": 3,
+      "peak_tree_rss_mib": 419.5
+    },
+    "python314_extended_strict": {
+      "passed": 14650,
+      "skipped_medium_only": 13,
+      "warnings_as_errors": true,
+      "peak_tree_rss_mib": 474.4
+    },
+    "python312_medium_edges": {
+      "passed": 13,
+      "skipped": 0,
+      "peak_tree_rss_mib": 108.5
+    },
+    "optional_png_and_font_reproduction": {
+      "passed": 2,
+      "skipped": 0
+    },
+    "python312_online": {
+      "passed": 3,
+      "skipped": 0
+    }
+  },
+  "gates": {
+    "poe_check": "passed",
+    "ruff": "passed",
+    "mypy": "passed",
+    "pyright_errors": 0,
+    "pyright_warnings": 0,
+    "public_exports_documented": 124,
+    "documentation_coverage_percent": 100,
+    "skill_coverage_percent": 100,
+    "python_snippets_passed": 423,
+    "cli_snippets_passed": 39,
+    "cli_nonrun_install_blocks": 3,
+    "man_commands": 49,
+    "strict_twine_files": 4
+  },
+  "installed_packages": {
+    "interpreters": [
+      "3.12",
+      "3.14"
+    ],
+    "artifact_inputs": [
+      "wheel",
+      "sdist"
+    ],
+    "combinations_passed": 4,
+    "library_only_import_isolation": true,
+    "sealed_bundled_data_rendering": true,
+    "v2_scoring_and_canonical_model_identity": true,
+    "cli_version_help_and_status_check": true,
+    "sdist_rebuilt_wheel_contents_identical": true
+  },
+  "scientific_references": {
+    "model": "libephemeris-4.0.0b1",
+    "patch_identity_record": "tests/data/model_qualifications/libephemeris-4.0.0b2.json",
+    "baseline_manifest_sha256": "e05b99c22f03c24a49249d82ba82d3c8c929848d9e6dd8cb7dde738e04db9cd8",
+    "live_input_files_verified": 12,
+    "original_references_or_tolerances_changed": false
+  },
+  "publication": "not uploaded; final source identity and staged artifact hashes are retained separately in local preparation evidence"
+}

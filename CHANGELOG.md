@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [6.1.0b2] - 2026-11-04
+
+### Changed
+
+- Pin the published `libephemeris==4.0.0b2` backend and keep the library/CLI
+  distributions at the same `6.1.0b2` version.
+- Record the exact source identity and registry hashes for the backend patch.
+  Its native core and data are unchanged from `4.0.0b1`, so the explicitly
+  qualified patch uses the existing immutable scientific model references.
+  No reference fixture, producer attestation or numerical tolerance is replaced.
+- Refresh backend installation guidance and the generated CLI man page.
+
+See the [beta release notes](release_notes/v6.1.0b2.md) for scope and validation.
+
 ## [6.1.0b1] - 2026-11-04
 
 ### Added

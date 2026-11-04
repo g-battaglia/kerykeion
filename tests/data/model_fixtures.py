@@ -34,6 +34,8 @@ def active_model(backend: str | None = None, version: str | None = None) -> str 
         return None
     if version == "4.0.0b1":
         return MODEL
+    if version == "4.0.0b2":
+        return patch_qualification(version)["model"]
     raise AssertionError(
         f"No qualified model fixtures for libephemeris {version}; do not reuse another model's references"
     )
@@ -55,6 +57,25 @@ def verify_file(path: Path, expected: str) -> Path:
     stat = path.stat()
     _verified_digest(path, expected, stat.st_size, stat.st_mtime_ns)
     return path
+
+
+@lru_cache(maxsize=1)
+def patch_qualification(version: str) -> dict:
+    """Bind one explicitly reviewed distribution patch to an unchanged model.
+
+    The source-identity record is separate from frozen producer references.
+    This is never a wildcard for future native versions or new model outputs.
+    """
+    assert version == "4.0.0b2", f"No qualified patch identity for {version}"
+    path = ROOT / "tests/data/model_qualifications" / f"libephemeris-{version}.json"
+    assert path.is_file(), f"Missing patch-model qualification: {path}"
+    data = json.loads(path.read_text())
+    assert data["schema"] == 1 and data["engine_version"] == version and data["model"] == MODEL
+    source = data["numerical_source"]
+    assert source["base_core_tree"] == source["candidate_core_tree"] and source["base_core_tree"]
+    assert source["runtime_python_source_changed"] is False
+    verify_file(MODEL_ROOT / "manifest.json", data["baseline_manifest_sha256"])
+    return data
 
 
 @lru_cache(maxsize=1)

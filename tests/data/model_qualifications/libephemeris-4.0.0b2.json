@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "engine_version": "4.0.0b2",
+  "model": "libephemeris-4.0.0b1",
+  "baseline_manifest_sha256": "e05b99c22f03c24a49249d82ba82d3c8c929848d9e6dd8cb7dde738e04db9cd8",
+  "numerical_source": {
+    "repository": "https://github.com/g-battaglia/libephemeris",
+    "base_tag": "python-v4.0.0b1",
+    "candidate_tag": "python-v4.0.0b2",
+    "base_commit": "5be9c89940bb3de3ff267511f88ed8501ccde7cd",
+    "candidate_commit": "f0eb8bf4fbc65deb20efa2a2123d335600e45d66",
+    "base_core_tree": "bbee7b1c6f2b9f0a9614d55cfd8652f2df87ae39",
+    "candidate_core_tree": "bbee7b1c6f2b9f0a9614d55cfd8652f2df87ae39",
+    "core_src_tree": "060ea257a5a669095059c4765f7eb8cfa77cbc8f",
+    "core_data_tree": "9cc471badae4079cfcc107ae8c0b460db88fe1f5",
+    "runtime_python_source_changed": false,
+    "binding_source_diff": "Only the cfg(test) package-version assertion in python/src/identity.rs changes; no calculation binding changes."
+  },
+  "published_files_sha256": {
+    "libephemeris-4.0.0b2-cp312-abi3-macosx_11_0_arm64.whl": "4e470f830bc0b2982d67af4b50b9ca3ae4f2e0037a40d3f6e4e9ecd06eb95c8c",
+    "libephemeris-4.0.0b2-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": "dfd65449a72599cf1d1394747aa2f6a5b448f9309cb694ec380aa4a107f543c6",
+    "libephemeris-4.0.0b2-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl": "888fa0e025c7bf152e63f4ff693fd7b130115ea9149fb21ac46e985e19e7236c",
+    "libephemeris-4.0.0b2-cp312-abi3-win_amd64.whl": "a9cfd2984331ce0dec3d561e9bede22ce0c9dbe9acee95fe0eb82f9dc83bea43",
+    "libephemeris-4.0.0b2.tar.gz": "e2cb9265e4d305c455fc94d765393f7b3f4d9dde601fc7109cb3ebcdf3103705"
+  }
+}
