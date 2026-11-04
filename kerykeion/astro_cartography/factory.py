@@ -248,61 +248,56 @@ class AstroCartographyFactory:
             # so the fetch is identical for tropical and sidereal charts.
             eq_iflag = (iflag & ~ephe.FLG_SIDEREAL) | ephe.FLG_EQUATORIAL
 
-            # One shared float latitude grid for every line type. Previously
-            # MC/IC built their grid with range(int(lat_min), ..., max(1, int(step)))
-            # — silently coercing a fractional step to an integer (and to >= 1) —
-            # while ASC/DSC scanned the true float step, so the two families of
-            # lines disagreed on their latitude samples. Build the grid once, in
-            # floats, and reuse it everywhere so all lines share the same scan.
-            # Integer-indexed grid: accumulating `lat += step` drifts in float
-            # (with step=0.1 the last row landed at 65.9 and the requested
-            # 66.0 edge was missing from every line).
-            n_steps = int(round((lat_max - lat_min) / step_value))
-            latitudes: List[float] = [
-                round(lat_min + i * step_value, 4)
-                for i in range(n_steps + 1)
-                if lat_min + i * step_value <= lat_max + 1e-9
+            equatorial_positions = [
+                (pname, ephe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]) for pname in selected
             ]
 
-            for pname in selected:
-                eq_pos = ephe.calc_ut(jd, _ACG_PLANET_IDS[pname], eq_iflag)[0]
-                ra_deg, dec_deg = eq_pos[0], eq_pos[1]
+        # One shared float latitude grid for every line type. Previously
+        # MC/IC built their grid with range(int(lat_min), ..., max(1, int(step)))
+        # — silently coercing a fractional step to an integer (and to >= 1) —
+        # while ASC/DSC scanned the true float step, so the two families of
+        # lines disagreed on their latitude samples. Build the grid once, in
+        # floats, and reuse it everywhere so all lines share the same scan.
+        # Integer-indexed grid: accumulating `lat += step` drifts in float
+        # (with step=0.1 the last row landed at 65.9 and the requested
+        # 66.0 edge was missing from every line).
+        n_steps = int(round((lat_max - lat_min) / step_value))
+        latitudes: List[float] = [
+            round(lat_min + i * step_value, 4) for i in range(n_steps + 1) if lat_min + i * step_value <= lat_max + 1e-9
+        ]
 
-                # MC line: the body culminates where LST == RA, i.e. at
-                # geographic longitude RA - GST. IC is the antimeridian.
-                mc_geo_lng = wrap_180(ra_deg - gst_deg)
-                ic_geo_lng = wrap_180(mc_geo_lng + 180.0)
+        latitude_geometry = [(lat, -math.tan(math.radians(lat))) for lat in latitudes]
 
-                # MC/IC lines are vertical (same lng, full latitude grid)
-                mc_points = [
-                    ACGLinePointModel(longitude=round(mc_geo_lng, 4), latitude=lat)
-                    for lat in latitudes
-                ]
-                ic_points = [
-                    ACGLinePointModel(longitude=round(ic_geo_lng, 4), latitude=lat)
-                    for lat in latitudes
-                ]
+        for pname, eq_pos in equatorial_positions:
+            ra_deg, dec_deg = eq_pos[0], eq_pos[1]
 
-                mc_lines[pname] = ACGLineModel(planet=pname, line_type="MC", points=mc_points)
-                ic_lines[pname] = ACGLineModel(planet=pname, line_type="IC", points=ic_points)
+            # MC line: the body culminates where LST == RA, i.e. at
+            # geographic longitude RA - GST. IC is the antimeridian.
+            mc_geo_lng = wrap_180(ra_deg - gst_deg)
+            ic_geo_lng = wrap_180(mc_geo_lng + 180.0)
 
-                # ASC/DSC lines: for each latitude, the body is on the
-                # geometric horizon when cos H = -tan(lat) * tan(dec). No
-                # solution means circumpolar / never rises at that latitude.
-                dec_rad = math.radians(dec_deg)
-                for lat in latitudes:
-                    cos_h0 = -math.tan(math.radians(lat)) * math.tan(dec_rad)
-                    if abs(cos_h0) <= 1.0:
-                        h0_deg = math.degrees(math.acos(cos_h0))  # in [0, 180]
-                        # Rising: hour angle -H0; setting: +H0.
-                        rise_lng = wrap_180(ra_deg - h0_deg - gst_deg)
-                        set_lng = wrap_180(ra_deg + h0_deg - gst_deg)
-                        asc_lines[pname].append(
-                            ACGLinePointModel(longitude=round(rise_lng, 4), latitude=lat)
-                        )
-                        dsc_lines[pname].append(
-                            ACGLinePointModel(longitude=round(set_lng, 4), latitude=lat)
-                        )
+            # MC/IC lines are vertical (same lng, full latitude grid)
+            rounded_mc_lng = round(mc_geo_lng, 4)
+            rounded_ic_lng = round(ic_geo_lng, 4)
+            mc_points = [ACGLinePointModel(longitude=rounded_mc_lng, latitude=lat) for lat in latitudes]
+            ic_points = [ACGLinePointModel(longitude=rounded_ic_lng, latitude=lat) for lat in latitudes]
+
+            mc_lines[pname] = ACGLineModel(planet=pname, line_type="MC", points=mc_points)
+            ic_lines[pname] = ACGLineModel(planet=pname, line_type="IC", points=ic_points)
+
+            # ASC/DSC lines: for each latitude, the body is on the
+            # geometric horizon when cos H = -tan(lat) * tan(dec). No
+            # solution means circumpolar / never rises at that latitude.
+            tan_dec = math.tan(math.radians(dec_deg))
+            for lat, negative_tan_lat in latitude_geometry:
+                cos_h0 = negative_tan_lat * tan_dec
+                if abs(cos_h0) <= 1.0:
+                    h0_deg = math.degrees(math.acos(cos_h0))  # in [0, 180]
+                    # Rising: hour angle -H0; setting: +H0.
+                    rise_lng = wrap_180(ra_deg - h0_deg - gst_deg)
+                    set_lng = wrap_180(ra_deg + h0_deg - gst_deg)
+                    asc_lines[pname].append(ACGLinePointModel(longitude=round(rise_lng, 4), latitude=lat))
+                    dsc_lines[pname].append(ACGLinePointModel(longitude=round(set_lng, 4), latitude=lat))
 
         # Assemble results
         result: List[ACGLineModel] = []
