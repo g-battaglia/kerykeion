@@ -144,9 +144,14 @@ def main() -> int:
     finally:
         for sig, handler in previous_handlers.items():
             signal.signal(sig, handler)
-    status = "RSS threshold exceeded; command stopped" if result.limit_exceeded else f"exit {result.returncode}"
+    if result.limit_exceeded:
+        status = "RSS threshold exceeded; command stopped"
+    elif result.returncode < 0:
+        status = f"command terminated by signal {-result.returncode}"
+    else:
+        status = f"exit {result.returncode}"
     print(f"Resource watchdog: {status}; sampled peak tree RSS {result.peak_rss / 2**20:.1f} MiB", file=sys.stderr)
-    return result.returncode
+    return result.returncode if result.returncode >= 0 else 128 - result.returncode
 
 
 if __name__ == "__main__":

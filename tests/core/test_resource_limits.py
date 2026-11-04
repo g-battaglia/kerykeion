@@ -12,7 +12,7 @@ import tomllib
 import psutil
 import pytest
 
-from scripts import check_import_graph
+from scripts import check_import_graph, run_resource_limited
 from scripts.run_resource_limited import LIMIT_EXIT_CODE, main, run_command
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -141,3 +141,13 @@ def test_cancelling_the_watchdog_stops_its_command(tmp_path):
                 psutil.Process(int(pid_file.read_text())).kill()
             except psutil.NoSuchProcess:
                 pass
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX signal exit status")
+def test_child_signal_uses_the_conventional_shell_status(monkeypatch, capsys):
+    monkeypatch.setattr(sys, "argv", ["watchdog", "--", "stubbed-command"])
+    monkeypatch.setattr(
+        run_resource_limited, "run_command", lambda *args, **kwargs: run_resource_limited.RunResult(-signal.SIGTERM, 0)
+    )
+    assert main() == 128 + signal.SIGTERM
+    assert "terminated by signal" in capsys.readouterr().err
