@@ -63,7 +63,7 @@ def test_command_exit_code_and_output_are_preserved(capfd):
 
 
 @pytest.mark.parametrize("jobs", [None, 2])
-def test_isolated_doc_snippets_are_serial_unless_requested(monkeypatch, tmp_path, jobs):
+def test_isolated_doc_snippets_are_serial_unless_requested(monkeypatch, tmp_path, capsys, jobs):
     page = tmp_path / "examples.md"
     page.write_text("```python\nprint(1)\n```\n\n```python\nprint(2)\n```\n")
     limits = []
@@ -87,8 +87,9 @@ def test_isolated_doc_snippets_are_serial_unless_requested(monkeypatch, tmp_path
     monkeypatch.setattr(sys, "argv", args)
     monkeypatch.setattr(snippet_runner, "ThreadPoolExecutor", Executor)
     monkeypatch.setattr(snippet_runner, "test_snippet", lambda *args, **kwargs: (True, None))
-    assert snippet_runner.main() == 0
+    snippet_runner.main()
     assert limits == [1 if jobs is None else jobs]
+    assert "2/2 snippets passed" in capsys.readouterr().out
 
 
 def test_nonpositive_doc_snippet_jobs_fail_before_running(monkeypatch):
