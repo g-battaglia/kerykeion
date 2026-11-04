@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [6.1.0] - Unreleased
+
+Promote the qualified 6.1 beta to stable for both the library and CLI. Includes
+native LibEphemeris v4 integration, opt-in relationship scoring v2, measured
+rendering/aspect/ACG optimizations and resource-safe validation tooling. Keep the
+qualified `libephemeris==4.0.0b1` pin and the existing v1 score default.
+See the [stable release notes](release_notes/v6.1.0.md).
+
 ## [6.1.0b1] - 2026-11-04
 
 ### Added

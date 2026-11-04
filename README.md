@@ -113,7 +113,7 @@ Install the current stable release:
 pip install --upgrade "kerykeion"
 ```
 
-Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/python-library/docs/v6/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
+Before upgrading from v4 or v5, read the <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.1.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a> and the <a href="https://www.kerykeion.net/python-library/docs/v6/migration" target="_blank" rel="noopener noreferrer">migration guide</a>.
 
 ### Supported date ranges
 
@@ -741,7 +741,7 @@ For every commercial CLI workflow, use the <a href="https://rapidapi.com/gbattag
 - **Schemas:** <a href="https://www.kerykeion.net/python-library/docs/v6/schemas" target="_blank" rel="noopener noreferrer">Models and literals</a>
 - **FAQ:** <a href="https://www.kerykeion.net/python-library/docs/v6/faq" target="_blank" rel="noopener noreferrer">Troubleshooting and conventions</a>
 - **Hosted API:** <a href="https://www.kerykeion.net/content/astrologer-api/" target="_blank" rel="noopener noreferrer">Full API Documentation</a>
-- **Changelog:** <a href="https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.0.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a>
+- **Changelog:** <a href="https://github.com/g-battaglia/kerykeion/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> and <a href="https://github.com/g-battaglia/kerykeion/blob/main/release_notes/v6.1.0.md" target="_blank" rel="noopener noreferrer">v6 release notes</a>
 
 ### Troubleshooting
 
