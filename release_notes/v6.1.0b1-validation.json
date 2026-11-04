@@ -1,0 +1,150 @@
+{
+  "schema": 1,
+  "version": "6.1.0b1",
+  "platform": "macOS arm64",
+  "sources": {
+    "qualified_runtime_sha256": "b13dfc63d0b01d6290191c4aaae0fbfc155834616aa9162838a377b2a533c076",
+    "integration_code_commit": "d296e263dfd43e1b13f189a37ff173d51f7aa05a",
+    "prs": {
+      "272": "f810a9e4008a74137b2f50fae10da073d665638d",
+      "273": "60750a496f04e96262d14a2f4d2da1b9048c8330",
+      "274": "7ccc61aca2068cb61aadd6f6615a6dd61a93bd9e",
+      "275": "5aad6f2d22d37d5b9162238b95bc85a77979652e"
+    }
+  },
+  "warnings_policy": "-W error; documented deprecations asserted",
+  "unique_collected": 14662,
+  "unique_passed": 14662,
+  "uncovered": [],
+  "failures": 0,
+  "unexpected_python_warnings": 0,
+  "collected_ids_sha256": "79537571b7803c48fa23bd33dc821fe0a54484491830ed3371e7854078cbf5b6",
+  "passed_ids_sha256": "79537571b7803c48fa23bd33dc821fe0a54484491830ed3371e7854078cbf5b6",
+  "profiles": {
+    "python312_extended": {
+      "python": "3.12.13",
+      "passed": 14649,
+      "skipped": 13,
+      "sampled_peak_tree_rss_mib": 411.9,
+      "passed_ids_sha256": "ed20e67aa833bdccbf78beb5cb1a05679ea687c6c5cbe4ff1a9b6641c39a38d8"
+    },
+    "python314_extended": {
+      "python": "3.14.7",
+      "passed": 14649,
+      "skipped": 13,
+      "sampled_peak_tree_rss_mib": 491.9,
+      "passed_ids_sha256": "ed20e67aa833bdccbf78beb5cb1a05679ea687c6c5cbe4ff1a9b6641c39a38d8"
+    },
+    "python312_medium_boundaries": {
+      "python": "3.12.13",
+      "passed": 26,
+      "skipped": 0,
+      "sampled_peak_tree_rss_mib": 107.8,
+      "passed_ids_sha256": "b85b0f69110bbc9338d26f3f54321468a70990b712d1cb84a7af847c59446258"
+    }
+  },
+  "cross_profile_skips_passed_in_medium": [
+    "tests/core/test_ephemeris_provenance.py::test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range",
+    "tests/core/test_ephemeris_provenance.py::test_ephemeris_series_preserves_fallback_source_per_sample",
+    "tests/core/test_heliacal.py::TestBackendHardErrors::test_out_of_range_window_raises",
+    "tests/core/test_moon_phase_details_factory_mocked.py::TestFactoryFromSubjectRangeEdge::test_beyond_range_end_raises_typed_error",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Lunar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Solar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Lunar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Solar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[False]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[True]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[False]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[True]",
+    "tests/core/test_void_of_course_moon_factory.py::test_range_edge_dates_raise_kerykeion_exception"
+  ],
+  "medium_passed_ids": [
+    "tests/core/test_ephemeris_provenance.py::test_arabic_parts_inherit_derived_provenance_from_primaries",
+    "tests/core/test_ephemeris_provenance.py::test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range",
+    "tests/core/test_ephemeris_provenance.py::test_derived_source_does_not_depend_on_trace_rows",
+    "tests/core/test_ephemeris_provenance.py::test_ephemeris_series_preserves_fallback_source_per_sample",
+    "tests/core/test_ephemeris_provenance.py::test_inventory_range_does_not_preempt_engine_source_selection",
+    "tests/core/test_ephemeris_provenance.py::test_leb_network_gate_rejects_before_socket_access",
+    "tests/core/test_ephemeris_provenance.py::test_leb_points_expose_source_precision_and_coverage",
+    "tests/core/test_ephemeris_provenance.py::test_optional_failure_is_reported_as_a_structured_warning",
+    "tests/core/test_ephemeris_provenance.py::test_relocation_preserves_derived_lot_provenance",
+    "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[ASSIST-numerical-model]",
+    "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[Analytical-analytical]",
+    "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[Keplerian-approximate]",
+    "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[SPK-ephemeris]",
+    "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[Skyfield-ephemeris]",
+    "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[SomeFutureBackend-numerical-model]",
+    "tests/core/test_heliacal.py::TestBackendHardErrors::test_out_of_range_window_raises",
+    "tests/core/test_moon_phase_details_factory_mocked.py::TestFactoryFromSubjectRangeEdge::test_beyond_range_end_raises_typed_error",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Lunar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Solar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Lunar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Solar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[False]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[True]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[False]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[True]",
+    "tests/core/test_void_of_course_moon_factory.py::test_range_edge_dates_raise_kerykeion_exception"
+  ],
+  "quality_check_peak_rss_mib": 644.0,
+  "python_snippets": 423,
+  "output_comparisons": 1470,
+  "frozen_inputs": {
+    "legacy_files": 398,
+    "svg_references": 354,
+    "report_references": 1,
+    "leb_inputs": 12,
+    "numeric_reference": "passed",
+    "result": "all frozen hashes unchanged"
+  },
+  "archives": {
+    "kerykeion-6.1.0b1-py3-none-any.whl": {
+      "bytes": 877339,
+      "sha256": "8a2a97bffed11362cc1d225b997f49580d79c85ecc3eb4ae377cb9f82f6eeb9f",
+      "source_files_verified": 146,
+      "metadata": "passed"
+    },
+    "kerykeion-6.1.0b1.tar.gz": {
+      "bytes": 814841,
+      "sha256": "df847ae98b07a028e4025cef68e352f01997eda7a6d2630a9f5f237f88050c60",
+      "source_files_verified": 146,
+      "metadata": "passed"
+    },
+    "kerykeion_cli-6.1.0b1-py3-none-any.whl": {
+      "bytes": 85396,
+      "sha256": "35fb35ad7c3ad1b478021cac11d0368f80fa1efe3e54e386ff251848c5cac94c",
+      "source_files_verified": 25,
+      "metadata": "passed"
+    },
+    "kerykeion_cli-6.1.0b1.tar.gz": {
+      "bytes": 70802,
+      "sha256": "54631243e06ea96392174e98f580f7490c3d223e36913b16b850a3fbfce2a316",
+      "source_files_verified": 25,
+      "metadata": "passed"
+    }
+  },
+  "isolated_installs": [
+    {
+      "python": "312",
+      "kind": "wheel",
+      "result": "passed"
+    },
+    {
+      "python": "312",
+      "kind": "sdist",
+      "result": "passed"
+    },
+    {
+      "python": "314",
+      "kind": "wheel",
+      "result": "passed"
+    },
+    {
+      "python": "314",
+      "kind": "sdist",
+      "result": "passed"
+    }
+  ],
+  "publication_performed": false,
+  "dry_run": "uv publish --dry-run --trusted-publishing never; file validation only; publisher supplies authentication in their terminal"
+}

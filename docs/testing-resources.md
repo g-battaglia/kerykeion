@@ -1,5 +1,10 @@
 # Resource-safe validation
 
+The final four-PR beta qualification covers **14,662 unique cases**, with
+**491.9 MiB** maximum sampled RSS in the complete test suites and **644.0 MiB**
+in `poe check`. See the [final qualification](../release_notes/v6.1.0b1-validation.md).
+The earlier measurements below retain their original scope.
+
 Pytest runs serially by default. CPU count is not a memory budget: `pytest -n auto`
 previously launched 18 workers on this machine, each independently retaining native
 astronomical data. Parallel execution is now an explicit choice, for example
@@ -114,6 +119,6 @@ Across profiles, **all 14,417 unique collected cases passed at least once**:
 zero unverified cases, failures or unexpected warnings. Counts overlap across
 profiles and must not be added as unique tests. PR #275 closes the earlier mean-
 node, fixed-reference and minified-geometry gaps without changing golden fixtures
-or numerical tolerances. Its [report and reproduction commands](https://github.com/g-battaglia/kerykeion/blob/codex/validation-coverage/docs/validation-completeness.md)
+or numerical tolerances. Its [report and reproduction commands](https://github.com/g-battaglia/kerykeion/blob/release/6.1.0b1/docs/validation-completeness.md)
 include source commits and the matching identifier-set hashes. Test and benchmark
 commands were sequential; no automatic worker pool was used.

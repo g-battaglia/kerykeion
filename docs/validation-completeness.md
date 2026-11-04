@@ -1,6 +1,8 @@
-# Complete test validation
+# Optimization test-coverage audit
 
-The final verification checkout combines optimization PR #273, resource-safety
+This audit predates the four-PR beta integration. See the [final beta qualification](../release_notes/v6.1.0b1-validation.md) for the later 14,662-case matrix and package checks.
+
+The verification checkout combines optimization PR #273, resource-safety
 PR #274 and this test-coverage change. Validation uses one process, indexed LEB
 reads and a 1 GiB sampled process-tree RSS watchdog. All runs use `-W error`:
 unexpected Python warnings fail the tests.

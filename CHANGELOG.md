@@ -1,6 +1,16 @@
 # Changelog
 
-## [6.1.0b1] - 2026-11-03
+## [Unreleased]
+
+## [6.1.0b1] - 2026-11-04
+
+### Added
+
+- Add the opt-in `kerykeion.relationship_score.v2` scorer with all nine
+  luminary pairs, per-direction Venus–Mars contacts, explicit numerical policy,
+  destiny-bonus suppression and reproducible contact metadata. Existing v1
+  scoring remains the default. Export v2 models lazily through the canonical
+  schemas and relationship-score namespaces.
 
 ### Changed
 
@@ -11,6 +21,20 @@
   preserving legacy fixture bytes and numerical tolerances.
 - Fix glyph-playground activation and regenerate the matching CLI man page.
 - Keep independent Skyfield oracles in development dependencies only.
+- Avoid unused wheel/panel work in modern, wheel-only and grid-only SVG output;
+  prepare aspect lookups, translation copies and astrocartography geometry once
+  per operation. The measured modern natal pipeline takes 21.7% less wall/CPU
+  time on the documented benchmark; gains depend on workload.
+- Run pytest and cold-import probes serially by default. Add `poe test:bounded`
+  with indexed LEB reads and a sampled process-tree memory watchdog to prevent
+  automatic worker counts from multiplying native ephemeris images.
+
+### Fixed
+
+- Anchor Havana DST-fold fixtures to an observed transition.
+- Replace skipped mean-node, fixed-frame and minified-glyph assertions with
+  applicable numeric/geometry checks; assert documented deprecations and load
+  only the independent altitude oracle's consumed reference data.
 
 Both distributions use `6.1.0b1`. See the [beta release notes](release_notes/v6.1.0b1.md)
 and [qualification report](release_notes/v6.1.0b1-validation.md).
@@ -23,8 +47,6 @@ and [qualification report](release_notes/v6.1.0b1-validation.md).
   SHA-256-verified data-v4 LEB2 inventory for downloads. Existing caches can be
   updated with `libephemeris download leb2-extended` (or the desired tier).
 - Keep the library and CLI distributions at the same version.
-
-## [Unreleased]
 
 ## [6.0.4] - 2026-09-29
 
