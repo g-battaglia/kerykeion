@@ -14,6 +14,8 @@ Run via:  poe benchmark
 import argparse
 import json
 import logging
+import os
+import subprocess
 import platform
 from importlib.metadata import version
 from pathlib import Path
@@ -70,11 +72,14 @@ def bench(label, func, *, rounds, warmup, iterations=1):
         func()
 
     times = []
+    cpu_times = []
     for _ in range(rounds):
+        cpu_t0 = time.process_time()
         t0 = time.perf_counter()
         for _ in range(iterations):
             func()
         times.append((time.perf_counter() - t0) / iterations)
+        cpu_times.append((time.process_time() - cpu_t0) / iterations)
 
     med = statistics.median(times)
     mn = min(times)
@@ -86,6 +91,8 @@ def bench(label, func, *, rounds, warmup, iterations=1):
         "max_ms": mx * 1000,
         "samples_ms": [t * 1000 for t in times],
         "iterations": iterations,
+        "cpu_median_ms": statistics.median(cpu_times) * 1000,
+        "cpu_samples_ms": [t * 1000 for t in cpu_times],
     }
 
 
@@ -99,10 +106,22 @@ def main():
     if args.rounds < 1 or args.warmup < 0 or args.iterations < 1:
         parser.error("rounds and iterations must be positive; warmup must be non-negative")
     logging.disable(logging.CRITICAL)
+    source_file = Path(sys.modules[AstrologicalSubjectFactory.__module__].__file__).resolve()
+    source_root = source_file.parents[2]
+    try:
+        source_commit = subprocess.check_output(
+            ["git", "-C", str(source_root), "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        source_commit = None
     environment = {
         "python": platform.python_version(),
         "platform": platform.platform(),
         "backend": BACKEND_NAME,
+        "source_commit": source_commit,
+        "source_module": str(source_file.relative_to(source_root)),
+        "leb_reader": os.environ.get("LIBEPHEMERIS_LEB_READER", "backend default"),
+        "timers": {"wall": "perf_counter", "cpu": "process_time"},
         "versions": {name: version(name) for name in ("kerykeion", "libephemeris", "pydantic", "svg-polish")},
         "rounds": args.rounds,
         "warmup": args.warmup,
