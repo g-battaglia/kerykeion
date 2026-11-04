@@ -35,6 +35,8 @@
     "online_passed": 3,
     "full_sampled_tree_peak_mib": 415.0,
     "quality_sampled_tree_peak_mib": 581.8,
-    "owned_indexed_equal_outputs": 1470
+    "owned_indexed_equal_outputs": 1470,
+    "medium_configuration_passed": 26,
+    "medium_sampled_tree_peak_mib": 108.3
   }
 }

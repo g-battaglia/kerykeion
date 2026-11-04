@@ -87,10 +87,12 @@ allocator crashes are separate diagnostics.
 
 The two PRs were merged in a temporary verification checkout. The new
 `poe test:bounded` path completed **14,341 passed, 72 skipped**, including all ten
-resource-runner tests, at **415.0 MiB sampled process-tree peak RSS**. The 72 skips
-are platform/backend/tier-specific tests, including tests requiring medium-tier
-range edges and frame combinations that are not applicable to this configuration.
-The three online tests passed separately.
+resource-runner tests, at **415.0 MiB sampled process-tree peak RSS**. The extended run's 72 skips consist of 50 unavailable mean-node reference entries,
+13 medium-only range-edge cases, four textual comparisons of minified geometry
+covered by separate symbol checks, three inapplicable reference frames and two
+optional font/rendering assets. The medium-only cases were then run in the proper
+configuration: **26 passed, no skips**, at **108.3 MiB** sampled peak. The three
+online tests passed separately.
 
 The full `poe check` sequence also passed with serial/indexed execution and a
 1 GiB watchdog: Ruff, mypy, pyright, structural/fresh imports, 7,913 core tests,
