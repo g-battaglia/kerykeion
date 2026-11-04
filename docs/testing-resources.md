@@ -83,7 +83,7 @@ memory oversubscription as the cause of the validation freezes without claiming
 that every unrelated crash has that cause. The previous day's `curl-impersonate`
 allocator crashes are separate diagnostics.
 
-## Final combined validation
+## Initial combined validation
 
 The two PRs were merged in a temporary verification checkout. The new
 `poe test:bounded` path completed **14,341 passed, 72 skipped**, including all ten
@@ -98,3 +98,20 @@ The full `poe check` sequence also passed with serial/indexed execution and a
 1 GiB watchdog: Ruff, mypy, pyright, structural/fresh imports, 7,913 core tests,
 1,155 baseline-gate tests, CLI smoke, all 39 runnable CLI examples and the generated
 manpage check. Its sampled process-tree peak was **581.8 MiB**.
+
+## Final strict coverage audit
+
+The later verification combines this fix, optimization PR #273 and
+[test-coverage PR #275](https://github.com/g-battaglia/kerykeion/pull/275), with
+`-n 0 -W error`, indexed reads and the same 1 GiB sampled watchdog. The extended
+suite, including online tests and optional font/PNG checks, passed **14,404 tests**
+with **13 medium-specific skips** at **489.1 MiB** peak. All 13 skipped identifiers
+passed in the medium configuration (**26 passed, zero skipped**, **160.5 MiB** peak).
+
+Across profiles, **all 14,417 unique collected cases passed at least once**:
+zero unverified cases, failures or unexpected warnings. Counts overlap across
+profiles and must not be added as unique tests. PR #275 closes the earlier mean-
+node, fixed-reference and minified-geometry gaps without changing golden fixtures
+or numerical tolerances. Its [report and reproduction commands](https://github.com/g-battaglia/kerykeion/blob/codex/validation-coverage/docs/validation-completeness.md)
+include source commits and the matching identifier-set hashes. Test and benchmark
+commands were sequential; no automatic worker pool was used.
