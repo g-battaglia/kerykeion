@@ -3,6 +3,8 @@
 from itertools import product
 from math import nan, inf
 from random import Random
+import subprocess
+import sys
 
 import pytest
 
@@ -20,6 +22,22 @@ from kerykeion.schemas.exceptions import KerykeionException
 
 A = {"Sun": 10.0, "Moon": 53.0, "Ascendant": 101.0, "Venus": 203.0, "Mars": 254.0}
 B = {"Sun": 47.0, "Moon": 167.0, "Ascendant": 283.0, "Venus": 321.0, "Mars": 15.0}
+
+
+def test_legacy_import_keeps_the_opt_in_scorer_unloaded():
+    subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import sys; import kerykeion; "
+            "from kerykeion.relationship_score import RelationshipScoreFactory; "
+            "assert RelationshipScoreFactory is kerykeion.RelationshipScoreFactory; "
+            "assert not any(name.startswith('kerykeion.relationship_score.v2') for name in sys.modules)",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
 
 def pair_result(p1, p2, difference):
