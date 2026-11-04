@@ -96,7 +96,8 @@ run `regenerate:docs-png` separately.
 | `generate_glyph_gallery.py` | `regenerate:glyph-gallery` | A self-contained poster of every chart glyph, plus its Markdown page. |
 | `generate_glyph_playground.py` | `playground` | `glyph_playground.html` — the modern cluster's three sizes and nine air steps per ring, pre-drawn, with sliders for the sizes and the row spacing. See below. |
 | `report_modern_displacement.py` | — | How far the modern decluttering moves each planet from its true position. Reads the SVG back through `charts.svg_metadata`, so it measures what was drawn rather than what was intended. |
-| `benchmark.py` | `benchmark` | Timings for subject creation, aspects and SVG rendering. |
+| `benchmark.py` | `benchmark` | Explicit classic/modern full charts, wheels, grids, minification, translations, astrocartography and complete pipelines. `--rounds`, `--warmup`, `--iterations`, `--json PATH` control sampling and JSON export. |
+| `compare_performance_outputs.py` | — | Create or compare deterministic output hashes across two source checkouts using the same backend/tier. |
 
 ## Gates
 
