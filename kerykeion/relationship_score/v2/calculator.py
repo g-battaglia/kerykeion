@@ -224,7 +224,10 @@ def _breakdown(contacts: list[ScoreContactV2Model], destiny_awarded: bool) -> li
 
 def _score_description(total: int) -> RelationshipScoreDescription:
     """Use v1's half-open bands and its >=30 category; labels never add points."""
-    return next((label for upper_limit, label in SCORE_BANDS if total < upper_limit), "Rare Exceptional")
+    for upper_limit, label in SCORE_BANDS:
+        if total < upper_limit:
+            return label
+    return "Rare Exceptional"
 
 
 def score_positions(
