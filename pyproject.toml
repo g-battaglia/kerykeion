@@ -140,7 +140,10 @@ testpaths = "tests"
 log_level = 20
 log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
-addopts = "-n auto --dist loadgroup"
+# Extended native ephemeris images are retained per process. CPU-count-based
+# xdist auto can multiply gigabytes of memory across every logical core.
+# Parallelism is opt-in: an explicit `pytest -n 2` overrides this serial default.
+addopts = "-n 0 --dist loadgroup"
 markers = [
     "online: tests requiring network access (GeoNames API)",
     "core: hand-written essential tests with known values",
@@ -206,6 +209,12 @@ help = "Run extended-tier tests (all offline tests)"
 [tool.poe.tasks."test:all"]
 cmd = "pytest tests/ -m 'not online'"
 help = "Run all tests (alias for test:extended)"
+
+[tool.poe.tasks."test:bounded"]
+cmd = "python scripts/run_resource_limited.py -- python -m pytest tests/ -m 'not online' -n 0"
+help = "Run offline tests serially with indexed LEB reads and a 1 GiB process-tree RSS stop threshold"
+[tool.poe.tasks."test:bounded".env]
+LIBEPHEMERIS_LEB_READER = "indexed"
 
 [tool.poe.tasks."test:all:cov"]
 cmd = "pytest tests/ -m 'not online' --cov=kerykeion --cov-report=term-missing --cov-report=html"
@@ -537,4 +546,5 @@ dev = [
     # The checkout's CLI, installed editable: `uv sync` does not install extras,
     # and `skill:cli:smoke` needs the `kerykeion` command on .venv/bin.
     "kerykeion-cli",
+    "psutil>=7.2.2",
 ]

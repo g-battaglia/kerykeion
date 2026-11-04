@@ -501,7 +501,7 @@ def check_loggers(report: Report) -> None:
 # --------------------------------------------------------------------------- #
 # --fresh-imports
 # --------------------------------------------------------------------------- #
-def check_fresh_imports(report: Report) -> None:
+def check_fresh_imports(report: Report, *, jobs: int = 1) -> None:
     modules: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
         if "__pycache__" in path.parts:
@@ -557,7 +557,7 @@ for _name in kerykeion.__all__:
         )
         return name, proc.returncode, proc.stderr
 
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
         for name, code, stderr in pool.map(probe, sorted(set(modules))):
             report.checked += 1
             if code != 0:
@@ -579,7 +579,10 @@ def main() -> int:
     for mode in MODES:
         parser.add_argument(f"--{mode}", action="store_true")
     parser.add_argument("--all", action="store_true", help="run every mode")
+    parser.add_argument("--jobs", type=int, default=1, help="Concurrent cold-import probes (default: 1)")
     args = parser.parse_args()
+    if args.jobs < 1:
+        parser.error("--jobs must be positive")
 
     selected = [m for m in MODES if getattr(args, m.replace("-", "_"))]
     if args.all or not selected:
@@ -589,7 +592,10 @@ def main() -> int:
     failed = False
     for mode in selected:
         report = Report()
-        MODES[mode](report)
+        if mode == "fresh-imports":
+            check_fresh_imports(report, jobs=args.jobs)
+        else:
+            MODES[mode](report)
         if report.problems:
             failed = True
             print(f"\n{mode}: {len(report.problems)} problem(s) in {report.checked} checked")
