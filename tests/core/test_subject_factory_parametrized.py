@@ -346,10 +346,6 @@ class TestSiderealModeConfigurations:
     @pytest.mark.parametrize("sidereal_mode", SIDEREAL_MODES, ids=lambda m: f"sidereal_{m}")
     def test_sidereal_positions_differ_from_tropical(self, sidereal_mode):
         """Test that sidereal positions are different from tropical positions."""
-        # J1900, J2000, B1950 are reference-frame modes that may not apply a standard ayanamsa
-        if sidereal_mode in self.FIXED_REFERENCE_SIDEREAL_MODES:
-            pytest.skip(f"{sidereal_mode} is a fixed reference frame, not a traditional ayanamsa")
-
         subject_data = get_subject_data_by_id("john_lennon_1940")
 
         tropical_subject = create_subject_from_data(subject_data, zodiac_type="Tropical")
@@ -358,6 +354,19 @@ class TestSiderealModeConfigurations:
             zodiac_type="Sidereal",
             sidereal_mode=sidereal_mode,
         )
+
+        if sidereal_mode in self.FIXED_REFERENCE_SIDEREAL_MODES:
+            # Fixed epochs shift the coordinates by precession, often too little
+            # to change a sign. Verify the actual longitudes instead of skipping.
+            shifts = [
+                abs(
+                    (getattr(sidereal_subject, planet).abs_pos - getattr(tropical_subject, planet).abs_pos + 180) % 360
+                    - 180
+                )
+                for planet in CORE_PLANETS
+            ]
+            assert any(shift > 1e-6 for shift in shifts), f"{sidereal_mode} left all longitudes unchanged"
+            return
 
         # At least some planets should have different signs due to ayanamsa
         different_signs = 0
@@ -403,6 +412,7 @@ class TestPerspectiveConfigurations:
         # The perspective's center body has no position as seen from itself and
         # is excluded (Sun in heliocentric, Moon in selenocentric, ...): skip it.
         from kerykeion.astrological_subject.factory import _center_body_names
+
         center = {n.lower() for n in _center_body_names(perspective_type)}
 
         # Verify planets are present

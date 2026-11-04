@@ -27,13 +27,13 @@ transit-vs-midpoint choice, and the horizon convention itself. A midpoint
 regression, a wrong search seed or a dropped refraction term fails here (proven
 by mutation); a Skyfield frame bug would not, and no test here claims otherwise.
 
-Needs `skyfield` and `skyfield-data`, both already present as transitive
-dependencies of the ephemeris backend.
+Needs `skyfield` and `skyfield-data`, both declared development dependencies.
 """
 
 from __future__ import annotations
 
 import datetime as dt
+from importlib.resources import as_file, files
 import math
 
 import pytest
@@ -79,14 +79,21 @@ _GRID = [
 @pytest.fixture(scope="module")
 def oracle():
     """Skyfield, loaded once: the second implementation everything is checked against."""
-    loader = skyfield_api.Loader(skyfield_data.get_skyfield_data_path(), verbose=False)
-    ephemeris = loader("de421.bsp")
-    return {
-        "ts": loader.timescale(),
-        "earth": ephemeris["earth"],
-        "sun": ephemeris["sun"],
-        "wgs84": skyfield_api.wgs84,
-    }
+    # This oracle consumes only DE421 from skyfield-data. The directory-wide
+    # expiration check also checks finals2000A.all, which it never reads.
+    resource = files(skyfield_data).joinpath("data", "de421.bsp")
+    with as_file(resource) as path:
+        loader = skyfield_api.Loader(str(path.parent), verbose=False)
+        ephemeris = loader(path.name)
+        try:
+            yield {
+                "ts": loader.timescale(builtin=True),
+                "earth": ephemeris["earth"],
+                "sun": ephemeris["sun"],
+                "wgs84": skyfield_api.wgs84,
+            }
+        finally:
+            ephemeris.close()
 
 
 def _observer(oracle, latitude: float, longitude: float):
