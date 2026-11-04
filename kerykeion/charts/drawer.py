@@ -64,7 +64,7 @@ from kerykeion.settings.config_constants import (
     return_label_keys,
     subject_states_a_diurnality,
 )
-from kerykeion.settings.translations import get_translations, load_language_pair
+from kerykeion.settings.translations import get_translations, _resolve_language_sources
 from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.charts.utils import (
     draw_zodiac_slice,
@@ -550,6 +550,10 @@ class ChartRendererProtocol(Protocol):
     from ChartDrawer.
     """
 
+    def setup_wheel(self, template_dict: dict) -> None:
+        """Configure all classic wheel fragments independently of panels."""
+        ...
+
     def setup_circles(self, template_dict: dict) -> None:
         """Configure concentric circle SVG elements for the wheel."""
         ...
@@ -570,7 +574,7 @@ class ChartRendererProtocol(Protocol):
         """Configure house comparison grid (dual-wheel charts only)."""
         ...
 
-    def render(self, template_dict: dict) -> None:
+    def render(self, template_dict: dict, *, include_classic_wheel: bool = True) -> None:
         """Execute all setup methods in order to populate template_dict."""
         ...
 
@@ -593,7 +597,7 @@ class BaseChartRenderer:
         """
         self.drawer = drawer
 
-    def render(self, template_dict: dict) -> None:
+    def render(self, template_dict: dict, *, include_classic_wheel: bool = True) -> None:
         """Execute all setup methods to populate the template dictionary.
 
         This is a Template Method that calls setup methods in a defined order.
@@ -602,11 +606,33 @@ class BaseChartRenderer:
         Args:
             template_dict: Dictionary to populate with SVG template values.
         """
-        self.setup_circles(template_dict)
+        if include_classic_wheel:
+            self.setup_wheel(template_dict)
         self.setup_aspects(template_dict)
         self.setup_info_sections(template_dict)
         self.setup_grids(template_dict)
         self.setup_house_comparison(template_dict)
+
+    def setup_wheel(self, template_dict: dict) -> None:
+        """Emit classic wheel geometry independently of the surrounding panels."""
+        d = self.drawer
+        self.setup_circles(template_dict)
+        template_dict["makeZodiac"] = d._draw_zodiac_circle_slices(d.main_radius)
+        first_houses = self._get_houses_list(d.first_obj)
+        if self.is_dual_wheel():
+            second_houses = self._get_houses_list(d.second_obj)
+            d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
+            d._setup_house_sectors(template_dict, first_houses, second_houses)
+            template_dict["makeGauquelinSectors"] = ""
+            d._setup_dual_wheel_planets(template_dict)
+            aspect_radius = d.main_radius - 160
+        else:
+            d._setup_single_wheel_houses(template_dict, first_houses)
+            d._setup_house_sectors(template_dict, first_houses)
+            d._setup_gauquelin_sectors(template_dict)
+            d._setup_single_wheel_planets(template_dict)
+            aspect_radius = d.main_radius - d.third_circle_radius
+        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, aspect_radius)
 
     def setup_circles(self, template_dict: dict) -> None:
         """Configure circle elements. Override in subclasses."""
@@ -1272,10 +1298,6 @@ class NatalChartRenderer(BaseChartRenderer):
 
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
-        d._setup_single_wheel_houses(template_dict, houses_list)
-        d._setup_house_sectors(template_dict, houses_list)
-        d._setup_gauquelin_sectors(template_dict)
-        d._setup_single_wheel_planets(template_dict)
         d._setup_main_planet_grid(
             template_dict,
             d.first_obj.name,
@@ -1373,10 +1395,6 @@ class CompositeChartRenderer(BaseChartRenderer):
 
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
-        d._setup_single_wheel_houses(template_dict, houses_list)
-        d._setup_house_sectors(template_dict, houses_list)
-        d._setup_gauquelin_sectors(template_dict)
-        d._setup_single_wheel_planets(template_dict)
 
         # Combined subject name
         subject_name = (
@@ -1494,8 +1512,6 @@ class TransitChartRenderer(BaseChartRenderer):
                     aspects_settings=d.aspects_settings,
                 )
 
-        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
-
     def setup_info_sections(self, template_dict: dict) -> None:
         """Set up natal and transit info sections."""
         d = self.drawer
@@ -1592,14 +1608,9 @@ class TransitChartRenderer(BaseChartRenderer):
         """Set up dual-wheel planet and house grids."""
         d = self.drawer
         first_houses = self._get_houses_list(d.first_obj)
-        second_houses = self._get_houses_list(d.second_obj)
 
         d._setup_main_houses_grid(template_dict, first_houses)
         template_dict["makeSecondaryHousesGrid"] = ""  # Transit doesn't show transit houses grid
-        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses, second_houses)
-        template_dict["makeGauquelinSectors"] = ""  # Not rendered for dual-wheel charts
-        d._setup_dual_wheel_planets(template_dict)
 
         # Planet grids with wheel labels
         first_label = d._truncate_name(d.first_obj.name)
@@ -1839,8 +1850,6 @@ class SynastryChartRenderer(BaseChartRenderer):
                     aspects_settings=d.aspects_settings,
                 )
 
-        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
-
     def setup_info_sections(self, template_dict: dict) -> None:
         """Set up info for both synastry subjects."""
         d = self.drawer
@@ -1891,10 +1900,6 @@ class SynastryChartRenderer(BaseChartRenderer):
 
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
-        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses, second_houses)
-        template_dict["makeGauquelinSectors"] = ""
-        d._setup_dual_wheel_planets(template_dict)
 
         # Planet grids
         first_label = d._truncate_name(d.first_obj.name, 18, "…")
@@ -2072,10 +2077,6 @@ class SingleReturnChartRenderer(BaseChartRenderer):
 
         d._setup_main_houses_grid(template_dict, houses_list)
         template_dict["makeSecondaryHousesGrid"] = ""
-        d._setup_single_wheel_houses(template_dict, houses_list)
-        d._setup_house_sectors(template_dict, houses_list)
-        d._setup_gauquelin_sectors(template_dict)
-        d._setup_single_wheel_planets(template_dict)
         d._setup_main_planet_grid(
             template_dict,
             d.first_obj.name,
@@ -2174,8 +2175,6 @@ class DualReturnChartRenderer(BaseChartRenderer):
                     aspects_settings=d.aspects_settings,
                 )
 
-        template_dict["makeAspects"] = d._draw_all_aspects_lines(d.main_radius, d.main_radius - 160)
-
     def setup_info_sections(self, template_dict: dict) -> None:
         """Set up natal and return info sections."""
         d = self.drawer
@@ -2244,10 +2243,6 @@ class DualReturnChartRenderer(BaseChartRenderer):
 
         d._setup_main_houses_grid(template_dict, first_houses)
         d._setup_secondary_houses_grid(template_dict, second_houses)
-        d._setup_dual_wheel_houses(template_dict, first_houses, second_houses)
-        d._setup_house_sectors(template_dict, first_houses, second_houses)
-        template_dict["makeGauquelinSectors"] = ""
-        d._setup_dual_wheel_planets(template_dict)
 
         # Planet grid labels
         first_label = d._truncate_name(d.first_obj.name)
@@ -4584,23 +4579,22 @@ class ChartDrawer:  # type: ignore[no-redef]
         language_pack: Optional[Mapping[str, Any]],
     ) -> None:
         """Resolve language models for the requested chart language."""
-        overrides = {self.chart_language: dict(language_pack)} if language_pack else None
-        # Materialize only the selected language + English fallback, not the whole
-        # ~10-language table (load_language_pair avoids the full-table deepcopy).
-        base_data, fallback_data = load_language_pair(self.chart_language, overrides)  # type: ignore[arg-type]
+        overrides: Optional[Mapping[str, Any]] = {self.chart_language: dict(language_pack)} if language_pack else None
+        # Pydantic validates the live source into fresh models; model_dump then
+        # owns the mutable dictionaries exposed by this drawer.
+        base_data, fallback_data = _resolve_language_sources(self.chart_language, overrides)
 
         if not fallback_data:
             raise KerykeionException("English translations are missing from LANGUAGE_SETTINGS.")
 
         selected_model = KerykeionLanguageModel(**base_data)
         if base_data is fallback_data:
-            # The common EN / unknown-language case: load_language_pair returns the
-            # same English dict for both selected and fallback. Build the model and
-            # dump it once instead of twice — get_translations consults the shared
-            # dict for both primary and fallback, so reusing the object is safe.
+            # EN and an unknown language resolve to the same source, including
+            # an EN language pack. Validate once, but keep the exposed selected
+            # dump independent of the fallback if a caller edits language_settings.
             fallback_model = selected_model
             selected_dump = selected_model.model_dump()
-            fallback_dump = selected_dump
+            fallback_dump = selected_model.model_dump()
         else:
             fallback_model = KerykeionLanguageModel(**fallback_data)
             selected_dump = selected_model.model_dump()
@@ -4790,9 +4784,6 @@ class ChartDrawer:  # type: ignore[no-redef]
             x_start=aspect_x,
             aspects_settings=self.aspects_settings,
         )
-        template_dict["makeAspects"] = self._draw_all_aspects_lines(
-            self.main_radius, self.main_radius - self.third_circle_radius
-        )
 
     def _setup_dual_chart_aspects(self, template_dict: dict, aspect_title: str) -> None:
         """
@@ -4826,7 +4817,6 @@ class ChartDrawer:  # type: ignore[no-redef]
                 self._TRANSIT_ASPECT_GRID_Y,
                 aspects_settings=self.aspects_settings,
             )
-        template_dict["makeAspects"] = self._draw_all_aspects_lines(self.main_radius, self.main_radius - 160)
 
     def _axis_cusp_colors(self) -> tuple[str, str, str, str]:
         """Resolve the (ASC, MC, DSC, IC) cusp colors by point name.
@@ -5374,7 +5364,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         Args:
             template (str): The raw SVG template string.
-            minify (bool): Remove whitespace and quotes for compactness.
+            minify (bool): Run the full SVG optimizer for compact output.
             remove_css_variables (bool): Embed CSS variable definitions inline.
 
         Returns:
@@ -5615,7 +5605,9 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         return ". ".join(p for p in parts if p) + "."
 
-    def _create_template_dictionary(self, *, custom_title: Union[str, None] = None) -> ChartTemplateModel:
+    def _create_template_dictionary(
+        self, *, custom_title: Union[str, None] = None, include_classic_wheel: bool = True
+    ) -> ChartTemplateModel:
         """
         Assemble chart data and rendering instructions into a template dictionary.
 
@@ -5624,6 +5616,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         Args:
             custom_title (str | None): Optional runtime override for the chart title.
+            include_classic_wheel: Emit classic geometry when consumed by the output.
 
         Returns:
             ChartTemplateModel: Populated structure of template variables.
@@ -5726,9 +5719,21 @@ class ChartDrawer:  # type: ignore[no-redef]
             template_dict[f"orb_color_{aspect['degree']}"] = aspect["color"]
 
         # ---------------------------------------------------------------------
-        # SVG ELEMENTS: Zodiac circle slices (the colored background arcs)
+        # SVG ELEMENTS: Required wheel slots (filled only for classic output)
         # ---------------------------------------------------------------------
-        template_dict["makeZodiac"] = self._draw_zodiac_circle_slices(self.main_radius)
+        for field in (
+            "makeZodiac",
+            "transitRing",
+            "degreeRing",
+            "background_circle",
+            "first_circle",
+            "second_circle",
+            "third_circle",
+            "makeHouses",
+            "makePlanets",
+            "makeAspects",
+        ):
+            template_dict[field] = ""
 
         # ---------------------------------------------------------------------
         # STATISTICS: Element distribution percentages
@@ -5783,7 +5788,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         # ------------------------------- #
         # Delegate to the appropriate renderer based on chart type.
         # This uses the Strategy Pattern to separate chart-specific logic.
-        self._renderer.render(template_dict)
+        self._renderer.render(template_dict, include_classic_wheel=include_classic_wheel)
 
         # ---------------------------------------------------------------------
         # LAYOUT: bottom-left block and moon glyph
@@ -5877,6 +5882,17 @@ class ChartDrawer:  # type: ignore[no-redef]
                 template_dict[text_field] = escape_svg_text(template_dict[text_field])
 
         return ChartTemplateModel(**template_dict)
+
+    def _create_export_template_dictionary(self) -> dict[str, str]:
+        """Common metadata for partial exports, without full-chart panels."""
+        title = self._get_chart_title()
+        return {
+            "color_style_tag": self.color_style_tag,
+            "chart_font_family": CHART_TEXT_FONT_FAMILY,
+            "background_color": "transparent" if self.transparent_background else self.chart_colors_settings["paper_1"],
+            "stringTitle": escape_svg_text(title),
+            "stringDescription": escape_svg_text(self._get_chart_description(title)),
+        }
 
     def _generate_modern_content(
         self,
@@ -6173,7 +6189,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         variables and minifies the output.
 
         Args:
-            minify (bool): Remove whitespace and quotes for compactness.
+            minify (bool): Run the full SVG optimizer for compact output.
             remove_css_variables (bool): Embed CSS variable definitions.
             custom_title (str or None): Optional override for the SVG title.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
@@ -6202,7 +6218,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         self._validate_chart_style(effective_style)
         self._validate_glyph_size(effective_glyph_size)
         self._warn_classic_only_options(effective_style)
-        td = self._create_template_dictionary(custom_title=custom_title)
+        td = self._create_template_dictionary(custom_title=custom_title, include_classic_wheel=effective_style == "classic")
 
         DATA_DIR = _MODULE_DIR
         raw_template = _load_cached_file(str(DATA_DIR / "templates" / "chart.xml"))
@@ -6414,7 +6430,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             filename (str or None): Custom filename for the SVG file (without extension).
                 If None, uses the default pattern:
                 "{subject.name} - {chart_type} Chart - {Modern|Classic}".
-            minify (bool): Pass-through to generate_svg_string for compact output.
+            minify (bool): Pass-through to generate_svg_string for full SVG optimization.
             remove_css_variables (bool): Pass-through to generate_svg_string to embed CSS variables.
             custom_title (str or None): Optional override for the SVG title.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
@@ -6456,7 +6472,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         CSS inlining and minification.
 
         Args:
-            minify (bool): Remove whitespace and quotes for compactness.
+            minify (bool): Run the full SVG optimizer for compact output.
             remove_css_variables (bool): Embed CSS variable definitions.
             style (KerykeionChartStyle): Chart wheel style — "classic" or "modern".
                 If not provided, uses the default set in the constructor.
@@ -6489,14 +6505,14 @@ class ChartDrawer:  # type: ignore[no-redef]
         if effective_style == "modern":
             raw_template = _load_cached_file(str(_MODULE_DIR / "templates" / "modern_wheel.xml"))
 
-            template_dict = self._create_template_dictionary()
+            template_dict = self._create_export_template_dictionary()
             modern_content = self._generate_modern_content(
                 show_zodiac_background_ring=effective_ring,
                 glyph_size=effective_glyph_size,
             )
             template = Template(raw_template).substitute(
                 {
-                    **template_dict.model_dump(),
+                    **template_dict,
                     "makeModernHoroscope": modern_content,
                     "viewbox": "0 0 100 100",
                 }
@@ -6504,9 +6520,10 @@ class ChartDrawer:  # type: ignore[no-redef]
         else:
             raw_template = _load_cached_file(str(_MODULE_DIR / "templates" / "wheel_only.xml"))
 
-            template_dict = self._create_template_dictionary()
+            template_dict = self._create_export_template_dictionary()
+            self._renderer.setup_wheel(template_dict)
             wheel_viewbox = self._wheel_only_viewbox()
-            template = Template(raw_template).substitute({**template_dict.model_dump(), "viewbox": wheel_viewbox})
+            template = Template(raw_template).substitute({**template_dict, "viewbox": wheel_viewbox})
             # Classic values are Full_Wheel-local; wheel_only.xml pins the wheel
             # at translate(100, 50). (The modern branch is already root-space:
             # its wheel-local 100x100 frame IS the wheel-only viewBox.)
@@ -6574,7 +6591,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         and applies optional CSS inlining and minification.
 
         Args:
-            minify (bool): Remove whitespace and quotes for compactness.
+            minify (bool): Run the full SVG optimizer for compact output.
             remove_css_variables (bool): Embed CSS variable definitions.
 
         Returns:
@@ -6583,7 +6600,7 @@ class ChartDrawer:  # type: ignore[no-redef]
 
         template = _load_cached_file(str(_MODULE_DIR / "templates" / "aspect_grid_only.xml"))
 
-        template_dict = self._create_template_dictionary()
+        template_dict = self._create_export_template_dictionary()
 
         if self._renderer.is_dual_wheel():
             aspects_grid = draw_transit_aspect_grid(
@@ -6606,7 +6623,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         viewbox_override = self._grid_only_viewbox()
 
         template = Template(template).substitute(
-            {**template_dict.model_dump(), "makeAspectGrid": aspects_grid, "viewbox": viewbox_override}
+            {**template_dict, "makeAspectGrid": aspects_grid, "viewbox": viewbox_override}
         )
 
         return self._apply_svg_post_processing(template, minify, remove_css_variables)
