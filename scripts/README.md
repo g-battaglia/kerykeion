@@ -109,6 +109,7 @@ something once passed the type checker and the test suite and was still wrong.
 | `test_markdown_snippets.py` | `docs:snippets` | A ` ```python ` block in any Markdown file that does not run. Offline: a snippet needing the network has to say `online=False`. |
 | `check_import_graph.py` | `imports`, `imports:fresh` | Module paths, patch targets and logger names that drifted from the package layout — the things a rename breaks silently. `imports:fresh` additionally imports every module in a cold interpreter, which is what catches leaf-first cycles. |
 | `quality_check.py` | `quality` | The aggregate gate. |
+| `run_resource_limited.py` | `test:bounded` | Supervise a command and its descendants with a sampled RSS threshold; stop the tree on excess memory or cancellation. |
 | `build_smoke_check.py` | `build:smoke` | A wheel that imports but cannot render, because a template or theme was left out of the package data. |
 
 ## Generated source
