@@ -157,6 +157,9 @@ from .settings_models import (
 # lazily (see __getattr__ below) to avoid import cycles and keep this
 # package import light.
 _FEATURE_MODEL_HOMES = {
+    "RelationshipScoreV2Model": "kerykeion.relationship_score.v2.models",
+    "ScoreContactV2Model": "kerykeion.relationship_score.v2.models",
+    "ScoreMetadataV2Model": "kerykeion.relationship_score.v2.models",
     "LunationModel": "kerykeion.lunations.factory",
     "LunationsCollectionModel": "kerykeion.lunations.factory",
     "StationModel": "kerykeion.retrograde_stations.factory",
@@ -192,6 +195,11 @@ _FEATURE_MODEL_HOMES = {
 }
 
 if TYPE_CHECKING:  # static analyzers see the lazy re-exports as plain imports
+    from kerykeion.relationship_score.v2.models import (
+        RelationshipScoreV2Model,
+        ScoreContactV2Model,
+        ScoreMetadataV2Model,
+    )
     from kerykeion.lunations.factory import LunationModel, LunationsCollectionModel
     from kerykeion.retrograde_stations.factory import (
         StationModel,
@@ -302,6 +310,9 @@ __all__ = [
     "RelationshipScoreAspectModel",
     "ScoreBreakdownItemModel",
     "RelationshipScoreModel",
+    "RelationshipScoreV2Model",
+    "ScoreContactV2Model",
+    "ScoreMetadataV2Model",
     "ActiveAspect",
     "NutationObliquityModel",
     "TransitMomentModel",
