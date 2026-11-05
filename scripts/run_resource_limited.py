@@ -19,6 +19,7 @@ import signal
 import subprocess
 import sys
 import time
+import threading
 
 import psutil
 
@@ -40,17 +41,35 @@ class RunResult:
 @contextmanager
 def _defer_stop_signals():
     """Do not interrupt spawn ownership or the final kill/wait sequence."""
+    # Defer Python handlers rather than blocking the thread's signal mask:
+    # a child would inherit a blocked mask and could never handle SIGTERM.
+    # Python only delivers handlers on the main thread.
+    if threading.current_thread() is not threading.main_thread():
+        yield
+        return
     signals = {signal.SIGINT, signal.SIGTERM}
     if hasattr(signal, "SIGHUP"):
         signals.add(signal.SIGHUP)
-    if hasattr(signal, "pthread_sigmask"):
-        previous = signal.pthread_sigmask(signal.SIG_BLOCK, signals)
-        try:
-            yield
-        finally:
-            signal.pthread_sigmask(signal.SIG_SETMASK, previous)
-    else:
+    previous = {sig: signal.getsignal(sig) for sig in signals}
+    pending = []
+
+    def remember(signum, frame):
+        pending.append((signum, frame))
+
+    try:
+        for sig in signals:
+            signal.signal(sig, remember)
         yield
+    finally:
+        for sig, handler in previous.items():
+            signal.signal(sig, handler)
+        if pending:
+            signum, frame = pending[0]
+            handler = previous[signum]
+            if callable(handler):
+                handler(signum, frame)
+            elif handler == signal.SIG_DFL:
+                signal.raise_signal(signum)
 
 
 def _signal_group(pid: int, signum: int) -> None:

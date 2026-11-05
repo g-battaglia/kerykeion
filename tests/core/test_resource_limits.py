@@ -195,3 +195,56 @@ def test_child_signal_uses_the_conventional_shell_status(monkeypatch, capsys):
     )
     assert main() == 128 + signal.SIGTERM
     assert "terminated by signal" in capsys.readouterr().err
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX signal-mask inheritance")
+def test_command_does_not_inherit_blocked_stop_signals():
+    code = """
+import signal
+blocked = signal.pthread_sigmask(signal.SIG_BLOCK, [])
+assert not blocked.intersection({signal.SIGINT, signal.SIGTERM, signal.SIGHUP}), blocked
+"""
+    assert run_command([sys.executable, "-c", code], rss_limit_bytes=256 * 2**20).returncode == 0
+
+
+def test_fast_exit_still_stops_background_descendant(tmp_path):
+    pid_file = tmp_path / "background.pid"
+    code = """
+import subprocess, sys
+from pathlib import Path
+child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
+Path(sys.argv[1]).write_text(str(child.pid))
+"""
+    result = run_command([sys.executable, "-c", code, str(pid_file)],
+                         rss_limit_bytes=256 * 2**20, interval=0.5)
+    assert result.returncode == 0
+    pid = int(pid_file.read_text())
+    try:
+        process = psutil.Process(pid)
+        deadline = time.monotonic() + 5
+        while process.status() != psutil.STATUS_ZOMBIE and time.monotonic() < deadline:
+            time.sleep(0.01)
+        assert process.status() == psutil.STATUS_ZOMBIE
+    except psutil.NoSuchProcess:
+        pass
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX setup cleanup")
+def test_process_handle_failure_still_reaps_command(monkeypatch):
+    children = []
+    original = subprocess.Popen
+
+    def spawn(*args, **kwargs):
+        child = original(*args, **kwargs)
+        children.append(child)
+        return child
+
+    def fail_handle(pid):
+        raise RuntimeError("handle setup failed")
+
+    monkeypatch.setattr(run_resource_limited.subprocess, "Popen", spawn)
+    monkeypatch.setattr(run_resource_limited.psutil, "Process", fail_handle)
+    with pytest.raises(RuntimeError, match="handle setup failed"):
+        run_command([sys.executable, "-c", "import time; time.sleep(30)"], rss_limit_bytes=256 * 2**20)
+    assert len(children) == 1
+    assert children[0].returncode is not None
