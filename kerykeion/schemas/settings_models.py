@@ -299,6 +299,12 @@ class KerykeionLanguageModel(SubscriptableBaseModel):
         title="Relationship Score: Rare Exceptional",
         description="The 'Rare Exceptional' relationship score band in the chart, in the language",
     )
+    ephemeris_omitted_points: str = Field(
+        default="Unavailable points", description="Label for requested points omitted by the ephemeris backend."
+    )
+    ephemeris_approximate_positions: str = Field(
+        default="Approximate positions", description="Label for positions explicitly classified as approximate."
+    )
     polar_fallback: str = Field(
         default="polar fallback",
         title="Polar Fallback",

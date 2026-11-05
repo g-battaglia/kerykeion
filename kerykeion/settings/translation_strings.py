@@ -7,6 +7,8 @@ This module exposes the `LANGUAGE_SETTINGS` dictionary used across the project.
 
 LANGUAGE_SETTINGS = {
     "EN": {
+        "ephemeris_omitted_points": "Unavailable points",
+        "ephemeris_approximate_positions": "Approximate positions",
         "info": "Info",
         "cusp": "Cusp",
         "longitude": "Longitude",
@@ -231,6 +233,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "FR": {
+        "ephemeris_omitted_points": "Points indisponibles",
+        "ephemeris_approximate_positions": "Positions approximatives",
         "info": "Informations",
         "cusp": "Maison",
         "longitude": "Longitude",
@@ -451,6 +455,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "PT": {
+        "ephemeris_omitted_points": "Pontos indisponíveis",
+        "ephemeris_approximate_positions": "Posições aproximadas",
         "info": "Informações",
         "cusp": "Casa",
         "longitude": "Longitude",
@@ -671,6 +677,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "IT": {
+        "ephemeris_omitted_points": "Punti non disponibili",
+        "ephemeris_approximate_positions": "Posizioni approssimate",
         "info": "Info",
         "cusp": "Cuspide",
         "longitude": "Longitudine",
@@ -891,6 +899,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "CN": {
+        "ephemeris_omitted_points": "不可用的星体",
+        "ephemeris_approximate_positions": "近似位置",
         "info": "命盤資訊",
         "cusp": "宮",
         "longitude": "經度",
@@ -1111,6 +1121,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "ES": {
+        "ephemeris_omitted_points": "Puntos no disponibles",
+        "ephemeris_approximate_positions": "Posiciones aproximadas",
         "info": "Información",
         "cusp": "Casa",
         "longitude": "Longitud",
@@ -1331,6 +1343,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "RU": {
+        "ephemeris_omitted_points": "Недоступные точки",
+        "ephemeris_approximate_positions": "Приблизительные положения",
         "info": "Информация",
         "cusp": "Дом",
         "longitude": "Долгота",
@@ -1551,6 +1565,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "TR": {
+        "ephemeris_omitted_points": "Kullanılamayan noktalar",
+        "ephemeris_approximate_positions": "Yaklaşık konumlar",
         "info": "Bilgi",
         "cusp": "Ev",
         "longitude": "Boylam",
@@ -1771,6 +1787,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "DE": {
+        "ephemeris_omitted_points": "Nicht verfügbare Punkte",
+        "ephemeris_approximate_positions": "Ungefähre Positionen",
         "info": "Informationen",
         "cusp": "Haus",
         "longitude": "Längengrad",
@@ -1991,6 +2009,8 @@ LANGUAGE_SETTINGS = {
         },
     },
     "HI": {
+        "ephemeris_omitted_points": "अनुपलब्ध बिंदु",
+        "ephemeris_approximate_positions": "अनुमानित स्थितियाँ",
         "info": "जानकारी",
         "cusp": "घर",
         "longitude": "देशांतर",

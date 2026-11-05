@@ -164,6 +164,7 @@ _RENDER_FLAGS: dict[str, tuple[Any, Optional[str]]] = {
     "aspect_icons": (options.AspectIconsFlag, "show_aspect_icons"),
     "zodiac_ring": (options.ZodiacRingFlag, "show_zodiac_background_ring"),
     "diurnality": (options.DiurnalityFlag, "show_diurnality"),
+    "show_ephemeris_notes": (options.EphemerisNotesFlag, "show_ephemeris_notes"),
     "house_position_comparison": (options.HousePositionComparisonFlag, "show_house_position_comparison"),
     "aspect_grid_type": (options.AspectGridTypeOpt, "double_chart_aspect_grid_type"),
     "svg_variant": (options.SvgVariantOpt, "svg_variant"),

@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+
+- Opt-in SVG ephemeris notes (`show_ephemeris_notes`, CLI
+  `--show-ephemeris-notes`) distinguish omitted points from explicitly
+  approximate positions. Notes are translated, accessible, and supported by
+  full, wheel-only and grid-only exports. Default drawing output is unchanged.
+
+### Fixed
+
+- Historical Swiss snapshot preconditions now verify missing required bodies
+  at the actual chart date. Known missing data or unsupported dates are reported
+  explicitly; unexpected errors and unexplained omissions remain failures.
+  Separate tests verify warnings and omitted aspects for those same dates.
+
 ## [6.1.0b2] - 2026-11-04
 
 ### Changed

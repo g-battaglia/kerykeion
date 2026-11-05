@@ -16,11 +16,12 @@ Tier filtering:
     pytest tests/ --tier=medium   # DE440: 1550-2650 (16 subjects, cumulative)
     pytest tests/ --tier=extended # DE441: full range (25 subjects, cumulative)
 
-    Without --tier, the tier is auto-detected by probing the loaded ephemeris,
-    so a plain ``pytest`` run is green on any kernel: out-of-range temporal
-    subjects and the BCE/ancient-date test modules are skipped (with reasons)
-    instead of failing. Pass --tier=extended explicitly to force-run everything
-    (requires the full-range DE441 kernel).
+    Without --tier, Sun availability selects the temporal test profile. For
+    LibEphemeris this distinguishes the native kernels. Swiss can also serve
+    the Sun analytically: its profile is a date selection, NOT a DE kernel or
+    evidence that every required body is available. Complete historical SVGs
+    check their required points separately before comparing references.
+
 """
 
 import os
@@ -91,11 +92,12 @@ def pytest_sessionstart(session):
 
 
 def _detect_ephemeris_tier() -> str:
-    """Probe the loaded ephemeris and return the widest tier it can serve.
+    """Select a temporal test profile from Sun availability, not body coverage.
 
-    Computes the Sun at probe dates chosen inside one tier's range but outside
-    the next narrower one: year 1000 is covered only by DE441 (extended),
-    year 1700 by DE440 (medium) but not DE440s (base, 1849+).
+    For LibEphemeris, years 1000/1700 distinguish extended/medium native
+    kernels. Swiss may answer using Moshier; an ``extended`` *test profile*
+    does not identify DE441 or imply that historical Chiron is available.
+    Required snapshot bodies are verified independently at the actual date.
     """
     from kerykeion.ephemeris_backend import ephe, ephemeris_session
 
@@ -170,8 +172,8 @@ def pytest_collection_modifyitems(config, items):
     # Build full set of all temporal subject IDs for checking
     all_subject_ids = {s["id"] for s in TEMPORAL_SUBJECTS}
 
-    detected_note = " (auto-detected from the loaded ephemeris)" if auto_detected else ""
-    skip_subject = pytest.mark.skip(reason=f"Subject not in tier '{tier}'{detected_note}")
+    detected_note = " (date profile selected from Sun availability)" if auto_detected else ""
+    skip_subject = pytest.mark.skip(reason=f"Subject not in date profile '{tier}'{detected_note}")
     skip_range = pytest.mark.skip(
         reason=f"Requires the full-range (extended) ephemeris kernel; current tier is '{tier}'{detected_note}"
     )

@@ -2,9 +2,9 @@
 """
 Opt-in chart marks.
 
-Six options each add one mark to the chart: station markers on the wheel,
+Optional settings add marks to the chart: station markers on the wheel,
 out-of-bounds badges in the point tables, dashes on separating aspect lines,
-the synastry score, the ayanamsa offset, and the polar-fallback note. All six
+the synastry score, the ayanamsa offset, and the polar-fallback note. All options
 default to off, and these tests pin the two halves of that promise:
 
     - Off is genuinely off. A caller who upgrades and changes nothing must get
@@ -50,6 +50,7 @@ ALL_MARKS = (
     "show_relationship_score",
     "show_ayanamsa_value",
     "show_polar_fallback_note",
+    "show_ephemeris_notes",
 )
 
 

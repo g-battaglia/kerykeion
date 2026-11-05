@@ -85,6 +85,37 @@ def manifest() -> dict:
     return data
 
 
+def require_temporal_snapshot_inputs(subject_id: str) -> None:
+    """Check the known coefficient contract of the two DE440 lunar snapshots.
+
+    The qualified automatic inventory serves these dates with medium/DE440
+    coefficients, even under the extended date profile. Forcing the extended
+    core changes the lunar model. Reject that configuration explicitly instead
+    of diagnosing a changed render as a numerical regression. No backend state
+    is changed, and the original producer manifest remains immutable.
+    """
+    if subject_id not in {"galileo_1564", "newton_1643"} or active_model() is None:
+        return
+    from kerykeion.ephemeris_backend import ephe
+
+    reader = ephe.get_leb_reader()
+    assert reader is not None, "Historical SVG references require the qualified local LEB inventory"
+    path = Path(reader.path)
+    assert path.name in {"base_core.leb2", "medium_core.leb2"}, (
+        f"{subject_id}: snapshot requires medium/DE440 coefficients at this date; "
+        f"the selected primary core is {path.name}. Use the qualified automatic "
+        "inventory (unset LIBEPHEMERIS_LEB), or medium_core.leb2. An explicit "
+        "extended core is a different model, not a failure of numerical precision."
+    )
+    inputs = {item["name"]: item["sha256"] for item in manifest()["inputs"]}
+    verify_file(path, inputs[path.name])
+    if path.name == "base_core.leb2":
+        medium = [Path(item["path"]) for item in ephe.get_leb_inventory()["files"]
+                  if Path(item["path"]).name == "medium_core.leb2"]
+        assert len(medium) == 1, "Historical SVG references require the qualified medium core in the inventory"
+        verify_file(medium[0], inputs["medium_core.leb2"])
+
+
 @lru_cache(maxsize=1)
 def numeric() -> dict:
     path = verify_file(MODEL_ROOT / "positions.json", manifest()["numeric_sha256"])
