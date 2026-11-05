@@ -37,3 +37,13 @@ bytes and scientific/input qualification must agree exactly. Original producer
 provenance stays frozen; a compatible consumer's source identity is printed
 separately, not substituted into the original attestation. Legacy regeneration
 commands refuse v4 output so they cannot overwrite v3 references accidentally.
+
+The Galileo/Newton SVGs also require the **coefficient-routing configuration**
+used by their producer. With the qualified inventory and automatic LEB selection,
+the native engine serves those dates from medium/DE440 coefficients. Selecting
+an extended date profile does not force every date onto DE441. An explicit
+`LIBEPHEMERIS_LEB=.../extended_core.leb2` changes that selection and is not the
+input configuration of those two images. Their tests now check the primary
+reader and the relevant manifest hashes before rendering, without changing
+backend state. Run the reference suite with `LIBEPHEMERIS_LEB` unset and the
+qualified owner-provided inventory; explicit-file scientific checks are separate.

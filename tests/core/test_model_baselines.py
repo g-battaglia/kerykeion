@@ -127,3 +127,41 @@ def test_native_angles_against_independent_clock_and_geometry(subject_id):
     reference = orientation(subject.julian_day, subject.lat, subject.lng)
     for angle in ("ascendant", "medium_coeli"):
         assert angular_distance(getattr(subject, angle).abs_pos, reference[angle]) <= POSITION_TOLERANCE
+
+
+@pytest.mark.parametrize("primary", ["base_core.leb2", "medium_core.leb2"])
+def test_historical_svg_inputs_verify_both_routing_and_asset_identity(monkeypatch, primary):
+    from types import SimpleNamespace
+    from kerykeion.ephemeris_backend import ephe
+
+    checked = []
+    monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
+    monkeypatch.setattr(fixtures, "manifest", lambda: {"inputs": [
+        {"name": "base_core.leb2", "sha256": "base-digest"},
+        {"name": "medium_core.leb2", "sha256": "medium-digest"},
+    ]})
+    monkeypatch.setattr(fixtures, "verify_file", lambda path, digest: checked.append((path.name, digest)))
+    monkeypatch.setattr(ephe, "get_leb_reader", lambda: SimpleNamespace(path=primary), raising=False)
+    monkeypatch.setattr(ephe, "get_leb_inventory", lambda: {"files": [{"path": "medium_core.leb2"}]}, raising=False)
+    fixtures.require_temporal_snapshot_inputs("galileo_1564")
+    expected = [(primary, "base-digest" if primary.startswith("base") else "medium-digest")]
+    if primary.startswith("base"):
+        expected.append(("medium_core.leb2", "medium-digest"))
+    assert checked == expected
+
+
+def test_historical_svg_rejects_different_core_without_switching_it(monkeypatch):
+    from types import SimpleNamespace
+    from kerykeion.ephemeris_backend import ephe
+
+    reader = SimpleNamespace(path="extended_core.leb2")
+    monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
+    monkeypatch.setattr(ephe, "get_leb_reader", lambda: reader, raising=False)
+    with pytest.raises(AssertionError, match="different model"):
+        fixtures.require_temporal_snapshot_inputs("newton_1643")
+    assert reader.path == "extended_core.leb2"
+
+
+def test_foreign_backend_has_no_native_coefficient_precondition(monkeypatch):
+    monkeypatch.setattr(fixtures, "active_model", lambda: None)
+    fixtures.require_temporal_snapshot_inputs("galileo_1564")

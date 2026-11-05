@@ -159,6 +159,7 @@ Constructor: `ChartDrawer(chart_data, *, ...)` — `chart_data` is the only posi
 | `show_relationship_score` | `False` | Synastry score in the info panel; needs a score on the chart data (`create_synastry_chart_data` computes one by default). |
 | `show_ayanamsa_value` | `False` | Ayanamsa offset in degrees and minutes on the zodiac line of a sidereal chart. |
 | `show_polar_fallback_note` | `False` | Mark the domification line when the requested house system was substituted at a polar latitude. |
+| `show_ephemeris_notes` | `False` | Add a footer for unavailable points and explicitly approximate positions; works for full, wheel and grid exports without recalculation. |
 
 The last six draw facts the chart data already carries. Each is silent where it
 has no referent — no station, no score, a tropical zodiac, a house system that
