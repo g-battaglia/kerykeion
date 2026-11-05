@@ -11,6 +11,9 @@
 
 ### Fixed
 
+- Route legacy lunar and solar helpers through the same path-ownership rules as
+  sessions, preserving active native overrides and avoiding empty paths even
+  with LibEphemeris 4.0.0b2. Swiss path application is unchanged.
 - Keep native readers warm across default sessions, restore defaults after owned
   explicit path selections, and invalidate coverage metadata on reader-generation
   changes. Iterate ephemeris batches lazily while preserving the list API.

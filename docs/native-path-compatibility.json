@@ -1,0 +1,147 @@
+{
+  "platform": {
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "reports": {
+    "probe-b3-314": {
+      "python": "3.14.7",
+      "libephemeris": "4.0.0b3",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b3",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "empty-restores-default; dot-selects-current-directory",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    },
+    "probe-b2-314": {
+      "python": "3.14.7",
+      "libephemeris": "4.0.0b2",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b2",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "known-b2-empty-path-error; integration-never-forwards-empty",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    },
+    "probe-b2-312": {
+      "python": "3.12.13",
+      "libephemeris": "4.0.0b2",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b2",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "known-b2-empty-path-error; integration-never-forwards-empty",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    },
+    "probe-b3-312": {
+      "python": "3.12.13",
+      "libephemeris": "4.0.0b3",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b3",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "empty-restores-default; dot-selects-current-directory",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    }
+  },
+  "unchanged_controls_across_all_four_environments": true,
+  "negative_controls": {
+    "negative-b2-312": {
+      "python": "3.12.13",
+      "kerykeion": "6.1.0b2",
+      "libephemeris": "4.0.0b2",
+      "observations": {
+        "direct_empty": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "default_session": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "lunar_helper": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        }
+      },
+      "solar_control_unchanged": true
+    },
+    "negative-b2-314": {
+      "python": "3.14.7",
+      "kerykeion": "6.1.0b2",
+      "libephemeris": "4.0.0b2",
+      "observations": {
+        "direct_empty": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "default_session": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "lunar_helper": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        }
+      },
+      "solar_control_unchanged": true
+    }
+  },
+  "candidate_code_commit": "dda51ddbf9271d2a99974755f50398651f13e3b7",
+  "full_suites": {
+    "native_python312": {
+      "passed": 14731,
+      "skipped": 28,
+      "deselected": 3
+    },
+    "native_python314": {
+      "passed": 14731,
+      "skipped": 28,
+      "deselected": 3
+    },
+    "swiss_python312": {
+      "passed": 14212,
+      "skipped": 547,
+      "deselected": 3
+    },
+    "swiss_python314": {
+      "passed": 14212,
+      "skipped": 547,
+      "deselected": 3
+    }
+  },
+  "focused_cases_per_environment": 27
+}
