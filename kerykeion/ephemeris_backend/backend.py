@@ -529,7 +529,8 @@ EPHEMERIS_LOCK = RLock()
 #
 #     KERYKEION_EPHE_PATH=/path/to/ephe python my_script.py
 #
-# - libephemeris: manages its own data (~/.libephemeris/leb/); path is a no-op.
+# - libephemeris: discovers its own data by default; explicit paths change
+#   native runtime state and must not receive the empty Swiss-style sentinel.
 # - swisseph: needs .se1 files; without KERYKEION_EPHE_PATH, the default
 #   download directory of ``python -m kerykeion.swisseph_setup`` is
 #   auto-detected, then swisseph falls back to its built-in Moshier
@@ -681,6 +682,20 @@ def _select_session_path(selected_path: str) -> None:
         if ephe.get_library_path() == _NATIVE_SESSION_PATH:
             ephe.set_ephe_path(None)
         _NATIVE_SESSION_PATH = None
+
+
+def _configure_default_ephemeris_path() -> None:
+    """Apply legacy-helper defaults without replacing an active native session.
+
+    Native sessions already own their selected path, including explicit caller
+    overrides. Outside a session, use the same ownership/discovery rules as
+    session entry. Swiss helpers retain their historical path-setting behavior.
+    """
+    with EPHEMERIS_LOCK:
+        depth = getattr(_SESSION_DEPTH, "value", 0)
+        if BACKEND_NAME == "libephemeris" and depth > 0:
+            return
+        _select_session_path(EPHE_DATA_PATH)
 
 
 @contextmanager
