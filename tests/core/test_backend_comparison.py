@@ -230,12 +230,19 @@ subject = AstrologicalSubjectFactory.from_birth_data(
 print(subject.model_dump_json())
 """
         results = {}
+        child_environment = dict(os.environ)
+        inherited = child_environment.get("PYTHONPATH")
+        search_paths = [str(Path(__file__).resolve().parents[2])]
+        if inherited is not None:
+            search_paths.extend(str(Path(entry).resolve()) for entry in inherited.split(os.pathsep))
+        child_environment["PYTHONPATH"] = os.pathsep.join(search_paths)
+        if child_environment.get("KERYKEION_EPHE_PATH"):
+            child_environment["KERYKEION_EPHE_PATH"] = str(Path(child_environment["KERYKEION_EPHE_PATH"]).resolve())
         for name in ("swisseph", "libephemeris"):
             child = subprocess.run(
                 [sys.executable, "-c", script],
                 cwd=Path(__file__).resolve().parents[2],
-                env={**os.environ, "KERYKEION_BACKEND": name,
-                     "PYTHONPATH": str(Path(__file__).resolve().parents[2])},
+                env={**child_environment, "KERYKEION_BACKEND": name},
                 capture_output=True, text=True, check=False, timeout=30,
             )
             assert child.returncode == 0, f"Isolated {name} subject calculation failed"
