@@ -67,45 +67,7 @@ def house(request) -> str:
 # =============================================================================
 
 
-def create_subject_from_id(subject_id: str, house_system: str = "P"):
-    """Create an astrological subject from its ID in the test matrix."""
-    # Check temporal subjects first
-    for data in TEMPORAL_SUBJECTS:
-        if data["id"] == subject_id:
-            return AstrologicalSubjectFactory.from_birth_data(
-                name=data["name"],
-                year=data["year"],
-                month=data["month"],
-                day=data["day"],
-                hour=data["hour"],
-                minute=data["minute"],
-                lat=data["lat"],
-                lng=data["lng"],
-                tz_str=data["tz_str"],
-                online=False,
-                suppress_geonames_warning=True,
-                houses_system_identifier=house_system,
-            )
-
-    # Check geographic subjects
-    for data in GEOGRAPHIC_SUBJECTS:
-        if data["id"] == subject_id:
-            return AstrologicalSubjectFactory.from_birth_data(
-                name=f"Test_{data['id']}",
-                year=1990,
-                month=6,
-                day=15,
-                hour=12,
-                minute=0,
-                lat=data["lat"],
-                lng=data["lng"],
-                tz_str=data["tz_str"],
-                online=False,
-                suppress_geonames_warning=True,
-                houses_system_identifier=house_system,
-            )
-
-    raise ValueError(f"Subject ID '{subject_id}' not found in test matrix")
+from tests.data.reference_recipes import create_subject_from_id
 
 
 # =============================================================================

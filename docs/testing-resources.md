@@ -119,6 +119,6 @@ Across profiles, **all 14,417 unique collected cases passed at least once**:
 zero unverified cases, failures or unexpected warnings. Counts overlap across
 profiles and must not be added as unique tests. PR #275 closes the earlier mean-
 node, fixed-reference and minified-geometry gaps without changing golden fixtures
-or numerical tolerances. Its [report and reproduction commands](https://github.com/g-battaglia/kerykeion/blob/release/6.1.0b1/docs/validation-completeness.md)
+or numerical tolerances. Its [report and reproduction commands](validation-completeness.md)
 include source commits and the matching identifier-set hashes. Test and benchmark
 commands were sequential; no automatic worker pool was used.

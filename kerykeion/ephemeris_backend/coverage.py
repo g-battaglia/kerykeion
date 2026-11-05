@@ -64,7 +64,12 @@ def get_body_coverage(body_id: int, jd: float):
         # let the native runtime resolve those records on every request.
         if reader is None or _stat(reader.path)[1] is None:
             return getter(body_id, jd)
-        state = (getter, ephe.get_calc_mode(), ephe.get_precision_tier(), ephe.get_current_file_data(), reader.path)
+        # Provisioning can replace a serving image in a previously empty search
+        # directory. File stamps alone cannot see it. Native invalidation tokens
+        # track that transition without rescanning or hashing the inventory.
+        generation = getattr(ephe, "get_leb_reader_generation", None)
+        state = (getter, ephe.get_calc_mode(), ephe.get_precision_tier(), ephe.get_current_file_data(), reader.path,
+                 generation() if callable(generation) else None)
         fingerprint = tuple(_stat(path) for path in _paths)
         if state != _state or fingerprint != _fingerprint:
             inventory = ephe.get_leb_inventory()

@@ -22,7 +22,7 @@ def _subject_positions(subject: AstrologicalSubjectModel) -> dict[str, float]:
     positions = {}
     for point_name in REQUIRED_POINTS:
         point = getattr(subject, point_name.lower(), None)
-        if point is None:
+        if point is None or point_name not in subject.active_points:
             raise KerykeionException(f"Discepolo v2 requires {point_name} in both subjects' active_points.")
         positions[point_name] = point.abs_pos
     return validate_positions(positions)

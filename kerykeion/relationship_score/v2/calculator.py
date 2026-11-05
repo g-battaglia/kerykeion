@@ -5,7 +5,7 @@ settings, v1 scorer, or general synastry engine is consulted. The fixed scoring
 profile is deliberately separate from configurable chart-aspect settings.
 """
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from math import floor, isfinite
 
@@ -108,7 +108,7 @@ def validate_positions(values: Mapping[str, float]) -> dict[str, float]:
             raise KerykeionException(f"Invalid {point} longitude: {value!r}.")
         # Check range before isfinite: huge Python integers must not overflow.
         if not 0 <= value < 360 or not isfinite(value):
-            raise KerykeionException(f"Invalid {point} longitude: {value!r}; expected finite degrees in [0, 360).")
+            raise KerykeionException(f"Invalid {point} longitude; expected finite degrees in [0, 360).")
         positions[point] = float(value)
     return positions
 
@@ -244,7 +244,8 @@ def score_positions(
     """
     first_positions = validate_positions(first)
     second_positions = validate_positions(second)
-    if len(subject_names) != 2 or not all(isinstance(name, str) for name in subject_names):
+    if (isinstance(subject_names, (str, bytes)) or not isinstance(subject_names, Sequence)
+            or len(subject_names) != 2 or not all(isinstance(name, str) for name in subject_names)):
         raise KerykeionException("Exactly two string subject names are required.")
 
     contacts = _luminary_contacts(first_positions, second_positions)

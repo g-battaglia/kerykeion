@@ -557,12 +557,15 @@ for _name in kerykeion.__all__:
         )
         return name, proc.returncode, proc.stderr
 
-    with ThreadPoolExecutor(max_workers=jobs) as pool:
+    pool = ThreadPoolExecutor(max_workers=jobs)
+    try:
         for name, code, stderr in pool.map(probe, sorted(set(modules))):
             report.checked += 1
             if code != 0:
                 last = stderr.strip().splitlines()[-1] if stderr.strip() else "unknown error"
                 report.fail(name, f"cold import failed: {last}")
+    finally:
+        pool.shutdown(wait=True, cancel_futures=True)
 
 
 # --------------------------------------------------------------------------- #

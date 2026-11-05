@@ -109,9 +109,12 @@ def main():
     source_file = Path(sys.modules[AstrologicalSubjectFactory.__module__].__file__).resolve()
     source_root = source_file.parents[2]
     try:
+        git_root = subprocess.check_output(
+            ["git", "-C", str(source_root), "rev-parse", "--show-toplevel"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
         source_commit = subprocess.check_output(
             ["git", "-C", str(source_root), "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
-        ).strip()
+        ).strip() if Path(git_root).resolve() == source_root else None
     except (OSError, subprocess.CalledProcessError):
         source_commit = None
     environment = {

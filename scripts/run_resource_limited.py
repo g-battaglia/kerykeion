@@ -4,11 +4,15 @@ Example: uv run python scripts/run_resource_limited.py -- python -m pytest -n 0
 The default threshold is 1 GiB. This is a watchdog, not an OS allocation limit:
 short-lived allocation spikes between samples may exceed it. Child stdout and
 stderr are inherited, and normal command exit codes are propagated unchanged.
+On POSIX, descendants that deliberately create another session before they can
+be sampled are outside this watchdog contract; use OS containment for such jobs.
 """
 
 from __future__ import annotations
 
 import argparse
+import importlib
+from contextlib import contextmanager
 from dataclasses import dataclass
 import os
 import signal
@@ -33,63 +37,118 @@ class RunResult:
     limit_exceeded: bool = False
 
 
-def _stop_tree(process: psutil.Process, known: dict[int, psutil.Process]) -> None:
-    """Stop only the child command and its observed descendants."""
+@contextmanager
+def _defer_stop_signals():
+    """Do not interrupt spawn ownership or the final kill/wait sequence."""
+    signals = {signal.SIGINT, signal.SIGTERM}
+    if hasattr(signal, "SIGHUP"):
+        signals.add(signal.SIGHUP)
+    if hasattr(signal, "pthread_sigmask"):
+        previous = signal.pthread_sigmask(signal.SIG_BLOCK, signals)
+        try:
+            yield
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, previous)
+    else:
+        yield
+
+
+def _signal_group(pid: int, signum: int) -> None:
+    """Signal an owned group, accepting macOS's EPERM for a zombie-only group."""
     try:
-        for child in process.children(recursive=True):
-            known[child.pid] = child
-    except psutil.Error:
+        os.killpg(pid, signum)
+    except ProcessLookupError:
         pass
-    processes = list(known.values())
-    for child in reversed(processes):
-        try:
-            child.terminate()
-        except psutil.Error:
-            pass
-    # POSIX commands have their own session, so escaped/reparented members of
-    # this group are also stopped. Never signal the caller's process group.
-    if os.name == "posix":
-        try:
-            os.killpg(process.pid, signal.SIGTERM)
-        except ProcessLookupError:
-            pass
-    _, alive = psutil.wait_procs(processes, timeout=1)
-    for child in alive:
-        try:
-            child.kill()
-        except psutil.Error:
-            pass
-    if os.name == "posix":
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+    except PermissionError:
+        # macOS can report EPERM instead of ESRCH when only its unreaped
+        # zombie leader remains. A live leader's permission failure is real.
+        if psutil.Process(pid).status() != psutil.STATUS_ZOMBIE:
+            raise
 
 
-def run_command(command: list[str], *, rss_limit_bytes: int, interval: float = 0.1) -> RunResult:
-    """Supervise a single command, including memory used by its descendants."""
-    if rss_limit_bytes <= 0 or interval <= 0:
-        raise ValueError("RSS limit and sampling interval must be positive")
-    child = subprocess.Popen(command, start_new_session=os.name == "posix")
-    process = psutil.Process(child.pid)
-    known = {process.pid: process}
-    if os.name == "posix":
-        try:
-            process.nice(10)
-        except psutil.Error:
-            pass
-    peak_rss = 0
-    try:
-        while child.poll() is None:
+def _stop_tree(child: subprocess.Popen, known: dict[int, psutil.Process], job=None) -> None:
+    """Terminate the owned group before reaping its leader (no reused PGID)."""
+    with _defer_stop_signals():
+        if job is not None:
+            job.close()
+            child.wait()
+            return
+        process = known.get(child.pid)
+        if process is not None:
             try:
                 for descendant in process.children(recursive=True):
                     known[descendant.pid] = descendant
             except psutil.Error:
                 pass
+        # Never let psutil.wait_procs reap the direct child: its PID reserves
+        # the process-group identity until our last signal has been sent.
+        descendants = [member for pid, member in known.items() if pid != child.pid]
+        for member in reversed(descendants):
+            try:
+                member.terminate()
+            except psutil.Error:
+                pass
+        if os.name == "posix":
+            _signal_group(child.pid, signal.SIGTERM)
+        else:
+            child.terminate()
+        _, alive = psutil.wait_procs(descendants, timeout=1)
+        for member in alive:
+            try:
+                member.kill()
+            except psutil.Error:
+                pass
+        if os.name == "posix":
+            _signal_group(child.pid, signal.SIGKILL)
+        elif child.poll() is None:
+            child.kill()
+        child.wait()
+
+
+def run_command(command: list[str], *, rss_limit_bytes: int, interval: float = 0.1) -> RunResult:
+    """Supervise the command and sampled descendants, preserving its exit code."""
+    if rss_limit_bytes <= 0 or interval <= 0:
+        raise ValueError("RSS limit and sampling interval must be positive")
+    child = None
+    job = None
+    known: dict[int, psutil.Process] = {}
+    peak_rss = 0
+    exceeded = False
+    try:
+        with _defer_stop_signals():
+            if os.name == "nt":
+                # Both module and script invocation are supported.
+                module = importlib.import_module(".windows_job", __package__) if __package__ else importlib.import_module("windows_job")
+                job = module.WindowsJob()
+                child = job.start(command)
+            else:
+                child = subprocess.Popen(command, start_new_session=True)
+            try:
+                process = psutil.Process(child.pid)
+            except psutil.NoSuchProcess:
+                return RunResult(child.wait(), 0)
+            known[process.pid] = process
+            if os.name == "posix":
+                try:
+                    process.nice(10)
+                except psutil.Error:
+                    pass
+        while True:
+            try:
+                # status() does not reap the leader, unlike Popen.poll().
+                if process.status() == psutil.STATUS_ZOMBIE:
+                    break
+                if os.name != "posix" and child.poll() is not None:
+                    break
+                for descendant in process.children(recursive=True):
+                    known[descendant.pid] = descendant
+            except psutil.NoSuchProcess:
+                break
+            except psutil.Error:
+                pass
             rss = 0
             for pid, member in list(known.items()):
                 try:
-                    # psutil's identity check protects against PID reuse.
                     if member.is_running():
                         rss += member.memory_info().rss
                     else:
@@ -98,18 +157,15 @@ def run_command(command: list[str], *, rss_limit_bytes: int, interval: float = 0
                     known.pop(pid, None)
             peak_rss = max(peak_rss, rss)
             if rss > rss_limit_bytes:
-                _stop_tree(process, known)
-                child.wait()
-                return RunResult(LIMIT_EXIT_CODE, peak_rss, True)
+                exceeded = True
+                break
             time.sleep(interval)
-        # A command may exit before a background child. End its session too;
-        # otherwise an orphan could keep allocating after supervision stops.
-        _stop_tree(process, known)
-        return RunResult(child.returncode, peak_rss)
-    except BaseException:
-        _stop_tree(process, known)
-        child.wait()
-        raise
+    finally:
+        if child is not None:
+            _stop_tree(child, known, job)
+        elif job is not None:
+            job.close()
+    return RunResult(LIMIT_EXIT_CODE if exceeded else child.returncode, peak_rss, exceeded)
 
 
 def main() -> int:

@@ -20,7 +20,6 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
-from types import SimpleNamespace
 
 import pytest
 
@@ -30,8 +29,7 @@ sys.path.insert(0, str(ROOT))
 from kerykeion.ephemeris_backend import BACKEND_NAME, ephe
 from kerykeion.utilities.core import HOUSE_FIELD_NAMES
 from tests.core.conftest import POSITION_TOLERANCE
-from tests.core.test_arabic_parts import _create_arabic_subject
-from tests.core.test_houses_positions import create_subject_from_id
+from tests.data.reference_recipes import _create_arabic_subject, create_subject_from_id, print_ancient_rome_report
 from tests.data.compare_svg_lines import DEFAULT_ABS_TOL, DEFAULT_REL_TOL, compare_svg_lines
 from tests.data.expected_arabic_parts import EXPECTED_ARABIC_PARTS
 from tests.data.expected_positions import EXPECTED_POSITIONS
@@ -256,25 +254,10 @@ def svg_fixtures(stage: Path) -> dict:
 
 def report_fixture(stage: Path) -> dict:
     """Run the existing exact report recipe, not a hand-maintained second copy."""
-    from tests.core import test_report
-
-    buffer, captured = StringIO(), []
-
-    class Capture:
-        def readouterr(self):
-            text = buffer.getvalue()
-            buffer.seek(0)
-            buffer.truncate()
-            return SimpleNamespace(out=text, err="")
-
-    previous = test_report._assert_report_match
-    try:
-        test_report._assert_report_match = lambda actual, _expected: captured.append(actual)
-        with redirect_stdout(buffer):
-            test_report.TestGoldenFileSnapshots().test_ancient_rome_snapshot(Capture())
-    finally:
-        test_report._assert_report_match = previous
-    assert len(captured) == 1
+    buffer = StringIO()
+    with redirect_stdout(buffer):
+        print_ancient_rome_report()
+    captured = [buffer.getvalue()]
     name = "natal_ancient_rome_all_report.txt"
     path = stage / "reports" / name
     path.parent.mkdir()
@@ -291,7 +274,11 @@ def main() -> None:
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     require_library_from_this_checkout(__file__)
-    assert BACKEND_NAME == "libephemeris" and ephe.__version__ == "4.0.0b1"
+    assert BACKEND_NAME == "libephemeris"
+    if ephe.__version__ != "4.0.0b1":
+        assert args.check, "only the original producer may generate this immutable model"
+        from tests.data.model_fixtures import patch_qualification
+        patch_qualification(ephe.__version__)
     assert ephe.get_precision_tier() == "extended", "generate against the declared full-range input set"
     if DESTINATION.exists() and not args.check:
         parser.error("the model set already exists; use --check, never overwrite immutable references")
@@ -334,7 +321,7 @@ def main() -> None:
             stored.pop("manifest.json")
             assert generated == stored, "the frozen model reference bytes do not reproduce"
             original_manifest = json.loads((DESTINATION / "manifest.json").read_text())
-            for field in ("producer_source_sha256", "producer_version"):
+            for field in ("producer_source_sha256", "producer_version", "engine_version"):
                 print(field, "original:", original_manifest.pop(field), "current:", manifest.pop(field))
             assert manifest == original_manifest, "model/input qualification changed; review a separate reference version"
             print("Frozen v4 reference bytes reproduce exactly; legacy references unchanged.")

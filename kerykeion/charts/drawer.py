@@ -10,6 +10,7 @@ https://www.kerykeion.net/python-library/docs/v6/chart_internals for options and
 This is part of Kerykeion (C) 2025 Giacomo Battaglia
 """
 
+from copy import deepcopy
 import logging
 import math
 import re
@@ -4580,14 +4581,14 @@ class ChartDrawer:  # type: ignore[no-redef]
     ) -> None:
         """Resolve language models for the requested chart language."""
         overrides: Optional[Mapping[str, Any]] = {self.chart_language: dict(language_pack)} if language_pack else None
-        # Pydantic validates the live source into fresh models; model_dump then
-        # owns the mutable dictionaries exposed by this drawer.
+        # Pydantic can reuse nested model instances. Snapshot translation sources
+        # before validation so subsequent caller edits cannot change this chart.
         base_data, fallback_data = _resolve_language_sources(self.chart_language, overrides)
 
         if not fallback_data:
             raise KerykeionException("English translations are missing from LANGUAGE_SETTINGS.")
 
-        selected_model = KerykeionLanguageModel(**base_data)
+        selected_model = KerykeionLanguageModel(**deepcopy(base_data))
         if base_data is fallback_data:
             # EN and an unknown language resolve to the same source, including
             # an EN language pack. Validate once, but keep the exposed selected
@@ -4596,7 +4597,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             selected_dump = selected_model.model_dump()
             fallback_dump = selected_model.model_dump()
         else:
-            fallback_model = KerykeionLanguageModel(**fallback_data)
+            fallback_model = KerykeionLanguageModel(**deepcopy(fallback_data))
             selected_dump = selected_model.model_dump()
             fallback_dump = fallback_model.model_dump()
 

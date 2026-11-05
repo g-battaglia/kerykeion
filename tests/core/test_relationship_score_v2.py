@@ -178,13 +178,13 @@ def test_missing_points_fail_closed(point):
         score_positions(B, a)
 
 
-@pytest.mark.parametrize("bad", [nan, inf, -inf, -0.01, 360, 361, True, None, "10"])
+@pytest.mark.parametrize("bad", [nan, inf, -inf, -0.01, 360, 361, True, None, "10", pytest.param(10**5000, id="oversized-int")])
 def test_nonfinite_out_of_range_or_nonnumeric_positions_rejected(bad):
     with pytest.raises(KerykeionException, match="Invalid Sun"):
         score_positions(dict(A, Sun=bad), B)
 
 
-@pytest.mark.parametrize("names", [("A",), ("A", "B", "C"), (None, "B")])
+@pytest.mark.parametrize("names", [("A",), ("A", "B", "C"), (None, "B"), "AB", None, 12])
 def test_invalid_names_fail(names):
     with pytest.raises(KerykeionException):
         score_positions(A, B, subject_names=names)
@@ -282,6 +282,16 @@ def natal_subjects():
         AstrologicalSubjectFactory.from_birth_data("A", 1990, 6, 15, 12, 30, **common),
         AstrologicalSubjectFactory.from_birth_data("B", 1992, 8, 20, 14, 45, **common),
     )
+
+
+def test_factory_rejects_inactive_point_even_when_its_attribute_is_retained(natal_subjects):
+    """Stored angles cannot silently opt themselves into relationship scoring."""
+    first, second = natal_subjects
+    first = first.model_copy(deep=True)
+    first.active_points.remove("Ascendant")
+    assert first.ascendant is not None
+    with pytest.raises(KerykeionException, match="Ascendant"):
+        RelationshipScoreFactoryV2(first, second)
 
 
 def test_factory_integrates_positions_not_aspects(monkeypatch, natal_subjects):

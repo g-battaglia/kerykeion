@@ -1666,25 +1666,9 @@ class TestGoldenFileSnapshots:
         if not fixture.exists():
             pytest.skip(f"Fixture {fixture.name} not found")
 
-        subject = AstrologicalSubjectFactory.from_birth_data(
-            name="Ancient Rome Subject",
-            year=100,
-            month=1,
-            day=1,
-            hour=12,
-            minute=0,
-            lat=41.9028,
-            lng=12.4964,
-            tz_str="Europe/Rome",
-            online=False,
-            suppress_geonames_warning=True,
-            active_points=ALL_ACTIVE_POINTS,
-        )
-        chart = ChartDataFactory.create_natal_chart_data(
-            subject,
-            active_aspects=ALL_ACTIVE_ASPECTS,
-        )
-        ReportGenerator(chart).print_report()
+        from tests.data.reference_recipes import print_ancient_rome_report
+
+        print_ancient_rome_report()
         captured = capsys.readouterr().out
         expected = fixture.read_text(encoding="utf-8")
         _assert_report_match(captured, expected + "\n")

@@ -200,8 +200,8 @@ the row positions a chosen size implies still have to come back out of
 
 The first air notch is the chart exactly as the library ships it, measured
 ceiling included; every notch above lifts `min_separation` out of the way so
-the clearance is what decides. Where the shipped ceiling genuinely binds — the
-small synastry — the page says so instead of hiding the discontinuity.
+the clearance is what decides. The page reports whether the shipped ceiling
+binds for each chart; small synastry is currently non-binding.
 
 The 270 charts fit in under two megabytes because each one travels as a
 line-level diff against the shipped chart of its size, and most changed lines

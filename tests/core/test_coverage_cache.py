@@ -13,7 +13,7 @@ def fake_native(tmp_path, monkeypatch):
     for path in files:
         path.write_bytes(b"fixture")
     calls = []
-    state = {"tier": "extended", "path": str(files[0])}
+    state = {"tier": "extended", "path": str(files[0]), "generation": 0}
 
     def coverage(body_id, jd):
         calls.append((body_id, jd))
@@ -25,6 +25,7 @@ def fake_native(tmp_path, monkeypatch):
         get_leb_reader=lambda: SimpleNamespace(path=state["path"]),
         get_calc_mode=lambda: "leb",
         get_precision_tier=lambda: state["tier"],
+        get_leb_reader_generation=lambda: state["generation"],
         get_current_file_data=lambda: (state["path"], 0.0, 300.0, 441),
         get_leb_inventory=lambda: {
             "files": [
@@ -73,6 +74,15 @@ def test_provider_changes_invalidate_records(fake_native):
     first = cache.get_body_coverage(0, 150.0)
     state["tier"] = "base"
     assert cache.get_body_coverage(0, 150.0) is not first
+    assert len(calls) == 2
+
+
+def test_provisioning_invalidates_even_when_sun_and_known_paths_are_unchanged(fake_native):
+    """A new serving image need not change any previously inventoried path."""
+    calls, state, _ = fake_native
+    first = cache.get_body_coverage(0, 50.0)
+    state["generation"] += 1
+    assert cache.get_body_coverage(0, 50.0) is not first
     assert len(calls) == 2
 
 

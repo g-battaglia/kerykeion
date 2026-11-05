@@ -42,6 +42,9 @@ def test_cold_imports_are_serial_by_default_and_parallel_only_on_request(monkeyp
         def __exit__(self, *args):
             return False
 
+        def shutdown(self, *, wait, cancel_futures):
+            assert wait and cancel_futures
+
         def map(self, function, items):
             # Do not create native ephemeris processes for a scheduling test.
             return []
@@ -125,6 +128,9 @@ time.sleep(30)
     pid = int(child_pid_file.read_text())
     try:
         process = psutil.Process(pid)
+        deadline = time.monotonic() + 5
+        while process.status() != psutil.STATUS_ZOMBIE and time.monotonic() < deadline:
+            time.sleep(0.01)
         assert process.status() == psutil.STATUS_ZOMBIE
     except psutil.NoSuchProcess:
         pass

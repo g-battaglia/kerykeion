@@ -55,6 +55,19 @@ def test_english_pair_is_independent_even_for_shared_nested_values(monkeypatch):
     assert nested["values"] == [1]
 
 
+def test_drawer_snapshots_nested_translation_models(subjects, monkeypatch):
+    """Pydantic model instances in global settings must not leak into drawers."""
+    from kerykeion.schemas.settings_models import KerykeionLanguageCelestialPointModel
+
+    points = KerykeionLanguageCelestialPointModel(**translations.LANGUAGE_SETTINGS["EN"]["celestial_points"])
+    monkeypatch.setitem(translations.LANGUAGE_SETTINGS["EN"], "celestial_points", points)
+    drawer = ChartDrawer(ChartDataFactory.create_chart_data("Natal", subjects[0]))
+    original = drawer.language_settings["celestial_points"]["Sun"]
+    points.Sun = "Changed after construction"
+    assert drawer.language_settings["celestial_points"]["Sun"] == original
+    assert drawer._language_model.celestial_points.Sun == original
+
+
 def test_drawers_validate_live_translations_without_retaining_mutable_defaults(subjects, monkeypatch):
     data = ChartDataFactory.create_chart_data("Natal", subjects[0])
     first = ChartDrawer(data, language_pack={"info": "Override"})
