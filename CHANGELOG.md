@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [6.1.0b3] - 2026-11-05
 
 ### Added
 
@@ -10,6 +10,15 @@
   full, wheel-only and grid-only exports. Default drawing output is unchanged.
 
 ### Fixed
+
+- Keep native readers warm across default sessions, restore defaults after owned
+  explicit path selections, and invalidate coverage metadata on reader-generation
+  changes. Iterate ephemeris batches lazily while preserving the list API.
+- Snapshot nested translation models, validate relationship-score inputs before
+  formatting/indexing them, and reject required points that are not active.
+- Preserve reference-producer provenance and separate fixture recipes from tests.
+  Resource watchdogs clean up descendants on cancellation and retain Windows
+  descendants in a Job Object. Backend subprocesses preserve caller paths.
 
 - Backend comparison tests now calculate high-level subjects in isolated
   processes and preserve configured data paths. Running them inside the Swiss

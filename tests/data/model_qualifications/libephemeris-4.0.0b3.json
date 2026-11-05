@@ -39,5 +39,13 @@
   },
   "qualification_artifacts_sha256": {
     "libephemeris-4.0.0b3-cp312-abi3-macosx_11_0_arm64.whl": "17707d59b3d884b6e80f7b91d5e0e60380347d6216c8395bd1bae980017295f0"
+  },
+  "publication_source_commit": "6e6ba6c9346adc66b4276575073bc97a641f989e",
+  "publication_artifacts_sha256": {
+    "libephemeris-4.0.0b3-cp312-abi3-macosx_11_0_arm64.whl": "f0453fcfb1306d1594548986b7becd00892118edc25d00695df80ee3fe1f3ade",
+    "libephemeris-4.0.0b3-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": "e1bf25bd1707beb1aa8a93695a921c08777bee3dae0ff6bbf30fbad008daac66",
+    "libephemeris-4.0.0b3-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl": "7189d4b581d8a55362a6fa5d5eb01a7b67aa58da16c0ae48d7d3a2a6ff55d23e",
+    "libephemeris-4.0.0b3-cp312-abi3-win_amd64.whl": "805bfbd0804584a1506a9fd7a0efbb6c2c0470988a24d80aa34656ad3d3f52c0",
+    "libephemeris-4.0.0b3.tar.gz": "189d0b2afa37b2d319bbf2a009badc6a4d1c26dcecd77d3e6aac20ad34fb8592"
   }
 }
