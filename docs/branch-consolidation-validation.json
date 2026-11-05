@@ -16,5 +16,9 @@
     "stable_preparation": "4be151edf33612e2dc7eae8e8adb1b998f3aacb7",
     "native_integration": "f12b8e28771808a7569809b3429e07cfa1340d2a",
     "local_native_checks": "635cb41c6cd643b619daef4857f927cec74584d4"
-  }
+  },
+  "additional_excluded_workstreams": [
+    "codex/bounded-backend-memory",
+    "codex/kerykeion-v4-closure"
+  ]
 }
