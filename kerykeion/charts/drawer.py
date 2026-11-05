@@ -5388,7 +5388,7 @@ class ChartDrawer:  # type: ignore[no-redef]
                 (self.first_obj, self.second_obj), self._translate,
                 language=self.chart_language, overrides=self._ephemeris_note_overrides,
             )
-            template = append_ephemeris_notes(template, notes)
+            template = append_ephemeris_notes(template, notes, self.chart_colors_settings["paper_0"])
 
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)

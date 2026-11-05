@@ -10,6 +10,7 @@ from kerykeion.charts.ephemeris_notes import NOTE_LABELS, collect_ephemeris_note
 from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.schemas.models import EphemerisWarningModel
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
+from kerykeion.settings.chart_defaults import DEFAULT_CHART_COLORS
 
 
 NS = {"s": "http://www.w3.org/2000/svg"}
@@ -78,6 +79,16 @@ def test_footer_keeps_geometry_and_identifies_both_limitations(limited_subject, 
     annotated.find("s:desc", NS).text = original.find("s:desc", NS).text
     assert ET.tostring(annotated) == ET.tostring(original)
     assert limited_subject.model_dump() == before_model
+
+
+@pytest.mark.parametrize("variant", VARIANTS)
+def test_footer_uses_custom_chart_text_color(limited_subject, variant):
+    """A custom palette must apply to provenance text as well as chart labels."""
+    root = ET.fromstring(render(limited_subject, "classic", variant,
+                               show_ephemeris_notes=True,
+                               colors_settings={**DEFAULT_CHART_COLORS, "paper_0": "#abcdef"}))
+    footer = next(node for node in root if node.get(KR) == "Ephemeris_Notes")
+    assert footer.get("fill") == "#abcdef"
 
 
 @pytest.mark.parametrize("language", LANGUAGE_SETTINGS)

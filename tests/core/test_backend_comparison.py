@@ -19,6 +19,7 @@ Run with::
 import importlib
 import json
 import os
+from pathlib import Path
 import subprocess
 import sys
 
@@ -232,7 +233,9 @@ print(subject.model_dump_json())
         for name in ("swisseph", "libephemeris"):
             child = subprocess.run(
                 [sys.executable, "-c", script],
-                env={**os.environ, "KERYKEION_BACKEND": name},
+                cwd=Path(__file__).resolve().parents[2],
+                env={**os.environ, "KERYKEION_BACKEND": name,
+                     "PYTHONPATH": str(Path(__file__).resolve().parents[2])},
                 capture_output=True, text=True, check=False, timeout=30,
             )
             assert child.returncode == 0, f"Isolated {name} subject calculation failed"

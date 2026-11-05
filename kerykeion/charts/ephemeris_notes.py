@@ -111,12 +111,15 @@ def _wrap_note(text: str, width: float, font_size: float) -> list[str]:
     return lines
 
 
-def append_ephemeris_notes(svg: str, notes: list[str]) -> str:
+def append_ephemeris_notes(
+    svg: str, notes: list[str], fill: str = "var(--kerykeion-chart-color-paper-0)"
+) -> str:
     """Append an accessible footer while preserving every original drawing element.
 
     Args:
         svg: A complete, unminified SVG emitted by a chart renderer.
         notes: Plain-text provenance notes; an empty list leaves the bytes intact.
+        fill: Configured chart text color, escaped before use as an SVG attribute.
 
     Returns:
         SVG with a taller viewBox, a footer and an expanded accessible description.
@@ -149,7 +152,7 @@ def append_ephemeris_notes(svg: str, notes: list[str]) -> str:
     )
     footer = (
         f'<g kr:node="Ephemeris_Notes" font-size="{font_size:g}" '
-        f'fill="var(--kerykeion-chart-color-paper-0)">{rows}</g>'
+        f'fill="{escape(fill, quote=True)}">{rows}</g>'
     )
     closing = svg.rfind("</svg>")
     if closing < 0:
