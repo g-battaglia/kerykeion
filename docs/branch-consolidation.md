@@ -22,17 +22,19 @@ published releases.
   production man-page/glyph fixes and native integration; the old local SDK
   path, experiments and old result summaries are not restored as current code.
 
-The superseded branches are joined as history-only merges. Their commits and
-original source snapshots remain reachable from this branch. The active runtime,
-CLI, tests, tools, packaging inputs and lockfile remain byte-identical to the
-published `v6.1.0b2` source. The archived stable draft is explicitly historical;
-a future stable release must qualify its then-current dependency and metadata.
+The superseded branches were joined as history-only merges. Their commits and
+original source snapshots remain reachable. Subsequent integration includes the
+bounded-memory and v4-closure changes, plus reviewed corrections for mutable
+translations, coverage invalidation, score inputs, subprocess lifecycle and
+reference provenance. Published b1/b2 packages and their references remain
+immutable. The archived stable draft is historical.
 
 The owner excluded LibEphemeris PR #82 (the v3 PostgreSQL provider). That PR and
 the related detached coefficient-routing experiment remain outside this
 consolidation. No PostgreSQL port or dependency-source substitution is implied.
-The newly started bounded-memory and v4-closure workstreams are likewise outside
-this owner-requested consolidation; their branches and working files are retained.
+The bounded-memory and v4-closure workstreams are now integrated. The b3
+publication candidate is prepared separately; exact registry pins and the
+lockfile will advance together after its dependency is published.
 
 `main` remains the review destination. Consolidation does not publish packages,
 move release tags, regenerate data or alter numerical tolerances.

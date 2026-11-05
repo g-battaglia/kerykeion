@@ -17,7 +17,7 @@ def test_model_selection_is_explicit():
     assert fixtures.active_model("swisseph", "4.0.0b1") is None
     assert fixtures.active_model("libephemeris", "4.0.0b1") == fixtures.MODEL
     assert fixtures.active_model("libephemeris", "4.0.0b2") == fixtures.MODEL
-    for version in ("4.0.0", "4.0.0b3", "4.0.1", "5.0.0"):
+    for version in ("4.0.0", "4.0.0b4", "4.0.1", "5.0.0"):
         with pytest.raises(AssertionError, match="No qualified model fixtures"):
             fixtures.active_model("libephemeris", version)
 
@@ -31,7 +31,7 @@ def test_patch_distribution_uses_an_authenticated_unchanged_model():
     path = fixtures.ROOT / "tests/data/svg/Ancient Greece 500BC - Natal Chart - Classic.svg"
     assert fixtures.fixture_path(path, backend="libephemeris", version="4.0.0b1") == fixtures.fixture_path(path, backend="libephemeris", version="4.0.0b2")
     with pytest.raises(AssertionError, match="No qualified patch identity"):
-        fixtures.patch_qualification("4.0.0b3")
+        fixtures.patch_qualification("4.0.0b4")
 
 
 def test_legacy_reference_bytes_are_unchanged():
@@ -165,3 +165,11 @@ def test_historical_svg_rejects_different_core_without_switching_it(monkeypatch)
 def test_foreign_backend_has_no_native_coefficient_precondition(monkeypatch):
     monkeypatch.setattr(fixtures, "active_model", lambda: None)
     fixtures.require_temporal_snapshot_inputs("galileo_1564")
+
+
+def test_b3_resource_patch_has_separate_evidence_without_rewriting_provenance():
+    record = fixtures.patch_qualification("4.0.0b3")
+    assert fixtures.active_model("libephemeris", "4.0.0b3") == fixtures.MODEL
+    assert record["schema"] == 2
+    assert record["reference_verification"]["reference_bytes_identical"] is True
+    assert fixtures.manifest()["engine_version"] == "4.0.0b1"
