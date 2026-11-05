@@ -763,7 +763,13 @@ def ephemeris_session(
                 if not -90.0 <= topo[1] <= 90.0:
                     raise ValueError("topo latitude must be between -90 and 90 degrees")
 
-            ephe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
+            selected_path = EPHE_DATA_PATH if ephe_path is None else ephe_path
+            # The native engine owns default discovery. Its v4 path setter is
+            # not the historical no-op: even an empty sentinel can retire the
+            # validated readers. Leave that configuration alone unless the
+            # caller actually selected a path. Swiss keeps its empty sentinel.
+            if BACKEND_NAME != "libephemeris" or selected_path:
+                ephe.set_ephe_path(selected_path)
             iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
             if perspective_type == "True Geocentric":

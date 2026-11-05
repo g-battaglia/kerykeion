@@ -72,7 +72,7 @@ from kerykeion.schemas.literals import AstrologicalPoint
 from datetime import datetime, timedelta, timezone
 import math
 
-from typing import Any, List, Literal, Optional
+from typing import Any, Generator, List, Literal, Optional
 import logging
 
 # Default limits to prevent excessive computational load
@@ -450,7 +450,15 @@ class EphemerisDataFactory:
             - House system affects the house cusp calculations
             - All positions are in the configured zodiac system (tropical/sidereal)
         """
-        ephemeris_data_list: list[dict[str, Any]] = []
+        return list(self.iter_ephemeris_data(as_model=as_model))
+
+    def iter_ephemeris_data(self, as_model: bool = False) -> Generator[dict[str, Any] | EphemerisDictModel, None, None]:
+        """Yield one complete sample at a time without retaining prior samples.
+
+        Each subject finishes its backend session before being yielded. Closing
+        or abandoning the iterator therefore leaves no native session held.
+        Existing list-returning APIs retain their ordering and output contract.
+        """
         for date in self.dates_list:
             subject = self._create_subject_for_date(date)
 
@@ -478,23 +486,10 @@ class EphemerisDataFactory:
             # tolerate both.
             if self.active_fixed_stars:
                 sample["fixed_stars"] = list(subject.fixed_stars)
-            ephemeris_data_list.append(sample)
-
-        if as_model:
-            # Type narrowing: at this point, the dict structure matches EphemerisDictModel
-            return [
-                EphemerisDictModel(
-                    date=data["date"],
-                    planets=data["planets"],
-                    houses=data["houses"],
-                    ephemeris_warnings=data["ephemeris_warnings"],
-                    polar_house_fallbacks=data["polar_house_fallbacks"],
-                    **({"fixed_stars": data["fixed_stars"]} if "fixed_stars" in data else {}),
-                )
-                for data in ephemeris_data_list
-            ]  # type: ignore
-
-        return ephemeris_data_list
+            if as_model:
+                yield EphemerisDictModel(**sample)
+            else:
+                yield sample
 
     def get_ephemeris_data_as_astrological_subjects(self, as_model: bool = False) -> list[AstrologicalSubjectModel]:
         """
