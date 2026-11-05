@@ -181,7 +181,16 @@ def run_command(command: list[str], *, rss_limit_bytes: int, interval: float = 0
             time.sleep(interval)
     finally:
         if child is not None:
-            _stop_tree(child, known, job)
+            try:
+                _stop_tree(child, known, job)
+            finally:
+                # Even failed process inspection/group signalling must reap the
+                # direct child. No further group signals follow this point, so
+                # polling here cannot expose a reused process-group identity.
+                with _defer_stop_signals():
+                    if child.poll() is None:
+                        child.kill()
+                    child.wait()
         elif job is not None:
             job.close()
     return RunResult(LIMIT_EXIT_CODE if exceeded else child.returncode, peak_rss, exceeded)
