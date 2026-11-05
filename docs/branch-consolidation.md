@@ -3,7 +3,11 @@
 The maintained development branch is `beta-v6`. Its current package versions
 are Kerykeion and CLI `6.1.0b2`, with `libephemeris==4.0.0b2`. It is the single
 beta branch proposed to `main`; version tags continue to identify the immutable
-published releases.
+published releases. These identifiers remain the last published dependency set,
+while the branch contains unpublished fixes. Do not republish modified b2
+artifacts. The distinct library/CLI 6.1.0b3 candidate is prepared on
+`codex/finalize-beta-v6`, pinned to native 4.0.0b4. Promote its metadata and registry
+lock together after that native distribution becomes available on PyPI.
 
 ## Consolidated histories
 

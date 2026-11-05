@@ -121,7 +121,8 @@ def main() -> None:
                     raise AssertionError("The published b2 negative control no longer reproduces")
             finally:
                 setter(None)
-        else:
+        elif le.__version__ == "4.0.0b3":
+            # Retained only for reproducing the superseded prepared b3 build.
             setter("")
             assert le.get_library_path() == expected_path
             le.release_data_cache()
@@ -129,6 +130,16 @@ def main() -> None:
             assert le.get_library_path() == str(Path.cwd()), "Dot must remain an explicit current directory"
             setter(None)
             empty_contract = "empty-restores-default; dot-selects-current-directory"
+        else:
+            setter("")
+            assert le.get_library_path() == str(Path.cwd())
+            le.release_data_cache()
+            setter(".")
+            assert le.get_library_path() == str(Path.cwd())
+            setter(None)
+            assert le.get_library_path() == expected_path
+            le.release_data_cache()
+            empty_contract = "empty-and-dot-select-current-directory; none-restores-default"
 
         print(json.dumps({
             "python": sys.version.split()[0], "libephemeris": le.__version__,

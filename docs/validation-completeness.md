@@ -1,6 +1,6 @@
 # Optimization test-coverage audit
 
-This audit predates the four-PR beta integration. See the [final beta qualification](../release_notes/v6.1.0b1-validation.md) for the later 14,662-case matrix and package checks.
+This audit predates the four-PR beta integration. The later [published b2 qualification](../release_notes/v6.1.0b2-validation.md) covers 14,663 unique cases and package checks. Subsequent native-path work has its own [compatibility report](native-path-compatibility.md); these historical audit counts do not describe the current branch.
 
 The verification checkout combines optimization PR #273, resource-safety
 PR #274 and this test-coverage change. Validation uses one process, indexed LEB
