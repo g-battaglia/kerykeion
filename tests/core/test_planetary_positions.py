@@ -334,7 +334,7 @@ class TestLunarNodes:
             assert lunar_node in ("mean_north_lunar_node", "mean_south_lunar_node"), (
                 f"Missing reference for {temporal_subject_id}/{lunar_node}"
             )
-            import swisseph
+            swisseph = pytest.importorskip("swisseph", reason="mean-node reference needs pyswisseph")
 
             with EPHEMERIS_LOCK:
                 north = swisseph.calc_ut(

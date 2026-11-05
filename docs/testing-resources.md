@@ -8,7 +8,7 @@ The earlier measurements below retain their original scope.
 Pytest runs serially by default. CPU count is not a memory budget: `pytest -n auto`
 previously launched 18 workers on this machine, each independently retaining native
 astronomical data. Parallel execution is now an explicit choice, for example
-`uv run pytest -n 2`; choose it only after measuring the per-worker workload.
+`uv run pytest tests/core -m 'not online' -n 2`; choose it only after measuring the per-worker workload.
 Cold-import checks also default to one subprocess. `--jobs 2` opts into two probes.
 Isolated Python documentation snippets likewise default to one subprocess;
 `scripts/test_markdown_snippets.py --jobs 2` explicitly enables two at a time.
