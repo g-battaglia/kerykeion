@@ -11,6 +11,10 @@
 
 ### Fixed
 
+- Backend comparison tests now calculate high-level subjects in isolated
+  processes and preserve configured data paths. Running them inside the Swiss
+  suite no longer leaves factories and backend configuration using different
+  engines. Numerical assertions and tolerances are unchanged.
 - Historical Swiss snapshot preconditions now verify missing required bodies
   at the actual chart date. Known missing data or unsupported dates are reported
   explicitly; unexpected errors and unexplained omissions remain failures.

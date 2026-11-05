@@ -17,6 +17,10 @@ Run with::
 """
 
 import importlib
+import json
+import os
+import subprocess
+import sys
 
 import pytest
 
@@ -52,7 +56,6 @@ TRUE_NODE = 11
 
 def _calc_planet(backend, planet_id: int, jd: float = JD_LENNON):
     """Calculate a planet position using a specific backend module."""
-    backend.set_ephe_path("")
     flags = backend.FLG_SWIEPH | backend.FLG_SPEED
     result, _retflags = backend.calc_ut(jd, planet_id, flags)
     return result  # (lon, lat, dist, lon_speed, lat_speed, dist_speed)
@@ -60,7 +63,6 @@ def _calc_planet(backend, planet_id: int, jd: float = JD_LENNON):
 
 def _calc_houses(backend, jd: float = JD_LENNON):
     """Calculate houses using a specific backend module."""
-    backend.set_ephe_path("")
     flags = backend.FLG_SWIEPH
     cusps, ascmc, cusps_speed, ascmc_speed = backend.houses_ex2(jd, LAT, LON, b"P", flags)
     return cusps, ascmc
@@ -204,29 +206,38 @@ class TestKerykeionIntegrationComparison:
 
     @pytest.fixture(scope="class")
     def subjects(self):
-        """Create the same subject with both backends."""
-        import os
-        from kerykeion import AstrologicalSubjectFactory
+        """Calculate each subject in a fresh process with its own backend state.
 
+        Reloading only the backend module leaves existing factories holding
+        aliases to the other engine, and changing its environment leaks into
+        later tests. The child asserts its actual backend before calculating;
+        numerical outputs are exchanged only in memory, never written as fixtures.
+        """
+        from kerykeion.ephemeris_backend import backend
+        from kerykeion.schemas.models import AstrologicalSubjectModel
+
+        original = (os.environ.get("KERYKEION_BACKEND"), backend.BACKEND_NAME, backend.ephe)
+        script = """
+import json, os
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
+assert BACKEND_NAME == os.environ["KERYKEION_BACKEND"]
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Test", 1940, 10, 9, 18, 30, lng=-2.9916, lat=53.4084,
+    tz_str="Europe/London", city="Liverpool", nation="GB", online=False,
+)
+print(subject.model_dump_json())
+"""
         results = {}
-
-        for backend_name in ("swisseph", "libephemeris"):
-            os.environ["KERYKEION_BACKEND"] = backend_name
-            # Force reimport of the backend module
-            import kerykeion.ephemeris_backend.backend as eb
-            importlib.reload(eb)
-
-            subject = AstrologicalSubjectFactory.from_birth_data(
-                "Test", 1940, 10, 9, 18, 30,
-                lng=LON, lat=LAT, tz_str="Europe/London",
-                city="Liverpool", nation="GB", online=False,
+        for name in ("swisseph", "libephemeris"):
+            child = subprocess.run(
+                [sys.executable, "-c", script],
+                env={**os.environ, "KERYKEION_BACKEND": name},
+                capture_output=True, text=True, check=False, timeout=30,
             )
-            results[backend_name] = subject
-
-        # Restore default
-        os.environ.pop("KERYKEION_BACKEND", None)
-        importlib.reload(eb)
-
+            assert child.returncode == 0, f"Isolated {name} subject calculation failed"
+            results[name] = AstrologicalSubjectModel.model_validate(json.loads(child.stdout))
+        assert (os.environ.get("KERYKEION_BACKEND"), backend.BACKEND_NAME, backend.ephe) == original
         return results
 
     def test_sun_sign_matches(self, subjects):
