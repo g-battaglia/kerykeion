@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-05",
+  "canonical_branch": "beta-v6",
+  "released_source_commit": "53c2e26098a1b3bc6ba6b95457a92fe3eef8dcdb",
+  "active_code_identical_to_released_b2": true,
+  "ignored_work": "LibEphemeris PR #82 and related coefficient-routing experiment",
+  "tests": {
+    "kerykeion_targeted_passed": 310,
+    "libephemeris_targeted_passed": 52
+  },
+  "peaks_mib": {
+    "kerykeion_targeted": 310.2,
+    "libephemeris_targeted": 76.0
+  },
+  "retained_history": {
+    "stable_preparation": "4be151edf33612e2dc7eae8e8adb1b998f3aacb7",
+    "native_integration": "f12b8e28771808a7569809b3429e07cfa1340d2a",
+    "local_native_checks": "635cb41c6cd643b619daef4857f927cec74584d4"
+  }
+}
