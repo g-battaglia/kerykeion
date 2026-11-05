@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import pytest
 
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory, ChartDrawer
-from kerykeion.charts.ephemeris_notes import collect_ephemeris_notes
+from kerykeion.charts.ephemeris_notes import NOTE_LABELS, collect_ephemeris_notes
 from kerykeion.charts.glyph_metrics import estimate_text_width
 from kerykeion.schemas.models import EphemerisWarningModel
 from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
@@ -86,8 +86,8 @@ def test_notes_use_chart_translations(limited_subject, language):
                                show_ephemeris_notes=True, chart_language=language))
     footer = next(node for node in root if node.get(KR) == "Ephemeris_Notes")
     text = " ".join(footer.itertext())
-    assert LANGUAGE_SETTINGS[language]["ephemeris_omitted_points"] in text
-    assert LANGUAGE_SETTINGS[language]["ephemeris_approximate_positions"] in text
+    assert NOTE_LABELS[language][0] in text
+    assert NOTE_LABELS[language][1] in text
 
 
 @pytest.mark.parametrize("theme", ["classic", "dark", "black-and-white"])
@@ -143,3 +143,9 @@ def test_cli_render_option_reaches_drawer(limited_subject):
     assert options.chart_kwargs()["show_ephemeris_notes"] is True
     result = render_svg(ChartDataFactory.create_natal_chart_data(limited_subject), options)
     assert "Ephemeris_Notes" in result
+
+
+def test_custom_note_label_must_be_text(complete_subject):
+    with pytest.raises(ValueError, match="ephemeris_omitted_points must be a string"):
+        ChartDrawer(ChartDataFactory.create_natal_chart_data(complete_subject),
+                    language_pack={"ephemeris_omitted_points": 42})

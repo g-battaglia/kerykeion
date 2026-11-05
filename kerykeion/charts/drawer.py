@@ -66,7 +66,7 @@ from kerykeion.settings.config_constants import (
 )
 from kerykeion.settings.translations import get_translations, _resolve_language_sources
 from kerykeion.charts.glyph_metrics import estimate_text_width
-from kerykeion.charts.ephemeris_notes import append_ephemeris_notes, collect_ephemeris_notes
+from kerykeion.charts.ephemeris_notes import append_ephemeris_notes, collect_ephemeris_notes, note_label_overrides
 from kerykeion.charts.utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -2854,6 +2854,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
         # These are direct assignments of constructor parameters to instance
         # attributes. They form the foundation for all subsequent setup.
+        self._ephemeris_note_overrides = note_label_overrides(language_pack) if language_pack is not None else None
+
         self._store_basic_configuration(
             chart_language=chart_language,
             double_chart_aspect_grid_type=double_chart_aspect_grid_type,
@@ -5382,7 +5384,10 @@ class ChartDrawer:  # type: ignore[no-redef]
             str: The processed SVG template.
         """
         if self.show_ephemeris_notes:
-            notes = collect_ephemeris_notes((self.first_obj, self.second_obj), self._translate)
+            notes = collect_ephemeris_notes(
+                (self.first_obj, self.second_obj), self._translate,
+                language=self.chart_language, overrides=self._ephemeris_note_overrides,
+            )
             template = append_ephemeris_notes(template, notes)
 
         if remove_css_variables:

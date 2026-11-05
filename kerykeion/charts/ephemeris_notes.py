@@ -1,6 +1,6 @@
 """Optional SVG notes derived from existing subject provenance, without calculations."""
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from html import escape
 import re
 from typing import Any
@@ -8,16 +8,54 @@ from typing import Any
 from kerykeion.charts.glyph_metrics import estimate_text_width
 
 
-def collect_ephemeris_notes(subjects: Iterable[Any], translate: Callable[[str, str], str]) -> list[str]:
+# These labels belong to the opt-in footer. Keeping them out of the ordinary
+# translation dictionaries preserves the cost and shape of default lookups.
+NOTE_LABELS = {
+    "EN": ("Unavailable points", "Approximate positions"),
+    "FR": ("Points indisponibles", "Positions approximatives"),
+    "PT": ("Pontos indisponíveis", "Posições aproximadas"),
+    "IT": ("Punti non disponibili", "Posizioni approssimate"),
+    "CN": ("不可用的星体", "近似位置"),
+    "ES": ("Puntos no disponibles", "Posiciones aproximadas"),
+    "RU": ("Недоступные точки", "Приблизительные положения"),
+    "TR": ("Kullanılamayan noktalar", "Yaklaşık konumlar"),
+    "DE": ("Nicht verfügbare Punkte", "Ungefähre Positionen"),
+    "HI": ("अनुपलब्ध बिंदु", "अनुमानित स्थितियाँ"),
+}
+NOTE_KEYS = ("ephemeris_omitted_points", "ephemeris_approximate_positions")
+
+
+def note_label_overrides(language_pack: Mapping[str, Any] | None) -> dict[str, str] | None:
+    """Copy explicit footer labels, leaving the default path allocation-free."""
+    if language_pack is None:
+        return None
+    overrides = {}
+    for key in NOTE_KEYS:
+        if key in language_pack:
+            value = language_pack[key]
+            if not isinstance(value, str):
+                raise ValueError(f"{key} must be a string")
+            overrides[key] = value
+    return overrides
+
+
+def collect_ephemeris_notes(
+    subjects: Iterable[Any], translate: Callable[[str, str], str], *,
+    language: str = "EN", overrides: Mapping[str, str] | None = None,
+) -> list[str]:
     """Describe omitted and approximate points without changing their models.
 
     Args:
         subjects: Subjects represented by the chart, including composite parents.
-        translate: The drawer's translation lookup with an English fallback.
+        translate: The drawer's point-name lookup with an English fallback.
+        language: Chart language; unknown custom languages fall back to English.
+        overrides: Explicit footer labels from the chart's language pack.
 
     Returns:
         Ordered, subject-labelled notes. Unknown precision classes imply nothing.
     """
+    labels = dict(zip(NOTE_KEYS, NOTE_LABELS.get(language, NOTE_LABELS["EN"])))
+    labels.update(overrides or {})
     notes: list[str] = []
     seen: set[int] = set()
 
@@ -40,7 +78,7 @@ def collect_ephemeris_notes(subjects: Iterable[Any], translate: Callable[[str, s
             (approximate, "ephemeris_approximate_positions", "Approximate positions"),
         ):
             if names:
-                label = translate(key, fallback)
+                label = labels.get(key, fallback)
                 notes.append(f"{subject.name} — {label}: {', '.join(map(point_label, names))}.")
         # A composite may retain its inputs' limitations only on its parents.
         for attribute in ("first_subject", "second_subject"):
