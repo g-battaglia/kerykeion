@@ -54,7 +54,7 @@ def collect_ephemeris_notes(
     Returns:
         Ordered, subject-labelled notes. Unknown precision classes imply nothing.
     """
-    labels = dict(zip(NOTE_KEYS, NOTE_LABELS.get(language, NOTE_LABELS["EN"])))
+    labels: dict[str, str] = dict(zip(NOTE_KEYS, NOTE_LABELS.get(language, NOTE_LABELS["EN"])))
     labels.update(overrides or {})
     notes: list[str] = []
     seen: set[int] = set()
