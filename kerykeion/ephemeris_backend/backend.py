@@ -91,6 +91,9 @@ logger = logging.getLogger(__name__)
 # configured by the outer session. Reject nesting before touching backend state,
 # so an accidental inner factory call cannot corrupt the still-active session.
 _SESSION_DEPTH = _thread_local()
+# Only paths installed by this adapter may be restored by a later default
+# session. Access is serialized by EPHEMERIS_LOCK together with native state.
+_NATIVE_SESSION_PATH: Optional[str] = None
 
 _VALID_SESSION_ZODIACS = (None, "Tropical", "Sidereal")
 _VALID_SESSION_PERSPECTIVES = (
@@ -664,6 +667,22 @@ def reset_ephemeris_session() -> None:
             ephe.set_calc_mode(_PINNED_LEB_MODE)
 
 
+def _select_session_path(selected_path: str) -> None:
+    """Select a path under EPHEMERIS_LOCK without resetting external defaults."""
+    global _NATIVE_SESSION_PATH
+    if BACKEND_NAME != "libephemeris":
+        ephe.set_ephe_path(selected_path)
+    elif selected_path:
+        ephe.set_ephe_path(selected_path)
+        _NATIVE_SESSION_PATH = ephe.get_library_path()
+    elif _NATIVE_SESSION_PATH is not None:
+        # An external setter may have superseded our last selection. Do not
+        # erase it; otherwise None restores native discovery (also on v4 b2).
+        if ephe.get_library_path() == _NATIVE_SESSION_PATH:
+            ephe.set_ephe_path(None)
+        _NATIVE_SESSION_PATH = None
+
+
 @contextmanager
 def ephemeris_session(
     *,
@@ -763,7 +782,8 @@ def ephemeris_session(
                 if not -90.0 <= topo[1] <= 90.0:
                     raise ValueError("topo latitude must be between -90 and 90 degrees")
 
-            ephe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
+            selected_path = EPHE_DATA_PATH if ephe_path is None else ephe_path
+            _select_session_path(selected_path)
             iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
             if perspective_type == "True Geocentric":
