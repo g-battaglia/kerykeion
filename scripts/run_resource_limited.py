@@ -79,10 +79,16 @@ def _signal_group(pid: int, signum: int) -> None:
     except ProcessLookupError:
         pass
     except PermissionError:
-        # macOS can report EPERM instead of ESRCH when only its unreaped
-        # zombie leader remains. A live leader's permission failure is real.
-        if psutil.Process(pid).status() != psutil.STATUS_ZOMBIE:
-            raise
+        # macOS can report EPERM while its unreaped leader is exiting, just
+        # before psutil observes ZOMBIE. Do not reap it or signal a new group:
+        # briefly wait for that transition, then propagate persistent EPERM.
+        process = psutil.Process(pid)
+        for attempt in range(11):
+            if process.status() == psutil.STATUS_ZOMBIE:
+                return
+            if attempt == 10:
+                raise
+            time.sleep(0.01)
 
 
 def _stop_tree(child: subprocess.Popen, known: dict[int, psutil.Process], job=None) -> None:

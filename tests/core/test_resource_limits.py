@@ -248,3 +248,40 @@ def test_process_handle_failure_still_reaps_command(monkeypatch):
         run_command([sys.executable, "-c", "import time; time.sleep(30)"], rss_limit_bytes=256 * 2**20)
     assert len(children) == 1
     assert children[0].returncode is not None
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX process-group cleanup")
+@pytest.mark.parametrize("live_observations", [0, 1, 3])
+def test_group_eperm_waits_for_the_owned_leader_to_become_zombie(monkeypatch, live_observations):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    denied = PermissionError("group is exiting")
+    kill = Mock(side_effect=denied)
+    status = Mock(side_effect=[psutil.STATUS_RUNNING] * live_observations + [psutil.STATUS_ZOMBIE])
+    sleep = Mock()
+    monkeypatch.setattr(run_resource_limited.os, "killpg", kill)
+    monkeypatch.setattr(run_resource_limited.psutil, "Process", lambda pid: SimpleNamespace(status=status))
+    monkeypatch.setattr(run_resource_limited.time, "sleep", sleep)
+    run_resource_limited._signal_group(123, signal.SIGKILL)
+    kill.assert_called_once_with(123, signal.SIGKILL)
+    assert sleep.call_count == live_observations
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX process-group cleanup")
+def test_group_eperm_for_a_live_leader_remains_an_error(monkeypatch):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    denied = PermissionError("persistent denial")
+    kill = Mock(side_effect=denied)
+    sleep = Mock()
+    monkeypatch.setattr(run_resource_limited.os, "killpg", kill)
+    monkeypatch.setattr(run_resource_limited.psutil, "Process",
+                        lambda pid: SimpleNamespace(status=lambda: psutil.STATUS_RUNNING))
+    monkeypatch.setattr(run_resource_limited.time, "sleep", sleep)
+    with pytest.raises(PermissionError) as error:
+        run_resource_limited._signal_group(123, signal.SIGKILL)
+    assert error.value is denied
+    kill.assert_called_once_with(123, signal.SIGKILL)
+    assert sleep.call_count == 10
