@@ -123,6 +123,12 @@ for w in s.ephemeris_warnings:            # empty on a default install: 1855 is
 print(len(s.ephemeris_warnings), s.chiron.source)   # 0 LEB
 ```
 
+For a self-contained SVG, `ChartDrawer(chart_data, show_ephemeris_notes=True)`
+(or CLI `--show-ephemeris-notes`) displays omissions and explicitly approximate
+positions separately. It is off by default and does not modify these models or
+CLI warning exit codes. A successful Swiss Sun calculation, including Moshier,
+does not imply Chiron or other optional-body availability at the same date.
+
 ## Provenance contract on `KerykeionPointModel` (a75, libephemeris only)
 
 | Field | Meaning |

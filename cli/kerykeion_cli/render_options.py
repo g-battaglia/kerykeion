@@ -46,6 +46,7 @@ class RenderOptions:
     show_aspect_icons: Optional[bool] = None
     show_zodiac_background_ring: Optional[bool] = None
     show_diurnality: Optional[bool] = None
+    show_ephemeris_notes: Optional[bool] = None
     show_house_position_comparison: Optional[bool] = None
     show_cusp_position_comparison: Optional[bool] = None
     double_chart_aspect_grid_type: Optional[str] = None

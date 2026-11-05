@@ -66,6 +66,7 @@ from kerykeion.settings.config_constants import (
 )
 from kerykeion.settings.translations import get_translations, _resolve_language_sources
 from kerykeion.charts.glyph_metrics import estimate_text_width
+from kerykeion.charts.ephemeris_notes import append_ephemeris_notes, collect_ephemeris_notes, note_label_overrides
 from kerykeion.charts.utils import (
     draw_zodiac_slice,
     convert_latitude_coordinate_to_string,
@@ -2712,6 +2713,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         show_relationship_score: bool = False,
         show_ayanamsa_value: bool = False,
         show_polar_fallback_note: bool = False,
+        show_ephemeris_notes: bool = False,
     ):
         """
         Initialize the chart visualizer with pre-computed chart data.
@@ -2814,6 +2816,12 @@ class ChartDrawer:  # type: ignore[no-redef]
                 could not be used at this latitude and another one stood in
                 for it. Defaults to False.
 
+            show_ephemeris_notes (bool, optional):
+                Append a footer identifying unavailable points and positions whose
+                provenance explicitly says approximate, for each subject. Applies
+                to full, wheel-only and grid-only exports. No calculations or
+                model fields change. Defaults to False; absent notes add nothing.
+
             Every option in this last group is off by default: each one adds
             marks a reader has not asked for, and a chart that gains them
             without being asked is a chart whose look changed under its owner.
@@ -2846,6 +2854,8 @@ class ChartDrawer:  # type: ignore[no-redef]
             )
         # These are direct assignments of constructor parameters to instance
         # attributes. They form the foundation for all subsequent setup.
+        self._ephemeris_note_overrides = note_label_overrides(language_pack) if language_pack is not None else None
+
         self._store_basic_configuration(
             chart_language=chart_language,
             double_chart_aspect_grid_type=double_chart_aspect_grid_type,
@@ -2871,6 +2881,7 @@ class ChartDrawer:  # type: ignore[no-redef]
             show_relationship_score=show_relationship_score,
             show_ayanamsa_value=show_ayanamsa_value,
             show_polar_fallback_note=show_polar_fallback_note,
+            show_ephemeris_notes=show_ephemeris_notes,
         )
 
         # =====================================================================
@@ -2968,6 +2979,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         show_relationship_score: bool,
         show_ayanamsa_value: bool,
         show_polar_fallback_note: bool,
+        show_ephemeris_notes: bool,
     ) -> None:
         """
         Store basic configuration parameters as instance attributes.
@@ -3015,6 +3027,7 @@ class ChartDrawer:  # type: ignore[no-redef]
         self.show_relationship_score = show_relationship_score
         self.show_ayanamsa_value = show_ayanamsa_value
         self.show_polar_fallback_note = show_polar_fallback_note
+        self.show_ephemeris_notes = show_ephemeris_notes
 
         # Chart style defaults (can be overridden per-render call)
         self._validate_chart_style(style)
@@ -5370,6 +5383,13 @@ class ChartDrawer:  # type: ignore[no-redef]
         Returns:
             str: The processed SVG template.
         """
+        if self.show_ephemeris_notes:
+            notes = collect_ephemeris_notes(
+                (self.first_obj, self.second_obj), self._translate,
+                language=self.chart_language, overrides=self._ephemeris_note_overrides,
+            )
+            template = append_ephemeris_notes(template, notes, self.chart_colors_settings["paper_0"])
+
         if remove_css_variables:
             template = inline_css_variables_in_svg(template)
 
