@@ -142,10 +142,10 @@ def test_invalid_limits_fail_before_starting_a_command(limit, interval):
         run_command(["must-not-run"], rss_limit_bytes=limit, interval=interval)
 
 
-def test_missing_executable_has_a_clear_nonzero_exit(monkeypatch, capsys):
+def test_missing_executable_has_a_clear_nonzero_exit(monkeypatch, capfd):
     monkeypatch.setattr(sys, "argv", ["watchdog", "--", "executable-that-does-not-exist-kerykeion"])
     assert main() == 127
-    assert "Cannot start command" in capsys.readouterr().err
+    assert "Cannot start command" in capfd.readouterr().err
 
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX signal and process-group cleanup")

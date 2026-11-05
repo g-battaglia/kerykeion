@@ -1,0 +1,178 @@
+{
+  "platform": {
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "reports": {
+    "probe-b2-312": {
+      "python": "3.12.13",
+      "libephemeris": "4.0.0b2",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b2",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "known-b2-empty-path-error; integration-never-forwards-empty",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    },
+    "probe-b4-312": {
+      "python": "3.12.13",
+      "libephemeris": "4.0.0b4",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b3",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "empty-and-dot-select-current-directory; none-restores-default",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    },
+    "probe-b2-314": {
+      "python": "3.14.7",
+      "libephemeris": "4.0.0b2",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b2",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "known-b2-empty-path-error; integration-never-forwards-empty",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    },
+    "probe-b4-314": {
+      "python": "3.14.7",
+      "libephemeris": "4.0.0b4",
+      "system": "Darwin",
+      "machine": "arm64",
+      "kerykeion_distribution": "6.1.0b3",
+      "network_policy": "sealed",
+      "precision": "base",
+      "repeated_sessions": 5,
+      "planetary_controls": 50,
+      "house_controls": 60,
+      "sidereal_controls": 5,
+      "controls_sha256": "31052deece5f9e7a6beb55e54fede7735f8b725b9c64753739d2ad95d4222606",
+      "lunar_phase_jd": 2451550.2594680786,
+      "empty_path_contract": "empty-and-dot-select-current-directory; none-restores-default",
+      "adapter_sha256": "0f2dede43799a574ad8ed47575183a3b12397c0f72e44ec4e8435ec3e2cc47ed",
+      "lunar_helpers_sha256": "836cb21c5937ef2de03ded5a0c86c328bf712cef2bfd8bc227ee851d011e4477"
+    }
+  },
+  "b2_reports_source": "Candidate checkout overrides installed Kerykeion distribution metadata; source hashes identify the adapter and lunar helper actually executed.",
+  "b4_reports_source": "Installed candidate library wheel with the exact final native publication wheel.",
+  "unchanged_controls_across_all_four_environments": true,
+  "negative_controls": {
+    "negative-b2-312": {
+      "python": "3.12.13",
+      "kerykeion": "6.1.0b2",
+      "libephemeris": "4.0.0b2",
+      "observations": {
+        "direct_empty": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "default_session": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "lunar_helper": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        }
+      },
+      "solar_control_unchanged": true
+    },
+    "negative-b2-314": {
+      "python": "3.14.7",
+      "kerykeion": "6.1.0b2",
+      "libephemeris": "4.0.0b2",
+      "observations": {
+        "direct_empty": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "default_session": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        },
+        "lunar_helper": {
+          "get_library_path": "DataNotFoundError",
+          "release_data_cache": "DataNotFoundError"
+        }
+      },
+      "solar_control_unchanged": true
+    }
+  },
+  "candidate_code_commit": "dda51ddbf9271d2a99974755f50398651f13e3b7",
+  "native_publication_source_commit": "819684a0000851eda7de99b60b00ca3a090062a5",
+  "full_suites": {
+    "native_python312": {
+      "passed": 14736,
+      "skipped": 28,
+      "deselected": 3
+    },
+    "native_python314": {
+      "passed": 14736,
+      "skipped": 28,
+      "deselected": 3
+    },
+    "swiss_python312": {
+      "passed": 14217,
+      "skipped": 547,
+      "deselected": 3
+    },
+    "swiss_python314": {
+      "passed": 14217,
+      "skipped": 547,
+      "deselected": 3
+    }
+  },
+  "full_suite_profile": {
+    "precision": "extended",
+    "leb_reader": "indexed",
+    "marker": "not online"
+  },
+  "focused_cases_per_environment": 27,
+  "native_wheel_qualification": {
+    "run": "https://github.com/g-battaglia/libephemeris/actions/runs/42093218912",
+    "platforms": [
+      "macOS ARM64",
+      "Linux x86_64",
+      "Linux ARM64",
+      "Windows x86_64"
+    ],
+    "python": [
+      "3.12",
+      "3.14"
+    ],
+    "source_archive_rebuilt": true
+  },
+  "development_watchdog": {
+    "fix_commit": "67f67584c34d35d3939e3c51100c5b0b909c157a",
+    "focused_cases_per_interpreter": 20,
+    "independent_cancellation_runs_per_interpreter": 10,
+    "shipped_in_distributions": false,
+    "retry_sleep_budget_ms": 100,
+    "strict_wall_clock_bound": false
+  },
+  "reported_fedora_asahi_environment_executed_locally": false
+}

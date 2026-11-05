@@ -17,7 +17,9 @@
     "native_integration": "f12b8e28771808a7569809b3429e07cfa1340d2a",
     "local_native_checks": "635cb41c6cd643b619daef4857f927cec74584d4"
   },
-  "additional_excluded_workstreams": [
+  "validated_consolidation_commit": "312593d44c2b3aad9260a537dd9f842f2c0abf53",
+  "claims_scope": "Historical consolidation snapshot only. Code identity, exclusions and results below do not describe the current beta branch; bounded-memory and v4-closure workstreams were subsequently integrated.",
+  "additional_excluded_workstreams_at_snapshot": [
     "codex/bounded-backend-memory",
     "codex/kerykeion-v4-closure"
   ]

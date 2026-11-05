@@ -34,7 +34,7 @@ def active_model(backend: str | None = None, version: str | None = None) -> str 
         return None
     if version == "4.0.0b1":
         return MODEL
-    if version in {"4.0.0b2", "4.0.0b3"}:
+    if version in {"4.0.0b2", "4.0.0b3", "4.0.0b4"}:
         return patch_qualification(version)["model"]
     raise AssertionError(
         f"No qualified model fixtures for libephemeris {version}; do not reuse another model's references"
@@ -59,14 +59,14 @@ def verify_file(path: Path, expected: str) -> Path:
     return path
 
 
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=3)
 def patch_qualification(version: str) -> dict:
     """Bind one explicitly reviewed distribution patch to an unchanged model.
 
     The source-identity record is separate from frozen producer references.
     This is never a wildcard for future native versions or new model outputs.
     """
-    assert version in {"4.0.0b2", "4.0.0b3"}, f"No qualified patch identity for {version}"
+    assert version in {"4.0.0b2", "4.0.0b3", "4.0.0b4"}, f"No qualified patch identity for {version}"
     path = ROOT / "tests/data/model_qualifications" / f"libephemeris-{version}.json"
     assert path.is_file(), f"Missing patch-model qualification: {path}"
     data = json.loads(path.read_text())
@@ -77,7 +77,7 @@ def patch_qualification(version: str) -> dict:
         assert source["base_core_tree"] == source["candidate_core_tree"] and source["base_core_tree"]
         assert source["runtime_python_source_changed"] is False
     else:
-        # b3 changes resource management, so whole-core identity would be false.
+        # Resource/path patches change the core, so whole-core identity is false.
         # Its explicit source audit and reproduced references form a separate
         # qualification; never extend this branch to an unreviewed version.
         assert data["schema"] == 2 and source["review_kind"] == "runtime-resource-patch"
