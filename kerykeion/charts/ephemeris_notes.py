@@ -70,6 +70,7 @@ def collect_ephemeris_notes(
         missing = list(dict.fromkeys(w.point_name for w in getattr(subject, "ephemeris_warnings", ())))
         points = [getattr(subject, name.lower(), None) for name in getattr(subject, "active_points", ())]
         points.extend(getattr(subject, "fixed_stars", ()))
+        points.extend(getattr(subject, "active_midpoints", ()))
         approximate = list(dict.fromkeys(
             point.name for point in points
             if point is not None and point.precision_class == "approximate"

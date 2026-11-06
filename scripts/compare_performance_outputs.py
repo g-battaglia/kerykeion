@@ -92,7 +92,8 @@ def main():
                 ("wheel", drawer.generate_wheel_only_svg_string),
             ]:
                 save((i, style, language, size, kind), method(style=style))
-            save((i, language, size, "grid"), drawer.generate_aspect_grid_only_svg_string())
+            if style == "modern":
+                save((i, language, size, "grid"), drawer.generate_aspect_grid_only_svg_string())
         for theme, inline, minify in itertools.product(
             ("classic", "dark", "black-and-white"), (False, True), (False, True)
         ):

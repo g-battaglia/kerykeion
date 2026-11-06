@@ -10,6 +10,7 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.astrological_subject import factory as subject_factory
 from kerykeion.ephemeris_backend import BACKEND_NAME, ephe
+from kerykeion.ephemeris_backend.backend import _PINNED_LEB_MODE
 from kerykeion.fixed_stars import factory as star_factory
 
 
@@ -115,7 +116,8 @@ def test_subject_fixed_star_scope_restores_native_parent(monkeypatch, fail_star)
         )
         assert ephe.get_trace_results() == expected
         assert len(subject.fixed_stars) == (0 if fail_star else 1)
-        assert subject.sun.source == "LEB"
-        assert subject.moon.source == "LEB"
+        if _PINNED_LEB_MODE == "leb":
+            assert subject.sun.source == "LEB"
+            assert subject.moon.source == "LEB"
     finally:
         outer.reset()

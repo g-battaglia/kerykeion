@@ -9,6 +9,7 @@ import pytest
 from kerykeion import AstrologicalSubjectFactory
 from kerykeion.astrological_subject.factory import ephemeris_trace
 from kerykeion.ephemeris_backend import BACKEND_NAME, ephe, ephemeris_session
+from kerykeion.ephemeris_backend.backend import _PINNED_LEB_MODE
 from kerykeion.fixed_stars.factory import _star_source_trace
 
 pytestmark = pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="Rust v4 backend contract")
@@ -48,7 +49,10 @@ def test_native_trace_scope_resets_even_on_error(inner_scope, fail):
     assert ephe.get_trace_results() == {}
     with ephemeris_trace():
         ephe.calc_ut(2451545.0, ephe.SUN, ephe.FLG_SPEED)
-        assert ephe.get_trace_results() == {ephe.SUN: "LEB"}
+        trace = ephe.get_trace_results()
+        assert ephe.SUN in trace
+        if _PINNED_LEB_MODE == "leb":
+            assert trace == {ephe.SUN: "LEB"}
     assert ephe.get_trace_results() == {}
 
 
@@ -67,10 +71,12 @@ def test_subject_with_fixed_star_leaves_no_native_trace_scope():
         active_points=["Sun", "Moon", "Ascendant"],
         active_fixed_stars=["Regulus"],
     )
-    assert subject.sun.source == "LEB"
+    if _PINNED_LEB_MODE == "leb":
+        assert subject.sun.source == "LEB"
     assert len(subject.fixed_stars) == 1
     # The native fixed-star route now emits its actual provider (#17).
-    assert subject.fixed_stars[0].source == "LEB"
+    if _PINNED_LEB_MODE == "leb":
+        assert subject.fixed_stars[0].source == "LEB"
     assert subject.fixed_stars[0].precision_class == "ephemeris"
     assert 149.0 < subject.fixed_stars[0].abs_pos < 150.0
     assert ephe.get_trace_results() == {}

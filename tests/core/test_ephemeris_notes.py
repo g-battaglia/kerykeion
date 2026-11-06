@@ -174,3 +174,30 @@ def test_note_text_stays_xml_safe_and_literal_during_css_inlining(note, expected
     assert " ".join(footer.itertext()) == expected
     assert expected in root.find("s:desc", NS).text
     assert footer.get("fill") == "#123456"
+
+
+def test_approximate_active_midpoints_are_disclosed_without_mutation():
+    """The optional footer includes approximate midpoint provenance once."""
+    midpoint = SimpleNamespace(name="Sun_Moon", precision_class="approximate")
+    subject = SimpleNamespace(name="Midpoint subject", active_midpoints=[midpoint, midpoint])
+    assert collect_ephemeris_notes([subject], lambda key, fallback: fallback) == [
+        "Midpoint subject — Approximate positions: Sun Moon."
+    ]
+    assert subject.active_midpoints == [midpoint, midpoint]
+
+
+@pytest.mark.parametrize("inline", [False, True])
+@pytest.mark.parametrize("variant", VARIANTS[1:])
+@pytest.mark.parametrize("style", ["classic", "modern"])
+def test_minified_partial_footer_remains_inside_viewbox_with_its_text_color(limited_subject, inline, variant, style):
+    """Transparent partial exports keep footer baselines and configured fill."""
+    drawer = ChartDrawer(ChartDataFactory.create_natal_chart_data(limited_subject),
+                         style=style, transparent_background=True, show_ephemeris_notes=True,
+                         colors_settings={**DEFAULT_CHART_COLORS, "paper_0": "#abcdef"})
+    root = ET.fromstring(getattr(drawer, variant)(minify=True, remove_css_variables=inline))
+    footer = next(node for node in root if node.get(KR) == "Ephemeris_Notes")
+    left, top, width, height = map(float, root.attrib["viewBox"].split())
+    assert footer.get("fill") == "#abcdef"
+    for row in footer:
+        assert top < float(row.get("y")) < top + height
+        assert left <= float(row.get("x")) < left + width

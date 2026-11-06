@@ -1,7 +1,7 @@
 # General beta branch
 
 The maintained development branch is `beta-v6`. Its package versions are
-Kerykeion and CLI `6.1.0b4`, with `libephemeris==4.0.0b4`. The owner published the b4
+Kerykeion and CLI `6.1.0b5` in preparation, with `libephemeris==4.0.0b4`. The owner published the b4
 library and CLI with the reviewed horizon, coverage and rendering fixes; all
 four archives match the qualified build checksums. The registry lock also pins
 the qualified SVG Polish 1.0.1 optimizer. The earlier Kerykeion/CLI b3 and native

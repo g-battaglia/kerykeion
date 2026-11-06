@@ -177,7 +177,10 @@ the tight-orb award. This is an explicit implementation policy, not a claim of
 literal agreement with every published edition of the method.
 
 `RelationshipScoreV2Model` extends the v1 result with `positions`, `subject_names`,
-`contacts`, `metadata` and destiny-award/suppression flags. `ScoreContactV2Model`
+`contacts`, `metadata` and destiny-award/suppression flags. `is_destiny_sign`
+indicates that the Sun signs share a modality, even when a special Sun–Sun award
+suppresses the bonus; `destiny_bonus_awarded` reports whether the bonus was
+actually applied. `ScoreContactV2Model`
 retains unrounded physical `distance`/`orbit` separately from the `scoring_*`
 values used for points. `ScoreMetadataV2Model.reference_verified` remains false:
 the rule tests do not establish complete independent reference-output parity.

@@ -245,7 +245,7 @@ print(subject.model_dump_json())
                 env={**child_environment, "KERYKEION_BACKEND": name},
                 capture_output=True, text=True, check=False, timeout=30,
             )
-            assert child.returncode == 0, f"Isolated {name} subject calculation failed"
+            assert child.returncode == 0, f"Isolated {name} subject calculation failed:\n{child.stderr}"
             results[name] = AstrologicalSubjectModel.model_validate(json.loads(child.stdout))
         assert (os.environ.get("KERYKEION_BACKEND"), backend.BACKEND_NAME, backend.ephe) == original
         return results
