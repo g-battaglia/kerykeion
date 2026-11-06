@@ -1064,14 +1064,14 @@ wheels = [
 
 [[package]]
 name = "svg-polish"
-version = "1.0.0"
+version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "defusedxml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/c5/e7987aa81660268e7cc64db5360ca28ef6e729cd225a28443d9da246a2ec/svg_polish-1.0.0.tar.gz", hash = "sha256:56df761f7f0beb7c41060616e7eb5ddc990ce78e4a3323f04d62790ab431273d", size = 209970, upload-time = "2026-04-17T11:06:26.648Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/5a/0b342a2b53ca1ac973f1c9ef47af58c632d424ded27e8a332ba3d910cc63/svg_polish-1.0.1.tar.gz", hash = "sha256:3ab8ac949641b04ed86d87eaa301c0b4d406c53114a327a19564e9963da941ed", size = 211262, upload-time = "2026-11-06T19:46:59.807Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/59/3e/3de48cd6c5c0c94924fb28127bd392ba99175f8a3f03bc43d9eb694bd61c/svg_polish-1.0.0-py3-none-any.whl", hash = "sha256:a513b3f584b64b293c2535d0231eb8bb27e977f193f8f1e5f59cdf7fc59ae61d", size = 122129, upload-time = "2026-04-17T11:06:24.881Z" },
+    { url = "https://files.pythonhosted.org/packages/95/a3/a37eb8bf340eaca79e7458a3cead520f147fc8d705ad2be0a7b083ee497e/svg_polish-1.0.1-py3-none-any.whl", hash = "sha256:440bf10dcf93166b48c9d774e38bfba60a7a776fafb4ed2a09430c5e9a31d8f2", size = 122410, upload-time = "2026-11-06T19:46:55.69Z" },
 ]
 
 [[package]]

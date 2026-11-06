@@ -143,10 +143,18 @@ def test_invalid_limits_fail_before_starting_a_command(limit, interval):
 
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX unreaped leader shutdown")
-@pytest.mark.parametrize("descendant", [False, True])
-def test_memory_threshold_preserves_the_leaders_sigterm_cleanup(tmp_path, descendant):
+@pytest.mark.parametrize("descendant", [False, True, "slow-termination"])
+def test_memory_threshold_preserves_the_leaders_sigterm_cleanup(tmp_path, monkeypatch, descendant):
     """Empty/quickly exiting descendant sets cannot truncate leader cleanup."""
     marker = tmp_path / "cleanup.txt"
+    if descendant == "slow-termination":
+        terminate = psutil.Process.terminate
+
+        def delayed_terminate(process):
+            time.sleep(0.9)
+            terminate(process)
+
+        monkeypatch.setattr(psutil.Process, "terminate", delayed_terminate)
     code = """
 import pathlib, signal, subprocess, sys, time
 def cleanup(signum, frame):
@@ -160,13 +168,37 @@ data = bytearray(32 * 2**20)
 time.sleep(30)
 """
     result = run_command(
-        [sys.executable, "-c", code, str(marker), str(descendant)],
+        [sys.executable, "-c", code, str(marker), str(bool(descendant))],
         rss_limit_bytes=24 * 2**20,
         interval=0.02,
     )
     assert result.returncode == LIMIT_EXIT_CODE
     assert result.limit_exceeded
     assert marker.read_text(encoding="utf-8") == "finished"
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX restricted process inspection")
+def test_denied_leader_status_still_signals_and_reaps_the_owned_group(monkeypatch):
+    """A restricted status query must not bypass the final group signal."""
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    clock = [0.0]
+
+    def sleep(seconds):
+        clock[0] += seconds
+
+    leader = SimpleNamespace(children=lambda **kwargs: [], status=Mock(side_effect=psutil.AccessDenied(123)))
+    child = SimpleNamespace(pid=123, wait=Mock())
+    signals = Mock()
+    monkeypatch.setattr(run_resource_limited, "_signal_group", signals)
+    monkeypatch.setattr(run_resource_limited.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(run_resource_limited.time, "sleep", sleep)
+    run_resource_limited._stop_tree(child, {123: leader})
+    assert clock[0] >= 1.0
+    assert signals.call_args_list[0].args == (123, signal.SIGTERM)
+    assert signals.call_args_list[-1].args == (123, signal.SIGKILL)
+    child.wait.assert_called_once_with()
 
 
 def test_missing_executable_has_a_clear_nonzero_exit(monkeypatch, capfd):

@@ -30,8 +30,10 @@ summed RSS it terminates the tree, escalates to kill after one second, and exits
 125. Normal command exit codes and output are preserved. Interrupts and POSIX
 termination signals clean up the command rather than leaving it running in the
 background. On POSIX this covers the owned process group and descendants sampled
-before reparenting. A descendant that creates another session and is reparented
-before discovery can evade both RSS accounting and cleanup. Use OS containment
+before reparenting. A descendant reparented before discovery can evade RSS
+accounting even if it stays in the owned process group; group cleanup still
+signals it. A descendant that also creates another session can evade cleanup.
+Use OS containment
 (such as a cgroup or a container) when commands may detach that way. POSIX
 commands run at lower CPU priority when permitted.
 

@@ -108,7 +108,6 @@ def _stop_tree(child: subprocess.Popen, known: dict[int, psutil.Process], job=No
         # Never let psutil.wait_procs reap the direct child: its PID reserves
         # the process-group identity until our last signal has been sent.
         descendants = [member for pid, member in known.items() if pid != child.pid]
-        deadline = time.monotonic() + 1.0
         for member in reversed(descendants):
             try:
                 member.terminate()
@@ -118,6 +117,7 @@ def _stop_tree(child: subprocess.Popen, known: dict[int, psutil.Process], job=No
             _signal_group(child.pid, signal.SIGTERM)
         else:
             child.terminate()
+        deadline = time.monotonic() + 1.0
         _, alive = psutil.wait_procs(descendants, timeout=max(0.0, deadline - time.monotonic()))
         if os.name == "posix" and process is not None:
             # wait_procs([]) returns immediately, and descendants may finish
@@ -129,6 +129,10 @@ def _stop_tree(child: subprocess.Popen, known: dict[int, psutil.Process], job=No
                         break
                 except psutil.NoSuchProcess:
                     break
+                except psutil.Error:
+                    # Restricted procfs/non-dumpable children can deny status.
+                    # Preserve grace, then still signal the entire owned group.
+                    pass
                 time.sleep(min(0.01, max(0.0, deadline - time.monotonic())))
         for member in alive:
             try:
