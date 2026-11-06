@@ -1,5 +1,116 @@
 # Changelog
 
+## 6.1.0b5
+
+- Require SVG Polish 1.0.1 or newer so existing installations also receive the qualified SVG cleanup and traversal optimizations.
+- Complete development-watchdog docstrings required by review. No ephemeris algorithms or scientific references change.
+- Classify the native stored-JPL provider as ephemeris-grade without promoting unknown future providers.
+- Include approximate active midpoints in opt-in SVG provenance notes. Strengthen transparent partial-export footer layout tests and backend trace tests for non-LEB modes.
+
+## [6.1.0b4] - 2026-11-06
+
+### Fixed
+
+- Primary-directions speculum points on the horizon consistently use the documented inclusive diurnal semi-arc across platforms. Equatorial roundoff no longer flips the horizon flag or selects the complementary nocturnal semi-arc. Resolved below-horizon and circumpolar classifications are preserved.
+- Delegate coverage metadata directly to the native runtime's shared snapshot,
+  removing per-point inventory filesystem scans and duplicate Python records.
+- Escape optional note text as SVG text, including XML control characters and
+  literal CSS-variable tokens, while preserving CSS variables in configured colors.
+- Validate fresh historical-reference generation against the original producer's
+  pinned inputs before the destination manifest exists; existing references remain immutable.
+- Suspend the Windows development watchdog's executable before job assignment,
+  including venv redirectors, and resume only after successful containment.
+- Read glyph regression inputs explicitly as UTF-8 on non-UTF-8 locales.
+
+### Documentation
+
+- State the Tropical, Apparent Geocentric input requirement of bare-longitude
+  relationship scoring, and point archived release guidance to the current beta.
+
+
+## [6.1.0b3] - 2026-11-05
+
+### Added
+
+- Opt-in SVG ephemeris notes (`show_ephemeris_notes`, CLI
+  `--show-ephemeris-notes`) distinguish omitted points from explicitly
+  approximate positions. Notes are translated, accessible, and supported by
+  full, wheel-only and grid-only exports. Default drawing output is unchanged.
+
+### Fixed
+
+- Route legacy lunar and solar helpers through the same path-ownership rules as
+  sessions, preserving active native overrides and avoiding empty paths even
+  with LibEphemeris 4.0.0b2. Swiss path application is unchanged.
+- Keep native readers warm across default sessions, restore defaults after owned
+  explicit path selections, and invalidate coverage metadata on reader-generation
+  changes. Iterate ephemeris batches lazily while preserving the list API.
+- Snapshot nested translation models, validate relationship-score inputs before
+  formatting/indexing them, and reject required points that are not active.
+- Preserve reference-producer provenance and separate fixture recipes from tests.
+  Resource watchdogs clean up descendants on cancellation and retain Windows
+  descendants in a Job Object. Backend subprocesses preserve caller paths.
+
+- Backend comparison tests now calculate high-level subjects in isolated
+  processes and preserve configured data paths. Running them inside the Swiss
+  suite no longer leaves factories and backend configuration using different
+  engines. Numerical assertions and tolerances are unchanged.
+- Historical Swiss snapshot preconditions now verify missing required bodies
+  at the actual chart date. Known missing data or unsupported dates are reported
+  explicitly; unexpected errors and unexplained omissions remain failures.
+  Separate tests verify warnings and omitted aspects for those same dates.
+
+## [6.1.0b2] - 2026-11-04
+
+### Changed
+
+- Pin the published `libephemeris==4.0.0b2` backend and keep the library/CLI
+  distributions at the same `6.1.0b2` version.
+- Record the exact source identity and registry hashes for the backend patch.
+  Its native core and data are unchanged from `4.0.0b1`, so the explicitly
+  qualified patch uses the existing immutable scientific model references.
+  No reference fixture, producer attestation or numerical tolerance is replaced.
+- Refresh backend installation guidance and the generated CLI man page.
+
+See the [beta release notes](release_notes/v6.1.0b2.md) for scope and validation.
+
+## [6.1.0b1] - 2026-11-04
+
+### Added
+
+- Add the opt-in `kerykeion.relationship_score.v2` scorer with all nine
+  luminary pairs, per-direction Venus–Mars contacts, explicit numerical policy,
+  destiny-bonus suppression and reproducible contact metadata. Existing v1
+  scoring remains the default. Export v2 models lazily through the canonical
+  schemas and relationship-score namespaces.
+
+### Changed
+
+- Use the published native Rust backend `libephemeris==4.0.0b1` from PyPI.
+- Adapt sessions, source/coverage metadata, fixed stars and heliacal settings;
+  retain bounded metadata-only caching with conservative invalidation.
+- Version the v4 angle/house, Arabic Parts, SVG and report references separately,
+  preserving legacy fixture bytes and numerical tolerances.
+- Fix glyph-playground activation and regenerate the matching CLI man page.
+- Keep independent Skyfield oracles in development dependencies only.
+- Avoid unused wheel/panel work in modern, wheel-only and grid-only SVG output;
+  prepare aspect lookups, translation copies and astrocartography geometry once
+  per operation. The measured modern natal pipeline takes 21.7% less wall/CPU
+  time on the documented benchmark; gains depend on workload.
+- Run pytest and cold-import probes serially by default. Add `poe test:bounded`
+  with indexed LEB reads and a sampled process-tree memory watchdog to prevent
+  automatic worker counts from multiplying native ephemeris images.
+
+### Fixed
+
+- Anchor Havana DST-fold fixtures to an observed transition.
+- Replace skipped mean-node, fixed-frame and minified-glyph assertions with
+  applicable numeric/geometry checks; assert documented deprecations and load
+  only the independent altitude oracle's consumed reference data.
+
+Both distributions use `6.1.0b1`. See the [beta release notes](release_notes/v6.1.0b1.md)
+and [qualification report](release_notes/v6.1.0b1-validation.md).
+
 ## [6.0.5] - 2026-10-05
 
 ### Changed
@@ -8,8 +119,6 @@
   SHA-256-verified data-v4 LEB2 inventory for downloads. Existing caches can be
   updated with `libephemeris download leb2-extended` (or the desired tier).
 - Keep the library and CLI distributions at the same version.
-
-## [Unreleased]
 
 ## [6.0.4] - 2026-09-29
 

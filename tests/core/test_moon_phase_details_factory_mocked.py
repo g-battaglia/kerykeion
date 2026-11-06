@@ -1257,34 +1257,35 @@ class TestTheMidnightThatOpensADayOfUnusualLength:
 
         from kerykeion.utilities.core import is_ambiguous, is_nonexistent
 
-        assert is_ambiguous(datetime(2026, 11, 1), ZoneInfo("America/Havana"))
+        # Use an observed fold rather than assuming future DST rules persist.
+        assert is_ambiguous(datetime(2025, 11, 2), ZoneInfo("America/Havana"))
         assert is_nonexistent(datetime(2026, 9, 6), ZoneInfo("America/Santiago"))
 
     def test_a_folded_midnight_opens_the_day_at_its_first_occurrence(self) -> None:
-        """Havana's clocks fall back at 00:00 on 2026-11-01, so the day is 25
+        """Havana's clocks fell back at 00:00 on 2025-11-02, so the day is 25
         hours long and opens at 04:00 UTC — the summer reading. The second
         occurrence, 05:00 UTC, is already an hour into the day."""
         jd_midnight, jd_next = self._window(
-            self._subject("Havana fold", 2026, 11, 1, **self._HAVANA)
+            self._subject("Havana fold", 2025, 11, 2, **self._HAVANA)
         )
 
-        assert jd_midnight == pytest.approx(self._jd_of_utc(2026, 11, 1, 4), abs=1e-9)
-        assert jd_next == pytest.approx(self._jd_of_utc(2026, 11, 2, 5), abs=1e-9)
+        assert jd_midnight == pytest.approx(self._jd_of_utc(2025, 11, 2, 4), abs=1e-9)
+        assert jd_next == pytest.approx(self._jd_of_utc(2025, 11, 3, 5), abs=1e-9)
         assert (jd_next - jd_midnight) * 24.0 == pytest.approx(25.0, abs=1e-6)
 
     def test_the_day_before_the_fold_ends_where_the_folded_day_begins(self) -> None:
         """The invariant the shared resolver exists for: the two boundaries are
         the same instant, so the repeated hour is counted once, on the right
-        side. October 31 is an ordinary 24-hour day."""
-        jd_midnight_31, jd_next_31 = self._window(
-            self._subject("Havana eve", 2026, 10, 31, **self._HAVANA)
+        side. November 1 is an ordinary 24-hour day."""
+        jd_midnight_eve, jd_next_eve = self._window(
+            self._subject("Havana eve", 2025, 11, 1, **self._HAVANA)
         )
-        jd_midnight_01, _ = self._window(
-            self._subject("Havana fold", 2026, 11, 1, **self._HAVANA)
+        jd_midnight_fold, _ = self._window(
+            self._subject("Havana fold", 2025, 11, 2, **self._HAVANA)
         )
 
-        assert jd_next_31 == pytest.approx(jd_midnight_01, abs=1e-9)
-        assert (jd_next_31 - jd_midnight_31) * 24.0 == pytest.approx(24.0, abs=1e-6)
+        assert jd_next_eve == pytest.approx(jd_midnight_fold, abs=1e-9)
+        assert (jd_next_eve - jd_midnight_eve) * 24.0 == pytest.approx(24.0, abs=1e-6)
 
     def test_a_midnight_inside_a_gap_still_opens_the_day_after_it(self) -> None:
         """Santiago's clocks jump 00:00 -> 01:00 on 2026-09-06: midnight never
@@ -1309,12 +1310,12 @@ class TestTheMidnightThatOpensADayOfUnusualLength:
         from kerykeion.moon_phase_details.utils import compute_sun_rise_set_ephe
         from kerykeion.utilities.core import julian_to_datetime
 
-        subject = self._subject("Havana sun", 2026, 11, 1, **self._HAVANA)
+        subject = self._subject("Havana sun", 2025, 11, 2, **self._HAVANA)
         result = _compute_sun_times(subject)
         assert result is not None
         sunrise, sunset, _solar_noon = result
         assert sunrise is not None and sunset is not None
-        assert sunrise.date() == date(2026, 11, 1)
+        assert sunrise.date() == date(2025, 11, 2)
 
         jd_midnight, _jd_next = self._window(subject)
         with ephemeris_session():

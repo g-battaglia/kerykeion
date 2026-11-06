@@ -15,6 +15,28 @@ T = TypeVar("T")
 _SENTINEL = object()
 
 
+def _copy_translation_data(value: Any, memo: Optional[dict[int, Any]] = None) -> Any:
+    """Copy plain translation dicts cheaply, preserving cycles and shared values.
+
+    Defaults consist of exact dicts and strings. Other types retain deepcopy's
+    hooks and semantics, including custom mappings and mutable override values.
+    """
+    if type(value) is str:
+        return value
+    if type(value) is not dict:
+        return deepcopy(value, memo)
+    if memo is None:
+        memo = {}
+    identity = id(value)
+    if identity in memo:
+        return memo[identity]
+    copied: dict = {}
+    memo[identity] = copied
+    for key, item in value.items():
+        copied[_copy_translation_data(key, memo)] = _copy_translation_data(item, memo)
+    return copied
+
+
 def load_language_settings(overrides: Optional[Mapping[str, Any]] = None) -> dict[str, dict[str, Any]]:
     """Return the available language settings merged with optional overrides.
 
@@ -29,7 +51,7 @@ def load_language_settings(overrides: Optional[Mapping[str, Any]] = None) -> dic
     accessor a code path happened to call. Nothing in the library mutates it
     today, which is exactly why the divergence would have been so hard to spot.
     """
-    languages = deepcopy(LANGUAGE_SETTINGS)
+    languages = _copy_translation_data(LANGUAGE_SETTINGS)
     if not overrides:
         return languages
 
@@ -55,6 +77,19 @@ def load_language_pair(
     The override shape and merge semantics match :func:`load_language_settings`
     (overrides keyed by language code, optionally wrapped under ``language_settings``).
     """
+    selected, en = _resolve_language_sources(language, overrides)
+    return _copy_translation_data(selected), _copy_translation_data(en)
+
+
+def _resolve_language_sources(
+    language: str,
+    overrides: Optional[Mapping[str, Any]] = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Resolve live inputs for validation; callers must not mutate these sources.
+
+    The drawer validates these into independent models and dumps, so copying the
+    source trees first is unnecessary. Public accessors still return fresh copies.
+    """
     en: dict[str, Any] = LANGUAGE_SETTINGS.get("EN", {})
     selected: Optional[dict[str, Any]] = LANGUAGE_SETTINGS.get(language)
 
@@ -64,15 +99,15 @@ def load_language_pair(
         if en_override:
             en = _deep_merge(en, en_override)
         selected_override = data.get(language)
-        if selected_override is not None:
+        if language == "EN":
+            selected = en
+        elif selected_override is not None:
             base = selected if selected is not None else {}
             selected = _deep_merge(base, selected_override)
 
     if selected is None:
         selected = en
-    # Fresh copies: the no-override path above still aliases the module-global
-    # table, and this is a public (``__all__``) entry point.
-    return deepcopy(selected), deepcopy(en)
+    return selected, en
 
 
 def get_translations(

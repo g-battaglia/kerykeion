@@ -39,12 +39,13 @@ _NO_EVENT_ERRORS: tuple = tuple(
 )
 
 def _resolve_skyfield_range_error() -> Optional[type]:
-    """libephemeris runs ``heliacal_ut`` through Skyfield, which raises its OWN
-    ``skyfield.errors.EphemerisRangeError`` (a plain ``ValueError`` subclass,
-    unrelated to libephemeris's exception tree) when a search walks off the end
-    of the ephemeris. Resolve it defensively so an out-of-range window is treated
-    as a hard error rather than a benign "no event". Returns ``None`` on
-    installs without Skyfield (e.g. the swisseph backend)."""
+    """Resolve the legacy Python v3 range exception only for that backend.
+
+    Native v4 reports its own errors and must not import Skyfield merely because
+    the independent test oracle happens to be installed in the dev environment.
+    """
+    if not str(getattr(ephe, "__version__", "")).startswith("3."):
+        return None
     try:
         from skyfield.errors import EphemerisRangeError
 

@@ -46,6 +46,13 @@ Thank you for your interest in contributing to Kerykeion! Contributions of all k
    LIBEPHEMERIS_PRECISION=extended uv run poe test:extended
    ```
 
+   Tests run serially by default because native ephemeris data is retained per
+   process. For a full-range run with a sampled 1 GiB process-tree RSS stop
+   threshold, use `LIBEPHEMERIS_PRECISION=extended uv run poe test:bounded`.
+   This task opts into indexed LEB reads without changing the calculation tier.
+   See [resource-safe validation](docs/testing-resources.md) for the measurements,
+   reader contract, interrupt cleanup and explicit parallel execution.
+
 5. Push your branch and open a Pull Request against the `main` branch.
 
 ## Reporting Issues

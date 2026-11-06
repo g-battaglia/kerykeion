@@ -104,6 +104,11 @@ logger = logging.getLogger(__name__)
 
 # MD (in degrees of RA) below which a point is treated as being on the meridian.
 _ON_MERIDIAN_TOLERANCE = 1e-6
+# The horizon belongs to the diurnal semi-arc (the documented inclusive
+# comparison). Equatorial conversion can put an exact horizon point a few
+# binary rounding units outside DSA on another platform. This degree-scale
+# roundoff allowance is separate from the meridian/pole approximation above.
+_ON_HORIZON_ROUNDOFF_DEG = 1e-10
 
 
 class SpeculumEntryModel(SubscriptableBaseModel):
@@ -440,7 +445,12 @@ class PrimaryDirectionsFactory:
             # Above the horizon iff the meridian distance from the MC does not
             # exceed the diurnal semi-arc. (A plain |MD| < 90 test ignores
             # declination and misclassifies points near the horizon.)
-            is_above = abs(md) <= dsa
+            is_above = dsa > 0.0 and (
+                abs(md) <= dsa or (
+                    dsa < 180.0
+                    and math.isclose(abs(md), dsa, rel_tol=0.0, abs_tol=_ON_HORIZON_ROUNDOFF_DEG)
+                )
+            )
 
             if is_above:
                 semi_arc = dsa

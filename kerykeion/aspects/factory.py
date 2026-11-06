@@ -10,11 +10,14 @@ This is part of Kerykeion (C) 2025 Giacomo Battaglia
 
 import logging
 import math
-from typing import Any, Callable, Mapping, Sequence, Union, List, Optional, cast
+from collections.abc import Mapping
+from typing import Any, Callable, Sequence, Union, List, Optional, cast
 
 from kerykeion.astrological_subject.factory import AstrologicalSubjectFactory, OPPOSITE_PAIRS
 from kerykeion.aspects.utils import (
     get_aspect_from_two_points,
+    _prepare_aspect_settings,
+    _get_aspect_from_prepared_settings,
     get_active_points_list,
     calculate_aspect_movement,
 )
@@ -528,12 +531,17 @@ class AspectsFactory:
 
         all_aspects_list = []
         n_points = len(active_points_list)
+        blocked_partners: dict[str, set[str]] = {}
+        for pair in SINGLE_CHART_ARTIFACT_PAIRS:
+            for name in pair:
+                blocked_partners.setdefault(name, set()).update(pair - {name})
 
         # Aspect-keyed table entries need the resolver to run once per aspect
         # for the pair. Decided once per call: tables of plain numbers (the
         # overwhelmingly common case) keep the single-resolve scalar path.
         aspect_keyed = has_aspect_keyed_adjustments(point_orb_adjustments)
         aspect_names = [setting["name"] for setting in filtered_settings] if aspect_keyed else []
+        prepared_by_orb: dict[float, tuple[tuple[float, float, str], ...]] = {}
 
         for first_idx, first_point in enumerate(active_points_list):
             first_name = first_point["name"]
@@ -541,6 +549,7 @@ class AspectsFactory:
             first_speed = first_point.get("speed") or 0.0
             first_in_axes = first_name in AXES_LIST
             first_is_star = first_name in star_names
+            blocked = blocked_partners.get(first_name, set())
             # Generate aspects list without repetitions (single chart - same chart)
             for second_idx in range(first_idx + 1, n_points):
                 second_point = active_points_list[second_idx]
@@ -552,7 +561,7 @@ class AspectsFactory:
                 # construction, a fake 0.0-orb opposition) and mean×true lunar
                 # node combinations (a permanent ≤1.75°-orb conjunction or
                 # opposition when both variants are active).
-                if frozenset((first_name, second_name)) in SINGLE_CHART_ARTIFACT_PAIRS:
+                if second_name in blocked:
                     continue
 
                 # Skip star-star pairs: fixed stars are mutually static, so
@@ -579,9 +588,17 @@ class AspectsFactory:
                         point_orb_adjustments,
                         point_orb_adjustment_strategy,
                     )
-                aspect = get_aspect_from_two_points(
-                    filtered_settings, first_abs_pos, second_abs_pos, extra_orb=extra_orb
-                )
+                # Custom Real subclasses may be unhashable or implement their
+                # own arithmetic, so they retain the general calculation path.
+                if aspect_keyed or type(extra_orb) not in (int, float):
+                    aspect = get_aspect_from_two_points(
+                        filtered_settings, first_abs_pos, second_abs_pos, extra_orb=extra_orb
+                    )
+                else:
+                    scalar_orb = cast(float, extra_orb)
+                    if scalar_orb not in prepared_by_orb:
+                        prepared_by_orb[scalar_orb] = _prepare_aspect_settings(filtered_settings, scalar_orb)
+                    aspect = _get_aspect_from_prepared_settings(prepared_by_orb[scalar_orb], first_abs_pos, second_abs_pos)
 
                 if aspect["verdict"]:
                     # Get planet IDs using lookup dictionary for better performance
@@ -677,6 +694,7 @@ class AspectsFactory:
         # pair to a per-aspect resolve; plain-number tables keep the scalar path.
         aspect_keyed = has_aspect_keyed_adjustments(point_orb_adjustments)
         aspect_names = [setting["name"] for setting in filtered_settings] if aspect_keyed else []
+        prepared_by_orb: dict[float, tuple[tuple[float, float, str], ...]] = {}
 
         all_aspects_list = []
         for first in range(len(first_active_points_list)):
@@ -711,12 +729,19 @@ class AspectsFactory:
                         point_orb_adjustments,
                         point_orb_adjustment_strategy,
                     )
-                aspect = get_aspect_from_two_points(
-                    filtered_settings,
-                    first_active_points_list[first]["abs_pos"],
-                    second_active_points_list[second]["abs_pos"],
-                    extra_orb=extra_orb,
-                )
+                first_abs_pos = first_active_points_list[first]["abs_pos"]
+                second_abs_pos = second_active_points_list[second]["abs_pos"]
+                # Custom Real subclasses may be unhashable or implement their
+                # own arithmetic, so they retain the general calculation path.
+                if aspect_keyed or type(extra_orb) not in (int, float):
+                    aspect = get_aspect_from_two_points(
+                        filtered_settings, first_abs_pos, second_abs_pos, extra_orb=extra_orb
+                    )
+                else:
+                    scalar_orb = cast(float, extra_orb)
+                    if scalar_orb not in prepared_by_orb:
+                        prepared_by_orb[scalar_orb] = _prepare_aspect_settings(filtered_settings, scalar_orb)
+                    aspect = _get_aspect_from_prepared_settings(prepared_by_orb[scalar_orb], first_abs_pos, second_abs_pos)
 
                 if aspect["verdict"]:
                     # Get planet IDs using lookup dictionary for better performance

@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "mode": "warnings treated as errors (-W error); expected deprecations are asserted",
+  "all_tests_unique": 14417,
+  "all_tests_passed_in_at_least_one_profile": 14417,
+  "uncovered": [],
+  "failures": 0,
+  "unhandled_warnings": 0,
+  "test_code_commit": "51f6d821092e5019024f3eacddf2c1c92dc95e67",
+  "profiles": {
+    "extended": {
+      "passed": 14404,
+      "skipped_in_this_profile": 13,
+      "includes_online_tests": true,
+      "peak_tree_rss_mib": 489.1,
+      "passed_ids_sha256": "3f95c5028fdf09ac436a6207a2366afb5084c15c37fbff157d033c3c20fc0757"
+    },
+    "medium_boundaries": {
+      "passed": 26,
+      "skipped": 0,
+      "peak_tree_rss_mib": 160.5,
+      "passed_ids": [
+        "tests/core/test_ephemeris_provenance.py::test_arabic_parts_inherit_derived_provenance_from_primaries",
+        "tests/core/test_ephemeris_provenance.py::test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range",
+        "tests/core/test_ephemeris_provenance.py::test_derived_source_does_not_depend_on_trace_rows",
+        "tests/core/test_ephemeris_provenance.py::test_ephemeris_series_preserves_fallback_source_per_sample",
+        "tests/core/test_ephemeris_provenance.py::test_inventory_range_does_not_preempt_engine_source_selection",
+        "tests/core/test_ephemeris_provenance.py::test_leb_network_gate_rejects_before_socket_access",
+        "tests/core/test_ephemeris_provenance.py::test_leb_points_expose_source_precision_and_coverage",
+        "tests/core/test_ephemeris_provenance.py::test_optional_failure_is_reported_as_a_structured_warning",
+        "tests/core/test_ephemeris_provenance.py::test_relocation_preserves_derived_lot_provenance",
+        "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[ASSIST-numerical-model]",
+        "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[Analytical-analytical]",
+        "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[Keplerian-approximate]",
+        "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[SPK-ephemeris]",
+        "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[Skyfield-ephemeris]",
+        "tests/core/test_ephemeris_provenance.py::test_trace_label_maps_to_an_honest_precision_class[SomeFutureBackend-numerical-model]",
+        "tests/core/test_heliacal.py::TestBackendHardErrors::test_out_of_range_window_raises",
+        "tests/core/test_moon_phase_details_factory_mocked.py::TestFactoryFromSubjectRangeEdge::test_beyond_range_end_raises_typed_error",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Lunar]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Solar]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Lunar]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Solar]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[False]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[True]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[False]",
+        "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[True]",
+        "tests/core/test_void_of_course_moon_factory.py::test_range_edge_dates_raise_kerykeion_exception"
+      ]
+    }
+  },
+  "extended_skips_all_passed_in_medium": [
+    "tests/core/test_ephemeris_provenance.py::test_default_chart_uses_traced_local_fallback_outside_chiron_leb_range",
+    "tests/core/test_ephemeris_provenance.py::test_ephemeris_series_preserves_fallback_source_per_sample",
+    "tests/core/test_heliacal.py::TestBackendHardErrors::test_out_of_range_window_raises",
+    "tests/core/test_moon_phase_details_factory_mocked.py::TestFactoryFromSubjectRangeEdge::test_beyond_range_end_raises_typed_error",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Lunar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_backward_search_past_lower_edge_raises_kerykeion[Solar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Lunar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_forward_search_past_upper_edge_raises_kerykeion[Solar]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[False]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_heliocentric_search_past_edge_raises_kerykeion[True]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[False]",
+    "tests/core/test_planetary_return.py::TestReturnSearchAtEphemerisEdge::test_lunar_node_crossing_past_edge_raises_kerykeion[True]",
+    "tests/core/test_void_of_course_moon_factory.py::test_range_edge_dates_raise_kerykeion_exception"
+  ],
+  "all_collected_ids_sha256": "01696dd0ec469770f8e16cb16b6f3c2cf9d76972d251ba52b09b79c44b1a03fa",
+  "all_passed_ids_sha256": "01696dd0ec469770f8e16cb16b6f3c2cf9d76972d251ba52b09b79c44b1a03fa",
+  "optional_assets": {
+    "font_sources": "All three fonts downloaded into an ignored cache and verified against the existing SHA-256 pins; templates were not rewritten.",
+    "rendering": "CairoSVG and Pillow supplied only to an isolated validation environment; system Cairo already installed."
+  },
+  "golden_fixtures_regenerated": false,
+  "tolerances_changed": false,
+  "validated_source_commits": {
+    "optimization": "7a91a9e12350c7ba79209a8b5b7d1c758154b361",
+    "resource_safety": "16d69a79f9e106a164fa16a10f92bdf1ada1d9c3",
+    "coverage_tests": "51f6d821092e5019024f3eacddf2c1c92dc95e67"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "machine_ram_gib": 48,
+  "validation_log_workers": 18,
+  "extended_partition_bytes": {
+    "extended_core.leb2": 1153119874,
+    "extended_asteroids.leb2": 6476624,
+    "extended_exotics.leb2": 234008376,
+    "extended_apogee.leb2": 1481194106
+  },
+  "kernel_panic": {
+    "source_basename": "panic-full-2026-11-04-055518.0002.panic",
+    "date": "2026-11-04 05:55:18.81 +0100",
+    "reason": "watchdog timeout: no checkins from watchdogd in 94 seconds",
+    "python312_process_count": 35,
+    "python312_processes_reporting_over_1gib": 25,
+    "free_mib": 14.28125,
+    "compressor_gib": 25.775405883789062
+  },
+  "jetsam": {
+    "source_basename": "JetsamEvent-2026-11-04-060009.ips",
+    "date": "2026-11-04 06:00:08.83 +0100",
+    "largest_process": "python3.12",
+    "python312_process_count": 22,
+    "python312_accounted_rpages_gib": 51.298248291015625,
+    "termination_reason_counts": {
+      "jettisoned": 376,
+      "idle-exit": 14,
+      "vm-compressor-space-shortage": 147
+    }
+  },
+  "interpretation": "Per-process accounted pages are not unique physical RAM. The panic is a watchdog timeout; the snapshots document severe concurrent memory exhaustion. No deliberate high-memory reproduction was attempted.",
+  "bounded_validation": {
+    "combined_offline_passed": 14341,
+    "skipped": 72,
+    "online_passed": 3,
+    "full_sampled_tree_peak_mib": 415.0,
+    "quality_sampled_tree_peak_mib": 581.8,
+    "owned_indexed_equal_outputs": 1470,
+    "medium_configuration_passed": 26,
+    "medium_sampled_tree_peak_mib": 108.3
+  }
+}

@@ -96,7 +96,8 @@ run `regenerate:docs-png` separately.
 | `generate_glyph_gallery.py` | `regenerate:glyph-gallery` | A self-contained poster of every chart glyph, plus its Markdown page. |
 | `generate_glyph_playground.py` | `playground` | `glyph_playground.html` — the modern cluster's three sizes and nine air steps per ring, pre-drawn, with sliders for the sizes and the row spacing. See below. |
 | `report_modern_displacement.py` | — | How far the modern decluttering moves each planet from its true position. Reads the SVG back through `charts.svg_metadata`, so it measures what was drawn rather than what was intended. |
-| `benchmark.py` | `benchmark` | Timings for subject creation, aspects and SVG rendering. |
+| `benchmark.py` | `benchmark` | Explicit classic/modern full charts, wheels, grids, minification, translations, astrocartography and complete pipelines. `--rounds`, `--warmup`, `--iterations`, `--json PATH` control sampling and JSON export. |
+| `compare_performance_outputs.py` | — | Create or compare deterministic output hashes across two source checkouts using the same backend/tier. |
 
 ## Gates
 
@@ -110,6 +111,14 @@ something once passed the type checker and the test suite and was still wrong.
 | `check_import_graph.py` | `imports`, `imports:fresh` | Module paths, patch targets and logger names that drifted from the package layout — the things a rename breaks silently. `imports:fresh` additionally imports every module in a cold interpreter, which is what catches leaf-first cycles. |
 | `quality_check.py` | `quality` | The aggregate gate. |
 | `build_smoke_check.py` | `build:smoke` | A wheel that imports but cannot render, because a template or theme was left out of the package data. |
+
+## Bounded test execution
+
+`poe test:bounded` explicitly wraps the offline suite in
+`run_resource_limited.py`. It samples RSS and stops the owned process group and
+discovered descendants on excess memory or cancellation. This supervisor is not
+part of `poe check` or `poe quality`. See [resource limits](../docs/testing-resources.md)
+for the sampling and POSIX containment limits.
 
 ## Generated source
 
@@ -198,8 +207,8 @@ the row positions a chosen size implies still have to come back out of
 
 The first air notch is the chart exactly as the library ships it, measured
 ceiling included; every notch above lifts `min_separation` out of the way so
-the clearance is what decides. Where the shipped ceiling genuinely binds — the
-small synastry — the page says so instead of hiding the discontinuity.
+the clearance is what decides. The page reports whether the shipped ceiling
+binds for each chart; small synastry is currently non-binding.
 
 The 270 charts fit in under two megabytes because each one travels as a
 line-level diff against the shipped chart of its size, and most changed lines

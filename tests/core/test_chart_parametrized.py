@@ -22,7 +22,7 @@ from typing import Dict, Any
 
 import pytest
 
-from kerykeion import AstrologicalSubjectFactory, ChartDrawer, KerykeionException
+from kerykeion import AstrologicalSubjectFactory, ChartDrawer
 from kerykeion.chart_data.factory import ChartDataFactory
 
 from tests.data.test_subjects_matrix import (
@@ -34,6 +34,8 @@ from tests.data.test_subjects_matrix import (
 )
 from tests.data.compare_svg_lines import compare_svg_file
 from tests.data.golden_places import golden_place
+from tests.data.ephemeris_requirements import unavailable_snapshot_points
+from tests.data.model_fixtures import require_temporal_snapshot_inputs
 
 
 # =============================================================================
@@ -146,18 +148,15 @@ class TestTemporalSubjects:
     )
     def test_temporal_subject_natal_chart(self, subject_data):
         """Test natal chart generation for each temporal subject."""
-        try:
-            subject = create_subject_from_dict(subject_data)
-            chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
-            expected_file = f"{subject_data['name']} - Natal Chart - Classic.svg"
-            _compare_chart_svg(expected_file, chart_svg)
-        except AssertionError:
-            # A baseline mismatch is a real regression, not an environment problem.
-            # Without this, `except Exception` swallows it into a skip and the suite stays green.
-            raise
-        except Exception as e:
-            pytest.skip(f"Could not generate chart for {subject_data['name']}: {e}")
+        require_temporal_snapshot_inputs(subject_data["id"])
+        subject = create_subject_from_dict(subject_data)
+        unavailable = unavailable_snapshot_points(subject)
+        if unavailable:
+            pytest.skip("Complete snapshot requires unavailable points: " + "; ".join(unavailable))
+        chart_data = ChartDataFactory.create_natal_chart_data(subject)
+        chart_svg = ChartDrawer(chart_data).generate_svg_string(style="classic")
+        expected_file = f"{subject_data['name']} - Natal Chart - Classic.svg"
+        _compare_chart_svg(expected_file, chart_svg)
 
     @pytest.mark.parametrize(
         "subject_id,theme",
@@ -176,25 +175,16 @@ class TestTemporalSubjects:
     def test_temporal_subject_with_themes(self, subject_id, theme):
         """Test temporal subjects with specific themes."""
         subject_data = get_subject_by_id(subject_id)
-        try:
-            subject = create_subject_from_dict(subject_data)
-            subject.name = f"{subject_data['name']} - {theme.title()} Theme"
-            chart_data = ChartDataFactory.create_natal_chart_data(subject)
-            chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string(style="classic")
-            expected_file = f"{subject.name} - Natal Chart - Classic.svg"
-            _compare_chart_svg(expected_file, chart_svg)
-        except AssertionError:
-            # A baseline mismatch is a real regression, not an environment problem.
-            # Without this, `except Exception` swallows it into a skip and the suite stays green.
-            raise
-        except KerykeionException:
-            # A theme this library does not have is a broken test, not a broken
-            # environment. Three cases named "light" went on skipping quietly for a
-            # whole release after it was removed, which reads in the log exactly
-            # like the ephemeris-tier skips around them.
-            raise
-        except Exception as e:
-            pytest.skip(f"Could not generate chart for {subject_data['name']} with {theme}: {e}")
+        require_temporal_snapshot_inputs(subject_id)
+        subject = create_subject_from_dict(subject_data)
+        unavailable = unavailable_snapshot_points(subject)
+        if unavailable:
+            pytest.skip("Complete snapshot requires unavailable points: " + "; ".join(unavailable))
+        subject.name = f"{subject_data['name']} - {theme.title()} Theme"
+        chart_data = ChartDataFactory.create_natal_chart_data(subject)
+        chart_svg = ChartDrawer(chart_data, theme=theme).generate_svg_string(style="classic")
+        expected_file = f"{subject.name} - Natal Chart - Classic.svg"
+        _compare_chart_svg(expected_file, chart_svg)
 
 
 # =============================================================================

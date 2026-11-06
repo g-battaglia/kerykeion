@@ -8,7 +8,7 @@ order: 8
 
 # Relationship Score Factory
 
-The `RelationshipScoreFactory` calculates a quantitative compatibility score between two subjects using the **Ciro Discepolo method**. It assigns points to specific inter-chart aspects and qualities.
+The `RelationshipScoreFactory` calculates a quantitative compatibility score between two subjects using the **Ciro Discepolo method**. It assigns points to specific inter-chart aspects and qualities. This is the unchanged v1 API; the explicit [v2 opt-in](#opt-in-v2-since-61) is described below.
 
 ## What Is Relationship Scoring?
 
@@ -140,6 +140,52 @@ The `get_relationship_score()` method returns a Pydantic model with:
 - `aspects` (`list[RelationshipScoreAspectModel]`): Aspects that contributed to the score. Each has `p1_name`, `p2_name`, `aspect`, and `orbit`.
 - `score_breakdown` (`list[ScoreBreakdownItemModel]`): Detailed breakdown of how each rule contributed points.
 - `subjects` (`list[AstrologicalSubjectModel]`): The two validated subject models.
+
+## Opt-in v2 (since 6.1)
+
+Import `RelationshipScoreFactoryV2` from `kerykeion.relationship_score.v2` to use
+the new fixed profile with two Tropical, Apparent Geocentric subjects. Each must
+contain Sun, Moon, Ascendant, Venus and Mars. The constructor snapshots its inputs;
+each `get_relationship_score()` call returns independent data. The existing
+`RelationshipScoreFactory` and its configuration options keep their v1 behavior.
+
+For calculations from known longitudes, use the pure numerical entry point.
+Both subjects must supply Tropical, Apparent Geocentric longitudes: bare
+numbers cannot verify their reference frame.
+
+```python
+from kerykeion.relationship_score.v2 import score_positions
+
+first_positions = {"Sun": 10.0, "Moon": 53.0, "Ascendant": 101.0, "Venus": 203.0, "Mars": 254.0}
+second_positions = {"Sun": 47.0, "Moon": 167.0, "Ascendant": 283.0, "Venus": 321.0, "Mars": 15.0}
+v2_score = score_positions(first_positions, second_positions)
+assert v2_score.score_value == sum(row.points for row in v2_score.score_breakdown)
+print(v2_score.model_dump_json())
+```
+
+The profile evaluates all nine Sun/Moon/Ascendant pairs and both Venus–Mars
+directions. Sun–Sun square/opposition and cross Sun–Moon conjunction receive an
+8/11-point award replacing the ordinary four points. Sun–Sun conjunction is an
+ordinary four-point contact. A special Sun–Sun award suppresses the matching
+solar-modality bonus; other modality matches receive five points once.
+
+The inclusive scoring orbs are conjunction 8°, semi-sextile 2°, semi-square 2°,
+sextile 3°, square 5°, trine 7°, sesquiquadrate 2° and opposition 8°. Quintile and
+quincunx do not score. The absolute longitude difference is rounded down before
+wrapping values above 190°. Consequently a physical residual of 2.99° can earn
+the tight-orb award. This is an explicit implementation policy, not a claim of
+literal agreement with every published edition of the method.
+
+`RelationshipScoreV2Model` extends the v1 result with `positions`, `subject_names`,
+`contacts`, `metadata` and destiny-award/suppression flags. `is_destiny_sign`
+indicates that the Sun signs share a modality, even when a special Sun–Sun award
+suppresses the bonus; `destiny_bonus_awarded` reports whether the bonus was
+actually applied. `ScoreContactV2Model`
+retains unrounded physical `distance`/`orbit` separately from the `scoring_*`
+values used for points. `ScoreMetadataV2Model.reference_verified` remains false:
+the rule tests do not establish complete independent reference-output parity.
+All three models are also available from `kerykeion.schemas` and
+`kerykeion.relationship_score`, as lazy exports of the same classes.
 
 ---
 

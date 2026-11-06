@@ -367,6 +367,9 @@ ZodiacRingFlag = Annotated[
     Bool, chart("--zodiac-ring/--no-zodiac-ring", help="Draw the zodiac background ring (default: on).")
 ]
 DiurnalityFlag = Annotated[Bool, chart("--diurnality/--no-diurnality", help="Mark day/night sect (default: on).")]
+EphemerisNotesFlag = Annotated[
+    Bool, chart("--show-ephemeris-notes", help="Append SVG notes for unavailable points and approximate positions.")
+]
 HousePositionComparisonFlag = Annotated[
     Bool,
     chart(

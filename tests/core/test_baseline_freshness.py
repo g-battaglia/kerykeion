@@ -22,6 +22,8 @@ whenever someone next looks.
 from __future__ import annotations
 
 import re
+from copy import deepcopy
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
@@ -191,18 +193,14 @@ GLYPHS = "GLYPHS:BEGIN", "GLYPHS:END"
 #: rewrites, and exactly the part a stale glyph shares with a fresh one — so what
 #: is compared is the shapes.
 _GEOMETRY = re.compile(
-    r'\b(?:d|cx|cy|r|rx|ry|x|y|x1|y1|x2|y2|width|height|points|transform|viewBox)='
+    r"\b(?:d|cx|cy|r|rx|ry|x|y|x1|y1|x2|y2|width|height|points|transform|viewBox)="
     r"(['\"])(.*?)\1",
     re.S,
 )
 
-#: An absolute moveto starts every path the generator writes. The SVG minifier
-#: rewrites them relative (`M5.10,7.6 C5.10,4.2` becomes `m5.1 7.6c0-3.4`), which
-#: is the same shape spelled differently — no string comparison can see through
-#: it, and rounding it back is a second implementation of the minifier. Minified
-#: baselines are therefore checked on their symbol list instead, and recognised
-#: by what the file contains, never by its name: a filename convention would
-#: quietly stop applying the day one is renamed.
+#: Minified paths use relative coordinates. Compare their geometry against
+#: current symbols passed through the same optimizer, preserving the minifier's
+#: exact representation and precision without regenerating stored baselines.
 _MINIFIED_PATH = re.compile(r"\bd=['\"]m")
 
 _USE_REF = re.compile(r"xlink:href=['\"]#([^'\"]+)['\"]")
@@ -296,18 +294,67 @@ def test_every_baseline_draws_the_current_glyphs(svg: Path):
     block = _glyph_block(svg.read_text(encoding="utf-8"))
     assert block is not None
     if _MINIFIED_PATH.search(block):
-        pytest.skip(
-            f"{svg.name}: paths were rewritten relative by the minifier, so the "
-            "geometry cannot be compared as text; the symbol-set case above still "
-            "covers this file."
-        )
+        _assert_minified_glyph_geometry(svg, block)
+        return
 
     assert _glyph_geometry(block) == CURRENT_GEOMETRY, (
         f"{svg.name} draws a glyph set the templates no longer have. {REGENERATE_HINT}"
     )
 
 
-def test_the_extended_generator_refuses_to_report_success_after_a_failure():
+def _assert_minified_glyph_geometry(svg: Path, block: str) -> None:
+    """Check that minification preserves the exported glyph geometry."""
+    from svg_polish import optimize
+
+    namespace = "http://www.w3.org/2000/svg"
+    xlink = "http://www.w3.org/1999/xlink"
+    path = f".//{{{namespace}}}symbol"
+    current = ET.parse(REPO_ROOT / "kerykeion/charts/templates/chart.xml").getroot()
+    sources = {element.attrib["id"]: element for element in current.findall(path)}
+    present = _glyph_ids(block)
+    assert present and set(present).issubset(sources)
+    reference = ET.Element(f"{{{namespace}}}svg", {"width": "100", "height": "100", "viewBox": "0 0 100 100"})
+    definitions = ET.SubElement(reference, f"{{{namespace}}}defs")
+    for name in present:
+        definitions.append(deepcopy(sources[name]))
+        ET.SubElement(reference, f"{{{namespace}}}use", {f"{{{xlink}}}href": "#" + name})
+    normalized = ET.fromstring(optimize(ET.tostring(reference, encoding="unicode")))
+    expected = {element.attrib["id"]: element for element in normalized.findall(path)}
+    actual = {
+        element.attrib["id"]: element
+        for element in ET.parse(svg).getroot().findall(path)
+        if element.attrib.get("id") in present
+    }
+    assert set(expected) == set(actual) == set(present)
+    for name in present:
+        assert _glyph_geometry(ET.tostring(actual[name], encoding="unicode")) == _glyph_geometry(
+            ET.tostring(expected[name], encoding="unicode")
+        ), f"{svg.name}: stale minified geometry for {name}. {REGENERATE_HINT}"
+
+
+def test_minified_geometry_guard_detects_a_changed_outline(tmp_path):
+    """Verify minified geometry guard detects a changed outline."""
+    source = next(path for path in GLYPHED if _MINIFIED_PATH.search(_glyph_block(path.read_text(encoding="utf-8")) or ""))
+    block = _glyph_block(source.read_text(encoding="utf-8"))
+    assert block is not None
+    namespace = "http://www.w3.org/2000/svg"
+    tree = ET.parse(source)
+    names = set(_glyph_ids(block))
+    paths = [
+        path
+        for symbol in tree.getroot().findall(f".//{{{namespace}}}symbol")
+        if symbol.attrib.get("id") in names
+        for path in symbol.findall(f".//{{{namespace}}}path")
+    ]
+    assert paths
+    paths[0].set("d", "m999 999l1 1")
+    stale = tmp_path / "stale-minified.svg"
+    tree.write(stale, encoding="unicode")
+    with pytest.raises(AssertionError, match="stale minified geometry"):
+        _assert_minified_glyph_geometry(stale, block)
+
+
+def test_the_extended_generator_refuses_to_report_success_after_a_failure(monkeypatch):
     """A regeneration that prints its failures and exits 0 reports success for a
     set it did not produce.
 
@@ -332,6 +379,11 @@ def test_the_extended_generator_refuses_to_report_success_after_a_failure():
     # come from, which is right for a regeneration and beside the point here: this
     # test is about how the script reports a failure, on whichever backend the
     # suite happens to run. Let it believe it is on the baseline backend.
+    # This unit test exercises exit reporting, never fixture generation. Bypass
+    # the model admission guard as well: v4 must not be allowed to rewrite v3.
+    import tests.data.regeneration_guard as guard
+
+    monkeypatch.setattr(guard, "require_the_baseline_backend", lambda: None)
     reported_backend = comparison.active_backend
     comparison.active_backend = lambda: comparison.BASELINE_BACKEND
     try:

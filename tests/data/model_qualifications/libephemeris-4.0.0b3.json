@@ -1,0 +1,51 @@
+{
+  "schema": 2,
+  "engine_version": "4.0.0b3",
+  "model": "libephemeris-4.0.0b1",
+  "baseline_manifest_sha256": "e05b99c22f03c24a49249d82ba82d3c8c929848d9e6dd8cb7dde738e04db9cd8",
+  "numerical_source": {
+    "repository": "https://github.com/g-battaglia/libephemeris",
+    "base_tag": "python-v4.0.0b2",
+    "candidate_commit": "232db5428e04b1df789c31a77ad0a8dac7213d2d",
+    "candidate_tag": "python-v4.0.0b3",
+    "base_commit": "f0eb8bf4fbc65deb20efa2a2123d335600e45d66",
+    "base_data_tree": "9cc471badae4079cfcc107ae8c0b460db88fe1f5",
+    "candidate_data_tree": "9cc471badae4079cfcc107ae8c0b460db88fe1f5",
+    "review_kind": "runtime-resource-patch",
+    "reviewed_paths": [
+      "core/src/bodies/orbital.rs",
+      "core/src/positions/tests/tests.rs",
+      "core/src/providers/leb/access.rs",
+      "core/src/providers/leb/mod.rs",
+      "core/src/providers/leb/reader.rs",
+      "core/src/providers/leb/storage.rs",
+      "core/src/runtime/config.rs",
+      "core/src/runtime/download.rs",
+      "python/libephemeris/__init__.pyi",
+      "python/libephemeris/state.py",
+      "python/libephemeris/state.pyi",
+      "python/src/identity.rs",
+      "python/src/state.rs"
+    ],
+    "reviewed_diff_sha256": "42b3d8db7c82ec72dc9871a09e5ce9c4289c4151c1289675897be06f803e980d",
+    "scope": "No calculation formulas or data-v4 bytes change. Runtime edits release consumed file-cache ranges, cool retained images without dropping warm coefficients, expose reader invalidation generation, and normalize empty Python paths. Orbital/position edits only restore historical test inputs. Binding identity and exports advance."
+  },
+  "reference_verification": {
+    "command": "LIBEPHEMERIS_PRECISION=extended LIBEPHEMERIS_LEB_READER=indexed python scripts/generate_v4_model_baselines.py --check --geometry-python <isolated-libephemeris-3.2.2-python>",
+    "reference_bytes_identical": true,
+    "scientific_manifest_identical": true,
+    "legacy_files_unchanged": true,
+    "baseline_producer": "4.0.0b1"
+  },
+  "qualification_artifacts_sha256": {
+    "libephemeris-4.0.0b3-cp312-abi3-macosx_11_0_arm64.whl": "17707d59b3d884b6e80f7b91d5e0e60380347d6216c8395bd1bae980017295f0"
+  },
+  "publication_source_commit": "6e6ba6c9346adc66b4276575073bc97a641f989e",
+  "publication_artifacts_sha256": {
+    "libephemeris-4.0.0b3-cp312-abi3-macosx_11_0_arm64.whl": "f0453fcfb1306d1594548986b7becd00892118edc25d00695df80ee3fe1f3ade",
+    "libephemeris-4.0.0b3-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": "e1bf25bd1707beb1aa8a93695a921c08777bee3dae0ff6bbf30fbad008daac66",
+    "libephemeris-4.0.0b3-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl": "7189d4b581d8a55362a6fa5d5eb01a7b67aa58da16c0ae48d7d3a2a6ff55d23e",
+    "libephemeris-4.0.0b3-cp312-abi3-win_amd64.whl": "805bfbd0804584a1506a9fd7a0efbb6c2c0470988a24d80aa34656ad3d3f52c0",
+    "libephemeris-4.0.0b3.tar.gz": "189d0b2afa37b2d319bbf2a009badc6a4d1c26dcecd77d3e6aac20ad34fb8592"
+  }
+}
