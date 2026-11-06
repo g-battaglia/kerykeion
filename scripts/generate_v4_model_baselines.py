@@ -263,7 +263,7 @@ def svg_fixtures(stage: Path) -> dict:
     records = {}
     for name, (svg, options) in sorted(captured.items()):
         original = SVG_DIR / name
-        if same_svg(original.read_text(), svg, options):
+        if same_svg(original.read_text(encoding="utf-8"), svg, options):
             records[name] = {"storage": "legacy", "sha256": digest(original)}
         else:
             path = stage / "svg" / name
@@ -309,7 +309,7 @@ def main() -> None:
         stage = Path(temporary)
         numeric, qualification = numeric_fixtures(args.geometry_python)
         numeric_path = stage / "positions.json"
-        numeric_path.write_text(json.dumps(numeric, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+        numeric_path.write_text(json.dumps(numeric, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
         svg = svg_fixtures(stage)
         reports = report_fixture(stage)
         import importlib.metadata
@@ -329,7 +329,7 @@ def main() -> None:
             "recipe_modules": list(GOLDEN_TEST_MODULES),
             "inputs": input_inventory(),
         }
-        (stage / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+        (stage / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         assert before == legacy_inventory(), "legacy fixtures were modified"
         if args.check:
             assert DESTINATION.is_dir()
@@ -341,7 +341,7 @@ def main() -> None:
             generated.pop("manifest.json")
             stored.pop("manifest.json")
             assert generated == stored, "the frozen model reference bytes do not reproduce"
-            original_manifest = json.loads((DESTINATION / "manifest.json").read_text())
+            original_manifest = json.loads((DESTINATION / "manifest.json").read_text(encoding="utf-8"))
             for field in ("producer_source_sha256", "producer_version", "engine_version"):
                 print(field, "original:", original_manifest.pop(field), "current:", manifest.pop(field))
             assert manifest == original_manifest, "model/input qualification changed; review a separate reference version"

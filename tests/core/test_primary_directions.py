@@ -48,12 +48,13 @@ class TestSpeculum:
         assert entry.is_above_horizon is False
         assert entry.semi_arc == round(180 - dsa, 4)
 
-    def test_never_rising_circumpolar_point_is_not_a_horizon_roundoff_tie(self, monkeypatch):
+    @pytest.mark.parametrize("meridian_distance", [0.0, 1e-12])
+    def test_never_rising_circumpolar_point_is_not_a_horizon_roundoff_tie(self, monkeypatch, meridian_distance):
         """Clamping AD to -90 degrees must not invent a rising horizon."""
         point = SimpleNamespace(abs_pos=0.0, declination=-80.0, ecliptic_latitude=0.0)
         subject = SimpleNamespace(ascendant=point, perspective_type="Apparent Geocentric", ayanamsa_value=0.0)
         monkeypatch.setattr(PrimaryDirectionsFactory, "DIRECTION_POINTS", ["Ascendant"])
-        monkeypatch.setattr(PrimaryDirectionsFactory, "_ecliptic_to_equatorial", staticmethod(lambda *args: (1e-12, -80.0)))
+        monkeypatch.setattr(PrimaryDirectionsFactory, "_ecliptic_to_equatorial", staticmethod(lambda *args: (meridian_distance, -80.0)))
         [entry] = PrimaryDirectionsFactory._build_speculum(subject, 2451545.0, 0, obliquity=23.44, ramc=0.0, geo_lat=80.0)
         assert entry.is_above_horizon is False
         assert entry.semi_arc == 180.0

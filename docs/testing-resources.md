@@ -29,7 +29,11 @@ The watchdog samples the command and its descendants every 100 ms. Above 1 GiB o
 summed RSS it terminates the tree, escalates to kill after one second, and exits
 125. Normal command exit codes and output are preserved. Interrupts and POSIX
 termination signals clean up the command rather than leaving it running in the
-background. POSIX commands run at lower CPU priority when permitted.
+background. On POSIX this covers the owned process group and descendants sampled
+before reparenting. A descendant that creates another session and is reparented
+before discovery can evade both RSS accounting and cleanup. Use OS containment
+(such as a cgroup or a container) when commands may detach that way. POSIX
+commands run at lower CPU priority when permitted.
 
 This is a sampled stop threshold, not a hard OS allocation limit: a brief spike
 can exceed it before the next sample. Shared pages may be counted in multiple

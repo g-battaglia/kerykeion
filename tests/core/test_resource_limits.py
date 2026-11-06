@@ -142,6 +142,33 @@ def test_invalid_limits_fail_before_starting_a_command(limit, interval):
         run_command(["must-not-run"], rss_limit_bytes=limit, interval=interval)
 
 
+@pytest.mark.skipif(os.name != "posix", reason="POSIX unreaped leader shutdown")
+@pytest.mark.parametrize("descendant", [False, True])
+def test_memory_threshold_preserves_the_leaders_sigterm_cleanup(tmp_path, descendant):
+    """Empty/quickly exiting descendant sets cannot truncate leader cleanup."""
+    marker = tmp_path / "cleanup.txt"
+    code = """
+import pathlib, signal, subprocess, sys, time
+def cleanup(signum, frame):
+    time.sleep(0.2)
+    pathlib.Path(sys.argv[1]).write_text('finished', encoding='utf-8')
+    raise SystemExit(0)
+signal.signal(signal.SIGTERM, cleanup)
+if sys.argv[2] == 'True':
+    subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
+data = bytearray(32 * 2**20)
+time.sleep(30)
+"""
+    result = run_command(
+        [sys.executable, "-c", code, str(marker), str(descendant)],
+        rss_limit_bytes=24 * 2**20,
+        interval=0.02,
+    )
+    assert result.returncode == LIMIT_EXIT_CODE
+    assert result.limit_exceeded
+    assert marker.read_text(encoding="utf-8") == "finished"
+
+
 def test_missing_executable_has_a_clear_nonzero_exit(monkeypatch, capfd):
     monkeypatch.setattr(sys, "argv", ["watchdog", "--", "executable-that-does-not-exist-kerykeion"])
     assert main() == 127

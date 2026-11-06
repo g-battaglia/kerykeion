@@ -445,9 +445,11 @@ class PrimaryDirectionsFactory:
             # Above the horizon iff the meridian distance from the MC does not
             # exceed the diurnal semi-arc. (A plain |MD| < 90 test ignores
             # declination and misclassifies points near the horizon.)
-            is_above = abs(md) <= dsa or (
-                0.0 < dsa < 180.0
-                and math.isclose(abs(md), dsa, rel_tol=0.0, abs_tol=_ON_HORIZON_ROUNDOFF_DEG)
+            is_above = dsa > 0.0 and (
+                abs(md) <= dsa or (
+                    dsa < 180.0
+                    and math.isclose(abs(md), dsa, rel_tol=0.0, abs_tol=_ON_HORIZON_ROUNDOFF_DEG)
+                )
             )
 
             if is_above:
