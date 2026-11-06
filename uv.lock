@@ -291,7 +291,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.1.0b4"
+version = "6.1.0b5"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -348,7 +348,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.33.0" },
     { name = "requests-cache", specifier = ">=1.2.1" },
     { name = "simple-ascii-tables", specifier = ">=1.0.0" },
-    { name = "svg-polish", specifier = ">=1.0.0" },
+    { name = "svg-polish", specifier = ">=1.0.1" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
     { name = "tzdata", specifier = ">=2025.2" },
 ]
@@ -377,7 +377,7 @@ dev = [
 
 [[package]]
 name = "kerykeion-cli"
-version = "6.1.0b4"
+version = "6.1.0b5"
 source = { editable = "cli" }
 dependencies = [
     { name = "kerykeion" },

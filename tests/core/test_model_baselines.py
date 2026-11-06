@@ -169,7 +169,6 @@ def test_foreign_backend_has_no_native_coefficient_precondition(monkeypatch):
 
 def test_original_producer_can_validate_temporal_inputs_before_manifest_exists(monkeypatch, tmp_path):
     from types import SimpleNamespace
-    from kerykeion.ephemeris_backend import ephe
 
     base = tmp_path / "base_core.leb2"
     medium = tmp_path / "medium_core.leb2"
@@ -177,9 +176,10 @@ def test_original_producer_can_validate_temporal_inputs_before_manifest_exists(m
     medium.write_bytes(b"medium producer fixture")
     monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
     monkeypatch.setattr(fixtures, "MODEL_ROOT", tmp_path / "missing-model")
-    monkeypatch.setattr(ephe, "__version__", "4.0.0b1")
-    monkeypatch.setattr(ephe, "get_leb_reader", lambda: SimpleNamespace(path=str(base)))
-    monkeypatch.setattr(ephe, "get_leb_inventory", lambda: {"files": [{"path": str(medium)}]})
+    import kerykeion.ephemeris_backend as backend
+    # This unit exercises a native producer contract even when the selected
+    # integration backend is Swiss; do not graft native methods onto its C module.
+    monkeypatch.setattr(backend, "ephe", SimpleNamespace(__version__="4.0.0b1", get_leb_reader=lambda: SimpleNamespace(path=str(base)), get_leb_inventory=lambda: {"files": [{"path": str(medium)}]}))
     inputs = {path.name: fixtures.file_sha256(path) for path in (base, medium)}
     fixtures.require_temporal_snapshot_inputs("galileo_1564", producer_inputs=inputs)
     medium.write_bytes(b"wrong coefficients")
@@ -189,12 +189,11 @@ def test_original_producer_can_validate_temporal_inputs_before_manifest_exists(m
 
 def test_candidate_cannot_use_producer_inputs_without_a_frozen_manifest(monkeypatch, tmp_path):
     from types import SimpleNamespace
-    from kerykeion.ephemeris_backend import ephe
 
     monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
     monkeypatch.setattr(fixtures, "MODEL_ROOT", tmp_path / "missing-model")
-    monkeypatch.setattr(ephe, "__version__", "4.0.0b4")
-    monkeypatch.setattr(ephe, "get_leb_reader", lambda: SimpleNamespace(path="base_core.leb2"))
+    import kerykeion.ephemeris_backend as backend
+    monkeypatch.setattr(backend, "ephe", SimpleNamespace(__version__="4.0.0b4", get_leb_reader=lambda: SimpleNamespace(path="base_core.leb2")))
     with pytest.raises(AssertionError, match="Only the original producer"):
         fixtures.require_temporal_snapshot_inputs("galileo_1564", producer_inputs={})
 

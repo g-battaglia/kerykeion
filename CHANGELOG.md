@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.1.0b5
+
+- Require SVG Polish 1.0.1 or newer so existing installations also receive the qualified SVG cleanup and traversal optimizations.
+- Complete development-watchdog docstrings required by review. No ephemeris algorithms or scientific references change.
+
 ## [6.1.0b4] - 2026-11-06
 
 ### Fixed

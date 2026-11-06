@@ -43,3 +43,15 @@ publication preparation retains the exact native b4 registry pin and lockfile. T
 
 `main` remains the review destination. Consolidation does not publish packages,
 move release tags, regenerate data or alter numerical tolerances.
+
+
+### Final b5 preparation
+
+Kerykeion and the CLI advance together to 6.1.0b5, retaining LibEphemeris
+4.0.0b4 and the qualified SVG Polish 1.0.1 lock. The distribution now requires
+SVG Polish >=1.0.1, so an already-installed 1.0.0 cannot silently satisfy the
+optimized beta. No ephemeris algorithms or frozen scientific references change.
+Watchdog docstrings close the review coverage finding; native producer guard
+unit tests use an isolated backend fake when the integration matrix is Swiss.
+The original producer/candidate restrictions and coefficient hashes remain
+strict. Publication is a separate owner action after artifact qualification.

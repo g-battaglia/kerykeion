@@ -1,6 +1,6 @@
 [project]
 name = "kerykeion"
-version = "6.1.0b4"
+version = "6.1.0b5"
 authors = [
     { name = "Giacomo Battaglia", email = "kerykeion.astrology@gmail.com" }
 ]
@@ -51,7 +51,7 @@ dependencies = [
     # A backend upgrade requires rechecking the extended suite and fixtures.
     "libephemeris==4.0.0b4",
     "pydantic>=2.5",
-    "svg-polish>=1.0.0",
+    "svg-polish>=1.0.1",
     "requests-cache>=1.2.1",
     "requests>=2.33.0",
     "simple-ascii-tables>=1.0.0",

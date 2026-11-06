@@ -27,12 +27,17 @@ LIMIT_EXIT_CODE = 125
 
 
 class StopRequested(BaseException):
+    """Carry an external stop signal through owned-process cleanup."""
+
     def __init__(self, signum: int):
+        """Retain the signal for the conventional shell exit status."""
         self.signum = signum
 
 
 @dataclass(frozen=True)
 class RunResult:
+    """Report the command status and sampled peak process-tree RSS."""
+
     returncode: int
     peak_rss: int
     limit_exceeded: bool = False
@@ -54,6 +59,7 @@ def _defer_stop_signals():
     pending = []
 
     def remember(signum, frame):
+        """Defer delivery until process ownership or cleanup is complete."""
         pending.append((signum, frame))
 
     try:
@@ -219,6 +225,7 @@ def run_command(command: list[str], *, rss_limit_bytes: int, interval: float = 0
 
 
 def main() -> int:
+    """Parse the watchdog command, restore handlers and return its status."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rss-limit-mib", type=int, default=1024)
     parser.add_argument("command", nargs=argparse.REMAINDER)
@@ -230,6 +237,7 @@ def main() -> int:
         parser.error("provide a command after --")
 
     def stop_requested(signum, frame):
+        """Request cleanup without losing the original terminating signal."""
         raise StopRequested(signum)
 
     stop_signals = [signal.SIGTERM]
