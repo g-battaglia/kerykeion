@@ -1,13 +1,12 @@
 # General beta branch
 
-The maintained development branch is `beta-v6`. Its current package versions
-are Kerykeion and CLI `6.1.0b2`, with `libephemeris==4.0.0b2`. It is the single
-beta branch proposed to `main`; version tags continue to identify the immutable
-published releases. These identifiers remain the last published dependency set,
-while the branch contains unpublished fixes. Do not republish modified b2
-artifacts. The distinct library/CLI 6.1.0b3 candidate is prepared on
-`codex/finalize-beta-v6`, pinned to native 4.0.0b4. Promote its metadata and registry
-lock together after that native distribution becomes available on PyPI.
+The maintained development branch is `beta-v6`. Its package versions are
+Kerykeion and CLI `6.1.0b3`, with `libephemeris==4.0.0b4`. These distributions
+were published on PyPI on 2026-11-06 and all nine artifacts match the prepared
+checksums. The package metadata and registry lock advance together; the locked
+workspace install and installed CLI with `--show-ephemeris-notes` pass.
+The branch remains proposed to `main`; published tags remain immutable and this
+beta integration does not promote main or a stable release.
 
 ## Consolidated histories
 
@@ -37,8 +36,8 @@ The owner excluded LibEphemeris PR #82 (the v3 PostgreSQL provider). That PR and
 the related detached coefficient-routing experiment remain outside this
 consolidation. No PostgreSQL port or dependency-source substitution is implied.
 The bounded-memory and v4-closure workstreams are now integrated. The b3
-publication candidate is prepared separately; exact registry pins and the
-lockfile will advance together after its dependency is published.
+publication preparation is integrated with its exact native b4 registry pin and
+lockfile. The previous b2 metadata is historical, not a version for new builds.
 
 `main` remains the review destination. Consolidation does not publish packages,
 move release tags, regenerate data or alter numerical tolerances.
