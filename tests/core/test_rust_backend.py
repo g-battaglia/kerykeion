@@ -77,7 +77,7 @@ def test_subject_with_fixed_star_leaves_no_native_trace_scope():
     # The native fixed-star route now emits its actual provider (#17).
     if _PINNED_LEB_MODE == "leb":
         assert subject.fixed_stars[0].source == "LEB"
-    assert subject.fixed_stars[0].precision_class == "ephemeris"
+        assert subject.fixed_stars[0].precision_class == "ephemeris"
     assert 149.0 < subject.fixed_stars[0].abs_pos < 150.0
     assert ephe.get_trace_results() == {}
 
