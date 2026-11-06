@@ -238,6 +238,9 @@ def score_positions(
 ) -> RelationshipScoreV2Model:
     """Calculate score and data from longitudes, with no interpretation or I/O.
 
+    Both subjects must supply Tropical, Apparent Geocentric longitudes.
+    Their reference frame cannot be verified from bare longitude values.
+
     A special Sun–Sun square/opposition suppresses the destiny +5. All other
     matching solar modalities earn +5 once. No contact is counted twice, and
     there is no arbitrary score cap. The same inputs always produce fresh data.

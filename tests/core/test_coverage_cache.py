@@ -1,110 +1,70 @@
-"""Metadata memoization must not conflate overlapping serving files or settings."""
+"""Coverage metadata must come from the same backend as the calculations."""
 
 from types import SimpleNamespace
 
 import pytest
 
-from kerykeion.ephemeris_backend import coverage as cache
+from kerykeion.ephemeris_backend import coverage
 
 
-@pytest.fixture
-def fake_native(tmp_path, monkeypatch):
-    files = [tmp_path / "base.leb2", tmp_path / "extended.leb2"]
-    for path in files:
-        path.write_bytes(b"fixture")
+def test_coverage_keeps_actual_overlapping_region_selection_and_precision(monkeypatch):
+    records = {"base": SimpleNamespace(data_file="base", precision_class="approximate", reviewed=False),
+               "extended": SimpleNamespace(data_file="extended", precision_class="reference", reviewed=True)}
     calls = []
-    state = {"tier": "extended", "path": str(files[0]), "generation": 0}
 
-    def coverage(body_id, jd):
+    def getter(body_id, jd):
         calls.append((body_id, jd))
-        return SimpleNamespace(data_file="base" if 100 <= jd <= 200 else "extended", reviewed=False)
+        return records["base" if 100 <= jd <= 200 else "extended"]
 
-    backend = SimpleNamespace(
-        __version__="4.0.test",
-        get_body_coverage=coverage,
-        get_leb_reader=lambda: SimpleNamespace(path=state["path"]),
-        get_calc_mode=lambda: "leb",
-        get_precision_tier=lambda: state["tier"],
-        get_leb_reader_generation=lambda: state["generation"],
-        get_current_file_data=lambda: (state["path"], 0.0, 300.0, 441),
-        get_leb_inventory=lambda: {
-            "files": [
-                {"path": str(path), "bodies": [{"body_id": 0, "jd_start": start, "jd_end": end}]}
-                for path, start, end in [(files[0], 100, 200), (files[1], 0, 300)]
-            ]
-        },
-    )
-    monkeypatch.setattr(cache, "ephe", backend)
-    monkeypatch.setattr(cache.inspect, "isbuiltin", lambda _: True)
-    cache.clear_coverage_cache()
-    yield calls, state, files
-    cache.clear_coverage_cache()
+    monkeypatch.setattr(coverage, "ephe", SimpleNamespace(get_body_coverage=getter))
+    for jd, name in [(50., "extended"), (150., "base"), (60., "extended"), (160., "base")]:
+        assert coverage.get_body_coverage(0, jd) is records[name]
+    assert len(calls) == 4
 
 
-def test_overlapping_coverage_regions_are_not_confused(fake_native):
-    calls, _, _ = fake_native
-    old = cache.get_body_coverage(0, 50.0)
-    modern = cache.get_body_coverage(0, 150.0)
-    assert old.data_file == "extended"
-    assert modern.data_file == "base"
-    assert cache.get_body_coverage(0, 60.0) is old
-    assert cache.get_body_coverage(0, 160.0) is modern
-    assert len(calls) == 2
-    assert not old.reviewed and not modern.reviewed
+def test_each_query_observes_backend_replacement_without_retained_records(monkeypatch):
+    state = {"record": object()}
+    backend = SimpleNamespace(get_body_coverage=lambda body_id, jd: state["record"])
+    monkeypatch.setattr(coverage, "ephe", backend)
+    assert coverage.get_body_coverage(0, 150.) is state["record"]
+    state["record"] = object()
+    assert coverage.get_body_coverage(0, 150.) is state["record"]
+    coverage.clear_coverage_cache()
+    assert coverage.get_body_coverage(0, 150.) is state["record"]
 
 
-def test_file_changes_invalidate_records(fake_native):
-    calls, _, files = fake_native
-    first = cache.get_body_coverage(0, 150.0)
-    files[0].write_bytes(b"changed fixture")
-    assert cache.get_body_coverage(0, 150.0) is not first
-    assert len(calls) == 2
+@pytest.mark.parametrize("jd", [None, -50., float("inf"), float("nan")])
+def test_unserved_or_diagnostic_queries_are_forwarded_unchanged(monkeypatch, jd):
+    calls = []
+
+    def getter(body_id, epoch):
+        calls.append((body_id, epoch))
+        return None
+
+    monkeypatch.setattr(coverage, "ephe", SimpleNamespace(get_body_coverage=getter))
+    assert coverage.get_body_coverage(9999, jd) is None
+    assert calls[0][0] == 9999 and calls[0][1] is jd
 
 
-def test_added_group_files_invalidate_records(fake_native):
-    calls, _, files = fake_native
-    first = cache.get_body_coverage(0, 150.0)
-    (files[0].parent / "extra.leb2").write_bytes(b"new group")
-    assert cache.get_body_coverage(0, 150.0) is not first
-    assert len(calls) == 2
+def test_native_query_does_not_probe_or_retain_a_duplicate_inventory(monkeypatch):
+    class Backend:
+        def get_body_coverage(self, body_id, jd):
+            return (body_id, jd)
+
+        def __getattr__(self, name):
+            raise AssertionError("Coverage must not probe other backend APIs")
+
+    monkeypatch.setattr(coverage, "ephe", Backend())
+    assert coverage.get_body_coverage(0, 150.) == (0, 150.)
 
 
-def test_provider_changes_invalidate_records(fake_native):
-    calls, state, _ = fake_native
-    first = cache.get_body_coverage(0, 150.0)
-    state["tier"] = "base"
-    assert cache.get_body_coverage(0, 150.0) is not first
-    assert len(calls) == 2
+def test_backend_errors_are_not_hidden_or_replaced_by_cached_success(monkeypatch):
+    error = RuntimeError("native resource failure")
 
+    def getter(body_id, jd):
+        raise error
 
-def test_provisioning_invalidates_even_when_sun_and_known_paths_are_unchanged(fake_native):
-    """A new serving image need not change any previously inventoried path."""
-    calls, state, _ = fake_native
-    first = cache.get_body_coverage(0, 50.0)
-    state["generation"] += 1
-    assert cache.get_body_coverage(0, 50.0) is not first
-    assert len(calls) == 2
-
-
-def test_virtual_readers_do_not_cache_incomplete_inventory(fake_native):
-    calls, state, _ = fake_native
-    state["path"] = "<bundled>/base_core.leb2"
-    cache.get_body_coverage(0, 150.0)
-    cache.get_body_coverage(0, 150.0)
-    assert len(calls) == 2
-
-
-@pytest.mark.parametrize("body,jd", [(0, -50.0), (9999, 150.0)])
-def test_unserved_or_uninventoried_regions_are_not_cached(fake_native, body, jd):
-    calls, _, _ = fake_native
-    cache.get_body_coverage(body, jd)
-    cache.get_body_coverage(body, jd + 1.0)
-    assert len(calls) == 2
-
-
-def test_monkeypatched_getters_bypass_cache(fake_native, monkeypatch):
-    calls, _, _ = fake_native
-    monkeypatch.setattr(cache.inspect, "isbuiltin", lambda _: False)
-    cache.get_body_coverage(0, 150.0)
-    cache.get_body_coverage(0, 150.0)
-    assert len(calls) == 2
+    monkeypatch.setattr(coverage, "ephe", SimpleNamespace(get_body_coverage=getter))
+    with pytest.raises(RuntimeError) as raised:
+        coverage.get_body_coverage(0, 150.)
+    assert raised.value is error

@@ -160,3 +160,17 @@ def test_custom_note_label_must_be_text(complete_subject):
     with pytest.raises(ValueError, match="ephemeris_omitted_points must be a string"):
         ChartDrawer(ChartDataFactory.create_natal_chart_data(complete_subject),
                     language_pack={"ephemeris_omitted_points": 42})
+
+
+@pytest.mark.parametrize("note,expected", [("Missing\x01 point", "Missing point"), ("Literal var(--paper_0)", "Literal var(--paper_0)")])
+def test_note_text_stays_xml_safe_and_literal_during_css_inlining(note, expected):
+    from kerykeion.charts.ephemeris_notes import append_ephemeris_notes
+    from kerykeion.utilities.core import inline_css_variables_in_svg
+
+    svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:kr="https://www.kerykeion.net/" viewBox="0 0 500 500"><style>:root { --paper_0: #123456; }</style><desc>Chart</desc></svg>'
+    annotated = append_ephemeris_notes(svg, [note], "var(--paper_0)")
+    root = ET.fromstring(inline_css_variables_in_svg(annotated))
+    footer = next(node for node in root if node.get(KR) == "Ephemeris_Notes")
+    assert " ".join(footer.itertext()) == expected
+    assert expected in root.find("s:desc", NS).text
+    assert footer.get("fill") == "#123456"

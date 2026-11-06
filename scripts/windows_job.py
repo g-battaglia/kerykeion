@@ -10,6 +10,8 @@ import subprocess
 import sys
 import uuid
 
+import psutil
+
 
 class WindowsJob:
     """Own a kill-on-close job and a startup event; instantiated on Windows only."""
@@ -25,6 +27,8 @@ class WindowsJob:
             "SetInformationJobObject": ([wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD], wintypes.BOOL),
             "AssignProcessToJobObject": ([wintypes.HANDLE, wintypes.HANDLE], wintypes.BOOL),
             "OpenProcess": ([wintypes.DWORD, wintypes.BOOL, wintypes.DWORD], wintypes.HANDLE),
+            "OpenThread": ([wintypes.DWORD, wintypes.BOOL, wintypes.DWORD], wintypes.HANDLE),
+            "ResumeThread": ([wintypes.HANDLE], wintypes.DWORD),
             "SetEvent": ([wintypes.HANDLE], wintypes.BOOL),
             "CloseHandle": ([wintypes.HANDLE], wintypes.BOOL),
         }
@@ -62,7 +66,7 @@ class WindowsJob:
         return value
 
     def start(self, command: list[str]) -> subprocess.Popen:
-        """Assign the waiting launcher before allowing it to create descendants."""
+        """Assign even a venv redirector before its primary thread can run."""
         launcher = """
 import ctypes, subprocess, sys
 from ctypes import wintypes
@@ -83,17 +87,33 @@ except OSError as exc:
     code = 127
 raise SystemExit(code)
 """
-        child = subprocess.Popen([sys.executable, "-c", launcher, self.name, *command])
+        # Suspending the executable itself is essential: a Windows venv
+        # redirector can create the interpreter before Python reaches the gate.
+        child = subprocess.Popen([sys.executable, "-c", launcher, self.name, *command], creationflags=0x00000004)
         try:
             process = self._check(self.kernel.OpenProcess(0x0100 | 0x0001, False, child.pid))
             try:
                 self._check(self.kernel.AssignProcessToJobObject(self.job, process))
+                threads = psutil.Process(child.pid).threads()
+                if len(threads) != 1:
+                    raise RuntimeError("Suspended launcher must have exactly one initial thread")
+                thread = self._check(self.kernel.OpenThread(0x0002, False, threads[0].id))
+                try:
+                    self._check(self.kernel.SetEvent(self.event))
+                    previous = self.kernel.ResumeThread(thread)
+                    if previous == 0xFFFFFFFF:
+                        raise ctypes.WinError(ctypes.get_last_error())
+                    if previous != 1:
+                        raise RuntimeError("Unexpected launcher suspension count")
+                finally:
+                    self.kernel.CloseHandle(thread)
             finally:
                 self.kernel.CloseHandle(process)
-            self._check(self.kernel.SetEvent(self.event))
         except BaseException:
-            child.kill()
-            child.wait()
+            try:
+                child.kill()
+            finally:
+                child.wait()
             raise
         return child
 

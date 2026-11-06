@@ -99,7 +99,7 @@ def manifest() -> dict:
     return data
 
 
-def require_temporal_snapshot_inputs(subject_id: str) -> None:
+def require_temporal_snapshot_inputs(subject_id: str, *, producer_inputs: dict[str, str] | None = None) -> None:
     """Check the known coefficient contract of the two DE440 lunar snapshots.
 
     The qualified automatic inventory serves these dates with medium/DE440
@@ -121,7 +121,12 @@ def require_temporal_snapshot_inputs(subject_id: str) -> None:
         "inventory (unset LIBEPHEMERIS_LEB), or medium_core.leb2. An explicit "
         "extended core is a different model, not a failure of numerical precision."
     )
-    inputs = {item["name"]: item["sha256"] for item in manifest()["inputs"]}
+    if producer_inputs is not None and not (MODEL_ROOT / "manifest.json").is_file():
+        assert ephe.__version__ == "4.0.0b1", "Only the original producer can create new reference inputs"
+        inputs = producer_inputs
+    else:
+        # A producer hint can never override an existing immutable manifest.
+        inputs = {item["name"]: item["sha256"] for item in manifest()["inputs"]}
     verify_file(path, inputs[path.name])
     if path.name == "base_core.leb2":
         medium = [Path(item["path"]) for item in ephe.get_leb_inventory()["files"]

@@ -332,8 +332,8 @@ def _assert_minified_glyph_geometry(svg: Path, block: str) -> None:
 
 
 def test_minified_geometry_guard_detects_a_changed_outline(tmp_path):
-    source = next(path for path in GLYPHED if _MINIFIED_PATH.search(_glyph_block(path.read_text()) or ""))
-    block = _glyph_block(source.read_text())
+    source = next(path for path in GLYPHED if _MINIFIED_PATH.search(_glyph_block(path.read_text(encoding="utf-8")) or ""))
+    block = _glyph_block(source.read_text(encoding="utf-8"))
     assert block is not None
     namespace = "http://www.w3.org/2000/svg"
     tree = ET.parse(source)

@@ -6,6 +6,7 @@ import re
 from typing import Any
 
 from kerykeion.charts.glyph_metrics import estimate_text_width
+from kerykeion.charts.utils import escape_svg_text
 
 
 # These labels belong to the opt-in footer. Keeping them out of the ordinary
@@ -143,11 +144,11 @@ def append_ephemeris_notes(
     new_height = height + 2 * margin + line_height * len(lines)
     updated_root = root.group()[:box.start(2)] + " ".join((*coordinates[:3], str(new_height))) + root.group()[box.end(2):]
     svg = svg[:root.start()] + updated_root + svg[root.end():]
-    description = escape(" ".join(notes), quote=True)
+    description = escape_svg_text(" ".join(notes))
     svg = re.sub(r"(</desc\s*>)", lambda match: " " + description + match[0], svg, count=1)
     rows = "".join(
         f'<text x="{left + margin:g}" y="{top + height + margin + line_height * (index + 1):g}">'
-        f'{escape(line, quote=True)}</text>'
+        f'{escape_svg_text(line)}</text>'
         for index, line in enumerate(lines)
     )
     footer = (

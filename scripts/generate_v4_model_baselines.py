@@ -208,6 +208,16 @@ def same_svg(legacy: str, actual: str, options: dict) -> bool:
 
 def svg_fixtures(stage: Path) -> dict:
     captured = {}
+    producer_inputs = None
+    if not DESTINATION.exists():
+        from libephemeris.download import DATA_FILES
+
+        # Creation has no destination manifest yet. Bind its temporal recipes
+        # to the original producer's official image hashes instead; existing
+        # sets continue to validate their frozen manifest without overrides.
+        assert ephe.__version__ == "4.0.0b1"
+        producer_inputs = {item["name"]: item["sha256"] for item in input_inventory()}
+        assert all(DATA_FILES[name]["sha256"] == checksum for name, checksum in producer_inputs.items())
 
     def collect(path, svg, **options):
         path = Path(path)
@@ -224,12 +234,23 @@ def svg_fixtures(stage: Path) -> dict:
             modules = [importlib.import_module("tests.data.compare_svg_lines")]
             modules.extend(importlib.import_module(name) for name in GOLDEN_TEST_MODULES)
             self.originals = [(module, module.compare_svg_file) for module in modules]
+            self.snapshot_originals = []
             for module, _original in self.originals:
                 module.compare_svg_file = collect
+                if producer_inputs is not None and hasattr(module, "require_temporal_snapshot_inputs"):
+                    original = module.require_temporal_snapshot_inputs
+                    self.snapshot_originals.append((module, original))
+
+                    def require_inputs(subject_id, _original=original):
+                        return _original(subject_id, producer_inputs=producer_inputs)
+
+                    module.require_temporal_snapshot_inputs = require_inputs
 
         def pytest_unconfigure(self, config):
             for module, original in self.originals:
                 module.compare_svg_file = original
+            for module, original in self.snapshot_originals:
+                module.require_temporal_snapshot_inputs = original
 
     paths = [str(ROOT / (name.replace(".", "/") + ".py")) for name in GOLDEN_TEST_MODULES]
     result = pytest.main(

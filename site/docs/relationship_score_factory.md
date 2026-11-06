@@ -149,7 +149,9 @@ contain Sun, Moon, Ascendant, Venus and Mars. The constructor snapshots its inpu
 each `get_relationship_score()` call returns independent data. The existing
 `RelationshipScoreFactory` and its configuration options keep their v1 behavior.
 
-For calculations from known longitudes, use the pure numerical entry point:
+For calculations from known longitudes, use the pure numerical entry point.
+Both subjects must supply Tropical, Apparent Geocentric longitudes: bare
+numbers cannot verify their reference frame.
 
 ```python
 from kerykeion.relationship_score.v2 import score_positions

@@ -5,6 +5,20 @@
 ### Fixed
 
 - Primary-directions speculum points on the horizon consistently use the documented inclusive diurnal semi-arc across platforms. Equatorial roundoff no longer flips the horizon flag or selects the complementary nocturnal semi-arc. Resolved below-horizon and circumpolar classifications are preserved.
+- Delegate coverage metadata directly to the native runtime's shared snapshot,
+  removing per-point inventory filesystem scans and duplicate Python records.
+- Escape optional note text as SVG text, including XML control characters and
+  literal CSS-variable tokens, while preserving CSS variables in configured colors.
+- Validate fresh historical-reference generation against the original producer's
+  pinned inputs before the destination manifest exists; existing references remain immutable.
+- Suspend the Windows development watchdog's executable before job assignment,
+  including venv redirectors, and resume only after successful containment.
+- Read glyph regression inputs explicitly as UTF-8 on non-UTF-8 locales.
+
+### Documentation
+
+- State the Tropical, Apparent Geocentric input requirement of bare-longitude
+  relationship scoring, and point archived release guidance to the current beta.
 
 
 ## [6.1.0b3] - 2026-11-05
