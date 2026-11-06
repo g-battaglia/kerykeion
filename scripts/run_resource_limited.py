@@ -173,7 +173,15 @@ def run_command(command: list[str], *, rss_limit_bytes: int, interval: float = 0
             try:
                 process = psutil.Process(child.pid)
             except psutil.NoSuchProcess:
-                return RunResult(child.wait(), 0)
+                # Retire the owned group before wait() can release its PGID.
+                # Clear ownership only after cleanup so finally cannot signal
+                # that already-reaped process-group identity a second time.
+                _stop_tree(child, known, job)
+                assert child.returncode is not None
+                result = RunResult(child.returncode, 0)
+                child = None
+                job = None
+                return result
             known[process.pid] = process
             if os.name == "posix":
                 try:

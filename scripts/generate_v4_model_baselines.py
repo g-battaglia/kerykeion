@@ -156,7 +156,7 @@ print(json.dumps(results))
         [str(geometry_python), "-I", "-c", program],
         input=json.dumps(controls),
         text=True,
-        capture_output=True,
+        stdout=subprocess.PIPE,
         check=True,
     )
     references = json.loads(result.stdout)

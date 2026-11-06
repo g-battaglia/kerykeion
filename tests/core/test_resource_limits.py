@@ -374,3 +374,35 @@ def test_group_eperm_for_a_live_leader_remains_an_error(monkeypatch):
     assert error.value is denied
     kill.assert_called_once_with(123, signal.SIGKILL)
     assert sleep.call_count == 10
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX process-group identity ownership")
+def test_initial_missing_process_handle_stops_group_before_reaping_once(monkeypatch):
+    """Initial lookup failure cannot signal a process group after its PID is reaped."""
+    events = []
+
+    class Child:
+        """Expose only the owned child operations needed by this failure path."""
+        pid = 123
+        returncode = None
+
+        def wait(self):
+            """Record the final reap after every group signal has been sent."""
+            events.append("wait")
+            self.returncode = 0
+            return 0
+
+        def poll(self):
+            """Reject any second cleanup pass over the reaped process identity."""
+            raise AssertionError("The completed child must not be polled or signalled again")
+
+    def missing(pid):
+        """Simulate failure of the first process-handle lookup."""
+        raise psutil.NoSuchProcess(pid)
+
+    monkeypatch.setattr(run_resource_limited.subprocess, "Popen", lambda *args, **kwargs: Child())
+    monkeypatch.setattr(run_resource_limited.psutil, "Process", missing)
+    monkeypatch.setattr(run_resource_limited, "_signal_group", lambda pid, sig: events.append(sig))
+    result = run_command(["synthetic-owned-child"], rss_limit_bytes=256 * 2**20)
+    assert result.returncode == 0 and result.peak_rss == 0 and not result.limit_exceeded
+    assert events == [signal.SIGTERM, signal.SIGKILL, "wait"]

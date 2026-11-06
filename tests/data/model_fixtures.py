@@ -144,7 +144,7 @@ def require_temporal_snapshot_inputs(subject_id: str, *, producer_inputs: dict[s
 def numeric() -> dict:
     """Load the verified numeric fixture for the active model."""
     path = verify_file(MODEL_ROOT / "positions.json", manifest()["numeric_sha256"])
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def positions_for_model(legacy: dict) -> dict:
