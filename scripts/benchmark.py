@@ -139,6 +139,7 @@ def main():
     results = {}
 
     def measure(label, func, *, iterations=None):
+        """Record the configured timing samples for one named workload."""
         results[label] = bench(
             label,
             func,
@@ -255,6 +256,7 @@ def main():
     print("\n[4] Full pipeline (create subject + ChartData + SVG)")
 
     def full_pipeline(style):
+        """Calculate a fresh subject and render a complete natal chart."""
         subject = create_subject(*SUBJECTS_DATA[0])
         data = ChartDataFactory.create_chart_data("Natal", subject)
         return ChartDrawer(data, theme="classic", style=style).generate_svg_string()

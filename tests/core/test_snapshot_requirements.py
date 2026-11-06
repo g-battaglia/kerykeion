@@ -14,11 +14,13 @@ from tests.data.test_subjects_matrix import TEMPORAL_SUBJECTS
 
 
 class BackendError(Exception):
+    """Represent the controlled backend failure in snapshot availability tests."""
     pass
 
 
 @pytest.fixture
 def missing_chiron(monkeypatch):
+    """Simulate unavailable Chiron while preserving the other required inputs."""
     subject = SimpleNamespace(**{name.lower(): object() for name in DEFAULT_ACTIVE_POINTS})
     subject.chiron = None
     subject.julian_day = 2_000_000.0
@@ -34,9 +36,11 @@ def missing_chiron(monkeypatch):
     ("date outside supported range", "supported coverage"),
 ])
 def test_only_confirmed_body_limitations_exclude_full_snapshots(monkeypatch, missing_chiron, message, reason):
+    """Verify only confirmed body limitations exclude full snapshots."""
     calls = []
 
     def calculate(jd, body, flags):
+        """Exercise the controlled point-availability calculation."""
         calls.append((jd, body, flags))
         raise BackendError(message)
 
@@ -48,13 +52,16 @@ def test_only_confirmed_body_limitations_exclude_full_snapshots(monkeypatch, mis
 
 
 def test_successful_native_call_with_omitted_consumer_point_is_a_failure(monkeypatch, missing_chiron):
+    """Verify successful native call with omitted consumer point is a failure."""
     monkeypatch.setattr(requirements, "ephe", SimpleNamespace(Error=BackendError, calc_ut=lambda *args: None))
     with pytest.raises(AssertionError, match="Kerykeion omitted"):
         requirements.unavailable_snapshot_points(missing_chiron)
 
 
 def test_unexpected_error_does_not_become_a_skip(monkeypatch, missing_chiron):
+    """Verify unexpected error does not become a skip."""
     def calculate(*args):
+        """Exercise the controlled point-availability calculation."""
         raise BackendError("unexpected internal calculation failure")
 
     monkeypatch.setattr(requirements, "ephe", SimpleNamespace(Error=BackendError, calc_ut=calculate))
@@ -63,6 +70,7 @@ def test_unexpected_error_does_not_become_a_skip(monkeypatch, missing_chiron):
 
 
 def test_missing_structured_warning_is_a_failure(missing_chiron):
+    """Verify missing structured warning is a failure."""
     missing_chiron.ephemeris_warnings = []
     with pytest.raises(AssertionError, match="without an ephemeris warning"):
         requirements.unavailable_snapshot_points(missing_chiron)
@@ -72,6 +80,7 @@ def test_missing_structured_warning_is_a_failure(missing_chiron):
 @pytest.mark.parametrize("data", [data for data in TEMPORAL_SUBJECTS if data["year"] < 1800],
                          ids=lambda data: data["id"])
 def test_historical_omissions_are_verified_even_when_complete_snapshot_is_unavailable(data):
+    """Verify historical omissions are verified even when complete snapshot is unavailable."""
     subject = create_subject_from_temporal_data(data)
     unavailable = requirements.unavailable_snapshot_points(subject)
     chart = ChartDataFactory.create_natal_chart_data(subject)

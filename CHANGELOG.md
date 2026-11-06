@@ -4,6 +4,7 @@
 
 - Require SVG Polish 1.0.1 or newer so existing installations also receive the qualified SVG cleanup and traversal optimizations.
 - Complete development-watchdog docstrings required by review. No ephemeris algorithms or scientific references change.
+- Classify the native stored-JPL provider as ephemeris-grade without promoting unknown future providers.
 - Include approximate active midpoints in opt-in SVG provenance notes. Strengthen transparent partial-export footer layout tests and backend trace tests for non-LEB modes.
 
 ## [6.1.0b4] - 2026-11-06

@@ -14,12 +14,14 @@ import math
 
 @lru_cache(maxsize=1)
 def timescale():
+    """Provide the independent oracle timescale."""
     from skyfield.api import load
 
     return load.timescale(builtin=True)
 
 
 def angular_distance(left: float, right: float) -> float:
+    """Return the wrapped angular separation used by the independent oracle."""
     return abs((left - right + 180.0) % 360.0 - 180.0)
 
 

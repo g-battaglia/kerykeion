@@ -38,6 +38,7 @@ class RelationshipScoreFactoryV2:
     """
 
     def __init__(self, first_subject: AstrologicalSubjectModel, second_subject: AstrologicalSubjectModel):
+        """Validate and snapshot both subjects before extracting their scoring positions."""
         _validate_subjects(first_subject, second_subject)
         self._first_subject = first_subject.model_copy(deep=True)
         self._second_subject = second_subject.model_copy(deep=True)

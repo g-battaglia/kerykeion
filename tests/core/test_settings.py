@@ -25,6 +25,7 @@ class TestLoadSettingsMapping:
     @pytest.fixture(autouse=True)
     def deprecation_contract(self):
         # Require the warning emitted by the deprecated API under test.
+        """Capture the expected deprecation behavior for settings access."""
         with pytest.deprecated_call(match="load_settings_mapping is deprecated") as recorded:
             yield
         assert len(recorded) == 1

@@ -20,6 +20,7 @@ MODEL_ROOT = ROOT / "tests/data/model_baselines" / MODEL
 
 
 def active_model(backend: str | None = None, version: str | None = None) -> str | None:
+    """Select the explicitly qualified model for the current backend."""
     if backend is None:
         from kerykeion.ephemeris_backend import BACKEND_NAME
 
@@ -42,6 +43,7 @@ def active_model(backend: str | None = None, version: str | None = None) -> str 
 
 
 def file_sha256(path: Path) -> str:
+    """Fingerprint a reference file without materializing its complete contents."""
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
@@ -49,10 +51,12 @@ def file_sha256(path: Path) -> str:
 @lru_cache(maxsize=1024)
 def _verified_digest(path: Path, expected: str, size: int, modified_ns: int) -> None:
     # Stat fields invalidate memoization when a file changes during a test run.
+    """Check a file digest before allowing cached reference reuse."""
     assert file_sha256(path) == expected, f"Frozen model reference changed: {path}"
 
 
 def verify_file(path: Path, expected: str) -> Path:
+    """Reject a reference whose bytes differ from the frozen manifest."""
     assert path.is_file(), f"Missing model reference: {path}"
     stat = path.stat()
     _verified_digest(path, expected, stat.st_size, stat.st_mtime_ns)
@@ -94,6 +98,7 @@ def patch_qualification(version: str) -> dict:
 
 @lru_cache(maxsize=1)
 def manifest() -> dict:
+    """Load and validate the selected immutable producer manifest."""
     data = json.loads((MODEL_ROOT / "manifest.json").read_text())
     assert data["schema"] == 1 and data["model"] == MODEL and data["engine_version"] == "4.0.0b1"
     return data
@@ -137,11 +142,13 @@ def require_temporal_snapshot_inputs(subject_id: str, *, producer_inputs: dict[s
 
 @lru_cache(maxsize=1)
 def numeric() -> dict:
+    """Load the verified numeric fixture for the active model."""
     path = verify_file(MODEL_ROOT / "positions.json", manifest()["numeric_sha256"])
     return json.loads(path.read_text())
 
 
 def positions_for_model(legacy: dict) -> dict:
+    """Return position references for the explicitly selected model."""
     if active_model() is None:
         return legacy
     data = manifest()
@@ -159,6 +166,7 @@ def positions_for_model(legacy: dict) -> dict:
 
 
 def arabic_parts_for_model(legacy: dict) -> dict:
+    """Return Arabic-part references from the verified model fixtures."""
     if active_model() is None:
         return legacy
     data = manifest()

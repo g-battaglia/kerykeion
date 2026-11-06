@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 
 def __getattr__(name: str):
+    """Resolve an advertised score export only when it is first requested."""
     if name in _V2_MODELS:
         value = getattr(import_module(".v2.models", __name__), name)
         globals()[name] = value
@@ -29,6 +30,7 @@ def __getattr__(name: str):
 
 
 def __dir__():
+    """List the advertised score exports without eagerly importing their modules."""
     return sorted(set(globals()) | set(_V2_MODELS))
 
 

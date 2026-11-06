@@ -244,7 +244,7 @@ _FIXED_STAR_KEY_PREFIX = "fixed_stars::"
 # "ephemeris" would overstate them (and would silently mislabel any source
 # label a future libephemeris adds), so unrecognized labels fall back to
 # "numerical-model" instead. Compared lowercased.
-_EPHEMERIS_GRADE_SOURCES = frozenset({"leb", "spk", "skyfield"})
+_EPHEMERIS_GRADE_SOURCES = frozenset({"leb", "spk", "skyfield", "nativejpl"})
 
 
 def _precision_class_for_source(source: str) -> str:

@@ -16,6 +16,7 @@ from kerykeion.moon_phase_details import utils
 @pytest.mark.parametrize("native", [False, True])
 @pytest.mark.parametrize("configured", ["", "/configured/ephe"])
 def test_lunar_helper_uses_backend_path_rules(monkeypatch, native, configured):
+    """Verify lunar helper uses backend path rules."""
     setter = Mock()
     monkeypatch.setattr(backend, "BACKEND_NAME", "libephemeris" if native else "swisseph")
     monkeypatch.setattr(backend, "EPHE_DATA_PATH", configured)
@@ -32,6 +33,7 @@ def test_lunar_helper_uses_backend_path_rules(monkeypatch, native, configured):
 
 @pytest.mark.parametrize("native", [False, True])
 def test_lunar_helper_preserves_active_native_override_and_swiss_behavior(monkeypatch, native):
+    """Verify lunar helper preserves active native override and swiss behavior."""
     setter = Mock()
     monkeypatch.setattr(backend, "BACKEND_NAME", "libephemeris" if native else "swisseph")
     monkeypatch.setattr(backend, "EPHE_DATA_PATH", "")
@@ -44,6 +46,7 @@ def test_lunar_helper_preserves_active_native_override_and_swiss_behavior(monkey
 
 
 def test_sealed_embedded_base_path_probe():
+    """Verify sealed embedded base path probe."""
     root = Path(__file__).resolve().parents[2]
     env = {**os.environ, "PYTHONPATH": str(root)}
     result = subprocess.run(
@@ -58,6 +61,7 @@ def test_sealed_embedded_base_path_probe():
 
 
 def test_real_configured_path_survives_lunar_helpers(tmp_path):
+    """Verify real configured path survives lunar helpers."""
     root = Path(__file__).resolve().parents[2]
     data = tmp_path / "data"
     data.mkdir()

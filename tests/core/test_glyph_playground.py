@@ -160,6 +160,7 @@ def test_synthetic_clusters_detect_an_active_ceiling(angle, binds):
     radii = {row: dm.CENTER - getattr(profile, row + "_y") for row in ("glyph", "degrees", "sign", "minutes", "rx")}
 
     def resolve(ceiling):
+        """Resolve one fixture using the playground contract."""
         entries = [
             {"point": SimpleNamespace(name=f"P{i}"), "angle": angle + i * 0.01, "row_half_widths": ink}
             for i in range(2)
@@ -178,6 +179,7 @@ def test_synthetic_clusters_detect_an_active_ceiling(angle, binds):
 
 @pytest.mark.parametrize(("first", "second"), [(0.0, 360.0), (12.00000001, 12.00000002)])
 def test_display_layout_uses_rendered_precision_and_circular_equivalence(first, second):
+    """Verify display layout uses rendered precision and circular equivalence."""
     point = SimpleNamespace(name="Sun")
     assert display_layout([{"point": point, "display_angle": first}]) == display_layout(
         [{"point": point, "display_angle": second}]
@@ -185,6 +187,7 @@ def test_display_layout_uses_rendered_precision_and_circular_equivalence(first, 
 
 
 def test_captured_layout_matches_actual_svg_rotations(charts):
+    """Verify captured layout matches actual svg rotations."""
     svg, layouts = render_with_layout(charts["natal"], "medium", [step_clearance(0)])
     kr = "{https://www.kerykeion.net/}"
     actual = []
@@ -208,6 +211,7 @@ def test_manifest_uses_geometry_not_svg_text(monkeypatch, layout_moves, svg_text
     monkeypatch.setattr(playground.ChartDataFactory, "create_synastry_chart_data", lambda *_: "synastry")
 
     def render_fixture(chart, size, clearances, unbound=()):
+        """Render a deterministic glyph-playground fixture."""
         shifted = bool(unbound) and chart == "synastry"
         svg = "<svg><!-- changed text --></svg>" if shifted and svg_text_changes else "<svg/>"
         angle = 20.0 if shifted and layout_moves else 10.0

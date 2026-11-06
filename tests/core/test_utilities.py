@@ -1550,6 +1550,7 @@ def ambiguous_house_reader(monkeypatch):
     from kerykeion.relocated_chart import factory as relocated_factory
 
     def numeric_lookup(*_args, **_kwargs):
+        """Supply numeric positions through the utility lookup contract."""
         return "Third_House"
 
     monkeypatch.setattr(subject_factory, "get_planet_house", numeric_lookup)

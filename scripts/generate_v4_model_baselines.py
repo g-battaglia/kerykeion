@@ -46,11 +46,13 @@ DESTINATION = ROOT / "tests/data/model_baselines" / MODEL
 
 
 def digest(path: Path) -> str:
+    """Hash a fixture file without loading all of its bytes at once."""
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
 def legacy_inventory() -> dict[str, str]:
+    """Fingerprint the legacy reference files before any producer capture."""
     paths = [ROOT / "tests/data/expected_positions.py", ROOT / "tests/data/expected_arabic_parts.py"]
     paths += sorted(SVG_DIR.glob("*.svg"))
     paths += sorted((ROOT / "tests/fixtures").glob("*.txt"))
@@ -77,6 +79,7 @@ def source_digest() -> str:
 
 
 def projected_point(point, expected: dict) -> dict:
+    """Select the stable point fields used by the frozen model references."""
     actual = point.model_dump(mode="json")
     missing = set(expected) - set(actual)
     if missing:
@@ -85,6 +88,7 @@ def projected_point(point, expected: dict) -> dict:
 
 
 def numeric_fixtures(geometry_python: Path) -> tuple[dict, dict]:
+    """Capture the independently qualified producer numeric fixtures."""
     positions, arabic, controls = {}, {}, []
     from tests.core.test_report import _assert_report_match
 
@@ -190,6 +194,7 @@ print(json.dumps(results))
 
 
 def same_svg(legacy: str, actual: str, options: dict) -> bool:
+    """Compare candidate SVG recipes under the established structural rules."""
     left, right = legacy.splitlines(), actual.splitlines()
     if len(left) != len(right):
         return False
@@ -207,6 +212,7 @@ def same_svg(legacy: str, actual: str, options: dict) -> bool:
 
 
 def svg_fixtures(stage: Path) -> dict:
+    """Capture producer SVG fixtures through the real pytest lifecycle."""
     captured = {}
     producer_inputs = None
     if not DESTINATION.exists():
@@ -220,6 +226,7 @@ def svg_fixtures(stage: Path) -> dict:
         assert all(DATA_FILES[name]["sha256"] == checksum for name, checksum in producer_inputs.items())
 
     def collect(path, svg, **options):
+        """Record each SVG recipe once and reject conflicting duplicate outputs."""
         path = Path(path)
         assert path.parent.resolve() == SVG_DIR.resolve(), path
         if path.name in captured:
@@ -231,6 +238,7 @@ def svg_fixtures(stage: Path) -> dict:
         """Use pytest's real fixture/setup/skip lifecycle, not a partial driver."""
 
         def pytest_configure(self, config):
+            """Redirect fixture comparisons for the duration of producer capture."""
             modules = [importlib.import_module("tests.data.compare_svg_lines")]
             modules.extend(importlib.import_module(name) for name in GOLDEN_TEST_MODULES)
             self.originals = [(module, module.compare_svg_file) for module in modules]
@@ -242,11 +250,13 @@ def svg_fixtures(stage: Path) -> dict:
                     self.snapshot_originals.append((module, original))
 
                     def require_inputs(subject_id, _original=original):
+                        """Bind temporal input validation to the original producer inventory."""
                         return _original(subject_id, producer_inputs=producer_inputs)
 
                     module.require_temporal_snapshot_inputs = require_inputs
 
         def pytest_unconfigure(self, config):
+            """Restore every comparison function and temporal-input validator."""
             for module, original in self.originals:
                 module.compare_svg_file = original
             for module, original in self.snapshot_originals:
@@ -290,6 +300,7 @@ def report_fixture(stage: Path) -> dict:
 
 
 def main() -> None:
+    """Validate the published producer and create its separate reference set."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--geometry-python", type=Path, default=ROOT / ".venv/bin/python")
     parser.add_argument("--check", action="store_true")

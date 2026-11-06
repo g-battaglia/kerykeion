@@ -502,6 +502,7 @@ def check_loggers(report: Report) -> None:
 # --fresh-imports
 # --------------------------------------------------------------------------- #
 def check_fresh_imports(report: Report, *, jobs: int = 1) -> None:
+    """Import each package module in an isolated interpreter and record failures."""
     modules: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
         if "__pycache__" in path.parts:

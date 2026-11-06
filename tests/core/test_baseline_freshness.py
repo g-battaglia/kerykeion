@@ -303,6 +303,7 @@ def test_every_baseline_draws_the_current_glyphs(svg: Path):
 
 
 def _assert_minified_glyph_geometry(svg: Path, block: str) -> None:
+    """Check that minification preserves the exported glyph geometry."""
     from svg_polish import optimize
 
     namespace = "http://www.w3.org/2000/svg"
@@ -332,6 +333,7 @@ def _assert_minified_glyph_geometry(svg: Path, block: str) -> None:
 
 
 def test_minified_geometry_guard_detects_a_changed_outline(tmp_path):
+    """Verify minified geometry guard detects a changed outline."""
     source = next(path for path in GLYPHED if _MINIFIED_PATH.search(_glyph_block(path.read_text(encoding="utf-8")) or ""))
     block = _glyph_block(source.read_text(encoding="utf-8"))
     assert block is not None

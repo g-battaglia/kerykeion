@@ -13,6 +13,7 @@ from kerykeion.settings import translations
 
 @pytest.fixture(scope="module")
 def subjects():
+    """Build deterministic subjects for output and allocation contracts."""
     return [
         AstrologicalSubjectFactory.from_birth_data(
             name,
@@ -32,6 +33,7 @@ def subjects():
 
 
 def test_translation_copy_preserves_graph_and_custom_mapping(monkeypatch):
+    """Verify translation copy preserves graph and custom mapping."""
     shared = {"label": "shared"}
     source = {"first": shared, "second": shared, "custom": UserDict({"values": [shared]})}
     source["cycle"] = source
@@ -47,6 +49,7 @@ def test_translation_copy_preserves_graph_and_custom_mapping(monkeypatch):
 
 
 def test_english_pair_is_independent_even_for_shared_nested_values(monkeypatch):
+    """Verify english pair is independent even for shared nested values."""
     nested = {"values": [1]}
     monkeypatch.setitem(translations.LANGUAGE_SETTINGS["EN"], "custom", nested)
     selected, fallback = translations.load_language_pair("EN")
@@ -69,6 +72,7 @@ def test_drawer_snapshots_nested_translation_models(subjects, monkeypatch):
 
 
 def test_drawers_validate_live_translations_without_retaining_mutable_defaults(subjects, monkeypatch):
+    """Verify drawers validate live translations without retaining mutable defaults."""
     data = ChartDataFactory.create_chart_data("Natal", subjects[0])
     first = ChartDrawer(data, language_pack={"info": "Override"})
     first.language_settings["celestial_points"]["Sun"] = "Changed"
@@ -88,10 +92,12 @@ def test_drawers_validate_live_translations_without_retaining_mutable_defaults(s
     "export", ["generate_svg_string", "generate_wheel_only_svg_string", "generate_aspect_grid_only_svg_string"]
 )
 def test_exports_do_not_build_unused_fragments(subjects, kind, export, monkeypatch):
+    """Verify exports do not build unused fragments."""
     data = ChartDataFactory.create_chart_data(kind, subjects[0], *subjects[1:] if kind != "Natal" else [])
     drawer = ChartDrawer(data)
 
     def unused(*args, **kwargs):
+        """Reject an unexpected fallback computation."""
         raise AssertionError("unused fragment was built")
 
     monkeypatch.setattr(drawer._renderer, "setup_wheel", unused)
@@ -103,6 +109,7 @@ def test_exports_do_not_build_unused_fragments(subjects, kind, export, monkeypat
 
 @pytest.mark.parametrize("kind", ["Natal", "Synastry"])
 def test_style_and_output_overrides_do_not_leave_stale_geometry(subjects, kind):
+    """Verify style and output overrides do not leave stale geometry."""
     data = ChartDataFactory.create_chart_data(kind, subjects[0], *subjects[1:] if kind != "Natal" else [])
     reused = ChartDrawer(data)
     for style in ("classic", "modern", "classic", "modern"):
@@ -114,6 +121,7 @@ def test_style_and_output_overrides_do_not_leave_stale_geometry(subjects, kind):
 
 @pytest.mark.parametrize("extra", [0.0, -2.0, 20.0, {"conjunction": 9.0, "square": -2.0}])
 def test_prepared_aspects_preserve_overlaps_wrap_and_ties(extra):
+    """Verify prepared aspects preserve overlaps wrap and ties."""
     settings = [
         {"name": "conjunction", "degree": 0, "orb": 50},
         {"name": "sextile", "degree": 60, "orb": 50},
@@ -131,11 +139,13 @@ def test_prepared_aspects_preserve_overlaps_wrap_and_ties(extra):
 
 
 class _UnhashableFloat(float):
+    """Reject accidental reliance on hashable numeric chart coordinates."""
     __hash__ = None
 
 
 @pytest.mark.parametrize("method", ["single_chart_aspects", "dual_chart_aspects"])
 def test_custom_numeric_orb_adjustments_keep_the_general_path(subjects, method):
+    """Verify custom numeric orb adjustments keep the general path."""
     args = subjects if method == "dual_chart_aspects" else subjects[:1]
     calculate = getattr(AspectsFactory, method)
     expected = calculate(*args, point_orb_adjustments={"Sun": 1.5}).model_dump()
@@ -146,12 +156,14 @@ def test_custom_numeric_orb_adjustments_keep_the_general_path(subjects, method):
 @pytest.mark.parametrize("method", ["single_chart_aspects", "dual_chart_aspects"])
 @pytest.mark.parametrize("strategy", ["none", "sum", "max_explicit", "min_explicit"])
 def test_factory_prepared_aspects_match_public_pair_calculation(subjects, method, strategy):
+    """Verify factory prepared aspects match public pair calculation."""
     args = subjects if method == "dual_chart_aspects" else subjects[:1]
     calculate = getattr(AspectsFactory, method)
     kwargs = dict(point_orb_adjustments={"Sun": 1.5, "Moon": -2.0}, point_orb_adjustment_strategy=strategy)
     actual = calculate(*args, **kwargs).model_dump()
 
     def reference(prepared, first, second):
+        """Calculate the established control result for this comparison."""
         settings = [{"degree": degree, "orb": orb, "name": name} for degree, orb, name in prepared]
         return aspect_utils.get_aspect_from_two_points(settings, first, second)
 
@@ -160,6 +172,7 @@ def test_factory_prepared_aspects_match_public_pair_calculation(subjects, method
 
 
 def test_astrocartography_builds_models_after_releasing_backend_session(subjects, monkeypatch):
+    """Verify astrocartography builds models after releasing backend session."""
     from contextlib import contextmanager
     from kerykeion.astro_cartography import factory
 
@@ -169,6 +182,7 @@ def test_astrocartography_builds_models_after_releasing_backend_session(subjects
 
     @contextmanager
     def tracked_session():
+        """Observe session ownership without changing its behavior."""
         nonlocal in_session
         with original_session() as flags:
             in_session = True
@@ -178,6 +192,7 @@ def test_astrocartography_builds_models_after_releasing_backend_session(subjects
                 in_session = False
 
     def point(**kwargs):
+        """Build the point fixture used by the comparison contract."""
         assert not in_session
         return original_point(**kwargs)
 

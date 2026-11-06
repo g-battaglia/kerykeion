@@ -27,6 +27,7 @@ import pytest
 
 
 def _try_import(name: str):
+    """Probe optional backend availability without changing the active backend."""
     try:
         return importlib.import_module(name)
     except ImportError:
@@ -251,15 +252,19 @@ print(subject.model_dump_json())
         return results
 
     def test_sun_sign_matches(self, subjects):
+        """Both isolated backends must report the same solar sign."""
         assert subjects["swisseph"].sun.sign == subjects["libephemeris"].sun.sign
 
     def test_moon_sign_matches(self, subjects):
+        """Both isolated backends must report the same lunar sign."""
         assert subjects["swisseph"].moon.sign == subjects["libephemeris"].moon.sign
 
     def test_ascendant_sign_matches(self, subjects):
+        """Both isolated backends must report the same Ascendant sign."""
         assert subjects["swisseph"].ascendant.sign == subjects["libephemeris"].ascendant.sign
 
     def test_sun_position_close(self, subjects):
+        """Solar longitudes must remain inside the existing backend comparison budget."""
         diff = _angular_diff(
             subjects["swisseph"].sun.abs_pos,
             subjects["libephemeris"].sun.abs_pos,
@@ -267,6 +272,7 @@ print(subject.model_dump_json())
         assert diff < 0.02, f"Sun abs_pos diff: {diff:.6f}°"
 
     def test_moon_position_close(self, subjects):
+        """Lunar longitudes must remain inside the existing backend comparison budget."""
         diff = _angular_diff(
             subjects["swisseph"].moon.abs_pos,
             subjects["libephemeris"].moon.abs_pos,
@@ -274,4 +280,5 @@ print(subject.model_dump_json())
         assert diff < 0.05, f"Moon abs_pos diff: {diff:.6f}°"
 
     def test_house_system_name_matches(self, subjects):
+        """Both isolated backends must retain the requested house-system name."""
         assert subjects["swisseph"].houses_system_name == subjects["libephemeris"].houses_system_name

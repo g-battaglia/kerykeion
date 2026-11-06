@@ -17,6 +17,7 @@ class WindowsJob:
     """Own a kill-on-close job and a startup event; instantiated on Windows only."""
 
     def __init__(self):
+        """Create the owned Windows job and guard event with checked Win32 handles."""
         self.kernel = ctypes.WinDLL("kernel32", use_last_error=True)
         self.job = None
         self.event = None
@@ -37,6 +38,7 @@ class WindowsJob:
             function.argtypes, function.restype = args, result
 
         class BasicLimits(ctypes.Structure):
+            """Represent the Win32 basic job limit structure with pointer-sized fields."""
             _fields_ = [("process_time", ctypes.c_int64), ("job_time", ctypes.c_int64),
                         ("flags", wintypes.DWORD), ("min_working_set", ctypes.c_size_t),
                         ("max_working_set", ctypes.c_size_t), ("active_processes", wintypes.DWORD),
@@ -44,6 +46,7 @@ class WindowsJob:
                         ("scheduling", wintypes.DWORD)]
 
         class ExtendedLimits(ctypes.Structure):
+            """Represent the extended job limits used for owned-process cleanup."""
             _fields_ = [("basic", BasicLimits), ("io_counters", ctypes.c_uint64 * 6),
                         ("process_memory", ctypes.c_size_t), ("job_memory", ctypes.c_size_t),
                         ("peak_process_memory", ctypes.c_size_t), ("peak_job_memory", ctypes.c_size_t)]

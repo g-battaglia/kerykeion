@@ -20,6 +20,7 @@ VARIANTS = ("generate_svg_string", "generate_wheel_only_svg_string", "generate_a
 
 @pytest.fixture(scope="module")
 def complete_subject():
+    """Build a deterministic subject without optional-point limitations."""
     return AstrologicalSubjectFactory.from_birth_data(
         "Notes", 1990, 7, 21, 12, 0, lat=51.5, lng=0, tz_str="UTC",
         online=False, suppress_geonames_warning=True, calculate_lunar_phase=False,
@@ -29,6 +30,7 @@ def complete_subject():
 
 @pytest.fixture
 def limited_subject(complete_subject):
+    """Copy a subject with one omitted and one approximate point."""
     subject = complete_subject.model_copy(deep=True)
     subject.chiron = None
     subject.active_points.remove("Chiron")
@@ -42,6 +44,7 @@ def limited_subject(complete_subject):
 
 
 def render(subject, style, variant, **options):
+    """Render the selected export with explicit note options."""
     drawer = ChartDrawer(ChartDataFactory.create_natal_chart_data(subject), style=style, **options)
     return getattr(drawer, variant)()
 
@@ -49,6 +52,7 @@ def render(subject, style, variant, **options):
 @pytest.mark.parametrize("style", ["classic", "modern"])
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_default_and_explicit_false_preserve_bytes(complete_subject, limited_subject, style, variant):
+    """Default exports remain byte-identical when provenance notes are disabled."""
     for subject in (complete_subject, limited_subject):
         assert render(subject, style, variant) == render(subject, style, variant, show_ephemeris_notes=False)
     assert render(complete_subject, style, variant) == render(
@@ -59,6 +63,7 @@ def test_default_and_explicit_false_preserve_bytes(complete_subject, limited_sub
 @pytest.mark.parametrize("style", ["classic", "modern"])
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_footer_keeps_geometry_and_identifies_both_limitations(limited_subject, style, variant):
+    """Notes preserve original drawing geometry and the input model."""
     before_model = limited_subject.model_dump()
     original = ET.fromstring(render(limited_subject, style, variant))
     annotated = ET.fromstring(render(limited_subject, style, variant, show_ephemeris_notes=True))
@@ -93,6 +98,7 @@ def test_footer_uses_custom_chart_text_color(limited_subject, variant):
 
 @pytest.mark.parametrize("language", LANGUAGE_SETTINGS)
 def test_notes_use_chart_translations(limited_subject, language):
+    """Every chart language translates the two provenance categories."""
     root = ET.fromstring(render(limited_subject, "modern", VARIANTS[0],
                                show_ephemeris_notes=True, chart_language=language))
     footer = next(node for node in root if node.get(KR) == "Ephemeris_Notes")
@@ -104,6 +110,7 @@ def test_notes_use_chart_translations(limited_subject, language):
 @pytest.mark.parametrize("theme", ["classic", "dark", "black-and-white"])
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_long_untrusted_text_wraps_and_survives_minification(limited_subject, theme, variant):
+    """Untrusted notes remain wrapped, escaped and intact after minification."""
     limited_subject.name = '<script>alert("&")</script> ' + "W" * 200
     drawer = ChartDrawer(ChartDataFactory.create_natal_chart_data(limited_subject),
                          theme=theme, show_ephemeris_notes=True, transparent_background=True)
@@ -121,6 +128,7 @@ def test_long_untrusted_text_wraps_and_survives_minification(limited_subject, th
 
 
 def test_dual_chart_and_composite_inputs_keep_subject_identity(limited_subject, complete_subject):
+    """Dual and composite notes retain subject ownership without duplicates."""
     other = complete_subject.model_copy(deep=True)
     other.name = "Second"
     other.moon.precision_class = "approximate"
@@ -135,6 +143,7 @@ def test_dual_chart_and_composite_inputs_keep_subject_identity(limited_subject, 
 
 
 def test_custom_translation_and_repeated_exports(limited_subject):
+    """Custom labels survive repeated exports without changing drawer state."""
     drawer = ChartDrawer(ChartDataFactory.create_natal_chart_data(limited_subject), show_ephemeris_notes=True,
                          language_pack={"ephemeris_omitted_points": "Missing locally"})
     first = drawer.generate_svg_string()
@@ -145,6 +154,7 @@ def test_custom_translation_and_repeated_exports(limited_subject):
 
 
 def test_cli_render_option_reaches_drawer(limited_subject):
+    """The CLI note flag reaches the shared chart renderer."""
     from kerykeion_cli.commands._shared import _render_options, _RENDER_FLAGS
     from kerykeion_cli.rendering import render_svg
 
@@ -157,6 +167,7 @@ def test_cli_render_option_reaches_drawer(limited_subject):
 
 
 def test_custom_note_label_must_be_text(complete_subject):
+    """Non-text translation overrides fail at chart construction."""
     with pytest.raises(ValueError, match="ephemeris_omitted_points must be a string"):
         ChartDrawer(ChartDataFactory.create_natal_chart_data(complete_subject),
                     language_pack={"ephemeris_omitted_points": 42})
@@ -164,6 +175,7 @@ def test_custom_note_label_must_be_text(complete_subject):
 
 @pytest.mark.parametrize("note,expected", [("Missing\x01 point", "Missing point"), ("Literal var(--paper_0)", "Literal var(--paper_0)")])
 def test_note_text_stays_xml_safe_and_literal_during_css_inlining(note, expected):
+    """XML controls are removed while literal CSS-looking note text survives."""
     from kerykeion.charts.ephemeris_notes import append_ephemeris_notes
     from kerykeion.utilities.core import inline_css_variables_in_svg
 

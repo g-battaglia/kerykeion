@@ -61,9 +61,11 @@ def collect_ephemeris_notes(
     seen: set[int] = set()
 
     def point_label(name: str) -> str:
+        """Translate a point name while preserving a readable fallback."""
         return translate(f"celestial_points.{name}", name.replace("_", " "))
 
     def visit(subject: Any) -> None:
+        """Collect one subject and recursively include distinct composite parents."""
         if subject is None or id(subject) in seen:
             return
         seen.add(id(subject))

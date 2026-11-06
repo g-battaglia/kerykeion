@@ -327,3 +327,11 @@ def test_leb_network_gate_rejects_before_socket_access(
     with pytest.raises(NetworkSealedError):
         require_network("Kerykeion sealed-mode regression probe")
     assert attempts == []
+
+
+@pytest.mark.parametrize("label,expected", [("NativeJpl", "ephemeris"), ("nativejpl", "ephemeris"), ("NATIVEJPL", "ephemeris"), ("NativeJplFuture", "numerical-model")])
+def test_native_jpl_provider_precision_is_explicit_and_case_insensitive(label, expected):
+    """Recognize the stored native JPL provider without promoting future labels."""
+    from kerykeion.astrological_subject.factory import _precision_class_for_source
+
+    assert _precision_class_for_source(label) == expected

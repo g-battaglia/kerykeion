@@ -30,6 +30,7 @@ def test_native_scope_restores_outer_trace(scope, fail):
         assert expected
 
         def calculate():
+            """Exercise nested trace restoration with an optional calculation failure."""
             with scope():
                 assert ephe.get_trace_results() == {}
                 ephe.calc_ut(2451545.0, ephe.MOON)
@@ -67,6 +68,7 @@ def test_contextvar_token_remains_supported(monkeypatch, module, scope_name, fai
     try:
 
         def calculate():
+            """Exercise nested trace restoration with an optional calculation failure."""
             with scope():
                 assert trace.get() == {}
                 if fail:
@@ -90,6 +92,7 @@ def test_subject_fixed_star_scope_restores_native_parent(monkeypatch, fail_star)
     if fail_star:
 
         def unavailable_star(*args, **kwargs):
+            """Simulate a fixed-star failure inside a nested native trace."""
             raise TraceFailure("star calculation failed")
 
         monkeypatch.setattr(ephe, "fixstar_ut", unavailable_star)

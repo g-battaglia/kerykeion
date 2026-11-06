@@ -76,10 +76,12 @@ class RecognizedAspect:
 
     @property
     def scoring_orbit(self) -> float:
+        """Return the residual used for scoring after the documented quantization."""
         return abs(self.separation.scoring - self.definition.angle)
 
     @property
     def physical_orbit(self) -> float:
+        """Return the residual of the original unrounded physical separation."""
         return abs(self.separation.physical - self.definition.angle)
 
 

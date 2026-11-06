@@ -56,6 +56,7 @@ def test_native_explicit_then_default_restores_only_adapter_path(monkeypatch, ex
     calls = []
 
     def setter(path):
+        """Record the session state update exercised by this regression."""
         calls.append(path)
         state["path"] = "/default" if path is None else path
 
@@ -83,6 +84,7 @@ def test_lazy_batch_matches_list_and_does_not_eagerly_calculate(monkeypatch, as_
     )
     calls = []
     def subject(date):
+        """Build the instrumented subject used by the lifecycle regression."""
         calls.append(date)
         return SimpleNamespace(ephemeris_warnings=[], polar_house_fallbacks=[], fixed_stars=[])
     monkeypatch.setattr(factory, "_create_subject_for_date", subject)

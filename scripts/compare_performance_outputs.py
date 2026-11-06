@@ -21,6 +21,7 @@ from kerykeion.settings.translation_strings import LANGUAGE_SETTINGS
 
 
 def subject(name="John", **kwargs):
+    """Build a deterministic subject for each output-equivalence workload."""
     return S.from_birth_data(
         name,
         1940,
@@ -38,6 +39,7 @@ def subject(name="John", **kwargs):
 
 
 def main():
+    """Hash the full rendering matrix for comparison across implementations."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("hash_file", type=Path)
     args = parser.parse_args()
@@ -77,6 +79,7 @@ def main():
     results = {}
 
     def save(key, obj):
+        """Store one deterministic output hash under its complete workload key."""
         text = obj if isinstance(obj, str) else json.dumps(obj, sort_keys=True)
         results[str(key)] = hashlib.sha256(text.encode()).hexdigest()
 

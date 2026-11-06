@@ -25,6 +25,7 @@ B = {"Sun": 47.0, "Moon": 167.0, "Ascendant": 283.0, "Venus": 321.0, "Mars": 15.
 
 
 def test_legacy_import_keeps_the_opt_in_scorer_unloaded():
+    """Verify legacy import keeps the opt in scorer unloaded."""
     subprocess.run(
         [
             sys.executable,
@@ -51,6 +52,7 @@ def pair_result(p1, p2, difference):
 
 @pytest.mark.parametrize("angle,expected", [(0, 4), (60, 4), (90, 11), (120, 4), (180, 11)])
 def test_sun_sun_special_awards_only_square_opposition(angle, expected):
+    """Verify sun sun special awards only square opposition."""
     _, contacts = pair_result("Sun", "Sun", angle)
     assert len(contacts) == 1
     assert contacts[0].points == expected
@@ -59,6 +61,7 @@ def test_sun_sun_special_awards_only_square_opposition(angle, expected):
 @pytest.mark.parametrize("p1,p2", [("Sun", "Moon"), ("Moon", "Sun")])
 @pytest.mark.parametrize("delta,expected", [(0, 11), (2, 11), (2.999, 11), (3, 8), (8.999, 8), (9, None)])
 def test_sun_moon_quantized_boundaries_and_replacement(p1, p2, delta, expected):
+    """Verify sun moon quantized boundaries and replacement."""
     result, contacts = pair_result(p1, p2, delta)
     assert [c.points for c in contacts] == ([] if expected is None else [expected])
     matching_breakdown = [i for i in result.score_breakdown if i.description.startswith(f"{p1}-{p2} ")]
@@ -68,6 +71,7 @@ def test_sun_moon_quantized_boundaries_and_replacement(p1, p2, delta, expected):
 @pytest.mark.parametrize("center,orb", [(90, 5), (180, 8)])
 @pytest.mark.parametrize("offset,expected", [(2, 11), (2.999, 11), (3, 8)])
 def test_sun_sun_upgrade_boundary(center, orb, offset, expected):
+    """Verify sun sun upgrade boundary."""
     _, contacts = pair_result("Sun", "Sun", center + offset)
     assert contacts[0].points == expected
     assert contacts[0].orb_limit == orb
@@ -75,6 +79,7 @@ def test_sun_sun_upgrade_boundary(center, orb, offset, expected):
 
 @pytest.mark.parametrize("p1,p2", list(product(("Sun", "Moon", "Ascendant"), repeat=2)))
 def test_all_nine_luminary_pairs_including_moon_moon_and_axis_axis(p1, p2):
+    """Verify all nine luminary pairs including moon moon and axis axis."""
     _, contacts = pair_result(p1, p2, 60)
     assert len(contacts) == 1
     assert contacts[0].points == 4
@@ -82,6 +87,7 @@ def test_all_nine_luminary_pairs_including_moon_moon_and_axis_axis(p1, p2):
 
 @pytest.mark.parametrize("name,angle,orb", [(a.name, a.angle, a.orb) for a in SCORING_ASPECTS])
 def test_every_profile_aspect_including_minors(name, angle, orb):
+    """Verify every profile aspect including minors."""
     _, contacts = pair_result("Moon", "Moon", angle)
     assert contacts[0].aspect == name
     assert contacts[0].orb_limit == orb
@@ -93,6 +99,7 @@ def test_every_profile_aspect_including_minors(name, angle, orb):
 
 
 def test_sextile_three_not_four_and_quincunx_disabled():
+    """Verify sextile three not four and quincunx disabled."""
     assert pair_result("Moon", "Moon", 63.999)[1][0].points == 4
     assert not pair_result("Moon", "Moon", 64)[1]
     assert not pair_result("Moon", "Moon", 150)[1]
@@ -111,12 +118,14 @@ def test_sextile_three_not_four_and_quincunx_disabled():
     ],
 )
 def test_round_down_before_wrap_preserves_operation_order(a, b, physical, legacy):
+    """Verify round down before wrap preserves operation order."""
     separation = _measure_separation(a, b)
     assert separation.physical == pytest.approx(physical)
     assert separation.scoring == legacy
 
 
 def test_tight_residual_is_not_the_physical_residual():
+    """Verify tight residual is not the physical residual."""
     _, contacts = pair_result("Sun", "Moon", 2.99)
     c = contacts[0]
     assert c.scoring_orbit == 2
@@ -126,6 +135,7 @@ def test_tight_residual_is_not_the_physical_residual():
 
 @pytest.mark.parametrize("first_sign,second_sign", list(product(range(12), repeat=2)))
 def test_all_144_destiny_sign_combinations(first_sign, second_sign):
+    """Verify all 144 destiny sign combinations."""
     a, b = dict(A), dict(B)
     a["Sun"], b["Sun"] = first_sign * 30 + 1, second_sign * 30 + 20
     r = score_positions(a, b)
@@ -138,6 +148,7 @@ def test_all_144_destiny_sign_combinations(first_sign, second_sign):
 
 @pytest.mark.parametrize("angle", [90, 92.99, 95.99, 180, 188.99])
 def test_destiny_not_double_counted_with_sun_sun_square_opposition(angle):
+    """Verify destiny not double counted with sun sun square opposition."""
     r, contacts = pair_result("Sun", "Sun", angle)
     assert contacts[0].points in (8, 11)
     assert r.is_destiny_sign
@@ -147,12 +158,14 @@ def test_destiny_not_double_counted_with_sun_sun_square_opposition(angle):
 
 
 def test_same_sign_sun_conjunction_still_gets_generic_four_and_destiny_five():
+    """Verify same sign sun conjunction still gets generic four and destiny five."""
     r, contacts = pair_result("Sun", "Sun", 0)
     assert contacts[0].points == 4
     assert r.destiny_bonus_awarded
 
 
 def test_venus_mars_counts_both_directions_not_once():
+    """Verify venus mars counts both directions not once."""
     a, b = dict(A), dict(B)
     a["Venus"], b["Mars"] = 0, 60
     a["Mars"], b["Venus"] = 10, 100
@@ -163,6 +176,7 @@ def test_venus_mars_counts_both_directions_not_once():
 
 
 def test_mercury_outer_planets_and_other_pairs_do_not_add_points():
+    """Verify mercury outer planets and other pairs do not add points."""
     r = score_positions(A, B)
     a, b = dict(A, Mercury=0, Jupiter=20), dict(B, Mercury=0, Jupiter=20)
     assert score_positions(a, b).score_value == r.score_value
@@ -170,6 +184,7 @@ def test_mercury_outer_planets_and_other_pairs_do_not_add_points():
 
 @pytest.mark.parametrize("point", REQUIRED_POINTS)
 def test_missing_points_fail_closed(point):
+    """Verify missing points fail closed."""
     a = dict(A)
     del a[point]
     with pytest.raises(KerykeionException, match=point):
@@ -180,12 +195,14 @@ def test_missing_points_fail_closed(point):
 
 @pytest.mark.parametrize("bad", [nan, inf, -inf, -0.01, 360, 361, True, None, "10", pytest.param(10**5000, id="oversized-int")])
 def test_nonfinite_out_of_range_or_nonnumeric_positions_rejected(bad):
+    """Verify nonfinite out of range or nonnumeric positions rejected."""
     with pytest.raises(KerykeionException, match="Invalid Sun"):
         score_positions(dict(A, Sun=bad), B)
 
 
 @pytest.mark.parametrize("names", [("A",), ("A", "B", "C"), (None, "B"), "AB", None, 12])
 def test_invalid_names_fail(names):
+    """Verify invalid names fail."""
     with pytest.raises(KerykeionException):
         score_positions(A, B, subject_names=names)
 
@@ -236,6 +253,7 @@ def reference_score(a, b):
 
 
 def test_differential_reference_500_seeded_charts_symmetry_and_accounting():
+    """Verify differential reference 500 seeded charts symmetry and accounting."""
     rng = Random(936275)
     for _ in range(500):
         a, b = ({p: rng.uniform(0, 359.999999) for p in REQUIRED_POINTS} for _ in range(2))
@@ -264,11 +282,13 @@ def test_differential_reference_500_seeded_charts_symmetry_and_accounting():
     ],
 )
 def test_v1_classification_bands_are_preserved(value, label):
+    """Verify v1 classification bands are preserved."""
     assert _score_description(value) == label
 
 
 @pytest.fixture(scope="module")
 def natal_subjects():
+    """Build deterministic natal subjects for score-v2 contracts."""
     common = dict(
         lng=12.4964,
         lat=41.9028,
@@ -295,9 +315,11 @@ def test_factory_rejects_inactive_point_even_when_its_attribute_is_retained(nata
 
 
 def test_factory_integrates_positions_not_aspects(monkeypatch, natal_subjects):
+    """Verify factory integrates positions not aspects."""
     from kerykeion.aspects import AspectsFactory
 
     def forbidden(*args, **kwargs):
+        """Fail if the scoring path performs this forbidden operation."""
         raise AssertionError("v2 must not call the aspect factory/v1")
 
     monkeypatch.setattr(AspectsFactory, "dual_chart_aspects", forbidden)
@@ -312,6 +334,7 @@ def test_factory_integrates_positions_not_aspects(monkeypatch, natal_subjects):
 
 
 def test_factory_repeat_calls_and_snapshot_isolation(natal_subjects):
+    """Verify factory repeat calls and snapshot isolation."""
     a, b = (s.model_copy(deep=True) for s in natal_subjects)
     f = RelationshipScoreFactoryV2(a, b)
     r = f.get_relationship_score()
@@ -330,17 +353,20 @@ def test_factory_repeat_calls_and_snapshot_isolation(natal_subjects):
 
 @pytest.mark.parametrize("bad", [None, "subject", 42])
 def test_non_mapping_position_inputs_raise_domain_exception(bad):
+    """Verify non mapping position inputs raise domain exception."""
     with pytest.raises(KerykeionException, match="map point names"):
         score_positions(bad, B)
 
 
 @pytest.mark.parametrize("bad", [None, "subject", 42])
 def test_invalid_subject_models_raise_domain_exception(bad, natal_subjects):
+    """Verify invalid subject models raise domain exception."""
     with pytest.raises(KerykeionException):
         RelationshipScoreFactoryV2(bad, natal_subjects[0])
 
 
 def test_missing_active_point_and_mixed_frame(natal_subjects):
+    """Verify missing active point and mixed frame."""
     a, b = natal_subjects
     missing = b.model_copy(update={"moon": None})
     with pytest.raises(KerykeionException, match="Moon"):
@@ -356,6 +382,7 @@ def test_missing_active_point_and_mixed_frame(natal_subjects):
 
 
 def test_json_roundtrip_preserves_only_data_and_numerical_metadata():
+    """Verify json roundtrip preserves only data and numerical metadata."""
     result = score_positions(A, B, subject_names=("A\nB", "Second"))
     restored = type(result).model_validate_json(result.model_dump_json())
     assert restored == result
@@ -380,11 +407,13 @@ def test_json_roundtrip_preserves_only_data_and_numerical_metadata():
 
 
 def test_suppressed_destiny_is_structured_metadata_not_interpretation():
+    """Verify suppressed destiny is structured metadata not interpretation."""
     result, _ = pair_result("Sun", "Sun", 90)
     assert result.model_dump()["destiny_bonus_suppressed"] is True
 
 
 def test_pure_inputs_not_mutated():
+    """Verify pure inputs not mutated."""
     a, b = dict(A), dict(B)
     r = score_positions(a, b)
     r.positions[0]["Sun"] = 300

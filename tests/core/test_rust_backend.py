@@ -16,6 +16,7 @@ pytestmark = pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="Rust v4 
 
 
 def test_backend_is_native_v4_without_python_astronomy_engines():
+    """A clean interpreter must load the native extension without Python engines."""
     import libephemeris._core as core
 
     assert ephe.__version__.startswith("4.")
@@ -37,6 +38,7 @@ def test_backend_is_native_v4_without_python_astronomy_engines():
 @pytest.mark.parametrize("inner_scope", [ephemeris_trace, _star_source_trace])
 @pytest.mark.parametrize("fail", [False, True])
 def test_native_trace_scope_resets_even_on_error(inner_scope, fail):
+    """Trace membership and cleanup survive successful and failing inner scopes."""
     assert ephe.get_trace_results() == {}
     try:
         with inner_scope():
@@ -57,6 +59,7 @@ def test_native_trace_scope_resets_even_on_error(inner_scope, fail):
 
 
 def test_subject_with_fixed_star_leaves_no_native_trace_scope():
+    """Fixed-star enrichment preserves provider metadata and releases its trace."""
     subject = AstrologicalSubjectFactory.from_birth_data(
         "Rust tracing",
         2000,
@@ -83,6 +86,7 @@ def test_subject_with_fixed_star_leaves_no_native_trace_scope():
 
 
 def test_session_cleanup_preserves_sealed_leb_mode():
+    """Session cleanup restores the selected native calculation and network modes."""
     with ephemeris_session(zodiac_type="Sidereal", sidereal_mode="LAHIRI") as flags:
         ephe.calc_ut(2451545.0, ephe.SUN, flags)
     from kerykeion.ephemeris_backend.backend import _PINNED_LEB_MODE

@@ -17,6 +17,7 @@ import tempfile
 
 
 def main() -> None:
+    """Exercise default and explicit paths against the selected backend."""
     with tempfile.TemporaryDirectory(prefix="kerykeion-native-path-") as temporary:
         root = Path(temporary)
         data = root / "data"
@@ -49,6 +50,7 @@ def main() -> None:
         dates = (2440000.5, 2451545.0, 2459215.5, 2460000.5, 2462502.5)
 
         def controls():
+            """Capture deterministic calculation controls around path updates."""
             with backend.EPHEMERIS_LOCK:
                 planets = [[le.calc_ut(jd, body, flags) for body in range(10)] for jd in dates]
                 houses = [le.houses_ex(jd, 51.48, 0.0, b"P") for jd in dates]
@@ -63,6 +65,7 @@ def main() -> None:
         calls = []
 
         def tracked_setter(path):
+            """Record path updates while delegating to the real backend setter."""
             assert path != "", "Kerykeion forwarded the empty native path sentinel"
             calls.append(path)
             setter(path)

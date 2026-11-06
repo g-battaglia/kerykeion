@@ -13,6 +13,7 @@ from tests.core.conftest import POSITION_TOLERANCE
 
 
 def test_model_selection_is_explicit():
+    """Verify model selection is explicit."""
     assert fixtures.active_model("libephemeris", "3.2.2") is None
     assert fixtures.active_model("swisseph", "4.0.0b1") is None
     assert fixtures.active_model("libephemeris", "4.0.0b1") == fixtures.MODEL
@@ -23,6 +24,7 @@ def test_model_selection_is_explicit():
 
 
 def test_patch_distribution_uses_an_authenticated_unchanged_model():
+    """Verify patch distribution uses an authenticated unchanged model."""
     record = fixtures.patch_qualification("4.0.0b2")
     assert record["model"] == fixtures.MODEL
     assert record["numerical_source"]["base_tag"] == "python-v4.0.0b1"
@@ -35,11 +37,13 @@ def test_patch_distribution_uses_an_authenticated_unchanged_model():
 
 
 def test_legacy_reference_bytes_are_unchanged():
+    """Verify legacy reference bytes are unchanged."""
     for relative, expected in fixtures.manifest()["legacy_files"].items():
         fixtures.verify_file(fixtures.ROOT / relative, expected)
 
 
 def test_native_overlays_preserve_every_case_and_point(monkeypatch):
+    """Verify native overlays preserve every case and point."""
     monkeypatch.setattr(fixtures, "active_model", lambda **kwargs: fixtures.MODEL)
     original = deepcopy(EXPECTED_POSITIONS)
     selected = fixtures.positions_for_model(EXPECTED_POSITIONS)
@@ -60,6 +64,7 @@ def test_native_overlays_preserve_every_case_and_point(monkeypatch):
 
 
 def test_legacy_model_returns_original_references(monkeypatch):
+    """Verify legacy model returns original references."""
     monkeypatch.setattr(fixtures, "active_model", lambda **kwargs: None)
     assert fixtures.positions_for_model(EXPECTED_POSITIONS) is EXPECTED_POSITIONS
     assert fixtures.arabic_parts_for_model(EXPECTED_ARABIC_PARTS) is EXPECTED_ARABIC_PARTS
@@ -68,6 +73,7 @@ def test_legacy_model_returns_original_references(monkeypatch):
 
 
 def test_native_variants_have_no_missing_or_orphan_files():
+    """Verify native variants have no missing or orphan files."""
     data = fixtures.manifest()
     expected = {"positions.json", "manifest.json"}
     for collection, original_directory in (("svg", "tests/data/svg"), ("reports", "tests/fixtures")):
@@ -84,6 +90,7 @@ def test_native_variants_have_no_missing_or_orphan_files():
 
 
 def test_unknown_native_chart_cannot_fall_back_to_legacy():
+    """Verify unknown native chart cannot fall back to legacy."""
     with pytest.raises(AssertionError, match="No .* reference registered"):
         fixtures.fixture_path(
             fixtures.ROOT / "tests/data/svg/unregistered.svg", backend="libephemeris", version="4.0.0b1"
@@ -91,6 +98,7 @@ def test_unknown_native_chart_cannot_fall_back_to_legacy():
 
 
 def test_missing_and_corrupted_reference_files_fail(tmp_path):
+    """Verify missing and corrupted reference files fail."""
     path = tmp_path / "reference.json"
     with pytest.raises(AssertionError, match="Missing model reference"):
         fixtures.verify_file(path, "0" * 64)
@@ -103,6 +111,7 @@ def test_missing_and_corrupted_reference_files_fail(tmp_path):
 
 
 def test_v4_cannot_rewrite_legacy_svg(monkeypatch):
+    """Verify v4 cannot rewrite legacy svg."""
     from tests.data.compare_svg_lines import compare_svg_file
     from tests.data.regeneration_guard import require_the_baseline_backend
 
@@ -121,6 +130,7 @@ def test_v4_cannot_rewrite_legacy_svg(monkeypatch):
 @pytest.mark.skipif(BACKEND_NAME != "libephemeris", reason="independent qualification of the native v4 model only")
 @pytest.mark.parametrize("subject_id", fixtures.manifest()["independent_qualification"]["subject_ids"])
 def test_native_angles_against_independent_clock_and_geometry(subject_id):
+    """Verify native angles against independent clock and geometry."""
     from tests.core.test_houses_positions import create_subject_from_id
 
     subject = create_subject_from_id(subject_id)
@@ -131,6 +141,7 @@ def test_native_angles_against_independent_clock_and_geometry(subject_id):
 
 @pytest.mark.parametrize("primary", ["base_core.leb2", "medium_core.leb2"])
 def test_historical_svg_inputs_verify_both_routing_and_asset_identity(monkeypatch, primary):
+    """Verify historical svg inputs verify both routing and asset identity."""
     from types import SimpleNamespace
     from kerykeion.ephemeris_backend import ephe
 
@@ -151,6 +162,7 @@ def test_historical_svg_inputs_verify_both_routing_and_asset_identity(monkeypatc
 
 
 def test_historical_svg_rejects_different_core_without_switching_it(monkeypatch):
+    """Verify historical svg rejects different core without switching it."""
     from types import SimpleNamespace
     from kerykeion.ephemeris_backend import ephe
 
@@ -163,11 +175,13 @@ def test_historical_svg_rejects_different_core_without_switching_it(monkeypatch)
 
 
 def test_foreign_backend_has_no_native_coefficient_precondition(monkeypatch):
+    """Verify foreign backend has no native coefficient precondition."""
     monkeypatch.setattr(fixtures, "active_model", lambda: None)
     fixtures.require_temporal_snapshot_inputs("galileo_1564")
 
 
 def test_original_producer_can_validate_temporal_inputs_before_manifest_exists(monkeypatch, tmp_path):
+    """Verify original producer can validate temporal inputs before manifest exists."""
     from types import SimpleNamespace
 
     base = tmp_path / "base_core.leb2"
@@ -188,6 +202,7 @@ def test_original_producer_can_validate_temporal_inputs_before_manifest_exists(m
 
 
 def test_candidate_cannot_use_producer_inputs_without_a_frozen_manifest(monkeypatch, tmp_path):
+    """Verify candidate cannot use producer inputs without a frozen manifest."""
     from types import SimpleNamespace
 
     monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
@@ -199,6 +214,7 @@ def test_candidate_cannot_use_producer_inputs_without_a_frozen_manifest(monkeypa
 
 
 def test_b3_resource_patch_has_separate_evidence_without_rewriting_provenance():
+    """Verify b3 resource patch has separate evidence without rewriting provenance."""
     record = fixtures.patch_qualification("4.0.0b3")
     assert fixtures.active_model("libephemeris", "4.0.0b3") == fixtures.MODEL
     assert record["schema"] == 2
@@ -207,6 +223,7 @@ def test_b3_resource_patch_has_separate_evidence_without_rewriting_provenance():
 
 
 def test_b4_path_contract_keeps_the_qualified_scientific_model():
+    """Verify b4 path contract keeps the qualified scientific model."""
     record = fixtures.patch_qualification("4.0.0b4")
     assert fixtures.active_model("libephemeris", "4.0.0b4") == fixtures.MODEL
     assert record["schema"] == 2
