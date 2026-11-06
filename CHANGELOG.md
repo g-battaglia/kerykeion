@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0b4] - 2026-11-06
+
+### Fixed
+
+- Primary-directions speculum points on the horizon consistently use the documented inclusive diurnal semi-arc across platforms. Equatorial roundoff no longer flips the horizon flag or selects the complementary nocturnal semi-arc. Resolved below-horizon and circumpolar classifications are preserved.
+
+
 ## [6.1.0b3] - 2026-11-05
 
 ### Added
