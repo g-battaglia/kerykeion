@@ -20,19 +20,19 @@
   <img src="https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/main/docs/charts/modern_default_natal.svg" width="540" alt="Kerykeion modern natal chart">
 </p>
 
-Kerykeion is a Python library for astrological calculations and SVG charts. It calculates planetary positions, houses, aspects, returns, progressions, and other techniques listed in the [feature overview](#feature-overview).
+Kerykeion is a Python library for astrology. It computes planetary and house positions, detects aspects, and generates SVG charts, including birth, synastry, transit, and composite charts. You can also customize which planets to include in your calculations.
 
-The defaults use the tropical zodiac, Placidus houses, and apparent geocentric positions. Results are Pydantic models that you can inspect in Python, export as JSON, or serialize as XML for LLM context.
+The main goal of this project is to provide high-precision astrological calculations through a clean, data-driven approach, making them accessible and programmable.
+
+Kerykeion also serves as the engine behind the hosted [Astrologer API](https://www.kerykeion.net/astrologer-api), and it integrates seamlessly with LLM and AI applications.
 
 ## Hosted API
 
-**For commercial closed-source projects, including SaaS products and mobile apps, we offer a hosted API.**
+If you are building a commercial application, a SaaS, or prefer to keep the codebase closed-source, consider the hosted **[Astrologer API](https://www.kerykeion.net/astrologer-api/subscribe)** on RapidAPI.
 
-We also provide an [Astrologer API Agent Skill](https://github.com/g-battaglia/Astrologer-API/tree/v5/skills/astrologer-api) for development with coding agents.
+Your app consumes Kerykeion as an external service rather than importing the AGPL library directly — no server setup, no copyleft concerns. Subscribing directly supports the ongoing development of this open-source project.
 
-[**Subscribe on RapidAPI**](https://rapidapi.com/gbattaglia/api/astrologer/pricing)  
-
-Subscriptions directly support Kerykeion development.
+**[Full API Documentation](https://www.kerykeion.net/astrologer-api)**
 
 ## Chart styles and themes
 
