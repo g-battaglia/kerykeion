@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.1.0 — Stable preparation
+
+- Promote the current qualified b5 library and CLI together, retaining the numerical implementation, rendering resources, scientific references and tolerances.
+- Pin the matching stable native backend, `libephemeris==4.0.0`, and align both stable classifiers, installation guidance and the generated man page.
+- Keep original native producer references immutable; stable backend model reuse requires a separate, explicit source-identity qualification.
+- Registry publication remains a separate maintainer action, in dependency order. See the [current stable preparation](release_notes/v6.1.0-stable.md); the earlier b1-based stable draft remains archived.
+
 ## 6.1.0b5
 
 - Require SVG Polish 1.0.1 or newer so existing installations also receive the qualified SVG cleanup and traversal optimizations.

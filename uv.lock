@@ -291,7 +291,7 @@ wheels = [
 
 [[package]]
 name = "kerykeion"
-version = "6.1.0b5"
+version = "6.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "libephemeris" },
@@ -342,7 +342,7 @@ requires-dist = [
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
     { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
-    { name = "libephemeris", specifier = "==4.0.0b4" },
+    { name = "libephemeris", specifier = "==4.0.0" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pyswisseph", marker = "extra == 'swiss'", specifier = ">=2.10.3.1" },
     { name = "requests", specifier = ">=2.33.0" },
@@ -377,7 +377,7 @@ dev = [
 
 [[package]]
 name = "kerykeion-cli"
-version = "6.1.0b5"
+version = "6.1.0"
 source = { editable = "cli" }
 dependencies = [
     { name = "kerykeion" },
@@ -388,17 +388,16 @@ requires-dist = [{ name = "kerykeion", editable = "." }]
 
 [[package]]
 name = "libephemeris"
-version = "4.0.0b4"
+version = "4.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d9/15/2f5c69407a06f63e3c40d7146499739670818f6011276241f2a223a8ec32/libephemeris-4.0.0b4.tar.gz", hash = "sha256:7f57329a18db1b6d736ba566ba2c556153ed8db4346a89960b807312765bbf45", size = 15333087, upload-time = "2026-11-06T08:53:55.456Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/6c/35b64191bbe634c8181b0a3decb325811cacb3f95eac4dce03bf1ebbe962/libephemeris-4.0.0b4-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:25fa57856c34c9efa0bd0098237062b99a7169d0e6fb4ff6a2339b06859f0a3c", size = 16826559, upload-time = "2026-11-06T08:53:35.673Z" },
-    { url = "https://files.pythonhosted.org/packages/c9/b1/b0977fca03757420624c0b679f3c96feac377190da17cd4d6a7708e56f8d/libephemeris-4.0.0b4-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:979d439e32c61885a5b3d4e9fd46501d7a8672d71a26dd9b24ad318247d7c7ee", size = 17257275, upload-time = "2026-11-06T08:53:40.438Z" },
-    { url = "https://files.pythonhosted.org/packages/11/d1/c1d39ca251d01f1451e9bf304084f2907ac84b2041b27151251249c7c9ea/libephemeris-4.0.0b4-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bbe37c610f7336b546f35661a2e84657ed5bb361d786968337dee23c6df8a5ef", size = 17465056, upload-time = "2026-11-06T08:53:44.844Z" },
-    { url = "https://files.pythonhosted.org/packages/fe/b9/36404c187f74fd7f6b6643e5d712a269c9999c2cb84378cdae0919e23538/libephemeris-4.0.0b4-cp312-abi3-win_amd64.whl", hash = "sha256:b91bfee8f874a7aea7e21abc4916275aa4211b4d6a322eff0072faf9344614bf", size = 16995444, upload-time = "2026-11-06T08:53:50.172Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/cc/0b40ee87e5b4b79ebe7c2a1371c875832ee069bec5f30ad526142abf3e7c/libephemeris-4.0.0-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:2fa6c48ca52446d8dd9c3009d91f58faac1851efd50bd19b1ae6fd0122c02bf1", size = 16821186, upload-time = "2026-11-12T00:47:18.354Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/e0/ecac603abbf0a4026df4c08d61d018798a746d1c0f0faee8324c0e15827f/libephemeris-4.0.0-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2ffded131a8bc76657d812a73ab62664a9dd9fd19db4d67772f06db99ca37226", size = 17254952, upload-time = "2026-11-12T00:47:25.004Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/49/f502a411b53628d152c0dde4fd2958fcc0888b548f3c177f8a1cf5637150/libephemeris-4.0.0-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:66ede025eb132d4616b586902d47c5500186c8a9ee17ffb97c669ce442012855", size = 17464230, upload-time = "2026-11-12T00:47:31.513Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/59/9817aca3fec1754cef59f3882eb989409636807a7fa7db5cd1568c84bd89/libephemeris-4.0.0-cp312-abi3-win_amd64.whl", hash = "sha256:092bc5f09beca236b91e0de10cbb3590269a1474369ae3e5d606c28179fa792f", size = 16994103, upload-time = "2026-11-12T00:47:37.944Z" },
 ]
 
 [[package]]

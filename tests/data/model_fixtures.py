@@ -35,7 +35,7 @@ def active_model(backend: str | None = None, version: str | None = None) -> str 
         return None
     if version == "4.0.0b1":
         return MODEL
-    if version in {"4.0.0b2", "4.0.0b3", "4.0.0b4"}:
+    if version in {"4.0.0b2", "4.0.0b3", "4.0.0b4", "4.0.0"}:
         return patch_qualification(version)["model"]
     raise AssertionError(
         f"No qualified model fixtures for libephemeris {version}; do not reuse another model's references"
@@ -63,20 +63,41 @@ def verify_file(path: Path, expected: str) -> Path:
     return path
 
 
-@lru_cache(maxsize=3)
+@lru_cache(maxsize=4)
 def patch_qualification(version: str) -> dict:
     """Bind one explicitly reviewed distribution patch to an unchanged model.
 
     The source-identity record is separate from frozen producer references.
     This is never a wildcard for future native versions or new model outputs.
     """
-    assert version in {"4.0.0b2", "4.0.0b3", "4.0.0b4"}, f"No qualified patch identity for {version}"
+    assert version in {"4.0.0b2", "4.0.0b3", "4.0.0b4", "4.0.0"}, f"No qualified patch identity for {version}"
     path = ROOT / "tests/data/model_qualifications" / f"libephemeris-{version}.json"
     assert path.is_file(), f"Missing patch-model qualification: {path}"
     data = json.loads(path.read_text())
     assert data["engine_version"] == version and data["model"] == MODEL
     source = data["numerical_source"]
-    if version == "4.0.0b2":
+    if version == "4.0.0":
+        # Stable naming is not evidence of model equivalence. Authenticate the
+        # previous qualification, then require its exact reviewed source lineage
+        # and identical numerical/data trees. Producer references remain untouched.
+        assert data["schema"] == 3 and source["review_kind"] == "stable-version-promotion"
+        assert source["base_engine_version"] == "4.0.0b4"
+        base_path = ROOT / "tests/data/model_qualifications/libephemeris-4.0.0b4.json"
+        verify_file(base_path, data["base_qualification_sha256"])
+        previous = patch_qualification("4.0.0b4")
+        assert source["base_commit"] == previous["numerical_source"]["candidate_commit"]
+        assert data["baseline_manifest_sha256"] == previous["baseline_manifest_sha256"]
+        assert len(source["candidate_commit"]) == 40
+        for name in ("core_rust", "bundled_leb2", "python_runtime", "data_crate_rust"):
+            tree = source["trees"][name]
+            assert tree["base"] == tree["candidate"] and len(tree["base"]) == 40, (
+                f"Stable promotion changed {name}"
+            )
+        assert source["reviewed_binding_paths"] == ["python/src/identity.rs"]
+        assert source["binding_runtime_unchanged"] is True, "Stable promotion changed binding runtime"
+        assert len(source["binding_runtime_prefix_sha256"]) == 64
+        assert len(source["reviewed_binding_diff_sha256"]) == 64
+    elif version == "4.0.0b2":
         assert data["schema"] == 1
         assert source["base_core_tree"] == source["candidate_core_tree"] and source["base_core_tree"]
         assert source["runtime_python_source_changed"] is False
@@ -115,7 +136,9 @@ def require_temporal_snapshot_inputs(subject_id: str, *, producer_inputs: dict[s
     """
     if subject_id not in {"galileo_1564", "newton_1643"} or active_model() is None:
         return
-    from kerykeion.ephemeris_backend import ephe
+    # Read the defining module's binding so native test doubles and the helper
+    # share one owner; patching a package re-export can leave other aliases stale.
+    from kerykeion.ephemeris_backend.backend import ephe
 
     reader = ephe.get_leb_reader()
     assert reader is not None, "Historical SVG references require the qualified local LEB inventory"

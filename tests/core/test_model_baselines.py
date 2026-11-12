@@ -18,7 +18,8 @@ def test_model_selection_is_explicit():
     assert fixtures.active_model("swisseph", "4.0.0b1") is None
     assert fixtures.active_model("libephemeris", "4.0.0b1") == fixtures.MODEL
     assert fixtures.active_model("libephemeris", "4.0.0b2") == fixtures.MODEL
-    for version in ("4.0.0", "4.0.0b5", "4.0.1", "5.0.0"):
+    assert fixtures.active_model("libephemeris", "4.0.0") == fixtures.MODEL
+    for version in ("4.0.0rc1", "4.0.0.post1", "4.0.0b5", "4.0.1", "5.0.0"):
         with pytest.raises(AssertionError, match="No qualified model fixtures"):
             fixtures.active_model("libephemeris", version)
 
@@ -34,6 +35,61 @@ def test_patch_distribution_uses_an_authenticated_unchanged_model():
     assert fixtures.fixture_path(path, backend="libephemeris", version="4.0.0b1") == fixtures.fixture_path(path, backend="libephemeris", version="4.0.0b2")
     with pytest.raises(AssertionError, match="No qualified patch identity"):
         fixtures.patch_qualification("4.0.0b5")
+
+
+def test_stable_promotion_authenticates_the_previous_qualification():
+    """Keep stable model reuse tied to b4's source, not its version prefix."""
+    record = fixtures.patch_qualification("4.0.0")
+    previous = fixtures.patch_qualification("4.0.0b4")
+    assert record["schema"] == 3
+    assert record["numerical_source"]["base_commit"] == previous["numerical_source"]["candidate_commit"]
+    assert record["baseline_manifest_sha256"] == previous["baseline_manifest_sha256"]
+    assert fixtures.manifest()["engine_version"] == "4.0.0b1"
+
+
+@pytest.mark.parametrize("changed", ["core_rust", "bundled_leb2", "python_runtime", "data_crate_rust", "binding"])
+def test_stable_promotion_rejects_changed_numerical_or_binding_sources(monkeypatch, tmp_path, changed):
+    """An exact stable version cannot excuse different source/data fingerprints."""
+    import json
+    import shutil
+
+    record = deepcopy(fixtures.patch_qualification("4.0.0"))
+    original = fixtures.ROOT / "tests/data/model_qualifications"
+    isolated = tmp_path / "tests/data/model_qualifications"
+    isolated.mkdir(parents=True)
+    shutil.copy2(original / "libephemeris-4.0.0b4.json", isolated)
+    if changed == "binding":
+        record["numerical_source"]["binding_runtime_unchanged"] = False
+        message = "Stable promotion changed binding runtime"
+    else:
+        record["numerical_source"]["trees"][changed]["candidate"] = "0" * 40
+        message = f"Stable promotion changed {changed}"
+    (isolated / "libephemeris-4.0.0.json").write_text(json.dumps(record), encoding="utf-8")
+    monkeypatch.setattr(fixtures, "ROOT", tmp_path)
+    fixtures.patch_qualification.cache_clear()
+    try:
+        with pytest.raises(AssertionError, match=message):
+            fixtures.patch_qualification("4.0.0")
+    finally:
+        fixtures.patch_qualification.cache_clear()
+
+
+def test_stable_promotion_rejects_a_changed_previous_qualification(monkeypatch, tmp_path):
+    """Verify the chained b4 evidence before accepting the stable source audit."""
+    import json
+
+    record = deepcopy(fixtures.patch_qualification("4.0.0"))
+    isolated = tmp_path / "tests/data/model_qualifications"
+    isolated.mkdir(parents=True)
+    (isolated / "libephemeris-4.0.0b4.json").write_text("{}", encoding="utf-8")
+    (isolated / "libephemeris-4.0.0.json").write_text(json.dumps(record), encoding="utf-8")
+    monkeypatch.setattr(fixtures, "ROOT", tmp_path)
+    fixtures.patch_qualification.cache_clear()
+    try:
+        with pytest.raises(AssertionError, match="Frozen model reference changed"):
+            fixtures.patch_qualification("4.0.0")
+    finally:
+        fixtures.patch_qualification.cache_clear()
 
 
 def test_legacy_reference_bytes_are_unchanged():
@@ -190,7 +246,7 @@ def test_original_producer_can_validate_temporal_inputs_before_manifest_exists(m
     medium.write_bytes(b"medium producer fixture")
     monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
     monkeypatch.setattr(fixtures, "MODEL_ROOT", tmp_path / "missing-model")
-    import kerykeion.ephemeris_backend as backend
+    from kerykeion.ephemeris_backend import backend
     # This unit exercises a native producer contract even when the selected
     # integration backend is Swiss; do not graft native methods onto its C module.
     monkeypatch.setattr(backend, "ephe", SimpleNamespace(__version__="4.0.0b1", get_leb_reader=lambda: SimpleNamespace(path=str(base)), get_leb_inventory=lambda: {"files": [{"path": str(medium)}]}))
@@ -207,7 +263,7 @@ def test_candidate_cannot_use_producer_inputs_without_a_frozen_manifest(monkeypa
 
     monkeypatch.setattr(fixtures, "active_model", lambda: fixtures.MODEL)
     monkeypatch.setattr(fixtures, "MODEL_ROOT", tmp_path / "missing-model")
-    import kerykeion.ephemeris_backend as backend
+    from kerykeion.ephemeris_backend import backend
     monkeypatch.setattr(backend, "ephe", SimpleNamespace(__version__="4.0.0b4", get_leb_reader=lambda: SimpleNamespace(path="base_core.leb2")))
     with pytest.raises(AssertionError, match="Only the original producer"):
         fixtures.require_temporal_snapshot_inputs("galileo_1564", producer_inputs={})

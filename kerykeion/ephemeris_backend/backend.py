@@ -14,7 +14,7 @@ supporting two mutually exclusive backends:
 
 Installation
 ------------
-This beta installs ``libephemeris 4.0.0b4`` from PyPI. Its astronomical
+This release requires ``libephemeris 4.0.0``. Its astronomical
 calculations run in Rust. Supported binary wheels need no local Rust build;
 source installations require a Rust toolchain.
 To use the alternative C-based backend instead::
@@ -168,7 +168,7 @@ else:
             "Kerykeion requires an ephemeris backend but neither 'libephemeris' nor "
             "'pyswisseph' is installed.\n\n"
             "Install one of:\n"
-            "  pip install libephemeris==4.0.0b4  # Published native backend (default)\n"
+            "  pip install libephemeris==4.0.0  # Required native backend (default)\n"
             "  pip install pyswisseph       # Swiss Ephemeris C bindings (AGPL-3.0)\n"
         )
 

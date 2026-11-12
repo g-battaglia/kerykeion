@@ -1,4 +1,10 @@
-# General beta branch
+# Beta branch consolidation (historical)
+
+This page records the beta consolidation and b5 preparation, not the current
+stable candidate. See the [current 6.1.0 stable preparation](../release_notes/v6.1.0-stable.md)
+for the matching stable versions, backend qualification and publication gates.
+The beta history and published beta packages remain unchanged; stable source
+preparation does not itself merge `main` or publish either distribution.
 
 The maintained development branch is `beta-v6`. Its package versions are
 Kerykeion and CLI `6.1.0b5` in preparation, with `libephemeris==4.0.0b4`. The owner published the b4

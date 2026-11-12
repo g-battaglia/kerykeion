@@ -753,7 +753,7 @@ Common first-run issues:
 
 ## Swiss Ephemeris backend
 
-Kerykeion uses **libephemeris 3.2.1** by default. To use the optional Swiss Ephemeris backend:
+Kerykeion 6.1 uses **libephemeris 4.0.0** by default. To use the optional Swiss Ephemeris backend:
 
 ```bash
 pip install "kerykeion[swiss]"

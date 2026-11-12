@@ -1,6 +1,6 @@
 """Read coverage from the backend's acquired immutable calculation snapshot.
 
-LibEphemeris 4.0.0b4 owns shared readers and verified metadata. An additional
+LibEphemeris 4.0.0 owns shared readers and verified metadata. An additional
 Python cache previously statted the entire inventory for every chart point,
 costing substantially more than the native query and retaining duplicate
 records. Delegate selection, invalidation, coverage and errors to the backend.
