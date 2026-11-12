@@ -8,7 +8,8 @@ import logging
 from kerykeion.ephemeris_backend.backend import ephe as _ephe
 
 difdeg2n = _ephe.difdeg2n
-from typing import Mapping, Optional, Union, get_args
+from collections.abc import Mapping
+from typing import Optional, Union, get_args
 from kerykeion.schemas.models import AstrologicalSubjectModel, CompositeSubjectModel, PlanetReturnModel
 from kerykeion.schemas.literals import AspectMovementType, AstrologicalPoint
 from kerykeion.schemas.settings_models import KerykeionSettingsCelestialPointModel
@@ -77,6 +78,56 @@ def get_aspect_from_two_points(
         deviation = abs(distance - aspect_degree)
         if deviation <= aspect_orb and (best_deviation is None or deviation < best_deviation):
             name = aspect["name"]  # type: ignore
+            aspect_degrees = aspect_degree
+            best_deviation = deviation
+    verdict = best_deviation is not None
+
+    return {
+        "verdict": verdict,
+        "name": name,
+        "orbit": abs(distance - aspect_degrees),
+        "distance": abs(distance - aspect_degrees),
+        "aspect_degrees": aspect_degrees,
+        "diff": diff,
+    }
+
+
+def _prepare_aspect_settings(
+    aspects_settings: list[dict],
+    extra_orb: Union[float, Mapping[str, float]] = 0.0,
+) -> tuple[tuple[float, float, str], ...]:
+    """Resolve invariant tolerance windows once for an operation's point pairs."""
+    if isinstance(extra_orb, Mapping):
+        return tuple(
+            (aspect["degree"], max(0.0, aspect["orb"] + extra_orb.get(aspect["name"], 0.0)), aspect["name"])
+            for aspect in aspects_settings
+        )
+    return tuple((aspect["degree"], max(0.0, aspect["orb"] + extra_orb), aspect["name"]) for aspect in aspects_settings)
+
+
+def _get_aspect_from_prepared_settings(
+    prepared_settings: tuple[tuple[float, float, str], ...],
+    point_one: Union[float, int],
+    point_two: Union[float, int],
+) -> dict:
+    """Evaluate prepared windows, preserving closest-match and settings-order ties."""
+    distance = abs(difdeg2n(point_one, point_two))
+    # Angular separation with 0/360 wraparound: abs(p1 - p2) reported 358 for
+    # an exact conjunction at 359 and 1 deg (persisted in AspectModel.diff and
+    # exported as kr:planetsdiff).
+    diff = distance
+
+    # Pick the CLOSEST qualifying aspect, not the first: with user-supplied
+    # overlapping orbs the ascending-degree order could label a separation
+    # with a wider aspect whose window merely contains it. Ties keep the
+    # first (settings order); default orbs never overlap.
+    name = None
+    aspect_degrees: float = 0
+    best_deviation: Optional[float] = None
+    for aspect_degree, aspect_orb, aspect_name in prepared_settings:
+        deviation = abs(distance - aspect_degree)
+        if deviation <= aspect_orb and (best_deviation is None or deviation < best_deviation):
+            name = aspect_name
             aspect_degrees = aspect_degree
             best_deviation = deviation
     verdict = best_deviation is not None
@@ -279,9 +330,10 @@ def get_active_points_list(
         slug = star_name.strip().lower().replace(" ", "_").replace("-", "_")
         star_lookup[slug] = star
 
+    active_names = set(active_points)
     resolved_names: set = set()
     for planet in celestial_points:
-        if planet["name"] not in active_points:
+        if planet["name"] not in active_names:
             continue
         key = planet["name"].lower()
         point = None

@@ -22,6 +22,14 @@ from kerykeion.schemas.settings_models import KerykeionLanguageModel
 class TestLoadSettingsMapping:
     """Tests for load_settings_mapping."""
 
+    @pytest.fixture(autouse=True)
+    def deprecation_contract(self):
+        # Require the warning emitted by the deprecated API under test.
+        """Capture the expected deprecation behavior for settings access."""
+        with pytest.deprecated_call(match="load_settings_mapping is deprecated") as recorded:
+            yield
+        assert len(recorded) == 1
+
     def test_default_loading_returns_dict_with_language_settings(self):
         settings = load_settings_mapping()
         assert isinstance(settings, dict)

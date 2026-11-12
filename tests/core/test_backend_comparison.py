@@ -17,11 +17,17 @@ Run with::
 """
 
 import importlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
 
 def _try_import(name: str):
+    """Probe optional backend availability without changing the active backend."""
     try:
         return importlib.import_module(name)
     except ImportError:
@@ -52,7 +58,6 @@ TRUE_NODE = 11
 
 def _calc_planet(backend, planet_id: int, jd: float = JD_LENNON):
     """Calculate a planet position using a specific backend module."""
-    backend.set_ephe_path("")
     flags = backend.FLG_SWIEPH | backend.FLG_SPEED
     result, _retflags = backend.calc_ut(jd, planet_id, flags)
     return result  # (lon, lat, dist, lon_speed, lat_speed, dist_speed)
@@ -60,7 +65,6 @@ def _calc_planet(backend, planet_id: int, jd: float = JD_LENNON):
 
 def _calc_houses(backend, jd: float = JD_LENNON):
     """Calculate houses using a specific backend module."""
-    backend.set_ephe_path("")
     flags = backend.FLG_SWIEPH
     cusps, ascmc, cusps_speed, ascmc_speed = backend.houses_ex2(jd, LAT, LON, b"P", flags)
     return cusps, ascmc
@@ -204,41 +208,63 @@ class TestKerykeionIntegrationComparison:
 
     @pytest.fixture(scope="class")
     def subjects(self):
-        """Create the same subject with both backends."""
-        import os
-        from kerykeion import AstrologicalSubjectFactory
+        """Calculate each subject in a fresh process with its own backend state.
 
+        Reloading only the backend module leaves existing factories holding
+        aliases to the other engine, and changing its environment leaks into
+        later tests. The child asserts its actual backend before calculating;
+        numerical outputs are exchanged only in memory, never written as fixtures.
+        """
+        from kerykeion.ephemeris_backend import backend
+        from kerykeion.schemas.models import AstrologicalSubjectModel
+
+        original = (os.environ.get("KERYKEION_BACKEND"), backend.BACKEND_NAME, backend.ephe)
+        script = """
+import json, os
+from kerykeion import AstrologicalSubjectFactory
+from kerykeion.ephemeris_backend import BACKEND_NAME
+assert BACKEND_NAME == os.environ["KERYKEION_BACKEND"]
+subject = AstrologicalSubjectFactory.from_birth_data(
+    "Test", 1940, 10, 9, 18, 30, lng=-2.9916, lat=53.4084,
+    tz_str="Europe/London", city="Liverpool", nation="GB", online=False,
+)
+print(subject.model_dump_json())
+"""
         results = {}
-
-        for backend_name in ("swisseph", "libephemeris"):
-            os.environ["KERYKEION_BACKEND"] = backend_name
-            # Force reimport of the backend module
-            import kerykeion.ephemeris_backend.backend as eb
-            importlib.reload(eb)
-
-            subject = AstrologicalSubjectFactory.from_birth_data(
-                "Test", 1940, 10, 9, 18, 30,
-                lng=LON, lat=LAT, tz_str="Europe/London",
-                city="Liverpool", nation="GB", online=False,
+        child_environment = dict(os.environ)
+        inherited = child_environment.get("PYTHONPATH")
+        search_paths = [str(Path(__file__).resolve().parents[2])]
+        if inherited is not None:
+            search_paths.extend(str(Path(entry).resolve()) for entry in inherited.split(os.pathsep))
+        child_environment["PYTHONPATH"] = os.pathsep.join(search_paths)
+        if child_environment.get("KERYKEION_EPHE_PATH"):
+            child_environment["KERYKEION_EPHE_PATH"] = str(Path(child_environment["KERYKEION_EPHE_PATH"]).resolve())
+        for name in ("swisseph", "libephemeris"):
+            child = subprocess.run(
+                [sys.executable, "-c", script],
+                cwd=Path(__file__).resolve().parents[2],
+                env={**child_environment, "KERYKEION_BACKEND": name},
+                capture_output=True, text=True, check=False, timeout=30,
             )
-            results[backend_name] = subject
-
-        # Restore default
-        os.environ.pop("KERYKEION_BACKEND", None)
-        importlib.reload(eb)
-
+            assert child.returncode == 0, f"Isolated {name} subject calculation failed:\n{child.stderr}"
+            results[name] = AstrologicalSubjectModel.model_validate(json.loads(child.stdout))
+        assert (os.environ.get("KERYKEION_BACKEND"), backend.BACKEND_NAME, backend.ephe) == original
         return results
 
     def test_sun_sign_matches(self, subjects):
+        """Both isolated backends must report the same solar sign."""
         assert subjects["swisseph"].sun.sign == subjects["libephemeris"].sun.sign
 
     def test_moon_sign_matches(self, subjects):
+        """Both isolated backends must report the same lunar sign."""
         assert subjects["swisseph"].moon.sign == subjects["libephemeris"].moon.sign
 
     def test_ascendant_sign_matches(self, subjects):
+        """Both isolated backends must report the same Ascendant sign."""
         assert subjects["swisseph"].ascendant.sign == subjects["libephemeris"].ascendant.sign
 
     def test_sun_position_close(self, subjects):
+        """Solar longitudes must remain inside the existing backend comparison budget."""
         diff = _angular_diff(
             subjects["swisseph"].sun.abs_pos,
             subjects["libephemeris"].sun.abs_pos,
@@ -246,6 +272,7 @@ class TestKerykeionIntegrationComparison:
         assert diff < 0.02, f"Sun abs_pos diff: {diff:.6f}°"
 
     def test_moon_position_close(self, subjects):
+        """Lunar longitudes must remain inside the existing backend comparison budget."""
         diff = _angular_diff(
             subjects["swisseph"].moon.abs_pos,
             subjects["libephemeris"].moon.abs_pos,
@@ -253,4 +280,5 @@ class TestKerykeionIntegrationComparison:
         assert diff < 0.05, f"Moon abs_pos diff: {diff:.6f}°"
 
     def test_house_system_name_matches(self, subjects):
+        """Both isolated backends must retain the requested house-system name."""
         assert subjects["swisseph"].houses_system_name == subjects["libephemeris"].houses_system_name

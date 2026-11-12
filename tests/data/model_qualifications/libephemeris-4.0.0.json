@@ -1,0 +1,37 @@
+{
+  "schema": 3,
+  "engine_version": "4.0.0",
+  "model": "libephemeris-4.0.0b1",
+  "baseline_manifest_sha256": "e05b99c22f03c24a49249d82ba82d3c8c929848d9e6dd8cb7dde738e04db9cd8",
+  "base_qualification_sha256": "cad6cf68f69e89592be4add9380e4b3035957a9ca8f096c7730f9f2178980bc7",
+  "numerical_source": {
+    "repository": "https://github.com/g-battaglia/libephemeris",
+    "review_kind": "stable-version-promotion",
+    "base_engine_version": "4.0.0b4",
+    "base_commit": "819684a0000851eda7de99b60b00ca3a090062a5",
+    "candidate_commit": "84b70895124c5e5685df3c44a389f230a7fa6102",
+    "base_tag": "python-v4.0.0b4",
+    "candidate_tag": "python-v4.0.0",
+    "trees": {
+      "core_rust": {"base": "54158a62bf822c776d0cc0dea5b4e0c8cb38c697", "candidate": "54158a62bf822c776d0cc0dea5b4e0c8cb38c697"},
+      "bundled_leb2": {"base": "9c9bb59cc9e84f3da0be0eefc82b417850516537", "candidate": "9c9bb59cc9e84f3da0be0eefc82b417850516537"},
+      "python_runtime": {"base": "66c9ce1030b51c0053f5fa450a179dc0bc9ab21b", "candidate": "66c9ce1030b51c0053f5fa450a179dc0bc9ab21b"},
+      "data_crate_rust": {"base": "8894ac74d3693666fbdfc8b0a4807ccbc109801f", "candidate": "8894ac74d3693666fbdfc8b0a4807ccbc109801f"}
+    },
+    "reviewed_binding_paths": ["python/src/identity.rs"],
+    "binding_runtime_unchanged": true,
+    "binding_runtime_prefix_sha256": "150e23dab575279b5410d90ae85b6e97a4a0132ad7c6201282825f710c2c6a72",
+    "reviewed_binding_diff_sha256": "4e88c9bdc3a24ce06af91e1dc99fa1bab9114fde53d32afef5686c2e532f46ce",
+    "scope": "The entire numerical Rust core, data-crate Rust source, bundled coefficient image and Python runtime trees are identical to b4. The only binding source edit changes the version assertion inside cfg(test); the complete production prefix is byte-identical. Package identities, exact internal version pins, documentation and release tests change; external Cargo dependency records are preserved. No numerical reference or tolerance changes."
+  },
+  "qualification_basis": "Exact source identity chained to the separately authenticated b4 qualification; not a wildcard for future versions and not an independent accuracy claim.",
+  "publication_status": "official-PyPI-files-verified-against-frozen-source-preparation",
+  "publication_source_commit": "84b70895124c5e5685df3c44a389f230a7fa6102",
+  "publication_artifacts_sha256": {
+    "libephemeris-4.0.0-cp312-abi3-macosx_11_0_arm64.whl": "2fa6c48ca52446d8dd9c3009d91f58faac1851efd50bd19b1ae6fd0122c02bf1",
+    "libephemeris-4.0.0-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": "2ffded131a8bc76657d812a73ab62664a9dd9fd19db4d67772f06db99ca37226",
+    "libephemeris-4.0.0-cp312-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl": "66ede025eb132d4616b586902d47c5500186c8a9ee17ffb97c669ce442012855",
+    "libephemeris-4.0.0-cp312-abi3-win_amd64.whl": "092bc5f09beca236b91e0de10cbb3590269a1474369ae3e5d606c28179fa792f",
+    "libephemeris-4.0.0.tar.gz": "e6e04024cd336d351e4d03b1f09023df0d5adb616d04d33d377f5703cee629db"
+  }
+}

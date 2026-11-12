@@ -159,6 +159,7 @@ Constructor: `ChartDrawer(chart_data, *, ...)` — `chart_data` is the only posi
 | `show_relationship_score` | `False` | Synastry score in the info panel; needs a score on the chart data (`create_synastry_chart_data` computes one by default). |
 | `show_ayanamsa_value` | `False` | Ayanamsa offset in degrees and minutes on the zodiac line of a sidereal chart. |
 | `show_polar_fallback_note` | `False` | Mark the domification line when the requested house system was substituted at a polar latitude. |
+| `show_ephemeris_notes` | `False` | Add a footer for unavailable points and explicitly approximate positions; works for full, wheel and grid exports without recalculation. |
 
 The last six draw facts the chart data already carries. Each is silent where it
 has no referent — no station, no score, a tropical zodiac, a house system that
@@ -192,7 +193,7 @@ assert "<svg" in svg
 
 `style=`, `show_zodiac_background_ring=` and `glyph_size=` at render time each
 override the constructor default for that call only (the aspect-grid-only
-methods take none of the three — there is no wheel to size). `minify=True` strips whitespace/quotes; `remove_css_variables=True` inlines the CSS custom-property definitions (needed by SVG consumers that do not resolve `var(...)`, e.g. many raster converters). `output_path=None` writes to the user's HOME directory — always pass a directory. `filename` is the basename without `.svg`; user-supplied names are sanitized (path separators, `..`, leading dots become underscores) and the resolved path must stay inside the output directory or `KerykeionException` is raised.
+methods take none of the three — there is no wheel to size). `minify=True` runs the full SVG optimizer (XML parsing, path/transform cleanup and serialization). It can cost substantially more CPU than rendering itself: for repeated delivery, generate and minify an asset once in the application, then reuse the result with a cache key covering its data and rendering options; `remove_css_variables=True` inlines the CSS custom-property definitions (needed by SVG consumers that do not resolve `var(...)`, e.g. many raster converters). `output_path=None` writes to the user's HOME directory — always pass a directory. `filename` is the basename without `.svg`; user-supplied names are sanitized (path separators, `..`, leading dots become underscores) and the resolved path must stay inside the output directory or `KerykeionException` is raised.
 
 Layout notes: with more than 24 active points the aspect list/grid moves to a full-height right-side panel instead of below the wheel. `double_chart_aspect_grid_type="table"` renders the dual-chart aspect grid as a matrix instead of the default column list.
 

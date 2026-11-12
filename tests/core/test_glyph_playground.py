@@ -7,11 +7,11 @@ approximations of them. That claim rests entirely on the diff format round
 tripping, so that is what is pinned here — on real renders, not on fixtures of
 renders.
 
+The manifest's cap-binding claims are checked against actual display geometry.
 What is not pinned here: the JavaScript reassembly (same algorithm, checked in
-a browser when the page is built) and the committed HTML being in step with the
-current profiles. The page is a tuning instrument, not a golden: it is rebuilt
-with ``poe playground`` when the eye needs it, and a stale one is a stale
-picture, not a broken promise.
+a browser when the page is built) or every pixel of the committed page. It is
+a tuning instrument, not a golden; rebuild it with ``poe playground`` when the
+profiles change.
 
 See: scripts/generate_glyph_playground.py
 """
@@ -21,18 +21,22 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from types import SimpleNamespace
+from xml.etree import ElementTree
 
 import pytest
 
-from kerykeion.ephemeris_backend import BACKEND_NAME
-
+from kerykeion.charts import draw_modern as dm
+from scripts import generate_glyph_playground as playground
 from scripts.generate_glyph_playground import (
     PAGE_TEMPLATE,
     STEP_COUNT,
     apply_diff,
     compact_diff,
+    display_layout,
     lines_of,
     render,
+    render_with_layout,
     step_clearance,
     unbound_rings,
 )
@@ -121,28 +125,101 @@ def test_the_marked_step_is_the_chart_the_library_ships(charts):
 
 
 @pytest.mark.parametrize(
-    ("chart", "size", "binds_lib", "binds_swiss"),
-    [("synastry", "small", True, False), ("natal", "medium", False, False), ("synastry", "large", False, False)],
+    ("chart", "size", "binds"),
+    [("synastry", "small", False), ("natal", "medium", False), ("synastry", "large", False)],
 )
-def test_the_page_tells_the_truth_about_the_ceiling(charts, chart, size, binds_lib, binds_swiss):
-    """Lifting ``min_separation`` has to matter exactly where the page says it does.
+def test_the_page_tells_the_truth_about_the_ceiling(charts, chart, size, binds):
+    """A clipped request need not constrain the layout: compare real placements.
 
-    Above ★ every notch renders with the ceiling out of reach, so that the
-    clearance is what decides instead of the cap. On the small synastry the
-    shipped ceiling genuinely binds and the page prints a warning; elsewhere the
-    two draw the same chart and it says so. Either claim going stale — a profile
-    re-measured, the lift quietly dropped — is a lie printed under a slider.
+    The current fixtures have enough space with either ceiling, including the
+    small synastry. This is geometry, not a property of a backend's name.
     """
     rings = ("natal",) if chart == "natal" else ("dual_outer", "dual_inner")
     air = [step_clearance(0)] * len(rings)
-
-    shipped = render(charts[chart], size, air)
-    lifted = render(charts[chart], size, air, rings)
-
-    # The generator measures this per render. Swiss positions do not bind
-    # the small-synastry ceiling at this fixture's date; libephemeris does.
-    binds = binds_lib if BACKEND_NAME == "libephemeris" else binds_swiss
+    _, shipped = render_with_layout(charts[chart], size, air)
+    _, lifted = render_with_layout(charts[chart], size, air, rings)
     assert (shipped != lifted) is binds
+
+
+@pytest.mark.parametrize(("angle", "binds"), [(0.0, False), (45.0, True)])
+def test_synthetic_clusters_detect_an_active_ceiling(angle, binds):
+    """The same real ink at the diagonal needs more arc; jammed points expose it.
+
+    Use the unchanged production small-outer profile. No astronomical positions,
+    measured spacing floors or ink metrics are adjusted to activate the cap.
+    """
+    profile = dm.GLYPH_SIZE_PROFILES["small"]["dual_outer"]
+    point = SimpleNamespace(
+        name="Sun",
+        point_type="AstrologicalPoint",
+        sign="Aqu",
+        position=29.983,
+        retrograde=True,
+    )
+    ink = dm._cluster_row_profile(point, **profile.scale_config())
+    radii = {row: dm.CENTER - getattr(profile, row + "_y") for row in ("glyph", "degrees", "sign", "minutes", "rx")}
+
+    def resolve(ceiling):
+        """Resolve one fixture using the playground contract."""
+        entries = [
+            {"point": SimpleNamespace(name=f"P{i}"), "angle": angle + i * 0.01, "row_half_widths": ink}
+            for i in range(2)
+        ]
+        return dm._resolve_planet_collisions(entries, min_separation=ceiling, row_radii=radii)
+
+    shipped = resolve(profile.min_separation)
+    lifted = resolve(playground.UNBOUND_CEILING)
+    assert (display_layout(shipped) != display_layout(lifted)) is binds
+    if binds:
+        shipped_gap = (shipped[1]["display_angle"] - shipped[0]["display_angle"]) % 360.0
+        lifted_gap = (lifted[1]["display_angle"] - lifted[0]["display_angle"]) % 360.0
+        assert shipped_gap == pytest.approx(profile.min_separation)
+        assert lifted_gap > profile.min_separation
+
+
+@pytest.mark.parametrize(("first", "second"), [(0.0, 360.0), (12.00000001, 12.00000002)])
+def test_display_layout_uses_rendered_precision_and_circular_equivalence(first, second):
+    """Verify display layout uses rendered precision and circular equivalence."""
+    point = SimpleNamespace(name="Sun")
+    assert display_layout([{"point": point, "display_angle": first}]) == display_layout(
+        [{"point": point, "display_angle": second}]
+    )
+
+
+def test_captured_layout_matches_actual_svg_rotations(charts):
+    """Verify captured layout matches actual svg rotations."""
+    svg, layouts = render_with_layout(charts["natal"], "medium", [step_clearance(0)])
+    kr = "{https://www.kerykeion.net/}"
+    actual = []
+    for element in ElementTree.fromstring(svg).iter():
+        if element.get(kr + "node") == "ChartPoint":
+            rotation = re.match(r"rotate\(([-+0-9.]+)\s", element.attrib["transform"])
+            assert rotation is not None
+            actual.append((element.attrib[kr + "slug"], -float(rotation.group(1)) % 360.0))
+    assert actual, "the render must contain real point placements"
+    assert layouts == (tuple(sorted(actual)),)
+
+
+@pytest.mark.parametrize("layout_moves", [False, True])
+@pytest.mark.parametrize("svg_text_changes", [False, True])
+def test_manifest_uses_geometry_not_svg_text(monkeypatch, layout_moves, svg_text_changes):
+    """Both false textual positives and false textual negatives are refused."""
+    monkeypatch.setattr(playground, "SIZES", ["small"])
+    monkeypatch.setattr(playground, "STEP_COUNT", 1)
+    monkeypatch.setattr(playground.AstrologicalSubjectFactory, "from_birth_data", lambda *args, **kwargs: object())
+    monkeypatch.setattr(playground.ChartDataFactory, "create_natal_chart_data", lambda _: "natal")
+    monkeypatch.setattr(playground.ChartDataFactory, "create_synastry_chart_data", lambda *_: "synastry")
+
+    def render_fixture(chart, size, clearances, unbound=()):
+        """Render a deterministic glyph-playground fixture."""
+        shifted = bool(unbound) and chart == "synastry"
+        svg = "<svg><!-- changed text --></svg>" if shifted and svg_text_changes else "<svg/>"
+        angle = 20.0 if shifted and layout_moves else 10.0
+        return svg, ((("Sun", angle),),)
+
+    monkeypatch.setattr(playground, "render_with_layout", render_fixture)
+    data = playground.build_data()
+    assert data["manifest"]["ceilingBinds"]["small"] == {"natal": False, "synastry": layout_moves}
 
 
 def test_the_shipped_page_is_whole():
@@ -174,6 +251,7 @@ def test_the_shipped_page_is_whole():
     # The page reads these back to label its own controls.
     assert data["manifest"]["shippedClearance"] == pytest.approx(step_clearance(0))
     assert set(data["manifest"]["ceilingBinds"]) == set(data["manifest"]["sizes"])
+    assert data["manifest"]["ceilingBinds"]["small"]["synastry"] is False
 
 
 def test_the_page_asks_for_nothing_from_the_network():

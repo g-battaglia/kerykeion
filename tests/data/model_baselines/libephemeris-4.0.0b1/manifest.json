@@ -1,0 +1,1955 @@
+{
+  "engine_version": "4.0.0b1",
+  "independent_qualification": {
+    "angle_geometry": "closed-form horizon and meridian intersections",
+    "angular_budget_degrees": 0.01,
+    "clock_and_poles": "Skyfield 1.54: UT1 GAST, true equator and ecliptic date frames",
+    "house_geometry": "LibEphemeris 3.2.2 public houses_armc with independent orientation inputs",
+    "maximum_ascendant_error_degrees": 0.00026045281299502676,
+    "maximum_cusp_error_degrees": 0.00029948951583946837,
+    "maximum_midheaven_error_degrees": 0.00017153080443677027,
+    "maximum_speed_error_degrees_per_day": 0.0016402749506596592,
+    "scope": "non-polar positions/rates at the existing consumer budgets; SVGs remain regression snapshots, not absolute accuracy certificates",
+    "speed_budget_degrees_per_day": 0.01,
+    "speed_reference": "central difference at +/-2 UT1 seconds, using actual sampled JD span",
+    "subject_ids": [
+      "american_independence_1776",
+      "ancient_200bc",
+      "ancient_500bc",
+      "buenos_aires_34s",
+      "cape_town_34s",
+      "columbus_1492",
+      "early_medieval_800",
+      "early_renaissance_1450",
+      "einstein_1879",
+      "enlightenment_1750",
+      "equinox_2020",
+      "fiji_dateline_east",
+      "future_2050",
+      "future_2100",
+      "future_2200",
+      "galileo_1564",
+      "high_medieval_1100",
+      "industrial_1850",
+      "john_lennon_1940",
+      "johnny_depp_1963",
+      "late_antiquity_400",
+      "late_medieval_1300",
+      "london_51n",
+      "millennium_2000",
+      "nairobi_1s",
+      "new_york_40n",
+      "newton_1643",
+      "oslo_60n",
+      "paul_mccartney_1942",
+      "quito_equator",
+      "roman_100ad",
+      "samoa_dateline_west",
+      "singapore_1n",
+      "sydney_34s",
+      "tokyo_35n",
+      "ushuaia_55s",
+      "ww1_start_1914",
+      "yoko_ono_1933"
+    ]
+  },
+  "inputs": [
+    {
+      "bytes": 9860592,
+      "name": "base_apogee.leb2",
+      "sha256": "f76ca7354d18e21e9f4e96f859149f29b0a2f0c19c19e305db1b7dba81f9c616"
+    },
+    {
+      "bytes": 2147422,
+      "name": "base_asteroids.leb2",
+      "sha256": "9364f821f09076db3cd3cfc428379e136a0eea80917af692681be405601652d8"
+    },
+    {
+      "bytes": 10232271,
+      "name": "base_core.leb2",
+      "sha256": "b891de02f82b68346046da67389fd3713aa81ab299287c632cb20cc396397964"
+    },
+    {
+      "bytes": 28244456,
+      "name": "base_exotics.leb2",
+      "sha256": "e0b5bf4b14b10495c704d553557922f91f3b9db71117e21f1eb4fc0a134f4d1a"
+    },
+    {
+      "bytes": 1481194106,
+      "name": "extended_apogee.leb2",
+      "sha256": "9426373afabdfaa1d4fa08c8eb580ff532508f4ff07aa7c4a9ef08ca7ddb193a"
+    },
+    {
+      "bytes": 6476624,
+      "name": "extended_asteroids.leb2",
+      "sha256": "2c9c9f999e22857bc24c0bbfd55e95192739f4984da56a8d19156d8c03e6907c"
+    },
+    {
+      "bytes": 1153119874,
+      "name": "extended_core.leb2",
+      "sha256": "2122b11a6b5d19178e54de41cb1d956e4e0fb54331f2c5b7e0dd8991ffb572cf"
+    },
+    {
+      "bytes": 234008376,
+      "name": "extended_exotics.leb2",
+      "sha256": "8b5094beaacd2a14807f60ddb6867922bdfa757624b6c7404b8fe02baa341d94"
+    },
+    {
+      "bytes": 35890238,
+      "name": "medium_apogee.leb2",
+      "sha256": "a2f8970cfd08150394556828862f497401f4b47fc7f75e1db7e9c63057324a3a"
+    },
+    {
+      "bytes": 6476624,
+      "name": "medium_asteroids.leb2",
+      "sha256": "f7a3784a1e29a1fcc42ad9736f0333bc690535befea008e86a7b799a4a7652d9"
+    },
+    {
+      "bytes": 37267685,
+      "name": "medium_core.leb2",
+      "sha256": "b74970cc37f8d0316c6a6fc0c72a5690d2b1f38f65352590a70ecb6500c9572d"
+    },
+    {
+      "bytes": 92325051,
+      "name": "medium_exotics.leb2",
+      "sha256": "c549f12032dd2d74ad547ddad43c8335f3fe975121b71d2c1b5f1c4b37ed16b5"
+    }
+  ],
+  "legacy_files": {
+    "tests/data/expected_arabic_parts.py": "4aee7527cfc4a0b7309e80b82fc34f150796d3f3352ba73b5f506a6013dbf1fb",
+    "tests/data/expected_positions.py": "7642731e7cadde66cee3d433f5cd6307fdead8f8c25a6c69c28a9429aba72ec5",
+    "tests/data/svg/Albert Einstein - Natal Chart - Classic.svg": "8080dc88381e38c40a045f1254313dcaf7a55dfe5911d77ba94a96f6d3079c93",
+    "tests/data/svg/Amitabh Bachchan - Natal Chart - Classic.svg": "ae74e3911b4e82e51cc447ebeb42c5c4067e5a39a18f30f1e2885f24aab113ae",
+    "tests/data/svg/Ancient Greece 500BC - Dark Theme - Natal Chart - Classic.svg": "337575a52010bcec45c3ca28f68cc3aa62a04ee3f7002d382726fb68152f70b2",
+    "tests/data/svg/Ancient Greece 500BC - Natal Chart - Classic.svg": "27f5477c9d5a819c5cd6bec57a63f17aa101e8765eda18851db7391c61daba2a",
+    "tests/data/svg/Ancient Greece 500BC - Progression Chart - Classic.svg": "32399116a114012f0a0ea6161280c4f6009a49c711334b6fa6973e25b5d304bb",
+    "tests/data/svg/Ancient Greece 500BC - Synastry Chart - Classic.svg": "1ee3d7863d20fd6aec1fd601e8b8937656d8eaed5088a541bb19f916908e376a",
+    "tests/data/svg/Ancient Greece 500BC - Transit Chart - Classic.svg": "d6c6e9fa2c3e406b9531da0ad8be1050f339710179b88643c8ce8aded06baa89",
+    "tests/data/svg/Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg": "3da07bd1cbe6fc8c3b8b88e2f35ac6efd4ffd27b4f4ff57e7bce91d86011b27c",
+    "tests/data/svg/Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg": "da97c7952aa6b6f3f4e9777819e8eff223d134df2011445d386ec9e284753a19",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - All Points All Aspects - Composite Chart - Modern Wheel Only.svg": "9e04a12c80524c2e3e1f80a543e53c5c04071055bdd52c9a0509cbff0f6d776b",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - All Points All Aspects - Composite Chart - Modern.svg": "62fef4052904ed7e9f17fa992c4989eabef34cc97158c6079bb1836768fdcb32",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - BW Theme - Composite Chart - Modern.svg": "5491e90001039a912636b0870e70d4225ad50def02f4770d0912fbd034ebd62c",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart - Classic.svg": "55f2348a6b31f7b65a438b8382477a5ec46df47c4665946ab2722fb296474a78",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Aspect Grid Only.svg": "bbe7f33e228ddc899f7559b7a1e7a706119672b083ea38375838a158cdd45c74",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Classic Wheel Only.svg": "76f4e713a0bd241b042a3e18cee7b2c8590fc2ea08e8ef2737b55835e48fa039",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Classic.svg": "6e1ce8a205740888394bc5ee41be184acf17026dd5e189459d7e8bb2def8be5d",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern Small.svg": "31620c6af196d49111568453c454045845a75664029a7a726998874d28022819",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern Wheel Only.svg": "8533a9ed829e8dc3a92d7faf808486a89835bce858909644ba5ec7b1ac06407f",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern.svg": "2d3d04b0f934285c06bb2b2b2ee091002d264ee60401b09c05f98cf348c3e80d",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Classic.svg": "a77f5ff33a70c58f84e6a4cddb5a17bd0a21f33c72837d9ffff3442a9ababb72",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Modern.svg": "2ef5f2442e6a27c830ab3a7c62bbe02ba7d56649ea732023042da2ca7e7d1ed4",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic.svg": "00ce4d05ff9fd42a98b372760f7ac3451839c208249bbcd454ad88173cf67a6d",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Classic.svg": "4db34d70bbf911122e3a7f752379bfc344a86122fecc039ca082fcbe4cef680c",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Modern.svg": "8881bf4540078205114a6aaa2e8d83d74fc1b4a769a4071875c24658fec293b4",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - No Zodiac Ring - Composite Chart - Modern.svg": "5d28cdc5478b9d602b78a94ed63e980be4d1c6c3951767d791494726b51b9fad",
+    "tests/data/svg/Angelina Jolie and Brad Pitt Composite Chart - PT - Composite Chart - Classic.svg": "c17f58d9adf73facbeebbff0e0e588fd21281b116c48c6ce46b15309fd9b7069",
+    "tests/data/svg/Antarctic Circle 66S - Koch - Natal Chart - Classic.svg": "41ba1af09c2d47cf35f4a055bccb3f448644ce9c7e7db4effae1d98ecd49686e",
+    "tests/data/svg/Antarctic Circle 66S - Natal Chart - Classic.svg": "0ca2444b2542e8d9cf3034e78dace247fe360656f24b46608125fa186ecbfa11",
+    "tests/data/svg/Antarctic Circle 66S - Whole Sign - Natal Chart - Classic.svg": "911f7f26f1fa745be757be2773f6908271c5146b90e765127079b6b6f980cbbf",
+    "tests/data/svg/Antarctic Subject - Natal Chart - Classic.svg": "7b696e840a7e0b934956d79866f881604c8d625b4179c420861b14bbe91d4811",
+    "tests/data/svg/Antonio Banderas - Natal Chart - Classic.svg": "792d2b92ecf45df4439f60634c34b4b9ac7db3cc730a00217dbf49e8e96dde92",
+    "tests/data/svg/Arctic Circle 66N - Koch - Natal Chart - Classic.svg": "967d1f119f2adc26a513e17ea4d0bd9e215723020056008828b0e093398014d4",
+    "tests/data/svg/Arctic Circle 66N - Natal Chart - Classic.svg": "b7faa14eb499fb898bac0c3cb32a2f9009a98fefc48a78909f65967dbc7ecb84",
+    "tests/data/svg/Arctic Circle 66N - Whole Sign - Natal Chart - Classic.svg": "1e999966663d49b5e1509ea28ac74c076d3029d5aa072dfd9fe9003ce35492d5",
+    "tests/data/svg/Arctic Subject - Natal Chart - Classic.svg": "df6d99f675520f7f2264cc4e0f751d235cb470114b91014a7fe5b4cfb161183c",
+    "tests/data/svg/Buenos Aires 34S - Koch - Natal Chart - Classic.svg": "c0f6e525282379aa9003b4f047653a74a6ea5ff5886463ee972a8e7d5bfaebb9",
+    "tests/data/svg/Buenos Aires 34S - Natal Chart - Classic.svg": "7b3144dc3e653c86dd3ed67b6a501616883fbf7e3d8e5c0547ebc541e3e9bd7e",
+    "tests/data/svg/Cape Town 34S - Koch - Natal Chart - Classic.svg": "849f1fea5a50cfaa143d4637f8371867364bdae54ca96207064ab0f75fd2beb9",
+    "tests/data/svg/Cape Town 34S - Natal Chart - Classic.svg": "7d46f50ef6165fe41b7f716aa277b16aeb70fc03866313623d3c550f70018383",
+    "tests/data/svg/Charlemagne Era 800AD - Dark Theme - Natal Chart - Classic.svg": "44dc604ce819683c9ba37614d5a5e6e5cf9935c5d02d9c3694b0b596888b8e06",
+    "tests/data/svg/Charlemagne Era 800AD - Natal Chart - Classic.svg": "b37cff44ceb20b72b92350a8e8195439fbda647a5ca4b589de16ca24cbd04651",
+    "tests/data/svg/Columbus 1492 - Natal Chart - Classic.svg": "649de1ef2a013be942e0d12fbdbee0ae097b18b0f524bdf9725fceb947e0df54",
+    "tests/data/svg/Constantinople 400AD - Dark Theme - Natal Chart - Classic.svg": "3503ddb96708371e4bdf4fc86c6c4602540473620d8d4c32b43d293c67e46f5c",
+    "tests/data/svg/Constantinople 400AD - Natal Chart - Classic.svg": "577abdda29e037746b5ded2775f377a9b691b4eca9ab4760a1bc40e6d7f309b0",
+    "tests/data/svg/Cristiano Ronaldo - Natal Chart - Classic.svg": "a178e6c799cd1867b243c058922612e75c0c8924c2fed171712a5ced36556c4b",
+    "tests/data/svg/Crusades Era 1100AD - Natal Chart - Classic.svg": "f1ff62aebe04b24109e3c4a7f3d3381797df249afc10a47ea6195b5a0df5493e",
+    "tests/data/svg/Dante Era 1300AD - Natal Chart - Classic.svg": "3dc6addf407968cdf11c70d2d1ab771f23f3371fb97def82bca09fac29f64e3c",
+    "tests/data/svg/Date Line Subject - Natal Chart - Classic.svg": "de0d18ecb652f974b6c7620c3bea5c8715c3b19aa032903bec9436ea68a6b385",
+    "tests/data/svg/Early Renaissance 1450 - Natal Chart - Classic.svg": "051d15a472b219405cb198ba6bdab0c693b937f6080e4ba725bd869fde839f84",
+    "tests/data/svg/Einstein Birth 1879 - Natal Chart - Classic.svg": "5207dfc30d311fc3cfb02f96d41f9ed59d8bc7dbe251823a56661abeff3208c7",
+    "tests/data/svg/Enlightenment 1750 - Natal Chart - Classic.svg": "65755baea9f8fd400e93b94f9d070f74dd595f0b8fefff603029483aed697760",
+    "tests/data/svg/Fiji Dateline East - Koch - Natal Chart - Classic.svg": "6c3d3fc1e19c0dbbcd023e5a2e3507b159a983e6e3c42d447a573b04350bf077",
+    "tests/data/svg/Fiji Dateline East - Natal Chart - Classic.svg": "f67217bae5175a7b5ef8aea8cea5f243036729c54ba9f2abf18b91c6d68fee85",
+    "tests/data/svg/Future 2050 - Black-And-White Theme - Natal Chart - Classic.svg": "d0a15d1709f7873b08d914d5cd3dd28c3354c7d791dc2d14a1ca4665ac4a0cd2",
+    "tests/data/svg/Future 2050 - Natal Chart - Classic.svg": "b7fa215b95cdaed68d7ce037616a0969eefa5d584094594d517a60ba6cce6f32",
+    "tests/data/svg/Future 2100 - Black-And-White Theme - Natal Chart - Classic.svg": "61b204a3491a6f5fc7dbf09f7d465aad78786ca2abfe248e2f54dcda0c3ea55f",
+    "tests/data/svg/Future 2100 - Natal Chart - Classic.svg": "09be62683ef3983641809ffecd1dbc17f0b93f71e14ed1a5487da5a5d7a886b8",
+    "tests/data/svg/Future 2200 - Black-And-White Theme - Natal Chart - Classic.svg": "12deebe78b9f43567d615d14e9bda55aa0236135d838ca472172c8509dd5ab3f",
+    "tests/data/svg/Future 2200 - Natal Chart - Classic.svg": "f5aa4f76c5efdf3e582a58016c2601338eba27114fa6446239a35c05990890b8",
+    "tests/data/svg/Future Subject - Natal Chart - Classic.svg": "0b07d3733856543cf49ed1ba3a506f76a460def90c268b41c018b0cb8cf9e5bb",
+    "tests/data/svg/Galileo Birth 1564 - Natal Chart - Classic.svg": "73facf8038e7c08b2c5e00eb790fc1a239cf35c55eb6aca4b85b57a7aa14901d",
+    "tests/data/svg/Historical Subject - Natal Chart - Classic.svg": "1245017d07dedfdcf49c8cd58c1d78a59b2247472f704cd825e62ba8b74b8210",
+    "tests/data/svg/Hua Chenyu - Natal Chart - Classic.svg": "86b007221817523a707a139affdb1f4484805d4f9ee57b3ca1cd273a432319a1",
+    "tests/data/svg/Industrial Era 1850 - Natal Chart - Classic.svg": "491f3eea463fcb836a172c1e6c6fb406a9a4f181eabe5f6f325a793cd9f7daa0",
+    "tests/data/svg/Jeanne Moreau - Natal Chart - Classic.svg": "1d8b6ed8df21a9869086f06184ca266a111140ea2aa5caecf9098e0cd7d64bbe",
+    "tests/data/svg/Jeanne Moreau - Natal Chart - Modern.svg": "5a6a76293ef9d38e939e2be2bdef65e4098ab5b5869f3a46f8d35bfec46fe0c6",
+    "tests/data/svg/John Lennon - All Active Points - Natal Chart - Aspect Grid Only.svg": "42403be41a5a94d64ee3835a946a213ee40f51ed75ff29b02a271bc280ec93c2",
+    "tests/data/svg/John Lennon - All Active Points - Natal Chart - Classic Wheel Only.svg": "e90a5110ff41a99b239318f5ee48dcdf62970583b8f55529f56ae55c3a5e2bcf",
+    "tests/data/svg/John Lennon - All Active Points - Natal Chart - Classic.svg": "782867b80983c979a6467398a66fbcf40036e4104e4c25c2942394149ef0a0a3",
+    "tests/data/svg/John Lennon - All Active Points - Natal Chart - Modern Large.svg": "c7166ba3fadbdf214522f3d7b5ec1263892d45f5010f24f9e2aa961c5a548d50",
+    "tests/data/svg/John Lennon - All Active Points - Synastry Chart - Aspect Grid Only.svg": "41cf843e36fb4df4c85397ddb8338aaeb67d0e53806373cd8598bebbc8dd4dc1",
+    "tests/data/svg/John Lennon - All Active Points - Synastry Chart - Classic Wheel Only.svg": "5f45d4b18ff260c4797dd4892b1c19adf0a6f549c16d10323a1a9d3e02b1fe7a",
+    "tests/data/svg/John Lennon - All Active Points - Synastry Chart - Grid.svg": "a3224e6ec2c9f60eb77d0c4e186a8bf009491452a7a90bb87b5ebc8d48f2d409",
+    "tests/data/svg/John Lennon - All Active Points - Synastry Chart - List.svg": "8cbacd9e79a8eb733f8c2df426d09e62b5e65dd4f4ce09f1092c49d89e9993cf",
+    "tests/data/svg/John Lennon - All Active Points - Transit Chart - Classic.svg": "20c40e6f567938879a232dd410bdc6fb8f0c130d773489136b32fe1a2d534c9f",
+    "tests/data/svg/John Lennon - All Marks Sidereal - Natal Chart - Classic.svg": "eef9b1545f72d9e4496d3d6d093c5d161b83f433bf010fe230a3b151e77b2f85",
+    "tests/data/svg/John Lennon - All Marks Synastry - Synastry Chart - Classic.svg": "2ff37f7eb232ffd1580d7de6b3eebd64715be510f9798b1586af0052657f67df",
+    "tests/data/svg/John Lennon - All Marks Synastry - Synastry Chart - Modern.svg": "dcf0631c3fb79df66a26a04d66d62c0d0f1b1e07eac7fc7401db852ed39dc320",
+    "tests/data/svg/John Lennon - All Points All Aspects - DualReturnChart Chart - Lunar Return - Modern.svg": "091a0ea33cd42296219afd2ccfd005908db9d3a01d31e6b863048bed7f9f13ea",
+    "tests/data/svg/John Lennon - All Points All Aspects - DualReturnChart Chart - Solar Return - Modern.svg": "955d09261dc43d3e253471a12b1d485f2a65dbfe9b0c3f74b1687b1230851b2c",
+    "tests/data/svg/John Lennon - All Points All Aspects - Natal Chart - Modern Wheel Only.svg": "bb175ed13e626302df359ed646f87c8ffac8e708b360d532566cf6f9972e2276",
+    "tests/data/svg/John Lennon - All Points All Aspects - Natal Chart - Modern.svg": "35e6cc6d3b8229bece8c9b89f1dfac7acc4c1701b6f9f0181176e8c89f3c409e",
+    "tests/data/svg/John Lennon - All Points All Aspects - Synastry Chart - Modern Wheel Only.svg": "8d362e0d3f0c4905f7ab26d3a516a4ce43035f3e54b8c1be31c7768db80aba76",
+    "tests/data/svg/John Lennon - All Points All Aspects - Synastry Chart - Modern.svg": "b312516666be6da9f26385bcefea1b17d168a02ee9d9e674ab1c64a8a5aaf07f",
+    "tests/data/svg/John Lennon - All Points All Aspects - Transit Chart - Modern Wheel Only.svg": "2e71a93a4a7318365d35b17da835bde09d47bf4e584879786719b7c228f1502e",
+    "tests/data/svg/John Lennon - All Points All Aspects - Transit Chart - Modern.svg": "6ed5838f51721c5a43d3f40ce376c38c0696e2411519f233533f47e803020d47",
+    "tests/data/svg/John Lennon - Aspect Grid BW - Natal Chart - Aspect Grid Only.svg": "de1d21014549ad61a4500fb8390c5c58f1ddeb39186c57d86b2abc3b4ed7b841",
+    "tests/data/svg/John Lennon - Aspect Grid BW Synastry - Synastry Chart - Aspect Grid Only.svg": "6e07305a02e38265d47e612274839967dcd1fd8eea0c13702c1c519055d03a2c",
+    "tests/data/svg/John Lennon - Aspect Grid BW Transit - Transit Chart - Aspect Grid Only.svg": "db1106cd6ba2ca71b6d0bca8b002812c802122421dbb2bf7d03e55bb4423555d",
+    "tests/data/svg/John Lennon - Aspect Grid Dark Synastry - Synastry Chart - Aspect Grid Only.svg": "825b130d683ae6e3deebd5e98daec7adbdfbc60e23a2cf3146c2bce42a444eb2",
+    "tests/data/svg/John Lennon - Aspect Grid Dark Theme - Natal Chart - Aspect Grid Only.svg": "de5dd3d3b16e6ca6c5f94832f99579c15e4798622ec403e32fc41ac16c7dd249",
+    "tests/data/svg/John Lennon - Aspect Grid Dark Transit - Transit Chart - Aspect Grid Only.svg": "2199e5e8636fd92782c60eeccdf3e23602d10d9885858af23e4c11e0d2198216",
+    "tests/data/svg/John Lennon - Aspect Grid Only - Natal Chart - Aspect Grid Only.svg": "64cc07f2ffa19cc6bfe0cbed6863cb961d6931cc46bba2aa21eeea919f284d6e",
+    "tests/data/svg/John Lennon - Aspect Grid Synastry - Synastry Chart - Aspect Grid Only.svg": "d8c3f0327c92253ff87a1504935b6de262ca1067a2fdf03d65cf8864fa7dd7f8",
+    "tests/data/svg/John Lennon - Aspect Grid Transit - Transit Chart - Aspect Grid Only.svg": "e7f976328dab5b3e60a5b8ed34c0559e82304cbbb011a34bd51cc134b39947f0",
+    "tests/data/svg/John Lennon - Auto Size False - Natal Chart - Classic.svg": "df1a58f25448aa22c151c8fd0d3d3fae99b4cd2412660dd80e6937e43fe585da",
+    "tests/data/svg/John Lennon - Ayanamsa Value - Natal Chart - Classic.svg": "1ef5866ab8861c546fa1a67f0d275b1faf9b0c80f9c96c220658f08535b5d99e",
+    "tests/data/svg/John Lennon - Ayanamsa Value - Natal Chart - Modern.svg": "5f01f9a875f4f3ba3b70d4ee6df93e46322a08254efd063ef5bde99fd94a3937",
+    "tests/data/svg/John Lennon - BW Theme - DualReturnChart Chart - Lunar Return - Modern.svg": "6a297940ddf45f2e4f0b3b911f47e8f3af115491ccac50e915af54b243a48681",
+    "tests/data/svg/John Lennon - BW Theme - DualReturnChart Chart - Solar Return - Modern.svg": "ff4f6935050aae18f456d82f48fef22e674d1dee71fae2ab21696350692d4b70",
+    "tests/data/svg/John Lennon - BW Theme Synastry - Synastry Chart - Modern.svg": "de6846dcde2dedb00dfee1ef8656aa809f62ede53c8c62bcbe9c0349ebf96cb1",
+    "tests/data/svg/John Lennon - BW Theme Transit - Transit Chart - Modern.svg": "8808f8b5017295cb8caa04237e4aadf580f67e78ee93898a7dccd427cb1a56fa",
+    "tests/data/svg/John Lennon - Black and White Theme - DualReturnChart Chart - Lunar Return - Classic.svg": "4855ebad01a8348747f9c3e16d1f5a1196488a50d55d7504d075c68570767dc2",
+    "tests/data/svg/John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return - Classic.svg": "7fec8a279784d5f55d6331800c93e28a93417f0c7d717f481888ec9d6f3b077b",
+    "tests/data/svg/John Lennon - Black and White Theme - Natal Chart - Classic.svg": "cedb0f76a89ef55b2e6b717d552854ca3958fc6023231cd9504d724ea18bf719",
+    "tests/data/svg/John Lennon - Black and White Theme - Natal Chart - Modern.svg": "274752b84137681fbeeee0bcf3a5b6ae3733bbe193cb13b8286b48daa8c2433f",
+    "tests/data/svg/John Lennon - Black and White Theme - Synastry Chart - Classic.svg": "a69cf34bea8e202a7107f01d4c84188c657387dc1a813fab7d2a39cf607cb26b",
+    "tests/data/svg/John Lennon - Black and White Theme - Transit Chart - Classic.svg": "3e28410e04df717bc7e9aeae60e5a87b5716aad19d8e33bcc12d8eec8b62f497",
+    "tests/data/svg/John Lennon - Black and White Theme External - Natal Chart - Classic.svg": "ae8859377eb5802b53a0fe2c1d5441b8347fde87159ffb196ccb99e26eacd57c",
+    "tests/data/svg/John Lennon - CN - Transit Chart - Classic.svg": "453a8e20128cb30abc8e525c42dbe4c07eb608ad7906180ae6beabf25021dfa1",
+    "tests/data/svg/John Lennon - Campanus - Synastry Chart - Classic.svg": "7d1dcdf8f4f1733a4619b227f754a4e0d6e79358ec9442ff8aff9cd2cb8f3ae5",
+    "tests/data/svg/John Lennon - Campanus - Transit Chart - Classic.svg": "5d9fed7d479d2fd44b757977f5d60d9b386fbde9b478d8783127ff37d5fe8feb",
+    "tests/data/svg/John Lennon - Custom Aspect Colors - Natal Chart - Classic.svg": "0f67d0c3987265b47981ea3c7838d52e358a0a44dec2600991d4d41b4669190f",
+    "tests/data/svg/John Lennon - Custom Colors - Natal Chart - Classic.svg": "61ec692169dd5c166d95ed6b8f90b91d8e59791d9dad494e84c465fb06029597",
+    "tests/data/svg/John Lennon - Custom Padding - Natal Chart - Classic.svg": "1f92556e0e7d02e2c72f0624fdd54d8ce90372c19c7ec3b02a52e4a2a1a9438a",
+    "tests/data/svg/John Lennon - Custom Planet Colors - Natal Chart - Classic.svg": "68b2c167a6a137539012ac2f9ea8ed846f5504988616bd5b5ac1c7ec959dcf70",
+    "tests/data/svg/John Lennon - Custom Title - Natal Chart - Classic.svg": "15868fdb5ee3129f94090dc46318d1e3226565f2b9bb52f24da7a732c1e68f1c",
+    "tests/data/svg/John Lennon - Custom Title Synastry - Synastry Chart - Classic.svg": "49800d73054e0cb63e2108412a4cd61306a163cb8ff660225baae897706509ce",
+    "tests/data/svg/John Lennon - Custom Title Transit - Transit Chart - Classic.svg": "b3cacb627319511d99a025cc70acb0b6528743a66b7d568d1f5536f5d1b9dd5d",
+    "tests/data/svg/John Lennon - DE - Synastry Chart - Classic.svg": "4e638144419edc7a93836724299862b656ee1c8b80996d7425c5466892fbbbad",
+    "tests/data/svg/John Lennon - DTS - Synastry Chart - Classic.svg": "8e92ad54e70bf18cdd1eb8051b25e34b58dfc04e598135a5fff568c4dd129722",
+    "tests/data/svg/John Lennon - Dark Theme - DualReturnChart Chart - Lunar Return - Modern.svg": "4ed9eda18e93d6d75ae26c428f900238ea938bf2a528d8e26121ca2221d098ac",
+    "tests/data/svg/John Lennon - Dark Theme - DualReturnChart Chart - Solar Return - Modern.svg": "68f17a4435ffeaf555edbf04aa9be95337daa43ecf489a648f7373acd71ce2c5",
+    "tests/data/svg/John Lennon - Dark Theme - Natal Chart - Classic.svg": "de9732305c6efc6be83f0228302b055b82eeecdc80e42ab2a94996974cd5a0e4",
+    "tests/data/svg/John Lennon - Dark Theme - Natal Chart - Modern Wheel Only.svg": "d57ff783d66f9764798f8ed8e8b2e51c6c8286c8363fce0eb8a80689e9f81a1d",
+    "tests/data/svg/John Lennon - Dark Theme - Natal Chart - Modern.svg": "2df0e7d649c724272c06cf60af09e69edb989c642e1ae22b44920508aeee82c7",
+    "tests/data/svg/John Lennon - Dark Theme - Progression Chart - Classic.svg": "a5c51f7d8631404d74f01b534c23979b34c4d390d2811b0b3182109398226b3e",
+    "tests/data/svg/John Lennon - Dark Theme - Transit Chart - Classic.svg": "c70b91cea69b983a4648d5dd1e2e9fee9e285f03d49457047c790fda25fde905",
+    "tests/data/svg/John Lennon - Dark Theme External - Natal Chart - Classic.svg": "3f1261fd17a1a8f73db885feb6cb5bdc03fb11650c6e1ce6ee36b3a379211b3d",
+    "tests/data/svg/John Lennon - Dark Theme Synastry - Synastry Chart - Modern.svg": "90f424ec1249427392a3846a5d4a8279cf8a64b546cbcc077b9e5ea39029e159",
+    "tests/data/svg/John Lennon - Dark Theme Transit - Transit Chart - Modern.svg": "16bc248f1a0450128c88a225b7f7b933989c884d491020b0c7d80bcbfadbf05b",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Lunar Return - Classic.svg": "df48b586a1721545ce2696a903cffcaa1cca39c42c1e89d3a480ccc38410cfa3",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Lunar Return - Cusp Comparison Only.svg": "f12e90ec856ba731421e8766a350e6a2d8b4ffcb67aedd854a0443fb41480574",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Lunar Return - House Comparison Only.svg": "df48b586a1721545ce2696a903cffcaa1cca39c42c1e89d3a480ccc38410cfa3",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Lunar Return - House and Cusp Comparison.svg": "94b204339b1e3eeaa5f02f41af4cce4e37f1f8cb78bb18b725bbd295a795d11f",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Lunar Return - Modern.svg": "faab9b43dd9e61f7412a9d800ea305a9ab9a15c9f003ee4979d01869c85c3f03",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Lunar Return - No House Comparison.svg": "4beac43d3ea8b50572362d00f687dc55ba49d42f884365ef7fce96a650349217",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Solar Return - Classic.svg": "fb65278080da19245d8bddfe01ad9123dc9a64806efabc41eb917f26b5ed6031",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Solar Return - Cusp Comparison Only.svg": "2829019b84292ac434c12a12da61cff29ef56bac01c6f38ee67e04ee104ca912",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Solar Return - House Comparison Only.svg": "fb65278080da19245d8bddfe01ad9123dc9a64806efabc41eb917f26b5ed6031",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Solar Return - House and Cusp Comparison.svg": "cbde5e80552b28b9bfc869d786c44316c5742187993d0f9b18b4e896d881ceaf",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Solar Return - Modern.svg": "36abc5ab3b552f700b8ed0429b2b118f0c9f3bf795c978b8be5decd32571c1a7",
+    "tests/data/svg/John Lennon - DualReturnChart Chart - Solar Return - No House Comparison.svg": "66723cc6cc83f27087788533927f206b0c654df96876f99f2ea30a9fe599a61c",
+    "tests/data/svg/John Lennon - EN - Natal Chart - Classic.svg": "ab41ddb1cc34397073b0fe8f3bace05791eec90289ef00a60a04729d5c6cf8c7",
+    "tests/data/svg/John Lennon - ES - Transit Chart - Classic.svg": "b61bee40902c93656ca1c27de4ab01f800d7fedcb344a81febdb21f68b1e0021",
+    "tests/data/svg/John Lennon - ES Transit - Transit Chart - Modern.svg": "d2bb7476c4515ea23da2890c3e7e99598d1e6652e2bf992e35eb875c342cdd7a",
+    "tests/data/svg/John Lennon - ExternalNatal - Natal Chart - Classic.svg": "0740834d3d864c8b6a0943fc2e0d09162cbe1c52503ee644c097ac08269cbe5d",
+    "tests/data/svg/John Lennon - FR - Synastry Chart - Classic.svg": "42b4213785dc899ed9b92a422ecd0e699923dc80bbea1dfdffb60d33b0733da3",
+    "tests/data/svg/John Lennon - FR Synastry - Synastry Chart - Modern.svg": "166d7fca6e43236459a7279905482eb792bccd6c33342ef5c9047a70a374f3d3",
+    "tests/data/svg/John Lennon - HI - Synastry Chart - Classic.svg": "f0da3c1c19ad4c50a738bccddbb848114133aad1b0e8363a2a860e694c31e8ab",
+    "tests/data/svg/John Lennon - Heliocentric - Natal Chart - Classic.svg": "6d81d3bd778bc641e0cfbde125d8895a926a77805625bf6c92752058059525ae",
+    "tests/data/svg/John Lennon - Heliocentric - Synastry Chart - Classic.svg": "305af3a477b291b96ddebff79fd20efbd095e8d4a81c147590a5b19277a9049b",
+    "tests/data/svg/John Lennon - House System APC - Natal Chart - Classic.svg": "d4d54dc824371b5f0e7e426df7898f753f30f86eead211345c6e0d6749f0464a",
+    "tests/data/svg/John Lennon - House System Alcabitius - Natal Chart - Classic.svg": "a8e29b1b4e527826c701c902292aa03648c63dca16d65dd941656d18bc5d3a9b",
+    "tests/data/svg/John Lennon - House System Campanus - Natal Chart - Classic.svg": "6a3f2bb4ae463ce3f3a42d41abe917505cd9119b9aab609451b504a166c4abe6",
+    "tests/data/svg/John Lennon - House System Carter - Natal Chart - Classic.svg": "d2c9b5c595c7732912346ad66a487024ef16b21fd71414220030f768fbc70934",
+    "tests/data/svg/John Lennon - House System Equal - Natal Chart - Classic.svg": "3d20ccd6b2f1bafbd2e5b41af8876c15d9ca4e7bd1121bf266d218edc315e339",
+    "tests/data/svg/John Lennon - House System Equal Aries - Natal Chart - Classic.svg": "1323e51e2744a12a4acc96eae03f6bdde8309d7ab7e0bf55e6add467ab29e30c",
+    "tests/data/svg/John Lennon - House System Equal MC - Natal Chart - Classic.svg": "b95e20cb58e21ea87a6198a5e094cae804e50122ad5aa9ff4be4d75b5577628f",
+    "tests/data/svg/John Lennon - House System Horizon - Natal Chart - Classic.svg": "a22adc9759664c099547d71471827cd7de44d174466c113dd071e13446573e0e",
+    "tests/data/svg/John Lennon - House System Koch - Natal Chart - Classic.svg": "cf5054fc018fe3c9f4a0c97b5eda41d70b6f54eb210c200bafd689efb2769cdb",
+    "tests/data/svg/John Lennon - House System Krusinski - Natal Chart - Classic.svg": "3668e75fee6ceb4a86f5fa18aa77d1337b95ff6b88773d2477f40714f8b5a14a",
+    "tests/data/svg/John Lennon - House System Meridian - Natal Chart - Classic.svg": "ba8919e4039fd5d0ad14430322862c01ea671aeb86bb2c9450b9c22d4e1e9cd4",
+    "tests/data/svg/John Lennon - House System Morinus - Natal Chart - Classic.svg": "6ae0b84c9e765ab5823fdaacbbf943507a3727ace8165a4bb5b6cd88585fcd30",
+    "tests/data/svg/John Lennon - House System Placidus - Natal Chart - Classic.svg": "f82d90cfd0b541f41ecf2882981e648b8b4db6f7101d480a0e09ec6acdfdbbcd",
+    "tests/data/svg/John Lennon - House System Polich Page - Natal Chart - Classic.svg": "53d5763445e7ef4bca3f6551e7503a69e6cddd9b7ce13a78b68b49ab264bf853",
+    "tests/data/svg/John Lennon - House System Porphyry - Natal Chart - Classic.svg": "16d9d22c3b8acae7800b1b725b20d4e9b9dd0de0373016f4e611792ec8f3f5eb",
+    "tests/data/svg/John Lennon - House System Pullen SD - Natal Chart - Classic.svg": "5824ad2b470dc598b711ed461f3fa868c32b35795f7e19dd3919cb4280d391cb",
+    "tests/data/svg/John Lennon - House System Pullen SR - Natal Chart - Classic.svg": "4e1ce3933549164866b484c3c421dd9748fb49a1f47ff13600b9f395dd9fe1c5",
+    "tests/data/svg/John Lennon - House System Regiomontanus - Natal Chart - Classic.svg": "b6434c655515cc271a82d45476ea884f6b3f797e2b56e5d2aa2795a1dcbdd191",
+    "tests/data/svg/John Lennon - House System Sripati - Natal Chart - Classic.svg": "6b6acfac3e57d9a7aae4476bafeb18350c2e7507eca3aee3f32b5bb432800c17",
+    "tests/data/svg/John Lennon - House System Sunshine - Natal Chart - Classic.svg": "f2d697b9fe4ed17e1413ca464164da1a73edd125f4d0d82ba600123a8e4cfcc3",
+    "tests/data/svg/John Lennon - House System Sunshine Alt - Natal Chart - Classic.svg": "5370fa4148ae7cb2d048c2d05cb4c049cdd7b50acd475c89bbc8450ec225d9b5",
+    "tests/data/svg/John Lennon - House System Vehlow - Natal Chart - Classic.svg": "c894310692ca6854193f270efd589d1be56dc9280ce779528d39af75d541655a",
+    "tests/data/svg/John Lennon - House System Whole Sign - Natal Chart - Classic.svg": "bda6b23f8ed3a33e22eeced691c447562ecc4afa06e40b3a956613ca1c82de90",
+    "tests/data/svg/John Lennon - Koch - Synastry Chart - Classic.svg": "eee6b4b41c5c170510beca47388a8f8b37670a5c7ec3d0399e17f1caf025910f",
+    "tests/data/svg/John Lennon - Koch - Transit Chart - Classic.svg": "9ed2142af0d7943609cc035b2c2bebc2f4eec8f83aa4aec2dbcab98bd85f378e",
+    "tests/data/svg/John Lennon - Language Pack - Natal Chart - Classic.svg": "3f6a10c4979f2dd3afcc8973c56de7e6c25507688a8e7c60f92948dad334d9a0",
+    "tests/data/svg/John Lennon - Large Padding - Natal Chart - Classic.svg": "710df6d0b486242b964ea193dd5313287a775ad11a6c74dd29eb1ef8784bb81b",
+    "tests/data/svg/John Lennon - Minified - Natal Chart - Classic.svg": "ad9ede6b9b39a7782db6ae603ccffb7a98532bdc8ecfb06b5e72572193af255a",
+    "tests/data/svg/John Lennon - Minified Synastry - Synastry Chart - Classic.svg": "b67e7f53c9c4ca427830501a5c6e3be6e7d0c873b4d745dd5a3aedbc8232e7e5",
+    "tests/data/svg/John Lennon - Minified Transit - Transit Chart - Classic.svg": "8a7268ebe8e84a41638484ea30280c26dfcbf61617177f32f03eb53263a2bf75",
+    "tests/data/svg/John Lennon - Minify CSS - Natal Chart - Classic.svg": "6a81ce60e8b13250af99a9921079a3c6e17117c1839b7ecc076facc2ce474d5d",
+    "tests/data/svg/John Lennon - Natal Chart - Classic.svg": "ebb6d1a8debdd8097eac2af93c61459450234e1f9ac9a63088e55f72e8a4cbe9",
+    "tests/data/svg/John Lennon - Natal Chart - Modern Large Wheel Only.svg": "e0d83a3de0962f82e3b84d38150883c828f4ec9bdc27ac1acd13e62ce02240f5",
+    "tests/data/svg/John Lennon - Natal Chart - Modern Large.svg": "5000cf9cfb2ddd4fd89249c184dbce5a3a0a74f45195b93e6f3941e828544c01",
+    "tests/data/svg/John Lennon - Natal Chart - Modern Small.svg": "151da14b0521f7e7dd428f3fcc6f6301019fed269958d35f1d9a999308cab598",
+    "tests/data/svg/John Lennon - Natal Chart - Modern Wheel Only.svg": "253e47bde7a6c77a7fed4c632522fe8ae8be08d0366a3bb2707cdb64f98ee4c1",
+    "tests/data/svg/John Lennon - Natal Chart - Modern.svg": "ab15330edbfe2f2c732bf8390fe26067c90f534a8d94d8c5fcbc35a04952a0a7",
+    "tests/data/svg/John Lennon - Natal Chart - No Degree Indicators.svg": "96b34747e2fa89a31ee56221c20a9e4c16e59d4b33d7a7e223e73f2d09005c39",
+    "tests/data/svg/John Lennon - No Aspect Icons - Natal Chart - Classic.svg": "7a16de0d1a8f8d502dcd37f9e5021afb34a5c99ce6aed335383323e583c593cc",
+    "tests/data/svg/John Lennon - No CSS Variables - Natal Chart - Classic.svg": "39dce14dbc8fb3554883746d1ebdad389a1e7db3aea555f5116615e561aaecb9",
+    "tests/data/svg/John Lennon - No Degree Indicators - Natal Chart - Classic.svg": "abf2ab07cc1655803a012fd2dc988e40cde7b93569d81f96a27b60d64496a8e9",
+    "tests/data/svg/John Lennon - No Theme - Natal Chart - Classic.svg": "b0e3046fd302052706c5cafc39e2f31717d3e1a6b7b52aa66afe7bcc3fa99bd6",
+    "tests/data/svg/John Lennon - No Zodiac Ring - Natal Chart - Modern.svg": "8db09a72c884ec4008f673853e301769a649f8f28cf5607a36c7cf3566b64a02",
+    "tests/data/svg/John Lennon - No Zodiac Ring Synastry - Synastry Chart - Modern.svg": "a625df39901c98997513c88681dad16aa67f8b9d6ef048d426b962e5f98e6368",
+    "tests/data/svg/John Lennon - Porphyry - Synastry Chart - Classic.svg": "df10aec8caa254372f65fc6479e5168c1665518c673936746d765cb2e4bf950b",
+    "tests/data/svg/John Lennon - Porphyry - Transit Chart - Classic.svg": "bb3efa6b0f71c09f8be9e1e53e0443f44f0a69bcad4e936372fda400f23492b3",
+    "tests/data/svg/John Lennon - Progression Chart - Classic.svg": "ac39f06b853be976eaf77df505dbe55ef1dff7fca0de99bd053f5353b8bae6b4",
+    "tests/data/svg/John Lennon - Progression Chart - Modern.svg": "7458f0e85b4008044ee3f1de48ab4f6a6ec75833cca6ee19c0791fb22f139374",
+    "tests/data/svg/John Lennon - Progression Chart - Table Grid.svg": "14f9c3e7e5bd0629712dd019e586504013b875ea1fa9ccfdb6b69c96789ac877",
+    "tests/data/svg/John Lennon - RU - Transit Chart - Classic.svg": "0f9bea681aacdca5d778e57d22e573a0adfc24c135444b5ce7517f536f99078f",
+    "tests/data/svg/John Lennon - Regiomontanus - Synastry Chart - Classic.svg": "7620ffd3116922da0391a2f858fa0c135789e39dfdc297feb7f699d422c0b5d0",
+    "tests/data/svg/John Lennon - Regiomontanus - Transit Chart - Classic.svg": "5f5219ca1e16e6ece5098d7628a16e0843c13941b2f46a96b68c399ccd089fb1",
+    "tests/data/svg/John Lennon - Relationship Score - Synastry Chart - Classic.svg": "fd31741f0ef866ad07233f999e44a67415cfa81d0ae04ad127c8768bf347f257",
+    "tests/data/svg/John Lennon - Relationship Score - Synastry Chart - Modern.svg": "5d98430995d571e0f91e682268fe246909f89f2722a390e588ea587c1b2efffa",
+    "tests/data/svg/John Lennon - SCTWL - Synastry Chart - Classic.svg": "656d370cf14ca23cb69664a571f55bc615e179161a7ab055183bea3883215311",
+    "tests/data/svg/John Lennon - Sidereal LAHIRI - Natal Chart - Modern.svg": "e3f737ec3d5187b5563934e748e669a7505186b4d3c1a18d1d6636a0c71e1823",
+    "tests/data/svg/John Lennon - Synastry Chart - Classic.svg": "4a1ab64f869b9694b5b651d2cde31c39020da7d61a9f525e9b2181123c143b80",
+    "tests/data/svg/John Lennon - Synastry Chart - Cusp Comparison Only.svg": "b9d8bc22d33a7887f3ecba97fc21bfd6225377be6b45ee9295b1941a5cd9654e",
+    "tests/data/svg/John Lennon - Synastry Chart - House Comparison Only.svg": "4a1ab64f869b9694b5b651d2cde31c39020da7d61a9f525e9b2181123c143b80",
+    "tests/data/svg/John Lennon - Synastry Chart - House and Cusp Comparison.svg": "7cf7aa97580587f96f03e223c2925f33fe7be1d7ca93b1b11bfe062010e89af9",
+    "tests/data/svg/John Lennon - Synastry Chart - Modern Large.svg": "e06fdba07a7bc54aa90ef5b366e0916a53a89d65f61699f90dd1c15a275087a4",
+    "tests/data/svg/John Lennon - Synastry Chart - Modern Small.svg": "df848f1c304a81272e433021d2e98a54faa5de0bd0e1a5e74b8f49acd1b79545",
+    "tests/data/svg/John Lennon - Synastry Chart - Modern Wheel Only.svg": "a0917c35bb27207ad687450776823760e41b8cc4d0bd48b53f3f39fca9bfcb51",
+    "tests/data/svg/John Lennon - Synastry Chart - Modern.svg": "6afe077c79c5c089c1ef1399e2b0854bdd6ce5ffa18f16049aba14f64eed2550",
+    "tests/data/svg/John Lennon - Synastry Chart - No Degree Indicators.svg": "484ec0a44a9e9e8efb0fac644923b7130c492a226da307bd8eea6859294b7da4",
+    "tests/data/svg/John Lennon - Synastry Chart - No House Comparison.svg": "0c7d945e3617c0412dd2f7d133681303fac60c49cc956cf6c4b0e6b2ecd875b4",
+    "tests/data/svg/John Lennon - TCWTG - Transit Chart - Classic.svg": "04df284e7a9f1b968ebd23fad43514d8e71a28694ffa13b8c23210e1570d2467",
+    "tests/data/svg/John Lennon - TR - Synastry Chart - Classic.svg": "5f8595ecd9170a1aa08dc2fc60cf534ad6a832e9adbf2dc730df8a50c4cb8268",
+    "tests/data/svg/John Lennon - Topocentric - Natal Chart - Classic.svg": "0392b20b6ccd3ca5402d64deb7b4d20fa99062a633dd7291629340fafcdbf16e",
+    "tests/data/svg/John Lennon - Topocentric - Transit Chart - Classic.svg": "e39bd8fa9b37128182ea27f6eaad55b8f6e19a489d48e3902313c106ddbe4c03",
+    "tests/data/svg/John Lennon - Transit Chart - Classic.svg": "293363dad3365aa4db44291a248a3685e90541fb3cfa5d70a8126b693df28e49",
+    "tests/data/svg/John Lennon - Transit Chart - Cusp Comparison Only.svg": "aafbc9ba9bd98c11812a04c9606f038e97de51275e57630f5a6cca93fa53582b",
+    "tests/data/svg/John Lennon - Transit Chart - House Comparison Only.svg": "293363dad3365aa4db44291a248a3685e90541fb3cfa5d70a8126b693df28e49",
+    "tests/data/svg/John Lennon - Transit Chart - House and Cusp Comparison.svg": "9a1049674342f881c4a0fd3bcc101b7439f01a9f0e80d5d61c0b939efd2c535b",
+    "tests/data/svg/John Lennon - Transit Chart - Modern Large.svg": "e1c43fc2487e267de05ed98b9c94b4d90486d76b35510b1586f4303ecfa6f8ac",
+    "tests/data/svg/John Lennon - Transit Chart - Modern Wheel Only.svg": "56d3a5ad8dcaa389160d79879fb12ad229228f2ac3fd115c0d08fba5a56f23a4",
+    "tests/data/svg/John Lennon - Transit Chart - Modern.svg": "964f78ecf4990f9e31a91363f08a182cfccdaca1c836904dc4bbf999177dd61d",
+    "tests/data/svg/John Lennon - Transit Chart - No Degree Indicators.svg": "2befe0ff7799588721ab5d3cf64707f26d4809f09c50f25d1ee293d9d751a618",
+    "tests/data/svg/John Lennon - Transit Chart - No House Comparison.svg": "00d38e119bcf1065886a0df97d83f84756f6e454e62094ca69b7628cbd1907f2",
+    "tests/data/svg/John Lennon - Transparent Background - Natal Chart - Classic.svg": "efc40fe5cbd357aa46ec8003d82ea7c5a6de2388c1dcb9d3c2307b8d31916c1c",
+    "tests/data/svg/John Lennon - Transparent Dark - Natal Chart - Classic.svg": "3442095521207bfe6117b32732cdb19f1556f77bdeeaae34adb30093d128812f",
+    "tests/data/svg/John Lennon - Transparent Synastry - Synastry Chart - Classic.svg": "d560506412b687f1b7d5418d52d6595fdb1eb260f4731a5543ae75982ee8a8fd",
+    "tests/data/svg/John Lennon - True Geocentric - Natal Chart - Classic.svg": "26b905a70db0302205c65f408f4574dfb68c1112add14627b73ada5bc356b291",
+    "tests/data/svg/John Lennon - True Geocentric - Synastry Chart - Classic.svg": "e34ad826126cdd6a131a0969438bb8470c5738ec9381e2113be9294980eb5681",
+    "tests/data/svg/John Lennon - Wheel External Only - ExternalNatal Chart - Classic Wheel Only.svg": "c8e07c6357a8b03c11d9ccb3c39ef31ae79c71a62a233f6d1c216d0c37d3a8e1",
+    "tests/data/svg/John Lennon - Wheel Only - Natal Chart - Classic Wheel Only.svg": "f54c9d74cfd3bd5eae7f0db830e900d334d9827946a879379798c67d4fe6351d",
+    "tests/data/svg/John Lennon - Wheel Only Classic Transparent - Natal Chart - Classic Wheel Only.svg": "e9af9547eebd0f63c6069406727271da86e7ef8244078ba46c7e91e016d8f1b3",
+    "tests/data/svg/John Lennon - Wheel Only Dark - Natal Chart - Classic Wheel Only.svg": "41e4026f542b9f01664c58d826598dd94805cbed91680c5d5c70c64f01f92c94",
+    "tests/data/svg/John Lennon - Wheel Only Dark Transparent - Natal Chart - Classic Wheel Only.svg": "3c7699b778fbf8bf70bbea92132f2225c6452d1e3f5572f29ceaa0811e4485c5",
+    "tests/data/svg/John Lennon - Wheel Synastry Dark - Synastry Chart - Classic Wheel Only.svg": "b4da937b7b243e1503f09c35bb1e29c1d1554575e68798799ef54c41f60efcf0",
+    "tests/data/svg/John Lennon - Wheel Synastry Only - Synastry Chart - Classic Wheel Only.svg": "040b6915563e591343988789937d270487896611e327ec717b772169d88dba24",
+    "tests/data/svg/John Lennon - Wheel Transit Dark - Transit Chart - Classic Wheel Only.svg": "887f9c13ebfed624317c67c63e81249c53ec1cae4f4956a0cf3009d10bc27152",
+    "tests/data/svg/John Lennon - Wheel Transit Only - Transit Chart - Classic Wheel Only.svg": "78d1c7e678b5856bec78088c8996a798826265d838061cc6d1fb4068f486f4fb",
+    "tests/data/svg/John Lennon - Whole Sign - Synastry Chart - Classic.svg": "7faedf5fcb073ef4bdf0544797da890d6268b75348911b817a070ba65b974925",
+    "tests/data/svg/John Lennon - Whole Sign - Transit Chart - Classic.svg": "f0db1cd2522919797d3a033231c66dc32df957d73f04a7236b2a1571f096f102",
+    "tests/data/svg/John Lennon - Zero Padding - Natal Chart - Classic.svg": "0ae7bf29ec5b5b3ad59ebd21f8ed1af513fb9a286050e12eeee0dd12785a71ce",
+    "tests/data/svg/John Lennon Aldebaran 15Tau - Natal Chart - Classic.svg": "5410b4e21cf32d412d1596e7317aaa1165a9725c4610279ea7d69f4237766054",
+    "tests/data/svg/John Lennon B1950 - Natal Chart - Classic.svg": "8acebd53a38cd39178f72879429421c9240d76e27e477e1b088c64e4a67a983d",
+    "tests/data/svg/John Lennon Babyl Etpsc - Natal Chart - Classic.svg": "30f4a5250130d0f9397e690510877c1c6af97212c8c8247e721ea714007e2382",
+    "tests/data/svg/John Lennon Babyl Huber - Natal Chart - Classic.svg": "1246093d28295bdb58483327ba262c19a09c48fd19f0f3a59168201c9c9a09af",
+    "tests/data/svg/John Lennon Babyl Kugler1 - Natal Chart - Classic.svg": "ea292fb60e820b622f711b2421359e1c4c3e06cf2a02697c1a007c70ee6dfe6a",
+    "tests/data/svg/John Lennon Babyl Kugler2 - Natal Chart - Classic.svg": "25f632fbac3d2925406bd0d66d754890ac1a3cefbd67f9e6c33fb82cff357c72",
+    "tests/data/svg/John Lennon Babyl Kugler3 - Natal Chart - Classic.svg": "39ecb0e0d07cae65787d42e63b8b98a2ca6e654c01f29079ff8dd01de2194b6f",
+    "tests/data/svg/John Lennon DeLuce - Natal Chart - Classic.svg": "4cc5205f3e0f74fdab23018340ce333a433a1a5827033ec60277ee10dda07001",
+    "tests/data/svg/John Lennon Djwhal Khul - Natal Chart - Classic.svg": "e7d2693dad5021ba98fe83a9b52a9047ecf2365ddb120262ce88c2b45552f22e",
+    "tests/data/svg/John Lennon FAGAN_BRADLEY - Classic Theme - Natal Chart - Classic.svg": "1ee27bef07f460465722d31909150ed9c6bff8949665fcb739fda36234cf5547",
+    "tests/data/svg/John Lennon FAGAN_BRADLEY - Dark Theme - Natal Chart - Classic.svg": "3d8f25ae79537149b94b3565444501f29da0048a18367f31bb89e21dd194ec2e",
+    "tests/data/svg/John Lennon Fagan-Bradley - Natal Chart - Classic.svg": "ac4fb2491609cf2c0903619297ab5bb8f258b95433c8b4f076f3542792b9271e",
+    "tests/data/svg/John Lennon Hipparchos - Natal Chart - Classic.svg": "683bf851901923bc6bfd90f1b9c859d7e119bc349171d690e74e2182ddeed98a",
+    "tests/data/svg/John Lennon J1900 - Natal Chart - Classic.svg": "bdca5ef7c10fac428496359c39d79ce8add56609aabaad30960336ebeb241c5e",
+    "tests/data/svg/John Lennon J2000 - Black-And-White Theme - Natal Chart - Classic.svg": "9edb76ddff026e54a6e9a13c97437715f1defe0addbc577a25f6d978e77a9f21",
+    "tests/data/svg/John Lennon J2000 - Classic Theme - Natal Chart - Classic.svg": "1229d22502322b74038fb7d4c598f59df1357bedd1a7ee4f790c2b3e0783972c",
+    "tests/data/svg/John Lennon J2000 - Natal Chart - Classic.svg": "0c79436fb1f6190005eab1b38b76d69d13dad9d353393e30f50d640f2c6e7461",
+    "tests/data/svg/John Lennon JN Bhasin - Natal Chart - Classic.svg": "ec59d6d1d9c4479f6309285c696eaad89da9466abf930369c88367b570a68759",
+    "tests/data/svg/John Lennon KRISHNAMURTI - Black-And-White Theme - Natal Chart - Classic.svg": "421b64dee62f5b1f0d1e3bd1402898b623b72d96cb7e7bf3ad60ead5493c7052",
+    "tests/data/svg/John Lennon KRISHNAMURTI - Dark Theme - Natal Chart - Classic.svg": "25bf09720b89a75529ed1f6eca68a839d805ca450f43b798af9c4443e5edf65a",
+    "tests/data/svg/John Lennon Krishnamurti - Natal Chart - Classic.svg": "d3feb1cf6120d2cc2c800bf1fe796e6de0679a9f2b10d9b296775c37c3138695",
+    "tests/data/svg/John Lennon LAHIRI - Black-And-White Theme - Natal Chart - Classic.svg": "564e28036a616525949ea6190ea3d55edf1da0fa4a9ee861609cb224620bb0b0",
+    "tests/data/svg/John Lennon LAHIRI - Classic Theme - Natal Chart - Classic.svg": "7f9631d8f1abe5c677d179224a27d776c144fbef69ea6775306b691e575a1f9d",
+    "tests/data/svg/John Lennon Lahiri - Dark Theme - Natal Chart - Classic Wheel Only.svg": "8ff55163e31bc9f0255fd8ba244061b25d0b7e7013a44dc57d36ae0dce4aadfe",
+    "tests/data/svg/John Lennon Lahiri - Natal Chart - Classic.svg": "d30c6c875090499715f8886cdace73648f6578a7de0cd62ef145fd8b6c30369a",
+    "tests/data/svg/John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg": "443ebb9d94dc56c70f054a1d8ca850318f1bc66d1e820b0e6c2ee8cb1987ae34",
+    "tests/data/svg/John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern.svg": "e1b1519b01229c05dc71ef775f36ee1f44d075c8ec91e332c4038a586af2c588",
+    "tests/data/svg/John Lennon Lunar Return - Black and White Theme - SingleReturnChart Chart - Classic.svg": "d1552307542f97299c235acb4a1f0054b1680f960925413d7b97708c43844c9c",
+    "tests/data/svg/John Lennon Lunar Return - Dark Theme - SingleReturnChart Chart - Modern.svg": "bef2d0f56a49eff1b1fa1c4d6f1edb1d32a87fe57882062a53d519567f9b55ad",
+    "tests/data/svg/John Lennon Lunar Return - SingleReturnChart Chart - Classic.svg": "8e99c953af3dd4ab0855705b109826339c1b7619393ece05544b8dfbf141a4ed",
+    "tests/data/svg/John Lennon Lunar Return - SingleReturnChart Chart - Modern Wheel Only.svg": "c36f423f7b95ccb6a556a8a145b92c55ef67b3eb65f9680e2b67a448800585cf",
+    "tests/data/svg/John Lennon Lunar Return - SingleReturnChart Chart - Modern.svg": "e14737ced7e8bd7ea421600719410644522ef84b71c7331e7746f7482e8fcd5a",
+    "tests/data/svg/John Lennon RAMAN - Classic Theme - Natal Chart - Classic.svg": "c57823bccade36a1164620ec640af2d6648fd6c864042be1d0224e43e3d93991",
+    "tests/data/svg/John Lennon RAMAN - Dark Theme - Natal Chart - Classic.svg": "5ae91554b19ae7389fdcbaa2b00dd463521939b2f3128a9930881e6140c6fdbd",
+    "tests/data/svg/John Lennon Raman - Natal Chart - Classic.svg": "549a213e494e9d7e11736bba3d314ad6a713a720f4425b844b45640527975943",
+    "tests/data/svg/John Lennon Sassanian - Natal Chart - Classic.svg": "f23aa8428d881237c72aed046c579c97fafafdf95d329ed569041b8c752dcadb",
+    "tests/data/svg/John Lennon Solar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg": "6fec28c6b6d4e14c63fb5af13f5df0ac81a698b76037be6cc7cfb4e12af05e8e",
+    "tests/data/svg/John Lennon Solar Return - All Points All Aspects - SingleReturnChart Chart - Modern.svg": "cc47316afc3de6ad9994a7028ee80d1aa67e985a588a292fc7b4507025b0d4cb",
+    "tests/data/svg/John Lennon Solar Return - Aspect Grid Only.svg": "eca0f63c6951cf94e71a3639f7404c99bf0421d76900c19e72c38c1302bed82f",
+    "tests/data/svg/John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart - Classic.svg": "5b86b7609f16f432850c01bcf64ff99575923b2ac0ddb0cb04ce1a187e9e90d8",
+    "tests/data/svg/John Lennon Solar Return - Classic Wheel Only.svg": "3f67465ab876340afa6f56a512cfc108fff8938670aab73eb3fb3b0c3d49bf48",
+    "tests/data/svg/John Lennon Solar Return - Dark Theme - SingleReturnChart Chart - Modern.svg": "2b795fbd0c47a795a91698fa5abd8aced95144c5581cc38967bdcac32650c70e",
+    "tests/data/svg/John Lennon Solar Return - No Zodiac Ring - SingleReturnChart Chart - Modern.svg": "4e3d8290f49bf7c0fe75c4855a87ffbb92e09e05165c985a63910486e7f5ffbb",
+    "tests/data/svg/John Lennon Solar Return - SingleReturnChart Chart - Classic.svg": "6148ac78985093f6759c8045c8fc12ce64d01c8d5934959159fa3341e833ed2d",
+    "tests/data/svg/John Lennon Solar Return - SingleReturnChart Chart - Modern Wheel Only.svg": "6280e15be7844c02872f7a091b28b1679cc5aa76819fe583f32e4347dc57378d",
+    "tests/data/svg/John Lennon Solar Return - SingleReturnChart Chart - Modern.svg": "aad3323ac8a03794f5d5b8d49a8d9ccaf5ea01c434f4ce91ae5d966a4f9bce02",
+    "tests/data/svg/John Lennon Ushashashi - Natal Chart - Classic.svg": "c57e8c29a958c6c66bf25366e50a58ab7e226dfa25f0f8eb922225d1796d7f0b",
+    "tests/data/svg/John Lennon Yukteshwar - Natal Chart - Classic.svg": "b482942a47cc7b07cfdcfa8c4530de4033bd03c948a470fd1d145a07c1e19f71",
+    "tests/data/svg/John and Yoko - Synastry Chart - Classic.svg": "3489de4f195e1f58a438c01941e5c4a6aad286d07d266b8885a4b9f5f5f45cba",
+    "tests/data/svg/Johnny Depp - Natal Chart - Classic.svg": "eb284eff37bd32fbb514829456dbf4afd593a4ee2d19f1e16cb2b369861d73e7",
+    "tests/data/svg/Kanye - Natal Chart - Classic.svg": "1e477256a66af0056384d5ac0eaa55cee54494d9bec69afde83ec5d6835442b3",
+    "tests/data/svg/London 51N - Koch - Natal Chart - Classic.svg": "6d29407f36904a87461837603179f4c3f93ccb3aa7db08bb08c0e3238b65e069",
+    "tests/data/svg/London 51N - Natal Chart - Classic.svg": "46e1957c564f80bc175cb6e9fc36825792f5af40490aeb71d9f63fe09ed1485d",
+    "tests/data/svg/Long Name - Natal Chart - Classic.svg": "162de6fcd10ae999aa4eeb1638499281a2fe3ec6952e0bb232da5cb68f2e8b35",
+    "tests/data/svg/Mehmet Oz - Natal Chart - Classic.svg": "942ebf8f6dd2e79e41a6716b77511287af641c3010b0911bf09d77ee85c95653",
+    "tests/data/svg/Mercury Station - All Marks - Natal Chart - Classic.svg": "0d66350a5f805cdf90dd05ef6618dec30b2541bcde7afd49225213f80c2be3c4",
+    "tests/data/svg/Mercury Station - All Marks - Natal Chart - Modern.svg": "7b8bd1f736662b768dc2738659d61b070b2d5aa888c897e2907cf1ebb853652b",
+    "tests/data/svg/Mercury Station - Aspect Movement - Natal Chart - Classic.svg": "fc7e3e98f352f0f826a022e466b1884f4a9cd0b71a3fed47ad8f8f24467dacef",
+    "tests/data/svg/Mercury Station - Aspect Movement - Natal Chart - Modern.svg": "fb34fb552a511d4eefecff909bacadb1d5523f0974216733d591621d69e0efd8",
+    "tests/data/svg/Mercury Station - Motion State - Natal Chart - Classic.svg": "919453f644d57580dc3e3ea26d51f7996013a12036b926a166ed97f99c7ed268",
+    "tests/data/svg/Mercury Station - Motion State - Natal Chart - Modern.svg": "c404c791840b02a80914fd0c3357c68c3d30d6f6a9e06cc5dc4a786436ba638c",
+    "tests/data/svg/Mikhail Bulgakov - Natal Chart - Classic.svg": "abb631ae367753b3416bd86104a174361b9b4ecc190a27b42042824f3d619cf7",
+    "tests/data/svg/Millennium 2000 - Natal Chart - Classic.svg": "361cd20e1c0f2639402744184948870a9328b569dae184ca899337796c77672a",
+    "tests/data/svg/Moon Phases.svg": "83e99c43676152d2194dc2cb5f3e9e945d43455324ec84ef36090da157455081",
+    "tests/data/svg/Nairobi 1S - Koch - Natal Chart - Classic.svg": "58602760f69e672751d5e609939e5bc6548ac0ccefabfd1edc2aafab3a320f1c",
+    "tests/data/svg/Nairobi 1S - Natal Chart - Classic.svg": "e9e457268ff652897800a55a69ae3b5f030a5d89dad208dfdb5a1f6163dc160a",
+    "tests/data/svg/Nairobi 1S - Whole Sign - Natal Chart - Classic.svg": "13db03b4bec679e6ce08714e9c99445de8be56717719dc9cedc6e7a53ff6900f",
+    "tests/data/svg/New York 40N - Koch - Natal Chart - Classic.svg": "0844ac22002ddfcedde07ee196ceb9df079558f5d71b3289b5245449af362ee1",
+    "tests/data/svg/New York 40N - Natal Chart - Classic.svg": "51db69b714739a6741edd24939c722831c01d14523c01e9dee8808505b63cc72",
+    "tests/data/svg/Newton Birth 1643 - Natal Chart - Classic.svg": "8416ec95b5f53bb48acedb3638b79cc3775ca5a87e47b22aea0246a96f7a03a7",
+    "tests/data/svg/Oslo 60N - Koch - Natal Chart - Classic.svg": "46fedacd91df618fa5d1e779d2da026073a22bb090fea1f0ca755a111204d7fe",
+    "tests/data/svg/Oslo 60N - Natal Chart - Classic.svg": "a5deb3628d829ee762332cf7f7c271dc443bff3acae96f67fcd48fcfc656b13f",
+    "tests/data/svg/Oslo 60N - Whole Sign - Natal Chart - Classic.svg": "da3248352a3220d37134954bab0d072057608f442ace01d3425a6115a6475c73",
+    "tests/data/svg/Out Of Bounds - Natal Chart - Classic.svg": "aac811c8cfc3d928750a9da641ac47c471241a200142c6f5a01148015280ca7e",
+    "tests/data/svg/Out Of Bounds - Natal Chart - Modern.svg": "dc5a7043196e238b1b5c76060e441144dde9bab9210575db603f973728643415",
+    "tests/data/svg/Paul McCartney - Natal Chart - Classic.svg": "59be7c80760b92cffade05abf52f5e6d63ad5ebd3792850b3981699ade0fe8f2",
+    "tests/data/svg/Polar Fallback - All Marks - Natal Chart - Classic.svg": "fbbcbd34ac933c5193f11ef73ee0db3250de0e38c525b4e94824965307ec126c",
+    "tests/data/svg/Polar Fallback - Natal Chart - Classic.svg": "95e0b081f4aaa19f3045874a7e612900de94c50888a565284c98cddc4c21fb45",
+    "tests/data/svg/Polar Fallback - Natal Chart - Modern.svg": "6dd592baeccc3873e33655f192d8da1f529572143dae1172113fc0b2521b3734",
+    "tests/data/svg/Ptolemaic Egypt 200BC - Dark Theme - Natal Chart - Classic.svg": "94bb53e44ab12cc2d5ece62ac70a1a98f3288160c40c88685bd54cf0cf513c58",
+    "tests/data/svg/Ptolemaic Egypt 200BC - Natal Chart - Classic.svg": "f24ca7a0ee69a86b716abe4b5baa2d22837024d2fbf960dc9a7cc49a893ce8e4",
+    "tests/data/svg/Quito Equator - Koch - Natal Chart - Classic.svg": "661689dd220681c6f68520e32cd5e6fd7783677ac0b342b3bd27432dfa8406d9",
+    "tests/data/svg/Quito Equator - Natal Chart - Classic.svg": "11f24aa7b70d00154a51297396608c07e42c43f15debc326e5f63e81c0767e8c",
+    "tests/data/svg/Quito Equator - Whole Sign - Natal Chart - Classic.svg": "3c729c7c9f266f51635c574719da9c674b2b1ddbaffa9ea065296ca029fe81dc",
+    "tests/data/svg/Reykjavik 64N - Koch - Natal Chart - Classic.svg": "ba4fa3519de1143652788acddb53cacc0673317387b8f26abfe2bfeec04cc2e8",
+    "tests/data/svg/Reykjavik 64N - Natal Chart - Classic.svg": "e69e7a6b8c62180e5afca1f598f83273828342517663e4b61338c72e8a8e1beb",
+    "tests/data/svg/Reykjavik 64N - Whole Sign - Natal Chart - Classic.svg": "96fba138d0b38af29439ced700f852fb96b23f211d169f729db96cea8d7d9ab3",
+    "tests/data/svg/Roman Empire 100AD - Dark Theme - Natal Chart - Classic.svg": "1a3f3c382b5898a8ad9a8218b1e64d8a566ca7fed0528a89d72862dbf1edcc5a",
+    "tests/data/svg/Roman Empire 100AD - Natal Chart - Classic.svg": "0b5f2c8682f554680fffd0321673e8192b74dcc0c909edcc68fa76d025e17ad0",
+    "tests/data/svg/Samoa Dateline West - Koch - Natal Chart - Classic.svg": "d6609d4082c18613e09660120ccd37d1083f3b265e42663cac1e321b98e31853",
+    "tests/data/svg/Samoa Dateline West - Natal Chart - Classic.svg": "e8d1f51a5afd706761213047bc882525280c5f4882c49b657d616a5f8a9c565b",
+    "tests/data/svg/Singapore 1N - Koch - Natal Chart - Classic.svg": "f57f7c6d2270da9d0f773a9890298fb9f32851dc421cdd4eb60e8ea194a32b4b",
+    "tests/data/svg/Singapore 1N - Natal Chart - Classic.svg": "58ca22fe8931d3f80318088a74ad741b2c87a2c900edcd2c470368fe942191e2",
+    "tests/data/svg/Singapore 1N - Whole Sign - Natal Chart - Classic.svg": "eeb4b291054ded52089eafb4024688f42a830644535ae8a213829dd567fd75ac",
+    "tests/data/svg/Sophia Loren - Natal Chart - Classic.svg": "c0400f6a54a97b9bc6da91498b7e96b5da5ab653c0ab0ff3480a78fa372c84af",
+    "tests/data/svg/Spring Equinox 2020 - Natal Chart - Classic.svg": "b86165d507a7ae382e331981ff664ac9b29b8419f2bcde953735e34abf7aa7b1",
+    "tests/data/svg/Sydney 34S - Koch - Natal Chart - Classic.svg": "7dd27f71c62f9201a0bf12e81dde936021b18251ee8bc050d159c09b7db334e2",
+    "tests/data/svg/Sydney 34S - Natal Chart - Classic.svg": "aee4d69ea3b1f05e21665b95331bdb0ab531272cecb92c1a74bffd3cc9f353a6",
+    "tests/data/svg/Tokyo 35N - Koch - Natal Chart - Classic.svg": "da74c0537121da39a8988725b6712e32ee8e2983bc7c51389ffe226ccb2abc87",
+    "tests/data/svg/Tokyo 35N - Natal Chart - Classic.svg": "483a10c2e138a532578f4b4955e1855b59eebe972e2be114c229ea95906be43d",
+    "tests/data/svg/US Independence 1776 - Natal Chart - Classic.svg": "8b11a0f7cd8272ee984ab0eedcc3dda8e5d62bf020c69e51f7dcc7459d55051a",
+    "tests/data/svg/Ushuaia 55S - Koch - Natal Chart - Classic.svg": "ec52d00e8bb6c567141f965e642abd413324bfd3bc7640412d8c9a69d60f0ff6",
+    "tests/data/svg/Ushuaia 55S - Natal Chart - Classic.svg": "b0d9e702c7debfc3c7612a8908cd0a7da9bc355e11fb8099d2b59fa68f00159c",
+    "tests/data/svg/Ushuaia 55S - Whole Sign - Natal Chart - Classic.svg": "e3caa7ec7109f004f181a7029bff601202532ebac963c3f7138b675c494f2c77",
+    "tests/data/svg/WW1 Start 1914 - Natal Chart - Classic.svg": "8dcb78c88fe5d7c36f49bcbaee93f350651024d98e4276b45a839deeffbeea1c",
+    "tests/data/svg/Yoko Ono - Natal Chart - Classic.svg": "a0d7d697e615273b18b7bb8357ed8ebc587c3cf3c59802e0033fdf52ce84f312",
+    "tests/fixtures/composite_all_points_all_aspects_report.txt": "797b43168ef316a17dc8597a7437af0a27b5465f9e1bb95ce080a78a3b678bb3",
+    "tests/fixtures/composite_john_yoko_report.txt": "c7422b39589df350d12483f1af8726f896bd79f5e2ba632bbb96c0f8bf7b38dc",
+    "tests/fixtures/composite_report.txt": "2f015cdcac57cf2fb55c713e004247152b2a33cc00e765a4fc1bb73d033a8622",
+    "tests/fixtures/composite_traditional_points_report.txt": "26141ad0b1e83907a3ecc8865d8b6ac9741e0515be82014fc503d28084a14115",
+    "tests/fixtures/dominants_john_lennon_report.txt": "24b92d41cd1635cdf9db065d0a645648f2c5748d0692c3be3a25efaa9c3c7b29",
+    "tests/fixtures/dual_return_all_points_all_aspects_report.txt": "3a77c412a52b26d62d39d771c1d97fe0f6e0c15849a23552d579d27226e3a84e",
+    "tests/fixtures/dual_return_report.txt": "b9a8f67b4bc6be994464af7af34ddb820b875b60288b365077888c51c68c8616",
+    "tests/fixtures/firdaria_john_lennon_report.txt": "aca3adeea9b78fc2e75c85640d68d7a5ac1df0b7ca9d25d803bebb026ad3f499",
+    "tests/fixtures/horary_indicators_report.txt": "4978fa551e56d52ad2f81e5860a6527c3aa7d67c025ee298bd2b264312d4035a",
+    "tests/fixtures/moon_phase_overview_report.txt": "70c49cf8b820ff57bcbf0d1c49df8c8b66b023b9502b6681c2909ddc534e39cc",
+    "tests/fixtures/mutual_receptions_report.txt": "e73847535f3433be45835f17f3677406d9a1dc71a71bdb89954369e2eccca9ef",
+    "tests/fixtures/natal_all_aspects_report.txt": "b01ac5728029a0fdbf00715b366ecd949d9264cb02698780f3b4015a936a12eb",
+    "tests/fixtures/natal_all_points_all_aspects_report.txt": "e6a106e52d23f8de9d471379b28b5ee07a9dd02926b4ca2ff3a28f61b36d62b8",
+    "tests/fixtures/natal_all_points_report.txt": "89f9e6f868d57f72b0a64e5dc2de0054945e50ebe8ef1afd10cdc528c4e117c3",
+    "tests/fixtures/natal_ancient_rome_all_report.txt": "574a2aeeb1a9f4eea5636eddc682bd55a4842f97a0d14b05aa54761ef3fc6651",
+    "tests/fixtures/natal_buenos_aires_all_report.txt": "d9f58573aa0a5a6255cf79862c4bc1101f57d74cfa9184eb94f6d31c59c756a1",
+    "tests/fixtures/natal_discepolo_aspects_report.txt": "3e492dec800982f9c35b2a2537f1a46ae463dba4662a42bada1107fa7f6ee638",
+    "tests/fixtures/natal_einstein_all_report.txt": "9a3b75b5f822827f93f94a04ed02348388982534510b78e78decd022fee79617",
+    "tests/fixtures/natal_future_2050_all_report.txt": "954999ff612792241776f82f9458aeca0c684447386a8f324639fc44ebc87d5e",
+    "tests/fixtures/natal_john_lennon_chart_report.txt": "56fa165a55042b165f9f6100df0baa54e65a32d5c994da6ec1be53bc3c76e4da",
+    "tests/fixtures/natal_john_lennon_subject_report.txt": "55f9c2a9cb623a20ca726652a8af4d8a892a176303d37eb770c8805378a9369b",
+    "tests/fixtures/natal_johnny_depp_chart_report.txt": "27b68a42e672f0fa0793eeb7b4ac86dc09d98b77ccf41fcd84dd3bff2908d630",
+    "tests/fixtures/natal_johnny_depp_subject_report.txt": "1bbcb1a08fa25fd16c112156f72817f16ba39d9211ee2b7dd94d63033acba9ac",
+    "tests/fixtures/natal_quito_all_report.txt": "b1e1f58fc486077cb706d01c569b0476cf60441365b31d12d3308517f4dca8c3",
+    "tests/fixtures/natal_tokyo_all_report.txt": "b0f2a6d19cf3519b8d1fa9c038447adf45b77a15e816bf8152870ffe30728137",
+    "tests/fixtures/natal_traditional_points_report.txt": "ba9b8ff45e1df945fed69bcbf6f43bf2ad211c53a1c7a73185f2f6ceaec1d08e",
+    "tests/fixtures/natal_yoko_ono_chart_report.txt": "d48e58057aec0ab20892876f580c7ee536fc4e613547478c1ed7fd010e16b7a4",
+    "tests/fixtures/natal_yoko_ono_subject_report.txt": "55a321ea18b88582a5e40ce3a323225a76ec154f6e426c53710147564610cc54",
+    "tests/fixtures/new_moon_test_natal_report.txt": "61f04a7c454c2317757a82c2adc81d8c0b5eaaf36af1df9894af7aa8bc7eb74b",
+    "tests/fixtures/profections_john_lennon_report.txt": "1bb05d9ad19efe86573ac972d2c975ae2b612f3bcb84600555d550d674c9c1d4",
+    "tests/fixtures/solar_return_all_points_report.txt": "e8de22df19449b73c87477aa026cd0d8c8ea586238f2c2b16b675dea798df37a",
+    "tests/fixtures/solar_return_johnny_depp_report.txt": "344dc472822e6cb32c48c60ce6640f75283159ed83dc6410aab0400de6e006a1",
+    "tests/fixtures/solar_return_report.txt": "aaa4b80bfdb514de6a9b10c94fcca453c5b6651ae773133217f5aedce9f7b56b",
+    "tests/fixtures/synastry_all_points_all_aspects_report.txt": "fdb1b6f55af3c587b01a73da5fd35a126eb20c6557c6107dc9761d95b01db607",
+    "tests/fixtures/synastry_john_yoko_report.txt": "d1ec3de11458e7882a802bd4ded1685ca3057244218d12083b3ec4e9f3e20ef8",
+    "tests/fixtures/synastry_report.txt": "83602bb28387ba05e6a1093828b8080f1f8d72d1c0ad05a3b015f7faae5a26a5",
+    "tests/fixtures/synastry_traditional_points_report.txt": "ce2f2165b06e65c75c23201e646dc42147d3da488056832defbc24a2921ac5da",
+    "tests/fixtures/transit_all_points_all_aspects_report.txt": "82bc391ea7f937eabbd7476987f6eed623c67a9804099fe89254dc3b0600773c",
+    "tests/fixtures/transit_johnny_depp_report.txt": "ae7b80fba8d431020c45037f09c69ef2022d8486521355119337cac6498d5493",
+    "tests/fixtures/transit_report.txt": "75894beb7f0de1da5c8953b21e211876e8c1a8c2b7c13d1f9fde81743b2e6355",
+    "tests/fixtures/transit_traditional_points_report.txt": "1f81047386245ee7f3c07465b34cb5607a8e3b150b8f13029bfd4f4213147da7",
+    "tests/fixtures/zodiacal_releasing_john_lennon_report.txt": "9c5fa2ec9376b907efb5b31deb42293903df996e99063fbf12b6e095dfc482f1"
+  },
+  "model": "libephemeris-4.0.0b1",
+  "numeric_sha256": "d2772d73d34c103eb39539a4d3ba29505fad1fb33153bb96e79581ed7fff0858",
+  "producer_source_sha256": "4de38cacb0ed8c2a34d1212bb2770118b8c527c2824357149d84f5756ab8e0e0",
+  "producer_version": "6.1.0b1",
+  "recipe_modules": [
+    "tests.core.test_chart_drawer",
+    "tests.core.test_optional_mark_baselines",
+    "tests.core.test_chart_parametrized",
+    "tests.core.test_bce_dates",
+    "tests.core.test_lunar_phase_svg"
+  ],
+  "reports": {
+    "natal_ancient_rome_all_report.txt": {
+      "sha256": "bbc177886d509d15a23390ad2366278d4f5e18621b150cb0efdb109ce809eb33",
+      "storage": "v4"
+    }
+  },
+  "schema": 1,
+  "sidereal_model": "continuous VCW pole/CIO transport, UT1 rotation and TT precession",
+  "svg": {
+    "Albert Einstein - Natal Chart - Classic.svg": {
+      "sha256": "8080dc88381e38c40a045f1254313dcaf7a55dfe5911d77ba94a96f6d3079c93",
+      "storage": "legacy"
+    },
+    "Amitabh Bachchan - Natal Chart - Classic.svg": {
+      "sha256": "ae74e3911b4e82e51cc447ebeb42c5c4067e5a39a18f30f1e2885f24aab113ae",
+      "storage": "legacy"
+    },
+    "Ancient Greece 500BC - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "6a3de48459d7ff1f1221af5862d20fd981ef24edad43b378fc57a9417f7b98a9",
+      "storage": "v4"
+    },
+    "Ancient Greece 500BC - Natal Chart - Classic.svg": {
+      "sha256": "cf100f7f4d9be49afe8c742954f11e293e9b7d1c3c3316d305dfd39fb110713d",
+      "storage": "v4"
+    },
+    "Ancient Greece 500BC - Progression Chart - Classic.svg": {
+      "sha256": "7750559a3120a58ac14db857f9fae0c0a0b7c3c0161ff9a845ac5bc765f2e7e0",
+      "storage": "v4"
+    },
+    "Ancient Greece 500BC - Synastry Chart - Classic.svg": {
+      "sha256": "f9c3784e2ad78d7911496fd49ab4d5ea1444d30055ec22ea964b2b3dd213ac41",
+      "storage": "v4"
+    },
+    "Ancient Greece 500BC - Transit Chart - Classic.svg": {
+      "sha256": "eb73c9f6e8c9bbb191d73f2aa1a31fae8e51c0e29ebb0ba872284ee8854582c1",
+      "storage": "v4"
+    },
+    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Synastry Chart - Classic.svg": {
+      "sha256": "1a32844cfd1dde39e5c915a3a4622c61e5959663589512ad0664016c471c02fd",
+      "storage": "v4"
+    },
+    "Ancient Greece 500BC and Ptolemaic Egypt 200BC - Transit Chart - Classic.svg": {
+      "sha256": "7c84b37ce2385382a2f1ad83209221a0a217b7a01886953a8e431c0d2862bd88",
+      "storage": "v4"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - All Points All Aspects - Composite Chart - Modern Wheel Only.svg": {
+      "sha256": "9e04a12c80524c2e3e1f80a543e53c5c04071055bdd52c9a0509cbff0f6d776b",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - All Points All Aspects - Composite Chart - Modern.svg": {
+      "sha256": "62fef4052904ed7e9f17fa992c4989eabef34cc97158c6079bb1836768fdcb32",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - BW Theme - Composite Chart - Modern.svg": {
+      "sha256": "5491e90001039a912636b0870e70d4225ad50def02f4770d0912fbd034ebd62c",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Black and White Theme - Composite Chart - Classic.svg": {
+      "sha256": "55f2348a6b31f7b65a438b8382477a5ec46df47c4665946ab2722fb296474a78",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Aspect Grid Only.svg": {
+      "sha256": "bbe7f33e228ddc899f7559b7a1e7a706119672b083ea38375838a158cdd45c74",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Classic Wheel Only.svg": {
+      "sha256": "76f4e713a0bd241b042a3e18cee7b2c8590fc2ea08e8ef2737b55835e48fa039",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Classic.svg": {
+      "sha256": "6e1ce8a205740888394bc5ee41be184acf17026dd5e189459d7e8bb2def8be5d",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern Small.svg": {
+      "sha256": "31620c6af196d49111568453c454045845a75664029a7a726998874d28022819",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern Wheel Only.svg": {
+      "sha256": "8533a9ed829e8dc3a92d7faf808486a89835bce858909644ba5ec7b1ac06407f",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Composite Chart - Modern.svg": {
+      "sha256": "2d3d04b0f934285c06bb2b2b2ee091002d264ee60401b09c05f98cf348c3e80d",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Classic.svg": {
+      "sha256": "a77f5ff33a70c58f84e6a4cddb5a17bd0a21f33c72837d9ffff3442a9ababb72",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - Dark Theme - Composite Chart - Modern.svg": {
+      "sha256": "2ef5f2442e6a27c830ab3a7c62bbe02ba7d56649ea732023042da2ca7e7d1ed4",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - FR - Composite Chart - Classic.svg": {
+      "sha256": "00ce4d05ff9fd42a98b372760f7ac3451839c208249bbcd454ad88173cf67a6d",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Classic.svg": {
+      "sha256": "4db34d70bbf911122e3a7f752379bfc344a86122fecc039ca082fcbe4cef680c",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - IT - Composite Chart - Modern.svg": {
+      "sha256": "8881bf4540078205114a6aaa2e8d83d74fc1b4a769a4071875c24658fec293b4",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - No Zodiac Ring - Composite Chart - Modern.svg": {
+      "sha256": "5d28cdc5478b9d602b78a94ed63e980be4d1c6c3951767d791494726b51b9fad",
+      "storage": "legacy"
+    },
+    "Angelina Jolie and Brad Pitt Composite Chart - PT - Composite Chart - Classic.svg": {
+      "sha256": "c17f58d9adf73facbeebbff0e0e588fd21281b116c48c6ce46b15309fd9b7069",
+      "storage": "legacy"
+    },
+    "Antarctic Circle 66S - Koch - Natal Chart - Classic.svg": {
+      "sha256": "41ba1af09c2d47cf35f4a055bccb3f448644ce9c7e7db4effae1d98ecd49686e",
+      "storage": "legacy"
+    },
+    "Antarctic Circle 66S - Natal Chart - Classic.svg": {
+      "sha256": "0ca2444b2542e8d9cf3034e78dace247fe360656f24b46608125fa186ecbfa11",
+      "storage": "legacy"
+    },
+    "Antarctic Circle 66S - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "911f7f26f1fa745be757be2773f6908271c5146b90e765127079b6b6f980cbbf",
+      "storage": "legacy"
+    },
+    "Antarctic Subject - Natal Chart - Classic.svg": {
+      "sha256": "7b696e840a7e0b934956d79866f881604c8d625b4179c420861b14bbe91d4811",
+      "storage": "legacy"
+    },
+    "Antonio Banderas - Natal Chart - Classic.svg": {
+      "sha256": "792d2b92ecf45df4439f60634c34b4b9ac7db3cc730a00217dbf49e8e96dde92",
+      "storage": "legacy"
+    },
+    "Arctic Circle 66N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "967d1f119f2adc26a513e17ea4d0bd9e215723020056008828b0e093398014d4",
+      "storage": "legacy"
+    },
+    "Arctic Circle 66N - Natal Chart - Classic.svg": {
+      "sha256": "b7faa14eb499fb898bac0c3cb32a2f9009a98fefc48a78909f65967dbc7ecb84",
+      "storage": "legacy"
+    },
+    "Arctic Circle 66N - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "1e999966663d49b5e1509ea28ac74c076d3029d5aa072dfd9fe9003ce35492d5",
+      "storage": "legacy"
+    },
+    "Arctic Subject - Natal Chart - Classic.svg": {
+      "sha256": "df6d99f675520f7f2264cc4e0f751d235cb470114b91014a7fe5b4cfb161183c",
+      "storage": "legacy"
+    },
+    "Buenos Aires 34S - Koch - Natal Chart - Classic.svg": {
+      "sha256": "c0f6e525282379aa9003b4f047653a74a6ea5ff5886463ee972a8e7d5bfaebb9",
+      "storage": "legacy"
+    },
+    "Buenos Aires 34S - Natal Chart - Classic.svg": {
+      "sha256": "7b3144dc3e653c86dd3ed67b6a501616883fbf7e3d8e5c0547ebc541e3e9bd7e",
+      "storage": "legacy"
+    },
+    "Cape Town 34S - Koch - Natal Chart - Classic.svg": {
+      "sha256": "849f1fea5a50cfaa143d4637f8371867364bdae54ca96207064ab0f75fd2beb9",
+      "storage": "legacy"
+    },
+    "Cape Town 34S - Natal Chart - Classic.svg": {
+      "sha256": "7d46f50ef6165fe41b7f716aa277b16aeb70fc03866313623d3c550f70018383",
+      "storage": "legacy"
+    },
+    "Charlemagne Era 800AD - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "c31035d7d6bd8a636b1b56a640daa3796072eef0736e1dfcf8842a01b84fa7de",
+      "storage": "v4"
+    },
+    "Charlemagne Era 800AD - Natal Chart - Classic.svg": {
+      "sha256": "c3624e578a817d2de0c874fa6994bc8a0d0a0d98adbcee2ef02724988855e387",
+      "storage": "v4"
+    },
+    "Columbus 1492 - Natal Chart - Classic.svg": {
+      "sha256": "b2ebbd02de0e6adb6be1107d321fcb59445f14bd4b0b8332242dae393e402588",
+      "storage": "v4"
+    },
+    "Constantinople 400AD - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "374d1f483c53dd0cae8d3f63421f14dfca7d1482e39885b17fb20fc121144ac9",
+      "storage": "v4"
+    },
+    "Constantinople 400AD - Natal Chart - Classic.svg": {
+      "sha256": "10afa12380b785b59e14bf737aa48029eae77fcfedef2c36ec2866d51d466617",
+      "storage": "v4"
+    },
+    "Cristiano Ronaldo - Natal Chart - Classic.svg": {
+      "sha256": "a178e6c799cd1867b243c058922612e75c0c8924c2fed171712a5ced36556c4b",
+      "storage": "legacy"
+    },
+    "Crusades Era 1100AD - Natal Chart - Classic.svg": {
+      "sha256": "bd98938ace72a1ecdda623967ac52576f23373a0181b33a3e1768c62213ba218",
+      "storage": "v4"
+    },
+    "Dante Era 1300AD - Natal Chart - Classic.svg": {
+      "sha256": "8073259ce142aea0c8cc9d43df86a3fdf65eb5ae5b3be406c9ce2f0b61231d1d",
+      "storage": "v4"
+    },
+    "Date Line Subject - Natal Chart - Classic.svg": {
+      "sha256": "de0d18ecb652f974b6c7620c3bea5c8715c3b19aa032903bec9436ea68a6b385",
+      "storage": "legacy"
+    },
+    "Early Renaissance 1450 - Natal Chart - Classic.svg": {
+      "sha256": "1d4fdeefdfe4b280c3287afeb3d14ee31cca664da98a7515193ff4505288093e",
+      "storage": "v4"
+    },
+    "Einstein Birth 1879 - Natal Chart - Classic.svg": {
+      "sha256": "5207dfc30d311fc3cfb02f96d41f9ed59d8bc7dbe251823a56661abeff3208c7",
+      "storage": "legacy"
+    },
+    "Enlightenment 1750 - Natal Chart - Classic.svg": {
+      "sha256": "65755baea9f8fd400e93b94f9d070f74dd595f0b8fefff603029483aed697760",
+      "storage": "legacy"
+    },
+    "Fiji Dateline East - Koch - Natal Chart - Classic.svg": {
+      "sha256": "6c3d3fc1e19c0dbbcd023e5a2e3507b159a983e6e3c42d447a573b04350bf077",
+      "storage": "legacy"
+    },
+    "Fiji Dateline East - Natal Chart - Classic.svg": {
+      "sha256": "f67217bae5175a7b5ef8aea8cea5f243036729c54ba9f2abf18b91c6d68fee85",
+      "storage": "legacy"
+    },
+    "Future 2050 - Black-And-White Theme - Natal Chart - Classic.svg": {
+      "sha256": "d0a15d1709f7873b08d914d5cd3dd28c3354c7d791dc2d14a1ca4665ac4a0cd2",
+      "storage": "legacy"
+    },
+    "Future 2050 - Natal Chart - Classic.svg": {
+      "sha256": "b7fa215b95cdaed68d7ce037616a0969eefa5d584094594d517a60ba6cce6f32",
+      "storage": "legacy"
+    },
+    "Future 2100 - Black-And-White Theme - Natal Chart - Classic.svg": {
+      "sha256": "f4b3b431cf1143ec036283e98aec60c91cbcc3996eb212d78e0472f11210b3d6",
+      "storage": "v4"
+    },
+    "Future 2100 - Natal Chart - Classic.svg": {
+      "sha256": "c37145f971cf4b7df57f7811fa2b343a0e66f4aa16becd74ddc364541ec31e13",
+      "storage": "v4"
+    },
+    "Future 2200 - Black-And-White Theme - Natal Chart - Classic.svg": {
+      "sha256": "16841534e7cb7dc309931f19f0649a1bc16ae52be72ef7cb0421a4531d617302",
+      "storage": "v4"
+    },
+    "Future 2200 - Natal Chart - Classic.svg": {
+      "sha256": "a41497751abb6b9633b4fb80e005b2a5604f1aa6d16231e1886e2b570b2a941d",
+      "storage": "v4"
+    },
+    "Future Subject - Natal Chart - Classic.svg": {
+      "sha256": "040d8c9621226957921923ef0c3ed49ea1fbae77d02f21cc9685f9a0c9d32979",
+      "storage": "v4"
+    },
+    "Galileo Birth 1564 - Natal Chart - Classic.svg": {
+      "sha256": "e750c03cd62f8f36047b387d866047b65ef2c5d3ccb0e24a40e2ccb1349f62f8",
+      "storage": "v4"
+    },
+    "Historical Subject - Natal Chart - Classic.svg": {
+      "sha256": "67420ae15d57f7a45b341d8894cd164b3a938ed89885b32c546c7b258c50287c",
+      "storage": "v4"
+    },
+    "Hua Chenyu - Natal Chart - Classic.svg": {
+      "sha256": "86b007221817523a707a139affdb1f4484805d4f9ee57b3ca1cd273a432319a1",
+      "storage": "legacy"
+    },
+    "Industrial Era 1850 - Natal Chart - Classic.svg": {
+      "sha256": "491f3eea463fcb836a172c1e6c6fb406a9a4f181eabe5f6f325a793cd9f7daa0",
+      "storage": "legacy"
+    },
+    "Jeanne Moreau - Natal Chart - Classic.svg": {
+      "sha256": "1d8b6ed8df21a9869086f06184ca266a111140ea2aa5caecf9098e0cd7d64bbe",
+      "storage": "legacy"
+    },
+    "Jeanne Moreau - Natal Chart - Modern.svg": {
+      "sha256": "5a6a76293ef9d38e939e2be2bdef65e4098ab5b5869f3a46f8d35bfec46fe0c6",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Natal Chart - Aspect Grid Only.svg": {
+      "sha256": "42403be41a5a94d64ee3835a946a213ee40f51ed75ff29b02a271bc280ec93c2",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Natal Chart - Classic Wheel Only.svg": {
+      "sha256": "e90a5110ff41a99b239318f5ee48dcdf62970583b8f55529f56ae55c3a5e2bcf",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Natal Chart - Classic.svg": {
+      "sha256": "782867b80983c979a6467398a66fbcf40036e4104e4c25c2942394149ef0a0a3",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Natal Chart - Modern Large.svg": {
+      "sha256": "c7166ba3fadbdf214522f3d7b5ec1263892d45f5010f24f9e2aa961c5a548d50",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Synastry Chart - Aspect Grid Only.svg": {
+      "sha256": "41cf843e36fb4df4c85397ddb8338aaeb67d0e53806373cd8598bebbc8dd4dc1",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Synastry Chart - Classic Wheel Only.svg": {
+      "sha256": "5f45d4b18ff260c4797dd4892b1c19adf0a6f549c16d10323a1a9d3e02b1fe7a",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Synastry Chart - Grid.svg": {
+      "sha256": "a3224e6ec2c9f60eb77d0c4e186a8bf009491452a7a90bb87b5ebc8d48f2d409",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Synastry Chart - List.svg": {
+      "sha256": "8cbacd9e79a8eb733f8c2df426d09e62b5e65dd4f4ce09f1092c49d89e9993cf",
+      "storage": "legacy"
+    },
+    "John Lennon - All Active Points - Transit Chart - Classic.svg": {
+      "sha256": "20c40e6f567938879a232dd410bdc6fb8f0c130d773489136b32fe1a2d534c9f",
+      "storage": "legacy"
+    },
+    "John Lennon - All Marks Sidereal - Natal Chart - Classic.svg": {
+      "sha256": "eef9b1545f72d9e4496d3d6d093c5d161b83f433bf010fe230a3b151e77b2f85",
+      "storage": "legacy"
+    },
+    "John Lennon - All Marks Synastry - Synastry Chart - Classic.svg": {
+      "sha256": "2ff37f7eb232ffd1580d7de6b3eebd64715be510f9798b1586af0052657f67df",
+      "storage": "legacy"
+    },
+    "John Lennon - All Marks Synastry - Synastry Chart - Modern.svg": {
+      "sha256": "dcf0631c3fb79df66a26a04d66d62c0d0f1b1e07eac7fc7401db852ed39dc320",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - DualReturnChart Chart - Lunar Return - Modern.svg": {
+      "sha256": "091a0ea33cd42296219afd2ccfd005908db9d3a01d31e6b863048bed7f9f13ea",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - DualReturnChart Chart - Solar Return - Modern.svg": {
+      "sha256": "955d09261dc43d3e253471a12b1d485f2a65dbfe9b0c3f74b1687b1230851b2c",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - Natal Chart - Modern Wheel Only.svg": {
+      "sha256": "bb175ed13e626302df359ed646f87c8ffac8e708b360d532566cf6f9972e2276",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - Natal Chart - Modern.svg": {
+      "sha256": "35e6cc6d3b8229bece8c9b89f1dfac7acc4c1701b6f9f0181176e8c89f3c409e",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - Synastry Chart - Modern Wheel Only.svg": {
+      "sha256": "8d362e0d3f0c4905f7ab26d3a516a4ce43035f3e54b8c1be31c7768db80aba76",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - Synastry Chart - Modern.svg": {
+      "sha256": "b312516666be6da9f26385bcefea1b17d168a02ee9d9e674ab1c64a8a5aaf07f",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - Transit Chart - Modern Wheel Only.svg": {
+      "sha256": "2e71a93a4a7318365d35b17da835bde09d47bf4e584879786719b7c228f1502e",
+      "storage": "legacy"
+    },
+    "John Lennon - All Points All Aspects - Transit Chart - Modern.svg": {
+      "sha256": "6ed5838f51721c5a43d3f40ce376c38c0696e2411519f233533f47e803020d47",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid BW - Natal Chart - Aspect Grid Only.svg": {
+      "sha256": "de1d21014549ad61a4500fb8390c5c58f1ddeb39186c57d86b2abc3b4ed7b841",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid BW Synastry - Synastry Chart - Aspect Grid Only.svg": {
+      "sha256": "6e07305a02e38265d47e612274839967dcd1fd8eea0c13702c1c519055d03a2c",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid BW Transit - Transit Chart - Aspect Grid Only.svg": {
+      "sha256": "db1106cd6ba2ca71b6d0bca8b002812c802122421dbb2bf7d03e55bb4423555d",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid Dark Synastry - Synastry Chart - Aspect Grid Only.svg": {
+      "sha256": "825b130d683ae6e3deebd5e98daec7adbdfbc60e23a2cf3146c2bce42a444eb2",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid Dark Theme - Natal Chart - Aspect Grid Only.svg": {
+      "sha256": "de5dd3d3b16e6ca6c5f94832f99579c15e4798622ec403e32fc41ac16c7dd249",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid Dark Transit - Transit Chart - Aspect Grid Only.svg": {
+      "sha256": "2199e5e8636fd92782c60eeccdf3e23602d10d9885858af23e4c11e0d2198216",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid Only - Natal Chart - Aspect Grid Only.svg": {
+      "sha256": "64cc07f2ffa19cc6bfe0cbed6863cb961d6931cc46bba2aa21eeea919f284d6e",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid Synastry - Synastry Chart - Aspect Grid Only.svg": {
+      "sha256": "d8c3f0327c92253ff87a1504935b6de262ca1067a2fdf03d65cf8864fa7dd7f8",
+      "storage": "legacy"
+    },
+    "John Lennon - Aspect Grid Transit - Transit Chart - Aspect Grid Only.svg": {
+      "sha256": "e7f976328dab5b3e60a5b8ed34c0559e82304cbbb011a34bd51cc134b39947f0",
+      "storage": "legacy"
+    },
+    "John Lennon - Auto Size False - Natal Chart - Classic.svg": {
+      "sha256": "df1a58f25448aa22c151c8fd0d3d3fae99b4cd2412660dd80e6937e43fe585da",
+      "storage": "legacy"
+    },
+    "John Lennon - Ayanamsa Value - Natal Chart - Classic.svg": {
+      "sha256": "1ef5866ab8861c546fa1a67f0d275b1faf9b0c80f9c96c220658f08535b5d99e",
+      "storage": "legacy"
+    },
+    "John Lennon - Ayanamsa Value - Natal Chart - Modern.svg": {
+      "sha256": "5f01f9a875f4f3ba3b70d4ee6df93e46322a08254efd063ef5bde99fd94a3937",
+      "storage": "legacy"
+    },
+    "John Lennon - BW Theme - DualReturnChart Chart - Lunar Return - Modern.svg": {
+      "sha256": "6a297940ddf45f2e4f0b3b911f47e8f3af115491ccac50e915af54b243a48681",
+      "storage": "legacy"
+    },
+    "John Lennon - BW Theme - DualReturnChart Chart - Solar Return - Modern.svg": {
+      "sha256": "ff4f6935050aae18f456d82f48fef22e674d1dee71fae2ab21696350692d4b70",
+      "storage": "legacy"
+    },
+    "John Lennon - BW Theme Synastry - Synastry Chart - Modern.svg": {
+      "sha256": "de6846dcde2dedb00dfee1ef8656aa809f62ede53c8c62bcbe9c0349ebf96cb1",
+      "storage": "legacy"
+    },
+    "John Lennon - BW Theme Transit - Transit Chart - Modern.svg": {
+      "sha256": "8808f8b5017295cb8caa04237e4aadf580f67e78ee93898a7dccd427cb1a56fa",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme - DualReturnChart Chart - Lunar Return - Classic.svg": {
+      "sha256": "4855ebad01a8348747f9c3e16d1f5a1196488a50d55d7504d075c68570767dc2",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme - DualReturnChart Chart - Solar Return - Classic.svg": {
+      "sha256": "7fec8a279784d5f55d6331800c93e28a93417f0c7d717f481888ec9d6f3b077b",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme - Natal Chart - Classic.svg": {
+      "sha256": "cedb0f76a89ef55b2e6b717d552854ca3958fc6023231cd9504d724ea18bf719",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme - Natal Chart - Modern.svg": {
+      "sha256": "274752b84137681fbeeee0bcf3a5b6ae3733bbe193cb13b8286b48daa8c2433f",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme - Synastry Chart - Classic.svg": {
+      "sha256": "a69cf34bea8e202a7107f01d4c84188c657387dc1a813fab7d2a39cf607cb26b",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme - Transit Chart - Classic.svg": {
+      "sha256": "3e28410e04df717bc7e9aeae60e5a87b5716aad19d8e33bcc12d8eec8b62f497",
+      "storage": "legacy"
+    },
+    "John Lennon - Black and White Theme External - Natal Chart - Classic.svg": {
+      "sha256": "ae8859377eb5802b53a0fe2c1d5441b8347fde87159ffb196ccb99e26eacd57c",
+      "storage": "legacy"
+    },
+    "John Lennon - CN - Transit Chart - Classic.svg": {
+      "sha256": "453a8e20128cb30abc8e525c42dbe4c07eb608ad7906180ae6beabf25021dfa1",
+      "storage": "legacy"
+    },
+    "John Lennon - Campanus - Synastry Chart - Classic.svg": {
+      "sha256": "7d1dcdf8f4f1733a4619b227f754a4e0d6e79358ec9442ff8aff9cd2cb8f3ae5",
+      "storage": "legacy"
+    },
+    "John Lennon - Campanus - Transit Chart - Classic.svg": {
+      "sha256": "5d9fed7d479d2fd44b757977f5d60d9b386fbde9b478d8783127ff37d5fe8feb",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Aspect Colors - Natal Chart - Classic.svg": {
+      "sha256": "0f67d0c3987265b47981ea3c7838d52e358a0a44dec2600991d4d41b4669190f",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Colors - Natal Chart - Classic.svg": {
+      "sha256": "61ec692169dd5c166d95ed6b8f90b91d8e59791d9dad494e84c465fb06029597",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Padding - Natal Chart - Classic.svg": {
+      "sha256": "1f92556e0e7d02e2c72f0624fdd54d8ce90372c19c7ec3b02a52e4a2a1a9438a",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Planet Colors - Natal Chart - Classic.svg": {
+      "sha256": "68b2c167a6a137539012ac2f9ea8ed846f5504988616bd5b5ac1c7ec959dcf70",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Title - Natal Chart - Classic.svg": {
+      "sha256": "15868fdb5ee3129f94090dc46318d1e3226565f2b9bb52f24da7a732c1e68f1c",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Title Synastry - Synastry Chart - Classic.svg": {
+      "sha256": "49800d73054e0cb63e2108412a4cd61306a163cb8ff660225baae897706509ce",
+      "storage": "legacy"
+    },
+    "John Lennon - Custom Title Transit - Transit Chart - Classic.svg": {
+      "sha256": "b3cacb627319511d99a025cc70acb0b6528743a66b7d568d1f5536f5d1b9dd5d",
+      "storage": "legacy"
+    },
+    "John Lennon - DE - Synastry Chart - Classic.svg": {
+      "sha256": "4e638144419edc7a93836724299862b656ee1c8b80996d7425c5466892fbbbad",
+      "storage": "legacy"
+    },
+    "John Lennon - DTS - Synastry Chart - Classic.svg": {
+      "sha256": "8e92ad54e70bf18cdd1eb8051b25e34b58dfc04e598135a5fff568c4dd129722",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - DualReturnChart Chart - Lunar Return - Modern.svg": {
+      "sha256": "4ed9eda18e93d6d75ae26c428f900238ea938bf2a528d8e26121ca2221d098ac",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - DualReturnChart Chart - Solar Return - Modern.svg": {
+      "sha256": "68f17a4435ffeaf555edbf04aa9be95337daa43ecf489a648f7373acd71ce2c5",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "de9732305c6efc6be83f0228302b055b82eeecdc80e42ab2a94996974cd5a0e4",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - Natal Chart - Modern Wheel Only.svg": {
+      "sha256": "d57ff783d66f9764798f8ed8e8b2e51c6c8286c8363fce0eb8a80689e9f81a1d",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - Natal Chart - Modern.svg": {
+      "sha256": "2df0e7d649c724272c06cf60af09e69edb989c642e1ae22b44920508aeee82c7",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - Progression Chart - Classic.svg": {
+      "sha256": "a5c51f7d8631404d74f01b534c23979b34c4d390d2811b0b3182109398226b3e",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme - Transit Chart - Classic.svg": {
+      "sha256": "c70b91cea69b983a4648d5dd1e2e9fee9e285f03d49457047c790fda25fde905",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme External - Natal Chart - Classic.svg": {
+      "sha256": "3f1261fd17a1a8f73db885feb6cb5bdc03fb11650c6e1ce6ee36b3a379211b3d",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme Synastry - Synastry Chart - Modern.svg": {
+      "sha256": "90f424ec1249427392a3846a5d4a8279cf8a64b546cbcc077b9e5ea39029e159",
+      "storage": "legacy"
+    },
+    "John Lennon - Dark Theme Transit - Transit Chart - Modern.svg": {
+      "sha256": "16bc248f1a0450128c88a225b7f7b933989c884d491020b0c7d80bcbfadbf05b",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Lunar Return - Classic.svg": {
+      "sha256": "df48b586a1721545ce2696a903cffcaa1cca39c42c1e89d3a480ccc38410cfa3",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Lunar Return - Cusp Comparison Only.svg": {
+      "sha256": "f12e90ec856ba731421e8766a350e6a2d8b4ffcb67aedd854a0443fb41480574",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Lunar Return - House Comparison Only.svg": {
+      "sha256": "df48b586a1721545ce2696a903cffcaa1cca39c42c1e89d3a480ccc38410cfa3",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Lunar Return - House and Cusp Comparison.svg": {
+      "sha256": "94b204339b1e3eeaa5f02f41af4cce4e37f1f8cb78bb18b725bbd295a795d11f",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Lunar Return - Modern.svg": {
+      "sha256": "faab9b43dd9e61f7412a9d800ea305a9ab9a15c9f003ee4979d01869c85c3f03",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Lunar Return - No House Comparison.svg": {
+      "sha256": "4beac43d3ea8b50572362d00f687dc55ba49d42f884365ef7fce96a650349217",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Solar Return - Classic.svg": {
+      "sha256": "fb65278080da19245d8bddfe01ad9123dc9a64806efabc41eb917f26b5ed6031",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Solar Return - Cusp Comparison Only.svg": {
+      "sha256": "2829019b84292ac434c12a12da61cff29ef56bac01c6f38ee67e04ee104ca912",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Solar Return - House Comparison Only.svg": {
+      "sha256": "fb65278080da19245d8bddfe01ad9123dc9a64806efabc41eb917f26b5ed6031",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Solar Return - House and Cusp Comparison.svg": {
+      "sha256": "cbde5e80552b28b9bfc869d786c44316c5742187993d0f9b18b4e896d881ceaf",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Solar Return - Modern.svg": {
+      "sha256": "36abc5ab3b552f700b8ed0429b2b118f0c9f3bf795c978b8be5decd32571c1a7",
+      "storage": "legacy"
+    },
+    "John Lennon - DualReturnChart Chart - Solar Return - No House Comparison.svg": {
+      "sha256": "66723cc6cc83f27087788533927f206b0c654df96876f99f2ea30a9fe599a61c",
+      "storage": "legacy"
+    },
+    "John Lennon - EN - Natal Chart - Classic.svg": {
+      "sha256": "ab41ddb1cc34397073b0fe8f3bace05791eec90289ef00a60a04729d5c6cf8c7",
+      "storage": "legacy"
+    },
+    "John Lennon - ES - Transit Chart - Classic.svg": {
+      "sha256": "b61bee40902c93656ca1c27de4ab01f800d7fedcb344a81febdb21f68b1e0021",
+      "storage": "legacy"
+    },
+    "John Lennon - ES Transit - Transit Chart - Modern.svg": {
+      "sha256": "d2bb7476c4515ea23da2890c3e7e99598d1e6652e2bf992e35eb875c342cdd7a",
+      "storage": "legacy"
+    },
+    "John Lennon - ExternalNatal - Natal Chart - Classic.svg": {
+      "sha256": "0740834d3d864c8b6a0943fc2e0d09162cbe1c52503ee644c097ac08269cbe5d",
+      "storage": "legacy"
+    },
+    "John Lennon - FR - Synastry Chart - Classic.svg": {
+      "sha256": "42b4213785dc899ed9b92a422ecd0e699923dc80bbea1dfdffb60d33b0733da3",
+      "storage": "legacy"
+    },
+    "John Lennon - FR Synastry - Synastry Chart - Modern.svg": {
+      "sha256": "166d7fca6e43236459a7279905482eb792bccd6c33342ef5c9047a70a374f3d3",
+      "storage": "legacy"
+    },
+    "John Lennon - HI - Synastry Chart - Classic.svg": {
+      "sha256": "f0da3c1c19ad4c50a738bccddbb848114133aad1b0e8363a2a860e694c31e8ab",
+      "storage": "legacy"
+    },
+    "John Lennon - Heliocentric - Natal Chart - Classic.svg": {
+      "sha256": "6d81d3bd778bc641e0cfbde125d8895a926a77805625bf6c92752058059525ae",
+      "storage": "legacy"
+    },
+    "John Lennon - Heliocentric - Synastry Chart - Classic.svg": {
+      "sha256": "305af3a477b291b96ddebff79fd20efbd095e8d4a81c147590a5b19277a9049b",
+      "storage": "legacy"
+    },
+    "John Lennon - House System APC - Natal Chart - Classic.svg": {
+      "sha256": "d4d54dc824371b5f0e7e426df7898f753f30f86eead211345c6e0d6749f0464a",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Alcabitius - Natal Chart - Classic.svg": {
+      "sha256": "a8e29b1b4e527826c701c902292aa03648c63dca16d65dd941656d18bc5d3a9b",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Campanus - Natal Chart - Classic.svg": {
+      "sha256": "6a3f2bb4ae463ce3f3a42d41abe917505cd9119b9aab609451b504a166c4abe6",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Carter - Natal Chart - Classic.svg": {
+      "sha256": "d2c9b5c595c7732912346ad66a487024ef16b21fd71414220030f768fbc70934",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Equal - Natal Chart - Classic.svg": {
+      "sha256": "3d20ccd6b2f1bafbd2e5b41af8876c15d9ca4e7bd1121bf266d218edc315e339",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Equal Aries - Natal Chart - Classic.svg": {
+      "sha256": "1323e51e2744a12a4acc96eae03f6bdde8309d7ab7e0bf55e6add467ab29e30c",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Equal MC - Natal Chart - Classic.svg": {
+      "sha256": "b95e20cb58e21ea87a6198a5e094cae804e50122ad5aa9ff4be4d75b5577628f",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Horizon - Natal Chart - Classic.svg": {
+      "sha256": "a22adc9759664c099547d71471827cd7de44d174466c113dd071e13446573e0e",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Koch - Natal Chart - Classic.svg": {
+      "sha256": "cf5054fc018fe3c9f4a0c97b5eda41d70b6f54eb210c200bafd689efb2769cdb",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Krusinski - Natal Chart - Classic.svg": {
+      "sha256": "3668e75fee6ceb4a86f5fa18aa77d1337b95ff6b88773d2477f40714f8b5a14a",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Meridian - Natal Chart - Classic.svg": {
+      "sha256": "ba8919e4039fd5d0ad14430322862c01ea671aeb86bb2c9450b9c22d4e1e9cd4",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Morinus - Natal Chart - Classic.svg": {
+      "sha256": "6ae0b84c9e765ab5823fdaacbbf943507a3727ace8165a4bb5b6cd88585fcd30",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Placidus - Natal Chart - Classic.svg": {
+      "sha256": "f82d90cfd0b541f41ecf2882981e648b8b4db6f7101d480a0e09ec6acdfdbbcd",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Polich Page - Natal Chart - Classic.svg": {
+      "sha256": "53d5763445e7ef4bca3f6551e7503a69e6cddd9b7ce13a78b68b49ab264bf853",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Porphyry - Natal Chart - Classic.svg": {
+      "sha256": "16d9d22c3b8acae7800b1b725b20d4e9b9dd0de0373016f4e611792ec8f3f5eb",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Pullen SD - Natal Chart - Classic.svg": {
+      "sha256": "5824ad2b470dc598b711ed461f3fa868c32b35795f7e19dd3919cb4280d391cb",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Pullen SR - Natal Chart - Classic.svg": {
+      "sha256": "4e1ce3933549164866b484c3c421dd9748fb49a1f47ff13600b9f395dd9fe1c5",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Regiomontanus - Natal Chart - Classic.svg": {
+      "sha256": "b6434c655515cc271a82d45476ea884f6b3f797e2b56e5d2aa2795a1dcbdd191",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Sripati - Natal Chart - Classic.svg": {
+      "sha256": "6b6acfac3e57d9a7aae4476bafeb18350c2e7507eca3aee3f32b5bb432800c17",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Sunshine - Natal Chart - Classic.svg": {
+      "sha256": "f2d697b9fe4ed17e1413ca464164da1a73edd125f4d0d82ba600123a8e4cfcc3",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Sunshine Alt - Natal Chart - Classic.svg": {
+      "sha256": "5370fa4148ae7cb2d048c2d05cb4c049cdd7b50acd475c89bbc8450ec225d9b5",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Vehlow - Natal Chart - Classic.svg": {
+      "sha256": "c894310692ca6854193f270efd589d1be56dc9280ce779528d39af75d541655a",
+      "storage": "legacy"
+    },
+    "John Lennon - House System Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "bda6b23f8ed3a33e22eeced691c447562ecc4afa06e40b3a956613ca1c82de90",
+      "storage": "legacy"
+    },
+    "John Lennon - Koch - Synastry Chart - Classic.svg": {
+      "sha256": "eee6b4b41c5c170510beca47388a8f8b37670a5c7ec3d0399e17f1caf025910f",
+      "storage": "legacy"
+    },
+    "John Lennon - Koch - Transit Chart - Classic.svg": {
+      "sha256": "9ed2142af0d7943609cc035b2c2bebc2f4eec8f83aa4aec2dbcab98bd85f378e",
+      "storage": "legacy"
+    },
+    "John Lennon - Language Pack - Natal Chart - Classic.svg": {
+      "sha256": "3f6a10c4979f2dd3afcc8973c56de7e6c25507688a8e7c60f92948dad334d9a0",
+      "storage": "legacy"
+    },
+    "John Lennon - Large Padding - Natal Chart - Classic.svg": {
+      "sha256": "710df6d0b486242b964ea193dd5313287a775ad11a6c74dd29eb1ef8784bb81b",
+      "storage": "legacy"
+    },
+    "John Lennon - Minified - Natal Chart - Classic.svg": {
+      "sha256": "ad9ede6b9b39a7782db6ae603ccffb7a98532bdc8ecfb06b5e72572193af255a",
+      "storage": "legacy"
+    },
+    "John Lennon - Minified Synastry - Synastry Chart - Classic.svg": {
+      "sha256": "b67e7f53c9c4ca427830501a5c6e3be6e7d0c873b4d745dd5a3aedbc8232e7e5",
+      "storage": "legacy"
+    },
+    "John Lennon - Minified Transit - Transit Chart - Classic.svg": {
+      "sha256": "8a7268ebe8e84a41638484ea30280c26dfcbf61617177f32f03eb53263a2bf75",
+      "storage": "legacy"
+    },
+    "John Lennon - Minify CSS - Natal Chart - Classic.svg": {
+      "sha256": "6a81ce60e8b13250af99a9921079a3c6e17117c1839b7ecc076facc2ce474d5d",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - Classic.svg": {
+      "sha256": "ebb6d1a8debdd8097eac2af93c61459450234e1f9ac9a63088e55f72e8a4cbe9",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - Modern Large Wheel Only.svg": {
+      "sha256": "e0d83a3de0962f82e3b84d38150883c828f4ec9bdc27ac1acd13e62ce02240f5",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - Modern Large.svg": {
+      "sha256": "5000cf9cfb2ddd4fd89249c184dbce5a3a0a74f45195b93e6f3941e828544c01",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - Modern Small.svg": {
+      "sha256": "151da14b0521f7e7dd428f3fcc6f6301019fed269958d35f1d9a999308cab598",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - Modern Wheel Only.svg": {
+      "sha256": "253e47bde7a6c77a7fed4c632522fe8ae8be08d0366a3bb2707cdb64f98ee4c1",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - Modern.svg": {
+      "sha256": "ab15330edbfe2f2c732bf8390fe26067c90f534a8d94d8c5fcbc35a04952a0a7",
+      "storage": "legacy"
+    },
+    "John Lennon - Natal Chart - No Degree Indicators.svg": {
+      "sha256": "96b34747e2fa89a31ee56221c20a9e4c16e59d4b33d7a7e223e73f2d09005c39",
+      "storage": "legacy"
+    },
+    "John Lennon - No Aspect Icons - Natal Chart - Classic.svg": {
+      "sha256": "7a16de0d1a8f8d502dcd37f9e5021afb34a5c99ce6aed335383323e583c593cc",
+      "storage": "legacy"
+    },
+    "John Lennon - No CSS Variables - Natal Chart - Classic.svg": {
+      "sha256": "39dce14dbc8fb3554883746d1ebdad389a1e7db3aea555f5116615e561aaecb9",
+      "storage": "legacy"
+    },
+    "John Lennon - No Degree Indicators - Natal Chart - Classic.svg": {
+      "sha256": "abf2ab07cc1655803a012fd2dc988e40cde7b93569d81f96a27b60d64496a8e9",
+      "storage": "legacy"
+    },
+    "John Lennon - No Theme - Natal Chart - Classic.svg": {
+      "sha256": "b0e3046fd302052706c5cafc39e2f31717d3e1a6b7b52aa66afe7bcc3fa99bd6",
+      "storage": "legacy"
+    },
+    "John Lennon - No Zodiac Ring - Natal Chart - Modern.svg": {
+      "sha256": "8db09a72c884ec4008f673853e301769a649f8f28cf5607a36c7cf3566b64a02",
+      "storage": "legacy"
+    },
+    "John Lennon - No Zodiac Ring Synastry - Synastry Chart - Modern.svg": {
+      "sha256": "a625df39901c98997513c88681dad16aa67f8b9d6ef048d426b962e5f98e6368",
+      "storage": "legacy"
+    },
+    "John Lennon - Porphyry - Synastry Chart - Classic.svg": {
+      "sha256": "df10aec8caa254372f65fc6479e5168c1665518c673936746d765cb2e4bf950b",
+      "storage": "legacy"
+    },
+    "John Lennon - Porphyry - Transit Chart - Classic.svg": {
+      "sha256": "bb3efa6b0f71c09f8be9e1e53e0443f44f0a69bcad4e936372fda400f23492b3",
+      "storage": "legacy"
+    },
+    "John Lennon - Progression Chart - Classic.svg": {
+      "sha256": "ac39f06b853be976eaf77df505dbe55ef1dff7fca0de99bd053f5353b8bae6b4",
+      "storage": "legacy"
+    },
+    "John Lennon - Progression Chart - Modern.svg": {
+      "sha256": "7458f0e85b4008044ee3f1de48ab4f6a6ec75833cca6ee19c0791fb22f139374",
+      "storage": "legacy"
+    },
+    "John Lennon - Progression Chart - Table Grid.svg": {
+      "sha256": "14f9c3e7e5bd0629712dd019e586504013b875ea1fa9ccfdb6b69c96789ac877",
+      "storage": "legacy"
+    },
+    "John Lennon - RU - Transit Chart - Classic.svg": {
+      "sha256": "0f9bea681aacdca5d778e57d22e573a0adfc24c135444b5ce7517f536f99078f",
+      "storage": "legacy"
+    },
+    "John Lennon - Regiomontanus - Synastry Chart - Classic.svg": {
+      "sha256": "7620ffd3116922da0391a2f858fa0c135789e39dfdc297feb7f699d422c0b5d0",
+      "storage": "legacy"
+    },
+    "John Lennon - Regiomontanus - Transit Chart - Classic.svg": {
+      "sha256": "5f5219ca1e16e6ece5098d7628a16e0843c13941b2f46a96b68c399ccd089fb1",
+      "storage": "legacy"
+    },
+    "John Lennon - Relationship Score - Synastry Chart - Classic.svg": {
+      "sha256": "fd31741f0ef866ad07233f999e44a67415cfa81d0ae04ad127c8768bf347f257",
+      "storage": "legacy"
+    },
+    "John Lennon - Relationship Score - Synastry Chart - Modern.svg": {
+      "sha256": "5d98430995d571e0f91e682268fe246909f89f2722a390e588ea587c1b2efffa",
+      "storage": "legacy"
+    },
+    "John Lennon - SCTWL - Synastry Chart - Classic.svg": {
+      "sha256": "656d370cf14ca23cb69664a571f55bc615e179161a7ab055183bea3883215311",
+      "storage": "legacy"
+    },
+    "John Lennon - Sidereal LAHIRI - Natal Chart - Modern.svg": {
+      "sha256": "e3f737ec3d5187b5563934e748e669a7505186b4d3c1a18d1d6636a0c71e1823",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - Classic.svg": {
+      "sha256": "4a1ab64f869b9694b5b651d2cde31c39020da7d61a9f525e9b2181123c143b80",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - Cusp Comparison Only.svg": {
+      "sha256": "b9d8bc22d33a7887f3ecba97fc21bfd6225377be6b45ee9295b1941a5cd9654e",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - House Comparison Only.svg": {
+      "sha256": "4a1ab64f869b9694b5b651d2cde31c39020da7d61a9f525e9b2181123c143b80",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - House and Cusp Comparison.svg": {
+      "sha256": "7cf7aa97580587f96f03e223c2925f33fe7be1d7ca93b1b11bfe062010e89af9",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - Modern Large.svg": {
+      "sha256": "e06fdba07a7bc54aa90ef5b366e0916a53a89d65f61699f90dd1c15a275087a4",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - Modern Small.svg": {
+      "sha256": "df848f1c304a81272e433021d2e98a54faa5de0bd0e1a5e74b8f49acd1b79545",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - Modern Wheel Only.svg": {
+      "sha256": "a0917c35bb27207ad687450776823760e41b8cc4d0bd48b53f3f39fca9bfcb51",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - Modern.svg": {
+      "sha256": "6afe077c79c5c089c1ef1399e2b0854bdd6ce5ffa18f16049aba14f64eed2550",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - No Degree Indicators.svg": {
+      "sha256": "484ec0a44a9e9e8efb0fac644923b7130c492a226da307bd8eea6859294b7da4",
+      "storage": "legacy"
+    },
+    "John Lennon - Synastry Chart - No House Comparison.svg": {
+      "sha256": "0c7d945e3617c0412dd2f7d133681303fac60c49cc956cf6c4b0e6b2ecd875b4",
+      "storage": "legacy"
+    },
+    "John Lennon - TCWTG - Transit Chart - Classic.svg": {
+      "sha256": "04df284e7a9f1b968ebd23fad43514d8e71a28694ffa13b8c23210e1570d2467",
+      "storage": "legacy"
+    },
+    "John Lennon - TR - Synastry Chart - Classic.svg": {
+      "sha256": "5f8595ecd9170a1aa08dc2fc60cf534ad6a832e9adbf2dc730df8a50c4cb8268",
+      "storage": "legacy"
+    },
+    "John Lennon - Topocentric - Natal Chart - Classic.svg": {
+      "sha256": "0392b20b6ccd3ca5402d64deb7b4d20fa99062a633dd7291629340fafcdbf16e",
+      "storage": "legacy"
+    },
+    "John Lennon - Topocentric - Transit Chart - Classic.svg": {
+      "sha256": "e39bd8fa9b37128182ea27f6eaad55b8f6e19a489d48e3902313c106ddbe4c03",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - Classic.svg": {
+      "sha256": "293363dad3365aa4db44291a248a3685e90541fb3cfa5d70a8126b693df28e49",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - Cusp Comparison Only.svg": {
+      "sha256": "aafbc9ba9bd98c11812a04c9606f038e97de51275e57630f5a6cca93fa53582b",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - House Comparison Only.svg": {
+      "sha256": "293363dad3365aa4db44291a248a3685e90541fb3cfa5d70a8126b693df28e49",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - House and Cusp Comparison.svg": {
+      "sha256": "9a1049674342f881c4a0fd3bcc101b7439f01a9f0e80d5d61c0b939efd2c535b",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - Modern Large.svg": {
+      "sha256": "e1c43fc2487e267de05ed98b9c94b4d90486d76b35510b1586f4303ecfa6f8ac",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - Modern Wheel Only.svg": {
+      "sha256": "56d3a5ad8dcaa389160d79879fb12ad229228f2ac3fd115c0d08fba5a56f23a4",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - Modern.svg": {
+      "sha256": "964f78ecf4990f9e31a91363f08a182cfccdaca1c836904dc4bbf999177dd61d",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - No Degree Indicators.svg": {
+      "sha256": "2befe0ff7799588721ab5d3cf64707f26d4809f09c50f25d1ee293d9d751a618",
+      "storage": "legacy"
+    },
+    "John Lennon - Transit Chart - No House Comparison.svg": {
+      "sha256": "00d38e119bcf1065886a0df97d83f84756f6e454e62094ca69b7628cbd1907f2",
+      "storage": "legacy"
+    },
+    "John Lennon - Transparent Background - Natal Chart - Classic.svg": {
+      "sha256": "efc40fe5cbd357aa46ec8003d82ea7c5a6de2388c1dcb9d3c2307b8d31916c1c",
+      "storage": "legacy"
+    },
+    "John Lennon - Transparent Dark - Natal Chart - Classic.svg": {
+      "sha256": "3442095521207bfe6117b32732cdb19f1556f77bdeeaae34adb30093d128812f",
+      "storage": "legacy"
+    },
+    "John Lennon - Transparent Synastry - Synastry Chart - Classic.svg": {
+      "sha256": "d560506412b687f1b7d5418d52d6595fdb1eb260f4731a5543ae75982ee8a8fd",
+      "storage": "legacy"
+    },
+    "John Lennon - True Geocentric - Natal Chart - Classic.svg": {
+      "sha256": "26b905a70db0302205c65f408f4574dfb68c1112add14627b73ada5bc356b291",
+      "storage": "legacy"
+    },
+    "John Lennon - True Geocentric - Synastry Chart - Classic.svg": {
+      "sha256": "e34ad826126cdd6a131a0969438bb8470c5738ec9381e2113be9294980eb5681",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel External Only - ExternalNatal Chart - Classic Wheel Only.svg": {
+      "sha256": "c8e07c6357a8b03c11d9ccb3c39ef31ae79c71a62a233f6d1c216d0c37d3a8e1",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Only - Natal Chart - Classic Wheel Only.svg": {
+      "sha256": "f54c9d74cfd3bd5eae7f0db830e900d334d9827946a879379798c67d4fe6351d",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Only Classic Transparent - Natal Chart - Classic Wheel Only.svg": {
+      "sha256": "e9af9547eebd0f63c6069406727271da86e7ef8244078ba46c7e91e016d8f1b3",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Only Dark - Natal Chart - Classic Wheel Only.svg": {
+      "sha256": "41e4026f542b9f01664c58d826598dd94805cbed91680c5d5c70c64f01f92c94",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Only Dark Transparent - Natal Chart - Classic Wheel Only.svg": {
+      "sha256": "3c7699b778fbf8bf70bbea92132f2225c6452d1e3f5572f29ceaa0811e4485c5",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Synastry Dark - Synastry Chart - Classic Wheel Only.svg": {
+      "sha256": "b4da937b7b243e1503f09c35bb1e29c1d1554575e68798799ef54c41f60efcf0",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Synastry Only - Synastry Chart - Classic Wheel Only.svg": {
+      "sha256": "040b6915563e591343988789937d270487896611e327ec717b772169d88dba24",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Transit Dark - Transit Chart - Classic Wheel Only.svg": {
+      "sha256": "887f9c13ebfed624317c67c63e81249c53ec1cae4f4956a0cf3009d10bc27152",
+      "storage": "legacy"
+    },
+    "John Lennon - Wheel Transit Only - Transit Chart - Classic Wheel Only.svg": {
+      "sha256": "78d1c7e678b5856bec78088c8996a798826265d838061cc6d1fb4068f486f4fb",
+      "storage": "legacy"
+    },
+    "John Lennon - Whole Sign - Synastry Chart - Classic.svg": {
+      "sha256": "7faedf5fcb073ef4bdf0544797da890d6268b75348911b817a070ba65b974925",
+      "storage": "legacy"
+    },
+    "John Lennon - Whole Sign - Transit Chart - Classic.svg": {
+      "sha256": "f0db1cd2522919797d3a033231c66dc32df957d73f04a7236b2a1571f096f102",
+      "storage": "legacy"
+    },
+    "John Lennon - Zero Padding - Natal Chart - Classic.svg": {
+      "sha256": "0ae7bf29ec5b5b3ad59ebd21f8ed1af513fb9a286050e12eeee0dd12785a71ce",
+      "storage": "legacy"
+    },
+    "John Lennon Aldebaran 15Tau - Natal Chart - Classic.svg": {
+      "sha256": "5410b4e21cf32d412d1596e7317aaa1165a9725c4610279ea7d69f4237766054",
+      "storage": "legacy"
+    },
+    "John Lennon B1950 - Natal Chart - Classic.svg": {
+      "sha256": "8acebd53a38cd39178f72879429421c9240d76e27e477e1b088c64e4a67a983d",
+      "storage": "legacy"
+    },
+    "John Lennon Babyl Etpsc - Natal Chart - Classic.svg": {
+      "sha256": "30f4a5250130d0f9397e690510877c1c6af97212c8c8247e721ea714007e2382",
+      "storage": "legacy"
+    },
+    "John Lennon Babyl Huber - Natal Chart - Classic.svg": {
+      "sha256": "1246093d28295bdb58483327ba262c19a09c48fd19f0f3a59168201c9c9a09af",
+      "storage": "legacy"
+    },
+    "John Lennon Babyl Kugler1 - Natal Chart - Classic.svg": {
+      "sha256": "ea292fb60e820b622f711b2421359e1c4c3e06cf2a02697c1a007c70ee6dfe6a",
+      "storage": "legacy"
+    },
+    "John Lennon Babyl Kugler2 - Natal Chart - Classic.svg": {
+      "sha256": "25f632fbac3d2925406bd0d66d754890ac1a3cefbd67f9e6c33fb82cff357c72",
+      "storage": "legacy"
+    },
+    "John Lennon Babyl Kugler3 - Natal Chart - Classic.svg": {
+      "sha256": "39ecb0e0d07cae65787d42e63b8b98a2ca6e654c01f29079ff8dd01de2194b6f",
+      "storage": "legacy"
+    },
+    "John Lennon DeLuce - Natal Chart - Classic.svg": {
+      "sha256": "4cc5205f3e0f74fdab23018340ce333a433a1a5827033ec60277ee10dda07001",
+      "storage": "legacy"
+    },
+    "John Lennon Djwhal Khul - Natal Chart - Classic.svg": {
+      "sha256": "e7d2693dad5021ba98fe83a9b52a9047ecf2365ddb120262ce88c2b45552f22e",
+      "storage": "legacy"
+    },
+    "John Lennon FAGAN_BRADLEY - Classic Theme - Natal Chart - Classic.svg": {
+      "sha256": "1ee27bef07f460465722d31909150ed9c6bff8949665fcb739fda36234cf5547",
+      "storage": "legacy"
+    },
+    "John Lennon FAGAN_BRADLEY - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "3d8f25ae79537149b94b3565444501f29da0048a18367f31bb89e21dd194ec2e",
+      "storage": "legacy"
+    },
+    "John Lennon Fagan-Bradley - Natal Chart - Classic.svg": {
+      "sha256": "ac4fb2491609cf2c0903619297ab5bb8f258b95433c8b4f076f3542792b9271e",
+      "storage": "legacy"
+    },
+    "John Lennon Hipparchos - Natal Chart - Classic.svg": {
+      "sha256": "683bf851901923bc6bfd90f1b9c859d7e119bc349171d690e74e2182ddeed98a",
+      "storage": "legacy"
+    },
+    "John Lennon J1900 - Natal Chart - Classic.svg": {
+      "sha256": "bdca5ef7c10fac428496359c39d79ce8add56609aabaad30960336ebeb241c5e",
+      "storage": "legacy"
+    },
+    "John Lennon J2000 - Black-And-White Theme - Natal Chart - Classic.svg": {
+      "sha256": "9edb76ddff026e54a6e9a13c97437715f1defe0addbc577a25f6d978e77a9f21",
+      "storage": "legacy"
+    },
+    "John Lennon J2000 - Classic Theme - Natal Chart - Classic.svg": {
+      "sha256": "1229d22502322b74038fb7d4c598f59df1357bedd1a7ee4f790c2b3e0783972c",
+      "storage": "legacy"
+    },
+    "John Lennon J2000 - Natal Chart - Classic.svg": {
+      "sha256": "0c79436fb1f6190005eab1b38b76d69d13dad9d353393e30f50d640f2c6e7461",
+      "storage": "legacy"
+    },
+    "John Lennon JN Bhasin - Natal Chart - Classic.svg": {
+      "sha256": "ec59d6d1d9c4479f6309285c696eaad89da9466abf930369c88367b570a68759",
+      "storage": "legacy"
+    },
+    "John Lennon KRISHNAMURTI - Black-And-White Theme - Natal Chart - Classic.svg": {
+      "sha256": "421b64dee62f5b1f0d1e3bd1402898b623b72d96cb7e7bf3ad60ead5493c7052",
+      "storage": "legacy"
+    },
+    "John Lennon KRISHNAMURTI - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "25bf09720b89a75529ed1f6eca68a839d805ca450f43b798af9c4443e5edf65a",
+      "storage": "legacy"
+    },
+    "John Lennon Krishnamurti - Natal Chart - Classic.svg": {
+      "sha256": "d3feb1cf6120d2cc2c800bf1fe796e6de0679a9f2b10d9b296775c37c3138695",
+      "storage": "legacy"
+    },
+    "John Lennon LAHIRI - Black-And-White Theme - Natal Chart - Classic.svg": {
+      "sha256": "564e28036a616525949ea6190ea3d55edf1da0fa4a9ee861609cb224620bb0b0",
+      "storage": "legacy"
+    },
+    "John Lennon LAHIRI - Classic Theme - Natal Chart - Classic.svg": {
+      "sha256": "7f9631d8f1abe5c677d179224a27d776c144fbef69ea6775306b691e575a1f9d",
+      "storage": "legacy"
+    },
+    "John Lennon Lahiri - Dark Theme - Natal Chart - Classic Wheel Only.svg": {
+      "sha256": "8ff55163e31bc9f0255fd8ba244061b25d0b7e7013a44dc57d36ae0dce4aadfe",
+      "storage": "legacy"
+    },
+    "John Lennon Lahiri - Natal Chart - Classic.svg": {
+      "sha256": "d30c6c875090499715f8886cdace73648f6578a7de0cd62ef145fd8b6c30369a",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg": {
+      "sha256": "443ebb9d94dc56c70f054a1d8ca850318f1bc66d1e820b0e6c2ee8cb1987ae34",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - All Points All Aspects - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "e1b1519b01229c05dc71ef775f36ee1f44d075c8ec91e332c4038a586af2c588",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - Black and White Theme - SingleReturnChart Chart - Classic.svg": {
+      "sha256": "d1552307542f97299c235acb4a1f0054b1680f960925413d7b97708c43844c9c",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - Dark Theme - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "bef2d0f56a49eff1b1fa1c4d6f1edb1d32a87fe57882062a53d519567f9b55ad",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - SingleReturnChart Chart - Classic.svg": {
+      "sha256": "8e99c953af3dd4ab0855705b109826339c1b7619393ece05544b8dfbf141a4ed",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - SingleReturnChart Chart - Modern Wheel Only.svg": {
+      "sha256": "c36f423f7b95ccb6a556a8a145b92c55ef67b3eb65f9680e2b67a448800585cf",
+      "storage": "legacy"
+    },
+    "John Lennon Lunar Return - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "e14737ced7e8bd7ea421600719410644522ef84b71c7331e7746f7482e8fcd5a",
+      "storage": "legacy"
+    },
+    "John Lennon RAMAN - Classic Theme - Natal Chart - Classic.svg": {
+      "sha256": "c57823bccade36a1164620ec640af2d6648fd6c864042be1d0224e43e3d93991",
+      "storage": "legacy"
+    },
+    "John Lennon RAMAN - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "5ae91554b19ae7389fdcbaa2b00dd463521939b2f3128a9930881e6140c6fdbd",
+      "storage": "legacy"
+    },
+    "John Lennon Raman - Natal Chart - Classic.svg": {
+      "sha256": "549a213e494e9d7e11736bba3d314ad6a713a720f4425b844b45640527975943",
+      "storage": "legacy"
+    },
+    "John Lennon Sassanian - Natal Chart - Classic.svg": {
+      "sha256": "f23aa8428d881237c72aed046c579c97fafafdf95d329ed569041b8c752dcadb",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - All Points All Aspects - SingleReturnChart Chart - Modern Wheel Only.svg": {
+      "sha256": "6fec28c6b6d4e14c63fb5af13f5df0ac81a698b76037be6cc7cfb4e12af05e8e",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - All Points All Aspects - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "cc47316afc3de6ad9994a7028ee80d1aa67e985a588a292fc7b4507025b0d4cb",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - Aspect Grid Only.svg": {
+      "sha256": "eca0f63c6951cf94e71a3639f7404c99bf0421d76900c19e72c38c1302bed82f",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - Black and White Theme - SingleReturnChart Chart - Classic.svg": {
+      "sha256": "5b86b7609f16f432850c01bcf64ff99575923b2ac0ddb0cb04ce1a187e9e90d8",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - Classic Wheel Only.svg": {
+      "sha256": "3f67465ab876340afa6f56a512cfc108fff8938670aab73eb3fb3b0c3d49bf48",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - Dark Theme - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "2b795fbd0c47a795a91698fa5abd8aced95144c5581cc38967bdcac32650c70e",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - No Zodiac Ring - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "4e3d8290f49bf7c0fe75c4855a87ffbb92e09e05165c985a63910486e7f5ffbb",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - SingleReturnChart Chart - Classic.svg": {
+      "sha256": "6148ac78985093f6759c8045c8fc12ce64d01c8d5934959159fa3341e833ed2d",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - SingleReturnChart Chart - Modern Wheel Only.svg": {
+      "sha256": "6280e15be7844c02872f7a091b28b1679cc5aa76819fe583f32e4347dc57378d",
+      "storage": "legacy"
+    },
+    "John Lennon Solar Return - SingleReturnChart Chart - Modern.svg": {
+      "sha256": "aad3323ac8a03794f5d5b8d49a8d9ccaf5ea01c434f4ce91ae5d966a4f9bce02",
+      "storage": "legacy"
+    },
+    "John Lennon Ushashashi - Natal Chart - Classic.svg": {
+      "sha256": "c57e8c29a958c6c66bf25366e50a58ab7e226dfa25f0f8eb922225d1796d7f0b",
+      "storage": "legacy"
+    },
+    "John Lennon Yukteshwar - Natal Chart - Classic.svg": {
+      "sha256": "b482942a47cc7b07cfdcfa8c4530de4033bd03c948a470fd1d145a07c1e19f71",
+      "storage": "legacy"
+    },
+    "John and Yoko - Synastry Chart - Classic.svg": {
+      "sha256": "3489de4f195e1f58a438c01941e5c4a6aad286d07d266b8885a4b9f5f5f45cba",
+      "storage": "legacy"
+    },
+    "Johnny Depp - Natal Chart - Classic.svg": {
+      "sha256": "eb284eff37bd32fbb514829456dbf4afd593a4ee2d19f1e16cb2b369861d73e7",
+      "storage": "legacy"
+    },
+    "Kanye - Natal Chart - Classic.svg": {
+      "sha256": "1e477256a66af0056384d5ac0eaa55cee54494d9bec69afde83ec5d6835442b3",
+      "storage": "legacy"
+    },
+    "London 51N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "6d29407f36904a87461837603179f4c3f93ccb3aa7db08bb08c0e3238b65e069",
+      "storage": "legacy"
+    },
+    "London 51N - Natal Chart - Classic.svg": {
+      "sha256": "46e1957c564f80bc175cb6e9fc36825792f5af40490aeb71d9f63fe09ed1485d",
+      "storage": "legacy"
+    },
+    "Long Name - Natal Chart - Classic.svg": {
+      "sha256": "162de6fcd10ae999aa4eeb1638499281a2fe3ec6952e0bb232da5cb68f2e8b35",
+      "storage": "legacy"
+    },
+    "Mehmet Oz - Natal Chart - Classic.svg": {
+      "sha256": "942ebf8f6dd2e79e41a6716b77511287af641c3010b0911bf09d77ee85c95653",
+      "storage": "legacy"
+    },
+    "Mercury Station - All Marks - Natal Chart - Classic.svg": {
+      "sha256": "0d66350a5f805cdf90dd05ef6618dec30b2541bcde7afd49225213f80c2be3c4",
+      "storage": "legacy"
+    },
+    "Mercury Station - All Marks - Natal Chart - Modern.svg": {
+      "sha256": "7b8bd1f736662b768dc2738659d61b070b2d5aa888c897e2907cf1ebb853652b",
+      "storage": "legacy"
+    },
+    "Mercury Station - Aspect Movement - Natal Chart - Classic.svg": {
+      "sha256": "fc7e3e98f352f0f826a022e466b1884f4a9cd0b71a3fed47ad8f8f24467dacef",
+      "storage": "legacy"
+    },
+    "Mercury Station - Aspect Movement - Natal Chart - Modern.svg": {
+      "sha256": "fb34fb552a511d4eefecff909bacadb1d5523f0974216733d591621d69e0efd8",
+      "storage": "legacy"
+    },
+    "Mercury Station - Motion State - Natal Chart - Classic.svg": {
+      "sha256": "919453f644d57580dc3e3ea26d51f7996013a12036b926a166ed97f99c7ed268",
+      "storage": "legacy"
+    },
+    "Mercury Station - Motion State - Natal Chart - Modern.svg": {
+      "sha256": "c404c791840b02a80914fd0c3357c68c3d30d6f6a9e06cc5dc4a786436ba638c",
+      "storage": "legacy"
+    },
+    "Mikhail Bulgakov - Natal Chart - Classic.svg": {
+      "sha256": "abb631ae367753b3416bd86104a174361b9b4ecc190a27b42042824f3d619cf7",
+      "storage": "legacy"
+    },
+    "Millennium 2000 - Natal Chart - Classic.svg": {
+      "sha256": "361cd20e1c0f2639402744184948870a9328b569dae184ca899337796c77672a",
+      "storage": "legacy"
+    },
+    "Moon Phases.svg": {
+      "sha256": "83e99c43676152d2194dc2cb5f3e9e945d43455324ec84ef36090da157455081",
+      "storage": "legacy"
+    },
+    "Nairobi 1S - Koch - Natal Chart - Classic.svg": {
+      "sha256": "58602760f69e672751d5e609939e5bc6548ac0ccefabfd1edc2aafab3a320f1c",
+      "storage": "legacy"
+    },
+    "Nairobi 1S - Natal Chart - Classic.svg": {
+      "sha256": "e9e457268ff652897800a55a69ae3b5f030a5d89dad208dfdb5a1f6163dc160a",
+      "storage": "legacy"
+    },
+    "Nairobi 1S - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "13db03b4bec679e6ce08714e9c99445de8be56717719dc9cedc6e7a53ff6900f",
+      "storage": "legacy"
+    },
+    "New York 40N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "0844ac22002ddfcedde07ee196ceb9df079558f5d71b3289b5245449af362ee1",
+      "storage": "legacy"
+    },
+    "New York 40N - Natal Chart - Classic.svg": {
+      "sha256": "51db69b714739a6741edd24939c722831c01d14523c01e9dee8808505b63cc72",
+      "storage": "legacy"
+    },
+    "Newton Birth 1643 - Natal Chart - Classic.svg": {
+      "sha256": "d9de6c135deb97a5fb62eba41c497df7c399bff1cb2faac9c029aa91d9ae7821",
+      "storage": "v4"
+    },
+    "Oslo 60N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "46fedacd91df618fa5d1e779d2da026073a22bb090fea1f0ca755a111204d7fe",
+      "storage": "legacy"
+    },
+    "Oslo 60N - Natal Chart - Classic.svg": {
+      "sha256": "a5deb3628d829ee762332cf7f7c271dc443bff3acae96f67fcd48fcfc656b13f",
+      "storage": "legacy"
+    },
+    "Oslo 60N - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "da3248352a3220d37134954bab0d072057608f442ace01d3425a6115a6475c73",
+      "storage": "legacy"
+    },
+    "Out Of Bounds - Natal Chart - Classic.svg": {
+      "sha256": "aac811c8cfc3d928750a9da641ac47c471241a200142c6f5a01148015280ca7e",
+      "storage": "legacy"
+    },
+    "Out Of Bounds - Natal Chart - Modern.svg": {
+      "sha256": "dc5a7043196e238b1b5c76060e441144dde9bab9210575db603f973728643415",
+      "storage": "legacy"
+    },
+    "Paul McCartney - Natal Chart - Classic.svg": {
+      "sha256": "59be7c80760b92cffade05abf52f5e6d63ad5ebd3792850b3981699ade0fe8f2",
+      "storage": "legacy"
+    },
+    "Polar Fallback - All Marks - Natal Chart - Classic.svg": {
+      "sha256": "fbbcbd34ac933c5193f11ef73ee0db3250de0e38c525b4e94824965307ec126c",
+      "storage": "legacy"
+    },
+    "Polar Fallback - Natal Chart - Classic.svg": {
+      "sha256": "95e0b081f4aaa19f3045874a7e612900de94c50888a565284c98cddc4c21fb45",
+      "storage": "legacy"
+    },
+    "Polar Fallback - Natal Chart - Modern.svg": {
+      "sha256": "6dd592baeccc3873e33655f192d8da1f529572143dae1172113fc0b2521b3734",
+      "storage": "legacy"
+    },
+    "Ptolemaic Egypt 200BC - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "aaecea826c06c833065c098ce92c07dffc5282bd0871ab7b8037aadfd8d57d8f",
+      "storage": "v4"
+    },
+    "Ptolemaic Egypt 200BC - Natal Chart - Classic.svg": {
+      "sha256": "1f90670155723d065fddb8cc8df729274d00993cc197f2202be122d4d282503a",
+      "storage": "v4"
+    },
+    "Quito Equator - Koch - Natal Chart - Classic.svg": {
+      "sha256": "661689dd220681c6f68520e32cd5e6fd7783677ac0b342b3bd27432dfa8406d9",
+      "storage": "legacy"
+    },
+    "Quito Equator - Natal Chart - Classic.svg": {
+      "sha256": "11f24aa7b70d00154a51297396608c07e42c43f15debc326e5f63e81c0767e8c",
+      "storage": "legacy"
+    },
+    "Quito Equator - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "3c729c7c9f266f51635c574719da9c674b2b1ddbaffa9ea065296ca029fe81dc",
+      "storage": "legacy"
+    },
+    "Reykjavik 64N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "ba4fa3519de1143652788acddb53cacc0673317387b8f26abfe2bfeec04cc2e8",
+      "storage": "legacy"
+    },
+    "Reykjavik 64N - Natal Chart - Classic.svg": {
+      "sha256": "e69e7a6b8c62180e5afca1f598f83273828342517663e4b61338c72e8a8e1beb",
+      "storage": "legacy"
+    },
+    "Reykjavik 64N - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "96fba138d0b38af29439ced700f852fb96b23f211d169f729db96cea8d7d9ab3",
+      "storage": "legacy"
+    },
+    "Roman Empire 100AD - Dark Theme - Natal Chart - Classic.svg": {
+      "sha256": "9673fa69e3bf4e6c5c51fbaaf41fe375b653e4041c9eb7828fa620b4a3b80b81",
+      "storage": "v4"
+    },
+    "Roman Empire 100AD - Natal Chart - Classic.svg": {
+      "sha256": "ab3eaab64313c56a95e052e9ea2e07a371d698543d0785ba8ddabcac0a836157",
+      "storage": "v4"
+    },
+    "Samoa Dateline West - Koch - Natal Chart - Classic.svg": {
+      "sha256": "d6609d4082c18613e09660120ccd37d1083f3b265e42663cac1e321b98e31853",
+      "storage": "legacy"
+    },
+    "Samoa Dateline West - Natal Chart - Classic.svg": {
+      "sha256": "e8d1f51a5afd706761213047bc882525280c5f4882c49b657d616a5f8a9c565b",
+      "storage": "legacy"
+    },
+    "Singapore 1N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "f57f7c6d2270da9d0f773a9890298fb9f32851dc421cdd4eb60e8ea194a32b4b",
+      "storage": "legacy"
+    },
+    "Singapore 1N - Natal Chart - Classic.svg": {
+      "sha256": "58ca22fe8931d3f80318088a74ad741b2c87a2c900edcd2c470368fe942191e2",
+      "storage": "legacy"
+    },
+    "Singapore 1N - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "eeb4b291054ded52089eafb4024688f42a830644535ae8a213829dd567fd75ac",
+      "storage": "legacy"
+    },
+    "Sophia Loren - Natal Chart - Classic.svg": {
+      "sha256": "c0400f6a54a97b9bc6da91498b7e96b5da5ab653c0ab0ff3480a78fa372c84af",
+      "storage": "legacy"
+    },
+    "Spring Equinox 2020 - Natal Chart - Classic.svg": {
+      "sha256": "b86165d507a7ae382e331981ff664ac9b29b8419f2bcde953735e34abf7aa7b1",
+      "storage": "legacy"
+    },
+    "Sydney 34S - Koch - Natal Chart - Classic.svg": {
+      "sha256": "7dd27f71c62f9201a0bf12e81dde936021b18251ee8bc050d159c09b7db334e2",
+      "storage": "legacy"
+    },
+    "Sydney 34S - Natal Chart - Classic.svg": {
+      "sha256": "aee4d69ea3b1f05e21665b95331bdb0ab531272cecb92c1a74bffd3cc9f353a6",
+      "storage": "legacy"
+    },
+    "Tokyo 35N - Koch - Natal Chart - Classic.svg": {
+      "sha256": "da74c0537121da39a8988725b6712e32ee8e2983bc7c51389ffe226ccb2abc87",
+      "storage": "legacy"
+    },
+    "Tokyo 35N - Natal Chart - Classic.svg": {
+      "sha256": "483a10c2e138a532578f4b4955e1855b59eebe972e2be114c229ea95906be43d",
+      "storage": "legacy"
+    },
+    "US Independence 1776 - Natal Chart - Classic.svg": {
+      "sha256": "32f1f54155201c52cd86d7e5ca27162b61eb8ceb752ec5c9cb9acf32e24f10ab",
+      "storage": "v4"
+    },
+    "Ushuaia 55S - Koch - Natal Chart - Classic.svg": {
+      "sha256": "ec52d00e8bb6c567141f965e642abd413324bfd3bc7640412d8c9a69d60f0ff6",
+      "storage": "legacy"
+    },
+    "Ushuaia 55S - Natal Chart - Classic.svg": {
+      "sha256": "b0d9e702c7debfc3c7612a8908cd0a7da9bc355e11fb8099d2b59fa68f00159c",
+      "storage": "legacy"
+    },
+    "Ushuaia 55S - Whole Sign - Natal Chart - Classic.svg": {
+      "sha256": "e3caa7ec7109f004f181a7029bff601202532ebac963c3f7138b675c494f2c77",
+      "storage": "legacy"
+    },
+    "WW1 Start 1914 - Natal Chart - Classic.svg": {
+      "sha256": "8dcb78c88fe5d7c36f49bcbaee93f350651024d98e4276b45a839deeffbeea1c",
+      "storage": "legacy"
+    },
+    "Yoko Ono - Natal Chart - Classic.svg": {
+      "sha256": "a0d7d697e615273b18b7bb8357ed8ebc587c3cf3c59802e0033fdf52ce84f312",
+      "storage": "legacy"
+    }
+  }
+}

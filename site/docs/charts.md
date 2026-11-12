@@ -218,8 +218,8 @@ Supported: `EN`, `IT`, `FR`, `ES`, `PT`, `CN`, `RU`, `TR`, `DE`, `HI`.
 
 ## Optional Marks
 
-Six constructor options draw facts the chart data already carries but the wheel
-never showed. All six default to `False`, and passing every one of them its own
+Seven constructor options draw facts the chart data already carries but the wheel
+never showed. All seven default to `False`, and passing every one of them its own
 default reproduces the SVG the previous release produced, byte for byte: each
 adds ink the reader did not ask for, so none of them arrives on an upgrade.
 
@@ -236,6 +236,19 @@ chart that shows nothing is telling you there was nothing to show.
 | `show_relationship_score`  | In the info panel, as `Relationship Score: 16 (Very Important)`. Needs a score on the chart data — `create_synastry_chart_data` computes one unless `include_relationship_score=False`. |
 | `show_ayanamsa_value`      | On the zodiac line of a sidereal chart, after the mode name: `Ayanamsa: Lahiri (23°43')`. Degrees and minutes only.                                       |
 | `show_polar_fallback_note` | On the domification line, as `Porphyry* (polar fallback)`, when the requested system was undefined at that latitude and another stood in for it.          |
+| `show_ephemeris_notes` | In a footer below the drawing: unavailable points and explicitly approximate positions, labelled by subject. Full charts, wheels and grids; the accessible description includes the same notes. |
+
+Ephemeris notes are a view of existing provenance: omitted points come from
+`subject.ephemeris_warnings`; approximate positions have
+`precision_class="approximate"`. An unreviewed local source is not automatically
+an approximate position. The footer performs no calculations, does not change
+model fields, and adds nothing when there are no notes. It does not certify
+absolute accuracy or completeness beyond the metadata available on the subjects.
+
+Enable it with `ChartDrawer(chart_data, show_ephemeris_notes=True)` or the CLI's
+`--show-ephemeris-notes`. With the option omitted, existing SVG bytes and layout
+remain unchanged. CLI warning output and `--warnings-as-errors` retain their
+existing semantics: a disclosed approximate result is not a failed calculation.
 
 A station is reported as `SR` where the retrograde phase opens and `SD` where it
 closes — the same two labels [`RetrogradeStationFactory`](/content/docs/retrograde_station_factory)
@@ -366,6 +379,7 @@ Everything after `chart_data` is keyword-only.
 | `show_relationship_score`       | `bool`                   | `False`      | Print the synastry relationship score in the info panel.             |
 | `show_ayanamsa_value`           | `bool`                   | `False`      | Append the ayanamsa offset to the zodiac line of a sidereal chart.   |
 | `show_polar_fallback_note`      | `bool`                   | `False`      | Mark the domification line when the requested house system was substituted. |
+| `show_ephemeris_notes` | `bool` | `False` | Append existing omission and approximation metadata as a subject-labelled footer. |
 | `show_house_position_comparison`| `bool`                   | `True`       | Render the house position comparison grid (dual charts). |
 | `show_cusp_position_comparison` | `bool`                   | `False`      | Render the cusp position comparison grid alongside house comparison. |
 | `colors_settings`               | `dict`                   | `DEFAULT_CHART_COLORS` | Custom color settings for chart elements. |

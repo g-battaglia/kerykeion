@@ -25,7 +25,7 @@ import logging
 import math
 from datetime import datetime, timezone
 from typing import Optional
-from kerykeion.ephemeris_backend.backend import ephe, EPHE_DATA_PATH
+from kerykeion.ephemeris_backend.backend import ephe, _configure_default_ephemeris_path
 from kerykeion.schemas.exceptions import KerykeionException
 from kerykeion.utilities.core import wrap_180
 
@@ -133,14 +133,12 @@ def describe_lunar_eclipse_type(retflag: int) -> str:
 
 def configure_ephemeris_path() -> int:
     """
-    Configure Swiss Ephemeris path and base flags for calculations.
+    Configure the backend path and base flags for legacy calculation helpers.
 
-    The path is (re-)applied on every call: ``set_ephe_path`` is cheap and
-    idempotent on both backends, while a once-only cache would silently
-    leave the path unset after any session reset elsewhere in the process
-    (``reset_session()``/``close()`` clear it), causing a fallback to
-    default data discovery — or, on pyswisseph, to the low-precision
-    Moshier ephemeris.
+    Swiss Ephemeris receives its configured path on every call. Native defaults
+    preserve discovery and warm readers rather than forwarding an empty path.
+    An active native session retains its explicit path selection. Calls outside
+    a session use the adapter's shared path-ownership rules.
 
     Prefer ``kerykeion.ephemeris_backend.backend.ephemeris_session`` for new code;
     it handles path setup, locking, and cleanup in one place.
@@ -148,7 +146,7 @@ def configure_ephemeris_path() -> int:
     Returns:
         int: Base iflag (FLG_SWIEPH) to be used in ephe.calc_ut-style functions.
     """
-    ephe.set_ephe_path(EPHE_DATA_PATH)
+    _configure_default_ephemeris_path()
     return ephe.FLG_SWIEPH
 
 

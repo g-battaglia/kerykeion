@@ -60,6 +60,13 @@ def require_the_baseline_backend() -> None:
     """Raise unless the active ephemeris is the one the stored baselines come from."""
     from tests.data.compare_svg_lines import BASELINE_BACKEND, active_backend
 
+    from tests.data.model_fixtures import active_model
+
+    if active_model(backend=active_backend()) is not None:
+        raise SystemExit(
+            "Refusing to overwrite legacy model baselines with v4 output. "
+            "Use scripts/generate_v4_model_baselines.py for separately versioned references."
+        )
     if active_backend() != BASELINE_BACKEND:
         raise SystemExit(
             f"Refusing to regenerate: the baselines are {BASELINE_BACKEND} charts and this "

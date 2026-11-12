@@ -6,16 +6,18 @@ Ephemeris Backend Abstraction
 This module provides a unified interface to the ephemeris calculation engine,
 supporting two mutually exclusive backends:
 
-- **libephemeris**: Pure-Python drop-in replacement using NASA JPL DE440/DE441
-  via Skyfield. No C compiler needed; works everywhere Python runs.
+- **libephemeris**: v4 Rust engine exposed through native PyO3 bindings.
+  Uses local LEB coefficients or native NASA JPL DE440/DE441 readers.
   Licensed under AGPL-3.0 by the Kerykeion project.
 - **swisseph** (``pyswisseph``): The traditional Swiss Ephemeris C library bindings.
   Requires compilation. Licensed under AGPL-3.0 by Astrodienst AG.
 
 Installation
 ------------
-A plain ``pip install kerykeion`` includes ``libephemeris`` by default.
-To use the C-based backend instead::
+This release requires ``libephemeris 4.0.0``. Its astronomical
+calculations run in Rust. Supported binary wheels need no local Rust build;
+source installations require a Rust toolchain.
+To use the alternative C-based backend instead::
 
     pip install kerykeion[swiss]    # Swiss Ephemeris C bindings (GPL)
 
@@ -35,8 +37,8 @@ When libephemeris is active, the calculation mode defaults to ``"leb"``
 (mandatory .leb binary ephemeris files) for maximum performance.
 Override via ``KERYKEION_LEB_MODE``::
 
-    KERYKEION_LEB_MODE=auto python my_script.py      # LEB if available, else Skyfield
-    KERYKEION_LEB_MODE=skyfield python my_script.py   # Always Skyfield/DE440
+    KERYKEION_LEB_MODE=auto python my_script.py      # Native provider routing
+    KERYKEION_LEB_MODE=skyfield python my_script.py   # Native JPL/SPK (legacy name)
     KERYKEION_LEB_MODE=leb python my_script.py        # Require .leb (default)
 
 Usage
@@ -89,6 +91,9 @@ logger = logging.getLogger(__name__)
 # configured by the outer session. Reject nesting before touching backend state,
 # so an accidental inner factory call cannot corrupt the still-active session.
 _SESSION_DEPTH = _thread_local()
+# Only paths installed by this adapter may be restored by a later default
+# session. Access is serialized by EPHEMERIS_LOCK together with native state.
+_NATIVE_SESSION_PATH: Optional[str] = None
 
 _VALID_SESSION_ZODIACS = (None, "Tropical", "Sidereal")
 _VALID_SESSION_PERSPECTIVES = (
@@ -163,7 +168,7 @@ else:
             "Kerykeion requires an ephemeris backend but neither 'libephemeris' nor "
             "'pyswisseph' is installed.\n\n"
             "Install one of:\n"
-            "  pip install libephemeris     # Pure Python (default)\n"
+            "  pip install libephemeris==4.0.0  # Required native backend (default)\n"
             "  pip install pyswisseph       # Swiss Ephemeris C bindings (AGPL-3.0)\n"
         )
 
@@ -524,7 +529,8 @@ EPHEMERIS_LOCK = RLock()
 #
 #     KERYKEION_EPHE_PATH=/path/to/ephe python my_script.py
 #
-# - libephemeris: manages its own data (~/.libephemeris/leb/); path is a no-op.
+# - libephemeris: discovers its own data by default; explicit paths change
+#   native runtime state and must not receive the empty Swiss-style sentinel.
 # - swisseph: needs .se1 files; without KERYKEION_EPHE_PATH, the default
 #   download directory of ``python -m kerykeion.swisseph_setup`` is
 #   auto-detected, then swisseph falls back to its built-in Moshier
@@ -585,7 +591,7 @@ logger.debug("Ephemeris data path: %r", EPHE_DATA_PATH)
 #
 # In "leb" mode, libephemeris raises RuntimeError if no .leb file is
 # found — this is intentional: we want a clear failure rather than a
-# silent fallback to Skyfield (which would require downloading DE440).
+# silent fallback to native JPL/SPK (which may require downloading DE440).
 
 _PINNED_LEB_MODE: Optional[str] = None
 
@@ -640,14 +646,14 @@ def reset_ephemeris_session() -> None:
 
     Uses ``reset_session()`` when the backend provides it (libephemeris),
     which clears sidereal mode, topocentric coordinates and per-call flags
-    while keeping the LEB reader, Skyfield timescale and SPK kernels alive.
+    while keeping the native LEB reader, timescale and SPK kernels alive.
     Falls back to ``close()`` on backends without ``reset_session()``
     (pyswisseph).
 
     Both reset paths clear the libephemeris calculation mode, so the mode
     pinned at import time (``KERYKEION_LEB_MODE``, default ``"leb"``) is
-    re-applied afterwards — otherwise a single reset would silently re-enable
-    the Skyfield auto-fallback this module explicitly disables.
+    re-applied afterwards — otherwise a single reset could silently re-enable
+    the native JPL/SPK auto-fallback this module explicitly disables.
 
     Callers must hold ``EPHEMERIS_LOCK``. Never call ``ephe.close()``
     directly; use this function (or ``ephemeris_session``) instead.
@@ -660,6 +666,36 @@ def reset_ephemeris_session() -> None:
         # left in "auto" mode would silently re-enable the Skyfield fallback.
         if BACKEND_NAME == "libephemeris" and _PINNED_LEB_MODE is not None:
             ephe.set_calc_mode(_PINNED_LEB_MODE)
+
+
+def _select_session_path(selected_path: str) -> None:
+    """Select a path under EPHEMERIS_LOCK without resetting external defaults."""
+    global _NATIVE_SESSION_PATH
+    if BACKEND_NAME != "libephemeris":
+        ephe.set_ephe_path(selected_path)
+    elif selected_path:
+        ephe.set_ephe_path(selected_path)
+        _NATIVE_SESSION_PATH = ephe.get_library_path()
+    elif _NATIVE_SESSION_PATH is not None:
+        # An external setter may have superseded our last selection. Do not
+        # erase it; otherwise None restores native discovery (also on v4 b2).
+        if ephe.get_library_path() == _NATIVE_SESSION_PATH:
+            ephe.set_ephe_path(None)
+        _NATIVE_SESSION_PATH = None
+
+
+def _configure_default_ephemeris_path() -> None:
+    """Apply legacy-helper defaults without replacing an active native session.
+
+    Native sessions already own their selected path, including explicit caller
+    overrides. Outside a session, use the same ownership/discovery rules as
+    session entry. Swiss helpers retain their historical path-setting behavior.
+    """
+    with EPHEMERIS_LOCK:
+        depth = getattr(_SESSION_DEPTH, "value", 0)
+        if BACKEND_NAME == "libephemeris" and depth > 0:
+            return
+        _select_session_path(EPHE_DATA_PATH)
 
 
 @contextmanager
@@ -761,7 +797,8 @@ def ephemeris_session(
                 if not -90.0 <= topo[1] <= 90.0:
                     raise ValueError("topo latitude must be between -90 and 90 degrees")
 
-            ephe.set_ephe_path(EPHE_DATA_PATH if ephe_path is None else ephe_path)
+            selected_path = EPHE_DATA_PATH if ephe_path is None else ephe_path
+            _select_session_path(selected_path)
             iflag = ephe.FLG_SWIEPH | ephe.FLG_SPEED
 
             if perspective_type == "True Geocentric":

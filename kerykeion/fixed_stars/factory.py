@@ -83,8 +83,8 @@ def _nearest_conjunction(
 def _star_source_trace() -> Iterator[dict[str, str | None]]:
     """Scope backend source tracing to a single star's ephemeris calls.
 
-    ``start_tracing`` sets a ContextVar, so scopes nest cleanly: opening one
-    per star keeps the collected map down to that star's own body id, which is
+    ``start_tracing`` opens a native thread-local scope. Independent per-star
+    scopes keep the collected map down to that star's own body id, which is
     what lets us read the source label back without an id -> name inventory
     (the fixed-star id space, unlike the planetary one, exposes none).
 
@@ -113,7 +113,11 @@ def _star_source_trace() -> Iterator[dict[str, str | None]]:
                 # single recorded label is this star's source by construction.
                 holder["source"] = str(next(iter(trace_map.values())))
             try:
-                token.var.reset(token)
+                reset = getattr(token, "reset", None)
+                if callable(reset):
+                    reset()
+                else:
+                    token.var.reset(token)
             except Exception:
                 # Broad on purpose: raising from a finally would replace the
                 # exception in flight. Same reasoning as the twin in

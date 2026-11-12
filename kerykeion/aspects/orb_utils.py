@@ -38,7 +38,8 @@ from __future__ import annotations
 import logging
 import math
 from numbers import Real
-from typing import Iterable, Literal, Mapping, Optional, Union, get_args
+from collections.abc import Mapping
+from typing import Iterable, Literal, Optional, Union, get_args
 
 from kerykeion.schemas.literals import AspectName
 

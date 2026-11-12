@@ -212,8 +212,11 @@ def main():
         ),
     )
     parser.add_argument("--timeout", type=float, default=20.0, help="Per-snippet timeout in seconds (default: 20).")
+    parser.add_argument("--jobs", type=int, default=1, help="Concurrent isolated snippets (default: 1).")
     parser.add_argument("paths", nargs="*", type=Path, help="Optional paths to scan (defaults depend on flags).")
     args = parser.parse_args()
+    if args.jobs < 1:
+        parser.error("--jobs must be positive")
 
     if args.readme_only:
         targets = [Path("README.md")]
@@ -301,12 +304,9 @@ def main():
                 # docs corpus is authored against the injected prelude —
                 # stripping it there reports a healthy corpus as broken.
                 bare = md_file.is_relative_to(SKILL_DIR)
-                # Each isolated snippet already runs in its own subprocess with
-                # its own tempfile and timeout, so the runs share no state;
-                # dispatching them through a pool just stops dozens of
-                # sequential interpreter startups from being one long
-                # single-core wait.
-                with ThreadPoolExecutor(max_workers=8) as pool:
+                # Each subprocess owns its native ephemeris allocations. Keep
+                # concurrency explicit even though snippets share no state.
+                with ThreadPoolExecutor(max_workers=args.jobs) as pool:
                     outcomes = list(
                         pool.map(
                             lambda code: test_snippet(code, timeout=args.timeout, bare=bare),

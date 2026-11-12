@@ -2,6 +2,7 @@
 """Tests for the Primary Directions factory (v6.0)."""
 
 import math
+from types import SimpleNamespace
 import pytest
 from kerykeion.ephemeris_backend import ephe, ephemeris_session
 from kerykeion import AstrologicalSubjectFactory, PrimaryDirectionsFactory
@@ -17,6 +18,57 @@ def subject():
 
 
 class TestSpeculum:
+    @pytest.mark.parametrize("declination", [-5.0, 5.0])
+    @pytest.mark.parametrize("latitude", [-51.4826, 51.4826])
+    @pytest.mark.parametrize("western", [False, True])
+    @pytest.mark.parametrize("offset", [-1, 0, 1])
+    def test_horizon_tie_remains_diurnal_across_equatorial_roundoff(self, monkeypatch, declination, latitude, western, offset):
+        """One binary step around an exact horizon cannot select the night arc."""
+        dsa = 90 + math.degrees(math.asin(math.tan(math.radians(declination)) * math.tan(math.radians(latitude))))
+        ra = 360 - dsa if western else dsa
+        if offset:
+            ra = math.nextafter(ra, math.inf if offset > 0 else -math.inf)
+        point = SimpleNamespace(abs_pos=0.0, declination=declination, ecliptic_latitude=0.0)
+        subject = SimpleNamespace(ascendant=point, perspective_type="Apparent Geocentric", ayanamsa_value=0.0)
+        monkeypatch.setattr(PrimaryDirectionsFactory, "DIRECTION_POINTS", ["Ascendant"])
+        monkeypatch.setattr(PrimaryDirectionsFactory, "_ecliptic_to_equatorial", staticmethod(lambda *args: (ra, declination)))
+        [entry] = PrimaryDirectionsFactory._build_speculum(subject, 2451545.0, 0, obliquity=23.44, ramc=0.0, geo_lat=latitude)
+        assert entry.is_above_horizon is True
+        assert entry.semi_arc == round(dsa, 4)
+
+    def test_a_resolved_point_below_the_horizon_keeps_its_nocturnal_arc(self, monkeypatch):
+        """The roundoff guard must not reclassify a physically separated point."""
+        latitude, declination = 51.4826, -5.0
+        dsa = 90 + math.degrees(math.asin(math.tan(math.radians(declination)) * math.tan(math.radians(latitude))))
+        point = SimpleNamespace(abs_pos=0.0, declination=declination, ecliptic_latitude=0.0)
+        subject = SimpleNamespace(ascendant=point, perspective_type="Apparent Geocentric", ayanamsa_value=0.0)
+        monkeypatch.setattr(PrimaryDirectionsFactory, "DIRECTION_POINTS", ["Ascendant"])
+        monkeypatch.setattr(PrimaryDirectionsFactory, "_ecliptic_to_equatorial", staticmethod(lambda *args: (dsa + 1e-6, declination)))
+        [entry] = PrimaryDirectionsFactory._build_speculum(subject, 2451545.0, 0, obliquity=23.44, ramc=0.0, geo_lat=latitude)
+        assert entry.is_above_horizon is False
+        assert entry.semi_arc == round(180 - dsa, 4)
+
+    @pytest.mark.parametrize("meridian_distance", [0.0, 1e-12])
+    def test_never_rising_circumpolar_point_is_not_a_horizon_roundoff_tie(self, monkeypatch, meridian_distance):
+        """Clamping AD to -90 degrees must not invent a rising horizon."""
+        point = SimpleNamespace(abs_pos=0.0, declination=-80.0, ecliptic_latitude=0.0)
+        subject = SimpleNamespace(ascendant=point, perspective_type="Apparent Geocentric", ayanamsa_value=0.0)
+        monkeypatch.setattr(PrimaryDirectionsFactory, "DIRECTION_POINTS", ["Ascendant"])
+        monkeypatch.setattr(PrimaryDirectionsFactory, "_ecliptic_to_equatorial", staticmethod(lambda *args: (meridian_distance, -80.0)))
+        [entry] = PrimaryDirectionsFactory._build_speculum(subject, 2451545.0, 0, obliquity=23.44, ramc=0.0, geo_lat=80.0)
+        assert entry.is_above_horizon is False
+        assert entry.semi_arc == 180.0
+
+    def test_london_ascendant_uses_the_inclusive_diurnal_horizon(self):
+        """The horizon boundary has a defined branch on every native platform."""
+        london = AstrologicalSubjectFactory.from_birth_data(
+            "Horizon boundary", 1980, 12, 12, 12, 12,
+            lng=0.0, lat=51.4825766, tz_str="Europe/London", online=False,
+        )
+        ascendant = next(row for row in PrimaryDirectionsFactory.compute_speculum(london) if row.name == "Ascendant")
+        assert ascendant.is_above_horizon is True
+        assert ascendant.semi_arc == 83.3151
+
     def test_speculum_returns_entries(self, subject):
         """Speculum should return entries for direction points."""
         speculum = PrimaryDirectionsFactory.compute_speculum(subject)

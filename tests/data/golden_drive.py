@@ -96,6 +96,24 @@ def baselines_out_of_this_runs_reach() -> set[str]:
     }
     if not _tnos_available():
         out_of_reach |= {name for name in stored if "All Active Points" in name}
+    from kerykeion.ephemeris_backend import BACKEND_NAME
+
+    if BACKEND_NAME == "swisseph":
+        from tests.conftest import create_subject_from_temporal_data
+        from tests.data.ephemeris_requirements import unavailable_snapshot_points
+
+        for data in TEMPORAL_SUBJECTS:
+            if TIER_ORDER[data.get("tier", "base")] > available:
+                continue
+            subject = create_subject_from_temporal_data(data)
+            if unavailable_snapshot_points(subject):
+                # Match only the natal/themed readers with this precondition.
+                # Other readers of the same subject retain their own checks.
+                out_of_reach.update(name for name in stored if (
+                    name == f"{data['name']} - Natal Chart - Classic.svg"
+                    or name.startswith(f"{data['name']} - ")
+                    and name.endswith(" Theme - Natal Chart - Classic.svg")
+                ))
     return out_of_reach
 
 
