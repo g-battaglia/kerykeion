@@ -5,6 +5,7 @@
 - Promote the current qualified b5 library and CLI together, retaining the numerical implementation, rendering resources, scientific references and tolerances.
 - Pin the matching stable native backend, `libephemeris==4.0.0`, and align both stable classifiers, installation guidance and the generated man page.
 - Keep original native producer references immutable; stable backend model reuse requires a separate, explicit source-identity qualification.
+- Require patched HTTP dependencies (`certifi>=2026.10.18`, `urllib3>=2.8.0`) so existing installations cannot retain the affected CA/proxy/chunk-processing versions. Only these two security lock records advance; the scientific backend and all other external records remain unchanged.
 - Registry publication remains a separate maintainer action, in dependency order. See the [current stable preparation](release_notes/v6.1.0-stable.md); the earlier b1-based stable draft remains archived.
 
 ## 6.1.0b5

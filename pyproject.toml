@@ -54,6 +54,10 @@ dependencies = [
     "svg-polish>=1.0.1",
     "requests-cache>=1.2.1",
     "requests>=2.33.0",
+    # Security floors for the HTTP stack: a lock-only fix would let existing
+    # Requests installations keep vulnerable CA roots or proxy/chunk handling.
+    "certifi>=2026.10.18",
+    "urllib3>=2.8.0",
     "simple-ascii-tables>=1.0.0",
     # HARD runtime dependency, not a convenience: the stdlib `zoneinfo` searches
     # TZPATH (the HOST's tz database) first and falls back to this package only

@@ -41,11 +41,11 @@ wheels = [
 
 [[package]]
 name = "certifi"
-version = "2026.1.4"
+version = "2026.10.18"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e0/2d/a891ca51311197f6ad14a7ef42e2399f36cf2f9bd44752b3dc4eab60fdc5/certifi-2026.1.4.tar.gz", hash = "sha256:ac726dd470482006e014ad384921ed6438c457018f4b3d204aea4281258b2120", size = 154268, upload-time = "2026-01-04T02:42:41.825Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7e/eb/a2aa1ac3ea30dd3f30ca57f40232138b6b0040719316ecb85daf61167771/certifi-2026.10.18.tar.gz", hash = "sha256:b9995d97b64d0431a5af837d8ca8cd6238104d1f319f04bd93ea43124d6c861e", size = 135227, upload-time = "2026-10-18T16:21:07.655Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/ad/3cc14f097111b4de0040c83a525973216457bbeeb63739ef1ed275c1c021/certifi-2026.1.4-py3-none-any.whl", hash = "sha256:9943707519e4add1115f44c2bc244f782c0249876bf51b6599fee1ffbedd685c", size = 152900, upload-time = "2026-01-04T02:42:40.15Z" },
+    { url = "https://files.pythonhosted.org/packages/08/ba/95dd616042484f7c83a06974388b37b837732740ee70bc5dc715b5fcd55a/certifi-2026.10.18-py3-none-any.whl", hash = "sha256:73191c47aaa79da394e8fee2dbc2ec827432cab56311122c9e47abf79e390f62", size = 134093, upload-time = "2026-10-18T16:21:06.276Z" },
 ]
 
 [[package]]
@@ -294,6 +294,7 @@ name = "kerykeion"
 version = "6.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "certifi" },
     { name = "libephemeris" },
     { name = "pydantic" },
     { name = "requests" },
@@ -302,6 +303,7 @@ dependencies = [
     { name = "svg-polish" },
     { name = "typing-extensions" },
     { name = "tzdata" },
+    { name = "urllib3" },
 ]
 
 [package.optional-dependencies]
@@ -339,6 +341,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "certifi", specifier = ">=2026.10.18" },
     { name = "kerykeion", extras = ["cli"], marker = "extra == 'all'" },
     { name = "kerykeion", extras = ["swiss"], marker = "extra == 'all'" },
     { name = "kerykeion-cli", marker = "extra == 'cli'", editable = "cli" },
@@ -351,6 +354,7 @@ requires-dist = [
     { name = "svg-polish", specifier = ">=1.0.1" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
     { name = "tzdata", specifier = ">=2025.2" },
+    { name = "urllib3", specifier = ">=2.8.0" },
 ]
 provides-extras = ["swiss", "cli", "all"]
 
@@ -393,6 +397,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/34/b5/07e2b0f44e64930c93e3ae717a8f1a54655d7dc92e59233d4c5516aa4bf1/libephemeris-4.0.0.tar.gz", hash = "sha256:e6e04024cd336d351e4d03b1f09023df0d5adb616d04d33d377f5703cee629db", size = 15333689, upload-time = "2026-11-12T00:47:43.866Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/cc/0b40ee87e5b4b79ebe7c2a1371c875832ee069bec5f30ad526142abf3e7c/libephemeris-4.0.0-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:2fa6c48ca52446d8dd9c3009d91f58faac1851efd50bd19b1ae6fd0122c02bf1", size = 16821186, upload-time = "2026-11-12T00:47:18.354Z" },
     { url = "https://files.pythonhosted.org/packages/e8/e0/ecac603abbf0a4026df4c08d61d018798a746d1c0f0faee8324c0e15827f/libephemeris-4.0.0-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2ffded131a8bc76657d812a73ab62664a9dd9fd19db4d67772f06db99ca37226", size = 17254952, upload-time = "2026-11-12T00:47:25.004Z" },
@@ -1138,9 +1143,9 @@ wheels = [
 
 [[package]]
 name = "urllib3"
-version = "2.7.0"
+version = "2.8.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c", size = 433602, upload-time = "2026-05-07T16:13:18.596Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e3/05/b17359e1cefb4f909b5e40b1b90a496d987258916dbbf88e842c729f510e/urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63", size = 458972, upload-time = "2026-09-15T19:29:36.253Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
+    { url = "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3", size = 135717, upload-time = "2026-09-15T19:29:34.577Z" },
 ]
