@@ -16,6 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MODEL = "libephemeris-4.0.0b1"
+QUALIFIED_VERSIONS = frozenset({"4.0.0b2", "4.0.0b3", "4.0.0b4", "4.0.0", "4.1.0"})
 MODEL_ROOT = ROOT / "tests/data/model_baselines" / MODEL
 
 
@@ -35,7 +36,7 @@ def active_model(backend: str | None = None, version: str | None = None) -> str 
         return None
     if version == "4.0.0b1":
         return MODEL
-    if version in {"4.0.0b2", "4.0.0b3", "4.0.0b4", "4.0.0"}:
+    if version in QUALIFIED_VERSIONS:
         return patch_qualification(version)["model"]
     raise AssertionError(
         f"No qualified model fixtures for libephemeris {version}; do not reuse another model's references"
@@ -63,14 +64,14 @@ def verify_file(path: Path, expected: str) -> Path:
     return path
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=None)
 def patch_qualification(version: str) -> dict:
-    """Bind one explicitly reviewed distribution patch to an unchanged model.
+    """Bind one explicitly reviewed distribution to an unchanged model.
 
     The source-identity record is separate from frozen producer references.
     This is never a wildcard for future native versions or new model outputs.
     """
-    assert version in {"4.0.0b2", "4.0.0b3", "4.0.0b4", "4.0.0"}, f"No qualified patch identity for {version}"
+    assert version in QUALIFIED_VERSIONS, f"No qualified patch identity for {version}"
     path = ROOT / "tests/data/model_qualifications" / f"libephemeris-{version}.json"
     assert path.is_file(), f"Missing patch-model qualification: {path}"
     data = json.loads(path.read_text())
@@ -113,6 +114,15 @@ def patch_qualification(version: str) -> dict:
         for field in ("reference_bytes_identical", "scientific_manifest_identical", "legacy_files_unchanged"):
             assert evidence[field] is True
         assert evidence["baseline_producer"] == "4.0.0b1"
+        if version == "4.1.0":
+            # The core changed. Chain the byte-for-byte fixture replay to the
+            # reviewed 4.0.0 build and the coefficient tree it qualified.
+            previous_path = path.with_name("libephemeris-4.0.0.json")
+            verify_file(previous_path, data["base_qualification_sha256"])
+            previous = patch_qualification("4.0.0")
+            assert source["base_commit"] == previous["numerical_source"]["candidate_commit"], "Expected qualified 4.0.0 source"
+            assert source["base_data_tree"] == previous["numerical_source"]["trees"]["bundled_leb2"]["candidate"]
+            assert data["baseline_manifest_sha256"] == previous["baseline_manifest_sha256"]
     verify_file(MODEL_ROOT / "manifest.json", data["baseline_manifest_sha256"])
     return data
 

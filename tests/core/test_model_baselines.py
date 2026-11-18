@@ -19,7 +19,8 @@ def test_model_selection_is_explicit():
     assert fixtures.active_model("libephemeris", "4.0.0b1") == fixtures.MODEL
     assert fixtures.active_model("libephemeris", "4.0.0b2") == fixtures.MODEL
     assert fixtures.active_model("libephemeris", "4.0.0") == fixtures.MODEL
-    for version in ("4.0.0rc1", "4.0.0.post1", "4.0.0b5", "4.0.1", "5.0.0"):
+    assert fixtures.active_model("libephemeris", "4.1.0") == fixtures.MODEL
+    for version in ("4.1.0rc1", "4.1.1", "4.0.0rc1", "4.0.0.post1", "4.0.0b5", "4.0.1", "5.0.0"):
         with pytest.raises(AssertionError, match="No qualified model fixtures"):
             fixtures.active_model("libephemeris", version)
 
@@ -88,6 +89,27 @@ def test_stable_promotion_rejects_a_changed_previous_qualification(monkeypatch, 
     try:
         with pytest.raises(AssertionError, match="Frozen model reference changed"):
             fixtures.patch_qualification("4.0.0")
+    finally:
+        fixtures.patch_qualification.cache_clear()
+
+
+def test_410_rejects_a_different_qualified_base(monkeypatch, tmp_path):
+    """The optimized reader must trace back to the reviewed stable build."""
+    import json
+    import shutil
+
+    qualifications = "tests/data/model_qualifications"
+    directory = tmp_path / qualifications
+    shutil.copytree(fixtures.ROOT / qualifications, directory)
+    path = directory / "libephemeris-4.1.0.json"
+    record = json.loads(path.read_text())
+    record["numerical_source"]["base_commit"] = "0" * 40
+    path.write_text(json.dumps(record))
+    monkeypatch.setattr(fixtures, "ROOT", tmp_path)
+    fixtures.patch_qualification.cache_clear()
+    try:
+        with pytest.raises(AssertionError, match="4.0.0 source"):
+            fixtures.patch_qualification("4.1.0")
     finally:
         fixtures.patch_qualification.cache_clear()
 

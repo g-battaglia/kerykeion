@@ -47,3 +47,9 @@ input configuration of those two images. Their tests now check the primary
 reader and the relevant manifest hashes before rendering, without changing
 backend state. Run the reference suite with `LIBEPHEMERIS_LEB` unset and the
 qualified owner-provided inventory; explicit-file scientific checks are separate.
+
+The 4.1.0 qualification binds the candidate wheel to the reviewed 4.0.0
+source and bundled LEB2 tree. The check above reproduced the frozen native
+LEB references with the indexed reader, automatic file selection and all
+12 coefficient files. The qualification record includes the candidate
+commit and wheel digest in `tests/data/model_qualifications/libephemeris-4.1.0.json`.
